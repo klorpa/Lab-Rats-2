@@ -935,9 +935,9 @@ label extra_mastery_crisis_label():
         return
 
     $ the_trait = None
-    if type(the_research) is SerumTrait:
+    if isinstance(the_research, SerumTrait):
         $ the_trait = mc.business.active_research_design
-    elif type(the_research) is SerumDesign:
+    elif isinstance(the_research, SerumDesign):
         $ the_trait = get_random_from_list(the_research.traits)
 
     if the_person in mc.location.people:
@@ -991,7 +991,7 @@ init 1 python:
             return False
         if mc.business.active_research_design is None:
             return False
-        if type(mc.business.active_research_design) is SerumTrait and not mc.business.active_research_design.researched:
+        if isinstance(mc.business.active_research_design, SerumTrait) and not mc.business.active_research_design.researched:
             return False #This event only triggers when making new serum designs (which use existing traits) or when working on mastering an existing trait.
         return True
 
@@ -1008,7 +1008,7 @@ init 1 python:
             return False
         if mc.business.active_research_design is None:
             return False
-        if type(mc.business.active_research_design) is not SerumDesign:
+        if not isinstance(mc.business.active_research_design, SerumDesign):
             return False #This event only triggers when making new serum designs (which use existing traits) or when working on mastering an existing trait.
         return True
 

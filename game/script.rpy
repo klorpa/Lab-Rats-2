@@ -561,12 +561,12 @@ init -2 python:
                 is_researched = the_research.researched # If it was researched before we added any research then we are increasing the mastery level of a trait (does nothing to serum designs)
                 self.research_produced += research_amount
                 if the_research.add_research(research_amount): #Returns true if the research is completed by this amount'
-                    if type(the_research) is SerumDesign:
+                    if isinstance(the_research, SerumDesign):
                         the_research.generate_side_effects() #The serum will generate any side effects that are needed.
                         self.mandatory_crises_list.append(Action("Research Finished Crisis",serum_creation_crisis_requirement,"serum_creation_crisis_label",the_research)) #Create a serum finished crisis, it will trigger at the end of the round
                         self.add_normal_message("New serum design researched: " + the_research.name)
                         self.active_research_design = None
-                    elif type(the_research) is SerumTrait:
+                    elif isinstance(the_research, SerumTrait):
                         if is_researched: #We've reseached it already, increase mastery level instead.
                             self.add_normal_message("Serum trait mastery improved: " + the_research.name + ", Now " + str(the_research.mastery_level))
                         else:
@@ -2720,7 +2720,7 @@ init -2 python:
             self.menu_tooltip = menu_tooltip # Added to any menu item where this action is displayed
 
         def __cmp__(self,other): ##This and __hash__ are defined so that I can use "if Action in List" and have it find identical actions that are different instances.
-            if type(other) is Action:
+            if isinstance(other, Action):
                 if self.name == other.name and self.requirement == other.requirement and self.effect == other.effect and self.args == other.args:
                     return 0
                 else:
@@ -2883,7 +2883,7 @@ init -2 python:
             self.on_buy_arguments = on_buy_arguments #A dictionary of values to be given to the function.
 
         def __cmp__(self,other): #
-            if type(other) is Policy:
+            if isinstance(other, Policy):
                 if self.name == other.name and self.desc == other.desc and self.cost == other.cost:
                     return 0
                 else:
@@ -3019,7 +3019,7 @@ init -2 python:
             else:
                 self.colour_pattern = colour_pattern #If there is a pattern assigned this is the colour used for the masked section.
         def __cmp__(self,other):
-            if type(self) is type(other):
+            if isinstance(self, other):
                 if self.name == other.name and self.hide_below == other.hide_below and self.layer == other.layer:
                     return 0
 
@@ -3264,7 +3264,7 @@ init -2 python:
             ordered_displayables = []
 
             for item in all_items:
-                if type(item) is Facial_Accessory:
+                if isinstance(item, Facial_Accessory):
                     ordered_displayables.append(item.generate_item_displayable(position, face_style, emotion, special_modifiers))
                 else:
                     if not item.is_extension:
@@ -3289,7 +3289,7 @@ init -2 python:
             all_items = self.generate_clothing_list(body_type, tit_size, position)
 
             for item in all_items:
-                if type(item) is Facial_Accessory:
+                if isinstance(item, Facial_Accessory):
                     item_check = item.generate_item_displayable(position, face_style, emotion, special_modifiers)
                 else:
                     if not item.is_extension:
