@@ -1,0 +1,11 @@
+# Exclude Everything except GIT ignore
+/lib/
+/renpy/
+*.*
+!.gitignore
+
+# Only include Ren'Py Game Code
+/game/**
+!/game/*.rpy
+
+
