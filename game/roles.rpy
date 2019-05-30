@@ -322,7 +322,7 @@ label employee_pay_cash_bonus(the_person):
                 $ the_person.reset_arousal()
                 $ the_person.review_outfit()
             else:
-                the_person.char "Wow... this is amazing sir. I'll do everything I can for you and the company!"
+                the_person.char "Wow... this is amazing [the_person.mc_title]. I'll do everything I can for you and the company!"
 
     return
 
@@ -331,7 +331,7 @@ label employee_performance_review(the_person):
     #Bring them into the office. (Set the background appropriately)
     mc.name "[the_person.title], I'd like to have a talk with you about your recent performance here at [mc.business.name]. Can you step inside my office for a moment?"
     if the_person.obedience > 100:
-        the_person.char "Oh, of course sir."
+        the_person.char "Oh, of course [the_person.mc_title]."
     else:
         the_person.char "Uh, I guess. so."
 
@@ -960,7 +960,7 @@ label futuristic_serum_stage_2_label(the_person):
         $ go_first = pick_3
     "[go_first.name] raises her hand and [the_person.title] smiles and grabs her clipboard."
     the_person.char "Very good. Come with me, you two can wait here until we're done."
-    "[the_person.title] leads [the_person.title] into a side office, and you decide to leave her to her work."
+    "[the_person.title] leads [go_first.title] into a side office, and you decide to leave her to her work."
     #TODO: Expand this event for more sexy stuff.
     $ mc.business.research_tier = 3
     $ mc.log_event("Max Research Tier Unlocked", "float_text_grey")
