@@ -3019,7 +3019,7 @@ init -2 python:
             else:
                 self.colour_pattern = colour_pattern #If there is a pattern assigned this is the colour used for the masked section.
         def __cmp__(self,other):
-            if isinstance(self, type(other):
+            if isinstance(self, type(other)):
                 if self.name == other.name and self.hide_below == other.hide_below and self.layer == other.layer:
                     return 0
 
