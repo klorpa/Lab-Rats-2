@@ -133,7 +133,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
                 #TODO: present the player with a list. TODO: Refactor the event above to be a generic way of presenting a list, w/ the dialogue separated.
                 call new_title_menu(the_person) from _call_new_title_menu_1
                 $ title_choice = _return
-                if not (title_choice == "Back" or title_choice == title_choice):
+                if not (title_choice == "Back" or the_person.title == the_person.create_formatted_title(title_choice)):
                     mc.name "I think [title_choice] would really suit you."
                     $ the_person.set_title(title_choice)
                     "[the_person.title] seems happy with her new title."
