@@ -86,7 +86,7 @@ label change_titles_person(the_person):
         "Change how you refer to her. (tooltip)Change your possessive title for this girl. A possessive title takes the form \"your employee\", \"your sister\", etc. It can also just be their name repeated. Different combinations of stats, roles, and personalities unlock different titles.":
             call new_possessive_title_menu(the_person) from _call_new_possessive_title_menu
             $ title_choice = _return
-            if not (title_choice == "Back" or the_person.possessive_title ==  the_person.create_formatted_title(the_person.possessive_title)):
+            if not (title_choice == "Back" or the_person.possessive_title ==  the_person.create_formatted_title(title_choice)):
                 "You decide to start refering [the_person.name] [the_person.last_name] as [title_choice] instead of [the_person.possessive_title] when you're talking about her."
                 $ the_person.set_possessive_title(title_choice)
     return
@@ -124,7 +124,7 @@ label new_possessive_title_menu(the_person):
 label person_new_title(the_person): #She wants a new title or to give you a new title.
     if __builtin__.len(get_titles(the_person)) <= 1: #There's only the one title available to them. Don't bother asking to change
         return
-    $ randomised_obedience = the_person.obedience + renpy.random.randint(0,30) - 15 #Randomize their effective obedience a little so they sometimes ask, sometimes demand
+    $ randomised_obedience = the_person.obedience + renpy.random.randint(-30,30)  #Randomize their effective obedience a little so they sometimes ask, sometimes demand
 
     if randomised_obedience > 120: #She just asks you for something "fresh". Her obedience is high enough that we already have control over this.
         the_person.char "[the_person.mc_title], do you think [the_person.title] is getting a little old? I think something new might be fun!"
@@ -167,7 +167,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
                     the_person.char "Yeah, I think you're right."
                 "Change her title to [formatted_title_two].":
                     mc.name "[formatted_title_two] does have a nice ring to it. You should start using that."
-                    $ the_person.set_title(title_one)
+                    $ the_person.set_title(title_two)
                     the_person.char "I think you're right. Thanks for the input!"
 
         else: #Both are new!
@@ -201,7 +201,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
         the_person.char "By the way [the_person.mc_title], I want you to start refering to me as [formatted_new_title] from now on. I think it suits me better."
         menu:
             "Change her title to [formatted_new_title].":
-                mc.name "I think [formatted_title_two] is the best of the two."
+                mc.name "I think [formatted_new_title] is the best of the two."
                 $ the_person.set_title(new_title)
                 the_person.char "Yeah, I think you're right. I'm going to start using from now on."
 
@@ -215,7 +215,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
 label person_new_mc_title(the_person):
     if __builtin__.len(get_player_titles(the_person)) <= 1: #There's only the one title available to them. Don't bother asking to change
         return
-    $ randomised_obedience = the_person.obedience + renpy.random.randint(0,30) - 15 #Randomize their effective obedience a little so they sometimes ask, sometimes demand
+    $ randomised_obedience = the_person.obedience + renpy.random.randint(-30, 30) #Randomize their effective obedience a little so they sometimes ask, sometimes demand
     if randomised_obedience > 120: #She just asks you for something "fresh". Her obedience is high enough that we already have control over this.
         the_person.char "I was just thinking that I've called you [the_person.mc_title] for a pretty long time. If you're getting tired of it I could call you something else."
         menu:
@@ -225,8 +225,8 @@ label person_new_mc_title(the_person):
                 $ title_choice = _return
                 if not (title_choice == "Back" or title_choice == the_person.mc_title):
                     mc.name "I think you should call me [title_choice] from now on."
-                    $ the_person.set_title(title_choice)
-                    "[the_person.title] seems happy with your new title."
+                    $ the_person.set_mc_title(title_choice)
+                    "[the_person.title] seems happy with how she may call you."
                 else:
                     mc.name "On second thought, I think [the_person.mc_title] is fine for now."
                     the_person.char "If you think so [the_person.mc_title]."
@@ -255,7 +255,7 @@ label person_new_mc_title(the_person):
                     the_person.char "Sure, whatever you like [the_person.mc_title]."
                 "Have her call you [title_two] instead.":
                     mc.name "[title_two] does have a nice ring to it. You should start using that."
-                    $ the_person.set_mc_title(title_one)
+                    $ the_person.set_mc_title(title_two)
                     the_person.char "Alright, you got it [the_person.mc_title]!"
 
         else: #Both are new!
