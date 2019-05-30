@@ -57,7 +57,7 @@
         def reserved_player_titles(the_person):
             return mc.name
         reserved_personality = Personality("reserved", #Mom style personality
-        common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "convservative outfits"],
+        common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits"],
         common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies"],
         common_dislikes = ["the colour red", "marketing work", "flirting"],
         common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "risking getting pregnant", "cum facials"],
@@ -72,7 +72,7 @@
         wild_personality = Personality("wild", default_prefix = "wild", #Stephanie style personality
         common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work"],
         common_sexy_likes = ["doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "risking getting pregnant"],
-        common_dislikes = ["Mondays", "the colour pink", "supply work", "convservative outfits", "work uniforms"],
+        common_dislikes = ["Mondays", "the colour pink", "supply work", "conservative outfits", "work uniforms"],
         common_sexy_dislikes = ["being submissive", "being fingered", "missionary style sex", "giving handjobs"],
         titles_function = wild_titles, possessive_titles_function = wild_possessive_titles, player_titles_function = wild_player_titles)
 
