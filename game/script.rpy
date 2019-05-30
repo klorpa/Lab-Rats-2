@@ -1675,10 +1675,10 @@ init -2 python:
             if day%7 == 0: #If the new day is Monday
                 self.change_happiness(self.get_opinion_score("Mondays"), add_to_log = False)
 
-            elif day%7 == 5: #If the new day is Friday
+            elif day%7 == 4: #If the new day is Friday
                 self.change_happiness(self.get_opinion_score("Fridays"), add_to_log = False)
 
-            elif day%7 == 6 or day%7 == 7: #If the new day is a weekend day
+            elif day%7 == 5 or day%7 == 6: #If the new day is a weekend day
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
 
 
