@@ -172,7 +172,7 @@ label cousin_blackmail_list(the_person):
             if not the_person.outfit.tits_visible():
                 "[the_person.title] reaches into her shirt and pulls out a small wad of bills."
             else:
-                "[the_perosn.title] pulls out a small wad of bills."
+                "[the_person.title] pulls out a small wad of bills."
             the_person.char "Fine."
             $ mc.business.funds += 100
             "She pulls out a $100 bill and hands it over to you. You take the money and slip it back into your pocket."
@@ -205,7 +205,7 @@ label cousin_blackmail_list(the_person):
             mc.name "I want to see you strip for me."
             if the_person.sluttiness >= 15:
                 "[the_person.possessive_title] doesn't say anything for a second."
-                $ the_perosn.change
+                $ the_person.change_love(-1)
                 the_person.char "Fine. Sit down and pay attention. I'm only doing this once."
                 if the_person.sluttiness <= 20:
                     #She only wants to show you her underwear.
@@ -287,7 +287,7 @@ label cousin_blackmail_list(the_person):
                         else:
                             "[the_person.possessive_title] takes off her [the_item.name]."
 
-                    while not the_perosn.outfit.vagina_visisble():
+                    while not the_person.outfit.vagina_visisble():
                         $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                         $ the_person.draw_animated_removal(the_item)
                         if the_person.outfit.vagina_visible():

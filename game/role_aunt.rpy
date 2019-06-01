@@ -692,7 +692,7 @@ label aunt_share_drinks_label(the_person):
                     "[the_person.title] talks more about herself, and it seems like being a little drunk seems to have removed any inhibitions she might have had."
                     $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False) #TODO: Add the include normal parameter.
                     if her_opinion:
-                        $ the_perosn.discover_opinion(her_opinion)
+                        $ the_person.discover_opinion(her_opinion)
                         $ opinion_string = opinion_score_to_string(her_opinion)
                         "Through her suprisingly erotic ramblings you discover that she [opinion_string] [her_opinion]."
                     else:
