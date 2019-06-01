@@ -41,7 +41,7 @@
             return mc.name
         #Default personality is a well rounded personaity, without any strong tendencies. Default "Lily" personality.
         relaxed_personality = Personality("relaxed", #Lily style personality
-        common_likes = ["skirts", "the weekend", "small talk", "the colour pink", "HR work", "supply work", "flirting"],
+        common_likes = ["skirts", "the weekend", "small talk", "the colour pink", "HR work", "supply work", "flirting","punk","pop"],
         common_sexy_likes = ["missionary style sex", "kissing", "masturbating", "being submissive", "drinking cum", "cum facials"],
         common_dislikes = ["Mondays", "pants", "the colour yellow", "research work", "work uniforms"],
         common_sexy_dislikes = ["taking control", "doggy style sex", "showing her tits", "showing her ass", "risking getting pregnant", "creampies"],
@@ -57,7 +57,7 @@
         def reserved_player_titles(the_person):
             return mc.name
         reserved_personality = Personality("reserved", #Mom style personality
-        common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits"],
+        common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits","jazz","classical"],
         common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies"],
         common_dislikes = ["the colour red", "marketing work", "flirting"],
         common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "risking getting pregnant", "cum facials"],
@@ -69,14 +69,30 @@
             return wild_titles(the_person)
         def wild_player_titles(the_person):
             return mc.name
-        wild_personality = Personality("wild", default_prefix = "wild", #Stephanie style personality
-        common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work"],
+        wild_personality = Personality("wild", #Stephanie style personality
+        common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work","heavy metal","punk"],
         common_sexy_likes = ["doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "risking getting pregnant"],
         common_dislikes = ["Mondays", "the colour pink", "supply work", "conservative outfits", "work uniforms"],
         common_sexy_dislikes = ["being submissive", "being fingered", "missionary style sex", "giving handjobs"],
         titles_function = wild_titles, possessive_titles_function = wild_possessive_titles, player_titles_function = wild_player_titles)
 
-        list_of_personalities = [relaxed_personality,reserved_personality,wild_personality]
+        def introvert_titles(the_person):
+            return the_person.name
+
+        def introvert_possessive_titles(the_person):
+            return introvert_titles(the_person)
+
+        def introvert_player_titles(the_person):
+            return mc.name
+
+        introvert_personality = Personality("introvert", #Stephanie style personality
+        common_likes = ["conservative outfits", "research work", "punk", "working", "the colour black"],
+        common_sexy_likes = ["big dicks", "kissing", "vaginal sex", "anal sex", "getting head", "giving blowjobs", "masturbating", "creampies"],
+        common_dislikes = ["skimpy outfits", "skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
+        common_sexy_dislikes = ["skimpy outfits", "not wearing underwear", "not wearing anything", "public sex", "lingerie"],
+        titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles)
+
+        list_of_personalities = [relaxed_personality,reserved_personality,wild_personality, introvert_personality]
 
         #SPECIAL PERSOANLITIES#
         def bimbo_titles(the_person):
@@ -86,7 +102,7 @@
         def bimbo_player_titles(the_person):
             return mc.name
         bimbo_personality = Personality("bimbo", #Currently used in the head researcher event line.
-        common_likes = ["skirts", "small talk", "the colour pink", "makeup"],
+        common_likes = ["skirts", "small talk", "the colour pink", "makeup", "pop"],
         common_sexy_likes = ["giving blowjobs", "missionary style sex", "being submissive", "skipmy outfits", "showing her tits", "showing her ass", "not wearing anything", "not wearing underwear", "lingerie", "cum facials"],
         common_dislikes = ["working", "research work", "work uniforms", "conservative outfits", "Mondays"],
         common_sexy_dislikes = ["taking control", "masturbating"],
@@ -173,12 +189,108 @@
         titles_function = mom_titles, possessive_titles_function = mom_possessive_titles, player_titles_function = mom_player_titles)
 
 
+        def aunt_titles(the_person):
+            valid_titles = []
+            valid_titles.append(the_person.name)
+            valid_titles.append("Aunt " + the_person.name)
+            if the_person.love > 20:
+                valid_titles.append("Auntie")
+            return valid_titles
+
+        def aunt_possessive_titles(the_person):
+            valid_possessive_titles = []
+            valid_possessive_titles.append(the_person.name)
+            valid_possessive_titles.append("Your aunt")
+
+            if the_person.love > 20:
+                valid_possessive_titles.append("Your loving aunt")
+
+
+            if the_person.love > 40 and the_person.sluttiness > 60:
+                valid_possessive_titles.append("Your personal MILF")
+
+            if the_person.sluttiness > 100:
+                valid_possessive_titles.append("Your cock hungry aunt")
+                valid_possessive_titles.append("Your cumdump aunt")
+
+            return valid_possessive_titles
+
+        def aunt_player_titles(the_person):
+            valid_player_titles = []
+            valid_player_titles.append(mc.name)
+
+            if the_person.love > 20:
+                valid_player_titles.append("Sweetheart")
+                valid_player_titles.append("Sweety")
+            return valid_player_titles
+
+        aunt_personality = Personality("aunt", default_prefix = "wild",
+            common_likes = ["small talk", "the colour pink", "makeup", "flirting"],
+            common_sexy_likes = ["lingerie", "skimpy outfits", "taking control"],
+            common_dislikes = ["working", "hiking", "conservative outfits"],
+            common_sexy_dislikes = ["public sex", "masturbating", "being fingered"],
+            titles_function = aunt_titles, possessive_titles_function = aunt_possessive_titles, player_titles_function = aunt_player_titles)
+
+        def cousin_titles(the_person):
+            valid_titles = []
+            valid_titles.append(the_person.name)
+            if the_person.love > 20:
+                valid_titles.append("Cuz")
+
+            if the_person.love < -30:
+                valid_titles.append("Hellspawn")
+            return valid_titles
+
+        def cousin_possessive_titles(the_person):
+            valid_possessive_titles = []
+            valid_possessive_titles.append(the_person.name)
+            valid_possessive_titles.append("Your cousin")
+            if the_person.love > 20:
+                valid_possessive_titles.append("Your cuz")
+
+            if the_person.love < -30:
+                valid_possessive_titles.append("Your bitchy cousin")
+
+            if the_person.sluttiness > 40:
+                valid_possessive_titles.append("Your cock-goth cousin")
+
+            return valid_possessive_titles
+
+        def cousin_player_titles(the_person):
+            valid_player_titles = []
+            valid_player_titles.append(mc.name)
+            if the_person.love < -20:
+                valid_player_titles.append("Asshat")
+                valid_player_titles.append("Dickwad")
+                valid_player_titles.append("Dick-for-brains")
+
+            if the_person.love > 20:
+                valid_player_titles.append("Cuz")
+
+            if the_person.love < 0 and the_person.sluttiness > 40:
+                valid_player_titles.append("Dildo")
+
+                if the_person.obedience < 20:
+                    valid_player_titles.append("Cock slave")
+                    valid_player_titles.append("Slave")
+            return valid_player_titles
+
+        cousin_personality = Personality("cousin", default_prefix = "introvert",
+            common_likes = ["the colour black","heavy metal","punk","makeup","skimpy outfits"],
+            common_sexy_likes = ["lingerie","masturbating","taking control","getting head"],
+            common_dislikes = ["small talk","flirting","working"],
+            common_sexy_dislikes = ["kissing", "giving blowjobs", "risking getting pregnant"],
+            titles_function = cousin_titles, possessive_titles_function = cousin_possessive_titles, player_titles_function = cousin_player_titles)
+
+
         def get_random_personality():
             return get_random_from_list(list_of_personalities)
 
 ###############################
 ##### Relaxed Personality #####
 ###############################
+# <editor-fold>
+
 label relaxed_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -529,10 +641,12 @@ label relaxed_improved_serum_unlock(the_person):
     the_person.char "What I want to do is take a dose of our serum myself, then have you record me while you run me through some questions."
     return
 
+#</editor-fold>
 
 ################################
 ##### Reserved Personality #####
 ################################
+# <editor-fold>
 label reserved_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -861,11 +975,12 @@ label reserved_date_seduction(the_person):
             the_person.char "I had a fantastic night [the_person.mc_title]. Before you head home would you like to share a glass of wine with me?"
     return
 
+#</editor-fold>
 
 ############################
 ##### Wild Personality #####
 ############################
-
+# <editor-fold>
 label wild_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -886,7 +1001,7 @@ label wild_sex_responses(the_person):
         else:
             the_person.char "Ah, don't you dare stop doing that! Ah!"
     else:
-        "Mmm, that feels... Ugh, that feels really good."
+        the_person.char "Mmm, that feels... Ugh, that feels really good."
     return
 
 label wild_climax_responses(the_person):
@@ -982,7 +1097,7 @@ label wild_seduction_response(the_person):
         elif the_person.sluttiness > 10:
             the_person.char "I know that look you're giving me, I think I know what you want."
         else:
-            the_person.char "[mc.nam], I know what you mean... Okay, I can spare a few minutes."
+            the_person.char "[mc.name], I know what you mean... Okay, I can spare a few minutes."
     return
 
 label wild_seduction_accept_crowded(the_person):
@@ -1110,7 +1225,7 @@ label wild_sex_watch(the_person, the_sex_person, the_position):
         $ the_person.draw_person()
         the_person.char "You're certainly feeling bold today [the_sex_person.name]. At least it looks like you're having a good time..."
         $ change_report = the_person.change_slut_temp(1)
-        "[the_person.title] watches for a moment, then turns away  while you and [the_sex_person.name] keep [the_position.verb]."
+        "[the_person.title] watches for a moment, then turns away while you and [the_sex_person.name] keep [the_position.verb]."
 
     elif the_person.sluttiness > the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
@@ -1210,9 +1325,375 @@ label wild_improved_serum_unlock(the_person):
     the_person.char "What I want to do is take a dose of our serum myself, then have you record me while you run me through some questions."
     return
 
+# </editor-fold>
+
+#################################
+##### Introvert Personality #####
+#################################
+# <editor-fold>
+label introvert_greetings(the_person):
+    if the_person.sluttiness > 60:
+        if the_person.obedience > 130:
+            the_person.char "Hello [the_person.mc_title]."
+        else:
+            the_person.char "Hey."
+    else:
+        if the_person.obedience > 130:
+            the_person.char "Hello."
+        else:
+            "[the_person.title] gives you a nod."
+    return
+
+label introvert_sex_responses(the_person):
+    if the_person.sluttiness > 50:
+        if the_person.obedience > 130:
+            the_person.char "Keep... Going... Please!"
+        else:
+            the_person.char "Ah... Fuck that's nice!"
+    else:
+        "[the_person.possessive_title] doesn't say anything, but her face is flush and her breathing rapid."
+    return
+
+label introvert_climax_responses(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "I'm... Cumming!"
+    else:
+        the_person.char "Shit..."
+    return
+
+label introvert_clothing_accept(the_person):
+    if the_person.obedience > 130:
+        the_person.char "If you like it, sure."
+    else:
+        the_person.char "It looks okay, I guess."
+    return
+
+label introvert_clothing_reject(the_person):
+    if the_person.obedience > 130:
+        the_person.char "I don't really like it. Sorry."
+        "[the_person.possessive_title] shrugs."
+    else:
+        if the_person.sluttiness > 60:
+            the_person.char "Other people would see me in this? No, I'm not wearing that."
+        else:
+            the_person.char "I don't like it."
+            "[the_person.possessive_title] shrugs."
+    return
+
+label introvert_clothing_review(the_person):
+    if the_person.obedience > 130:
+        the_person.char "I need to get cleaned up."
+    else:
+        if the_person.sluttiness > 40:
+            "[the_person.title] starts to get cleaned up and dressed."
+        else:
+            the_person.char "Don't look at me..."
+            "[the_person.title] turns her back to you while she gets put back together."
+    return
+
+label introvert_strip_reject(the_person):
+    if the_person.obedience > 130:
+        the_person.char "No, don't take that off please."
+
+    elif the_person.love < 10:
+        "[the_person.title] grabs your hand to stop you."
+        the_person.char "Keep dreaming."
+    else:
+        "[the_person.title] grabs your hand shakes her head."
+    return
+
+label introvert_sex_accept(the_person):
+    if the_person.sluttiness > 70:
+        if the_person.obedience < 70:
+            "[the_person.title] shrugs and nods."
+            the_person.char "Sure. Sounds like it could be fun."
+        else:
+            "[the_person.possessive_title] smiles and nods."
+    else:
+        "[the_person.title] shrugs and looks away nervously."
+        if the_person.love < 0:
+            the_person.char "With you? Ugh, I guess..."
+        else:
+            the_person.char "Sure, I guess."
+    return
+
+label introvert_sex_obedience_accept(the_person):
+    if the_person.sluttiness > 70:
+        "[the_person.possessive_title] seems nervious but nods."
+        the_person.char "Okay."
+    else:
+        if the_person.obedience > 130:
+            "[the_person.possessive_title] seems shocked, but nods meekly."
+            the_person.char "Okay..."
+        else:
+            the_person.char "I guess I could give that a try..."
+    return
+
+label introvert_sex_gentle_reject(the_person):
+    if the_person.sluttiness > 50:
+        "[the_person.possessive_title] shakes her head."
+        the_person.char "Let's do something else."
+    else:
+        "[the_person.possessive_title] shakes her head."
+        the_person.char "Let's do something else. Something less serious."
+    return
+
+label introvert_sex_angry_reject(the_person):
+    if the_person.sluttiness < 20:
+        "[the_person.possessive_title] seems shocked. She looks away and shakes her head, stepping away from you."
+
+    else:
+        "[the_person.possessive_title] shakes her head."
+        the_person.char "No way, not even a chance. Ugh."
+    return
+
+label introvert_seduction_response(the_person):
+    if the_person.obedience > 130:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] bites her lip."
+            the_person.char "Is that so?"
+        else:
+            the_person.char "Oh... I don't know what to say..."
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "You too? Well..."
+            "[the_person.title] bites her lip."
+        elif the_person.sluttiness > 10:
+            the_person.char "Oh... Really?"
+        else:
+            "[the_person.possessive_title] seems flustered and turns her head away."
+            the_person.char "Oh, really? I don't... Ah, I don't even know what to say!"
+    return
+
+label introvert_seduction_accept_crowded(the_person):
+    if the_person.sluttiness < 20:
+        "[the_person.possessive_title] glances around nervously."
+        the_person.char "Fine. Let's get out of here."
+    elif the_person.sluttiness < 50:
+        "[the_person.possessive_title] glances around."
+        the_person.char "Fine. Let's get out of here."
+    else:
+        "[the_person.possessive_title] glances around, blushing."
+        the_person.char "Fine. Should we go somewhere else...?"
+    return
+
+label introvert_seduction_accept_alone(the_person):
+    if the_person.sluttiness < 20:
+        the_person.char "I think... Okay."
+    elif the_person.sluttiness < 50:
+        "[the_person.possessive_title] bites her lip and nods her approval."
+    else:
+        "[the_person.possessive_title] eagerly nods her approval. She seems to blush in anticipation."
+    return
+
+label introvert_seduction_refuse(the_person):
+    if the_person.sluttiness < 20:
+        "[the_person.possessive_title] blushes and shakes her head."
+        the_person.char "Not right now."
+
+    elif the_person.sluttiness < 50:
+        the_person.char "I... No, I don't think so."
+
+    else:
+        the_person.char "Hmm..."
+        "[the_person.possessive_title] takes a long moment to make up her mind."
+        the_person.char "No, I don't think so [the_person.mc_title]."
+    return
+
+label introvert_flirt_response(the_person):
+    if the_person.obedience > 130:
+        if the_person.sluttiness > 50:
+            the_person.char "I was thinking of you when I put this on."
+        else:
+            "[the_person.title] smiles and shrugs."
+            the_person.char "Actions speak louder than words."
+    else:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] puts her hands behind her back and rocks her hips left and right."
+        else:
+            "[the_person.title] blushes and looks away."
+            the_person.char "Oh... I... ah... Thanks."
+    return
+
+label introvert_cum_face(the_person):
+    if the_person.obedience > 130:
+        if the_person.sluttiness > 60:
+            "[the_person.title] licks her lips, cleaning up a few drops of your semen that had run down her face."
+        else:
+            "[the_person.title] runs a finger along her cheek, wiping away some of your semen."
+    else:
+        if the_person.sluttiness > 80:
+            "[the_person.title] looks you in the eye, then runs her tongue over her lips seductively."
+        else:
+            "[the_person.title] wipes some of your cum off her face with the back of her hand."
+    return
+
+label introvert_cum_mouth(the_person):
+    if the_person.obedience > 130:
+        if the_person.sluttiness > 60:
+            the_person.char "Mmm. Thank you."
+        else:
+            the_person.char "Mmm."
+    else:
+        if the_person.sluttiness > 80:
+            the_person.char "Mmm, you taste great."
+        else:
+            the_person.char "Ugh."
+    return
+
+label introvert_suprised_exclaim(the_person):
+    $rando = renpy.random.choice(["Fuck!","Shit!","Oh fuck!","Dicks!", "Fuck me!","Ah! Oh fuck!", "Ah!", "Holy shit!", "Fucking shit!", "God fucking dammit!", "Son of a bitch!", "Mother fucker!"])
+    the_person.char "[rando]"
+    return
+
+label introvert_talk_busy(the_person):
+    if the_person.obedience > 120:
+        the_person.char "I'm busy right now. Can we talk later?"
+    else:
+        the_person.char "Huh? Sorry, I can't talk right now."
+    return
+
+label introvert_sex_strip(the_person):
+    #TODO: See if this sounds right with them just not saying anything (strong silent type)
+    # if the_person.sluttiness < 20:
+    #     if the_person.arousal < 50:
+    #         the_person.char "One sec, I want to take something off."
+    #     else:
+    #         the_person.char "Ah, I'm wearing way too much right now. One sec!"
+    #
+    # elif the_person.sluttiness < 60:
+    #     if the_person.arousal < 50:
+    #         the_person.char "Why do I bother wearing all this?"
+    #     else:
+    #         the_person.char "Wait, I want to get a little more naked for you."
+    #
+    # else:
+    #     if the_person.arousal < 50:
+    #         the_person.char "Give me a second, I'm going to strip something off just. For. You."
+    #     else:
+    #         the_person.char "Ugh let me get this off. I want to feel your pressed against every inch!"
+    return
+
+label introvert_sex_watch(the_person, the_sex_person, the_position):
+    if the_person.sluttiness < the_position.slut_requirement - 20:
+        $ the_person.draw_person(emotion = "angry")
+        the_person.char "What the fuck..."
+        $ the_person.change_obedience(-2)
+        $ the_person.change_happiness(-3)
+        "[the_person.title] shakes her head while you and [the_sex_person.name] [the_position.verb]."
+
+    elif the_person.sluttiness < the_position.slut_requirement - 10:
+        $ the_person.draw_person()
+        the_person.char "Right here? Really?"
+        $ the_person.change_happiness(-1)
+        "[the_person.title] rolls her eyes and tries to avert her gaze as you and [the_sex_person.name] [the_position.verb]."
+
+    elif the_person.sluttiness < the_position.slut_requirement:
+        $ the_person.draw_person()
+        the_person.char "Right in front of me? Really?"
+        $ change_report = the_person.change_slut_temp(1)
+        "[the_person.title] watches for a moment, then turns away while you and [the_sex_person.name] keep [the_position.verb]."
+
+    elif the_person.sluttiness > the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
+        $ the_person.draw_person()
+        $ change_report = the_person.change_slut_temp(2)
+        "[the_person.title] blushes, watching you and [the_sex_person.name] [the_position.verb]."
+
+    else:
+        $ the_person.draw_person(emotion = "happy")
+        # the_person.char "Come on [the_person.mc_title], [the_sex_person.name] is going to fall asleep at this rate! You're going to have to give her a little more than that."
+        "[the_person.title] watches excitedlky while you and [the_sex_person.name] [the_position.verb]. She whispers under her breath, almost to herself."
+        the_person.char "Come on, give it to her. Harder..."
+    return
+
+label introvert_being_watched(the_person, the_watcher, the_position):
+    if the_person.sluttiness >= the_position.slut_cap and the_watcher.sluttiness >= the_position.slut_cap:
+        #They agree you should give it to her harder
+        the_person.char "[the_person.mc_title], I want more!"
+        $ the_person.change_arousal(1)
+        "[the_person.title] seems turned on by [the_watcher.title] watching you and her [the_position.verb]."
+
+    elif the_person.sluttiness >= the_position.slut_cap and the_watcher.sluttiness < the_position.slut_requirement:
+        #She's super slutty and doesn't care what people think.
+        the_person.char "Just focus on me. Just me."
+
+    elif the_person.sluttiness >= the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
+        #She's super slutty and encourages the watcher to be slutty.
+        the_person.cahr "Did you know how good this feels [the_watcher.title]?"
+        $ the_person.change_arousal(1)
+        "[the_person.title] seems turned on by [the_watcher.title] watching you and her [the_position.verb]."
+
+    elif the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness >= the_position.slut_cap:
+        #She's into it and encouraged by the slut watching her.
+        $ the_person.change_arousal(1)
+        "[the_person.title] doesn't say anything, but she seems turned on by [the_watcher.title] watching you and her [the_position.verb]."
+
+    elif the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_requirement:
+        #She's into it but shamed by the prude watching her.
+        the_person.char "We should go somewhere quiet..."
+        $ the_person.change_arousal(-1)
+        $ the_person.change_slut_temp(-1)
+        "[the_person.title] seems uncomfortable with [the_watcher.title] nearby."
+
+    else: #the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
+        #They're both into it but not fanatical about it.
+        "[the_person.possessive_title] glances between you and [the_watcher.title]."
+        $ the_person.change_arousal(1)
+        $ the_person.change_slut_temp(1)
+        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+
+    return
+
+label introvert_work_enter_greeting(the_person):
+    if the_person.happiness < 80:
+        "[the_person.title] glances at you when you enter the room. She promptly ignores you and turns back to her work."
+
+    elif the_person.happiness > 130:
+        if the_person.sluttiness > 40:
+            "[the_person.title] looks up at you, blushes, then looks away."
+        else:
+            "[the_person.title] looks up from her work and gives you a quick nod."
+
+    else:
+        if the_person.sluttiness > 60:
+            "[the_person.title] looks up briefly from her work. She bites her lip and winks."
+        else:
+            "[the_person.title] doesn't notice you come in and stays focused on her work."
+    return
+
+label introvert_date_seduction(the_person): #TODO: Change this to be different.
+    if the_person.sluttiness > the_person.love:
+        if the_person.sluttiness > 40:
+            the_person.char "I want you to come home with me. Want to come?"
+        else:
+            the_person.char "I don't normally do this. Do you want to come home with me?"
+    else:
+        if the_person.love > 40:
+            "[the_person.title] stays close to you, before touching your arm to get your attention."
+            the_person.char "I had a really good time. I... was wondering if you wanted to come home with me..."
+        else:
+            "[the_person.title] wrings her hands together nerviously, as if working up the courage to speak."
+            the_person.char "I like you, and I want you to come home with me so I don't have to say goodbye. Do you... want to?"
+    return
+
+## Role Specific Section ##
+label introvert_improved_serum_unlock(the_person):
+    mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
+    "[the_person.title] nods and listens."
+    mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
+    "[the_person.title] thinks about it, then nods again."
+    the_person.char "Well, I may have an idea. I think it could lead to a breakthrough."
+    mc.name "Go on."
+    the_person.char "Our testing procedures focus on human safety. If we put that to the side we could gain much more information about the subjective effects of our serum."
+    the_person.char "I want to do is take a dose of our serum myself. I would need you to record me and ask me some questions."
+    return
+
+# </editor-fold>
+
 ###############################
 ###### Bimbo Personality ######
 ###############################
+# <editor-fold>
 label bimbo_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -1545,12 +2026,12 @@ label bimbo_improved_serum_unlock(the_person):
     the_person.char "Duh, that's why I thought of it! Come on, how bad could it be? Just let me try it! Record it or something and I'll tell you what it feels like!"
     return
 
-
+# </editor-fold>
 
 ############################
 #### Unique - Stephanie ####
 ############################
-
+# <editor-fold>
 label stephanie_greetings(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:
@@ -1628,10 +2109,12 @@ label stephanie_sex_strip(the_person):
 
     return
 
+# </editor-fold>
 
 #######################
 #### Unique - Lily ####
 #######################
+# <editor-fold>
 
 label lily_greetings(the_person):
     if the_person.obedience > 130:
@@ -1943,11 +2426,12 @@ label lily_date_seduction(the_person):
             the_person.char "If you want to come back to my room and chat for a while I wouldn't say no."
     return
 
+# </editor-fold>
 
 ######################
 #### Unique - Mom ####
 ######################
-
+# <editor-fold>
 
 label mom_greetings(the_person):
     if the_person.obedience > 130:
@@ -2266,6 +2750,26 @@ label mom_date_seduction(the_person): #TODO: Change this to be different.
             "When you get home your mother gets your attention. She leans over and kisses you on the cheek."
             the_person.char "You've been a wonderful date. Would you like to share a drink with me before we head to bed?"
     return
+
+# </editor-fold>
+
+
+#######################
+#### Unique - Aunt ####
+#######################
+# <editor-fold>
+
+#TODO:
+
+# </editor-fold>
+
+
+#########################
+#### Unique - Cousin ####
+#########################
+# <editor-fold>
+#TODO
+# </editor-fold>
 
 
 #TODO: Go through and add unique stephanie versions for these events.

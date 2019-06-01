@@ -2945,7 +2945,7 @@ label mom_selfie_label():
                 "[the_person.possessive_title] sends you a selfie of herself in the office bathroom, naked and bending over the sink."
 
         elif ran_num == 1:
-            if mc.buisness.is_weekend():
+            if mc.business.is_weekend():
                 the_person.char "I know it shouldn't, but thinking about you gets me so wet. You've made me a new woman [the_person.mc_title]."
             else:
                 the_person.char "I'm at work and stuck at my desk but I can't get you out of my head. I'm so wet, I wonder if anyone would notice if I touched myself..."

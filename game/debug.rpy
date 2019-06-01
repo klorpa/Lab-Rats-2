@@ -92,3 +92,9 @@ label edit_default_wardrobe:
     $ picked_outfit = _return
     call create_outfit(picked_outfit) from _call_create_outfit_2
     return
+
+label load_select_from_wardrobe(the_wardrobe):
+    call screen girl_outfit_select_manager(the_wardrobe, show_sets = True)
+    $ picked_outfit = _return
+    call create_outfit(picked_outfit) from _call_create_outfit_3
+    return
