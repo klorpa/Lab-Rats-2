@@ -712,7 +712,7 @@ label aunt_share_drinks_label(the_person):
                     the_person.char "So [the_person.mc_title], now that I'm back on the market I think I need your help with something."
                     mc.name "With what?"
                     the_person.char "I need to update my wardrobe. You know, make it a little more modern. You're a hip young guy, I'm sure you can tell me what men like to see."
-                    the_person.cahr "Would you help me? It'll just take a few minutes."
+                    the_person.char "Would you help me? It'll just take a few minutes."
                     mc.name "Of course. Come on, show me what you've got."
                     "She smiles, drinks the last of her wine, and leads you into her bedroom."
                     "TODO!!!"

@@ -1619,7 +1619,7 @@ label introvert_being_watched(the_person, the_watcher, the_position):
 
     elif the_person.sluttiness >= the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
         #She's super slutty and encourages the watcher to be slutty.
-        the_person.cahr "Did you know how good this feels [the_watcher.title]?"
+        the_person.char "Did you know how good this feels [the_watcher.title]?"
         $ the_person.change_arousal(1)
         "[the_person.title] seems turned on by [the_watcher.title] watching you and her [the_position.verb]."
 
