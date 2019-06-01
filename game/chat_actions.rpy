@@ -30,6 +30,8 @@ init -2 python:
     def date_requirement(the_person):
         if the_person.love < 30:
             return "Requires: 30 Love"
+        elif mc.business.event_triggers_dict.get("date_scheduled", False):
+            return "You already have a date planned!"
         else:
             return True
 
@@ -225,7 +227,7 @@ label person_new_mc_title(the_person):
                 $ title_choice = _return
                 if not (title_choice == "Back" or title_choice == the_person.mc_title):
                     mc.name "I think you should call me [title_choice] from now on."
-                    $ the_person.set_title(title_choice)
+                    $ the_person.set_mc_title(title_choice)
                     "[the_person.title] seems happy with your new title."
                 else:
                     mc.name "On second thought, I think [the_person.mc_title] is fine for now."
@@ -472,6 +474,7 @@ label date_person(the_person): #You invite them out on a proper date
             the_person.char "Me too!"
             $ dinner_action = Action("Dinner date", dinner_date_requirement, "dinner_date", args=the_person, requirement_args=4) #it happens on a friday, so day%7 == 4
             $ mc.business.mandatory_crises_list.append(dinner_action)
+            $ mc.business.event_triggers_dict["date_scheduled"] = True
 
         "Maybe some other time.":
             mc.name "I'm busy on Friday unfortunately."
@@ -488,6 +491,7 @@ label date_person(the_person): #You invite them out on a proper date
     return
 
 label dinner_date(the_person):
+    $ mc.business.event_triggers_dict["date_scheduled"] = False #Deflag this event so you can schedule a date with another person for next week.
     "You have a dinner date planned with [the_person.title]."
     menu:
         "Get ready for the date." if mc.business.funds >= 30:
@@ -606,4 +610,5 @@ label dinner_date(the_person):
 
     hide screen person_info_ui
     $ renpy.scene("Active")
+
     return

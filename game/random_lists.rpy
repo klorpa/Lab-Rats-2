@@ -102,6 +102,7 @@ init -2:
         list_of_names.append("Gillian")
         list_of_names.append("Faith")
         list_of_names.append("Julia")
+        list_of_names.append("Bailey")
 
 
         def get_random_name():
@@ -175,6 +176,7 @@ init -2:
         list_of_last_names.append("Anderson")
         list_of_last_names.append("Connors")
         list_of_last_names.append("Song")
+        list_of_last_names.append("Rosen")
 
 
         def get_random_last_name():
@@ -346,6 +348,12 @@ init -2:
         opinions_list.append("the colour yellow")
         opinions_list.append("the colour red")
         opinions_list.append("the colour pink")
+        opinions_list.append("the colour black")
+        opinions_list.append("heavy metal")
+        opinions_list.append("jazz")
+        opinions_list.append("punk")
+        opinions_list.append("classical")
+        opinions_list.append("pop")
         opinions_list.append("conservative outfits") #Has gameplay effect
         opinions_list.append("work uniforms") #Has gameplay effect
         opinions_list.append("research work") #Has gameplay effect
@@ -409,12 +417,12 @@ init -2:
         readable_color_list.append("#dddddd") #Grey
         readable_color_list.append("#ffff6e") #Yellow
         readable_color_list.append("#8fff66") #Green
-        readable_color_list.append("#ff2c2c") #Red
+        readable_color_list.append("#cd5c5c") #Indian Red (Replaces harsh pure red)
         readable_color_list.append("#ffd4d4") #Pink
         readable_color_list.append("#FFB1F8") #Hotpink
         readable_color_list.append("#73ffdf") #Teal
         readable_color_list.append("#d62cff") #Purple
-        readable_color_list.append("#696eff") #Blue
+        readable_color_list.append("#87cefa") #Light Blue (Replaces pure blue)
 
 
         def get_random_readable_color():
@@ -434,7 +442,7 @@ init -2:
                 list_of_titles.append("Slut")
                 if the_person.obedience > 140:
                     list_of_titles.append("Cocksleeve")
-                    list_of_titles.appnd("Cock Slave")
+                    list_of_titles.append("Cock Slave")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
                 list_of_titles.append("Cumslut")
@@ -594,6 +602,38 @@ init 1 python:
 
         mom.home.add_person(mom)
 
+        ### AUNT ###
+        aunt_wardrobe = wardrobe_from_xml("Aunt_Wardrobe")
+
+        global aunt
+        aunt = create_random_person(name = "Rebecca", last_name = get_random_last_name(), age = 46, body_type = "thin_body", face_style = "Face_1", tits = "DD", height = 0.92, hair_colour = "blond", hair_style = bobbed_hair, skin="white", \
+            eyes = "brown", personality = aunt_personality, name_color = "#66FF8A", dial_color = "#66FF8A", starting_wardrobe = aunt_wardrobe, start_home = aunt_bedroom, \
+            stat_array = [5,2,1], skill_array = [1,2,0,0,0], sex_array = [3,5,3,2], start_sluttiness = 11, start_obedience = 0, start_happiness = 70, start_love = 5, \
+            title = "Rebecca", possessive_title = "Your aunt", mc_title = mc.name)
+
+
+        aunt.special_role = [aunt_role]
+        for i in range(0,5):
+            aunt.schedule[i] = aunt_bedroom #Hide them in their bedroom off the map until they're ready.
+        aunt.home.add_person(aunt)
+
+        aunt_intro_action = Action("Aunt introduction", aunt_intro_requirement, "aunt_intro_label", requirement_args = renpy.random.randint(15,20))
+        mc.business.mandatory_crises_list.append(aunt_intro_action) #Aunt and cousin will be visiting tomorrow in the morning
+
+
+        ### COUSIN ###
+        cousin_wardrobe = wardrobe_from_xml("Cousin_Wardrobe")
+
+        global cousin
+        cousin = create_random_person(name = "Gabrielle", last_name = aunt.last_name, age = 18, body_type = "curvy_body", face_style = "Face_3", tits = "DDD", height = 0.90, hair_colour = "black", hair_style = messy_short_hair, skin="white",\
+            eyes = "brown", personality = cousin_personality, name_color = "#9c4dea", dial_color = "#9c4dea", starting_wardrobe = cousin_wardrobe, start_home = cousin_bedroom, \
+            stat_array = [0,4,2], skill_array = [0,0,2,1,0], sex_array = [3,0,0,0], start_sluttiness = 8, start_obedience = -30, start_happiness = 70, start_love = -20, \
+            title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name)
+
+        cousin.special_role = [cousin_role]
+        for i in range(0,5):
+            cousin.schedule[i] = cousin_bedroom #Hide them in their bedroom off the map until they're ready
+        cousin.home.add_person(cousin)
 
     def get_premade_character(): #Get a premade character and return them when the function is called.
         person = get_random_from_list(list_of_unique_characters)
