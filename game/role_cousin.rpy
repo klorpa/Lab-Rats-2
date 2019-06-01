@@ -287,7 +287,7 @@ label cousin_blackmail_list(the_person):
                         else:
                             "[the_person.possessive_title] takes off her [the_item.name]."
 
-                    while not the_person.outfit.vagina_visisble():
+                    while not the_person.outfit.vagina_visible():
                         $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                         $ the_person.draw_animated_removal(the_item)
                         if the_person.outfit.vagina_visible():
