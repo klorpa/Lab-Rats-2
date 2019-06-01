@@ -9336,9 +9336,9 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
 
 
         ##Other Locations##
-        aunt_apartment = Room("Rebecca's Apartment", "Rebecca's Apartment", [], house_background, [], [], [], False, [4, 1], None, False)
+        aunt_apartment = Room("Rebecca's Apartment", "Rebecca's Apartment", [], house_background, [], [], [], False, [4, 2], None, False)
         aunt_bedroom = Room("Rebecca's bedroom", "Rebecca's Bedroom", [], bedroom_background, [], [], [], False, [3, 1], None, False)
-        cousin_bedroom = Room("Gabrielle's bedroom", "Gabrielle's Bedroom", [], bedroom_background, [], [], [], False, [4,1], None, False)
+        cousin_bedroom = Room("Gabrielle's bedroom", "Gabrielle's Bedroom", [], bedroom_background, [], [], [], False, [4, 1], None, False)
 
 
         ##PC starts in his bedroom##
