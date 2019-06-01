@@ -309,7 +309,7 @@ label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object, the_ro
             if the_girl.sluttiness < 60:
                 the_girl.char "Yeah? Do I look sexy in it?"
                 $ blowjob.current_modifier = "blowjob"
-                $ the_girl.draw_animated_removal(the_clothing, position_tag.position_tag)
+                $ the_girl.draw_animated_removal(the_clothing, position = blowjob.position_tag)
                 "She licks the length of your shaft, then slides your tip into her mouth and starts to blow you again."
             else:
                 the_girl.char "Does it make me look like a good little slut? Or is your cock in my mouth enough for that?"
