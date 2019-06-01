@@ -436,7 +436,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 $ mc.business.funds += -25
                 "Pizza Guy" "Thanks man, enjoy."
                 "You take the pizza into the kitchen. A couple of minutes later [aunt.title] comes out of the bathroom."
-                aunt.char "Oh, is that here already? I'm sorry [aunt.mc_title, I was going to pay for that."
+                aunt.char "Oh, is that here already? I'm sorry [aunt.mc_title], I was going to pay for that."
                 mc.name "Don't worry about it, it's no big deal."
                 $ aunt.change_love(1)
                 aunt.char "Well thank you. Get me a slice of that, I'm starving now too!"
