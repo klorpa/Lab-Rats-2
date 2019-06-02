@@ -10,7 +10,7 @@ init -2 python:
             return True
         return False
 
-    def cousin_house_phase_two_requirement(day_trigger, the_person):
+    def cousin_house_phase_two_requirement(the_person):
         if the_person in hall.people: #Note: this breaks if we eventually let you move people around. By bringing her to your place you could leave and come back early.
             return True
         return False
@@ -206,6 +206,7 @@ label cousin_blackmail_list(the_person):
             if the_person.sluttiness >= 15:
                 "[the_person.possessive_title] doesn't say anything for a second."
                 $ the_person.change_love(-1)
+                $ the_person.change_obedience(3)
                 the_person.char "Fine. Sit down and pay attention. I'm only doing this once."
                 if the_person.sluttiness <= 20:
                     #She only wants to show you her underwear.
