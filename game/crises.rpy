@@ -2009,7 +2009,7 @@ label cat_fight_crisis_label():
     "[person_two.title] looks at you and pleads."
     person_two.char "You have to believe me, [person_one.title] is making all of this up! That's just the kind of thing she would do, too."
     if person_two.sluttiness > 50:
-        $ person_one.draw_person(emotion = "anrgy")
+        $ person_one.draw_person(emotion = "angry")
         person_one.char "Jesus, why don't you just suck his cock and get it over with. That's how you normally convince people, right?"
     else:
         $ person_one.draw_person(emotion = "angry")
