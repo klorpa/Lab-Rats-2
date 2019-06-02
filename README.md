@@ -5,5 +5,5 @@ All versions are tagged with their appropriate release version.
 # BugFix
 This branch contains bugfixes for the official release version.
 
-# Enhancement
-This branch contains enhancements to the official release version files, but only work in combination with the LR2 Mods from [this repository](https://gitgud.io/lab-rats-2-mods/lr2mods/tree/develop).
+# LR2 Mod
+There is also a repository with Mods for Lab Rats 2, you can find it here https://gitgud.io/lab-rats-2-mods/lr2mods/commits/develop
