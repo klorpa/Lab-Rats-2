@@ -160,7 +160,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
                 $ title_two = title_one
                 $ title_one = placeholder
             $ formatted_title_one = the_person.title
-            $ formatted_title_two = the_person.create_formatted_title(title_one)
+            $ formatted_title_two = the_person.create_formatted_title(title_two)
             the_person.char "Hey [the_person.mc_title], do you like calling me [formatted_title_one] or do you think [formatted_title_two] sounds better?"
             menu:
                 "Keep calling her [formatted_title_one].":

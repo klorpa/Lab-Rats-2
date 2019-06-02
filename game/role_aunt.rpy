@@ -451,7 +451,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 mc.name "The pizza guy's here."
                 aunt.char "Oh! I didn't think he would be here so soon! Just, uh... just come in and get it, it's in my purse."
                 "You open the door to the bathroom. [aunt.possessive_title]'s shower has a clear glass door, not hiding anything. She turns away as you come in."
-                $ aunt.outfit = default_wardrobe.get_outfit_with_name("Nude")
+                $ aunt.outfit = default_wardrobe.get_outfit_with_name("Nude 1")
                 $ aunt.draw_person(position = "back_peek")
                 $ aunt.change_slut_temp(2)
                 aunt.char "It's right over there, just grab it and go."
@@ -692,7 +692,7 @@ label aunt_share_drinks_label(the_person):
                     "[the_person.title] talks more about herself, and it seems like being a little drunk seems to have removed any inhibitions she might have had."
                     $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False) #TODO: Add the include normal parameter.
                     if her_opinion:
-                        $ the_perosn.discover_opinion(her_opinion)
+                        $ the_person.discover_opinion(her_opinion)
                         $ opinion_string = opinion_score_to_string(her_opinion)
                         "Through her suprisingly erotic ramblings you discover that she [opinion_string] [her_opinion]."
                     else:
@@ -712,7 +712,7 @@ label aunt_share_drinks_label(the_person):
                     the_person.char "So [the_person.mc_title], now that I'm back on the market I think I need your help with something."
                     mc.name "With what?"
                     the_person.char "I need to update my wardrobe. You know, make it a little more modern. You're a hip young guy, I'm sure you can tell me what men like to see."
-                    the_person.cahr "Would you help me? It'll just take a few minutes."
+                    the_person.char "Would you help me? It'll just take a few minutes."
                     mc.name "Of course. Come on, show me what you've got."
                     "She smiles, drinks the last of her wine, and leads you into her bedroom."
                     "TODO!!!"

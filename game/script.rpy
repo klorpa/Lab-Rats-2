@@ -8272,7 +8272,7 @@ label talk_person(the_person):
 label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False):
     #Use a situational modifier to change sluttiness before having sex.
     $ use_love = True
-    if any(relationship in [sister_role,mother_role,aunt_rol,cousin_role] for role in the_person.special_role): #Check if any of the roles the person has belong to the list of family roles.
+    if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in the_person.special_role): #Check if any of the roles the person has belong to the list of family roles.
         #if sister_role in the_person.special_role or mother_role in the_person.special_role or aunt_role in the_person.special_role or cousin_role in the_person.special_role:
         $ the_person.add_situational_slut("taboo_sex", -20, "We're related, we shouldn't be doing this.")
         $ use_love = False
@@ -9336,7 +9336,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
 
 
         ##Other Locations##
-        aunt_apartment = Room("Rebecca's Apartment", "Rebecca's Apartment", [], house_background, [], [], [], False, [4, 1], None, False)
+        aunt_apartment = Room("Rebecca's Apartment", "Rebecca's Apartment", [], house_background, [], [], [], False, [4, 2], None, False)
         aunt_bedroom = Room("Rebecca's bedroom", "Rebecca's Bedroom", [], bedroom_background, [], [], [], False, [3, 1], None, False)
         cousin_bedroom = Room("Gabrielle's bedroom", "Gabrielle's Bedroom", [], bedroom_background, [], [], [], False, [4,1], None, False)
 
