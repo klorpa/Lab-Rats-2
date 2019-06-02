@@ -2996,7 +2996,7 @@ label mom_selfie_label():
         elif ran_num == 3:
             python:
                 while not the_person.outfit.tits_visible():
-                    the_person.outfit.remove_random_upper(top_layer_first)
+                    the_person.outfit.remove_random_upper(top_layer_first = True)
 
             if mc.business.is_weekend():
                 the_person.char "I'm so glad it's the weekend, I can finally let these girls out..."
@@ -3036,7 +3036,7 @@ label mom_selfie_label():
                 "Mom sends you a selfie without her shirt on. It looks like she's taken in the bathroom of her office."
 
         elif ran_num == 2:
-            $ the_clothing = the_person.outfit.remove_random_upper(top_layer_first, do_not_remove = True)
+            $ the_clothing = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
             if the_clothing:
                 $ the_clothing.colour[3] = the_clothing.colour[3]*0.9 #It's translucent.
                 the_person.char "It looks like my [the_clothing.name] didn't like being in the wash, it's gone all see-through."
