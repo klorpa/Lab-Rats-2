@@ -2831,7 +2831,7 @@ label mom_lingerie_surprise_label():
     "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
     the_person.char "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
     menu:
-        "Ask for her help. (tootlip)Ask your mother to help satisfy your phsyical desires." if mc.current_stamina > 0:
+        "Ask for her help. (tooltip)Ask your mother to help satisfy your phsyical desires." if mc.current_stamina > 0:
             mc.name "That would be amazing Mom, I could really use your help."
             $ the_person.change_slut_temp(2)
             "[the_person.possessive_title] smiles and bounces slightly on your bed."
