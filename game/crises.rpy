@@ -2989,7 +2989,7 @@ label mom_selfie_label():
             "[the_person.possessive_title] doesn't wait for a reply and starts sending selfies."
             python:
                 for i in range(3):
-                    the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear()
+                    the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness)
                     the_person.draw_person(emotion = "happy")
                     renpy.say("","")
             the_person.char "I hope you think your mommy looks sexy in her underwear ;)"
