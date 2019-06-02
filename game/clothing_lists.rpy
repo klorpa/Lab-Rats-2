@@ -317,6 +317,9 @@ init -1:
         dress_shirt = Clothing("Dress Shirt", 2, True, True, "Dress_Shirt", True, False, 0, tucked = True, opacity_adjustment = 1.12)
         shirts_list.append(dress_shirt)
 
+        business_vest = Clothing("Business Vest", 2, True, True, "Tight_Vest", True, False, 2, opacity_adjustment = 1.3)
+        shirts_list.append(business_vest)
+
         lab_coat = Clothing("Lab Coat", 3, True, True, "Lab_Coat", True, False, 0, opacity_adjustment = 1.08)
         shirts_list.append(lab_coat)
 
@@ -325,9 +328,6 @@ init -1:
 
         vest = Clothing("Vest", 3, False, True, "Vest", True, False, 0)
         shirts_list.append(vest)
-
-        business_vest = Clothing("Business Vest", 3, True, True, "Tight_Vest", True, False, 2, opacity_adjustment = 1.3)
-        shirts_list.append(business_vest)
 
 
         ##Socks##
