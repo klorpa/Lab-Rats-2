@@ -442,7 +442,7 @@ label futuristic_serum_stage_2_label(the_person):
         $ go_first = pick_3
     "[go_first.name] raises her hand and [the_person.title] smiles and grabs her clipboard."
     the_person.char "Very good. Come with me, you two can wait here until we're done."
-    "[the_person.title] leads [the_person.title] into a side office, and you decide to leave her to her work."
+    "[the_person.title] leads [go_first.title] into a side office, and you decide to leave her to her work."
     #TODO: Expand this event for more sexy stuff.
     $ mc.business.research_tier = 3
     $ mc.log_event("Max Research Tier Unlocked", "float_text_grey")

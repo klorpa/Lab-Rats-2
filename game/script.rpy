@@ -3,6 +3,7 @@
 #Each position has a "position_tag". When you start having sex with someone the draw_person code will check it's dictionaryto see if it has a position_tag entry. If yes, it uses that set.
 #Otherwise, it uses the default standing images. Right now, this should have changed absolutely nothing about the way the game works.
 
+
 init -2 python:
 
     import os
@@ -142,7 +143,7 @@ init -2 python:
 
     def get_individual_heart(core_slut, temp_slut, suggest_slut): #Give this the core, temp, core+suggest slut, minus 20*(current heart-1) each and it will find out the current heart status for that chunk of the heart array.
         image_string = "gui/heart/"
-        suggest_slut += 10 #Add 10, which is the default limit to temp slut if they have no serum in them.
+        #suggest_slut += 10 #Add 10, which is the default limit to temp slut if they have no serum in them. #No longer added, testing more direct way of increasing sluttiness.
         #None of the core heart statuses were reached. We must be in a duel or tri-colour heart state.
         if core_slut < 5:
             #There is no gold to draw.
@@ -1817,12 +1818,15 @@ init -2 python:
 
             return None
 
-        def get_random_opinion(self, include_known = True, include_sexy = False): #Gets the topic string of a random opinion this character holds. Includes options to include known opinions and sexy opinions. Returns None if no valid opinion can be found.
-            the_dict = self.opinions
-            if include_sexy:
-                the_dict = dict(self.opinions, **self.sexy_opinions)
-            else:
-                the_dict = dict(self.opinions)
+        def get_random_opinion(self, include_known = True, include_sexy = False, include_normal = True): #Gets the topic string of a random opinion this character holds. Includes options to include known opinions and sexy opinions. Returns None if no valid opinion can be found.
+            the_dict = {} #Start our list of valid opinions to be listed as empty
+
+            if include_normal: #if we include normal opinions build a dict out of the two
+                the_dict = dict(the_dict, **self.opinions)
+
+            if include_sexy: #If we want sexy opinions add them in too.
+                the_dict = dict(the_dict, **self.sexy_opinions)
+
 
             known_keys = []
             if not include_known: #If we do not want to talk about known values
@@ -1892,7 +1896,10 @@ init -2 python:
                     trait.add_mastery(0.1)
                     studied_something = True
             if studied_something and add_to_log:
-                mc.log_event("Observed " + self.title + ", mastery of all active serum traits increased by 0.1", "float_text_blue")
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                mc.log_event("Observed " + display_name + ", mastery of all active serum traits increased by 0.1", "float_text_blue")
 
 
         def change_suggest(self,amount): #This changes the base, usually permanent suggest. Use add_suggest_effect to add temporary, only-highest-is-used, suggestion values
@@ -1928,8 +1935,11 @@ init -2 python:
             else:
                 log_string = str(amount) + " Happiness"
 
-            if add_to_log and amount != 0 and self.title:
-                mc.log_event(self.title + ": " + log_string, "float_text_yellow")
+            if add_to_log and amount != 0:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                mc.log_event(display_name + ": " + log_string, "float_text_yellow")
 
         def change_love(self, amount, add_to_log = True):
             amount = __builtin__.int(amount)
@@ -1945,8 +1955,11 @@ init -2 python:
             else:
                 log_string = str(amount) + " Love"
 
-            if add_to_log and amount != 0 and self.title:
-                mc.log_event(self.title + ": " + log_string, "float_text_pink")
+            if add_to_log and amount != 0:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                mc.log_event(display_name + ": " + log_string, "float_text_pink")
 
         def change_slut_temp(self,amount, add_to_log = True): #Adds the amount to our slut value. If over our max, add only to the max instead (but don't lower). If subtracting, don't go lower than 0.
             return_report = "" #This is the string that is returned that will report what the final value of the change was.
@@ -1970,8 +1983,11 @@ init -2 python:
             else: #It is exactly 0
                 return_report = "No Effect on Sluttiness"
 
-            if add_to_log and self.title:
-                mc.log_event(self.title + ": " + return_report, "float_text_pink")
+            if add_to_log:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                mc.log_event(display_name + ": " + return_report, "float_text_pink")
 
             # return return_report #Return this so we can display the effective change or cap message. #Depreciated as of phone log approach
 
@@ -1988,8 +2004,11 @@ init -2 python:
             else:
                 log_string = str(amount) + " Core Sluttiness"
 
-            if add_to_log and amount != 0 and self.title:
-                mc.log_event(self.title + ": " + log_string, "float_text_pink")
+            if add_to_log and amount != 0:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                mc.log_event(display_name + ": " + log_string, "float_text_pink")
 
         def add_situational_slut(self, source, amount, description = ""):
             #Adds a conditional, temporary sluttiness amount. This is added now and removed when clear_situational is called, or when another add_situational is called with the same source.
@@ -2024,35 +2043,42 @@ init -2 python:
                 if self.suggestibility == 0 and self.title: #TODO: think about how much we need this now.
                     mc.business.add_normal_message(self.title + " has a sluttiness higher then her core sluttiness. Raising her suggestibility with serum will slowly increase her core sluttiness!")
 
-                if self.sluttiness > self.core_sluttiness + self.suggestibility + 10:
+                if self.sluttiness > self.core_sluttiness + self.suggestibility:
                     #We need to bleed a lot because our suggestibility dropped.
-                    difference = self.sluttiness - (self.core_sluttiness + self.suggestibility + 10)
+                    difference = self.sluttiness - (self.core_sluttiness + self.suggestibility)
                     if difference > 5:
                         difference = 5
+
+                    if renpy.random.randint(1,5) <= difference: #ie. there's a 20% chance per point over to increase it by a point.
                         self.change_slut_core(1, add_to_log = False) #We're experimenting with sluttiness above your suggestability amount converting inefficently (instead of not at all)
                     self.change_slut_temp(-difference, add_to_log = False)
 
                 # self.change_slut_temp(-3, add_to_log = False) #We're experimenting with only lowering the temporary sluttiness when the core sluttiness goes up.
-                if renpy.random.randint(0,100) < self.suggestibility:
+                elif renpy.random.randint(0,100) < self.suggestibility: # If we're not over our suggestability amount we turn it into core slut effectively.
                     self.change_slut_core(3, add_to_log = False)
                     self.change_slut_temp(-3, add_to_log = False)
 
-            if self.sluttiness < self.core_sluttiness:
-                self.change_slut_temp(5, add_to_log = False)
-                if self.sluttiness > self.core_sluttiness:
-                    self.change_slut_temp(-(self.sluttiness - self.core_sluttiness), add_to_log = False) #If the +5 brings us above our core sluttiness subtract the difference to get us to exactly our core sluttiness.
+            if self.sluttiness < self.core_sluttiness: #If we're lower than core we quickly return to it.
+                difference = self.core_sluttiness - self.sluttiness
+                if difference > 5:
+                    difference = 5
+                self.change_slut_temp(difference, add_to_log = False)
+
 
         def change_obedience(self,amount, add_to_log = True):
             self.obedience += amount
             if self.obedience < 0:
                 self.obedience = 0
             log_string = ""
-            if amount > 0:
-                log_string = self.title + ": +" + str(amount) + " Obedience"
-            else:
-                log_string = self.title + ": " + str(amount) + " Obedience"
+            if add_to_log and amount != 0: #If we don't know the title don't add it to the log, because we know nothing about the person
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                if amount > 0:
+                    log_string = display_name + ": +" + str(amount) + " Obedience"
+                else:
+                    log_string = display_name + ": " + str(amount) + " Obedience"
 
-            if add_to_log and amount != 0:
                 mc.log_event(log_string,"float_text_grey")
 
         def change_cha(self,amount, add_to_log = True):
@@ -2065,12 +2091,15 @@ init -2 python:
                 self.charisma = 0
 
             log_string = ""
-            if amount > 0:
-                log_string = self.title + ": +" + str(amount) + " Charisma"
-            else:
-                log_string = self.title + ": " + str(amount) + " Charisma"
+            if amount != 0 and add_to_log:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                if amount > 0:
+                    log_string = display_name + ": +" + str(amount) + " Charisma"
+                else:
+                    log_string = display_name + ": " + str(amount) + " Charisma"
 
-            if add_to_log and amount != 0:
                 mc.log_event(log_string, "float_text_grey")
 
         def change_int(self,amount, add_to_log = True):
@@ -2083,12 +2112,17 @@ init -2 python:
                 self.int = 0
 
             log_string = ""
-            if amount > 0:
-                log_string = self.title + ": +" + str(amount) + " Intelligence"
-            else:
-                log_string = self.title + ": " + str(amount) + " Intelligence"
 
-            if add_to_log and amount != 0:
+            if amount != 0 and add_to_log:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+
+                if amount > 0:
+                    log_string = display_name + ": +" + str(amount) + " Intelligence"
+                else:
+                    log_string = display_name + ": " + str(amount) + " Intelligence"
+
                 mc.log_event(log_string, "float_text_grey")
 
         def change_focus(self,amount, add_to_log = True): #See charisma for full comments
@@ -2101,12 +2135,18 @@ init -2 python:
                 self.focus = 0
 
             log_string = ""
-            if amount > 0:
-                log_string = self.title + ": +" + str(amount) + " Focus"
-            else:
-                log_string = self.title + ": " + str(amount) + " Focus"
 
-            if add_to_log and amount != 0:
+            if amount != 0 and add_to_log:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+
+                if amount > 0:
+                    log_string = display_name + ": +" + str(amount) + " Focus"
+                else:
+                    log_string = display_name + ": " + str(amount) + " Focus"
+
+
                 mc.log_event(log_string, "float_text_grey")
 
         def review_outfit(self):

@@ -203,9 +203,8 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
         the_person.char "By the way [the_person.mc_title], I want you to start refering to me as [formatted_new_title] from now on. I think it suits me better."
         menu:
             "Change her title to [formatted_new_title].":
-                mc.name "I think [formatted_title_two] is the best of the two."
+                mc.name "I think you're right, [formatted_new_title] sounds good."
                 $ the_person.set_title(new_title)
-                the_person.char "Yeah, I think you're right. I'm going to start using from now on."
 
             "Refuse to change her title.\n-10 Happiness.":
                 mc.name "I think that sounds silly, I'm just going to keep calling you [the_person.title]."

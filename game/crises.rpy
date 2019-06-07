@@ -291,7 +291,7 @@ label broken_AC_crisis_label:
                         person.change_slut_temp(10, add_to_log = False)
                 $ mc.log_event("All Production Staff: +10 Sluttiness","float_text_pink")
 
-        "Tell everyone to strip down and keep working.\nRequires: [casual_uniform_policy.name] (disabled)" if not casual_uniform_policy.is_owned():
+        "Tell everyone to strip down and keep working.\n{size=22}Requires: [casual_uniform_policy.name] (disabled)" if not casual_uniform_policy.is_owned():
             pass
     $renpy.scene("Active")
     return
@@ -2009,7 +2009,7 @@ label cat_fight_crisis_label():
     "[person_two.title] looks at you and pleads."
     person_two.char "You have to believe me, [person_one.title] is making all of this up! That's just the kind of thing she would do, too."
     if person_two.sluttiness > 50:
-        $ person_one.draw_person(emotion = "anrgy")
+        $ person_one.draw_person(emotion = "angry")
         person_one.char "Jesus, why don't you just suck his cock and get it over with. That's how you normally convince people, right?"
     else:
         $ person_one.draw_person(emotion = "angry")
@@ -2831,7 +2831,7 @@ label mom_lingerie_surprise_label():
     "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
     the_person.char "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
     menu:
-        "Ask for her help. (tootlip)Ask your mother to help satisfy your phsyical desires." if mc.current_stamina > 0:
+        "Ask for her help.(tootlip) Ask your mother to help satisfy your phsyical desires." if mc.current_stamina > 0:
             mc.name "That would be amazing Mom, I could really use your help."
             $ the_person.change_slut_temp(2)
             "[the_person.possessive_title] smiles and bounces slightly on your bed."
@@ -2989,7 +2989,7 @@ label mom_selfie_label():
             "[the_person.possessive_title] doesn't wait for a reply and starts sending selfies."
             python:
                 for i in range(3):
-                    the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear()
+                    the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness)
                     the_person.draw_person(emotion = "happy")
                     renpy.say("","")
             the_person.char "I hope you think your mommy looks sexy in her underwear ;)"
@@ -3036,7 +3036,7 @@ label mom_selfie_label():
                 "Mom sends you a selfie without her shirt on. It looks like she's taken in the bathroom of her office."
 
         elif ran_num == 2:
-            $ the_clothing = the_person.outfit.remove_random_upper(top_layer_first, do_not_remove = True)
+            $ the_clothing = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
             if the_clothing:
                 $ the_clothing.colour[3] = the_clothing.colour[3]*0.9 #It's translucent.
                 the_person.char "It looks like my [the_clothing.name] didn't like being in the wash, it's gone all see-through."
