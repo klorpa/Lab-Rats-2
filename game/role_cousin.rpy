@@ -205,8 +205,6 @@ label cousin_blackmail_list(the_person):
             mc.name "I want to see you strip for me."
             if the_person.sluttiness >= 15:
                 "[the_person.possessive_title] doesn't say anything for a second."
-                $ the_person.change_love(-1)
-                $ the_person.change_obedience(3)
                 the_person.char "Fine. Sit down and pay attention. I'm only doing this once."
                 if the_person.sluttiness <= 20:
                     #She only wants to show you her underwear.

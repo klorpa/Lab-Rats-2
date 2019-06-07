@@ -291,7 +291,7 @@ label broken_AC_crisis_label:
                         person.change_slut_temp(10, add_to_log = False)
                 $ mc.log_event("All Production Staff: +10 Sluttiness","float_text_pink")
 
-        "Tell everyone to strip down and keep working.\nRequires: [casual_uniform_policy.name] (disabled)" if not casual_uniform_policy.is_owned():
+        "Tell everyone to strip down and keep working.\n{size=22}Requires: [casual_uniform_policy.name] (disabled)" if not casual_uniform_policy.is_owned():
             pass
     $renpy.scene("Active")
     return

@@ -7,12 +7,12 @@ init -1:
 
         ## libido_suppressant_functions ##
         def libido_suppressant_on_apply(the_person, add_to_log):
-            the_person.change_slut_core(20, fire_event = False)
-            the_person.change_slut_temp(20)
-
-        def libido_suppressant_on_remove(the_person, add_to_log):
             the_person.change_slut_core(-20, fire_event = False)
             the_person.change_slut_temp(-20)
+
+        def libido_suppressant_on_remove(the_person, add_to_log):
+            the_person.change_slut_core(20, fire_event = False)
+            the_person.change_slut_temp(20)
 
         ## anxiety_provoking_functions ##
         def anxiety_provoking_on_turn(the_person, add_to_log):

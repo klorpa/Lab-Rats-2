@@ -355,7 +355,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 "She's not the boss of you. You wait a couple of minutes then start snooping around."
                 "Most of the boxes are clearly labeled, but you find one that just says \"Keep Out!\" on the side."
                 "You open the box and find it filled with all of [cousin.title]'s underwear, all black, purple, or blue."
-                "You dig deeper, past the large cupped bras she needs for her big tits. She has a handful of g-strings, fishnet stockinigs, and a garter belt near the bottom."
+                "You dig deeper, past the large cupped bras she needs for her big tits. She has a handful of g-strings, fishnet stockings, and a garter belt near the bottom."
                 "You think you feel something rigid at the bottom, but your search is interrupted by the front door lock clicking open."
                 "You rush to get [cousin.possessive_title]'s underwear back in order. You slam the box shut and sit down on her bed, trying to look nonchalant."
                 $ cousin.draw_person()
@@ -551,7 +551,7 @@ label aunt_intro_phase_final_label():
         cousin_at_house_phase_one_action = Action("Cousin changes schedule", cousin_house_phase_one_requirement, "cousin_house_phase_one_label", args = cousin, requirement_args = day+renpy.random.randint(2,5))
         mc.business.mandatory_crises_list.append(cousin_at_house_phase_one_action) #This event changes the cousin's schedule so she shows up at your house.
 
-        cousin_at_house_phase_two_action = Action("Cousin at house", cousin_house_phase_two_requirement, "cousin_house_phase_two_label", args = cousin, requirement_args = cousin)
+        cousin_at_house_phase_two_action = Action("Cousin at house", cousin_house_phase_two_requirement, "cousin_house_phase_two_label")
         cousin.on_room_enter_event_list.append(cousin_at_house_phase_two_action)
 
         aunt_share_drink_intro = Action("Aunt drink intro", aunt_drink_intro_requirement, "aunt_share_drink_intro_label")
@@ -690,7 +690,7 @@ label aunt_share_drinks_label(the_person):
                 elif decision_score <= 45:
                     # She talks to you about stuff she finds sexy. Reveal a sex opinion
                     "[the_person.title] talks more about herself, and it seems like being a little drunk seems to have removed any inhibitions she might have had."
-                    $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False) #TODO: Add the include normal parameter.
+                    $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False)
                     if her_opinion:
                         $ the_person.discover_opinion(her_opinion)
                         $ opinion_string = opinion_score_to_string(her_opinion)
