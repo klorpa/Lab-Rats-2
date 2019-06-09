@@ -8421,7 +8421,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                     return #Don't do anything else, just return.
                 else:
                     $ the_person.call_dialogue("sex_gentle_reject")
-                    call fuck_person(the_person) from _call_fuck_person_1 #Gives you a chance to fuck them some other way, but this path is ended by the return right after you finish having sex like that.
+                    call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_1 #Gives you a chance to fuck them some other way, but this path is ended by the return right after you finish having sex like that.
                     return
 
     ## ONCE WE HAVE DONE FIRST ROUND CHECKS WE GO HERE ##
@@ -8529,7 +8529,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
 
     elif position_choice == "Pull Out": #Also how you leave if you don't want to fuck till you cum.
         $ the_position.current_modifier = None
-        call fuck_person(the_person) from _call_fuck_person_2
+        call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_2
 
     else:
         if not position_choice == the_position: #We are changing to a new position.
