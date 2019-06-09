@@ -54,14 +54,14 @@ label scene_cowgirl_2(the_girl, the_location, the_object, the_round):
             "[the_girl.possessive_title] reaches down and grabs your hands. She brings them up to her tits and plants them there."
             "She moans and grinds your hands into her breasts, then puts her hands on your chest and focuses on fucking you."
         else:
-            $ the_clothing = the_person.outfit.get_visible_upper[0]
+            $ the_clothing = the_girl.outfit.get_visible_upper[0]
             "Her large tits are barely contained by her [the_clothing.name]. You watch them bounce around as she fucks you vigorously."
     else:
         if the_girl.outfit.tits_visible:
             "She reaches up and grabs onto one of her own small tits, squeezing it while she rides you."
             the_girl.char "Ah!"
         else:
-            $ the_clothing = the_person.outfit.get_visible_upper[0]
+            $ the_clothing = the_girl.outfit.get_visible_upper[0]
             "She reaches up and grabs onto one of her small tits through her [the_clothing.name]. She kneeds it through the fabric and moans loudly while she rides you."
             the_girl. char "Ah!"
     return
@@ -140,7 +140,7 @@ label strip_cowgirl(the_girl, the_clothing, the_location, the_object, the_round)
     return
 
 label strip_ask_cowgirl(the_girl, the_clothing, the_location, the_object, the_round):
-    the_girl.char "[the_person.mc_title], I'd like to take off my [the_clothing.name]. Would you mind?"
+    the_girl.char "[the_girl.mc_title], I'd like to take off my [the_clothing.name]. Would you mind?"
     menu:
         "Let her strip.":
             mc.name "Take it off for me."

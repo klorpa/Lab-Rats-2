@@ -54,7 +54,7 @@ label scene_deepthroat_1(the_girl, the_location, the_object, the_round):
                 "[the_girl.title] tries to slide you deeper into her mouth and gags hard. She pulls back and gasps for air as soon as your dick is out of the way."
                 $ deepthroat.current_modifier = None
                 $ deepthroat.redraw_scene(the_girl)
-                if the_person.obedience > 120:
+                if the_girl.obedience > 120:
 
                     the_girl.char "I'm... I swear I'm trying, it's just so... so big when I try and go deeper."
                 else:

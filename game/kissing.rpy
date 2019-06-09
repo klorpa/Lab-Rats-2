@@ -218,7 +218,7 @@ label transition_kissing_blowjob(the_girl, the_location, the_object, the_round):
         $ the_girl.draw_person(position="blowjob")
         "[the_girl.possessive_title] drops down to her knees quickly, shuffling right up next to you and resting your hard shaft on her cheek."
     else:
-        $ the_person.draw_person(position="blowjob")
+        $ the_girl.draw_person(position="blowjob")
         "[the_girl.possessive_title] looks down at your erection then back up at you. She smiles and nods, dropping slowly to her knees while her hands run down your sides."
         the_girl.char "How's this?"
     "[the_girl.title] leans in close and kisses the tip of your dick gently, swirling her tongue around the tip."
