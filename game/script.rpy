@@ -3235,8 +3235,8 @@ init -2 python:
 
         def get_image(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
-            if special_modifier:
-                if renpy.loadable(self.images[index_string + "_" + special_modifier]):
+            if not special_modifier is None:
+                if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
                     index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
 
             return Image("character_images/" + self.images[index_string])
