@@ -477,7 +477,7 @@ label orgasm_deepthroat(the_girl, the_location, the_object, the_round):
                 $ blowjob.current_modifier = None
                 $ blowjob.redraw_scene(the_girl)
                 "When she's finished cumming you let [the_girl.title] pull back off your shaft. She gasps loudly for air."
-                the_girl.char "That was... oh my god [the_girl.mc_title], I want you to do that agian!"
+                the_girl.char "That was... oh my god [the_girl.mc_title], I want you to do that again!"
 
             else:
                 $ blowjob.current_modifier = None
