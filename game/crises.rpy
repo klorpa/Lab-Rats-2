@@ -5,7 +5,6 @@
 ## 3) An effect label. Points towards a label that will run the actual event, compute final effects, and take input from the player.
 
 
-#Key things to to keep in mind right now: TODO: Remove this list once we're done implimenting stuff
 ## Potential new crises ##
 # Lily is going on a date. Forbid her, help her dress, fuck her first, etc.
 # Girl is seen not wearing uniform - Leads to potential for punishment (level of punishment might depeond on other corporate policies)
@@ -14,6 +13,14 @@
 # Catch someone sneaking serum doses out of the lab! (Test it on them as punishment).
 # Expand the existing crises with more options and levels, ect. (Tax option is top priority)
 # Bulk order demand for a large number of a single type of serum comes in (10 + 2*diff) due in 7 days.
+# Walk past one of your girls bending over. Quick check to see if you just pass by, slap her ass, or pull down her pants and fuck her.
+# You're horny at work and can't get anything done. Jerk off or call someone in to help you.
+#
+
+
+#We want to add more at home morning crises so that we don't have the same ones triggering over and over
+#We want more crises that deal with other characters in the game
+#We want to figure out how we're going to do "one off" on enter crises, like walking in on a girl masturbating.
 
 
 ## Potential Policies ##
@@ -372,7 +379,6 @@ label no_uniform_punishment_label():
 
     "You decide to take a break and stretch your legs. You start walking around the office, peeking in on your different divisions. You turn a corner and run into [the_person.title]."
     $ the_person.draw_person()
-    show screen person_info_ui(the_person)
     the_person.char "Oh, hey [the_person.mc_title]. I was just getting back to work."
     mc.name "Shouldn't you be in your uniform [the_person.title]?"
     $ random_excuse = renpy.random.randint(0,2) #Get a random excuse for why she's not wearing her uniform.
@@ -524,7 +530,7 @@ label no_uniform_punishment_label():
                 "Deny her an orgasm.\n{size=22}Requires Stamina{/size} (disabled)" if the_person.sluttiness > 60 and mc.current_stamina == 0:
                         pass
 
-    hide screen person_info_ui
+    $renpy.scene("Active")
     return
 
 
@@ -544,7 +550,6 @@ label office_flirt_label():
 
     $ the_person = get_random_from_list(mc.location.people)
     $ the_person.draw_person(position = "walking_away")
-    show screen person_info_ui(the_person)
     if mc.location == mc.business.m_div: #Note: This won't actually work properly because the locations for production and marketing are the same. TODO: Fix that.
         "[the_person.title] walks by you while you're recording shipping addresses for the next batch of serum."
 
@@ -763,7 +768,7 @@ label office_flirt_label():
                         $ change_amount = 10
                         $ slut_report = the_person.change_slut_temp(change_amount)
                         "She winks and walks past your desk, making sure to shake her ass as you watch."
-    hide screen person_info_ui
+    $ renpy.scene("Active")
     return
 
 
@@ -782,7 +787,6 @@ label special_training_crisis_label():
         return #We must have had someone quit or be fired, so we no longer can get a random person.
 
     $ the_person = get_random_from_list(mc.business.get_employee_list())
-    show screen person_info_ui(the_person)
     "You get a text  from [the_person.title]."
     the_person.char "[the_person.mc_title], I've just gotten word about a training seminar going on right now a few blocks away. I would love to take a trip over and see if there is anything I could learn."
     the_person.char "There's a sign up fee of $500. If you can cover that, I'll head over right away."
@@ -862,7 +866,6 @@ label lab_accident_crisis_label():
 
 
     $ the_person.draw_person(emotion = "sad")
-    show screen person_info_ui(the_person)
     "You get to [the_person.title]'s lab bench. There's a shattered test tube still on it and a pool of coloured liquid."
     mc.name "What happened?"
     $ techno = get_random_from_list(technobabble_list)
@@ -907,7 +910,6 @@ label production_accident_crisis_label():
 
 
     $ the_person.draw_person(emotion = "sad")
-    show screen person_info_ui(the_person)
     "You get to [the_person.title]'s lab bench. There's a collection of shattered test tubes still on it and a pool of coloured liquid."
     mc.name "What happened?"
     $ techno = get_random_from_list(technobabble_list)
@@ -944,12 +946,10 @@ label extra_mastery_crisis_label():
         #She's in the same room as you.
         the_person.char "[the_person.mc_title], I have something interesting to show you."
         $ the_person.draw_person()
-        show screen person_info_ui(the_person)
     else:
         #She comes to meet you,
         "Your work is interrupted when [the_person.title] comes into the room."
         $ the_person.draw_person()
-        show screen person_info_ui(the_person)
         the_person.char "[the_person.mc_title], there has been an interesting breakthrough in my research."
     "She places a file in front of you and keeps talking."
     $ techno_string = "I've discovered that I can " + get_random_from_list(technobabble_list) + " and the chance for a side effect should drop significantly when working with " + the_trait.name + "."
@@ -1074,7 +1074,6 @@ label water_spill_crisis_label():
 
     "You're hard at work when [the_person.title] comes up to you. She's got her phone clutched in one hand, a water bottle in the other."
     $ the_person.draw_person()
-    show screen person_info_ui(the_person)
     $ the_person.call_dialogue("greetings")
     mc.name "Hey [the_person.title], how can I help you?"
     the_person.char "I had a few questions about how my taxes were going to be calculated this year, and I was hoping you could answer some of them."
@@ -1232,7 +1231,7 @@ label home_fuck_crisis_label():
     "You drag yourself out of bed and stumble out to the front hall. You move to a window and peek out at your front door."
     $ the_person.draw_person(emotion = "happy") #TODO: Create a set of late night outfits that she can be wearing.
     $ the_person.add_situational_slut("drunk", 20, "More than a little tipsy.")
-    show screen person_info_ui(the_person)
+
     "You see [the_person.title] standing outside. You open the door before she goes to knock."
     mc.name "[the_person.title], what are you doing here? It's the middle of the night."
     "[the_person.possessive_title] takes a step towards you, running a hand down your chest. You guide her outside so she won't wake up your mother or sister."
@@ -1327,7 +1326,6 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
         "You travel back to your office. You're just in the door when [the_person.title] comes in and closes the door behind her."
 
     $the_person.draw_person()
-    show screen person_info_ui(the_person)
     the_person.char "Thank you for meeting with me on such short notice. I thought about sending you an email but I think this should be said in person."
     "[the_person.title] takes a deep breath then continues."
     if the_person.happiness < 100:
@@ -1399,7 +1397,6 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
             $ mc.business.remove_employee(the_person)
 
     $renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 init 1 python:
@@ -2327,7 +2324,6 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         $ rd_staff = get_random_from_list(mc.business.r_div.people) #Get a random researcher from the R&D department. TODO: Repalce this with the head researcher position.
 
     if rd_staff is not None and not mc.business.is_weekend():
-        show screen person_info_ui(rd_staff)
         if mc.location == mc.business.r_div: # The MC is in the lab, just physically get them.
             $ the_place = mc.business.r_div
             $ renpy.show(the_place.name,what=the_place.background_image) #Just in case another crisis had interupted us being here.
@@ -2352,6 +2348,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         else: # The MC is somewhere else, bring them to the lab for this.
             "Your phone buzzes, grabbing your attention. It's a call from the R&D section of your buisness."
             "As soon as you answer you hear the voice of [rd_staff.title]."
+            show screen person_info_ui(rd_staff)
             rd_staff.title "[rd_staff.mc_title], I've had a breakthrough! The first test dose of serum \"[the_serum.name]\" is coming out right now!"
             rd_staff.title "What would you like me to do?"
             menu:
@@ -2372,6 +2369,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     $ rd_staff.change_obedience(change_amount)
                     rd_staff.title "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
                     "[rd_staff.title] hangs up."
+                    $renpy.scene("Active")
                     return
 
         ## Test the serum out on someone.
@@ -2497,19 +2495,17 @@ label mom_outfit_help_crisis_label():
                 mc.name "Sure thing, I'll be right there."
                 $ renpy.show(mom_bedroom.name,what=mom_bedroom.background_image)
                 $ the_person.draw_person()
-                show screen person_info_ui(the_person)
                 "You step into [the_person.possessive_title]. She's standing at the foot of her bed and laying out a few sets of clothing."
                 mc.name "Hey Mom, what's up?"
 
             "Say you're busy.":
                 mc.name "Sorry [the_person.title], I'm a little busy at the moment."
                 the_person.char "Okay, I'll ask your sister."
-                hide screen person_info_ui
+                $ renpy.scene("Active")
                 return
     else:
         #She's in the room with you right now (how? no clue, but maybe it'll happen one day!)
         $ the_person.draw_person()
-        show screen person_info_ui(the_person)
         the_person.char "[the_person.mc_title], could you help me with something for a moment?"
         menu:
             "Help [the_person.possessive_title].":
@@ -2519,7 +2515,7 @@ label mom_outfit_help_crisis_label():
             "Say you're busy.":
                 mc.name "Sorry Mom, I should really be getting to bed."
                 the_person.char "That's okay [the_person.mc_title], I'll ask your sister then."
-                hide screen person_info_ui
+                $ renpy.scene("Active")
                 return
 
     the_person.char "I've got a meeting with an important client tomorrow and I don't know what I should wear."
@@ -2803,7 +2799,7 @@ label mom_outfit_help_crisis_label():
     mc.name "Any time, I'm just glad to help."
     "You leave [the_person.possessive_title] in her room as she starts to pack her clothes away."
 
-    hide screen person_info_ui
+    $ renpy.scene("Active")
     return
 
 init 1 python:
@@ -3126,7 +3122,6 @@ label mom_morning_surprise_label():
         $ the_person.change_happiness(3)
         "She smiles and stands up."
         $ the_person.draw_person()
-        show screen person_info_ui(the_person)
         the_person.char "There's some breakfast in the kitchen, make sure to grab some before you go flying out the door."
         "You sit up on the side of the bed and stretch, letting out a long yawn."
         if the_person.sluttiness < 20:
@@ -3149,7 +3144,6 @@ label mom_morning_surprise_label():
             the_person.char "Certainly nothing to be embarrassed, but I think you should take care of it before you leave."
             "[the_person.possessive_title] turns around and starts rifling through your closet."
             $ the_person.draw_person(position = "walking_away")
-            show screen person_info_ui(the_person)
             the_person.char "I'll find you a nice outfit to wear to save you some time. Go ahead [the_person.mc_title], pretend I'm not even here. It's nothing I haven't seen before."
             menu:
                 "Masturbate.":
@@ -3230,7 +3224,6 @@ label mom_morning_surprise_label():
     elif the_person.sluttiness < 70:
         "You're slowly awoken by a strange, pleasant sensation. When you open your eyes it takes a moment to realise you aren't still dreaming."
         $ the_person.draw_person(position = "blowjob") #TODO: We need a handjob pose.
-        show screen person_info_ui(the_person)
         "[the_person.possessive_title] is sitting on the side of your bed. The covers have been pulled down and she has your morning wood in her hand. She strokes it slowly as she speaks."
         the_person.char "Good morning [the_person.mc_title]. You forgot to set an alarm and overslept. I came in to wake you up and saw this..."
         "She speeds up her strokes."
@@ -3271,7 +3264,6 @@ label mom_morning_surprise_label():
         #TODO: image a lying down blowjob pose
         "You're slowly awoken by a strange, pleasant sensation. When you open your eyes it takes a moment to realise you aren't still dreaming."
         $ the_person.draw_person(position = "blowjob")
-        show screen person_info_ui(the_person)
         "[the_person.possessive_title] is lying face down between your legs, gently sucking off your morning wood."
         "She notices you waking up and pulls off of your cock to speak."
         the_person.char "Good morning [the_person.mc_title]. I noticed your alarm hadn't gone off and came in to wake you up..."
@@ -3329,7 +3321,6 @@ label mom_morning_surprise_label():
             $ the_index += 1
         "You're woken up by your bed shifting under you and a sudden weight around your waist."
         $ the_person.draw_person(position = "cowgirl", emotion = "happy")
-        show screen person_info_ui(the_person)
         "[the_person.possessive_title] has pulled down your sheets and underwear and is straddling you. The tip of your morning wood is brushing against her pussy."
         the_person.char "Good morning [the_person.mc_title]. I didn't hear your alarm go off and when I came to check on you I noticed this..."
         "She grinds her hips back and forth, rubbing your shaft along the lips of her cunt."
@@ -3372,7 +3363,7 @@ label mom_morning_surprise_label():
                     "[the_person.title] gives you a kiss on the forehead and heads for the door."
                 $ renpy.scene("Active")
                 "You get up and rush to get ready to make up for lost time."
-    hide screen person_info_ui
+
     $ renpy.scene("Active")
     return
 
@@ -3486,7 +3477,7 @@ label lily_new_underwear_crisis_label():
             $ renpy.scene("Active")
             "She leaves and closes your door behind her."
 
-    hide screen person_info_ui
+    $ renpy.scene("Active")
     return
 
 init 1 python:
@@ -3508,9 +3499,8 @@ label lily_morning_encounter_label():
 
     "You wake up in the morning to your alarm. You get dressed and leave your room to get some breakfast."
     $ the_person.draw_person()
-    show screen person_info_ui(the_person)
-    if the_person.outfit.wearing_panties:
-        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completley naked."
+    if the_person.outfit.wearing_panties():
+        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completeley naked."
     else:
         "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, wearing nothing but her underwear."
 
@@ -3610,7 +3600,6 @@ label lily_morning_encounter_label():
 
     $ the_person.outfit = the_person.planned_outfit.get_copy() #Make sure to reset their outfits for the day.
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 init 1 python:

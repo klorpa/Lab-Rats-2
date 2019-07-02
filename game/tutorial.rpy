@@ -1,7 +1,6 @@
 label lobby_tutorial_intro():
     "You arrive at your newly purchased lab building. It's small, out of date, and run down, but it's yours!"
     "You can see [stephanie.title] through the glass front door as you walk up. She turns and waves when you come in."
-    show screen person_info_ui(stephanie)
     $ stephanie.draw_person(emotion = "happy")
     stephanie.title "Hey [stephanie.mc_title]. I can't believe you were able to find this place, this is a once in a lifetime opportunity."
     mc.name "I got lucky, that's all. Have you been here long?"
@@ -14,11 +13,9 @@ label lobby_tutorial_intro():
     $ lobby.accessable = False
     $ rd_division.accessable = True
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 label research_tutorial_intro():
-    show screen person_info_ui(stephanie)
     $ stephanie.draw_person(emotion = "happy")
     "The small room has a couple of lab benches with fume hoods, old but serviceable glassware, and a few more delicate instruments you don't recognise by sight."
     mc.name "Here we are, what do you think?"
@@ -34,19 +31,15 @@ label research_tutorial_intro():
     "[stephanie.title] pulls out a notebook and flips it open, handing it over to you."
     stephanie.title "These are my first ideas, you should pick something for me to work on right now. If you change your mind you can always come back here and pick a new topic."
     $ renpy.scene("Active")
-    hide screen person_info_ui
     call research_select_action_description from _call_research_select_action_description
-    show screen person_info_ui(stephanie)
     $ stephanie.draw_person(emotion = "happy")
     stephanie.title "Good, I'll work on that later. Can we take a look at the production lab now?"
     $ rd_division.accessable = False
     $ p_division.accessable = True
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 label production_tutorial_intro():
-    show screen person_info_ui(stephanie)
     $ stephanie.draw_person(emotion = "happy")
     "This lab room is larger than [stephanie.title]'s production lab and filled with bulkier and more familiar equipment."
     stephanie.title "When I'm finished creating a serum design you can take it here and tool up the production lines to make it on an industrial scale."
@@ -58,11 +51,9 @@ label production_tutorial_intro():
     $ p_division.accessable = False
     $ office.accessable = True
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 label office_tutorial_intro():
-    show screen person_info_ui(stephanie)
     $ stephanie.draw_person(emotion = "happy")
     "The offices are divided into a few separate cubicles and a small private office."
     stephanie.title "This seems like a good place to do any of your supply ordering from, and you can use your office to interview anyone who you're thinking of hiring."
@@ -73,11 +64,9 @@ label office_tutorial_intro():
     $ office.accessable = False
     $ m_division.accessable = True
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 label marketing_tutorial_intro():
-    show screen person_info_ui(stephanie)
     $ stephanie.draw_person(emotion = "happy")
     "The marketing room is a combination of office and mail room. It comes with all the supplies you would need to mail out your product to your customers."
     mc.name "When we've got actual product to sell I'll be able to come here and mail it off."
@@ -89,6 +78,5 @@ label marketing_tutorial_intro():
         for place in list_of_places:
             place.accessable = True
     $ renpy.scene("Active")
-    hide screen person_info_ui
     call advance_time from _call_advance_time_11
     return

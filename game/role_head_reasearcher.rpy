@@ -212,14 +212,12 @@ label advanced_serum_stage_2_label(the_person):
         $ mc.change_location(mc.business.r_div)
         $ renpy.show(mc.business.r_div.name,what=mc.business.r_div.background_image)
         $ the_person.draw_person()
-        show screen person_info_ui(the_person)
         mc.name "What's the news [the_person.title]?"
 
     else:
         $ renpy.show(mc.business.r_div.name,what=mc.business.r_div.background_image)
         the_person.char "Excuse me, [the_person.mc_title]?"
         $ the_person.draw_person()
-        show screen person_info_ui(the_person)
         the_person.char "I have some news about that prototype serum you asked me to retrieve. Can I have a moment?"
         mc.name "Of course."
     "[the_person.title] nods towards one of the small offices attached to the lab. You follow her inside and shut the door after yourself."

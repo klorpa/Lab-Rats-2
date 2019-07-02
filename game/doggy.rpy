@@ -200,18 +200,36 @@ label outro_doggy(the_girl, the_location, the_object, the_round):
     mc.name "Ah, I'm going to cum!"
     menu:
         "Cum inside of her.":
-            "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps softly in time with each new shot of hot semen inside of her."
-            $ the_girl.cum_in_vagina()
-            $ doggy.redraw_scene(the_girl)
-            if the_girl.sluttiness > 80:
-                the_girl.char "Oh wow, there's so much of it..."
+            if mc.condom:
+                "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps as you dump your load into her, barely contained by your condom."
+                "You wait until your orgasm has passed completely, then pull out and sit back. The condom is ballooned and sagging with the weight of your seed."
+                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
+                    $ the_girl.discover_opinion("drinking cum")
+                    "[the_girl.possessive_title] turns around and reaches for your cock. With delicate fingers she slides the condom off of you."
+                    the_girl.char "It would be a shame to waste all of this, right?"
+                    "She winks and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
+                    $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
+                else:
+                    "[the_girl.possessive_title] turns around and reaches for your cock. She removes the condom and ties the end in a knot."
+                    the_girl.char "Look at all that cum. Well done."
+                "You sigh contentedly and enjoy the post-orgasm feeling of relaxation."
             else:
-                the_girl.char "Oh fuck, you're lucky I'm on the pill." #TODO: Make it possible to not be on the pill
+                "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps softly in time with each new shot of hot semen inside of her."
+                $ the_girl.cum_in_vagina()
+                $ doggy.redraw_scene(the_girl)
+                if the_girl.sluttiness > 80:
+                    the_girl.char "Oh wow, there's so much of it..."
+                else:
+                    the_girl.char "Oh fuck, what if I get pregnant? Ah..."
 
-            "You wait until your orgasm has passed completely, then pull out and sit back. Your cum starts to drip out of [the_girl.title]'s slit almost immediately."
+                "You wait until your orgasm has passed completely, then pull out and sit back. Your cum starts to drip out of [the_girl.title]'s slit almost immediately."
 
         "Cum on her ass.":
-            "You pull out of [the_girl.title] at the last moment, stroking your shaft as you blow your load over her ass. She holds still for you as you cover her with your sperm."
+            if mc.condom:
+                "You pull out of [the_girl.title] at the last moment. You whip your condom off and stroke your cock as you blow your load over her ass."
+                "She holds still for you as you cover her with your warm sperm."
+            else:
+                "You pull out of [the_girl.title] at the last moment, stroking your shaft as you blow your load over her ass. She holds still for you as you cover her with your sperm."
             $ the_girl.cum_on_ass()
             $ doggy.redraw_scene(the_girl)
             if the_girl.sluttiness > 120:

@@ -130,14 +130,15 @@ init -2 python:
         heart_string += "{image=" + get_individual_heart(the_person.core_sluttiness-40, the_person.sluttiness-40, the_person.core_sluttiness+the_person.suggestibility-40) + "}"
         heart_string += "{image=" + get_individual_heart(the_person.core_sluttiness-60, the_person.sluttiness-60, the_person.core_sluttiness+the_person.suggestibility-60) + "}"
         heart_string += "{image=" + get_individual_heart(the_person.core_sluttiness-80, the_person.sluttiness-80, the_person.core_sluttiness+the_person.suggestibility-80) + "}"
-        if the_person.suggestibility <= 0:
-            heart_string += "{image=gui/heart/Grey_Steady.png}"
-        elif the_person.sluttiness > the_person.core_sluttiness:
-            heart_string += "{image=gui/heart/Green_Up.png}"
-        elif the_person.sluttiness < the_person.core_sluttiness:
-            heart_string += "{image=gui/heart/Red_Down.png}"
-        else:
-            heart_string += "{image=gui/heart/Grey_Steady.png}"
+
+        # if the_person.suggestibility <= 0:
+        #     heart_string += "{image=gui/heart/Grey_Steady.png}"
+        # elif the_person.sluttiness > the_person.core_sluttiness:
+        #     heart_string += "{image=gui/heart/Green_Up.png}"
+        # elif the_person.sluttiness < the_person.core_sluttiness:
+        #     heart_string += "{image=gui/heart/Red_Down.png}"
+        # else:
+        #     heart_string += "{image=gui/heart/Grey_Steady.png}"
         return heart_string
 
 
@@ -317,6 +318,16 @@ init -2 python:
 
         else: #the_score == 2:
             return "loves"
+
+    def SO_relationship_to_title(relationship_string): #Takes a character relationship (Girlfriend, Fiancée, Married) and returns the male equivalent
+        if relationship_string == "Girlfriend":
+            return "boyfriend"
+        elif relationship_string == "Fiancée":
+            return "fiancé"
+        elif relationship_string == "Married":
+            return "husband"
+        else:
+            return "ERROR - relationship incorrectly defined"
 
     class Business(renpy.store.object):
         # main jobs to start with:
@@ -551,9 +562,9 @@ init -2 python:
                 bonus_percent = (self.head_researcher.int - 2)*0.05
                 research_amount = research_amount * (1.0 + bonus_percent) #Every point above int 2 gives a 5% bonus.
                 if bonus_percent > 0:
-                    self.add_normal_message("Head researcher " + self.head_researcher.name + "'s intelligence resulted in a " + str(bonus_percent*100) + "% increase in research produced!")
+                    self.add_normal_message("Head researcher " + self.head_researcher.title + "'s intelligence resulted in a " + str(bonus_percent*100) + "% increase in research produced!")
                 else:
-                    self.add_normal_message("Head researcher " + self.head_researcher.name + "'s intelligence resulted in a " + str(bonus_percent*100) + "% change in research produced.")
+                    self.add_normal_message("Head researcher " + self.head_researcher.title + "'s intelligence resulted in a " + str(bonus_percent*100) + "% change in research produced.")
             else:
                 research_amount = research_amount * 0.9 #No head researcher is treated like int 0.
                 self.add_normal_message("No head researcher resulted in a 10% reduction in research produced! Assign a head researcher at R&D!")
@@ -584,11 +595,15 @@ init -2 python:
             amount_researched = self.research_progress(mc.int,mc.focus,mc.research_skill)
             self.listener_system.fire_event("general_work")
             self.listener_system.fire_event("player_research", amount = amount_researched)
+            renpy.say("","You spend time in the lab, experimenting with different chemicals and techniques and producing " + str(amount_researched) + " research points.")
+            return amount_researched
 
         def player_buy_supplies(self):
             amount_bought = self.supply_purchase(mc.focus,mc.charisma,mc.supply_skill)
             self.listener_system.fire_event("general_work")
             self.listener_system.fire_event("player_supply_purchase", amount = amount_bought)
+            renpy.say("","You spend time securing new supplies for the lab, purchasing " + str(amount_bought) + " units of serum supplies.")
+            return amount_bought
 
         def supply_purchase(self,focus,cha,skill):
             max_supply = __builtin__.round(((3*focus) + (cha) + (2*skill) + 10) * (self.team_effectiveness))/100
@@ -607,6 +622,8 @@ init -2 python:
             amount_sold = self.sale_progress(mc.charisma,mc.focus,mc.market_skill)
             self.listener_system.fire_event("player_serums_sold_count", amount = amount_sold)
             self.listener_system.fire_event("general_work")
+            renpy.say("","You spend time making phone calls to clients and shipping out orders. You sell " + str(amount_sold) + "doses of serum.")
+            return amount_sold
 
         def sale_progress(self,cha,focus,skill, slut_modifier = 0):
 
@@ -615,7 +632,7 @@ init -2 python:
                 sluttiness_multiplier = (slut_modifier/100.0) + 1
                 serum_value_multiplier = serum_value_multiplier * (sluttiness_multiplier)
 
-            serum_sale_count = __builtin__.round(((3*cha) + (focus) + (2*skill) + 10) * (self.team_effectiveness))/100 #Total number of doses of serum that can be sold by this person.
+            serum_sale_count = __builtin__.round(((3*cha) + (focus) + (2*skill) + 5) * (self.team_effectiveness))/100 #Total number of doses of serum that can be sold by this person.
             serum_sale_count = __builtin__.int(serum_sale_count)
             sorted_by_value = sorted(self.sale_inventory.serums_held, key = lambda serum: serum[0].value) #List of tuples [SerumDesign, count], sorted by the value of each design. Used so most valuable serums are sold first.
             if self.sale_inventory.get_any_serum_count() < serum_sale_count:
@@ -740,14 +757,18 @@ init -2 python:
             production_amount = self.production_progress(mc.focus,mc.int,mc.production_skill)
             self.listener_system.fire_event("player_production", amount = production_amount)
             self.listener_system.fire_event("general_work")
+            renpy.say("","You spend time in the lab synthesizing serum from the it's raw chemical precursors. You generate " + str(production_amount) + " production points.")
+            return production_amount
 
         def player_hr(self):
             eff_amount = self.hr_progress(mc.charisma,mc.int,mc.hr_skill)
             self.listener_system.fire_event("player_efficiency_restore", amount = eff_amount)
             self.listener_system.fire_event("general_work")
+            renpy.say("","You settle in and spend a few hours filling out paperwork, raising company efficency by " + str(eff_amount )+ "%%.")
+            return eff_amount
 
         def hr_progress(self,cha,int,skill): #Don't compute efficency cap here so that player HR effort will be applied against any efficency drop even though it's run before the rest of the end of the turn.
-            restore_amount = (3*cha) + (int) + (2*skill) + 10
+            restore_amount = (3*cha) + (int) + (2*skill) + 5
             self.team_effectiveness += restore_amount
             return restore_amount
 
@@ -1218,6 +1239,8 @@ init -2 python:
             self.max_stamina = 2 # How many times you can seduce someone each day
             self.current_stamina = 2 # Current stamina.
 
+            self.condom = False #True if you currently have a condom on. (maintained by sex scenes). TODO: Allow a third "broken" state and add dialgoue and descriptions for that.
+
             self.known_home_locations = [] #When the MC learns a character's home location the room reference should be added here. They can then get to it from the map.
 
             self.listener_system = Listener_Management_System() #A listener manager to let us enroll to events and update goals when they are triggered.
@@ -1383,7 +1406,8 @@ init -2 python:
             font = "Avara.tff", name_color = "#ffffff", dialogue_color = "#ffffff",
             face_style = "Face_1",
             special_role = None,
-            title = None, possessive_title = None, mc_title = None):
+            title = None, possessive_title = None, mc_title = None,
+            relationship = None, SO_name = None, kids = None):
 
             ## Personality stuff, name, ect. Non-physical stuff.
             self.name = name
@@ -1401,10 +1425,28 @@ init -2 python:
             self.schedule = {0:home,1:None,2:None,3:None,4:home} #A character's schedule is a dict of 0,1,2,3,4 (time periods) mapped to locations.
             #If there is a place in the schedule the character will go there. Otherwise they have free time and will do whatever they want.
             self.job = job
+
+            # Relationship and family stuff
+            if relationship:
+                self.relationship = relationship
+            else:
+                self.relationship = "Single" #Should be Single, Girlfriend, Fiancée, or Married.
+
+            if SO_name:
+                self.SO_name = SO_name
+            else:
+                self.SO_name = None #If not single, name of their SO (for guilt purposes or future events).
+
+            if kids:
+                self.kids = kids
+            else:
+                self.kids = 0 #If she has kids, how many. (More likely for older characters.
+
+
             self.personality = personality
 
 
-            # Loves, likes, dislikes, and hates determine some reactions in conversations, options, etc. Some are just fluff. TODO: Make some of them not just fluff
+            # Loves, likes, dislikes, and hates determine some reactions in conversations, options, etc. Some are just fluff.
             self.opinions = {} #Key is the name of the opinion (see random list), value is a list holding [value, known]. Value ranges from -2 to 2 going from hate to love (things not on the list are assumed 0). Known is a bool saying if the player knows about their opinion.
 
             self.sexy_opinions = {}
@@ -1458,7 +1500,7 @@ init -2 python:
             self.body_images = body_images #instance of Clothing class, which uses full body shots.
             self.face_style = face_style
             self.expression_images = expression_images #instance of the Expression class, which stores facial expressions for different skin colours
-            self.hair_colour = hair_colour
+            self.hair_colour = hair_colour #A list of [description, color value], where colour value is a standard RGBA list.
             self.hair_style = hair_style
             self.skin = skin
             self.eyes = eyes
@@ -1683,8 +1725,10 @@ init -2 python:
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
 
 
-        def draw_person(self,position = None, emotion = None, special_modifier = None): #Draw the person, standing as default if they aren't standing in any other position.
+        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True): #Draw the person, standing as default if they aren't standing in any other position.
             renpy.scene("Active")
+            if show_person_info:
+                renpy.show_screen("person_info_ui",self)
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
             #self.hair_style.draw_hair_back(self.hair_colour,self.height) #NOTE: Not currently used to see if it's actually needed.
@@ -1738,6 +1782,7 @@ init -2 python:
         def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None): #A special version of draw_person, removes the_clothing and animates it floating away. Otherwise draws as normal.
             #Note: this function includes a call to remove_clothing, it is not needed seperately.
             renpy.scene("Active")
+            renpy.show_screen("person_info_ui",self)
             if position is None:
                 position = self.idle_pose
 
@@ -1792,8 +1837,13 @@ init -2 python:
 
             if self.happiness > 100:
                 return "happy"
+
             elif self.happiness < 80:
-                return "sad"
+                if love > 0:
+                    return "sad"
+                else:
+                    return "angry"
+
             else:
                 return "default"
 
@@ -2193,7 +2243,7 @@ init -2 python:
             return happy_points
 
         def change_arousal(self,amount, add_to_log = True):
-            self.arousal += amount
+            self.arousal += __builtin__.round(amount) #Round it to an integer if it isn't one already.
             if self.arousal < 0:
                 self.arousal = 0
 
@@ -2235,10 +2285,6 @@ init -2 python:
             self.change_slut_temp(5*self.get_opinion_score("creampies"))
             self.change_happiness(5*self.get_opinion_score("creampies"))
             self.discover_opinion("creampies")
-
-            self.change_slut_temp(5*self.get_opinion_score("risking getting pregnant")) #TODO: add support for girls going off the pill, you not using a condom, etc.
-            self.change_happiness(5*self.get_opinion_score("risking getting pregnant"))
-            self.discover_opinion("risking getting pregnant")
 
         def cum_on_tits(self):
             if self.outfit.can_add_accessory(tits_cum):
@@ -2357,6 +2403,12 @@ init -2 python:
         def set_mc_title(self, new_title):
             self.mc_title = new_title
 
+        def get_role_reference_by_name(self, the_role):
+            for role in self.special_role:
+                if role.role_name == the_role:
+                    return role
+            return None
+
     class Personality(renpy.store.object): #How the character responds to various actions
         def __init__(self, personality_type_prefix, default_prefix = "relaxed",
             common_likes = None, common_dislikes = None, common_sexy_likes = None, common_sexy_dislikes = None,
@@ -2373,7 +2425,7 @@ init -2 python:
             #These are the labels we will be trying to get our dialogue. If the labels do not exist we will get their defaults instead. A default should _always_ exist, if it does not our debug check will produce an error.
             self.response_label_ending = ["greetings", "sex_responses", "climax_responses", "clothing_accept", "clothing_reject", "clothing_review", "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse", "flirt_response", "cum_face", "cum_mouth", "suprised_exclaim", "talk_busy",
-            "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction"]
+            "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction"]
 
             self.response_dict = {}
             for ending in self.response_label_ending:
@@ -2468,13 +2520,13 @@ init -2 python:
     def create_random_person(name = None, last_name = None, age = None, body_type = None, face_style = None, tits = None, height = None, hair_colour = None, hair_style = None, skin = None, eyes = None, job = None,
         personality = None, custom_font = None, name_color = None, dial_color = None, starting_wardrobe = None, stat_array = None, skill_array = None, sex_array = None,
         start_sluttiness = None, start_obedience = None, start_happiness = None, start_love = None, start_home = None,
-        title = None, possessive_title = None, mc_title = None):
+        title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None):
         if name is None:
             name = get_random_name()
         if last_name is None:
             last_name = get_random_last_name()
         if age is None:
-            age = renpy.random.randint(21,50)
+            age = renpy.random.randint(18,50)
         if body_type is None:
             body_type = get_random_body_type()
         if tits is None:
@@ -2482,22 +2534,27 @@ init -2 python:
         if height is None:
             height = 0.9 + (renpy.random.random()/10)
 
-        if hair_colour is None:
-            hair_colour = get_random_hair_colour()
+        if hair_colour is None: #If we pass nothing we can pick a random hair colour
+            hair_colour = generate_hair_colour() #Hair colour is a list of [string, [colour]], generated with variations by this function,
+        elif isinstance(hair_colour, basestring):
+            hair_colour = generate_hair_colour(hair_colour) #If we pass a string assume we want to generate a variation based on that colour.
+        #else: we assume a full colour list was passed and everything is okay.
 
         if hair_style is None:
             hair_style = get_random_from_list(hair_styles).get_copy()
         else:
             hair_style = hair_style.get_copy() #Get a copy so we don't modify the master.
 
-        if hair_colour == "blond": #TODO: add random variation in hair colour, to add variety between people.
-            hair_style.colour = [0.84,0.75,0.47,1]
-        elif hair_colour == "brown":
-            hair_style.colour = [0.73,0.43,0.24,1]
-        elif hair_colour == "red":
-            hair_style.colour = [0.3,0.05,0.05,1]
-        else: #black
-            hair_style.colour = [0.1,0.09,0.08,1]
+        hair_style.colour = hair_colour[1]
+
+        # if hair_colour == "blond": #TODO: add random variation in hair colour, to add variety between people.
+        #     hair_style.colour = [0.84,0.75,0.47,1]
+        # elif hair_colour == "brown":
+        #     hair_style.colour = [0.73,0.43,0.24,1]
+        # elif hair_colour == "red":
+        #     hair_style.colour = [0.3,0.05,0.05,1]
+        # else: #black
+        #     hair_style.colour = [0.1,0.09,0.08,1]
 
         if skin is None:
             skin = get_random_skin()
@@ -2583,11 +2640,32 @@ init -2 python:
 
             #start_home = downtown
 
+        if relationship is None:
+            relationship = get_random_from_weighted_list([["Single",100-age],["Girlfriend",75],["Fiancée",120-age*2],["Married",50+age*2]]) #Age plays a major factor.
+
+        if kids is None:
+            kids = 0
+            if age >=28:
+                kids += renpy.random.randint(0,1) #Young characters don't have as many kids
+
+            if age >= 38:
+                kids += renpy.random.randint(0,1) #As you get older you're more likely to have one
+
+            if relationship == "Girlfriend":
+                kids += renpy.random.randint(0,1) #People who are dating have kids more often than single people
+
+            elif relationship != "Single":
+                kids += renpy.random.randint(0,3) #And married/engaged people have more kids still
+
+        if SO_name is None and relationship != "Single":
+            SO_name = get_random_male_name()
+
         return Person(name,last_name,age,body_type,tits,height,body_images,emotion_images,hair_colour,hair_style,skin,eyes,job,starting_wardrobe,personality,
             stat_array,skill_array,sex_list=sex_array,sluttiness=start_sluttiness,obedience=start_obedience,suggest=start_suggest, love=start_love, happiness=start_happiness, home = start_home,
             font = my_custom_font, name_color = name_color , dialogue_color = dial_color,
             face_style = face_style,
-            title = title, possessive_title = possessive_title, mc_title = mc_title)
+            title = title, possessive_title = possessive_title, mc_title = mc_title,
+            relationship = relationship, kids = kids, SO_name = SO_name)
 
     def height_to_string(the_height): #Height is a value between 0.9 and 1.0 which corisponds to 5' 0" and 5' 10"
         rounded_height = __builtin__.round(the_height,2) #Round height to 2 decimal points.
@@ -2633,9 +2711,9 @@ init -2 python:
                 for emotion in self.emotion_set:
                     self.position_dict[position][emotion] = emotion + "_" + facial_style + "_" + position + "_" + skin_colour + ".png"
 
-            for position in self.ignore_position_set:
+            for position in self.ignore_position_set: #Positions that ignore emotions always use the "default" emotion for the back of the head.
                 for emotion in self.emotion_set:
-                    self.position_dict[position][emotion] = "empty_holder.png" ##An empty image to be drawn when we don't want to draw any emotion, because the character's face is turned away.
+                    self.position_dict[position][emotion] = "default" + "_" + facial_style + "_" + position + "_" + skin_colour + ".png" ##An empty image to be drawn when we don't want to draw any emotion, because the character's face is turned away.
 
             for position, modifiers in self.special_modifiers.iteritems(): #Position is the key of our special modifers dict, get all the positions with a special modifier assigned.
                 for modifier in modifiers: #If that position has multiple special modifers we want to add them all.
@@ -2821,9 +2899,10 @@ init -2 python:
             renpy.return_statement()
 
     class Role(renpy.store.object): #Roles are assigned to special people. They have a list of actions that can be taken when you talk to the person and acts as a flag for special dialogue options.
-        def __init__(self, role_name, actions):
+        def __init__(self, role_name, actions, hidden = False):
             self.role_name = role_name
             self.actions = actions # A list of actions that can be taken. These actions are shown when you talk to a person with this role if their requirement is met.
+            self.hidden = hidden #A hidden role is not shown on the "Roles" list
 
     class Listener_Management_System(renpy.store.object): #Used to manage listeners in objects. Contains functiosn for enrolling and removing triggers as well as firing notices to those triggers.
         def __init__(self):
@@ -2988,7 +3067,7 @@ init -2 python:
                 if self.obedience_modifier >0:
                     the_string += "+" + str(self.obedience_modifier) + " Obedience"
 
-                the_string += "{/size}"
+                the_string += "{/size} (tooltip)The object you have sex on influences how enthusiastic and obedient a girl will be."
                 return the_string
             else:
                 return self.name
@@ -3691,7 +3770,7 @@ init -2 python:
                     return False
             return True
 
-        def get_total_slut_modifiers(self): #Calculates the sluttienss boost purely do to the different pieces of clothing and not what is hidden/revealed.
+        def get_total_slut_modifiers(self): #Calculates the sluttiness boost purely do to the different pieces of clothing and not what is hidden/revealed.
             new_score = 0
             for cloth in self.accessories + self.upper_body + self.lower_body + self.feet: #Add the extra sluttiness values of any of the pieces of clothign we're wearing.
                 new_score += cloth.slut_value
@@ -4142,6 +4221,32 @@ init -2 python:
 
         def redraw_scene(self, the_person, emotion = None): #redraws the scene, call this when something is modified.
             the_person.draw_person(self.position_tag, emotion = emotion, special_modifier = self.current_modifier)
+
+        def build_position_willingness_string(self, the_person): #Generates a string for this position that includes a tooltip and coloured willingness for the person given.
+            willingness_string = ""
+            tooltip_string = ""
+            if the_person.sluttiness >= self.slut_cap:
+                if the_person.arousal >= self.slut_cap:
+                    willingness_string = "{color=#6b6b6b}Boring{/color}" #No sluttiness gain AND half arousal gain
+                    tooltip_string = " (tooltip)This position is too boring to interest her when she is this horny. No sluttiness increase and her arousal gain is halved."
+                else:
+                    willingness_string = "{color=#3C3CFF}Comfortable{/color}" #No sluttiness
+                    tooltip_string = " (tooltip)This position is too tame for her tastes. No sluttiness increase, but it may still be a good way to get warmed up and ready for other positions."
+            elif the_person.sluttiness >= self.slut_requirement:
+                willingness_string = "{color=#3DFF3D}Exciting{/color}" #Normal sluttiness gain
+                tooltip_string = " (tooltip)This position pushes the boundry of what she is comfortable with. Increases temporary sluttiness, which may become permanent over time or with serum application."
+            elif the_person.sluttiness + the_person.obedience-100 >= self.slut_requirement:
+                willingness_string = "{color=#FFFF3D}Willing if Commanded{/color}"
+                tooltip_string = " (tooltip)This position is beyond what she would normally consider. She is obedient enough to do it if she is commanded, at the cost of some happiness."
+            else:
+                willingness_string = "{color=#FF3D3D}Too Slutty{/color}"
+                tooltip_string = " (tooltip)This position is so far beyond what she considers appropriate that she would never dream of it."
+
+            if self.check_clothing(the_person):
+                return self.name + "\n{size=22}" + willingness_string + "{/size}" + tooltip_string
+            else:
+                return self.name + "\n{size=22}"+ willingness_string + "\nObstructed by Clothing{/size} (disabled)"
+
 
     ##Initialization of requirement functions go down here. Can also be moved to init -1 eventually##
 
@@ -4937,6 +5042,7 @@ screen employee_overview(white_list = None, black_list = None, person_select = F
 
 
 screen person_info_ui(the_person): #Used to display stats for a person while you're talking to them.
+    layer "Active" #By making this layer active it is cleared whenever we draw a person or clear them off the screen.
     $ formatted_tooltip = ""
     $ formatted_obedience_tooltip = ""
     python:
@@ -4948,7 +5054,7 @@ screen person_info_ui(the_person): #Used to display stats for a person while you
             elif the_person.situational_sluttiness[situation][0] < 0:
                 negative_effects += get_coloured_arrow(-1)+get_red_heart(-the_person.situational_sluttiness[situation][0])+" - " + the_person.situational_sluttiness[situation][1] + "\n"
         formatted_tooltip += positive_effects + negative_effects
-        formatted_tooltip += "The higher a girls sluttiness the more slutty actions she will consider acceptable and normal. Temporary sluttiness (" + get_red_heart(20) + ") is easier to raise but drops slowly over time. Core sluttiness (" + get_gold_heart(20) + ") is permanent, but can only be created by using serum to raise suggestability or by making a girl climax."
+        formatted_tooltip += "The higher a girls sluttiness the more slutty actions she will consider acceptable and normal. Temporary sluttiness (" + get_red_heart(20) + ") is easier to raise but drops slowly over time. Core sluttiness (" + get_gold_heart(20) + ") is permanent, but only increases slowly unless a girl is suggestable."
 
         positive_effects = ""
         negative_effects = ""
@@ -4984,7 +5090,8 @@ screen person_info_ui(the_person): #Used to display stats for a person while you
                     text "     Job: " + mc.business.get_employee_title(the_person) style "menu_text_style"
 
                 for role in the_person.special_role:
-                    text "       - " + role.role_name style "menu_text_style" size 14
+                    if not role.hidden:
+                        text "       - " + role.role_name style "menu_text_style" size 14
 
             vbox:
                 if the_person.arousal > 0:
@@ -5009,17 +5116,10 @@ screen person_info_ui(the_person): #Used to display stats for a person while you
                     action NullAction()
                     sensitive True
 
-                textbutton "Love: [the_person.love]":
-                    ysize 28
-                    text_style "menu_text_style"
-                    tooltip "Girls who love you will be more willing to have sex when you're in private (as long as they aren't family) and be more devoted to you. Girls who hate you will have a lower effective sluttiness regardless of the situation."
-                    action NullAction()
-                    sensitive True
-
                 textbutton "Suggestibility: [the_person.suggestibility]%":
                     ysize 28
                     text_style "menu_text_style"
-                    tooltip "How likely this character is to increase her core sluttiness. Every time chunk there is a [the_person.suggestibility]% chance to change 1 point of temporary sluttiness (" + get_red_heart(5) + ") into core sluttiness (" + get_gold_heart(5) + ") as long as temporary sluttiness is higher."
+                    tooltip "How likely this character is to increase her core sluttiness. Every time chunk there is a chance to change 1 point of temporary sluttiness (" + get_red_heart(5) + ") into core sluttiness (" + get_gold_heart(5) + ") as long as temporary sluttiness is higher."
                     action NullAction()
                     sensitive True
 
@@ -5027,6 +5127,13 @@ screen person_info_ui(the_person): #Used to display stats for a person while you
                     ysize 28
                     text_style "menu_text_style"
                     tooltip formatted_tooltip
+                    action NullAction()
+                    sensitive True
+
+                textbutton "Love: [the_person.love]":
+                    ysize 28
+                    text_style "menu_text_style"
+                    tooltip "Girls who love you will be more willing to have sex when you're in private (as long as they aren't family) and be more devoted to you. Girls who hate you will have a lower effective sluttiness regardless of the situation."
                     action NullAction()
                     sensitive True
 
@@ -5066,12 +5173,19 @@ screen person_info_detailed(the_person):
                 text "[the_person.name] [the_person.last_name]" style "menu_text_style" size 30 xalign 0.5 yalign 0.5 yanchor 0.5 color the_person.char.who_args["color"] font the_person.char.what_args["font"]
                 if not mc.business.get_employee_title(the_person) == "None":
                     text "Position: " + mc.business.get_employee_title(the_person) + " ($[the_person.salary]/day)" style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
+
+                $ visible_roles = []
                 $ role_string = "Special Roles: "
-                if the_person.special_role:
-                    python:
-                        role_string += the_person.special_role[0].role_name
-                        for role in the_person.special_role[1::]:
-                            role_string += ", " + role.role_name
+                python:
+                    for role in the_person.special_role:
+                        if not role.hidden:
+                            visible_roles.append(role.role_name)
+
+                    if visible_roles:
+                        role_string += visible_roles[0]
+                        for role in visible_roles[1::]: #Slicing off the first manually let's us use commas correctly.
+                            role_string += ", " + role
+                if visible_roles:
                     text role_string style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
 
         hbox:
@@ -5084,7 +5198,25 @@ screen person_info_detailed(the_person):
                 xsize 325
                 ysize 450
                 vbox:
-                    text "Main Stats" style "menu_text_style" size 22
+                    text "Status and Info" style "menu_text_style" size 22
+                    text "Happiness: [the_person.happiness]" style "menu_text_style"
+                    text "Suggestibility: [the_person.suggestibility]" style "menu_text_style"
+                    text "Sluttiness: [the_person.sluttiness]" style "menu_text_style"
+                    text "Love: [the_person.love]" style "menu_text_style"
+                    text "Obedience: [the_person.obedience] - " + get_obedience_plaintext(the_person.obedience) style "menu_text_style"
+
+                    text "Age: [the_person.age]" style "menu_text_style"
+                    text "Relationship:  [the_person.relationship]" style "menu_text_style"
+                    if the_person.relationship != "Single":
+                        text "Significant Other: [the_person.SO_name]" style "menu_text_style"
+                    text "Kids: [the_person.kids]" style "menu_text_style"
+
+            frame:
+                background "#1a45a1aa"
+                xsize 325
+                ysize 450
+                vbox:
+                    text "Characteristics" style "menu_text_style" size 22
                     text "Charisma: [the_person.charisma]" style "menu_text_style"
                     text "Intelligence: [the_person.int]" style "menu_text_style"
                     text "Focus: [the_person.focus]" style "menu_text_style"
@@ -5110,17 +5242,6 @@ screen person_info_detailed(the_person):
                     text "Oral Skill: " + str(the_person.sex_skills["Oral"]) style "menu_text_style"
                     text "Vaginal Skill: " + str(the_person.sex_skills["Vaginal"]) style "menu_text_style"
                     text "Anal: " + str(the_person.sex_skills["Anal"]) style "menu_text_style"
-
-            frame:
-                background "#1a45a1aa"
-                xsize 325
-                ysize 450
-                vbox:
-                    text "Current Status" style "menu_text_style" size 22
-                    text "Happiness: [the_person.happiness]" style "menu_text_style"
-                    text "Suggestibility: [the_person.suggestibility]" style "menu_text_style"
-                    text "Sluttiness: [the_person.sluttiness]" style "menu_text_style"
-                    text "Obedience: [the_person.obedience] - " + get_obedience_plaintext(the_person.obedience) style "menu_text_style"
 
             frame:
                 background "#1a45a1aa"
@@ -5540,7 +5661,8 @@ screen interview_ui(the_candidates,count):
 init -2 python: # Some functions used only within screens for modifying variables
     def show_candidate(the_candidate):
         renpy.scene("Active")
-        the_candidate.draw_person()
+        the_candidate.draw_person(show_person_info = False)
+
 
 screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_names = []): #You can now pass extra inventories, as well as names for all of the inventories you are passing. Returns nothing, but is used to view inventories.
     add "Science_Menu_Background.png"
@@ -5845,6 +5967,7 @@ screen trait_list_tooltip(the_traits):
 
 
 screen serum_trade_ui(inventory_1,inventory_2,name_1="Player",name_2="Business"): #Lets you trade serums back and forth between two different inventories. Inventory 1 is assumed to be the players.
+    modal True
     add "Science_Menu_Background.png"
     frame:
         background "#888888"
@@ -7431,7 +7554,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.17.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.18.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -7938,9 +8061,9 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
         "Do something... (disabled)" if (mc.location.valid_actions() == 0):
             pass
 
-        "Examine the room.":
-            $ mc.can_skip_time = False
-            call examine_room(mc.location) from _call_examine_room_1
+        # "Examine the room.": #Removed in v0.18.0 to see if it's ever actually needed.
+        #     $ mc.can_skip_time = False
+        #     call examine_room(mc.location) from _call_examine_room_1
 
     jump game_loop
 
@@ -7957,7 +8080,6 @@ label change_location(the_place):
 
 label talk_person(the_person):
     $the_person.draw_person()
-    show screen person_info_ui(the_person)
     if the_person.title is None:
         call person_introduction(the_person) from _call_person_introduction #If their title is none we assume it is because we have never met them before. We have a special introduction scene for new people.
         #Once that's done we continue to talk to the person.
@@ -8120,7 +8242,6 @@ label talk_person(the_person):
                             the_person.char "Were you about to put that in my drink? Oh my god [the_person.mc_title]!"
                             mc.name "Me? Never!"
                             "[the_person.title] shakes her head and storms off. You can only hope this doesn't turn into soemthing more serious."
-                            hide screen person_info_ui
                             $renpy.scene("Active")
                             return
 
@@ -8196,9 +8317,9 @@ label talk_person(the_person):
             mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
             $ the_person.call_dialogue("seduction_response")
             $ random_chance = renpy.random.randint(0,100)
-            $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + mc.charisma * 4 + the_person.get_opinion_score("taking control")*4
+            $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
             $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
-            $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + mc.charisma * 4 + the_person.get_opinion_score("being submissive")*4
+            $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
 
             if chance_service_her > 100:
                 $ chance_service_her = 100
@@ -8305,17 +8426,32 @@ label talk_person(the_person):
             $the_person.draw_person(position = "walking_away")
             "You say goodbye to [the_person.title] and the two of you separate."
 
-    hide screen person_info_ui
     $renpy.scene("Active")
     return
 
-label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False):
+label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False):
     #Use a situational modifier to change sluttiness before having sex.
     $ use_love = True
     if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in the_person.special_role): #Check if any of the roles the person has belong to the list of family roles.
-        #if sister_role in the_person.special_role or mother_role in the_person.special_role or aunt_role in the_person.special_role or cousin_role in the_person.special_role:
         $ the_person.add_situational_slut("taboo_sex", -20, "We're related, we shouldn't be doing this.")
         $ use_love = False
+
+    $ the_person.discover_opinion("cheating on men")
+    if the_person.relationship == "Girlfriend":
+        if the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 5, "I'm cheating on my boyfriend!")
+        else:
+            $ the_person.add_situational_slut("cheating", -5 + (the_person.get_opinion_score("cheating on men") * -10), "I can't cheat on my boyfriend!")
+    elif the_person.relationship == "Fiancée":
+        if the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 8, "I'm cheating on my fiancé!")
+        else:
+            $ the_person.add_situational_slut("cheating", -15 + (the_person.get_opinion_score("cheating on men") * -15), "I could never cheat on my fiancé!")
+    elif the_person.relationship == "Married":
+        if the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 10, "I'm cheating on my husband!")
+        else:
+            $ the_person.add_situational_slut("cheating", -20 + (the_person.get_opinion_score("cheating on men") * -20), "I could never cheat on my husband!")
 
     if not private:
         $ use_love = False
@@ -8326,7 +8462,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
 
     if use_love or the_person.love < 0:
         if the_person.love > 0:
-            $ the_person.add_situational_slut("love_modifier", the_person.love, "I love you and want to be with you!")
+            $ the_person.add_situational_slut("love_modifier", the_person.love, "I love you and want you close to me!")
         else:
             $ the_person.add_situational_slut("love_modifier", the_person.love, "I hate you, get away from me!")
 
@@ -8343,19 +8479,18 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
                             if position.slut_requirement <= the_person.effective_sluttiness():
                                 tuple_list.append(position)
                 position_choice = get_random_from_list(tuple_list)
-                if not position_choice:
-                    position_choice = "Leave"
+                if not position_choice: #TODO: Add a way for them to decide to actually leave here.
+                    position_choice = "Girl Leave" #Needs to be a different flag because "Leave" triggers all of the checks for a girl to convince you to keep going.
 
 
             else:
                 for position in list_of_positions:
                     if mc.location.has_object_with_trait(position.requires_location):
-                        if position.check_clothing(the_person):
-                            tuple_list.append([position.name + "{size=22}\nMax Effect: " + get_red_heart(position.slut_cap) + "\nSuggested Sluttiness: " + get_red_heart(position.slut_requirement) + "{/size}",position])
-                        else:
-                            tuple_list.append([position.name + "\n{size=22}Obstructed by Clothing\nSuggested Sluttiness: " + get_red_heart(position.slut_requirement)+ "{/size} (disabled)",position])
+                        #Note: clothing checks are done in the build_position_willingness_string() check, where it markes them as obstructed and (disabled).
+                        tuple_list.append([position.build_position_willingness_string(the_person), position])
 
-                tuple_list.append(["Leave","Leave"]) #Stop having sex, since cumming is now a locked in thing.
+                if not hide_leave: #Some events don't let you leave.
+                    tuple_list.append(["Leave","Leave"]) #Stop having sex, since cumming is now a locked in thing.
                 position_choice = renpy.display_menu(tuple_list,True,"Choice")
 
 
@@ -8387,10 +8522,36 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
             $ start_round = 1
         call sex_description(the_person, position_choice, object_choice, start_round, private=private, girl_in_charge = girl_in_charge) from _call_sex_description
 
+    else: #The position choice was "Leave" and we want to add some extra stuff.
+        if the_person.effective_sluttiness() > 60:
+            if renpy.random.randint(0,the_person.arousal) + 50 < the_person.obedience:
+                $ the_person.call_dialogue("sex_take_control")
+                $ the_person.change_obedience(-3)
+                call fuck_person(the_person, private, start_position, start_object, skip_intro = True, girl_in_charge = True) from _call_fuck_person_18
+
+            elif the_person.arousal > 80:
+                # They're close to their orgasm and beg you to help them finish.
+                $ the_person.call_dialogue("sex_beg_finish")
+                menu:
+                    "Keep going.":
+                        $ the_person.change_obedience(2)
+                        call fuck_person(the_person, private, start_position, start_object, skip_intro = True, hide_leave = True) from _call_fuck_person_19 #Redo all of this but don't let them leave. Start position and start_object will normally be None
+
+                    "Leave.":
+                        $ the_person.call_dialogue("sex_end_early")
+
+            else: #They're slutty but they just say they're sad to end.
+                $ the_person.call_dialogue("sex_end_early")
+        else:
+            $ the_person.call_dialogue("sex_end_early")
+
+
     $ the_person.clear_situational_slut("love_modifier")
+    $ the_person.clear_situational_slut("cheating")
     $ the_person.clear_situational_slut("taboo_sex")
     $ the_person.clear_situational_slut("sex_object")
     $ the_person.clear_situational_obedience("sex_object")
+    $ mc.condom = False
     return
 
 label sex_description(the_person, the_position, the_object, round, private = True, girl_in_charge = False):
@@ -8402,16 +8563,28 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
     if round == 0: ##First round means you just started, so do intro stuff before we get on with it. Also where we check to see if they are into having this type of sex.
         if the_person.effective_sluttiness() >= the_position.slut_requirement: #The person is slutty enough to want to have sex like this.
             $ the_person.call_dialogue("sex_accept")
+            if the_position.skill_tag == "Vaginal": #She may demand you put on a condom.
+                call condom_ask(the_person) from _call_condom_ask
+                if not _return:
+                    call fuck_person(the_person) from _call_fuck_person_20
+                    return
+
             $ the_position.call_intro(the_person, mc.location, the_object, round)
             $ the_position.redraw_scene(the_person)
+
         else: #The person isn't slutty enough for this. First, try and use obedience. If you still fail, but by a little, she rebukes you but you keep seducing her. Otherwise, the entire thing ends.
             if the_person.effective_sluttiness() + (the_person.obedience-100) >= the_position.slut_requirement:
                 #You can use obedience to do it.
+                $ the_person.call_dialogue("sex_obedience_accept")
+                call condom_ask(the_person) from _call_condom_ask_1
+                if not _return:
+                    call fuck_person(the_person) from _call_fuck_person_21
+                    return
                 $ the_position.redraw_scene(the_person)
                 $ change_amount = the_position.slut_requirement - the_person.sluttiness
                 $ the_person.change_happiness(-change_amount) #She looses happiness equal to the difference between her sluttiness and the requirement. ie the amount obedience covered.
-                $ the_person.call_dialogue("sex_obedience_accept")
                 $ the_position.call_intro(the_person, mc.location, the_object, round)
+                $ the_position.redraw_scene(the_person)
             else:
                 #No amount of obedience will help here. How badly did you screw up?
                 if the_person.effective_sluttiness() < the_position.slut_requirement/2: #Badly, not even half way to what you needed
@@ -8429,6 +8602,13 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
     $ mc.listener_system.fire_event("sex_event", the_person = the_person, the_position = the_position, the_object = the_object)
 
     $ change_amount = the_position.girl_arousal + (the_position.girl_arousal * mc.sex_skills[the_position.skill_tag] * 0.1) #How much we increase her arousal.
+    if the_position.skill_tag == "Vaginal":
+        $ the_person.discover_opinion("bareback sex")
+        if mc.condom:
+            $ change_amount += -2 * the_person.get_opinion_score("bareback sex")
+        else:
+            $ change_amount += 2 * the_person.get_opinion_score("bareback sex")
+
     if the_position.opinion_tags:
         python:
             for opinion_tag in the_position.opinion_tags:
@@ -8445,6 +8625,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
             $ mc.log_event(the_person.title + ": Bored by position. Arousal gain halved.", "float_text_red")
             $ change_amount = change_amount/2 #Low sluttiness girls can be made to cum by kissing, higher sluttiness girls require more intense positions.
             #TODO: add a "sex_bored" dialogue option that can be called, asking for a more intense position.
+
 
     $ the_person.change_arousal(change_amount) #The girls arousal gain is the base gain + 10% per the characters skill in that category.
     $ mc.change_arousal(the_position.guy_arousal + (the_position.guy_arousal * the_person.sex_skills[the_position.skill_tag] * 0.1)) # The same calculation but for the guy
@@ -8509,10 +8690,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                 tuple_list.append(["Strip her down.","Strip"])
                 for position in the_position.connections:
                     if the_object.has_trait(position.requires_location):
-                        if position.check_clothing(the_person):
-                            appended_name = "Change to " + position.name + ".\n{size=22}Max Effect: " + get_red_heart(position.slut_cap) + "\nSuggested Sluttiness: " + get_red_heart(position.slut_requirement) + "{/size}"
-                        else:
-                            appended_name = "Change to " + position.name + ".\n{size=22}Obstructed by Clothing\nSuggested Sluttiness: " + get_red_heart(position.slut_requirement) + "{/size} (disabled)"
+                        appended_name = "Change to " + position.build_position_willingness_string(the_person) #Note: clothing check is now done in build_position_willingness_string() call and marks them as (disabled)
                         tuple_list.append([appended_name,position])
                 position_choice = renpy.display_menu(tuple_list,True,"Choice")
 
@@ -8561,6 +8739,66 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
         call sex_description(the_person, position_choice, the_object, round+1, private = private, girl_in_charge = girl_in_charge) from _call_sex_description_2
 
     return
+
+label condom_ask(the_person):
+    $ condom_threshold = 70 + (the_person.get_opinion_score("bareback sex") * -10)
+    if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in the_person.special_role):
+        $ condom_threshold += 10
+
+    if the_person.effective_sluttiness() < condom_threshold:
+        # they demand you put on a condom.
+        if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies"):
+            the_person.char "I hate do say it, but I need you to put a condom on for me."
+        else:
+            the_person.char "Do you have a condom? You're going to have to put one on."
+
+        menu:
+            "Put on a condom.":
+                $ mc.condom = True
+                "You pull out a condom from your wallet and rip open the package. [the_person.title] watches while you slide it on."
+
+            "Refuse and do something else.":
+                "[the_person.title] doesn't seem like she's going to change her mind."
+                mc.name "If it's that important to you let's just do something else."
+                return False
+
+    elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness() < condom_threshold + 20:
+        # They suggest you put on a condom.
+        if the_person.get_opinion_score("creampies") > 0:
+            $ the_person.discover_opinion("creampies")
+            the_person.char "I think you should put on a condom. If you do you won't have to pull out when you cum."
+        else:
+            the_person.char "Do you think you should put a condom on? Maybe it's a good idea."
+        menu:
+            "Put on a condom.":
+                $ mc.condom = True
+                mc.name "I think you're right. One second."
+                "[the_person.title] watches eagerly while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
+
+            "Fuck her raw.":
+                mc.name "No way. I want to feel you wrapped around me."
+                the_person.char "Just make sure to pull out if you're going to cum, okay?"
+
+    else:
+        # They ask you _not_ to put on a condom.
+        if the_person.get_opinion_score("creampies") > 0:
+            $ the_person.discover_opinion("creampies")
+            the_person.char "Don't put on a condom, I want to feel you when you cum inside me."
+        else:
+            the_person.char "You don't need a condom, I want to feel every single thing you do to me."
+        menu:
+            "Put on a condom.":
+                $ mc.condom = True
+                mc.name "Sorry, but I still think a condom is a good idea."
+                the_person.char "Fine, just make it quick please!"
+                "[the_person.title] watches impatiently while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
+
+            "Fuck her raw.":
+                pass
+
+
+
+    return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
 
 label strip_menu(the_person):
     python:
@@ -8647,7 +8885,7 @@ label examine_person(the_person):
     #Take a close look and figure out their physical attributes (tit size, ass size?, hair colour, hair style)
 
     python:
-        string = "She has " + the_person.skin + " coloured skin, along with " + the_person.hair_colour + " coloured hair and pretty " + the_person.eyes + " coloured eyes. She stands " + height_to_string(the_person.height) + " tall."
+        string = "She has " + the_person.skin + " coloured skin, along with " + the_person.hair_colour[0] + " coloured hair and pretty " + the_person.eyes + " coloured eyes. She stands " + height_to_string(the_person.height) + " tall."
         renpy.say("",string)
 
         outfit_top = the_person.outfit.get_upper_visible()
@@ -8716,31 +8954,27 @@ label faq_action_description:
 label hr_work_action_description:
     $ mc.business.player_hr()
     call advance_time from _call_advance_time_1
-    "You settle in and spend a few hours filling out paperwork."
     return
 
 label research_work_action_description:
     $ mc.business.player_research()
     call advance_time from _call_advance_time_2
-    "You spend a few hours in the lab, experimenting with different chemicals and techniques."
     return
 
 label supplies_work_action_description:
     $ mc.business.player_buy_supplies()
     call advance_time from _call_advance_time_3
-    "You spend a few hours securing new supplies for the lab, spending some of it's available funds to do so."
     return
 
 label market_work_action_description:
     $ mc.business.player_market()
     call advance_time from _call_advance_time_4
-    "You spend a few hours making phone calls to your clients and shipping out orders that have been marked for sale."
+
     return
 
 label production_work_action_description:
     $ mc.business.player_production()
     call advance_time from _call_advance_time_5
-    "You spend a few hours in the lab, synthesizing serum from the it's raw chemical precursors."
     return
 
 label interview_action_description:
@@ -8828,7 +9062,7 @@ label interview_action_description:
                         $ mc.business.h_div.add_person(new_person)
                         $ new_person.set_work([1,2,3], mc.business.h_div)
 
-                python:
+                python: #Establish their titles. TODO: Have this kind of stuff handled in an interview scene.
                     new_person.set_title(get_random_title(new_person))
                     new_person.set_possessive_title(get_random_possessive_title(new_person))
                     new_person.set_mc_title(get_random_player_title(new_person))
@@ -9181,7 +9415,6 @@ label advance_time:
     $ renpy.scene("Active")
     $ renpy.scene()
     $ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
-    hide screen person_info_ui
     show screen business_ui
 
     if time_of_day == 4: ##First, determine if we're going into the next chunk of time. If we are, advance the day and run all of the end of day code.
@@ -9301,15 +9534,15 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
 
         ##Actions##
         hr_work_action = Action("Spend time orgainizing your business. {image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
-            menu_tooltip = "Raises business efficency, which drops over time based on how many employees the business has.")
+            menu_tooltip = "Raises business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
         research_work_action = Action("Spend time researching in the lab. {image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
-            menu_tooltip = "Contributes research points towards the currently selected project.")
+            menu_tooltip = "Contributes research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
         supplies_work_action = Action("Spend time ordering supplies. {image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
-            menu_tooltip = "Purchase serum supply at the cost of $1 per unit of supplies. When producing serum every production point requires one unit of serum.")
+            menu_tooltip = "Purchase serum supply at the cost of $1 per unit of supplies. When producing serum every production point requires one unit of serum.\n+3*Focus + 2*Skill + 1*Charisma + 10 Serum Supply.")
         market_work_action = Action("Spend time shipping doses of serum marked for sale. {image=gui/heart/Time_Advance.png}",market_work_action_requirement,"market_work_action_description",
-            menu_tooltip = "Sells serum that has been marked for sale. Mark serum manually from the office or set an autosell threshold in production.")
+            menu_tooltip = "Sells serum that has been marked for sale. Mark serum manually from the office or set an autosell threshold in production.\n3*Charisma + 2*Skill + 1*Focus + 5 Serum Doses Sold.")
         production_work_action = Action("Spend time producing serum in the lab. {image=gui/heart/Time_Advance.png}",production_work_action_requirement,"production_work_action_description",
-            menu_tooltip = "Produces serum from raw materials. Each production point of serum requires one unit if supply, which can be purchased from your office.")
+            menu_tooltip = "Produces serum from raw materials. Each production point of serum requires one unit if supply, which can be purchased from your office.\n+3*Focus + 2*Skill + 1*Intelligence + 10 Production Points.")
 
         interview_action = Action("Hire someone new. {image=gui/heart/Time_Advance.png}", interview_action_requirement,"interview_action_description",
             menu_tooltip = "Look through the resumes of several candidates. More information about a candidate can be revealed by purchasing new business policies.")

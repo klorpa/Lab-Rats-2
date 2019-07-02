@@ -28,8 +28,20 @@ init -2 python:
             return True
 
     def date_requirement(the_person):
+        love_requirement = 20
+        if the_person.relationship == "Girlfriend":
+            love_requirement += 20
+        elif the_person.relationship == "Fiancée":
+            love_requirement += 30
+        elif the_person.relationship == "Married":
+            love_requirement += 40
+
+        love_requirement += -10*the_person.get_opinion_score("cheating on men")
+        if love_requirement < 20:
+            love_requirement = 20
+
         if the_person.love < 30:
-            return "Requires: 30 Love"
+            return "Requires: " + str(love_requirement) + " Love"
         elif mc.business.event_triggers_dict.get("date_scheduled", False):
             return "You already have a date planned!"
         else:
@@ -41,22 +53,30 @@ init -2 python:
         return False
 
 label person_introduction(the_person):
-    mc.name "Excuse me, could I bother you for a moment?"
-    "She turns around and looks at you quizzically."
-    #TODO: Have this differ based on personality
-    #the_person.create_formatted_title("???") "Sure, I guess. How can I help you?"
-    $ the_person.set_title("???")
-    the_person.char "Sure, I guess. How can I help you?"
-    mc.name "I'm so sorry, I know this is silly but I just couldn't let you walk by without knowing your name."
-    "She laughs and rolls her eyes."
-    #We cheat a little here to stop the UI from updating before the player has been properly introduced.
-    $ title_choice = get_random_title(the_person)
-    $ formatted_title = the_person.create_formatted_title(title_choice)
-    the_person.char "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
-    $ the_person.set_title(title_choice)
-    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
-    "[the_person.possessive_title] holds her hand out to shake yours."
-    the_person.char "What about you, what's your name?"
+
+    $ the_person.call_dialogue("introduction")
+
+    #
+    # mc.name "Excuse me, could I bother you for a moment?"
+    # "She turns around and looks at you quizzically."
+    # #TODO: Have this differ based on personality
+    # $ the_person.set_title("???")
+    # the_person.char "Sure, I guess. How can I help you?"
+    # mc.name "I'm so sorry, I know this is silly but I just couldn't let you walk by without knowing your name."
+    # "She laughs and rolls her eyes."
+    #
+    #
+    #
+    # $ title_choice = get_random_title(the_person)
+    # $ formatted_title = the_person.create_formatted_title(title_choice)
+    # the_person.char "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
+    # $ the_person.set_title(title_choice)
+    # $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    # "[the_person.possessive_title] holds her hand out to shake yours."
+    # the_person.char "What about you, what's your name?"
+    #
+
+    #She's given us her name, now she asks for yours.
     $ title_tuple = []
     $ title_choice = None
     python:
@@ -64,9 +84,8 @@ label person_introduction(the_person):
             title_tuple.append([title,title])
 
     $ title_choice = renpy.display_menu(title_tuple,True,"Choice")
-    mc.name "[title_choice], the pleasure really is all mine."
+    mc.name "[title_choice], it's a pleasure to meet you."
     $ the_person.set_mc_title(title_choice)
-    #the_person.char "Well then [the_person.mc_title], since you've grabbed my attention, is there anything else you'd like to say?"
     return
 
 label change_titles_person(the_person):
@@ -464,6 +483,19 @@ label date_person(the_person): #You invite them out on a proper date
         mc.name "Mom, I was wondering if I could take you out to dinner, just the two of us. I'd enjoy some mother son bonding time."
         the_person.char "Aww, that's so sweet. How about Friday, after we're both finished with work."
 
+    elif not the_person.relationship == "Single":
+        mc.name "[the_person.title], I'd love to spend some time together, just the two of us. Would you let me take you out for dinner?"
+        $ SO_title = SO_relationship_to_title(the_person.relationship)
+        the_person.char "[the_person.mc_title], you know I've got a [SO_title], right? Well..."
+        if the_person.get_opinion_score("cheating on men") > 0:
+            "She doesn't take very long to make up her mind."
+            the_person.char "He won't know about it, right? What he doesn't know can't hurt him. Are you free Friday?"
+        else:
+            "She thinks about it for a long moment."
+            the_person.char "Just this once, and we have to make sure my [SO_title] never finds out. Are you free Friday?"
+
+
+
     else:
         mc.name "[the_person.title], I'd love to get to know you better. Would you let me take you out for dinner?"
         the_person.char "That sounds delightful [the_person.mc_title]. I'm free Friday night, if you would be available."
@@ -510,7 +542,6 @@ label dinner_date(the_person):
     $ mc.change_location(downtown)
     $ renpy.show(downtown.name,what=downtown.background_image)
     "You get yourself looking as presentable as possible and head downtown."
-    show screen person_info_ui(the_person)
     $ the_person.draw_person(emotion = "happy")
     "You meet up with [the_person.title] on time."
     the_person.char "So, where are we going tonight [the_person.mc_title]?"
@@ -607,7 +638,6 @@ label dinner_date(the_person):
             mc.name "It would be my pleasure."
             "[the_person.title]'s taxi arrives and she gives you a kiss goodbye. You watch her drive away, then head home yourself."
 
-    hide screen person_info_ui
     $ renpy.scene("Active")
 
     return

@@ -715,13 +715,115 @@ label aunt_share_drinks_label(the_person):
                     the_person.char "Would you help me? It'll just take a few minutes."
                     mc.name "Of course. Come on, show me what you've got."
                     "She smiles, drinks the last of her wine, and leads you into her bedroom."
-                    "TODO!!!"
-                    #TODO:
-                    # Go to her room.
-                    # She asks you to set up a new outfit for her.
-                    # She changes into it and models it for you. Asks your opinion.
-                    # Decide if you want to have her add it to her wardrobe (if it's not too slutty.)
+                    call change_location(aunt_bedroom) from _call_change_location_1 #Changbe our location so that the background is correct,
+                    the_person.char "Okay, so here's what I have to work with. Tell me what you think."
+                    "She opens her wardrobe and stands back, giving you room to look around."
+                    call screen outfit_creator(Outfit("New Outfit"))
+                    if _return:
+                        $ created_outfit = _return
+                        "You pull out a few pieces of clothing and lay them out on [the_person.possessive_title]'s bed."
+                        "She looks at the outfit you've laid out for her and seems to think for a second."
+                        if created_outfit.slut_requirement <= the_person.sluttiness: #She likes it enough to try it on.
+                            if created_outfit.vagina_visible():
+                                the_person.char "Oh, wow. My pussy would just be out there, for everyone to see..."
+                                "She sounds more excited than worried."
+                            elif created_outfit.tits_visible():
+                                the_person.char "Oh, wow. I wore that my tits would just be out there, for everyone to see..."
+                                "She sounds more excited than worried."
+                            elif not created_outfit.wearing_panties():
+                                the_person.char "Oh wow, you don't think I should wear any panties with it? I guess that's what girls are doing these days..."
+                            elif not created_outfit.wearing_bra():
+                                the_person.char "You don't think I'd need a bra? I don't want my girls bouncing around all the time. Or do I?"
+                            else:
+                                the_person.char "Oh, that looks so cute!"
 
+                            the_person.char "If I try it on will you tell me what you think?"
+                            mc.name "Go for it. I want to see what it looks like on you."
+                            "[the_person.possessive_title] starts to get undressed in front of you. She pauses after a second."
+                            the_person.char "I'll just be naked for a second. You don't mind, right?"
+                            mc.name "Of course not."
+                            $ the_person.change_slut_temp(2)
+                            the_person.char "I didn't think so. Just don't tell my sister."
+                            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                            while strip_choice is not None:
+                                $ the_person.draw_animated_removal(strip_choice)
+                                "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
+                                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                            "Once she's stripped out of her clothing [the_person.possessive_title] puts on the outfit you've made for her."
+                            $ the_person.outfit = created_outfit.get_copy()
+                            $ the_person.draw_person()
+
+                            if created_outfit.slut_requirement <= the_person.sluttiness-20:
+                                #She would like it normally and doesn't find it slutty.
+                                the_person.char "Well? This is cute, but I don't know if I'm going to be wowing any men in it."
+                                $ the_person.draw_person(position = "back_peek")
+                                the_person.char "I think it needs to be a little... more. Or less, if you know what I mean."
+
+                            else:
+                                #She only likes it because she's drunk.
+                                the_person.char "Well? It's certainly a lot bolder than I would normally wear. Is this the sort of thing men like?"
+                                $ the_person.draw_person(position = "back_peek")
+                                $ the_person.change_slut_temp(2)
+                                the_person.char "What about my ass? Does it look good?"
+
+                            menu:
+                                "Add it to her wardrobe.":
+                                    mc.name "It looks really good on you. You should wear it more often."
+                                    the_person.char "You really think so? Okay then, that's why I wanted your opinion in the first place!"
+                                    $ the_person.change_obedience(2)
+                                    $ the_person.draw_person()
+                                    $ the_person.wardrobe.add_outfit(created_outfit)
+                                "Don't add it to her wardrobe.":
+                                    mc.name "Now that I'm seeing it I don't think it really suits you."
+                                    the_person.char "That's a shame. well, that's why I wanted your opinion in the first place!"
+                                    $ the_person.change_obedience(1)
+                                    "[the_person.title] starts to get naked again to put on her old outfit."
+                                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                                    while strip_choice is not None:
+                                        $ the_person.draw_animated_removal(strip_choice)
+                                        "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
+                                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                                    $ the_person.draw_person()
+                            the_person.char "This was really fun [the_person.mc_title], but I think that extra glass of wine is starting to get to me."
+                            "She yawns dramatically and lies down on her bed."
+                            $ the_person.change_happiness(2)
+                            the_person.char "I'm going to have a little nap, but we should do this again some time. You're so nice to have around."
+                            mc.nmae "I'll make sure to come by again. I'll see myself out."
+                                    
+
+
+                        else: #It's too slutty even for her drunk state. She's bashful but doesn't try it on.
+
+                            the_person.char "Oh my god [the_person.mc_title], do you really think I could wear that?"
+                            $ the_person.change_slut_temp(2)
+                            if created_outfit.vagina_visible():
+                                the_person.char "My... pussy would just be out there for everyone to see!"
+                            elif created_outfit.tits_visible():
+                                the_person.char "I would just have my tits out for everyone!"
+                            elif not created_outfit.wearing_panties():
+                                the_person.char "It doesn't even have any panties for me!"
+                            elif not created_outfit.wearing_bra():
+                                the_person.char "It doesn't even have a bra for me!"
+                            mc.name "I think it would be a good look for you. You should try it on."
+                            "[the_person.possessive_title] blushes and shakes her head."
+                            the_person.char "I don't think I can... Maybe that extra glass of wine wasn't such a good idea [the_person.mc_title], it's gone straight to my head."
+                            "She sits down on her bed and sighs."
+                            the_person.char "I think I just need to have a rest. You can help me out with this some other day, okay?"
+                            "[the_person.title] lies down and seems to be drifting off to sleep almost instantly. You say goodbye and head to the door."
+
+
+                    else:
+                        mc.name "Sorry [the_person.title], I don't have any ideas right now."
+                        $ the_person.change_happiness(-2)
+                        $ the_person.draw_person(emotion="sad")
+                        "[the_person.possessive_title] sighs dramatically and collapses onto her bed."
+                        the_person.char "Am I really that out of touch? I'll have to go shopping and update everything then."
+                        the_person.char "Maybe I just need to lie down, this wine is really getting to me."
+                        "[the_person.title] seems to be drifting off to sleep already. You say goodbye and head to the door."
+                    $ renpy.scene("Active")
+                    call screen change_location(aunt_apartment)
 
                 elif decision_score <= 65:
                     # She wants your opinion about some underwear
@@ -731,21 +833,193 @@ label aunt_share_drinks_label(the_person):
                     the_person.char "I've got plenty of lingerie, but I need to know what looks good on me. Can I trust you to give me an honest opinion?"
                     mc.name "Of course, I'll tell you exactly what I think."
                     "She smiles, drinks the last of her wine, and leads you into her bedroom."
-                    "TODO!!!"
-                    #TODO:
+                    call change_location(aunt_bedroom) from _call_change_location_2 #Changbe our location so that the background is correct,
+                    the_person.char "Okay, so I have a few things I want your opinion on. You just tell me what looks good and that I should keep around."
+                    "She starts to strip down, then pauses and looks at you."
+                    the_person.char "Don't tell my sister I'm doing this with you. We're both adults, but I don't think she'd understand."
+                    "She rolls her eyes and keeps going."
+                    $ the_person.change_slut_temp(1)
+                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                    while strip_choice is not None:
+                        $ the_person.draw_animated_removal(strip_choice)
+                        "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
+                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    the_person.char "Okay, first one."
+                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-30)
+                    $ the_person.outfit = lingerie.get_copy()
+                    $ the_person.draw_person()
+                    "She slips on her new set of underwear."
+                    the_person "Okay, what do you think? Keep or toss?"
+                    $ the_person.draw_person(position="back_peek")
+                    menu:
+                        "Add it to her wardrobe.":
+                            mc.name "Keep, definitely."
+                            $ the_person.draw_person()
+                            the_person.char "Okay, keep it is! Let's see what's up next..."
+                            $ the_person.wardrobe.add_underwear_set(lingerie)
+                        "Don't add it to her wardrobe.":
+                            mc.name "Toss, I think you can do better."
+                            $ the_person.draw_person()
+                            the_person.char "I think so too. Let's see what's up next..."
+
+                    $ the_person.change_slut_temp(1)
+                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                    while strip_choice is not None:
+                        $ the_person.draw_animated_removal(strip_choice)
+                        "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
+                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-25)
+                    $ the_person.outfit = lingerie.get_copy()
+                    $ the_person.draw_person()
+                    "She slips on the next set of lingerie."
+                    the_person "What about this one? Keep or toss?"
+                    $ the_person.draw_person(position="back_peek")
+                    menu:
+                        "Add it to her wardrobe.":
+                            mc.name "Keep."
+                            $ the_person.draw_person()
+                            the_person.char "We've got a winner! Okay, one more..."
+                            $ the_person.wardrobe.add_underwear_set(lingerie)
+                        "Don't add it to her wardrobe.":
+                            mc.name "Toss."
+                            $ the_person.draw_person()
+                            the_person.char "Tough customer. Okay, one more..."
+
+                    $ the_person.change_slut_temp(1)
+                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                    while strip_choice is not None:
+                        $ the_person.draw_animated_removal(strip_choice)
+                        "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
+                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-20)
+                    $ the_person.outfit = lingerie.get_copy()
+                    $ the_person.draw_person()
+                    "She slips on the last set of underwear she has to show you."
+                    $ the_person.draw_person(position="back_peek")
+                    the_person.char "Well?"
+                    menu:
+                        "Add it to her wardrobe.":
+                            mc.name "Keep it."
+                            $ the_person.draw_person()
+                            the_person.char "I thought you'd like this one. Okay, I'll hold onto it!"
+                            $ the_person.wardrobe.add_underwear_set(lingerie)
+                        "Don't add it to her wardrobe.":
+                            mc.name "Toss it, you've got nice stuff you could wear."
+                            $ the_person.draw_person()
+                            the_person.char "Yeah, I think you're right. Let's get this off then!"
+                            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                            while strip_choice is not None:
+                                $ the_person.draw_animated_removal(strip_choice)
+                                "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
+                                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    $ the_person.change_love(2)
+                    $ the_person.change_slut_temp(2)
+                    the_person.char "Thank you for helping me [the_person.mc_title]. Now I think I need to lie down, because that wine is going right to my head."
+                    "She yawns dramatically and falls back onto her bed, arms spread wide."
+                    the_person.char "Stop by again some time soon though, we can do this again."
+                    mc.name "Sure thing [the_person.title], I'll be by again soon."
+
+
+                    $ renpy.scene("Active")
+                    call screen change_location(aunt_apartment)
                     # Same as above but she strips down and asks you for underwear sets.
                 elif decision_score <= 75:
                     # She wants to strip for you.
                     the_person.char "[the_person.mc_title], does it feel warm in here or is it just me?"
                     "[the_person.title] takes a sip from her glass of wine and stands up."
-                    the_person.char "You don't mind if I get a little more comfortable, do you?"
-                    #TODO:
-                    # She strips down,  depending on how slutty she is she strips down further.
-                    # Asks you if you think she's still sexy and if she turns you on.
+                    if the_person.outfit.remove_random_any(exclude_feet = True, do_not_remove = True):
+                        the_person.char "You don't mind if I get a little more comfortable, do you?"
+                        $ strip_choice = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
+                        $ the_person.draw_animated_removal(strip_choice)
+                        "Before you can answer she peels off her [strip_choice.name] and drops it onto the couch."
+                        mc.name "No, go right ahead."
+                        if the_person.outfit.remove_random_lower(do_not_remove = True):
+                            $ strip_choice = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+                            $ the_person.draw_animated_removal(strip_choice)
+                            "She takes off her [strip_choice.name] next and throws it onto the couch too."
+                    the_person.char "[the_person.mc_title], can I ask you a question? Do you think I'm still attractive?"
+                    $ the_person.draw_person(position = "back_peek")
+                    "She spins around in front of you, showing you her butt."
+                    the_person.char "I mean, would you be attracted to me if I wasn't your aunt?"
+                    menu:
+                        "Encourage her." if the_person.outfit.remove_random_any(exclude_feet = True, do_not_remove = True):
+                            mc.name "Keep taking your clothes off and maybe I'll tell you."
+                            $ the_person.change_slut_temp(2)
+                            $ the_person.change_obedience(1)
+                            the_person.char "Oh? Okay then, I'll play your game you dirty boy."
+                            $ strip_choice = the_person.outfit.remove_random_any(exclude_feet = True, do_not_remove = True)
+                            $ the_person.draw_animated_removal(strip_choice, position = "back_peek")
+                            "She keeps her back to you and takes off her [strip_choice.name]."
+                            the_person.char "Do you like watching me strip down for you? Do you think I'm hot?"
+                            mc.name "Yeah, I think you're hot."
+                            the_person.char "Oh [the_person.mc_title], that's so nice to hear. I just want to be wanted. Even if it's only by you..."
+                            $ the_person.draw_person()
+                            the_person.char "We should keep this our little secret, okay?"
+
+                        "Compliment her.":
+                            mc.name "Of course you're attractive [the_person.title], look at you! You've got a hot ass and a killer rack."
+                            the_person.char "Oh [the_person.mc_title], you know just what I wanted to hear..."
+                            "She wiggles her ass just for you."
+                            the_person.char "You don't think I'm too old? I feel like I'm past my prime."
+                            mc.name "You're beautiful, you have an amazing body, and you have the experience to know what to do with it."
+                            $ the_person.change_happiness(5)
+                            $ the_person.change_slut_temp(2)
+                            $ the_person.change_love(1)
+                            $ the_person.draw_person()
+                            if the_person.outfit.tits_available():
+                                "She turns back around and leans over to give you a hug on the couch. Her tits dangle down in front of you, tempting you."
+                            else:
+                                "She turns back around and leans over to give you a hug on the couch."
+                            the_person.char "It's been so long since I felt wanted... I think I just needed to feel like I was, even if it's only by you..."
+
+                        "Insult her.":
+                            mc.name "Attractive? Sure, but you've got to accept you're past your prime."
+                            $ the_person.change_happiness(-5)
+                            the_person.char "What?"
+                            mc.name "You're getting older [the_person.title], you just can't compete with all the younger women out there."
+                            $ the_person.draw_person(emotion="angry")
+                            "She turns back and crosses her arms."
+                            the_person.char "You're telling me these aren't some nice tits?"
+                            mc.name "Maybe, but you have to do more than just tease. If you want to impress someone get them wrapped around their cock."
+                            mc.name "You've got experience, but you need to put it to work."
+                            $ the_person.change_obedience(2)
+                            $ the_person.change_slut_temp(3)
+                            "She seems to think long and hard about this for a few seconds."
+                            the_person.char "I guess I understand. Thank you for being honest with me."
+
+                    $ the_person.draw_person(position="sitting")
+                    "She sits down on the couch again and sighs."
+                    the_person.char "I'm sorry but that extra glass of wine is just knocking me out. I think I'm going to lie down for a bit."
+                    the_person.char "Do you want to come by another day and do this again?"
+                    mc.name "I'd love to."
+                    "You take your wine glasses to the kitchen for [the_person.title] and say goodbye."
 
                 else:
-                    "She wants to seduce you! TODO!!!"
-                    # She wants to seduce you.
+                    "[the_person.possessive_title] slides closer to you on the couch and places her hand on your thigh while you chat."
+                    "Inch by inch it moves up your leg until it brushes against the tip of your soft cock. She rubs it gently through your pants, coaxing it to life."
+                    the_person.char "I... I know we shouldn't, but nobody needs to know. Right?"
+                    menu:
+                        "Fuck her." if mc.current_stamina > 0:
+                            call fuck_person(the_person) from _call_fuck_person_22
+                            "[the_person.possessive_title] is exhausted when you're finished fooling around. She lies back on the couch and quickly falls asleep."
+                            "You get yourself tidied up, move the dirty glasses of wine to the kitchen, and get ready to leave."
+
+                        "Fuck her. (disabled)" if mc.current_stamina == 0:
+                            pass
+
+                        "Turn her down.":
+                            mc.name "I don't think that's a good idea right now [the_person.title]. You're in no state to make that kind of decision."
+                            "You gently take her hand off you. She seems to snap to her senses and looks away."
+                            the_person.char "Right, of course. I didn't mean... I didn't mean anything, okay?"
+                            $ the_person.change_love(1)
+                            $ the_person.change_obedience(1)
+                            the_person.char "Maybe you should go, I'm clearly not thinking straight with all this wine."
+                            mc.name "That may be for the best. Maybe we can do this again some other time though."
+                            "You take the glasses of wine to the kitchen for [the_person.possessive_title] and say goodbye."
 
 
                 $ the_person.clear_situational_slut("Drunk")

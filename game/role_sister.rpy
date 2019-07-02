@@ -60,7 +60,6 @@ label sister_intro_crisis_label(the_person):
     "There's a knock at your bedroom door."
     mc.name "Come in."
     $ the_person.draw_person()
-    show screen person_info_ui(the_person)
     the_person.char "Hey [the_person.mc_title], do you have a moment?"
     mc.name "Sure, what's up?"
     "[the_person.possessive_title] steps into your room and closes the door behind her."
@@ -103,7 +102,6 @@ label sister_intro_crisis_label(the_person):
             $ mc.business.event_triggers_dict["sister_needs_reintro"] = True
 
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 label sister_reintro_label(the_person):
@@ -156,7 +154,6 @@ label sister_strip_intro_label(the_person):
     "There's a knock at your bedroom door."
     mc.name "Come in."
     $ the_person.draw_person()
-    show screen person_info_ui(the_person)
     the_person.char "Hey [the_person.mc_title], can I talk to you about something?"
     "[the_person.possessive_title] comes into your room and shuts the door behind her. She seems nervous, avoiding eye contact as she comes closer."
     mc.name "Any time, what's up?"
@@ -180,7 +177,6 @@ label sister_strip_intro_label(the_person):
             $ mc.business.event_triggers_dict["sister_strip_reintro"] = True
 
     $ renpy.scene("Active")
-    hide screen person_info_ui
     return
 
 label sister_strip_reintro_label(the_person):

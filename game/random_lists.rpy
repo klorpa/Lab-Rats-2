@@ -219,14 +219,42 @@ init -2:
         def get_random_male_name():
             return get_random_from_list(list_of_male_names)
 
+        #These are "ideal" hair colours. Individuals will have minor variations applied to them so that different "blonds" have slightly different hair.
         list_of_hairs = []
-        list_of_hairs.append("blond")
-        list_of_hairs.append("brown")
-        list_of_hairs.append("black")
-        list_of_hairs.append("red")
+        list_of_hairs.append(["blond", [0.89,0.75,0.47,1]])
+        list_of_hairs.append(["brown", [0.21,0.105,0.06,1]])
+        list_of_hairs.append(["black",[0.09,0.07,0.09,1]])
+        list_of_hairs.append(["chestnut", [0.59,0.31,0.18,1]])
+        #TODO: Add more hair colours
+
 
         def get_random_hair_colour():
             return get_random_from_list(list_of_hairs)
+
+        def generate_hair_colour(base_colour = None, create_variation = True):
+            if base_colour:
+                for hair in list_of_hairs:
+                    if hair[0] == base_colour:
+                        return_hair = copy.deepcopy(hair)
+            else:
+                return_hair = copy.deepcopy(get_random_hair_colour()) #Deep copy the hair colours because lists are passed by reference and it is two lists deep.
+
+            if create_variation: #The colour is modified slightly to give different characters slightly different hair colours even if they have the same base.
+                hair_colour = return_hair[1]
+                for component_index in __builtin__.range(3): #The RGB components can be 10% lighter or darker each.
+                    component_variation_constant = 0.07
+                    if renpy.random.randint(0,1) == 0:
+                        # Shade it, it's a little darker.
+                        shade_factor = renpy.random.random() * component_variation_constant
+                        hair_colour[component_index] = hair_colour[component_index] * (1-shade_factor)
+
+                    else:
+                        # Tint it, it's a little lighter.
+                        tint_factor = renpy.random.random() * component_variation_constant
+                        hair_colour[component_index] = hair_colour[component_index] + ((1-hair_colour[component_index])*tint_factor)
+
+            return return_hair
+
 
         list_of_skins = []
         list_of_skins.append(["white",5])
@@ -396,8 +424,9 @@ init -2:
         sexy_opinions_list.append("creampies") #Has gameplay effect
         sexy_opinions_list.append("cum facials") #Has gameplay effect
         sexy_opinions_list.append("being covered in cum") #Has gameplay effect
-        sexy_opinions_list.append("risking getting pregnant") #Has TEMPORARY gameplay effect
+        sexy_opinions_list.append("bareback sex") #Has TEMPORARY gameplay effect
         sexy_opinions_list.append("big dicks")
+        sexy_opinions_list.append("cheating on men")
 
         def get_random_sexy_opinion():
             return get_random_from_list(sexy_opinions_list)
@@ -406,6 +435,14 @@ init -2:
         font_list.append("Avara.ttf")
         font_list.append("GlacialIndifference-Regular.otf")
         font_list.append("FantasqueSansMono-Regular.ttf")
+        font_list.append("TruenoRg.otf")
+        font_list.append("TruenoBd.otf")
+        font_list.append("Crimson-Roman.ttf")
+        font_list.append("Crimson-Bold.ttf")
+        font_list.append("HKVenetian-Regular.otf")
+        font_list.append("HKVenetian-Italic.otf")
+
+
 
         def get_random_font():
             return get_random_from_list(font_list)
@@ -417,7 +454,7 @@ init -2:
         readable_color_list.append("#dddddd") #Grey
         readable_color_list.append("#ffff6e") #Yellow
         readable_color_list.append("#8fff66") #Green
-        readable_color_list.append("#cd5c5c") #Indian Red (Replaces harsh pure red)
+        readable_color_list.append("#cf3232") #Red
         readable_color_list.append("#ffd4d4") #Pink
         readable_color_list.append("#FFB1F8") #Hotpink
         readable_color_list.append("#73ffdf") #Teal
@@ -444,8 +481,16 @@ init -2:
                     list_of_titles.append("Cocksleeve")
                     list_of_titles.append("Cock Slave")
 
+                if the_person.has_large_tits():
+                    list_of_titles.append("Big Tits")
+                else:
+                    list_of_titles.append("Little Tits")
+
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
                 list_of_titles.append("Cumslut")
+
+            if the_person.sluttiness > (70 - (the_person.get_opinion_score("bareback sex")*5 + the_person.get_opinion_score("creampies")*5)):
+                list_of_titles.append("Cumdump")
 
             return list_of_titles #We return the list so that it can be presented to the player. In general the girl will always want to pick the first one on the list.
 
@@ -467,6 +512,9 @@ init -2:
                 if the_person.sluttiness > 60:
                     list_of_possessive_titles.append("Your office slut")
 
+            if the_person.love > 10:
+                list_of_possessive_titles.append("Your friend")
+
             if the_person.obedience > 150 and the_person.sluttiness > 60:
                 list_of_possessive_titles.append("Your dedicated cocksleeve")
 
@@ -478,6 +526,12 @@ init -2:
                     list_of_possessive_titles.append("Your hatefuck slut")
                 else:
                     list_of_possessive_titles.append("Your slut")
+
+                if the_person.kids > 0:
+                    list_of_possessive_titles.append("Your slutty MILF")
+
+                if not the_person.relationship == "Single":
+                    list_of_possessive_titles.append("Your cheating slut")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
                 list_of_possessive_titles.append("Your cumslut")
@@ -525,13 +579,13 @@ init 1 python:
         global list_of_premade_characters
         global list_of_unique_characters
         list_of_premade_characters = []
-        list_of_premade_characters.append(create_random_person(body_type = "curvy_body", height=0.99, skin="tan", tits="DD",hair_colour="red",hair_style=messy_hair))
-        list_of_premade_characters.append(create_random_person(body_type = "thin_body", height=1.0, skin="white", tits="B",hair_colour="red",hair_style=messy_hair))
+        list_of_premade_characters.append(create_random_person(body_type = "curvy_body", height=0.99, skin="tan", tits="DD",hair_colour="chestnut",hair_style=messy_hair))
+        list_of_premade_characters.append(create_random_person(body_type = "thin_body", height=1.0, skin="white", tits="B",hair_colour="chestnut",hair_style=messy_hair))
         list_of_premade_characters.append(create_random_person(body_type = "curvy_body", height=0.96, skin="white", tits="DD",hair_colour="brown",hair_style=twintail))
-        list_of_premade_characters.append(create_random_person(body_type = "standard_body", height=0.96, skin="white", tits="DD", hair_colour="red",hair_style=messy_hair))
+        list_of_premade_characters.append(create_random_person(body_type = "standard_body", height=0.96, skin="white", tits="DD", hair_colour="chestnut",hair_style=messy_hair))
         list_of_premade_characters.append(create_random_person(body_type = "thin_body", height=0.92, skin="tan", tits="B", hair_colour="black", hair_style=ponytail))
         list_of_premade_characters.append(create_random_person(body_type = "standard_body", height=0.90, skin="white", tits="DD", hair_colour="blond", hair_style=messy_hair))
-        list_of_premade_characters.append(create_random_person(body_type = "curvy_body", height=1.00, skin="white", tits="DD", hair_colour="red", hair_style=messy_hair))
+        list_of_premade_characters.append(create_random_person(body_type = "curvy_body", height=1.00, skin="white", tits="DD", hair_colour="chestnut", hair_style=messy_hair))
         list_of_premade_characters.append(create_random_person(body_type = "thin_body", height=0.94, skin="white", tits="FF", hair_colour="blond", hair_style=long_hair))
         list_of_premade_characters.append(create_random_person(body_type = "standard_body", height=0.95, skin="tan", tits="FF", hair_colour="brown", hair_style=ponytail))
 
@@ -556,13 +610,32 @@ init 1 python:
             personality = reserved_personality, stat_array = [1,4,3], skill_array = [5,1,2,3,2], sex_array = [2,1,4,2])
         list_of_unique_characters.append(person_paige)
 
+        ### STEPHANIE ###
         stephanie_wardrobe = wardrobe_from_xml("Stephanie_Wardrobe")
 
         global stephanie
-        stephanie = create_random_person(name = "Stephanie", age = 29, body_type = "standard_body", face_style = "Face_4",  tits="C", height = 0.95, hair_colour="brown", hair_style = messy_hair, skin="white" , \
-            eyes = "brown", personality = stephanie_personality, name_color = "#ff2c2c", dial_color = "#ff2c2c" , starting_wardrobe = stephanie_wardrobe, \
-            stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 10, \
-            title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name)
+        stephanie = create_random_person(name = "Stephanie", age = 29, body_type = "standard_body", face_style = "Face_4",  tits="C", height = 0.94, hair_colour="brown", hair_style = messy_short_hair, skin="white" , \
+            eyes = "brown", personality = stephanie_personality, name_color = "#cf3232", dial_color = "#cf3232" , starting_wardrobe = stephanie_wardrobe, \
+            stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 7, \
+            title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
+
+        ### ALEXIA ###
+        alexia_wardrobe = wardrobe_from_xml("Alexia_Wardrobe")
+
+        global alexia
+        alexia = create_random_person(name = "Alexia", age = 21, body_type = "thin_body", face_style = "Face_2", tits = "C", height = 0.92, hair_colour = "blond", hair_style = short_hair, skin="white",\
+            eyes = "brown", personality = alexia_personality, name_color = "#ffff6e", dial_color = "#ffff6e", starting_wardrobe = alexia_wardrobe, \
+            stat_array = [4,3,3], skill_array = [1,3,2,1,1], sex_array = [2,2,1,0], start_sluttiness = 3, start_obedience = 0, start_happiness = 102, start_love = 3, \
+            title = "Alexia", possessive_title = "Your old classmate",mc_title = mc.name, relationship = "Girlfriend", SO_name = get_random_male_name(), kids = 0)
+
+        alexia_intro_phase_zero_action = Action("Alexia Set Schedule", alexia_intro_phase_zero_requirement, "alexia_phase_zero_label", requirement_args = renpy.random.randint(14, 21))
+        mc.business.mandatory_crises_list.append(alexia_intro_phase_zero_action)
+
+        alexia_intro_phase_one_action = Action("Alexia Intro Phase One", alexia_intro_phase_one_requirement, "alexia_intro_phase_one_label")
+        alexia.on_room_enter_event_list.append(alexia_intro_phase_one_action)
+
+        alexia.special_role = [alexia_role]
+        alexia.home.add_person(alexia)
 
 
         ### LILY ###
@@ -572,7 +645,7 @@ init 1 python:
         lily = create_random_person(name = "Lily", last_name = mc.last_name, age = 19, body_type = "thin_body", face_style = "Face_6", tits = "B", height = 0.90, hair_colour="blond", hair_style = ponytail, skin="white", \
             eyes = "blue", personality = lily_personality, name_color = "#FFB1F8", dial_color = "#FFB1F8", starting_wardrobe = lily_wardrobe, start_home = lily_bedroom, \
             stat_array = [5,2,2], skill_array = [2,2,0,1,1], sex_array = [2,1,0,0], start_sluttiness = 8, start_obedience = -26, start_happiness = 122, start_love = 15, \
-            title = "Lily", possessive_title = "Your sister", mc_title = mc.name)
+            title = "Lily", possessive_title = "Your sister", mc_title = mc.name, relationship = "Single", kids = 0)
 
         lily.special_role = [sister_role]
         lily.schedule[3] = lily.home
@@ -592,7 +665,7 @@ init 1 python:
         mom = create_random_person(name = "Jennifer", last_name = mc.last_name, age = 49, body_type = "standard_body", face_style = "Face_1", tits = "DD", height = 0.94, hair_colour = "black", hair_style = long_hair, skin="white", \
             eyes = "brown", personality = mom_personality, name_color = "#8fff66", dial_color = "#8fff66", starting_wardrobe = mom_wardrobe, start_home = mom_bedroom, \
             stat_array = [3,2,4], skill_array = [5,2,0,0,2], sex_array = [2,1,3,0], start_sluttiness = 7, start_obedience = 12, start_happiness = 108, start_love = 25, \
-            title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart")
+            title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2)
 
         mom.special_role = [mother_role]
         mom.schedule[3] = kitchen
@@ -609,7 +682,7 @@ init 1 python:
         aunt = create_random_person(name = "Rebecca", last_name = get_random_last_name(), age = 46, body_type = "thin_body", face_style = "Face_1", tits = "DD", height = 0.92, hair_colour = "blond", hair_style = bobbed_hair, skin="white", \
             eyes = "brown", personality = aunt_personality, name_color = "#66FF8A", dial_color = "#66FF8A", starting_wardrobe = aunt_wardrobe, start_home = aunt_bedroom, \
             stat_array = [5,2,1], skill_array = [1,2,0,0,0], sex_array = [3,5,3,2], start_sluttiness = 11, start_obedience = 0, start_happiness = 70, start_love = 5, \
-            title = "Rebecca", possessive_title = "Your aunt", mc_title = mc.name)
+            title = "Rebecca", possessive_title = "Your aunt", mc_title = mc.name, relationship = "Single", kids = 1)
 
 
         aunt.special_role = [aunt_role]
@@ -628,7 +701,7 @@ init 1 python:
         cousin = create_random_person(name = "Gabrielle", last_name = aunt.last_name, age = 18, body_type = "curvy_body", face_style = "Face_3", tits = "DDD", height = 0.90, hair_colour = "black", hair_style = messy_short_hair, skin="white",\
             eyes = "brown", personality = cousin_personality, name_color = "#9c4dea", dial_color = "#9c4dea", starting_wardrobe = cousin_wardrobe, start_home = cousin_bedroom, \
             stat_array = [0,4,2], skill_array = [0,0,2,1,0], sex_array = [3,0,0,0], start_sluttiness = 8, start_obedience = -30, start_happiness = 70, start_love = -20, \
-            title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name)
+            title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = None, kids = 0)
 
         cousin.special_role = [cousin_role]
         for i in range(0,5):
