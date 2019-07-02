@@ -1,35 +1,5 @@
 ##Standard standing images taken at 1920x420 regardless of item size, so they can be tiled.
 
-# init -10 python:
-#     log_message("Beginning file unzip")
-#     import zipfile
-#     file_path = os.path.abspath(os.path.join(config.basedir, "game/images/character_images"))
-#     file_name = os.path.join(file_path,"master.zip")
-#     zip_ref = zipfile.ZipFile(file_name, mode='r')
-#     zip_ref.extractall(file_path)
-#     zip_ref.close
-#     log_message("Finished file unzip")
-init python:
-    def unpack_character_image(image_name, zip_file = "master.zip"): #Gets a single file out of the master list to be used by the game. Modded images should go in a different zip file and be referenced as such.
-        #Construct local filepath to image archive.
-        log_message("Looking for file " + image_name)
-        file_path = os.path.abspath(os.path.join(config.basedir, "game/images/character_images"))
-        file_name = os.path.join(file_path,zip_file)
-
-        #log_message("Opening file " + file_name)
-        zip_ref = zipfile.ZipFile(file_name, mode='r')
-        #log_message("Reading file " + file_name)
-        the_image = zip_ref.read(image_name)
-        zip_ref.close()
-        #log_message("Finished. Returning image.")
-        return_image = im.Data(the_image,image_name)
-
-
-        #renpy.show(image_name,what=return_image,tag=image_name)
-        #renpy.say("",image_name)
-        log_message("--Finished getting " + image_name)
-        return return_image
-
 init -1:
     define mannequin_average = Image("mannequin_average.png") #Define the mannequin image we use for preview in all of the option selects.
 
@@ -89,7 +59,7 @@ init -1:
         ##HAIR STYLES##
         hair_styles =  []
 
-        short_hair = Clothing("Short Hair", 1, True, True, "Short_Hair",False, False, 0, contrast_adjustment = 1.4)
+        short_hair = Clothing("Short Hair", 1, True, True, "Short_Hair",False, False, 0,  whiteness_adjustment = 0.1, contrast_adjustment = 1.2)
         hair_styles.append(short_hair)
 
         messy_hair = Clothing("Messy Hair", 1, True, True, "Messy_Long_Hair", False, False, 0, whiteness_adjustment = 0.1, contrast_adjustment = 1.4)
@@ -107,16 +77,16 @@ init -1:
         twintail = Clothing("Twintails", 1, True, True, "Twin_Ponytails", False, False, 0, whiteness_adjustment = 0.1, contrast_adjustment = 1.1)
         hair_styles.append(twintail)
 
-        ponytail = Clothing("Ponytail", 1, True, True, "Ponytail", False, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.1)
+        ponytail = Clothing("Ponytail", 1, True, True, "Ponytail", False, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.3)
         hair_styles.append(ponytail)
 
-        long_hair = Clothing("Long Hair", 1, True, True, "Long_Hair", False, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.3)
+        long_hair = Clothing("Long Hair", 1, True, True, "Long_Hair", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.8)
         hair_styles.append(long_hair)
 
-        bobbed_hair = Clothing("Bobbed Hair", 1, True, True, "Bobbed_Hair", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2)
+        bobbed_hair = Clothing("Bobbed Hair", 1, True, True, "Bobbed_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.3)
         hair_styles.append(bobbed_hair)
 
-        bowl_hair = Clothing("Bowl Hair", 1, True, True, "Coco_Hair", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2)
+        bowl_hair = Clothing("Bowl Hair", 1, True, True, "Coco_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
         hair_styles.append(bowl_hair)
 
 
@@ -142,7 +112,7 @@ init -1:
         cute_panties = Clothing("Cute Panties", 1, True, True, "Cute_Panties", False, True, 0, tucked = True)
         panties_list.append(cute_panties)
 
-        lace_panties = Clothing("Lace Panties", 1, True, True, "Lace_Panties", False, True, 2, tucked = True, supported_patterns = {"Two Toned":"Pattern_1"})
+        lace_panties = Clothing("Lace Panties", 1, True, True, "Lace_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"})
         panties_list.append(lace_panties)
 
         cute_lace_panties = Clothing("Cute Lace Panties", 1, True, True, "Cute_Lace_Panties", False, True, 2, tucked = True)
@@ -278,10 +248,10 @@ init -1:
         ##Shirts
         shirts_list = []
 
-        tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.3, supported_patterns = {"Striped":"Pattern_2"})
+        tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.35, supported_patterns = {"Striped":"Pattern_2"})
         shirts_list.append(tshirt)
 
-        lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.1)
+        lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.15)
         shirts_list.append(lace_sweater)
 
         long_sweater = Clothing("Long Sweater", 2, True, True, "Long_Sweater", True, False, 0, whiteness_adjustment = 0.1, supported_patterns = {"Striped":"Pattern_1"})
@@ -501,14 +471,20 @@ init -1:
             return return_outfit
 
         def wardrobe_from_xml(xml_filename):
-            file_path = os.path.abspath(os.path.join(config.basedir, "game"))
-            file_path = os.path.join(file_path,"wardrobes")
-            file_name = os.path.join(file_path, xml_filename + ".xml")
+            # file_path = os.path.abspath(os.path.join(config.basedir, "game"))
+            # file_path = os.path.join(file_path,"wardrobes")
+            # file_name = os.path.join(file_path, xml_filename + ".xml")
+            wardrobe_file = None
+            modified_filename = "wardrobes/" + xml_filename+".xml"
+            if renpy.loadable(modified_filename):
+                wardrobe_file = renpy.file(modified_filename)
 
-            if not os.path.isfile(file_name):
-                return Wardrobe("xml_filename") #If there is no wardrobe present we return an empty wardrobe with the name of our file.
+            #if not os.path.isfile(file_name): #This is likely where the outfit problem on android is.
+            if wardrobe_file is None:
+                return Wardrobe(xml_filename) #If there is no wardrobe present we return an empty wardrobe with the name of our file.
 
-            wardrobe_tree = ET.parse(file_name)
+            #wardrobe_tree = ET.parse(file_name)
+            wardrobe_tree = ET.parse(wardrobe_file)
             tree_root = wardrobe_tree.getroot()
 
             return_wardrobe = Wardrobe(tree_root.attrib["name"])

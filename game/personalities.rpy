@@ -44,7 +44,7 @@
         common_likes = ["skirts", "the weekend", "small talk", "the colour pink", "HR work", "supply work", "flirting","punk","pop"],
         common_sexy_likes = ["missionary style sex", "kissing", "masturbating", "being submissive", "drinking cum", "cum facials"],
         common_dislikes = ["Mondays", "pants", "the colour yellow", "research work", "work uniforms"],
-        common_sexy_dislikes = ["taking control", "doggy style sex", "showing her tits", "showing her ass", "risking getting pregnant", "creampies"],
+        common_sexy_dislikes = ["taking control", "doggy style sex", "showing her tits", "showing her ass", "bareback sex", "creampies"],
         titles_function = relaxed_titles, possessive_titles_function = relaxed_possessive_titles, player_titles_function = relaxed_player_titles)
 
         def reserved_titles(the_person):
@@ -60,7 +60,7 @@
         common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits","jazz","classical"],
         common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies"],
         common_dislikes = ["the colour red", "marketing work", "flirting"],
-        common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "risking getting pregnant", "cum facials"],
+        common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "bareback sex", "cum facials"],
         titles_function = reserved_titles, possessive_titles_function = reserved_possessive_titles, player_titles_function = reserved_player_titles)
 
         def wild_titles(the_person):
@@ -71,7 +71,7 @@
             return mc.name
         wild_personality = Personality("wild", #Stephanie style personality
         common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work","heavy metal","punk"],
-        common_sexy_likes = ["doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "risking getting pregnant"],
+        common_sexy_likes = ["doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "bareback sex"],
         common_dislikes = ["Mondays", "the colour pink", "supply work", "conservative outfits", "work uniforms"],
         common_sexy_dislikes = ["being submissive", "being fingered", "missionary style sex", "giving handjobs"],
         titles_function = wild_titles, possessive_titles_function = wild_possessive_titles, player_titles_function = wild_player_titles)
@@ -100,7 +100,10 @@
         def bimbo_possessive_titles(the_person):
             return bimbo_titles(the_person)
         def bimbo_player_titles(the_person):
-            return mc.name
+            valid_mc_titles = []
+            valid_mc_titles.append(mc.name)
+            valid_mc_titles.append("cutie")
+            return valid_mc_titles
         bimbo_personality = Personality("bimbo", #Currently used in the head researcher event line.
         common_likes = ["skirts", "small talk", "the colour pink", "makeup", "pop"],
         common_sexy_likes = ["giving blowjobs", "missionary style sex", "being submissive", "skimpy outfits", "showing her tits", "showing her ass", "not wearing anything", "not wearing underwear", "lingerie", "cum facials"],
@@ -121,10 +124,33 @@
             return mc.name
         stephanie_personality = Personality("stephanie", default_prefix = "wild",
         common_likes = ["pants", "research work", "Fridays", "makeup", "the colour red"],
-        common_sexy_likes = ["giving blowjobs", "drinking cum"],
+        common_sexy_likes = ["giving blowjobs", "drinking cum","cheating on men"],
         common_dislikes = ["Mondays", "HR work", "marketing work", "conservative outfits"],
         common_sexy_dislikes = ["anal sex", "being submissive"],
         titles_function = stephanie_titles, possessive_titles_function = stephanie_possessive_titles, player_titles_function = stephanie_player_titles)
+
+        def alexia_titles(the_person):
+            valid_titles = []
+            valid_titles.append(the_person.name)
+            valid_titles.append("Alex")
+            return valid_titles
+
+        def alexia_possessive_titles(the_person):
+            valid_possessive_titles = []
+            valid_possessive_titles.append("Your old classmate")
+            return valid_possessive_titles
+
+        def alexia_player_titles(the_person):
+            valid_mc_titles = []
+            valid_mc_titles.append(mc.name)
+            return valid_mc_titles
+
+        alexia_personality = Personality("alexia", default_prefix = "relaxed",
+        common_likes = ["sports", "the colour yellow", "pop", "marketing work"],
+        common_sexy_likes = ["doggy style sex", "bareback sex", "not wearing anything", "skimpy outfits"],
+        common_dislikes = ["pants", "conservative outfits", "hiking"],
+        common_sexy_dislikes = ["anal sex", "being fingered", "taking control"],
+        titles_function = alexia_titles, possessive_titles_function = alexia_possessive_titles, player_titles_function = alexia_player_titles)
 
         def lily_titles(the_person):
             valid_titles = [the_person.name]
@@ -183,7 +209,7 @@
 
         mom_personality = Personality("mom", default_prefix = "reserved",
         common_likes = ["pants", "conservative outfits", "work uniforms", "HR work", "makeup"],
-        common_sexy_likes = ["taking control", "being submissive", "risking getting pregnant"],
+        common_sexy_likes = ["taking control", "being submissive", "bareback sex"],
         common_dislikes = ["production work", "sports"],
         common_sexy_dislikes = ["anal sex", "drinking cum", "sex standing up"],
         titles_function = mom_titles, possessive_titles_function = mom_possessive_titles, player_titles_function = mom_player_titles)
@@ -228,7 +254,7 @@
             common_likes = ["small talk", "the colour pink", "makeup", "flirting"],
             common_sexy_likes = ["lingerie", "skimpy outfits", "taking control"],
             common_dislikes = ["working", "hiking", "conservative outfits"],
-            common_sexy_dislikes = ["public sex", "masturbating", "being fingered"],
+            common_sexy_dislikes = ["public sex", "masturbating", "being fingered", "cheating on men"],
             titles_function = aunt_titles, possessive_titles_function = aunt_possessive_titles, player_titles_function = aunt_player_titles)
 
         def cousin_titles(the_person):
@@ -279,7 +305,7 @@
             common_likes = ["the colour black","heavy metal","punk","makeup","skimpy outfits"],
             common_sexy_likes = ["lingerie","masturbating","taking control","getting head"],
             common_dislikes = ["small talk","flirting","working"],
-            common_sexy_dislikes = ["kissing", "giving blowjobs", "risking getting pregnant"],
+            common_sexy_dislikes = ["kissing", "giving blowjobs", "bareback sex"],
             titles_function = cousin_titles, possessive_titles_function = cousin_possessive_titles, player_titles_function = cousin_player_titles)
 
 
@@ -289,7 +315,23 @@
 ###############################
 ##### Relaxed Personality #####
 ###############################
-# <editor-fold>
+# <editor-fold
+label relaxed_introduction(the_person):
+    mc.name "Excuse me, could I bother you for a moment?"
+    "She turns around."
+    $ the_person.set_title("???")
+    the_person.char "I guess? What do you need?"
+    mc.name "I know this is strange, but I saw you and I just needed to know your name."
+    "She laughs and blushes."
+    the_person.char "Really? You're just saying that to impress me, aren't you."
+    mc.name "Really, I really just wanted to talk to you."
+    $ title_choice = get_random_title(the_person)
+    $ formatted_title = the_person.create_formatted_title(title_choice)
+    the_person.char "Well fine, my name is [formatted_title]. It's nice to meet you..."
+    $ the_person.set_title(title_choice)
+    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    "She waits expectantly for you to introduce yourself."
+    return
 
 label relaxed_greetings(the_person):
     if the_person.sluttiness > 60:
@@ -629,6 +671,43 @@ label relaxed_date_seduction(the_person):
             the_person.char "I had a great night [the_person.mc_title]. Would you like to come back to my place for a quick drink?"
     return
 
+label relaxed_sex_end_early(the_person):
+    if the_person.sluttiness > 50:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "Oh damn it [the_person.mc_title], I want more of you so badly!"
+            else:
+                the_person.char "Is that all you wanted to do? I was happy just being close to you."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "Is that really all? [the_person.mc_title], I was just getting started!"
+            else:
+                the_person.char "Aww, we were just getting started and you're already finished?"
+
+    else:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "You don't want to take this any further? I thought we had a real connction."
+            else:
+                the_person.char "That's all? Well, maybe we can try again some other time."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "Oh my god... you've got me all out of breath..."
+            else:
+                the_person.char "That's all? Alright."
+    return
+
+label relaxed_sex_take_control(the_person):
+    if the_person.arousal > 60:
+        the_person.char "No no no, you can't just get worked up and then leave. We're finishing this, one way or another."
+    else:
+        the_person.char "Wait, we're just getting started! You just relax and leave this to me."
+    return
+
+label relaxed_sex_beg_finish(the_person):
+    "No no no, please [the_person.mc_title] you can't stop now. I'll do whatever you want, please just let me cum!"
+    return
+
 ## Role Specific Section ##
 label relaxed_improved_serum_unlock(the_person):
     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
@@ -646,7 +725,23 @@ label relaxed_improved_serum_unlock(the_person):
 ################################
 ##### Reserved Personality #####
 ################################
-# <editor-fold>
+# <editor-fold
+label reserved_introduction(the_person):
+    mc.name "Excuse me, could I bother you for a moment?"
+    "She turns around and looks at you quizzically."
+    $ the_person.set_title("???")
+    the_person.char "I suppose you could. How can I help you?"
+    mc.name "I'm so sorry, I know this is silly but I just couldn't let you walk by without knowing your name."
+    "She laughs and rolls her eyes."
+    $ title_choice = get_random_title(the_person)
+    $ formatted_title = the_person.create_formatted_title(title_choice)
+    the_person.char "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
+    $ the_person.set_title(title_choice)
+    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    "[the_person.possessive_title] holds her hand out to shake yours."
+    the_person.char "What about you, what's your name?"
+    return
+
 label reserved_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -846,15 +941,6 @@ label reserved_talk_busy(the_person):
         the_person.char "Sorry to interupt, but I've got some work I really need to see to. I'd love to catch up some other time though."
     return
 
-label reserved_improved_serum_unlock(the_person):
-    mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
-    the_person.char "Okay, how can I help?"
-    mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
-    "[the_person.title] nods in agreement."
-    the_person.char "I think I have an idea that could really help us along. All of our testing procedures focus on human safety, but what I really need to know about are the subjective effects of our creations."
-    the_person.char "With your permission, I would like to take a dose of serum myself and have you record my experience with it."
-    return
-
 label reserved_sex_strip(the_person):
     if the_person.sluttiness < 20:
         if the_person.arousal < 50:
@@ -975,12 +1061,77 @@ label reserved_date_seduction(the_person):
             the_person.char "I had a fantastic night [the_person.mc_title]. Before you head home would you like to share a glass of wine with me?"
     return
 
+label reserved_sex_end_early(the_person):
+    if the_person.sluttiness > 50:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "You're done? You're going to drive me crazy [the_person.mc_title], I'm so horny..."
+            else:
+                the_person.char "All done? I hope you were having a good time."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "That's all? I don't know how you can stop, I'm so horny after that!"
+            else:
+                the_person.char "Is that all? Well, that's disappointing."
+
+    else:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "You're done? Well, you could have at least thought about me."
+            else:
+                the_person.char "All done? Maybe we can pick this up another time when we're alone."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "I... I don't know what to say, you've worn me out."
+            else:
+                the_person.char "That's all you wanted? I guess we're finished then."
+    return
+
+
+label reserved_sex_take_control (the_person):
+    if the_person.arousal > 60:
+        the_person.char "I can't let you go [the_person.mc_title], I'm going to finish what you started!"
+    else:
+        the_person.char "Do you think you're going somewhere? We're just getting started [the_person.mc_title]."
+    return
+
+label reserved_sex_beg_finish(the_person):
+    "Wait, you aren't stopping are you? Please [the_person.mc_title], I'm so close to cumming, I'll do anything!"
+    return
+
+
+## Role Specific Section ##
+label reserved_improved_serum_unlock(the_person):
+    mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
+    the_person.char "Okay, how can I help?"
+    mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
+    "[the_person.title] nods in agreement."
+    the_person.char "I think I have an idea that could really help us along. All of our testing procedures focus on human safety, but what I really need to know about are the subjective effects of our creations."
+    the_person.char "With your permission, I would like to take a dose of serum myself and have you record my experience with it."
+    return
+
 #</editor-fold>
 
 ############################
 ##### Wild Personality #####
 ############################
-# <editor-fold>
+# <editor-fold
+label wild_introduction(the_person):
+    mc.name "Excuse me, could I bother you for a moment?"
+    "She turns around and looks you up and down."
+    #TODO: Have this differ based on personality
+    $ the_person.set_title("???")
+    the_person.char "Uh, sure? What do you want?"
+    mc.name "I know this sounds crazy, but I saw you and just wanted to say hi and get your name."
+    "She laughs and crosses her arms."
+    $ title_choice = get_random_title(the_person)
+    $ formatted_title = the_person.create_formatted_title(title_choice)
+    the_person.char "Yeah? Well I like the confidence, I'll say that. My name's [formatted_title]."
+    $ the_person.set_title(title_choice)
+    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    the_person.char "And what about you, random stranger? What's your name?"
+    return
+
 label wild_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -1313,6 +1464,44 @@ label wild_date_seduction(the_person): #TODO: Change this to be different.
             the_person.char "This might be crazy, but I had a great time tonight and you make me a little crazy. Do you want to come back to my place and see where things go?"
     return
 
+label wild_sex_end_early(the_person):
+    if the_person.sluttiness > 50:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "You're really done? Fuck [the_person.mc_title], I'm still so horny..."
+            else:
+                the_person.char "That's all you wanted? I was prepared to do so much more to you..."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "Fuck, I'm so horny... you're sure you're finished?"
+            else:
+                the_person.char "That was a little bit of fun, I suppose."
+
+    else:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "[the_person.mc_title], you got me so turned on..."
+            else:
+                the_person.char "I hope you had a good time."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "Oh god, that was intense..."
+            else:
+                the_person.char "Done? Good, nice and quick."
+    return
+
+
+label wild_sex_take_control (the_person):
+    if the_person.arousal > 60:
+        the_person.char "Oh hell no, you can't just get me wet and then walk away!"
+    else:
+        the_person.char "Are you getting bored already? Get back here, we aren't done yet!"
+    return
+
+label wild_sex_beg_finish(the_person):
+    "Wait [the_person.mc_title], I'm going to cum soon and I just really need this... I'll do anything for you, just let me cum!"
+    return
+
 ## Role Specific Section ##
 label wild_improved_serum_unlock(the_person):
     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
@@ -1330,7 +1519,28 @@ label wild_improved_serum_unlock(the_person):
 #################################
 ##### Introvert Personality #####
 #################################
-# <editor-fold>
+# <editor-fold
+label introvert_introduction(the_person):
+    mc.name "Excuse me, could I bother you for a moment?"
+    "She freezes, then turns around slowly to face you."
+    #TODO: Have this differ based on personality
+    $ the_person.set_title("???")
+    the_person.char "What do you want?"
+    mc.name "I know this is sudden, but I just saw you walking by and I felt like I needed to say hi and get your name."
+    "She glances around uncomfortably."
+    the_person.char "Why? Why do you want to talk to me?"
+    $ the_person.change_happiness(-1)
+    mc.name "I don't know yet, but there's something about you that I just couldn't turn away from."
+    "She seems nervous while she thinks for a second."
+    $ title_choice = get_random_title(the_person)
+    $ formatted_title = the_person.create_formatted_title(title_choice)
+    the_person.char "My name is [formatted_title]. Is that all you wanted to know?"
+    $ the_person.set_title(title_choice)
+    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    $ the_person.change_happiness(-2)
+    mc.name "Well I wanted to introduce myself too..."
+    return
+
 label introvert_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -1676,6 +1886,46 @@ label introvert_date_seduction(the_person): #TODO: Change this to be different.
             the_person.char "I like you, and I want you to come home with me so I don't have to say goodbye. Do you... want to?"
     return
 
+label introvert_sex_end_early(the_person):
+    if the_person.sluttiness > 50:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "You're done? I was hoping you'd at least help me cum."
+            else:
+                the_person.char "All done? I thought this was going somewhere."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "Fuck, I was hoping you'd make me cum."
+            else:
+                "[the_person.title] stays silent but seems dissapointed that you're finishing up early."
+
+    else:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "Done? I hope it wasn't something I did, I was having a really good time..."
+            else:
+                the_person.char "Done? I hope it wasn't something I did wrong."
+        else:
+            if the_person.arousal > 60:
+                "[the_person.title] stays silent, but her cheeks are flush and her breathing is heavier than normal."
+            else:
+                "[the_person.title] stays silent but seems glad that you're finishing up early."
+    return
+
+
+label introvert_sex_take_control (the_person):
+    if the_person.arousal > 60:
+        "[the_person.title] grabs your arm and moans aggressively."
+        the_person.char "No, I'm not done yet!"
+    else:
+        the_person.char "You're staying here, I was just getting started!"
+    return
+
+label introvert_sex_beg_finish(the_person):
+    "[the_person.title] grabs your arm and moans desperately."
+    the_person.char "No, please I'm so close to cumming! I... I need you to keep going!"
+    return
+
 ## Role Specific Section ##
 label introvert_improved_serum_unlock(the_person):
     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
@@ -1693,7 +1943,26 @@ label introvert_improved_serum_unlock(the_person):
 ###############################
 ###### Bimbo Personality ######
 ###############################
-# <editor-fold>
+# <editor-fold
+label bimbo_introduction(the_person):
+    mc.name "Excuse me, could I bother you for a moment?"
+    "She turns around at you. She doesn't hide the way she looks your body up and down."
+    #TODO: Have this differ based on personality
+    $ the_person.set_title("???")
+    the_person.char "Oh you're cute! Okay, cutie, what do you need?"
+    mc.name "I just wanted to get your name. I saw you walking past and..."
+    $ title_choice = get_random_title(the_person)
+    $ formatted_title = the_person.create_formatted_title(title_choice)
+    if the_person.has_large_tits():
+        the_person.char "And you liked my titss? Yeah, I get that a lot. I'm [formatted_title], it's nice to meet you!"
+    else:
+        the_person.char "And you liked my ass? Yeah, I get that a lot. I'm [formatted_title], it's nice to meet you!"
+    #the_person.char "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
+    $ the_person.set_title(title_choice)
+    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    the_person.char "So what's your name?"
+    return
+
 label bimbo_greetings(the_person):
     if the_person.sluttiness > 60:
         if the_person.obedience > 130:
@@ -2008,6 +2277,33 @@ label bimbo_date_seduction(the_person): #TODO: Change this to be different.
             the_person.char "Oh my god [the_person.mc_title], tonight has been so much fun. Do you want to, like, come back home with me and drink some more?"
     return
 
+label bimbo_sex_end_early(the_person):
+    if the_person.sluttiness > 50:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "Aww sweety, I was just getting close to cumming and you're done?!"
+            else:
+                the_person.char "That's all? Aww, I hope you had a good time with me..."
+        else:
+            if the_person.arousal > 60:
+                "Wait, you're stopping? Aren't crazy horny right now too?"
+            else:
+                the_person.char "Don't you want to play with me any more? Oh well, your loss."
+
+    else:
+        if the_person.love > 40:
+            if the_person.arousal > 60:
+                the_person.char "You're actually done? But weren't you, like, having fun? I'm so fucking horny now..."
+            else:
+                the_person.char "Is that all you wanted to do? I thought guys had to, like, cum or it hurt."
+        else:
+            if the_person.arousal > 60:
+                the_person.char "Aww, I was just getting getting warmed up!"
+
+            else:
+                the_person.char "That's it? Well, I guess that was a fun time well it lasted."
+    return
+
 ## Role Specific Section ##
 label bimbo_improved_serum_unlock(the_person):
     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
@@ -2031,7 +2327,7 @@ label bimbo_improved_serum_unlock(the_person):
 ############################
 #### Unique - Stephanie ####
 ############################
-# <editor-fold>
+# <editor-fold
 label stephanie_greetings(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:
@@ -2114,7 +2410,7 @@ label stephanie_sex_strip(the_person):
 #######################
 #### Unique - Lily ####
 #######################
-# <editor-fold>
+# <editor-fold
 
 label lily_greetings(the_person):
     if the_person.obedience > 130:
@@ -2431,7 +2727,7 @@ label lily_date_seduction(the_person):
 ######################
 #### Unique - Mom ####
 ######################
-# <editor-fold>
+# <editor-fold
 
 label mom_greetings(the_person):
     if the_person.obedience > 130:
@@ -2751,6 +3047,17 @@ label mom_date_seduction(the_person): #TODO: Change this to be different.
             the_person.char "You've been a wonderful date. Would you like to share a drink with me before we head to bed?"
     return
 
+label mom_sex_take_control (the_person):
+    if the_person.arousal > 60:
+        the_person.char "[the_person.mc_title], you just sit back and let me take care of you. Mommy's going to get what she needs from you..."
+    else:
+        the_person.char "Oh sweetheart, you can't get a women all worked up then just walk away. Here, let me take care of both of us."
+    return
+
+label mom_sex_beg_finish(the_person):
+    "Wait [the_person.mc_title], you can't stop now, I'm so close! Please, please help your mother cum!"
+    return
+
 # </editor-fold>
 
 
@@ -2759,7 +3066,9 @@ label mom_date_seduction(the_person): #TODO: Change this to be different.
 #######################
 # <editor-fold>
 
-#TODO:
+label aunt_sex_beg_finish(the_person):
+    "Wait, I really need this [the_person.mc_title]! You're making me feel like a real women, please don't stop! Please!"
+    return
 
 # </editor-fold>
 
@@ -2767,7 +3076,7 @@ label mom_date_seduction(the_person): #TODO: Change this to be different.
 #########################
 #### Unique - Cousin ####
 #########################
-# <editor-fold>
+# <editor-fold
 #TODO
 # </editor-fold>
 

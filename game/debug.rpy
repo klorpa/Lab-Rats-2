@@ -98,3 +98,19 @@ label load_select_from_wardrobe(the_wardrobe):
     $ picked_outfit = _return
     call create_outfit(picked_outfit) from _call_create_outfit_3
     return
+
+screen display_all_hair():
+    add "Paper_Background.png"
+    viewport:
+        mousewheel True
+        scrollbars "vertical"
+        xsize 1920
+        ysize 1080
+
+        vbox:
+            spacing -900
+            for hair in hair_styles:
+                hbox:
+                    text hair.name
+                    $ hair_displayable = hair.generate_item_displayable("standard_body", "AA", "stand2")
+                    add hair_displayable

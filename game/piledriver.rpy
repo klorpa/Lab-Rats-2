@@ -91,7 +91,7 @@ label scene_piledriver_1(the_girl, the_location, the_object, the_round):
                     the_girl.char "And you look good on top of me... Fucking my poor little pussy raw."
                     mc.name "I know you can handle it, you're a well trained little slut who knows how to take a dick."
                     "[the_girl.possessive_title] moans loudly, enjoying the combination of your dirty talk and getting fucked."
-                    if the_girl.get_opinion_score("creampies") > 0 or the_girl.get_opinion_score("risking getting pregnant"):
+                    if the_girl.get_opinion_score("creampies") > 0 or the_girl.get_opinion_score("bareback sex"):
                         the_girl.char "Oh... I want to watch you cum [the_girl.mc_title]. I want to watch you unload deep inside of me. I want to feel your hot dripping out of me..."
 
                     elif the_girl.get_opinion_score("cum facials") > 0 or the_girl.get_opinion_score("being covered in cum"):
@@ -185,23 +185,42 @@ label outro_piledriver(the_girl, the_location, the_object, the_round):
     mc.name "Fuck me, I'm going to cum!"
     menu:
         "Cum inside of her.":
-            if the_girl.sluttiness > 120:
+            if the_girl.sluttiness > 120 or mc.condom:
                 the_girl.char "Come on, dump it right inside of me!"
-                "You had no intention of stopping either way, but hearing her ask for it makes you cum even harder. You gasp and push yourself as deep as you can, draining your balls into [the_girl.title]'s cunt."
-                $ the_girl.cum_in_vagina()
-                $ piledriver.redraw_scene(the_girl)
-                the_girl.char "Mmmm, it's so nice and warm..."
+                if mc.condom:
+                    "You had no intention of stopping, but hearing her ask for it makes you cum even harder."
+                    "You push yourself as deep as you can manage and pump your load out into her cunt, hopefully contained by your condom."
+                    "You take a moment to catch your breath, then you pull your cock out of [the_girl.title] and sit back down. The condom tip is ballooned out, hanging to one side and filled with your cum."
+                    if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
+                        $ the_girl.discover_opinion("drinking cum")
+                        "When you let [the_girl.possessive_title] down she reaches for your cock. With delicate fingers she slides the condom off of you."
+                        the_girl.char "It would be a shame to waste all of this, right?"
+                        "She smiles and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
+                        $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
+                    else:
+                        "When you let [the_girl.possessive_title] down she reaches for your cock, removes the condom, and ties the end in a knot."
+                        the_girl.char "Look at all that cum. Well done."
+
+                else:
+                    "You had no intention of stopping either way, but hearing her ask for it makes you cum even harder. You gasp and push yourself as deep as you can, draining your balls into [the_girl.title]'s cunt."
+                    $ the_girl.cum_in_vagina()
+                    $ piledriver.redraw_scene(the_girl)
+                    the_girl.char "Mmmm, it's so nice and warm..."
+                    "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]. You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
 
             else:
                 the_girl.char "Wait, make sure to pull out!"
                 "It's a little late for that now. You gasp and push yourself as deep as you can, draining your balls into [the_girl.possessive_title]'s cunt."
                 $ the_girl.cum_in_vagina()
                 $ piledriver.redraw_scene(the_girl)
-                the_girl.char "Well... Fuck... Good thing I'm on the pill I guess."
-            "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]. You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
+                the_girl.char "Oh fuck... what if I get pregnant [the_girl.mc_title]?"
+                "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]. You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
 
         "Cum on her face.":
-            "You pull your cock out at the last minute, stroking it off with one hand as you point it towards [the_girl.possessive_title]'s face."
+            if mc.condom:
+                "You pull your cock out at the last minute, whipping the condom off with one hand as you aim it towards [teh_girl.possessive_title]'s face."
+            else:
+                "You pull your cock out at the last minute, stroking it off with one hand as you point it towards [the_girl.possessive_title]'s face."
             $ the_girl.cum_on_face()
             $ piledriver.redraw_scene(the_girl)
             if the_girl.sluttiness > 80:

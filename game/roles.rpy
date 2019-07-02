@@ -40,6 +40,11 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1,advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
 
+        #ALEXIA ACTIONS#
+        #TODO
+
+        alexia_role = Role("Alexia", [], hidden = True) #Hide her role because we don't want to display it.
+
         #SISTER ACTIONS#
         sister_reintro_action = Action("Ask if she needs extra work.", sister_reintro_action_requirement, "sister_reintro_label",
             menu_tooltip = "She was eager to make some money before, maybe she still is.")

@@ -355,7 +355,6 @@ label move_employee_label(the_person):
             "Yes, move [the_person.title]":
                 pass
             "No, leave [the_person.title]":
-                hide screen person_info_ui
                 $renpy.scene("Active")
                 return
 

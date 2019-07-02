@@ -17,7 +17,7 @@ init 1:
 label intro_missionary(the_girl, the_location, the_object, the_round):
     "You run your hands along [the_girl.title]'s hips, feeling the shape of her body."
     mc.name "I want you to lie down for me."
-    "She nods and lies down on the [the_object.name], waiting while you unzip your pants and climb on top of her."
+    "She nods and lies down on the [the_object.name], waiting while you climb on top of her."
     "[the_girl.possessive_title] wraps her arms around you and holds you close as you line your cock up with her pussy. She sighs happily into your ear as you slide into her."
     return
 
@@ -95,9 +95,9 @@ label scene_missionary_2(the_girl, the_location, the_object, the_round):
                     $ the_girl.change_arousal(the_girl.get_opinion_score("being submissive"))
                     "You feel her body tremble beneath you and her pussy get suddenly wetter."
                     mc.name "It doesn't matter what you think. I'm going to fuck you until I'm done."
-                    if the_girl.get_opinion_score("risking getting pregnant") > 0:
-                        the_girl.char "Oh my god, you're going to fuck me and get me pregnant... I'm such a worthless, dirty slut that you don't even care if you get me pregnant..."
-                        $ the_girl.discover_opinion("risking getting pregnant")
+                    if the_girl.get_opinion_score("bareback sex") > 0:
+                        the_girl.char "Oh my god, you're fucking me raw and going to get me pregnant... I'm such a worthless, dirty slut that you don't even care if you get me pregnant..."
+                        $ the_girl.discover_opinion("bareback sex")
                     else:
                         the_girl.char "Oh my god... I'm just a worthless, dirty slut to you..."
                     "She shivers again, apparantly turned on by the thought."
@@ -151,7 +151,7 @@ label scene_missionary_2(the_girl, the_location, the_object, the_round):
                     the_girl.char "Ah! You've got me held down and there's nothing I can do..."
                     "She tests your grip on her hands and shivers with pleasure when you force them back down and keep her in place. You can hear her talking softly to herself."
                     the_girl.char "I'm just a fuck toy to you right now... Just a soft wet hole for you to fuck with that big cock... Ah!"
-                    if the_girl.get_opinion_score("risking getting pregnant") > 0:
+                    if the_girl.get_opinion_score("bareback sex") > 0:
                         the_girl.char "You could fuck me until you cum inside. You might get me pregnant and all I can do is sit here and get fucked like a slut... Oh my god..."
                     elif the_girl.get_opinion_score("creampies") > 0:
                         the_girl.char "You could cum right inside me and there's nothing I could do to stop you... You would just fuck me full of your cum!"
@@ -193,25 +193,50 @@ label scene_missionary_2(the_girl, the_location, the_object, the_round):
 label outro_missionary(the_girl, the_location, the_object, the_round):
     "You get to hear every little gasp and moan from [the_girl.title] as you're pressed up against her. Combined with the feeling of fucking her pussy it's not long before you're pushed past the point of no return."
     mc.name "I'm going to cum!"
-    if the_girl.sluttiness > 120:
-        the_girl.char "Go ahead and cum inside me. I want it nice and deep again, get me really fucking pregnant!"
+    if not mc.condom:
+        if the_girl.sluttiness > 120:
+            the_girl.char "Go ahead and cum inside me. I want it nice and deep again, get me really fucking pregnant!"
+        else:
+            the_girl.char "Ah! Make sure to pull out!"
     else:
-        the_girl.char "Ah! Make sure to pull out!"
+        the_girl.char "Do it! Cum for me!"
+
     menu:
         "Cum inside of her.":
             "You use your full weight to push your cock deep inside of [the_girl.possessive_title]'s cunt as you climax. She gasps and claws lightly at your back as you pump your seed into her."
-            if the_girl.sluttiness > 120:
-                the_girl.char "That's it... Ah..."
+            if mc.condom:
+                if the_girl.get_opinion_score("creampies") > 0:
+                    the_girl.char "Ah... Imagine if you broke the condom and you just got me pregnant..."
+                    "She moans and rolls her hips against you one last time."
+                else:
+                    the_girl.char "Ah... I hope the condom didn't break!"
+                "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her. Your condom is balloond with your seed and hangs to one side."
+                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
+                    $ the_girl.discover_opinion("drinking cum")
+                    "[the_girl.possessive_title] reaches over for your cock. With delicate fingers she slides the condom off of you, pinching it off do your cum doesn't spill out."
+                    the_girl.char "It would be a shame to waste all of this, right?"
+                    "She smiles and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
+                    $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
+                else:
+                    "[the_girl.possessive_title] reaches over for your cock, removes the condom, and ties the end in a knot for you."
+                    the_girl.char "Look at all that cum. Well done."
+
             else:
-                the_girl.char "Fuck! I said not to... Ah... Not to do that! You're lucky I'm on the pill."
-            $ the_girl.cum_in_vagina()
-            $ missionary.redraw_scene(the_girl)
+                if the_girl.sluttiness > 120:
+                    the_girl.char "That's it... Ah..."
+                else:
+                    the_girl.char "Fuck! I said not to... Ah... Not to do that! You're lucky I'm on the pill."
+                $ the_girl.cum_in_vagina()
+                $ missionary.redraw_scene(the_girl)
             "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."
 
         "Cum on her chest.":
             $ the_girl.cum_on_stomach()
             $ missionary.redraw_scene(the_girl)
-            "You pull out at the last moment and grab your cock. You kneel and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
+            if mc.condom:
+                "You pull out at the last moment and grab your cock. You whip off your condom and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
+            else:
+                "You pull out at the last moment and grab your cock. You kneel and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
             the_girl.char "Ah... Good job... Ah..."
             "You sit back and sigh contentedly, enjoying the sight of [the_girl.possessive_title]'s body covered in your semen."
     return

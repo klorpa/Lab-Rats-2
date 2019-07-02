@@ -219,8 +219,6 @@ init -2 python:
     # This is handing a list of actions OR simple strings. Actions will be tested to determine which state they pass to the choice screen. Strings are passed directly.
     # The answer from the choice screen is returned.
         valid_actions_list = [] #A list of tuples, the tag to be shown and the thing to be returned.
-        # print "The actions handed:"
-        # print the_actions
         for act in the_actions:
             if isinstance(act, basestring):
                 valid_actions_list.append([act,act]) #If it's just a string it is it's own return value.
@@ -229,9 +227,7 @@ init -2 python:
                 if isinstance(act, list):
                     extra_args = act[1] #second part of list, which is itself a list of extra parameters.
                     act = act[0] #rename it so the rest works properly.
-
-                # print "This action:"
-                # print act
+                    
                 display_name = ""
                 display = False
                 if act.is_action_enabled(extra_args):
