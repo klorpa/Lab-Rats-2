@@ -1839,7 +1839,7 @@ init -2 python:
                 return "happy"
 
             elif self.happiness < 80:
-                if love > 0:
+                if self.love > 0:
                     return "sad"
                 else:
                     return "angry"
