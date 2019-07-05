@@ -213,7 +213,7 @@ label outro_against_wall(the_girl, the_location, the_object, the_round):
     mc.name "Fuck, I'm going to cum!"
     menu:
         "Cum inside of her.":
-            if mc.condom:
+            if not mc.condom:
                 "You push forward as you finally climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She gasps softly each time your dick pulses and shoots hot cum into her."
                 if the_girl.sluttiness > 80 or the_girl.get_opinion_score("creampies") > 0:
                     the_girl.char "That's it, fill me up!"
