@@ -823,7 +823,7 @@ label aunt_share_drinks_label(the_person):
                         the_person.char "Maybe I just need to lie down, this wine is really getting to me."
                         "[the_person.title] seems to be drifting off to sleep already. You say goodbye and head to the door."
                     $ renpy.scene("Active")
-                    call screen change_location(aunt_apartment)
+                    call change_location(aunt_apartment) from _call_change_location_4
 
                 elif decision_score <= 65:
                     # She wants your opinion about some underwear
