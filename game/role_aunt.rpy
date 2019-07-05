@@ -790,7 +790,7 @@ label aunt_share_drinks_label(the_person):
                             "She yawns dramatically and lies down on her bed."
                             $ the_person.change_happiness(2)
                             the_person.char "I'm going to have a little nap, but we should do this again some time. You're so nice to have around."
-                            mc.nmae "I'll make sure to come by again. I'll see myself out."
+                            mc.name "I'll make sure to come by again. I'll see myself out."
                                     
 
 
