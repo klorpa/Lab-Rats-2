@@ -925,7 +925,7 @@ label aunt_share_drinks_label(the_person):
 
 
                     $ renpy.scene("Active")
-                    call screen change_location(aunt_apartment)
+                    call change_location(aunt_apartment) from _call_change_location_3
                     # Same as above but she strips down and asks you for underwear sets.
                 elif decision_score <= 75:
                     # She wants to strip for you.
