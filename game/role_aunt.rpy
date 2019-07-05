@@ -874,7 +874,7 @@ label aunt_share_drinks_label(the_person):
                     $ the_person.outfit = lingerie.get_copy()
                     $ the_person.draw_person()
                     "She slips on the next set of lingerie."
-                    the_person "What about this one? Keep or toss?"
+                    the_person.char "What about this one? Keep or toss?"
                     $ the_person.draw_person(position="back_peek")
                     menu:
                         "Add it to her wardrobe.":
