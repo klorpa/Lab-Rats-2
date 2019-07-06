@@ -17,7 +17,7 @@
 label intro_cowgirl(the_girl, the_location, the_object, the_round):
     the_girl.char "Lie down for me, I want to be on top."
     "You lie down on the [the_object.name] and undo your pants. [the_girl.title] swings a leg over your body and straddles you."
-    if the_girl.outfit.vagina_visible:
+    if the_girl.outfit.vagina_visible():
         "She leans back and grinds herself against you. The shaft of your cock rubs against the lips of her pussy."
     else:
         $ blocking_item = the_girl.outift.get_visible_lower()[0]
@@ -47,8 +47,8 @@ label scene_cowgirl_1(the_girl, the_location, the_object, the_round):
 
 label scene_cowgirl_2(the_girl, the_location, the_object, the_round):
     "[the_girl.title] speeds up, working her thighs to pump herself up and down your cock."
-    if the_girl.has_large_tits:
-        if the_girl.outfit.tits_visible:
+    if the_girl.has_large_tits():
+        if the_girl.outfit.tits_visible():
             "Her large, unconstrained tits bounce up and down with each stroke."
             the_girl.char "Fuck, hold onto these!"
             "[the_girl.possessive_title] reaches down and grabs your hands. She brings them up to her tits and plants them there."
@@ -57,7 +57,7 @@ label scene_cowgirl_2(the_girl, the_location, the_object, the_round):
             $ the_clothing = the_girl.outfit.get_visible_upper[0]
             "Her large tits are barely contained by her [the_clothing.name]. You watch them bounce around as she fucks you vigorously."
     else:
-        if the_girl.outfit.tits_visible:
+        if the_girl.outfit.tits_visible():
             "She reaches up and grabs onto one of her own small tits, squeezing it while she rides you."
             the_girl.char "Ah!"
         else:
