@@ -389,7 +389,7 @@ label outro_deepthroat(the_girl, the_location, the_object, the_round):
                 "[the_girl.possessive_title] looks up at you and stares into your eyes as you climax. She tightens and relaxes her throat, as if to draw out every last drop of semen from you."
                 $ the_girl.cum_in_mouth()
                 $ deepthroat.redraw_scene(the_girl)
-                "Whn you're completely finished she pulls off slowly, kissing the tip before leaning back."
+                "When you're completely finished she pulls off slowly, kissing the tip before leaning back."
                 $ the_girl.call_dialogue("cum_mouth")
             elif the_girl.sluttiness > 60:
                 "[the_girl.possessive_title] closes her eyes and holds still as you climax. You feel her throat spasm a few times as she struggles to keep your cock in place."
