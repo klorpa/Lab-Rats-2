@@ -8576,10 +8576,11 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
             if the_person.effective_sluttiness() + (the_person.obedience-100) >= the_position.slut_requirement:
                 #You can use obedience to do it.
                 $ the_person.call_dialogue("sex_obedience_accept")
-                call condom_ask(the_person) from _call_condom_ask_1
-                if not _return:
-                    call fuck_person(the_person) from _call_fuck_person_21
-                    return
+                if the_position.skill_tag == "Vaginal": #She may demand you put on a condom.
+                    call condom_ask(the_person) from _call_condom_ask_1
+                    if not _return:
+                        call fuck_person(the_person) from _call_fuck_person_21
+                        return
                 $ the_position.redraw_scene(the_person)
                 $ change_amount = the_position.slut_requirement - the_person.sluttiness
                 $ the_person.change_happiness(-change_amount) #She looses happiness equal to the difference between her sluttiness and the requirement. ie the amount obedience covered.
