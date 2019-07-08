@@ -123,7 +123,7 @@ label alexia_intro_phase_two_label(the_person):
 
         "I missed you.":
             mc.name "When you disappeared it hurt, and I've missed you all this time. It's really strange having you pop back into my life again."
-            $ the_person.chnage_happiness(-5)
+            $ the_person.change_happiness(-5)
             $ the_person.change_obedience(3)
             "She reaches across the table for your hand and holds it in hers."
             the_person.char "I promise I will never hurt you like that again. We've got a second chance, to get to know each other as friends again."

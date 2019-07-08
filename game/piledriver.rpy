@@ -181,7 +181,8 @@ label scene_piledriver_2(the_girl, the_location, the_object, the_round):
     return
 
 label outro_piledriver(the_girl, the_location, the_object, the_round):
-    "[the_girl.title]'s pussy is warm, tight and wet as you pump in and out of it, pulling you closer and closer to climaxing with each thrust. You finally can't take any more and feel your orgasm approaching quickly."
+    "[the_girl.title]'s pussy is warm, tight and wet as you pump in and out of it, pulling you closer and closer to climaxing with each thrust."
+    "You reach your limit and feel your orgasm approaching quickly."
     mc.name "Fuck me, I'm going to cum!"
     menu:
         "Cum inside of her.":

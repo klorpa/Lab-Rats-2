@@ -32,7 +32,8 @@ label intro_deepthroat(the_girl, the_location, the_object, the_round):
     else:
         $ deepthroat.current_modifier = "blowjob"
         $ deepthroat.redraw_scene(the_girl)
-        "She kisses the tip of your cock, then slides it into her mouth. Bit by bit she takes it deeper, until you have your entire shaft down her throat. She pauses there for a moment, then starts to bob her head up and down slowly."
+        "She kisses the tip of your cock, then slides it into her mouth. Bit by bit she takes it deeper, until you have your entire shaft down her throat."
+        "She pauses there for a moment, then starts to bob her head up and down slowly."
     return
 
 label scene_deepthroat_1(the_girl, the_location, the_object, the_round):

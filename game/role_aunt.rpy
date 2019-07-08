@@ -791,7 +791,7 @@ label aunt_share_drinks_label(the_person):
                             $ the_person.change_happiness(2)
                             the_person.char "I'm going to have a little nap, but we should do this again some time. You're so nice to have around."
                             mc.nmae "I'll make sure to come by again. I'll see myself out."
-                                    
+
 
 
                         else: #It's too slutty even for her drunk state. She's bashful but doesn't try it on.
@@ -850,7 +850,7 @@ label aunt_share_drinks_label(the_person):
                     $ the_person.outfit = lingerie.get_copy()
                     $ the_person.draw_person()
                     "She slips on her new set of underwear."
-                    the_person "Okay, what do you think? Keep or toss?"
+                    the_person.char "Okay, what do you think? Keep or toss?"
                     $ the_person.draw_person(position="back_peek")
                     menu:
                         "Add it to her wardrobe.":
