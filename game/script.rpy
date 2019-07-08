@@ -3,7 +3,6 @@
 #Each position has a "position_tag". When you start having sex with someone the draw_person code will check it's dictionaryto see if it has a position_tag entry. If yes, it uses that set.
 #Otherwise, it uses the default standing images. Right now, this should have changed absolutely nothing about the way the game works.
 
-
 init -2 python:
 
     import os
@@ -622,7 +621,7 @@ init -2 python:
             amount_sold = self.sale_progress(mc.charisma,mc.focus,mc.market_skill)
             self.listener_system.fire_event("player_serums_sold_count", amount = amount_sold)
             self.listener_system.fire_event("general_work")
-            renpy.say("","You spend time making phone calls to clients and shipping out orders. You sell " + str(amount_sold) + "doses of serum.")
+            renpy.say("","You spend time making phone calls to clients and shipping out orders. You sell " + str(amount_sold) + " doses of serum.")
             return amount_sold
 
         def sale_progress(self,cha,focus,skill, slut_modifier = 0):
@@ -3176,7 +3175,6 @@ init -2 python:
                     the_image = image_set.get_image(body_type, "AA")
 
 
-                # This will break the animated clothing removal (see line 3258) because of the changes to item_displayable returning a list of items.
                 converted_mask_image = None
                 inverted_mask_image = None
                 if self.pattern is not None:
@@ -3184,14 +3182,13 @@ init -2 python:
                         mask_image = self.pattern_sets.get(position+"_"+self.pattern).get_image(body_type, tit_size)
                     else:
                         mask_image = self.pattern_sets.get(position+"_"+self.pattern).get_image(body_type, "AA")
+
                     if mask_image is None:
                         self.pattern = None
                     else:
-                        inverted_mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,-1,1]) #Takes the
+                        inverted_mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,-1,1]) #Generate the masks that will be used to determine what is colour A and B
+                        mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0])
 
-                    #renpy.show(self.name,at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name)
-
-                    #inverted_mask_image = im.MatrixColor(converted_mask_image, [
 
 
                 brightness_matrix = im.matrix.brightness(self.whiteness_adjustment)
@@ -3211,28 +3208,15 @@ init -2 python:
                     colour_pattern_matrix = im.matrix.tint(self.colour_pattern[0], self.colour_pattern[1], self.colour_pattern[2])
                     pattern_alpha_matrix = im.matrix.opacity(self.colour_pattern[3] * self.colour[3]) #The opacity of the pattern is relative to the opacity of the entire piece of clothing.
                     shader_pattern_image = im.MatrixColor(greyscale_image, pattern_alpha_matrix * colour_pattern_matrix)
-                    main_displayable = AlphaMask(shader_image, inverted_mask_image)
-                    pattern_displayable = AlphaMask(shader_pattern_image, mask_image)
 
-
-                    size_render = renpy.render(main_displayable, 10, 10, 0, 0) #We need a render object to check the actual size of the body displayable so we can build our composite accordingly.
-                    the_size = size_render.get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size ofthings inside it.
-                    x_size = __builtin__.int(the_size[0])
-                    y_size = __builtin__.int(the_size[1])
-                    composite_list = [(x_size,y_size)] #
-
-                    composite_list.append((0,0)) #Center all displaybles on the top left corner, because of how they are rendered they will all line up.
-                    composite_list.append(main_displayable)
-                    composite_list.append((0,0))
-                    composite_list.append(pattern_displayable)
-
-                    final_image = Composite(*composite_list) # Create a composite image using all of the displayables
+                    final_image = AlphaBlend(mask_image, shader_image, shader_pattern_image, alpha=False)
 
 
                 if self.pattern: #If we have been able to generate a pattern we present the composited single displayable item.
                     return final_image
-                else: #Otherwise it was either a no-pattern piece of clothing OR we failed to produce the correct pattern. Eitehr way we only return one item, but do it in a list to support .extend()
+                else: #Otherwise it was either a no-pattern piece of clothing OR we failed to produce the correct pattern.
                     return shader_image
+
 
     class Facial_Accessory(Clothing): #This class inherits from Clothing and is used for special accessories that require extra information
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False,
@@ -3581,6 +3565,16 @@ init -2 python:
 
         def get_lower_ordered(self):
             return sorted(self.lower_body, key=lambda clothing: clothing.layer)
+
+        def get_upper_top_layer(self):
+            if self.get_upper_ordered():
+                return self.get_upper_ordered()[-1]
+            return None
+
+        def get_lower_top_layer(self):
+            if self.get_lower_ordered():
+                return self.get_lower_ordered()[-1]
+            return None
 
         def get_feet_ordered(self):
             return sorted(self.feet, key=lambda clothing: clothing.layer)
@@ -7554,7 +7548,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.18.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.18.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8061,9 +8055,6 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
         "Do something... (disabled)" if (mc.location.valid_actions() == 0):
             pass
 
-        # "Examine the room.": #Removed in v0.18.0 to see if it's ever actually needed.
-        #     $ mc.can_skip_time = False
-        #     call examine_room(mc.location) from _call_examine_room_1
 
     jump game_loop
 
@@ -8708,6 +8699,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
 
     elif position_choice == "Pull Out": #Also how you leave if you don't want to fuck till you cum.
         $ the_position.current_modifier = None
+        $ mc.condom = False
         call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_2
 
     else:

@@ -2526,7 +2526,7 @@ label mom_outfit_help_crisis_label():
     $ third_outfit = None # She asks you to put something together from her wardrobe. If it's reasonable for her she'll add it to her wardrobe.
     $ caught = False #Did you get cuaght watching her strip
 
-    if the_person.sluttiness + the_person.love < 15: #She really doesn't want you to see anything
+    if the_person.sluttiness + the_person.love < 35: #She really doesn't want you to see anything
         the_person.char "Okay, I'll need a moment to get changed."
         mc.name "I can just turn around, if that would be faster."
         the_person.char "I'll just be a second. Go on, out."
@@ -2534,7 +2534,7 @@ label mom_outfit_help_crisis_label():
         "[the_person.possessive_title] shoos you out of her bedroom. You lean against her door and wait."
         the_person.char "Okay, all done. Come on in!"
 
-    elif the_person.sluttiness + the_person.love < 40: #She just asks you to turn your back, so you can peek if you want.
+    elif the_person.sluttiness + the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
         the_person.char "Okay, I'll need a moment to get changed. Could you just turn around for a second?"
         $ renpy.scene("Active")
         "You nod and turn your back to [the_person.possessive_title]. You hear her moving behind you as she starts to get undressed."
@@ -2627,13 +2627,13 @@ label mom_outfit_help_crisis_label():
 
 
     #Strip choices for the second peek section
-    if the_person.sluttiness + the_person.love < 15 or caught: #She really doesn't want you to see anything
+    if the_person.sluttiness + the_person.love < 35 or caught: #She really doesn't want you to see anything
         the_person.char "Okay, I just need to get changed again."
         $ renpy.scene("Active")
         "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
         the_person.char "Okay, come in!"
 
-    elif the_person.sluttiness  + the_person.love < 40: #She just asks you to turn your back, so you can peek if you want.
+    elif the_person.sluttiness  + the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
         the_person.char "I'm going to need to get changed again."
         $ renpy.scene("Active")
         "You turn around to give her some privacy."
@@ -2726,12 +2726,12 @@ label mom_outfit_help_crisis_label():
                 "You lay the outfit out for [the_person.possessive_title]. She looks it over and nods."
                 the_person.char "I'll try it on, but I think I like it!"
 
-                if the_person.sluttiness + the_person.love < 15 or caught: #She really doesn't want you to see anything
+                if the_person.sluttiness + the_person.love < 35 or caught: #She really doesn't want you to see anything
                     $ renpy.scene("Active")
                     "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
                     the_person.char "Okay, come back!"
 
-                elif the_person.sluttiness+ the_person.love < 40: #She just asks you to turn your back, so you can peek if you want.
+                elif the_person.sluttines s+ the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
                     the_person.char "I'm just going to get changed one last time, if you could turn around for a second."
                     $ renpy.scene("Active")
                     "You turn around to give her some privacy."

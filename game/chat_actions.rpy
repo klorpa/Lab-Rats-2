@@ -40,7 +40,7 @@ init -2 python:
         if love_requirement < 20:
             love_requirement = 20
 
-        if the_person.love < 30:
+        if the_person.love < love_requirement:
             return "Requires: " + str(love_requirement) + " Love"
         elif mc.business.event_triggers_dict.get("date_scheduled", False):
             return "You already have a date planned!"
@@ -452,7 +452,7 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
     #TODO: Vary the flirting intro and response based on sluttiness.
     mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
     $ mc.listener_system.fire_event("player_flirt", the_person = the_person)
-    $ change_amount = mc.charisma + 1 + the_person.get_opinion_score("flirting") #We still cap out at 20, but we get there a little faster or slower depending on if they like flirting )
+    $ change_amount = mc.charisma + 1 + the_person.get_opinion_score("flirting") #We still cap out at 20, but we get there a little faster or slower depending on if they like flirting
     if change_amount + the_person.sluttiness > 20:
         $ change_amount = 20 - the_person.sluttiness
         if change_amount < 0:

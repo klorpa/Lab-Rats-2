@@ -693,7 +693,8 @@ label aunt_share_drinks_label(the_person):
                     $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False)
                     if her_opinion:
                         $ the_person.discover_opinion(her_opinion)
-                        $ opinion_string = opinion_score_to_string(her_opinion)
+                        $ opinion_state = the_person.get_opinion_topic(her_opinion)
+                        $ opinion_string = opinion_score_to_string(opinion_state[0])
                         "Through her suprisingly erotic ramblings you discover that she [opinion_string] [her_opinion]."
                     else:
                         #We know everything.
@@ -791,7 +792,7 @@ label aunt_share_drinks_label(the_person):
                             $ the_person.change_happiness(2)
                             the_person.char "I'm going to have a little nap, but we should do this again some time. You're so nice to have around."
                             mc.name "I'll make sure to come by again. I'll see myself out."
-                                    
+
 
 
                         else: #It's too slutty even for her drunk state. She's bashful but doesn't try it on.

@@ -434,15 +434,15 @@ init -1:
 
 
         ##Non Clothing Accessories##
-        ass_cum = Clothing("Ass Cum", 1, False, False, "Ass_Covered", False, False, 10)
+        ass_cum = Clothing("Ass Cum", 1, False, False, "Ass_Covered", False, False, 10, whiteness_adjustment = 0.2)
 
-        tits_cum = Clothing("Tit Cum", 1, False, False, "Tits_Covered", True, False, 10)
+        tits_cum = Clothing("Tit Cum", 1, False, False, "Tits_Covered", True, False, 10, whiteness_adjustment = 0.2)
 
-        stomach_cum = Clothing("Stomach Cum", 1, False, False, "Stomach_Covered", False, False, 10)
+        stomach_cum = Clothing("Stomach Cum", 1, False, False, "Stomach_Covered", False, False, 10, whiteness_adjustment = 0.2)
 
-        mouth_cum = Facial_Accessory("Mouth Cum", 1, False, False, "Mouth_Dribble", False, False, 10)
+        mouth_cum = Facial_Accessory("Mouth Cum", 1, False, False, "Mouth_Dribble", False, False, 10, whiteness_adjustment = 0.2)
 
-        face_cum = Facial_Accessory("Face Cum", 1, False, False, "Face_Covered", False, False, 10)
+        face_cum = Facial_Accessory("Face Cum", 1, False, False, "Face_Covered", False, False, 10, whiteness_adjustment = 0.2)
 
 
         ##Creating outfits from XML##
