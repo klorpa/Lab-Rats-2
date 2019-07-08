@@ -833,7 +833,7 @@ label reserved_sex_responses(the_person):
         if the_person.sluttiness > 50:
             the_person.char "Yes! Oh god yes! Ah!"
         else:
-            the_person "Oh lord... this feeling is addictive!"
+            the_person.char "Oh lord... this feeling is addictive!"
     else:
         if the_person.sluttiness > 50:
             if the_person.relationship == "Single":
@@ -1894,7 +1894,7 @@ label introvert_seduction_response(the_person):
     return
 
 label introvert_seduction_accept_crowded(the_person):
-    if the_pesrson.relationship == "Single":
+    if the_person.relationship == "Single":
         if the_person.sluttiness < 20:
             "[the_person.possessive_title] glances around nervously."
             the_person.char "Fine. Let's get out of here."
