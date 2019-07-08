@@ -1812,7 +1812,7 @@ label introvert_sex_watch(the_person, the_sex_person, the_position):
     else:
         $ the_person.draw_person(emotion = "happy")
         # the_person.char "Come on [the_person.mc_title], [the_sex_person.name] is going to fall asleep at this rate! You're going to have to give her a little more than that."
-        "[the_person.title] watches excitedlky while you and [the_sex_person.name] [the_position.verb]. She whispers under her breath, almost to herself."
+        "[the_person.title] watches excitedly while you and [the_sex_person.name] [the_position.verb]. She whispers under her breath, almost to herself."
         the_person.char "Come on, give it to her. Harder..."
     return
 
