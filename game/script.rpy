@@ -8724,9 +8724,9 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                         $ the_person.call_dialogue("sex_angry_reject")
                         return #Don't do anything else, just return.
                     else:
-                        $ the_position.call_transition(position_choice, the_person, mc.location, the_object, round)
+                        $ the_position.call_transition(position_choice, the_person, mc.location, the_object, 1)
                         $ the_person.call_dialogue("sex_gentle_reject")
-                        $ position_choice.call_transition(the_position, the_person, mc.location, the_object, round)
+                        $ position_choice.call_transition(the_position, the_person, mc.location, the_object, 1)
                         $ position_choice = the_position
 
         call sex_description(the_person, position_choice, the_object, round+1, private = private, girl_in_charge = girl_in_charge) from _call_sex_description_2
