@@ -2731,7 +2731,7 @@ label mom_outfit_help_crisis_label():
                     "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
                     the_person.char "Okay, come back!"
 
-                elif the_person.sluttines s+ the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
+                elif the_person.sluttiness + the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
                     the_person.char "I'm just going to get changed one last time, if you could turn around for a second."
                     $ renpy.scene("Active")
                     "You turn around to give her some privacy."
