@@ -1008,6 +1008,8 @@ label aunt_share_drinks_label(the_person):
                             call fuck_person(the_person) from _call_fuck_person_22
                             "[the_person.possessive_title] is exhausted when you're finished fooling around. She lies back on the couch and quickly falls asleep."
                             "You get yourself tidied up, move the dirty glasses of wine to the kitchen, and get ready to leave."
+                            $ the_person.reset_arousal()
+                            $ the_person.review_outfit()
 
                         "Fuck her. (disabled)" if mc.current_stamina == 0:
                             pass
