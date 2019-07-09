@@ -9670,7 +9670,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
             room.add_object(make_bed())
             room.add_object(make_window())
 
-        for room in [kitchen, aunt_apartment]
+        for room in [kitchen, aunt_apartment]:
             room.add_object(make_wall())
             room.add_object(make_floor())
             room.add_object(make_chair())
