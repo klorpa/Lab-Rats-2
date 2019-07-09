@@ -216,7 +216,6 @@ label alexia_hire_label(the_person):
         mc.business.listener_system.fire_event("new_hire", the_person = the_person)
         the_person.special_role.append(employee_role)
         mc.business.add_employee_marketing(the_person)
-        mc.business.m_div.add_person(the_person)
         the_person.set_work([1,2,3], mc.business.m_div)
 
         the_person.get_role_reference_by_name("Alexia").actions.remove(alexia_hire_action) #Remove the hire action because this story event has played itself out.
