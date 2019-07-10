@@ -8557,7 +8557,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
             if the_position.skill_tag == "Vaginal": #She may demand you put on a condom.
                 call condom_ask(the_person) from _call_condom_ask
                 if not _return:
-                    call fuck_person(the_person) from _call_fuck_person_20
+                    call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_20
                     return
 
             $ the_position.call_intro(the_person, mc.location, the_object, round)
@@ -8570,7 +8570,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                 if the_position.skill_tag == "Vaginal": #She may demand you put on a condom.
                     call condom_ask(the_person) from _call_condom_ask_1
                     if not _return:
-                        call fuck_person(the_person) from _call_fuck_person_21
+                        call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_21
                         return
                 $ the_position.redraw_scene(the_person)
                 $ change_amount = the_position.slut_requirement - the_person.sluttiness
