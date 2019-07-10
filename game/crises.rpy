@@ -1059,7 +1059,7 @@ label trait_for_side_effect_label():
             mc.name "I don't think the side effects are acceptable. Revert back to a more stable version and keep going from there."
 
     the_person.char "Understood sir, I'll make the changes to all of the documentation."
-
+    $ renpy.scene("Active")
     return
 
 label water_spill_crisis_label():
