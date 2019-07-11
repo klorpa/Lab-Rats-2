@@ -49,7 +49,7 @@ label scene_cowgirl_2(the_girl, the_location, the_object, the_round):
     "[the_girl.title] speeds up, working her thighs to pump herself up and down your cock."
     if the_girl.has_large_tits():
         if the_girl.outfit.tits_visible():
-            "Her large, unconstrained tits bounce up and down with each stroke."
+            "Her large, unconstrained tits bouncse up and down with each stroke."
             the_girl.char "Fuck, hold onto these!"
             "[the_girl.possessive_title] reaches down and grabs your hands. She brings them up to her tits and plants them there."
             "She moans and grinds your hands into her breasts, then puts her hands on your chest and focuses on fucking you."

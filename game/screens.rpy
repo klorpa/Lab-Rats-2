@@ -227,7 +227,7 @@ init -2 python:
                 if isinstance(act, list):
                     extra_args = act[1] #second part of list, which is itself a list of extra parameters.
                     act = act[0] #rename it so the rest works properly.
-                    
+
                 display_name = ""
                 display = False
                 if act.is_action_enabled(extra_args):
@@ -245,6 +245,117 @@ init -2 python:
 
         act_choice = renpy.display_menu(valid_actions_list,True,"Choice")
         return act_choice #We've shown the screen and the player picked something. return that to them.
+
+screen main_choice_display(elements_list, draw_hearts_for_people = True, person_preview_args = None): #Elements_list is a list of lists, with each internal list recieving an individual column
+    #The first element in a column should be the title, either text or a displayable. After that it should be a tuple of (displayable/text, return_value).
+
+    #[["Title",["Item",Return] ]]
+
+    hbox:
+        spacing 10
+        xalign 0.5
+        yalign 0.2
+        xanchor 0.5
+        yanchor 0.0
+        for count in __builtin__.range(len(elements_list)):
+            frame:
+                background "gui/LR2_Main_Choice_Box.png"
+                xsize 380
+                ysize 700
+                $ title_element = elements_list[count][0]
+                if isinstance(title_element, basestring):
+                    text title_element xalign 0.5 ypos 45 anchor (0.5,0.5) size 32 style "menu_text_style" xsize 200
+                else:
+                    add title_element xalign 0.5 ypos 45 anchor (0.5,0.5)
+
+
+                $ column_elements = elements_list[count][1:]
+                viewport:
+                    scrollbars "vertical"
+                    mousewheel True
+                    xalign 0.512
+                    xanchor 0.5
+                    yanchor 0.0
+
+                    ypos 100
+                    xsize 370
+                    ysize 587
+                    side_spacing -60
+                    vbox:
+                        for item in column_elements:
+
+                            #Key values we want to know about to display our text button.
+                            $ title = ""
+                            $ return_value = None
+
+                            $ hovered_list = []
+                            $ unhovered_list = []
+                            $ the_tooltip = None
+
+                            $ display = True
+                            $ is_sensitive = True
+
+                            if isinstance(item,list): #It's a title/return value pair. Show the title, return the value.
+                                $ title = item[0]
+                                $ return_value = item[1]
+
+                            elif isinstance(item,Person): #It's a person. Format it for a person list.
+                                $ title = format_titles(item)
+                                $ return_value = item
+
+                                if draw_hearts_for_people:
+                                    $ title += "\n"
+                                    $ title += get_heart_image_list(item)
+                                if person_preview_args is None:
+                                    $ person_preview_args = {}
+                                $ hovered_list.append(Function(item.draw_person, **person_preview_args))
+                                $ unhovered_list.append(Function(renpy.scene, "Active"))
+
+
+                            elif isinstance(item,Action):
+                                $ title = ""
+                                $ return_value = item
+                                $ display = False #Default display state for an action is to hide it unless it is enabled or has a disabled slug
+                                $ extra_args = None
+                                if item.is_action_enabled(extra_args):
+                                    $ title = item.name
+                                    $ display = True
+
+                                elif item.is_disabled_slug_shown(extra_args):
+                                    $ title = item.get_disabled_slug_name(extra_args)
+                                    $ display = True
+
+                                if item.menu_tooltip:
+                                    $ the_tooltip = item.menu_tooltip
+
+                            else: #It's (probably) just text. Display the text and return the text.
+                                $ title = item
+                                $ return_value = item
+
+                            if " (tooltip)" in title:
+                                $ the_tooltip = title.split(" (tooltip)",1)[1]
+                                $ title = title.replace(" (tooltip)" + the_tooltip,"")
+
+                            if " (disabled)" in title:
+                                $ title = title.replace(" (disabled)", "")
+                                $ is_sensitive = False
+
+                            if display: #If we haven't encountered any reason to completely hide the item we display it now.
+                                textbutton title:
+                                    xsize 360
+                                    ysize 120
+                                    xalign 0.5
+                                    yalign 0.0
+                                    xanchor 0.5
+                                    yanchor 0.0
+                                    style "textbutton_style"
+                                    text_style "textbutton_text_style"
+                                    text_align (0.5,0.5)
+                                    hovered hovered_list
+                                    unhovered unhovered_list
+                                    action Return(return_value)
+                                    tooltip the_tooltip
+                                    sensitive is_sensitive
 
 screen person_choice(people, draw_hearts = False, person_prefix = None, person_suffix = None, show_person_preview = True, person_preview_args = None):
     style_prefix "choice"
@@ -282,13 +393,6 @@ screen person_choice(people, draw_hearts = False, person_prefix = None, person_s
                 else:
                     textbutton i action Return(i)
 
-                # if " (tooltip)" in i.caption:
-                #     $ the_tooltip = i.caption.split(" (tooltip)",1)[1]
-                # if " (disabled)" in i.caption:
-                #     textbutton i.caption.replace(" (disabled)", "").replace(" (tooltip)" + the_tooltip,"") sensitive False tooltip the_tooltip #Replace the full tooltip bit with nothing.
-                # else:
-                #     textbutton i.caption.replace(" (tooltip)" + the_tooltip,"") action i.action tooltip the_tooltip
-
         vbox:
             xalign 0.67
             yalign 0.5
@@ -316,15 +420,6 @@ screen person_choice(people, draw_hearts = False, person_prefix = None, person_s
                 else:
                     textbutton j action Return(j)
 
-
-                # $ the_tooltip = ""
-                # if " (tooltip)" in j.caption:
-                #     $ the_tooltip = j.caption.split(" (tooltip)",1)[1]
-                #
-                # if " (disabled)" in j.caption:
-                #     textbutton j.caption.replace(" (disabled)", "").replace(" (tooltip)" + the_tooltip,"") sensitive False tooltip the_tooltip
-                # else:
-                #     textbutton j.caption.replace(" (tooltip)" + the_tooltip,"") action j.action tooltip the_tooltip
 
 
 screen choice(items):

@@ -693,8 +693,7 @@ label aunt_share_drinks_label(the_person):
                     $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False)
                     if her_opinion:
                         $ the_person.discover_opinion(her_opinion)
-                        $ opinion_state = the_person.get_opinion_topic(her_opinion)
-                        $ opinion_string = opinion_score_to_string(opinion_state[0])
+                        $ opinion_string = opinion_score_to_string(the_person.get_opinion_score(her_opinion))
                         "Through her suprisingly erotic ramblings you discover that she [opinion_string] [her_opinion]."
                     else:
                         #We know everything.
@@ -824,7 +823,7 @@ label aunt_share_drinks_label(the_person):
                         the_person.char "Maybe I just need to lie down, this wine is really getting to me."
                         "[the_person.title] seems to be drifting off to sleep already. You say goodbye and head to the door."
                     $ renpy.scene("Active")
-                    call change_location(aunt_apartment) from _call_change_location_4
+                    call change_location(aunt_apartment) from _call_change_location_3
 
                 elif decision_score <= 65:
                     # She wants your opinion about some underwear
@@ -924,9 +923,8 @@ label aunt_share_drinks_label(the_person):
                     the_person.char "Stop by again some time soon though, we can do this again."
                     mc.name "Sure thing [the_person.title], I'll be by again soon."
 
-
                     $ renpy.scene("Active")
-                    call change_location(aunt_apartment) from _call_change_location_3
+                    call change_location(aunt_apartment) from _call_change_location_4
                     # Same as above but she strips down and asks you for underwear sets.
                 elif decision_score <= 75:
                     # She wants to strip for you.
