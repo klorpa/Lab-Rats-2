@@ -71,18 +71,6 @@ init -2 python:
         return_title = "{color=" + the_person.char.who_args["color"] + "}" + "{font=" + the_person.char.what_args["font"] + "}" + person_title + "{/font}{/color}"
         return return_title
 
-    # def format_person_list(list_of_people, draw_hearts = False): #Takes a list of people and returns a properly formated list of tuples with [name,person_object] for use in a choice statement. Person font and colour are applied.
-    #     #TODO: Add extra things here, like hearts as a sluttiness indicator.
-    #     tuple_list = []
-    #     for person in list_of_people:
-    #         tuple_string = format_titles(person)
-    #
-    #         if draw_hearts: #If we want to draw sluttiness hearts under someone add them to the image list now
-    #             tuple_string += "\n"
-    #             tuple_string += get_heart_image_list(person)
-    #
-    #         tuple_list.append([tuple_string,person]) #Close all of our modifiers
-    #     return tuple_list
 
     def get_coloured_arrow(direction):
         if direction < 0:
@@ -2813,6 +2801,14 @@ init -2 python:
                     count += 1
             return count
 
+        def get_valid_actions(self):
+            return_list = []
+            for act in self.actions:
+                if act.is_action_enabled() or act.is_disabled_slug_shown():
+                    return_list.append(act)
+            return return_list
+
+
 
     class Action(renpy.store.object): #Contains the information about actions that can be taken in a room. Dispayed when you are asked what you want to do somewhere.
         # Also used for crises, those are not related to any partiular room and are not displayed in a list. They are forced upon the player when their requirement is met.
@@ -3298,8 +3294,8 @@ init -2 python:
 
         def get_image(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
-            if special_modifier:
-                if renpy.loadable(self.images[index_string + "_" + special_modifier]):
+            if not special_modifier is None:
+                if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
                     index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
 
             return Image("character_images/" + self.images[index_string])
@@ -4133,6 +4129,10 @@ init -2 python:
     def make_bed():
         the_bed = Object("bed",["Sit","Lay","Low"], sluttiness_modifier = 10, obedience_modifier = 10)
         return the_bed
+
+    def make_couch():
+        the_couch = Object("couch",["Sit","Lay","Low"], sluttiness_modifier = 5, obedience_modifier = -5)
+        return the_couch
 
     def make_floor():
         the_floor = Object("floor",["Lay","Kneel"], sluttiness_modifier = -10, obedience_modifier = -10)
@@ -5953,11 +5953,24 @@ screen trait_tooltip(the_trait,given_xalign=0.9,given_yalign=0.1):
             text the_trait.desc style "menu_text_style" xalign 0.5 xanchor 0.5
 
 screen trait_list_tooltip(the_traits):
-    vbox:
-        xalign 0.9
+    hbox:
+        spacing 50
+        xalign 0.5
         yalign 0.1
+        xanchor 0.0
         for trait in the_traits:
-            add trait_tooltip(trait, 0.0,0.0)
+            frame: #TODO: Functionally identical to trait Figure out how to put this into a separate screen or displayable.
+                background "#888888"
+                xalign 0.0
+                yalign 0.0
+                xanchor 1.0
+                yanchor 0.0
+                vbox:
+                    xsize 500
+                    text trait.name style "menu_text_style" xalign 0.5 xanchor 0.5
+                    text trait.positive_slug style "menu_text_style" size 14 color "#98fb98" xalign 0.5 xanchor 0.5
+                    text trait.build_negative_slug() style "menu_text_style" size 14 color "#ff0000" xalign 0.5 xanchor 0.5
+                    text trait.desc style "menu_text_style" xalign 0.5 xanchor 0.5
 
 
 screen serum_trade_ui(inventory_1,inventory_2,name_1="Player",name_2="Business"): #Lets you trade serums back and forth between two different inventories. Inventory 1 is assumed to be the players.
@@ -7548,7 +7561,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.18.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.18.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -7973,6 +7986,79 @@ label create_outfit(the_outfit):
     return
 
 label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS YOU TAKE
+    # You're a clever one, I like you. Here's a sneak peak at the v0.19 menu rework, if you want to enable it:
+    # $ mc.can_skip_time = True
+    #
+    # $ people_list = ["Talk to Someone"]
+    # $ people_list.extend(mc.location.people)
+    #
+    # $ actions_list = ["Do Something"]
+    # $ actions_list.extend(mc.location.get_valid_actions())
+    # $ actions_list.append(["Go somewhere else", "Travel"])
+    #
+    # call screen main_choice_display([people_list,actions_list])
+    #
+    # $ picked_option = _return
+    # if isinstance(picked_option, Person):
+    #     $ mc.can_skip_time = False
+    #     if picked_option == "Back":
+    #         $ renpy.jump("game_loop")
+    #     else:
+    #         $ picked_option.draw_person()
+    #         $ enabled_talk_events = []
+    #         python:
+    #             for possible_talk_event in picked_option.on_talk_event_list:
+    #                 if possible_talk_event.is_action_enabled(picked_option):
+    #                     enabled_talk_events.append(possible_talk_event)
+    #         if enabled_talk_events:
+    #             #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
+    #             $ talk_action = get_random_from_list(enabled_talk_events)
+    #             $ talk_action.call_action(picked_option)
+    #             $ picked_option.on_talk_event_list.remove(talk_action)
+    #
+    #
+    #         else:
+    #             if picked_option.title is None:
+    #                 "You decide to approach the stranger and introduce yourself."
+    #             else:
+    #                 "You approach [picked_option.title] and chat for a little bit."
+    #                 $ picked_option.call_dialogue("greetings")
+    #
+    #             call talk_person(picked_option) from _call_talk_person
+    #
+    # elif isinstance(picked_option, Action):
+    #     $ picked_option.call_action()
+    #
+    # else:# picked_option == "Travel":
+    #     $ mc.can_skip_time = False
+    #     call screen map_manager
+    #     $ new_location = _return
+    #     call change_location(new_location) from _call_change_location #_return is the location returned from the map manager.
+    #     if new_location.people: #There are people in the room, let's see if there are any room events
+    #         $ enabled_room_events = []
+    #         python: #Scan through all the people and...
+    #             for a_person in new_location.people:
+    #                 for possible_room_event in a_person.on_room_enter_event_list:
+    #                     if possible_room_event.is_action_enabled(a_person): #See what events the are enabled...
+    #                         enabled_room_events.append([a_person, possible_room_event]) #Then keep track of the person so we know who to remove it from if it triggers.
+    #
+    #         if enabled_room_events: #If there are room events to take care of run those right now.
+    #             $ picked_event = get_random_from_list(enabled_room_events)
+    #             $ picked_event[0].on_room_enter_event_list.remove(picked_event[1]) #Remove the event from their list since we will be running it.
+    #             $ picked_event[1].call_action(picked_event[0]) #Run the action with the person as an extra argument.
+    #
+    #         elif new_location in [mc.business.m_div, mc.business.p_div, mc.business.r_div, mc.business.s_div, mc.business.h_div]: #There are no room events, so generate a quick room greeting from an employee if one is around.
+    #             $ possible_greetings = []
+    #             python:
+    #                 for a_person in new_location.people:
+    #                     if mc.business.get_employee_title(a_person) != "None":
+    #                         possible_greetings.append(a_person)
+    #             $ the_greeter = get_random_from_list(possible_greetings)
+    #             if the_greeter:
+    #                 $ the_greeter.draw_person()
+    #                 $ the_greeter.call_dialogue("work_enter_greeting")
+    #                 $ renpy.scene("Active")
+    #
 
     $ mc.can_skip_time = True
     menu:
@@ -8170,20 +8256,6 @@ label talk_person(the_person):
 
         "Modify her wardrobe. (disabled)\n{size=22}Requires: Obedience 120{/size}" if the_person.obedience < 120:
             pass
-
-        # "Fire them!" if not mc.business.get_employee_title(the_person) == "None":
-        #     "You tell [the_person.name] to collect their things and leave the building."
-        #     $ mc.business.remove_employee(the_person)
-        #
-        #     #TODO: See if we actually need to managing the person's location now that we can manipulate their schedule.
-        #     if rd_division.has_person(the_person):
-        #         $ rd_division.remove_person(the_person)
-        #     elif p_division.has_person(the_person):
-        #         $ p_division.remove_person(the_person)
-        #     elif office.has_person(the_person):
-        #         $ office.remove_person(the_person)
-        #     elif m_division.has_person(the_person):
-        #         $ m_division.remove_person(the_person)
 
         "Take a closer look at [the_person.title].":
             call examine_person(the_person) from _call_examine_person
@@ -8557,7 +8629,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
             if the_position.skill_tag == "Vaginal": #She may demand you put on a condom.
                 call condom_ask(the_person) from _call_condom_ask
                 if not _return:
-                    call fuck_person(the_person) from _call_fuck_person_20
+                    call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_20
                     return
 
             $ the_position.call_intro(the_person, mc.location, the_object, round)
@@ -8570,7 +8642,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                 if the_position.skill_tag == "Vaginal":
                     call condom_ask(the_person) from _call_condom_ask_1
                     if not _return:
-                        call fuck_person(the_person) from _call_fuck_person_21
+                        call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_21
                         return
                 $ the_position.redraw_scene(the_person)
                 $ change_amount = the_position.slut_requirement - the_person.sluttiness
@@ -9726,6 +9798,22 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
 
         gym.add_object(make_wall())
         gym.add_object(make_floor())
+
+        aunt_apartment.add_object(make_wall())
+        aunt_apartment.add_object(make_floor())
+        aunt_apartment.add_object(make_couch())
+        aunt_apartment.add_object(make_table())
+        aunt_apartment.add_object(make_chair())
+
+        aunt_bedroom.add_object(make_wall())
+        aunt_bedroom.add_object(make_floor())
+        aunt_bedroom.add_object(make_window())
+        aunt_bedroom.add_object(make_bed())
+
+        cousin_bedroom.add_object(make_wall())
+        cousin_bedroom.add_object(make_floor())
+        cousin_bedroom.add_object(make_window())
+        cousin_bedroom.add_object(make_bed())
 
         for place in list_of_places:
             if place.public:

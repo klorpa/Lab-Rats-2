@@ -693,7 +693,7 @@ label aunt_share_drinks_label(the_person):
                     $ her_opinion = the_person.get_random_opinion(include_known = False, include_sexy = True, include_normal = False)
                     if her_opinion:
                         $ the_person.discover_opinion(her_opinion)
-                        $ opinion_string = opinion_score_to_string(her_opinion)
+                        $ opinion_string = opinion_score_to_string(the_person.get_opinion_score(her_opinion))
                         "Through her suprisingly erotic ramblings you discover that she [opinion_string] [her_opinion]."
                     else:
                         #We know everything.
@@ -790,7 +790,7 @@ label aunt_share_drinks_label(the_person):
                             "She yawns dramatically and lies down on her bed."
                             $ the_person.change_happiness(2)
                             the_person.char "I'm going to have a little nap, but we should do this again some time. You're so nice to have around."
-                            mc.nmae "I'll make sure to come by again. I'll see myself out."
+                            mc.name "I'll make sure to come by again. I'll see myself out."
 
 
 
@@ -823,7 +823,7 @@ label aunt_share_drinks_label(the_person):
                         the_person.char "Maybe I just need to lie down, this wine is really getting to me."
                         "[the_person.title] seems to be drifting off to sleep already. You say goodbye and head to the door."
                     $ renpy.scene("Active")
-                    call screen change_location(aunt_apartment)
+                    call change_location(aunt_apartment) from _call_change_location_3
 
                 elif decision_score <= 65:
                     # She wants your opinion about some underwear
@@ -874,7 +874,7 @@ label aunt_share_drinks_label(the_person):
                     $ the_person.outfit = lingerie.get_copy()
                     $ the_person.draw_person()
                     "She slips on the next set of lingerie."
-                    the_person "What about this one? Keep or toss?"
+                    the_person.char "What about this one? Keep or toss?"
                     $ the_person.draw_person(position="back_peek")
                     menu:
                         "Add it to her wardrobe.":
@@ -925,7 +925,7 @@ label aunt_share_drinks_label(the_person):
 
 
                     $ renpy.scene("Active")
-                    call screen change_location(aunt_apartment)
+                    call change_location(aunt_apartment) from _call_change_location_4
                     # Same as above but she strips down and asks you for underwear sets.
                 elif decision_score <= 75:
                     # She wants to strip for you.
@@ -1005,6 +1005,7 @@ label aunt_share_drinks_label(the_person):
                     menu:
                         "Fuck her." if mc.current_stamina > 0:
                             call fuck_person(the_person) from _call_fuck_person_22
+                            $ the_person.reset_arousal()
                             "[the_person.possessive_title] is exhausted when you're finished fooling around. She lies back on the couch and quickly falls asleep."
                             "You get yourself tidied up, move the dirty glasses of wine to the kitchen, and get ready to leave."
 

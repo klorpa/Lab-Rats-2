@@ -1059,6 +1059,7 @@ label trait_for_side_effect_label():
             mc.name "I don't think the side effects are acceptable. Revert back to a more stable version and keep going from there."
 
     the_person.char "Understood sir, I'll make the changes to all of the documentation."
+    $ renpy.scene("Active")
 
     return
 
@@ -2731,7 +2732,7 @@ label mom_outfit_help_crisis_label():
                     "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
                     the_person.char "Okay, come back!"
 
-                elif the_person.sluttines s+ the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
+                elif the_person.sluttiness + the_person.love < 60: #She just asks you to turn your back, so you can peek if you want.
                     the_person.char "I'm just going to get changed one last time, if you could turn around for a second."
                     $ renpy.scene("Active")
                     "You turn around to give her some privacy."
@@ -2955,7 +2956,7 @@ label mom_selfie_label():
                 python:
                     for i in range(3):
                         the_person.outfit.remove_random_upper(top_layer_first = True)
-                        if the_person.outfit.panties_covered: #If we get down to her panties keep them on, because that's sexier.
+                        if the_person.outfit.panties_covered(): #If we get down to her panties keep them on, because that's sexier.
                             the_person.outfit.remove_random_lower(top_layer_first = True)
                 $ the_person.draw_person(emotion = "happy")
                 "[the_person.possessive_title] sends you a picture of herself stripped down in front of her bedroom mirror."
@@ -2965,7 +2966,7 @@ label mom_selfie_label():
                 python:
                     for i in range(3):
                         the_person.outfit.remove_random_upper(top_layer_first = True)
-                        if the_person.outfit.panties_covered:
+                        if the_person.outfit.panties_covered():
                             the_person.outfit.remove_random_lower(top_layer_first = True)
                 $ the_person.draw_person(emotion = "happy")
                 "[the_person.possessive_title] sends you a picture of herself stripped down in the office bathroom."
@@ -3077,7 +3078,7 @@ label mom_selfie_label():
             the_person.char "All your hard work has inspired me [the_person.mc_title], I'm going out for a walk to stay in shape!"
             $ the_person.draw_person(emotion = "happy")
             "[the_person.possessive_title] sends you a short video she took of herself outside. She's keeping up a brisk walk and seems slightly out of breath."
-            if not the_person.outfit.wearing_bra and the_person.has_large_tits:
+            if not the_person.outfit.wearing_bra() and the_person.has_large_tits():
                 "She doesn't seem to realise it but it's very obvious [the_person.possessive_title] isn't wearing a bra under her shirt. Her sizeable breasts heave up and down with each step."
 
     else:
@@ -3520,7 +3521,7 @@ label lily_morning_encounter_label():
         "[the_person.title] closes her door behind her, then notices you. She turns and smiles."
         the_person.char "Morning [the_person.mc_title], I didn't think you'd be up yet."
         mc.name "Yep, early start today. What are you up to?"
-        if the_person.outfit.wearing_panties:
+        if the_person.outfit.wearing_panties():
             "She starts to walk alongside you and doesn't seem to mind being in her underwear."
         else:
             "She starts to walk alongside you and doesn't seem to mind being naked."
@@ -3560,7 +3561,7 @@ label lily_morning_encounter_label():
         the_person.char "Morning [the_person.mc_title], I was wondering if you were going to be up now."
         mc.name "Yep, early start today. What are you up to?"
         the_person.char "I was just going to get some laundry out of the machine."
-        if the_person.outfit.wearing_panties:
+        if the_person.outfit.wearing_panties():
             "[the_person.possessive_title] thumbs her underwear playfully."
         else:
             "[the_person.possessive_title] absentmindedly runs her hands over her hips."

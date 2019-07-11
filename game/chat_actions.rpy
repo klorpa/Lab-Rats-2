@@ -118,7 +118,7 @@ label new_title_menu(the_person):
     python:
         for title in get_titles(the_person):
             title_tuple.append([title,title])
-            tuple_list.append(["Do not change her title.","Back"])
+        tuple_list.append(["Do not change her title.","Back"])
         title_choice = renpy.display_menu(title_tuple,True,"Choice")
     return title_choice
 
@@ -128,7 +128,7 @@ label new_mc_title_menu(the_person):
     python:
         for title in get_player_titles(the_person):
             title_tuple.append([title,title])
-            tuple_list.append(["Do not change your title.","Back"])
+        tuple_list.append(["Do not change your title.","Back"])
         title_choice = renpy.display_menu(title_tuple,True,"Choice")
     return title_choice
 
@@ -138,7 +138,7 @@ label new_possessive_title_menu(the_person):
     python:
         for title in get_possessive_titles(the_person):
             title_tuple.append([title,title])
-            tuple_list.append(["Do not change your title.","Back"])
+        tuple_list.append(["Do not change your title.","Back"])
         title_choice = renpy.display_menu(title_tuple,True,"Choice")
     return title_choice
 

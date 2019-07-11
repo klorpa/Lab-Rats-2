@@ -219,7 +219,7 @@ label outro_piledriver(the_girl, the_location, the_object, the_round):
 
         "Cum on her face.":
             if mc.condom:
-                "You pull your cock out at the last minute, whipping the condom off with one hand as you aim it towards [teh_girl.possessive_title]'s face."
+                "You pull your cock out at the last minute, whipping the condom off with one hand as you aim it towards [the_girl.possessive_title]'s face."
             else:
                 "You pull your cock out at the last minute, stroking it off with one hand as you point it towards [the_girl.possessive_title]'s face."
             $ the_girl.cum_on_face()
