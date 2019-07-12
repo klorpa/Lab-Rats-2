@@ -207,7 +207,8 @@ label outro_piledriver(the_girl, the_location, the_object, the_round):
                     $ the_girl.cum_in_vagina()
                     $ piledriver.redraw_scene(the_girl)
                     the_girl.char "Mmmm, it's so nice and warm..."
-                    "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]. You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
+                    "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]."
+                    "You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
 
             else:
                 the_girl.char "Wait, make sure to pull out!"
@@ -215,7 +216,8 @@ label outro_piledriver(the_girl, the_location, the_object, the_round):
                 $ the_girl.cum_in_vagina()
                 $ piledriver.redraw_scene(the_girl)
                 the_girl.char "Oh fuck... what if I get pregnant [the_girl.mc_title]?"
-                "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]. You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
+                "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]."
+                "You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
 
         "Cum on her face.":
             if mc.condom:
