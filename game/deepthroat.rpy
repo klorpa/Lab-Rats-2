@@ -175,7 +175,8 @@ label scene_deepthroat_2(the_girl, the_location, the_object, the_round):
                     "In response she bottoms out on your dick. She rocks her head left and right, grinding her face into your crotch to take as much of your length as possible."
                     "She tenses and and relaxes her throat rhythmically, gently massaging your shaft with it."
                     mc.name "Oh... maybe it's both then. A talent and a passion for gagging on dick. Either way, you're a perfect little cock sucker, aren't you."
-                    "After a long moment she bobs her head back and breathes deeply through her nose. You let her recover before putting pressure on the back of her head to encourage her to go back to sucking you off."
+                    "After a long moment she bobs her head back and breathes deeply through her nose."
+                    "You let her recover before putting pressure on the back of her head to encourage her to go back to sucking you off."
                 elif the_girl.get_opinion_score("giving blowjobs") < 0:
                     $ deepthroat.current_modifier = None
                     $ deepthroat.redraw_scene(the_girl)
@@ -368,9 +369,11 @@ label outro_deepthroat(the_girl, the_location, the_object, the_round):
             mc.name "Fuck, I'm about to cum! I'm going to fill that cute mouth of yours up!"
             "You keep your hand on the back of [the_girl.title]'s head to make it clear you want her to keep sucking. She keeps throating you until you tense up and start to pump your load out into her mouth."
             if the_girl.sluttiness > 70:
-                "[the_girl.title] doesn't even flinch as you shoot your hot cum across the back of her throat. She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
+                "[the_girl.title] doesn't even flinch as you shoot your hot cum across the back of her throat."
+                "She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
             else:
-                "[the_girl.title] stops when you shoot your first blast of hot cum across the back of her throat. She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
+                "[the_girl.title] stops when you shoot your first blast of hot cum across the back of her throat."
+                "She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
 
             $ the_girl.cum_in_mouth()
             $ deepthroat.redraw_scene(the_girl)

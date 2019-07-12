@@ -243,16 +243,20 @@ label outro_blowjob(the_girl, the_location, the_object, the_round):
             mc.name "Fuck, I'm about to cum!"
             "You keep a hand on the back of [the_girl.title]'s head to make it clear you want her to keep sucking. She keeps blowing you until you tense up and start to pump your load out into her mouth."
             if the_girl.effective_sluttiness() > 70:
-                "[the_girl.possessive_title] doesn't even flinch as you shoot your hot cum across the back of her throat. She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
+                "[the_girl.possessive_title] doesn't even flinch as you shoot your hot cum across the back of her throat."
+                "She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
             else:
-                "[the_girl.possessive_title] stops when you shoot your first blast of hot cum across the back of her throat. She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
+                "[the_girl.possessive_title] stops when you shoot your first blast of hot cum across the back of her throat."
+                "She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
 
             $ the_girl.cum_in_mouth()
             $ blowjob.redraw_scene(the_girl)
             if the_girl.effective_sluttiness() > 80:
-                "Once you've had a good long look at your work [the_girl.title] closes her mouth and swallows loudly. It takes a few big gulps to get every last drop of your cum down, but when she opens up again it's all gone."
+                "Once you've had a good long look at your work [the_girl.title] closes her mouth and swallows loudly."
+                "It takes a few big gulps to get every last drop of your cum down, but when she opens up again it's all gone."
             else:
-                "Once you've had a good long look at your work [the_girl.title] leans over to the side and lets your cum dribble out slowly onto the ground. She straightens up and wipes her lips with the back of her hand."
+                "Once you've had a good long look at your work [the_girl.title] leans over to the side and lets your cum dribble out slowly onto the ground."
+                "She straightens up and wipes her lips with the back of her hand."
 
             $ blowjob.current_modifier = None
             $ blowjob.redraw_scene(the_girl)
