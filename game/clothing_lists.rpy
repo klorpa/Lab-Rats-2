@@ -89,10 +89,8 @@ init -1:
         bowl_hair = Clothing("Bowl Hair", 1, True, True, "Coco_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
         hair_styles.append(bowl_hair)
 
-
-
         bow_hair = Clothing("Bow Hair", 1, True, True, "Bow_Hair", False, False, 0) #NO IMAGES
-        # hair_styles.append(bow_hair) #TODO: Still falls into the uncanny valley.
+        hair_styles.append(bow_hair) #TODO: Still falls into the uncanny valley.
 
 
         ##CLOTHING##
@@ -243,7 +241,7 @@ init -1:
 
         towel_bottom = Clothing("Towel", 1, True, True, "Towel", False, False, 0, is_extension = True)
         towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom)
-        # dress_list.append(towel) #TEMPORARY FOR TESTING
+        dress_list.append(towel) #TEMPORARY FOR TESTING
 
         ##Shirts
         shirts_list = []
@@ -364,9 +362,7 @@ init -1:
         earings_list.append(sunglasses)
 
         head_towel = Clothing("Head Towel", 2, False, False, "Head_Towel", False, False, 0, body_dependant = False)
-        # earings_list.append(head_towel) #TEMPORARY FOR TESTING
-
-
+        earings_list.append(head_towel) #TEMPORARY FOR TESTING
 
 
         #TODO: Add a makeup section
