@@ -990,9 +990,9 @@ init -2 python:
             if self.expires:
                 self.duration_counter += 1
 
-        def run_on_apply(self, the_person):
+        def run_on_apply(self, the_person, add_to_log = True):
             for trait in self.traits + self.side_effects:
-                trait.run_on_apply(the_person)
+                trait.run_on_apply(the_person, add_to_log)
 
         def run_on_remove(self, the_person):
             for trait in self.traits + self.side_effects:
