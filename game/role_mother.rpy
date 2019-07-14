@@ -38,7 +38,7 @@ label mom_weekly_pay_label(the_person):
                 $ the_person.change_happiness(5)
                 $ the_person.change_love(3)
                 $ the_person.draw_person(position = "sitting", emotion = "happy")
-                the_person.char "Every little bit does sweetheart. Thank you so much."
+                the_person.char "Every little bit does [the_person.mc_title]. Thank you so much."
                 "She gives you a hug and turns her attention back to the bills."
 
             "Help out.\n{size=22}-$100{/size} (disabled)" if mc.business.funds < 100:
@@ -93,14 +93,14 @@ label mom_weekly_pay_label(the_person):
                         "You hand the serum to [the_person.possessive_title], followed by the cash."
                         the_person.char "Okay, so that's all for now?"
                         mc.name "That's all. I'll just be keeping an eye on you in the future, but you don't need to worry about that."
-                        the_person.char "Well thank you sweetheart, this money will really make a difference. I'm so proud of you!"
+                        the_person.char "Well thank you [the_person.mc_title], this money will really make a difference. I'm so proud of you!"
                     else:
                         mc.name "Actually, I don't have anything right now. Maybe next wek though, okay?"
-                        the_person.char "Okay sweetheart, thanks for at least thinking about it."
+                        the_person.char "Okay [the_person.mc_title], thanks for at least thinking about it."
                 else:
                     $ mc.business.event_triggers_dict["Mom_Serum_Test"] = 1
                     mc.name "I have something you could help me with Mom."
-                    the_person.char "What is it sweetheart? I'll do whatever I can for you."
+                    the_person.char "What is it [the_person.mc_title]? I'll do whatever I can for you."
                     mc.name "We have a little bit of a research bottleneck at work. I have something I'd like you to test for me."
                     the_person.char "Oh, okay. If it helps I can be your for hire test subject!"
                     mc.name "Excellent, let me just see if I have anything with me right now..."
@@ -110,16 +110,16 @@ label mom_weekly_pay_label(the_person):
                         "You hand the serum to [the_person.possessive_title], followed by the cash."
                         the_person.char "Okay, so that's all for now?"
                         mc.name "That's all. I'll just be keeping an eye on you in the future, but you don't need to worry about that."
-                        the_person.char "Well thank you sweetheart, this money will really make a difference. I'm so proud of you!"
+                        the_person.char "Well thank you [the_person.mc_title], this money will really make a difference. I'm so proud of you!"
                     else:
                         mc.name "Actually, I don't have anything right now. Maybe next wek though, okay?"
-                        the_person.char "Okay sweetheart, thanks for at least thinking about it."
+                        the_person.char "Okay [the_person.mc_title], thanks for at least thinking about it."
 
 
             "Nothing this week.":
                 mc.name "Sorry Mom, but I'm tight on cash right now as well. Maybe next week, okay?"
                 "[the_person.possessive_title] nods and turns back to her bills."
-                the_person.char "I understand sweetheart. Now don't let me keep you, I'm sure you were up to something important."
+                the_person.char "I understand [the_person.mc_title]. Now don't let me keep you, I'm sure you were up to something important."
                 pass
 
             #TODO: pay her to fuck you.
