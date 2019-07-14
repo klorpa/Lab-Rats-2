@@ -1918,7 +1918,7 @@ init -2 python:
 
         def give_serum(self,the_serum_design, add_to_log = True): ##Make sure you are passing a copy of the serum, not a reference.
             self.serum_effects.append(the_serum_design)
-            the_serum_design.run_on_apply(self)
+            the_serum_design.run_on_apply(self, add_to_log)
 
         def is_under_serum_effect(self):
             if self.serum_effects:
