@@ -9805,16 +9805,6 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         aunt_apartment.add_object(make_table())
         aunt_apartment.add_object(make_chair())
 
-        aunt_bedroom.add_object(make_wall())
-        aunt_bedroom.add_object(make_floor())
-        aunt_bedroom.add_object(make_window())
-        aunt_bedroom.add_object(make_bed())
-
-        cousin_bedroom.add_object(make_wall())
-        cousin_bedroom.add_object(make_floor())
-        cousin_bedroom.add_object(make_window())
-        cousin_bedroom.add_object(make_bed())
-
         for place in list_of_places:
             if place.public:
                 if not max_num_of_random == 0:
