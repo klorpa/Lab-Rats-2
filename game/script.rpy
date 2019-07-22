@@ -8172,18 +8172,19 @@ label talk_person(the_person):
             # $ Formatted_Compliment_String = "Compliment her outfit.\n{size=22}Max Effect: {/size}" + get_red_heart(40)
             # $ Formatted_Flirt_String = "Flirt with her.\n{size=22}Max Effect: {/size}" + get_red_heart(20)
 
-            $ change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
-                menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.")
-            $ small_talk_action = Action("Make small talk. {image=gui/heart/Time_Advance.png}", requirement = small_talk_requirement, effect = "small_talk_person", args=the_person, requirement_args=the_person,
-                menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
-            $ compliment_action = Action("Compliment her. {image=gui/heart/Time_Advance.png}", requirement = compliment_requirement, effect = "compliment_person", args=the_person, requirement_args=the_person,
-                menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to recieve a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
-            $ flirt_action = Action("Flirt with her. {image=gui/heart/Time_Advance.png}", requirement = flirt_requirement, effect = "flirt_person", args=the_person, requirement_args=the_person,
-                menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
-            $ date_action = Action("Ask her on a date.", requirement = date_requirement, effect = "date_person", args=the_person, requirement_args=the_person,
-                menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
+            python:
+                change_titles_action.args = [the_person]
+                change_titles_action.requirement_args = [the_person]
+                small_talk_action.args = [the_person]
+                small_talk_action.requirement_args = [the_person]
+                compliment_action.args = [the_person]
+                compliment_action.requirement_args = [the_person]
+                flirt_action.args = [the_person]
+                flirt_action.requirement_args = [the_person]
+                date_action.args = [the_person]
+                date_action.requirement_args = [the_person]
 
-            $ act_choice = call_formated_action_choice([change_titles_action,small_talk_action, compliment_action, flirt_action, date_action, "Back"])
+                act_choice = call_formated_action_choice([change_titles_action,small_talk_action, compliment_action, flirt_action, date_action, "Back"])
 
             if act_choice == "Back":
                 call talk_person(the_person) from _call_talk_person_4
@@ -9635,6 +9636,17 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
             menu_tooltip = "Go to sleep and advance time to the next day. Night time counts as three time chunks when calculating serum durations.")
         faq_action = Action("Check the FAQ.",faq_action_requirement,"faq_action_description",
             menu_tooltip = "Answers to frequently asked questions about Lab Rats 2.")
+
+        change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", 
+            menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.")
+        small_talk_action = Action("Make small talk. {image=gui/heart/Time_Advance.png}", requirement = small_talk_requirement, effect = "small_talk_person", 
+            menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
+        compliment_action = Action("Compliment her. {image=gui/heart/Time_Advance.png}", requirement = compliment_requirement, effect = "compliment_person",
+            menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to recieve a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
+        flirt_action = Action("Flirt with her. {image=gui/heart/Time_Advance.png}", requirement = flirt_requirement, effect = "flirt_person",
+            menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
+        date_action = Action("Ask her on a date.", requirement = date_requirement, effect = "date_person",
+            menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
 
         test_action = Action("This is a test.", faq_action_requirement, "faq_action_description")
 
