@@ -189,10 +189,13 @@ label advanced_serum_stage_1_label(the_person):
             $ mc.business.funds += -2000
             mc.name "That sounds like a good lead. I'll make sure the funds are allocated, let me know when you have something to show me."
             the_person.char "Absolutely sir, you'll know as soon as I know something."
-            $ random_day = day + renpy.random.randint(2,4)
-            $ mc.business.event_triggers_dict["advanced_serum_stage_1"] = True
-            $ advanced_serum_unlock_stage_2 = Action("Advanced serum unlock stage 2",advanced_serum_stage_2_requirement,"advanced_serum_stage_2_label", args = the_person, requirement_args = [the_person, random_day])
-            $ mc.business.mandatory_crises_list.append(advanced_serum_unlock_stage_2) #Append it to the mandatory crisis list so that it will be run eventually. We will list the person and the random day that the event will finish.
+
+            python:
+                random_day = day + renpy.random.randint(2,4)
+                mc.business.event_triggers_dict["advanced_serum_stage_1"] = True
+                advanced_serum_unlock_stage_2.args = [the_person]
+                advanced_serum_unlock_stage_2.requirement_args = [the_person, random_day]
+                mc.business.mandatory_crises_list.append(advanced_serum_unlock_stage_2) #Append it to the mandatory crisis list so that it will be run eventually. We will list the person and the random day that the event will finish.
 
         "Try and secure a prototype serum.\n{size=22}Costs $2000{/size} (disabled)" if mc.business.funds < 2000:
             pass

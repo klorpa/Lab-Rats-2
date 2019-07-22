@@ -25,6 +25,8 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         advanced_serum_unlock_stage_1 = Action("Ask about advancing your research.", advanced_serum_stage_1_requirement, "advanced_serum_stage_1_label",
             menu_tooltip = "Another breakthrough will unlock new serum traits.")
 
+        advanced_serum_unlock_stage_2 = Action("Advanced serum unlock stage 2",advanced_serum_stage_2_requirement,"advanced_serum_stage_2_label")
+
         advanced_serum_unlock_stage_3 = Action("Present with recording of prototype serum test.", advanced_serum_stage_3_requirement, "advanced_serum_stage_3_label",
             menu_tooltip = "Your new head researcher will have to take over now, and this recording should help them.")
 
