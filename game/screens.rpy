@@ -264,7 +264,7 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                 ysize 700
                 $ title_element = elements_list[count][0]
                 if isinstance(title_element, basestring):
-                    text title_element xalign 0.5 ypos 45 anchor (0.5,0.5) size 26 style "menu_text_style" xsize 200
+                    text title_element xalign 0.5 ypos 45 anchor (0.5,0.5) size 22 style "menu_text_style" xsize 240
                 else:
                     add title_element xalign 0.5 ypos 45 anchor (0.5,0.5)
 
@@ -350,11 +350,9 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                             if display: #If we haven't encountered any reason to completely hide the item we display it now.
                                 textbutton title:
                                     xsize 360
-                                    ysize 100
+                                    ysize 80
                                     xalign 0.5
-                                    yalign 0.0
-                                    xanchor 0.5
-                                    yanchor 0.0
+                                    yalign 0.5
                                     style "textbutton_style"
                                     text_size 18
                                     text_style "textbutton_text_style"
