@@ -253,7 +253,7 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
 
     hbox:
         spacing 10
-        xalign 0.5
+        xalign 0.518
         yalign 0.2
         xanchor 0.5
         yanchor 0.0
@@ -264,23 +264,26 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                 ysize 700
                 $ title_element = elements_list[count][0]
                 if isinstance(title_element, basestring):
-                    text title_element xalign 0.5 ypos 45 anchor (0.5,0.5) size 32 style "menu_text_style" xsize 200
+                    text title_element xalign 0.5 ypos 45 anchor (0.5,0.5) size 26 style "menu_text_style" xsize 200
                 else:
                     add title_element xalign 0.5 ypos 45 anchor (0.5,0.5)
 
 
                 $ column_elements = elements_list[count][1:]
                 viewport:
-                    scrollbars "vertical"
+                    if renpy.variant("touch"):
+                        scrollbars "vertical" #But if we aren't on a PC we need to make sure the player can scroll since they won't have a mouse wheel.
+                    else:
+                        scrollbars None # By making this none we remove the issue of the box requiring extra space to the side, screwing up the offset.
+
                     mousewheel True
-                    xalign 0.512
+                    xalign 0.5
                     xanchor 0.5
                     yanchor 0.0
 
-                    ypos 100
-                    xsize 370
-                    ysize 587
-                    side_spacing -60
+                    ypos 99
+                    xsize 360
+                    ysize 588
                     vbox:
                         for item in column_elements:
 
@@ -291,15 +294,21 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                             $ hovered_list = []
                             $ unhovered_list = []
                             $ the_tooltip = None
+                            $ extra_args = None
 
                             $ display = True
                             $ is_sensitive = True
 
                             if isinstance(item,list): #It's a title/return value pair. Show the title, return the value.
-                                $ title = item[0]
-                                $ return_value = item[1]
+                                if isinstance(item[0], Action): #It's an action with extra arguments.
+                                    $ extra_args = item[1]
+                                    $ item = item[0] #Rename item so that this is caught by the action section below.
 
-                            elif isinstance(item,Person): #It's a person. Format it for a person list.
+                                else: #It's (probably) a title/return string pair. Show the title, return the value
+                                    $ title = item[0]
+                                    $ return_value = item[1]
+
+                            if isinstance(item,Person): #It's a person. Format it for a person list.
                                 $ title = format_titles(item)
                                 $ return_value = item
 
@@ -311,12 +320,10 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                 $ hovered_list.append(Function(item.draw_person, **person_preview_args))
                                 $ unhovered_list.append(Function(renpy.scene, "Active"))
 
-
-                            elif isinstance(item,Action):
+                            if isinstance(item,Action):
                                 $ title = ""
                                 $ return_value = item
                                 $ display = False #Default display state for an action is to hide it unless it is enabled or has a disabled slug
-                                $ extra_args = None
                                 if item.is_action_enabled(extra_args):
                                     $ title = item.name
                                     $ display = True
@@ -328,7 +335,7 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                 if item.menu_tooltip:
                                     $ the_tooltip = item.menu_tooltip
 
-                            else: #It's (probably) just text. Display the text and return the text.
+                            if isinstance(item,basestring): #It's just text. Display the text and return the text.
                                 $ title = item
                                 $ return_value = item
 
@@ -343,12 +350,13 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                             if display: #If we haven't encountered any reason to completely hide the item we display it now.
                                 textbutton title:
                                     xsize 360
-                                    ysize 120
+                                    ysize 100
                                     xalign 0.5
                                     yalign 0.0
                                     xanchor 0.5
                                     yanchor 0.0
                                     style "textbutton_style"
+                                    text_size 18
                                     text_style "textbutton_text_style"
                                     text_align (0.5,0.5)
                                     hovered hovered_list
@@ -356,6 +364,8 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                     action Return(return_value)
                                     tooltip the_tooltip
                                     sensitive is_sensitive
+
+
 
 screen person_choice(people, draw_hearts = False, person_prefix = None, person_suffix = None, show_person_preview = True, person_preview_args = None):
     style_prefix "choice"

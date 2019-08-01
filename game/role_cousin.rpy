@@ -338,3 +338,9 @@ label cousin_blackmail_list(the_person):
             the_person.char "Ugh."
 
     return
+
+label cousin_more_blackmail_label(the_person):
+    # Find more blackmail material for your cousin.
+    # TODO: Figure out what that should be.
+    # Idea: She asks you to do something/get something for her (alcohol? drugs? Maybe you neecd to produce a special serum for her).
+    return

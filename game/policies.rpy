@@ -58,7 +58,7 @@ init 1300 python:
             return False
 
     reduced_coverage_uniform_policy = Policy(name = "Reduced Coverage Corporate Uniforms",
-        desc = "The term \"appropriate coverage\" in the employee manual is redefined and subject to employer approval. You can now use full outfits or underwear sets as part of your corporate uniform. Underwear sets much have a sluttiness core of 10.",
+        desc = "The term \"appropriate coverage\" in the employee manual is redefined and subject to employer approval. You can now use full outfits or underwear sets as part of your corporate uniform. Underwear sets must have a sluttiness core of 10.",
         cost = 5000,
         requirement = reduced_coverage_uniform_policy_requirment)
 

@@ -22,6 +22,9 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         improved_serum_unlock = Action("Ask about advancing your research.", improved_serum_unlock_requirement, "improved_serum_unlock_label",
             menu_tooltip = "Your basic initial research can only take you so far. You will need a breakthrough to discover new serum traits.")
 
+        visit_nora_intro = Action("Visit Nora to try and advance your research.", visit_nora_intro_requirement, "nora_intro_label",
+            menu_tooltip = "Have your head researcher reach out to your old mentor to see if she can help advance your research.")
+
         advanced_serum_unlock_stage_1 = Action("Ask about advancing your research.", advanced_serum_stage_1_requirement, "advanced_serum_stage_1_label",
             menu_tooltip = "Another breakthrough will unlock new serum traits.")
 
@@ -40,12 +43,20 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         fire_head_researcher_action = Action("Remove her as head reseracher.", fire_head_researcher_requirement, "fire_head_researcher",
             menu_tooltip = "Remove her as your head researcher so you can select another. Without a head researcher your R&D department will be less efficent.")
 
-        head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1,advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
+        head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1, visit_nora_intro, advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
+
+        #STEPH ACTIONS#
+
+        steph_role = Role("Stephanie", [], hidden = True) #Used to hold any Stephanie specific actions not tied to another role, and to guarantee this is Steph even if she undergoes a personality change.
 
         #ALEXIA ACTIONS#
-        #TODO
+        alexia_ad_reintro = Action("Have her order photography equipment. -$500", alexia_ad_suggest_reintro_requirement, "alexia_ad_suggest_reintro_label")
 
-        alexia_role = Role("Alexia", [], hidden = True) #Hide her role because we don't want to display it.
+        alexia_ad_photo_intro = Action("Shoot pictures for your business cards. {image=gui/heart/Time_Advance.png}", alexia_photography_intro_requirement, "alexia_photography_intro_label")
+
+        alexia_ad_photo_list = Action("Shoot pictures for an advertisement. {image=gui/heart/Time_Advance.png}", alexia_photography_list_requirement, "alexia_photography_list_label")
+
+        alexia_role = Role("Alexia", [alexia_ad_reintro, alexia_ad_photo_intro, alexia_ad_photo_list], hidden = True) #Hide her role because we don't want to display it.
 
         #SISTER ACTIONS#
         sister_reintro_action = Action("Ask if she needs extra work.", sister_reintro_action_requirement, "sister_reintro_label",
@@ -87,12 +98,45 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         cousin_role = Role("Cousin", [cousin_blackmail_action])
 
+
+
+        ####################
+        #RELATIONSHIP ROLES# TODO TODO TODO
+        ####################
+
+        #GIRLFRIEND ACTIONS#
+        # Give her gifts (bonus happiness + Love)
+        # She tests serum for you for free.
+        # Go on dates (Remove this option from the normal chat menu?)
+        # If she has (of age) kids, meet them (and, amazingly, they're hot young women!)
+
+        #Other things to add#
+        # Enables new girlfriend specific crises.
+        # Adds more love to seduction attempts (reduce love from other sources)
+        # Fallout if your girlfriend catches you with someone else.
+
+
+        girlfrind_role = Role("Girlfriend", []) #Your girlfriend, and she's not in a relationship with anyone else
+        #Getting married is some kind of victory for the game?
+
+
+        #AFFAIRE ACTIONS
+        # Sneaky versions of all of the normal girlfriend stuff
+        # Have her get money from her (b/f/h) and give it to you.
+        # Convince her to leave her (boyfriend/fiance/husband) for you. Changes to her being your girlfriend.
+        # Start to blackmail her for money or sex.
+
+        affaire_role = Role("Affaire", []) #A women who, if she were single, would be your girlfriend but is in a relationship.
+
+
+
     return
 
 
 
 
 label pay_strip_scene(the_person):
+    # TODO: Figure out where this scene should go, since this file should be a pure role-define section.
     #A loop where someone strips if you pay them. Not nessicarily limited to the Lily-MC relationship.
     #Concept: tell the girl what position to stand in and ask her to take things off for you. If her outfit is conservative she'll strip for free, when it starts to get slutty she'll want extra cash.
     #High obedience will sub in for sluttiness; an obedient girl will strip just because you ask.
