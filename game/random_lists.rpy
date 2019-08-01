@@ -103,6 +103,8 @@ init -2:
         list_of_names.append("Faith")
         list_of_names.append("Julia")
         list_of_names.append("Bailey")
+        list_of_names.append("Sierra")
+        list_of_names.append("Terry")
 
 
         def get_random_name():
@@ -177,6 +179,8 @@ init -2:
         list_of_last_names.append("Connors")
         list_of_last_names.append("Song")
         list_of_last_names.append("Rosen")
+        list_of_last_names.append("Mayfair")
+        list_of_last_names.append("Morgan")
 
 
         def get_random_last_name():
@@ -209,7 +213,8 @@ init -2:
         list_of_male_names.append("Rudy")
         list_of_male_names.append("Steve")
         list_of_male_names.append("Stuart")
-        list_of_male_names.append("Terrence")
+        list_of_male_names.append("Terrance")
+        list_of_male_names.append("Terry")
         list_of_male_names.append("Tyrone")
         list_of_male_names.append("Vincent")
         list_of_male_names.append("Wilbur")
@@ -614,10 +619,22 @@ init 1 python:
         stephanie_wardrobe = wardrobe_from_xml("Stephanie_Wardrobe")
 
         global stephanie
-        stephanie = create_random_person(name = "Stephanie", age = 29, body_type = "standard_body", face_style = "Face_4",  tits="C", height = 0.94, hair_colour="brown", hair_style = messy_short_hair, skin="white" , \
+        stephanie = create_random_person(name = "Stephanie", age = 29, body_type = "standard_body", face_style = "Face_3",  tits="C", height = 0.94, hair_colour="brown", hair_style = messy_short_hair, skin="white" , \
             eyes = "brown", personality = stephanie_personality, name_color = "#cf3232", dial_color = "#cf3232" , starting_wardrobe = stephanie_wardrobe, \
             stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 7, \
             title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
+
+
+        ### NORA ##
+        nora_wardrobe = wardrobe_from_xml("Nora_Wardrobe")
+
+        global nora
+        nora = create_random_person(name = "Nora", age = 47, body_type = "standard_body", face_style = "Face_4", tits = "D", height = 0.98, hair_colour="black", hair_style = bowl_hair, skin = "white", \
+            eyes = "grey", personality = nora_personality, name_color = "#dddddd", dial_color = "#dddddd", starting_wardrobe = nora_wardrobe, \
+            stat_array = [1,5,4], skill_array = [1,1,5,3,1], sex_array = [3,2,4,1], start_sluttiness = 4, start_obedience = 2, start_happiness = 0, start_love = 3, \
+            title = "Nora", possessive_title = "Your old boss", mc_title = mc.name, relationship = "Single", kids = 0)
+        nora.set_work([0,1,2,3,4], nora.home)
+        nora.home.add_person(nora)
 
         ### ALEXIA ###
         alexia_wardrobe = wardrobe_from_xml("Alexia_Wardrobe")
@@ -635,6 +652,8 @@ init 1 python:
         alexia.on_room_enter_event_list.append(alexia_intro_phase_one_action)
 
         alexia.special_role = [alexia_role]
+        for i in range(0,5):
+            alexia.schedule[i] = alexia.home #Hide them in their bedroom off the map until they're ready.
         alexia.home.add_person(alexia)
 
 
@@ -649,6 +668,7 @@ init 1 python:
 
         lily.special_role = [sister_role]
         lily.schedule[3] = lily.home
+        lily.set_work([1,2],university)
 
         sister_intro_crisis = Action("sister_intro_crisis", sister_intro_crisis_requirements, "sister_intro_crisis_label", args=lily, requirement_args = [lily, renpy.random.randint(7,14)]) #Def is in roles.rpy
         sister_strip_intro_crisis = Action("sister_strip_intro_crisis", sister_strip_intro_requirement, "sister_strip_intro_label", args=lily, requirement_args = lily)
@@ -701,7 +721,7 @@ init 1 python:
         cousin = create_random_person(name = "Gabrielle", last_name = aunt.last_name, age = 18, body_type = "curvy_body", face_style = "Face_3", tits = "DDD", height = 0.90, hair_colour = "black", hair_style = messy_short_hair, skin="white",\
             eyes = "brown", personality = cousin_personality, name_color = "#9c4dea", dial_color = "#9c4dea", starting_wardrobe = cousin_wardrobe, start_home = cousin_bedroom, \
             stat_array = [0,4,2], skill_array = [0,0,2,1,0], sex_array = [3,0,0,0], start_sluttiness = 8, start_obedience = -30, start_happiness = 70, start_love = -20, \
-            title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = None, kids = 0)
+            title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = "Single", kids = 0)
 
         cousin.special_role = [cousin_role]
         for i in range(0,5):

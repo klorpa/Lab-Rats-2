@@ -82,6 +82,21 @@ init -2 python:
     def fire_head_researcher_requirement(the_person): #Remove the person as your head researcher.
         return True
 
+    def visit_nora_intro_requirement(the_person):
+        if steph_role not in the_person.special_role: #Only Stephanie gets to have this event trigger while she is head researcher.
+            return False
+        elif not mc.business.event_triggers_dict.get("intro_nora", False): #TODO: Also make sure you can't visit her again after you accept her quest.
+            return False
+        elif mc.location != mc.business.r_div:
+            return False
+        elif not mc.business.is_open_for_business():
+            return False
+        elif mc.business.research_tier != 1: #This event is used to get to tier 2, so if you're already past that it doesn't matter.
+            return False
+        elif the_person.love < 15:
+            return "Requires: 15 Love"
+        else:
+            return True
 
 
 #####HEAD RESEARCHER ACTION LABELS#####
@@ -136,14 +151,14 @@ label improved_serum_unlock_label(the_person):
                 the_person.char "I... Yes, I agree with you sir."
                 "[the_person.title]'s eyes are fixed firmly on yours. This seems like a good chance to impress upon her your goals for the company."
                 menu:
-                    "Stress the importance of obedience.":
+                    "Stress the importance of obedience. (tooltip)Likely to raise her obedience.":
                         mc.name "A highly organised workplace is important, especially in a lab setting. I need employees who are able to listen to my instructions and follow them."
                         "[the_person.possessive_title] nods in agreement."
                         mc.name "As the leader of the research team I need you to be especially loyal. Do you understand?"
                         $ the_person.change_obedience(10)
                         the_person.char "Yes, absolutely. I'll do everything I can to make sure this business is successful."
 
-                    "Stress the importance of appearance.":
+                    "Stress the importance of appearance. (tooltip)Likely to raise her sluttiness.":
                         mc.name "Impressions are key in this line of business, and I need my employees dressed to impress."
                         "[the_person.possessive_title] nods in agreement."
                         mc.name "As the leader of the research team I need you to be especially aware of your appearance. You represent everything our technology can achieve. Do you understand?"
@@ -151,12 +166,19 @@ label improved_serum_unlock_label(the_person):
                         $ the_person.change_slut_core(5)
                         the_person.char "Yes, absolutely. I'll make sure I always leave a positive impression."
 
-                    "Stress the importance of satisfaction.":
+                    "Stress the importance of satisfaction. (tooltip)Likely to dramatically raise her happiness.":
                         mc.name "It can be easy to burn yourself out in this line of business. Pay might not always be great and the hours might be long, but a good attitude is key."
                         "[the_person.possessive_title] nods in agreement."
                         mc.name "Your attitude is going to affect the rest of the research team. I need you to be as positive as possible, do you understand?"
                         $ the_person.change_happiness(10)
                         the_person.char "Yes sir, I understand completely. I'll try and be as chipper as possible."
+
+                    "Stress the importance of your relationship. (tooltip)Likely to raise her love for you.":
+                        mc.name "Through everything we're going to do together I want you to know that your friendship means the world to me."
+                        mc.name "I need you to stick by my side throught it all."
+                        $ the_person.change_love(5)
+                        "[the_person.possessive_title] nods in agreement."
+                        the_person.char "Yes, absolutely. Our friendship means everything to me too."
 
                 mc.name "Good to hear it."
                 "You ask [the_person.title] a few more questions, recording her observations and noting down a few of your own. Half an hour passes before you're finished."
@@ -184,6 +206,12 @@ label advanced_serum_stage_1_label(the_person):
     the_person.char "Well, I've seen a few papers floating around that make it seem like other groups are working with the same basic techniques as us."
     the_person.char "I'd like to reach out to them and see about securing a prototype of some sort, to see if we can learn anything from its effects."
     the_person.char "These academic types can get very defensive about their research, so I don't think we'll get anything for free."
+    if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False):
+        the_person.char "I suppose there's one person we could ask..."
+        mc.name "Do you mean [nora.title]?"
+        "[the_person.title] nods."
+        the_person.char "When I left the university was cracking down on her research and trying to keep it private. I know she hated that."
+        the_person.char "Getting her help could save us a lot of money, and it would be nice to see her again."
     menu:
         "Try and secure a prototype serum.\n{size=22}Costs $2000{/size}" if mc.business.funds >= 2000:
             $ mc.business.funds += -2000
@@ -196,6 +224,11 @@ label advanced_serum_stage_1_label(the_person):
 
         "Try and secure a prototype serum.\n{size=22}Costs $2000{/size} (disabled)" if mc.business.funds < 2000:
             pass
+
+        "Contact Nora."if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False):
+            $ mc.business.event_triggers_dict["intro_nora"] = True
+            mc.name "I think [nora.title] is the right choice."
+            the_person.char "I'll call and see when she's available. Come back and talk to me when you want to go visit her."
 
         "Wait until later.":
             mc.name "Funds are tight right now. I'll try and secure them for you, but until do what you can with the resources you have."

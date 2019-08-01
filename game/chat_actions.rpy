@@ -52,29 +52,31 @@ init -2 python:
             return True
         return False
 
+    def wardrobe_change_requirment(the_person):
+        if the_person.obedience < 120:
+            return "Requires: Obedience 120"
+        else:
+            return True
+
+    def serum_give_requirement(the_person):
+        #the_person parameter passed to match other actions and for future proofing.
+        if mc.inventory.get_any_serum_count() <= 0:
+            return "Requires: Serum in inventory"
+        else:
+            return True
+
+    def seduce_requirement(the_person):
+        if the_person.sluttiness < 15:
+            return "Requires: {image=gui/heart/three_quarter_red_quarter_empty_heart.png}"
+        elif mc.current_stamina <= 0:
+            return "Requires: 1 Stamina"
+        else:
+            return True
+
+
 label person_introduction(the_person):
 
     $ the_person.call_dialogue("introduction")
-
-    #
-    # mc.name "Excuse me, could I bother you for a moment?"
-    # "She turns around and looks at you quizzically."
-    # #TODO: Have this differ based on personality
-    # $ the_person.set_title("???")
-    # the_person.char "Sure, I guess. How can I help you?"
-    # mc.name "I'm so sorry, I know this is silly but I just couldn't let you walk by without knowing your name."
-    # "She laughs and rolls her eyes."
-    #
-    #
-    #
-    # $ title_choice = get_random_title(the_person)
-    # $ formatted_title = the_person.create_formatted_title(title_choice)
-    # the_person.char "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
-    # $ the_person.set_title(title_choice)
-    # $ the_person.set_possessive_title(get_random_possessive_title(the_person))
-    # "[the_person.possessive_title] holds her hand out to shake yours."
-    # the_person.char "What about you, what's your name?"
-    #
 
     #She's given us her name, now she asks for yours.
     $ title_tuple = []
@@ -128,7 +130,7 @@ label new_mc_title_menu(the_person):
     python:
         for title in get_player_titles(the_person):
             title_tuple.append([title,title])
-        tuple_list.append(["Do not change your title.","Back"])
+        title_tuple.append(["Do not change your title.","Back"])
         title_choice = renpy.display_menu(title_tuple,True,"Choice")
     return title_choice
 
@@ -406,6 +408,7 @@ label small_talk_person(the_person): #Tier 0. Useful for discovering a character
             "[the_person.possessive_title] seems happy to chitchat, and you spend a couple of hours just hanging out. You don't feel like you've learned much about her, but least she seems to have enjoyed talking."
 
     $ the_person.apply_serum_study()
+    call advance_time from _call_advance_time_21
     return
 
 label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO: just have it raise love and not sluttiness.
@@ -416,6 +419,7 @@ label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO
     $ the_person.change_happiness(2)
     the_person.char "It's been fun talking [the_person.mc_title], we should do this again some time!"
     $ the_person.apply_serum_study()
+    call advance_time from _call_advance_time_22
     return
 
 
@@ -461,6 +465,7 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
     $ the_person.discover_opinion("flirting")
     $ the_person.call_dialogue("flirt_response")
     $ the_person.apply_serum_study()
+    call advance_time from _call_advance_time_23
     return
 
 label lunch_person(the_person): #You take them out to lunch. A sort of mini-date where you get to know them.
@@ -640,4 +645,273 @@ label dinner_date(the_person):
 
     $ renpy.scene("Active")
 
+    return
+
+
+label wardrobe_change_label(the_person):
+    menu:
+        "Add an outfit.":
+            mc.name "[the_person.title], I've got something I'd like you to wear for me."
+            $ renpy.scene("Active")
+            call screen outfit_select_manager()
+            $ the_person.draw_person()
+            if not _return == "No Return":
+                $ new_outfit = _return
+                menu:
+                    "Save as a full outfit.":
+                        $ outfit_type = "full"
+
+                    "Save as an underwear set." if new_outfit.is_suitable_underwear_set():
+                        $ outfit_type = "under"
+
+                    "Save as an underwear set. (disabled)" if not new_outfit.is_suitable_underwear_set():
+                        pass
+
+                    "Save as an overwear set." if new_outfit.is_suitable_overwear_set():
+                        $ outfit_type = "over"
+
+                    "Save as an overwear set. (disabled)" if not new_outfit.is_suitable_overwear_set():
+                        pass
+
+
+                $ slut_require = new_outfit.slut_requirement
+                if outfit_type == "under":
+                    $ slut_require = new_outfit.get_underwear_slut_score()
+                elif outfit_type == "over":
+                    $ slut_require = new_outfit.get_overwear_slut_score()
+
+                if slut_require > the_person.sluttiness:
+                    $ the_person.call_dialogue("clothing_reject")
+                else:
+                    $ the_person.add_outfit(new_outfit,outfit_type)
+                    $ the_person.call_dialogue("clothing_accept")
+
+            else:
+                mc.name "On second thought, nevermind."
+
+        "Delete an outfit.":
+            mc.name "[the_person.title], lets have a talk about what you've been wearing."
+            $ renpy.scene("Active")
+            call screen outfit_delete_manager(the_person.wardrobe)
+            $ the_person.draw_person()
+            #TODO: Figure out what happens when someone doesn't have anything in their wardrobe.
+
+        "Wear an outfit right now.":
+            mc.name "[the_person.title], I want you to get changed for me."
+            $ renpy.scene("Active")
+            call screen girl_outfit_select_manager(the_person.wardrobe)
+            if _return != "None":
+                $ the_person.set_outfit(_return)
+
+            $ the_person.draw_person()
+            the_person.char "Is this better?"
+    return
+
+label serum_give_label(the_person):
+    $ sneak_serum_chance = 70 + (mc.int*5) - (the_person.focus*5)  #% chance that you will successfully give serum to someone sneaklily. Less focused people are easier to fool.
+    $ ask_serum_chance = 10*mc.charisma + 5*the_person.int #The more charismatic you are and the more intellectually curious they are the better the chance of success
+    $ demand_serum_chance = mc.charisma * (the_person.obedience - 90) #The more charismatic you are and the more obedient they are the more likely this is to succeed.
+
+    if sneak_serum_chance < 0:
+        $ sneak_serum_chance = 0
+    elif sneak_serum_chance > 100:
+        $ sneak_serum_chance = 100
+
+    if ask_serum_chance < 0:
+        $ ask_serum_chance = 0
+    elif ask_serum_chance > 100:
+        $ ask_serum_chance = 100
+
+    if mc.business.get_employee_title(the_person) == "None":
+        $demand_serum_chance += -35 #if she doesn't work for you there is a much lower chance she will listen to your demand (unless you are very charismatic or she is highly obedient.)
+    if demand_serum_chance < 0:
+        $ demand_serum_chance = 0
+    elif demand_serum_chance > 100:
+        $ demand_serum_chance = 100
+
+    $ pay_serum_cost = the_person.salary * 5
+    $ rand_chance = renpy.random.randint(0,100)
+
+    menu:
+        "Give it to her stealthily.\n{size=22}Success Chance: [sneak_serum_chance]%%{/size}": #TODO: Have this modified by something so there are interesting gameplay decisions
+            "You chat with [the_person.title] for a couple of minutes. Waiting to find a chance to deliver a dose of serum."
+            if rand_chance < sneak_serum_chance:
+                #Success
+                "You're able to distract [the_person.title] and have a chance to give her a dose of serum."
+                call give_serum(the_person) from _call_give_serum
+
+            else:
+                #Caught!
+                "You finally distract [the_person.title] and have a chance to give her a dose of serum."
+                the_person.char "Hey, what's that?"
+                "You nearly jump as [the_person.title] points down at the small vial of serum you have clutched in your hand."
+                $ avoid_chance = renpy.random.randint(0,10)
+                if avoid_chance < mc.charisma:
+                    if mc.business.get_employee_title(the_person) == "None":
+                        mc.name "This? Oh, it's just something we're working on at the lab that I thought you might be interested in."
+                        "You dive into a technical description of your work, hoping to distract [the_person.title] from your real intentions."
+
+                    else:
+                        mc.name "This? Oh, it's just one of the serums I grabbed from production for quality control. I was just fidgeting with it I guess."
+                        "You make small talk with [the_person.title], hoping to distract her from your real intentions."
+                    "After a few minutes you've managed to avoid her suspicion, but haven't been able to deliver the dose of serum."
+
+                else:
+                    mc.name "This? Uh..."
+                    $ the_person.draw_person(emotion="angry")
+                    $ the_person.change_obedience(-10)
+                    $ the_person.change_happiness(-10)
+                    $ the_person.change_love(-5)
+                    the_person.char "Were you about to put that in my drink? Oh my god [the_person.mc_title]!"
+                    mc.name "Me? Never!"
+                    "[the_person.title] shakes her head and storms off. You can only hope this doesn't turn into soemthing more serious."
+                    $renpy.scene("Active")
+                    return
+
+        "Ask her to take it.\n{size=22}Success Chance: [ask_serum_chance]%%{/size}" if not mandatory_unpaid_serum_testing_policy.is_owned() or mc.business.get_employee_title(the_person) == "None":
+            if mc.business.get_employee_title(the_person) == "None":
+                mc.name "[the_person.title], I've got a project going on at work that could really use a test subject. Would you be interested in helping me out?"
+
+            else:
+                mc.name "[the_person.title], there's a serum design that is in need of a test subject. Would you be interested in helping out with a quick field study?"
+
+            if rand_chance < ask_serum_chance:
+                #Success
+                if mc.business.get_employee_title(the_person) == "None":
+                    the_person.char "I'd be happy to help, as long as you promise it's not dangerous of course. I've always wanted to be a proper scientist!"
+                else:
+                    the_person.char "I'll admit I'm curious what it would do to me. Okay, as long as it's already passed the safety test requirements, of course."
+                mc.name "It's completely safe, we just need to test what the results from it will be. Thank you."
+                call give_serum(the_person) from _call_give_serum_2
+
+            else:
+                #Denies
+                $ the_person.change_obedience(-2)
+                the_person.char "I'm... I don't think I would be comfortable with that. Is that okay?"
+                mc.name "Of course it is, that's why I'm asking in the first place."
+
+        "Ask her to take it.\n{size=22}Success Chance: Required by Policy{/size}" if mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None":
+            #Auto success
+            mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this."
+            call give_serum(the_person) from _call_give_serum_3
+
+        "Demand she takes it.\n{size=22}Success Chance: [demand_serum_chance]%%{/size}": #They must work for you to demand it.
+            mc.name "[the_person.title], you're going to drink this for me."
+            "You pull out a vial of serum and present it to [the_person.title]."
+            the_person.char "What is it for, is it important?"
+            mc.name "Of course it is, I wouldn't ask you to if it wasn't."
+            if rand_chance < demand_serum_chance:
+                #Success
+                the_person.char "Okay, if that's what you need me to do..."
+                call give_serum(the_person) from _call_give_serum_4
+            else:
+                #Refues
+                $ the_person.draw_person(emotion = "angry")
+                $ the_person.change_obedience(-2)
+                $ the_person.change_happiness(-2)
+                $ the_person.change_love(-2)
+                the_person.char "You expect me to just drink random shit you hand to me? I'm sorry, but that's just rediculous."
+
+        "Pay her to take it.\n{size=22}Costs: $[pay_serum_cost]{/size}" if mandatory_paid_serum_testing_policy.is_owned() and not mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None": #This becomes redundent when they take it for free.
+            #Pay cost and proceed
+            $ mc.business.funds += -pay_serum_cost
+            mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this, a bonus will be added onto your paycheck."
+            call give_serum(the_person) from _call_give_serum_5
+
+
+        "Pay her to take it.\n{size=22}Requires: Mandatory Paid Serum Testing{/size} (disabled)" if not mandatory_unpaid_serum_testing_policy.is_owned() and not mandatory_paid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None":
+            pass
+
+        "Do nothing.":
+            pass
+    return
+
+label seduce_label(the_person):
+    mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
+    $ the_person.call_dialogue("seduction_response")
+    $ random_chance = renpy.random.randint(0,100)
+    $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
+    $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
+    $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
+
+    if chance_service_her > 100:
+        $ chance_service_her = 100
+    elif chance_service_her < 0:
+        $ chance_service_her = 0
+
+    if chance_both_good > 100:
+        $ chance_both_good = 100
+    elif chance_both_good < 0:
+        $ chance_both_good = 0
+
+    if chance_service_him > 100:
+        $ chance_service_him = 100
+    elif chance_service_him < 0:
+        $ chance_service_him = 0
+
+    $ seduced = False #Flip to true if our approach works
+    menu:
+        "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
+            "You lean in close whisper what you want to do to her."
+            if random_chance < chance_service_her: #Success
+                $ seduced = True
+                $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
+                $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
+                $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
+                $ the_person.discover_opinion("taking control")
+            else: #Failure
+                pass
+
+        "Let's have a good time.\n{size=22}Success Chance: [chance_both_good]%%\nModifiers: None{/size} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
+            "You lean in close and whisper what you want to do together."
+            if random_chance < chance_both_good:
+                $ seduced = True
+            else:
+                pass
+
+        "I need you to get me off.\n{size=22}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
+            "You lean in close and whisper what you want her to do to you."
+            if random_chance < chance_service_him:
+                $ seduced = True
+                $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
+                $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
+                $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
+                $ the_person.discover_opinion("being submissive")
+            else:
+                pass
+
+    if seduced and the_person.sexed_count < 1:
+
+        $ extra_people_count = mc.location.get_person_count() - 1
+        $ in_private = True
+        if extra_people_count > 0: #We have more than one person here
+            $ the_person.call_dialogue("seduction_accept_crowded")
+            menu:
+                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                    "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interupted."
+
+                "Stay right here.\n{size=22}[extra_people_count] watching{/size}":
+                    if the_person.sluttiness < 50:
+                        mc.name "I think we'll be fine right here."
+                        the_person.char "I... Okay, if you say so."
+
+                    $ in_private = False
+        else:
+            $ the_person.call_dialogue("seduction_accept_alone")
+
+        $ mc.current_stamina += -1
+        call fuck_person(the_person,private = in_private) from _call_fuck_person
+        $ the_person.reset_arousal()
+        $ the_person.review_outfit()
+
+        #Tidy up our situational modifiers, if any.
+        $ the_person.clear_situational_slut("public_sex")
+        $ the_person.clear_situational_slut("seduction_approach")
+        $ the_person.clear_situational_obedience("seduction_approach")
+    else:
+        $ the_person.call_dialogue("seduction_refuse")
+        $ the_person.clear_situational_slut("seduction_approach")
+        $ the_person.clear_situational_obedience("seduction_approach")
+
+    $ the_person.sexed_count += 1
     return

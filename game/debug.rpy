@@ -99,6 +99,17 @@ label load_select_from_wardrobe(the_wardrobe):
     call create_outfit(picked_outfit) from _call_create_outfit_3
     return
 
+screen display_all_faces():
+    add "Paper_Background.png"
+    hbox:
+        spacing -250
+        add "character_images/default_Face_1_stand2_white.png"
+        add "character_images/default_Face_2_stand2_white.png"
+        add "character_images/default_Face_3_stand2_white.png"
+        add "character_images/default_Face_4_stand2_white.png"
+        add "character_images/default_Face_5_stand2_white.png"
+        add "character_images/default_Face_6_stand2_white.png"
+
 screen display_all_hair():
     add "Paper_Background.png"
     viewport:

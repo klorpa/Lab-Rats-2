@@ -235,3 +235,25 @@ label sister_strip_label(the_person):
     "She tucks the money away and gets ready in front of you."
     call pay_strip_scene(the_person) from _call_pay_strip_scene_1
     return
+
+label sister_instathot_intro_label(the_person):
+    # Your sister needs you to take pictures for her.
+    # She's got an instapic (genius, they'll never guess!) account and wants to be an "influencer"
+
+
+label sister_cam_girl_intro_label(the_person):
+    # Your sister comes to you asking for _more_ money, this time to buy a better computer.
+    # "I have an idea to make money, right here at home. I just need to buy some equipment."
+    # "I need a new computer. And a microphone. And a webcam."
+    # "It's none of your business!"
+    # Threaten to tell your Mom, she tells you that she's going to make some videos for her "premium instapic followers".
+    # Offer to buy her the equipment in exchange for a cut.
+    return
+
+label sister_cam_girl_online_view_label(the_person):
+    # Tune into one of your sisters shows. Give her cash to do things as an anonymous doner.
+    return
+
+label sister_cam_girl_in_person_view_label(the_person):
+    # Crash your sister's room and watch/join in on the show. At very high sluttiness she has you pose as her "boyfriend" for various things.
+    return

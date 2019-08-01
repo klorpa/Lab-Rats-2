@@ -144,6 +144,15 @@ init -1:
             mc.log_event("[the_person.char]: Personality changed. Now: Bimbo", "float_text_pink")
 
 
+        ## nora_serum_up_trait ##
+        def nora_suggest_up_on_apply(the_person, add_to_log):
+            the_person.add_suggest_effect(50, add_to_log)
+
+        def nora_suggest_up_on_remove(the_person, add_to_log):
+            the_person.remove_suggest_effect(50)
+
+
+
 label instantiate_serum_traits(): #Creates all of the default LR2 serum trait objects.
     python:
 
@@ -243,7 +252,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         sedatives_trait = SerumTrait(name = "Low Concentration Sedatives",
             desc = "A low dose of slow release sedatives makes the recipient more obedient, but have a negative effect on productivity.",
             positive_slug = "+$15 Value, +10 Obedience",
-            negative_slug = "-1 To All Stats, +50 Serum Research.",
+            negative_slug = "-1 To All Stats, +50 Serum Research",
             value_added = 15,
             research_added = 50,
             base_side_effect_chance = 10,
@@ -518,31 +527,49 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             exclude_tags = "Production")
 
         mind_control_agent = SerumTrait(name = "Mind Control Agent",
-                desc = "This low grade mind control agent will massively increase the suggestibility of the recipient, resulting in rapid changes in personality based on external stimuli.",
-                positive_slug = "+$40 Value, +70 Suggestibility",
-                negative_slug = "+200 Serum Research",
-                value_added = 40,
-                research_added = 200,
-                base_side_effect_chance = 50,
-                on_apply = mind_control_agent_on_apply,
-                on_remove = mind_control_agent_on_remove,
-                requires = blood_brain_pen,
-                tier = 3,
-                research_needed = 1500,
-                exclude_tags = "Suggest")
+            desc = "This low grade mind control agent will massively increase the suggestibility of the recipient, resulting in rapid changes in personality based on external stimuli.",
+            positive_slug = "+$40 Value, +70 Suggestibility",
+            negative_slug = "+200 Serum Research",
+            value_added = 40,
+            research_added = 200,
+            base_side_effect_chance = 50,
+            on_apply = mind_control_agent_on_apply,
+            on_remove = mind_control_agent_on_remove,
+            requires = blood_brain_pen,
+            tier = 3,
+            research_needed = 1500,
+            exclude_tags = "Suggest")
 
         permanent_bimbo = SerumTrait(name = "Permanent Bimbofication",
-                desc = "This delicate chemical cocktail was reverse engineered from an experimental serum sampled in the lab and will turn the recipient into a complete bimbo. Intelligence and obedience will suffer, but she will be happy and slutty. This change is permanent. It does not end when the serum expires and cannot be reversed with other serums.",
-                positive_slug = "New Personality: Bimbo, +$40 Value, +10 Permanent Sluttiness, +10 Permanent Obedience",
-                negative_slug = "+400 Serum Research, Int Lowered to 1 Permanently",
-                value_added = 40,
-                research_added = 400,
-                base_side_effect_chance = 80,
-                on_apply = permanent_bimbo_on_apply,
-                #on_remove = a_function, #TODO: Add a way for serums to hold parameters about the person they are used on. Use those to restore personality when forcibly removed.
-                requires = mind_control_agent,
-                tier = 3,
-                research_needed = 2000)
+            desc = "This delicate chemical cocktail was reverse engineered from an experimental serum sampled in the lab and will turn the recipient into a complete bimbo. Intelligence and obedience will suffer, but she will be happy and slutty. This change is permanent. It does not end when the serum expires and cannot be reversed with other serums.",
+            positive_slug = "New Personality: Bimbo, +$40 Value, +10 Permanent Sluttiness, +10 Permanent Obedience",
+            negative_slug = "+400 Serum Research, Int Lowered to 1 Permanently",
+            value_added = 40,
+            research_added = 400,
+            base_side_effect_chance = 80,
+            on_apply = permanent_bimbo_on_apply,
+            #on_remove = a_function, #TODO: Add a way for serums to hold parameters about the person they are used on. Use those to restore personality when forcibly removed.
+            requires = mind_control_agent,
+            tier = 3,
+            research_needed = 2000)
+
+
+    ### SPECIAL TRAITS ###
+
+        nora_suggest_up = SerumTrait(name = "Nora's Research Trait",
+            desc = "The manufacturing details for a serum trait developed by Nora. Raises suggestibility significantly, but is guaranteed to generate a side effect and negatively effects value.",
+            positive_slug = "+50 Suggestibility",
+            negative_slug = "+75 Serum Research, -$150 Value",
+            value_added = -150,
+            research_added = 75,
+            base_side_effect_chance = 1000000,
+            on_apply = nora_suggest_up_on_apply,
+            on_remove = nora_suggest_up_on_remove,
+            #requires = [list_of_other_traits],
+            tier = 2,
+            start_researched = False,
+            research_needed = 1000000,
+            exclude_tags = "Suggest")
 
 
         # Tier 0
