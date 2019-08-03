@@ -690,7 +690,6 @@ init 1 python:
         mom.special_role = [mother_role]
         mom.schedule[3] = kitchen
 
-        mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
         mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
 
         mom.home.add_person(mom)

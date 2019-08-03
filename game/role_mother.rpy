@@ -1,6 +1,6 @@
 ﻿init -2 python:
     #MOM ACTION REQUIREMENTS
-    def mom_weekly_pay_requirement(the_person):
+    def mom_weekly_pay_requirement():
         if time_of_day == 4 and day%7 == 4: #It is the end of the day on friday
             return True
         return False
@@ -12,7 +12,8 @@
 
 ### MOM ACTION LABELS ###
 
-label mom_weekly_pay_label(the_person):
+label mom_weekly_pay_label():
+    $ the_person = mom
     $ renpy.show(bedroom.name,what=bedroom.background_image)
     "You're getting ready for bed when [the_person.possessive_title] calls from downstairs."
     the_person.char "[the_person.mc_title], could we talk for a moment?"
@@ -127,9 +128,8 @@ label mom_weekly_pay_label(the_person):
             #TODO: pay her to do somehting with Lily.
             #TODO: have Lily start a cam show to make cash, then bring your Mom into it.
 
-
-    $ mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
-    $ mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
+    python:
+        mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
     return
 
 label mom_offer_make_dinner_label(the_person):

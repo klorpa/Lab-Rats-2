@@ -510,9 +510,11 @@ label date_person(the_person): #You invite them out on a proper date
         "Plan a date for Friday night.":
             mc.name "It's a date. I'm already looking forward to it."
             the_person.char "Me too!"
-            $ dinner_action = Action("Dinner date", dinner_date_requirement, "dinner_date", args=the_person, requirement_args=4) #it happens on a friday, so day%7 == 4
-            $ mc.business.mandatory_crises_list.append(dinner_action)
-            $ mc.business.event_triggers_dict["date_scheduled"] = True
+            python:
+                dinner_action.args = [the_person]
+                dinner_action.requirement_args = [4]
+                mc.business.mandatory_crises_list.append(dinner_action)
+                mc.business.event_triggers_dict["date_scheduled"] = True
 
         "Maybe some other time.":
             mc.name "I'm busy on Friday unfortunately."

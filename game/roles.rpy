@@ -1,138 +1,129 @@
 # This file holds the initialization information and general storyline info for all of the roles in the game. Individual roles and individual files.
-
-
-label instantiate_roles(): #This section instantiates all of the key roles in the game. It is placed here to ensure it is properly created, saved, ect. by Renpy.
+init -1 python:
+    #This section instantiates all of the key roles in the game. It is placed here to ensure it is properly created, saved, ect. by Renpy.
     #All of the role labels and requirements are defined in their own file, but their Action representitions are stored here for saving purposes.
-    python:
-        #EMPLOYEE ACTIONS#
-        move_employee_action = Action("Move her to a new division", move_employee_requirement, "move_employee_label",
-            menu_tooltip = "Move her to a new division, where her skills might be put to better use.")
-        employee_complement_action = Action("Compliment her work.", employee_complement_requirement, "employee_complement_work",
-            menu_tooltip = "Offer a few kind words about her performance at work. Increases happiness and love, dependent on your charisma.")
-        employee_insult_action = Action("Insult her work.", employee_insult_requirement, "insult_recent_work",
-            menu_tooltip = "Offer a few choice words about her performance at work. Lowers love and happiness, but is good for instilling obedience.")
-        employee_pay_cash_action = Action("Pay her a cash bonus.", employee_pay_cash_requirement, "employee_pay_cash_bonus",
-            menu_tooltip = "A bonus in cold hard cash is good for obedience and happiness. The larger the reward the greater the effect.")
-        employee_performance_review = Action("Start a performance review. {image=gui/heart/Time_Advance.png}", employee_performance_review_requirement , "employee_performance_review",
-            menu_tooltip = "Bring her to your office for a performance review. Get her opinion about her job, reward, punish, or fire her as you see fit. Can only be performed once every seven days.")
 
-        employee_role = Role("Employee", [employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action])
+    #EMPLOYEE ACTIONS#
+    move_employee_action = Action("Move her to a new division", move_employee_requirement, "move_employee_label",
+        menu_tooltip = "Move her to a new division, where her skills might be put to better use.")
+    employee_complement_action = Action("Compliment her work.", employee_complement_requirement, "employee_complement_work",
+        menu_tooltip = "Offer a few kind words about her performance at work. Increases happiness and love, dependent on your charisma.")
+    employee_insult_action = Action("Insult her work.", employee_insult_requirement, "insult_recent_work",
+        menu_tooltip = "Offer a few choice words about her performance at work. Lowers love and happiness, but is good for instilling obedience.")
+    employee_pay_cash_action = Action("Pay her a cash bonus.", employee_pay_cash_requirement, "employee_pay_cash_bonus",
+        menu_tooltip = "A bonus in cold hard cash is good for obedience and happiness. The larger the reward the greater the effect.")
+    employee_performance_review = Action("Start a performance review. {image=gui/heart/Time_Advance.png}", employee_performance_review_requirement , "employee_performance_review",
+        menu_tooltip = "Bring her to your office for a performance review. Get her opinion about her job, reward, punish, or fire her as you see fit. Can only be performed once every seven days.")
 
-        #HEAD RESEARCHER ACTIONS#
-        improved_serum_unlock = Action("Ask about advancing your research.", improved_serum_unlock_requirement, "improved_serum_unlock_label",
-            menu_tooltip = "Your basic initial research can only take you so far. You will need a breakthrough to discover new serum traits.")
+    employee_role = Role("Employee", [employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action])
 
-        visit_nora_intro = Action("Visit Nora to try and advance your research.", visit_nora_intro_requirement, "nora_intro_label",
-            menu_tooltip = "Have your head researcher reach out to your old mentor to see if she can help advance your research.")
+    #HEAD RESEARCHER ACTIONS#
+    improved_serum_unlock = Action("Ask about advancing your research.", improved_serum_unlock_requirement, "improved_serum_unlock_label",
+        menu_tooltip = "Your basic initial research can only take you so far. You will need a breakthrough to discover new serum traits.")
 
-        advanced_serum_unlock_stage_1 = Action("Ask about advancing your research.", advanced_serum_stage_1_requirement, "advanced_serum_stage_1_label",
-            menu_tooltip = "Another breakthrough will unlock new serum traits.")
+    visit_nora_intro = Action("Visit Nora to try and advance your research.", visit_nora_intro_requirement, "nora_intro_label",
+        menu_tooltip = "Have your head researcher reach out to your old mentor to see if she can help advance your research.")
 
-        advanced_serum_unlock_stage_2 = Action("Advanced serum unlock stage 2",advanced_serum_stage_2_requirement,"advanced_serum_stage_2_label")
+    advanced_serum_unlock_stage_1 = Action("Ask about advancing your research.", advanced_serum_stage_1_requirement, "advanced_serum_stage_1_label",
+        menu_tooltip = "Another breakthrough will unlock new serum traits.")
 
-        advanced_serum_unlock_stage_3 = Action("Present with recording of prototype serum test.", advanced_serum_stage_3_requirement, "advanced_serum_stage_3_label",
-            menu_tooltip = "Your new head researcher will have to take over now, and this recording should help them.")
+    advanced_serum_unlock_stage_2 = Action("Advanced serum unlock stage 2",advanced_serum_stage_2_requirement,"advanced_serum_stage_2_label")
 
-        futuristic_serum_unlock_stage_1 = Action("Ask about advancing your research.", futuristic_serum_stage_1_requirement, "futuristic_serum_stage_1_label",
-            menu_tooltip = "You will need another breakthrough to unlock new serum traits.") #First time you ask about it
+    advanced_serum_unlock_stage_3 = Action("Present with recording of prototype serum test.", advanced_serum_stage_3_requirement, "advanced_serum_stage_3_label",
+        menu_tooltip = "Your new head researcher will have to take over now, and this recording should help them.")
 
-        futuristic_serum_unlock_stage_2 = Action("Talk about the test subjects.", futuristic_serum_stage_2_requirement, "futuristic_serum_stage_2_label",
-            menu_tooltip = "Your head researcher needs willing, dedicated test subjects to advance your research any further.") #Talk to her to either select test subjects or get a refresher on what you need.
+    futuristic_serum_unlock_stage_1 = Action("Ask about advancing your research.", futuristic_serum_stage_1_requirement, "futuristic_serum_stage_1_label",
+        menu_tooltip = "You will need another breakthrough to unlock new serum traits.") #First time you ask about it
 
-
-        fire_head_researcher_action = Action("Remove her as head reseracher.", fire_head_researcher_requirement, "fire_head_researcher",
-            menu_tooltip = "Remove her as your head researcher so you can select another. Without a head researcher your R&D department will be less efficent.")
-
-        head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1, visit_nora_intro, advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
-
-        #STEPH ACTIONS#
-
-        steph_role = Role("Stephanie", [], hidden = True) #Used to hold any Stephanie specific actions not tied to another role, and to guarantee this is Steph even if she undergoes a personality change.
-
-        #ALEXIA ACTIONS#
-        alexia_ad_reintro = Action("Have her order photography equipment. -$500", alexia_ad_suggest_reintro_requirement, "alexia_ad_suggest_reintro_label")
-
-        alexia_ad_photo_intro = Action("Shoot pictures for your business cards. {image=gui/heart/Time_Advance.png}", alexia_photography_intro_requirement, "alexia_photography_intro_label")
-
-        alexia_ad_photo_list = Action("Shoot pictures for an advertisement. {image=gui/heart/Time_Advance.png}", alexia_photography_list_requirement, "alexia_photography_list_label")
-
-        alexia_role = Role("Alexia", [alexia_ad_reintro, alexia_ad_photo_intro, alexia_ad_photo_list], hidden = True) #Hide her role because we don't want to display it.
-
-        #SISTER ACTIONS#
-        sister_reintro_action = Action("Ask if she needs extra work.", sister_reintro_action_requirement, "sister_reintro_label",
-            menu_tooltip = "She was eager to make some money before, maybe she still is.")
-
-        sister_serum_test_action = Action("Ask her to test serum.", sister_serum_test_requirement, "sister_serum_test_label",
-            menu_tooltip = "Have your sister test serum for you. Over time she will become more comfortable following your orders and making deals with you.")
+    futuristic_serum_unlock_stage_2 = Action("Talk about the test subjects.", futuristic_serum_stage_2_requirement, "futuristic_serum_stage_2_label",
+        menu_tooltip = "Your head researcher needs willing, dedicated test subjects to advance your research any further.") #Talk to her to either select test subjects or get a refresher on what you need.
 
 
-        sister_strip_reintro_action = Action("Ask if she would strip for pay.", sister_strip_reintro_requirement, "sister_strip_reintro_label",
-            menu_tooltip = "She was eager to make some money, maybe she will be willing to strip for you if you pay her.")
+    fire_head_researcher_action = Action("Remove her as head reseracher.", fire_head_researcher_requirement, "fire_head_researcher",
+        menu_tooltip = "Remove her as your head researcher so you can select another. Without a head researcher your R&D department will be less efficent.")
 
-        sister_strip_action = Action("Ask her to strip for you.", sister_strip_requirement, "sister_strip_label",
-            menu_tooltip = "Have your sister strip for you, in exchange for some money.")
+    head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1, visit_nora_intro, advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
 
-        sister_role = Role("Sister", [sister_reintro_action, sister_serum_test_action, sister_strip_reintro_action, sister_strip_action])
+    #STEPH ACTIONS#
 
+    steph_role = Role("Stephanie", [], hidden = True) #Used to hold any Stephanie specific actions not tied to another role, and to guarantee this is Steph even if she undergoes a personality change.
 
-        #MOTHER ACTIONS#
-        mother_offer_make_dinner = Action("Offer to make dinner. {image=gui/heart/Time_Advance.png}", mom_offer_make_dinner_requirement, "mom_offer_make_dinner_label",
-            menu_tooltip = "Earn some good will by making dinner for your mother and sister.")
+    #ALEXIA ACTIONS#
+    alexia_ad_reintro = Action("Have her order photography equipment. -$500", alexia_ad_suggest_reintro_requirement, "alexia_ad_suggest_reintro_label")
 
-        mother_role = Role("Mother", [mother_offer_make_dinner])
+    alexia_ad_photo_intro = Action("Shoot pictures for your business cards. {image=gui/heart/Time_Advance.png}", alexia_photography_intro_requirement, "alexia_photography_intro_label")
 
+    alexia_ad_photo_list = Action("Shoot pictures for an advertisement. {image=gui/heart/Time_Advance.png}", alexia_photography_list_requirement, "alexia_photography_list_label")
 
-        #AUNT ACTIONS#
-        aunt_help_move = Action("Help her move into her apartment. {image=gui/heart/Time_Advance.png}", aunt_intro_moving_apartment_requirement, "aunt_intro_moving_apartment_label",
-            menu_tooltip = "Help your aunt and your cousin move their stuff from your house to their new apartment. They're sure to be grateful, and it would give you a chance to snoop around.")
+    alexia_role = Role("Alexia", [alexia_ad_reintro, alexia_ad_photo_intro, alexia_ad_photo_list], hidden = True) #Hide her role because we don't want to display it.
 
-        aunt_share_drinks_action = Action("Share a glass of wine. {image=gui/heart/Time_Advance.png}", aunt_share_drinks_requirement, "aunt_share_drinks_label",
-            menu_tooltip = "Sit down with your aunt and share a glass or two of wine. Maybe a little bit of alcohol will loosen her up a bit.")
+    #SISTER ACTIONS#
+    sister_reintro_action = Action("Ask if she needs extra work.", sister_reintro_action_requirement, "sister_reintro_label",
+        menu_tooltip = "She was eager to make some money before, maybe she still is.")
 
-        aunt_role = Role("Aunt", [aunt_help_move,aunt_share_drinks_action])
-
-
-        #COUSIN ACTIONS#
-        cousin_blackmail_action = Action("Blackmail her.", cousin_blackmail_requirement, "cousin_blackmail_label",
-            menu_tooltip = "Threaten to tell her mother about what she's been doing and see what you can get out of her.")
-
-        cousin_role = Role("Cousin", [cousin_blackmail_action])
+    sister_serum_test_action = Action("Ask her to test serum.", sister_serum_test_requirement, "sister_serum_test_label",
+        menu_tooltip = "Have your sister test serum for you. Over time she will become more comfortable following your orders and making deals with you.")
 
 
+    sister_strip_reintro_action = Action("Ask if she would strip for pay.", sister_strip_reintro_requirement, "sister_strip_reintro_label",
+        menu_tooltip = "She was eager to make some money, maybe she will be willing to strip for you if you pay her.")
 
-        ####################
-        #RELATIONSHIP ROLES# TODO TODO TODO
-        ####################
+    sister_strip_action = Action("Ask her to strip for you.", sister_strip_requirement, "sister_strip_label",
+        menu_tooltip = "Have your sister strip for you, in exchange for some money.")
 
-        #GIRLFRIEND ACTIONS#
-        # Give her gifts (bonus happiness + Love)
-        # She tests serum for you for free.
-        # Go on dates (Remove this option from the normal chat menu?)
-        # If she has (of age) kids, meet them (and, amazingly, they're hot young women!)
-
-        #Other things to add#
-        # Enables new girlfriend specific crises.
-        # Adds more love to seduction attempts (reduce love from other sources)
-        # Fallout if your girlfriend catches you with someone else.
+    sister_role = Role("Sister", [sister_reintro_action, sister_serum_test_action, sister_strip_reintro_action, sister_strip_action])
 
 
-        girlfrind_role = Role("Girlfriend", []) #Your girlfriend, and she's not in a relationship with anyone else
-        #Getting married is some kind of victory for the game?
+    #MOTHER ACTIONS#
+    mother_offer_make_dinner = Action("Offer to make dinner. {image=gui/heart/Time_Advance.png}", mom_offer_make_dinner_requirement, "mom_offer_make_dinner_label",
+        menu_tooltip = "Earn some good will by making dinner for your mother and sister.")
+
+    mother_role = Role("Mother", [mother_offer_make_dinner])
 
 
-        #AFFAIRE ACTIONS
-        # Sneaky versions of all of the normal girlfriend stuff
-        # Have her get money from her (b/f/h) and give it to you.
-        # Convince her to leave her (boyfriend/fiance/husband) for you. Changes to her being your girlfriend.
-        # Start to blackmail her for money or sex.
+    #AUNT ACTIONS#
+    aunt_help_move = Action("Help her move into her apartment. {image=gui/heart/Time_Advance.png}", aunt_intro_moving_apartment_requirement, "aunt_intro_moving_apartment_label",
+        menu_tooltip = "Help your aunt and your cousin move their stuff from your house to their new apartment. They're sure to be grateful, and it would give you a chance to snoop around.")
 
-        affaire_role = Role("Affaire", []) #A women who, if she were single, would be your girlfriend but is in a relationship.
+    aunt_share_drinks_action = Action("Share a glass of wine. {image=gui/heart/Time_Advance.png}", aunt_share_drinks_requirement, "aunt_share_drinks_label",
+        menu_tooltip = "Sit down with your aunt and share a glass or two of wine. Maybe a little bit of alcohol will loosen her up a bit.")
 
-
-
-    return
+    aunt_role = Role("Aunt", [aunt_help_move,aunt_share_drinks_action])
 
 
+    #COUSIN ACTIONS#
+    cousin_blackmail_action = Action("Blackmail her.", cousin_blackmail_requirement, "cousin_blackmail_label",
+        menu_tooltip = "Threaten to tell her mother about what she's been doing and see what you can get out of her.")
+
+    cousin_role = Role("Cousin", [cousin_blackmail_action])
+
+    ####################
+    #RELATIONSHIP ROLES# TODO TODO TODO
+    ####################
+
+    #GIRLFRIEND ACTIONS#
+    # Give her gifts (bonus happiness + Love)
+    # She tests serum for you for free.
+    # Go on dates (Remove this option from the normal chat menu?)
+    # If she has (of age) kids, meet them (and, amazingly, they're hot young women!)
+
+    #Other things to add#
+    # Enables new girlfriend specific crises.
+    # Adds more love to seduction attempts (reduce love from other sources)
+    # Fallout if your girlfriend catches you with someone else.
+
+
+    girlfrind_role = Role("Girlfriend", []) #Your girlfriend, and she's not in a relationship with anyone else
+    #Getting married is some kind of victory for the game?
+
+
+    #AFFAIRE ACTIONS
+    # Sneaky versions of all of the normal girlfriend stuff
+    # Have her get money from her (b/f/h) and give it to you.
+    # Convince her to leave her (boyfriend/fiance/husband) for you. Changes to her being your girlfriend.
+    # Start to blackmail her for money or sex.
+
+    affaire_role = Role("Affaire", []) #A women who, if she were single, would be your girlfriend but is in a relationship.
 
 
 label pay_strip_scene(the_person):

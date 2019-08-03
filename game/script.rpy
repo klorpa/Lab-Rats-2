@@ -8135,6 +8135,11 @@ label talk_person(the_person):
         if the_person in mc.location.people and time_of_day == starting_time_of_day:
             call talk_person(the_person) from _call_talk_person_1 #If we're in the same place and time hasn't advanced keep talking to them until we stop talking on purpose.
 
+    python:
+        # Release objects
+        special_role_actions = None
+        roles_that_need_people_args = None
+
     $ renpy.scene("Active")
     return
 
@@ -9532,84 +9537,83 @@ label advance_time:
     #$mc.can_skip_time = True #Now give the player the ability to skip time again, because they should be back in control.
     return
 
-label create_test_variables(character_name,business_name,last_name,stat_array,skill_array,_sex_array,max_num_of_random=4): #Gets all of the variables ready. TODO: Move some of this stuff to an init block?
+init -1 python:
+    ##Actions##
+    hr_work_action = Action("Spend time orgainizing your business. {image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
+        menu_tooltip = "Raises business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
+    research_work_action = Action("Spend time researching in the lab. {image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
+        menu_tooltip = "Contributes research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
+    supplies_work_action = Action("Spend time ordering supplies. {image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
+        menu_tooltip = "Purchase serum supply at the cost of $1 per unit of supplies. When producing serum every production point requires one unit of serum.\n+3*Focus + 2*Skill + 1*Charisma + 10 Serum Supply.")
+    market_work_action = Action("Spend time shipping doses of serum marked for sale. {image=gui/heart/Time_Advance.png}",market_work_action_requirement,"market_work_action_description",
+        menu_tooltip = "Sells serum that has been marked for sale. Mark serum manually from the office or set an autosell threshold in production.\n3*Charisma + 2*Skill + 1*Focus + 5 Serum Doses Sold.")
+    production_work_action = Action("Spend time producing serum in the lab. {image=gui/heart/Time_Advance.png}",production_work_action_requirement,"production_work_action_description",
+        menu_tooltip = "Produces serum from raw materials. Each production point of serum requires one unit if supply, which can be purchased from your office.\n+3*Focus + 2*Skill + 1*Intelligence + 10 Production Points.")
 
+    interview_action = Action("Hire someone new. {image=gui/heart/Time_Advance.png}", interview_action_requirement,"interview_action_description",
+        menu_tooltip = "Look through the resumes of several candidates. More information about a candidate can be revealed by purchasing new business policies.")
+    design_serum_action = Action("Create a new serum design. {image=gui/heart/Time_Advance.png}", serum_design_action_requirement,"serum_design_action_description",
+        menu_tooltip = "Combine serum traits to create a new design. Once a design has been created it must be researched before it can be put into production.")
+    pick_research_action = Action("Assign Research Project.", research_select_action_requirement,"research_select_action_description",
+        menu_tooltip = "Pick the next research topic for your R&D division. Serum designs must be researched before they can be put into production.")
+    pick_production_action = Action("Set production settings.", production_select_action_requirement,"production_select_action_description",
+        menu_tooltip = "Decide what serum designs are being produced. Production is divided between multiple factory lines, and auto sell thresholds can be set to automatically flag serum for sale.")
+    pick_supply_goal_action = Action("Set the amount of supply you would like to maintain.", pick_supply_goal_action_requirement,"pick_supply_goal_action_description",
+        menu_tooltip = "Set a maximum amount of serum you and your staff will attempt to purchase.")
+    policy_purhase_action = Action("Purchase new business policies.", policy_purchase_requirement,"policy_purchase_description",
+        menu_tooltip = "New business policies changes the way your company runs and expands your control over it. Once purchased business policies are always active.")
+    set_head_researcher_action = Action("Select a Head Researcher.", head_researcher_select_requirement, "head_researcher_select_description",
+        menu_tooltip = "Pick a member of your R&D staff to be your head researcher. A head resercher with a high intelligence score will increase the amount of research produced by the entire division.")
+
+    trade_serum_action = Action("Access the serum production stockpile.", trade_serum_action_requirement, "trade_serum_action_description",
+        menu_tooltip = "Move serum to and from your personal inventory. You can only use serum you are carrying with you.")
+    sell_serum_action = Action("Mark serum to be sold.", sell_serum_action_requirement, "sell_serum_action_description",
+        menu_tooltip = "Decide what serum should be available for sale. It can then be sold from the marketing division. Setting an autosell threshold in the production department can do this automatically.")
+    review_designs_action = Action("Review serum designs.", review_designs_action_requirement, "review_designs_action_description",
+        menu_tooltip = "Shows all existing serum designs and allows you to delete any you no longer desire.")
+
+    sleep_action = Action("Go to sleep for the night. {image=gui/heart/Time_Advance.png}",sleep_action_requirement,"sleep_action_description",
+        menu_tooltip = "Go to sleep and advance time to the next day. Night time counts as three time chunks when calculating serum durations.")
+    faq_action = Action("Check the FAQ.",faq_action_requirement,"faq_action_description",
+        menu_tooltip = "Answers to frequently asked questions about Lab Rats 2.")
+
+    change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", 
+        menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.")
+    small_talk_action = Action("Make small talk. {image=gui/heart/Time_Advance.png}", requirement = small_talk_requirement, effect = "small_talk_person", 
+        menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
+    compliment_action = Action("Compliment her. {image=gui/heart/Time_Advance.png}", requirement = compliment_requirement, effect = "compliment_person",
+        menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to recieve a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
+    flirt_action = Action("Flirt with her. {image=gui/heart/Time_Advance.png}", requirement = flirt_requirement, effect = "flirt_person",
+        menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
+    date_action = Action("Ask her on a date.", requirement = date_requirement, effect = "date_person",
+        menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
+
+    wardrobe_change_action = Action("Ask to change her wardrobe.", requirement = wardrobe_change_requirment, effect = "wardrobe_change_label",
+        menu_tooltip = "Add and remove outfits from her wardrobe, or ask her to put on a specific outfit.")
+    serum_give_action = Action("Try to give her a dose of serum.", requirement = serum_give_requirement, effect = "serum_give_label",
+        menu_tooltip = "Demand she take a dose, ask her politely, or just try and slip it into something she'll drink. Failure may result in her trusting you less or being immediately unhappy.")
+    seduce_action = Action("Try to seduce her.", requirement = seduce_requirement, effect = "seduce_label",
+        menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.")
+
+    ##Actions unlocked by policies##
+    set_uniform_action = Action("Manage Employee Uniforms.",set_uniform_requirement,"set_uniform_description")
+    set_serum_action = Action("Set Daily Serum Doses.",set_serum_requirement,"set_serum_description")
+
+    ## Misc Actions
+    dinner_action = Action("Dinner date", dinner_date_requirement, "dinner_date") #it happens on a friday, so day%7 == 4
+    mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label")
+
+    test_action = Action("This is a test.", faq_action_requirement, "faq_action_description")
+
+label create_test_variables(character_name,business_name,last_name,stat_array,skill_array,_sex_array,max_num_of_random=4): #Gets all of the variables ready. TODO: Move some of this stuff to an init block?
     $ list_of_traits = [] #List of serum traits that can be used. Established here so they play nice with rollback, saving, etc.
     $ list_of_side_effects = [] #List of special serum traits that are reserved for bad results.
+    $ list_of_places = [] #By having this in an init block it may be set to null each time the game is reloaded, because the initialization stuff below is only called once.
 
     call instantiate_serum_traits() from _call_instantiate_serum_traits #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has lables that can be externally added and called here.
     call instantiate_side_effect_traits() from _call_instantiate_side_effect_traits
 
     python:
-
-        list_of_places = [] #By having this in an init block it may be set to null each time the game is reloaded, because the initialization stuff below is only called once.
-
-        ##Actions##
-        hr_work_action = Action("Spend time orgainizing your business. {image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
-            menu_tooltip = "Raises business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
-        research_work_action = Action("Spend time researching in the lab. {image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
-            menu_tooltip = "Contributes research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
-        supplies_work_action = Action("Spend time ordering supplies. {image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
-            menu_tooltip = "Purchase serum supply at the cost of $1 per unit of supplies. When producing serum every production point requires one unit of serum.\n+3*Focus + 2*Skill + 1*Charisma + 10 Serum Supply.")
-        market_work_action = Action("Spend time shipping doses of serum marked for sale. {image=gui/heart/Time_Advance.png}",market_work_action_requirement,"market_work_action_description",
-            menu_tooltip = "Sells serum that has been marked for sale. Mark serum manually from the office or set an autosell threshold in production.\n3*Charisma + 2*Skill + 1*Focus + 5 Serum Doses Sold.")
-        production_work_action = Action("Spend time producing serum in the lab. {image=gui/heart/Time_Advance.png}",production_work_action_requirement,"production_work_action_description",
-            menu_tooltip = "Produces serum from raw materials. Each production point of serum requires one unit if supply, which can be purchased from your office.\n+3*Focus + 2*Skill + 1*Intelligence + 10 Production Points.")
-
-        interview_action = Action("Hire someone new. {image=gui/heart/Time_Advance.png}", interview_action_requirement,"interview_action_description",
-            menu_tooltip = "Look through the resumes of several candidates. More information about a candidate can be revealed by purchasing new business policies.")
-        design_serum_action = Action("Create a new serum design. {image=gui/heart/Time_Advance.png}", serum_design_action_requirement,"serum_design_action_description",
-            menu_tooltip = "Combine serum traits to create a new design. Once a design has been created it must be researched before it can be put into production.")
-        pick_research_action = Action("Assign Research Project.", research_select_action_requirement,"research_select_action_description",
-            menu_tooltip = "Pick the next research topic for your R&D division. Serum designs must be researched before they can be put into production.")
-        pick_production_action = Action("Set production settings.", production_select_action_requirement,"production_select_action_description",
-            menu_tooltip = "Decide what serum designs are being produced. Production is divided between multiple factory lines, and auto sell thresholds can be set to automatically flag serum for sale.")
-        pick_supply_goal_action = Action("Set the amount of supply you would like to maintain.", pick_supply_goal_action_requirement,"pick_supply_goal_action_description",
-            menu_tooltip = "Set a maximum amount of serum you and your staff will attempt to purchase.")
-        policy_purhase_action = Action("Purchase new business policies.", policy_purchase_requirement,"policy_purchase_description",
-            menu_tooltip = "New business policies changes the way your company runs and expands your control over it. Once purchased business policies are always active.")
-        set_head_researcher_action = Action("Select a Head Researcher.", head_researcher_select_requirement, "head_researcher_select_description",
-            menu_tooltip = "Pick a member of your R&D staff to be your head researcher. A head resercher with a high intelligence score will increase the amount of research produced by the entire division.")
-
-        trade_serum_action = Action("Access the serum production stockpile.", trade_serum_action_requirement, "trade_serum_action_description",
-            menu_tooltip = "Move serum to and from your personal inventory. You can only use serum you are carrying with you.")
-        sell_serum_action = Action("Mark serum to be sold.", sell_serum_action_requirement, "sell_serum_action_description",
-            menu_tooltip = "Decide what serum should be available for sale. It can then be sold from the marketing division. Setting an autosell threshold in the production department can do this automatically.")
-        review_designs_action = Action("Review serum designs.", review_designs_action_requirement, "review_designs_action_description",
-            menu_tooltip = "Shows all existing serum designs and allows you to delete any you no longer desire.")
-
-        sleep_action = Action("Go to sleep for the night. {image=gui/heart/Time_Advance.png}",sleep_action_requirement,"sleep_action_description",
-            menu_tooltip = "Go to sleep and advance time to the next day. Night time counts as three time chunks when calculating serum durations.")
-        faq_action = Action("Check the FAQ.",faq_action_requirement,"faq_action_description",
-            menu_tooltip = "Answers to frequently asked questions about Lab Rats 2.")
-
-        change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", 
-            menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.")
-        small_talk_action = Action("Make small talk. {image=gui/heart/Time_Advance.png}", requirement = small_talk_requirement, effect = "small_talk_person", 
-            menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
-        compliment_action = Action("Compliment her. {image=gui/heart/Time_Advance.png}", requirement = compliment_requirement, effect = "compliment_person",
-            menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to recieve a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
-        flirt_action = Action("Flirt with her. {image=gui/heart/Time_Advance.png}", requirement = flirt_requirement, effect = "flirt_person",
-            menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
-        date_action = Action("Ask her on a date.", requirement = date_requirement, effect = "date_person",
-            menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
-
-        wardrobe_change_action = Action("Ask to change her wardrobe.", requirement = wardrobe_change_requirment, effect = "wardrobe_change_label",
-            menu_tooltip = "Add and remove outfits from her wardrobe, or ask her to put on a specific outfit.")
-        serum_give_action = Action("Try to give her a dose of serum.", requirement = serum_give_requirement, effect = "serum_give_label",
-            menu_tooltip = "Demand she take a dose, ask her politely, or just try and slip it into something she'll drink. Failure may result in her trusting you less or being immediately unhappy.")
-        seduce_action = Action("Try to seduce her.", requirement = seduce_requirement, effect = "seduce_label",
-            menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.")
-
-        test_action = Action("This is a test.", faq_action_requirement, "faq_action_description")
-
-        ##Roles##
-    call instantiate_roles() from _call_instantiate_roles #Broken out as a renpy statement instead of using the python equivalent because returning from a label might skip to the end of the whole pyton statement.
-    python:
-        ##Actions unlocked by policies##
-        set_uniform_action = Action("Manage Employee Uniforms.",set_uniform_requirement,"set_uniform_description")
-        set_serum_action = Action("Set Daily Serum Doses.",set_serum_requirement,"set_serum_description")
-
         ##PC's Home##
         hall = Room("main hall","Home",[],house_background,[],[],[],False,[3,3])
         bedroom = Room("your bedroom", "Your Bedroom",[],bedroom_background,[],[],[sleep_action,faq_action],False,[3,2])
@@ -9644,7 +9648,6 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         cousin_bedroom = Room("Gabrielle's bedroom", "Gabrielle's Bedroom", [], bedroom_background, [], [], [], False, [4,1], None, False)
 
         university = Room("university Campus", "University Campus", [], campus_background, [], [], [], False, [9,5], None, False)
-
 
         ##PC starts in his bedroom##
         main_business = Business(business_name, m_division, p_division, rd_division, office, office)
