@@ -626,7 +626,7 @@ init -2 python:
                 if not multiplier_source[0] in multipilers_used:
                     multipilers_used[multiplier_source[0]] = multiplier_source[1]
                 elif multiplier_source[1] > multipliers_used.get(multiplier_source[0]):
-                    multiplers_used[multiplier_source[0]] = multiplier_source[1]
+                    multipilers_used[multiplier_source[0]] = multiplier_source[1]
 
             for maxed_multiplier in multipilers_used:
                 value_change = multipilers_used.get(maxed_multiplier)
