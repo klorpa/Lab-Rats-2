@@ -1579,6 +1579,13 @@ init 1 python:
                 return True
         return False
 
+    def work_chat_get_candidate():
+        possible_people = []
+        for person in mc.location.people:
+            if mc.business.get_employee_title(person) != "None" and not person.get_opinion_score("small talk") < 0:
+                possible_people.append(person)
+        return get_random_from_list(possible_people)
+
     work_chat_crisis = Action("Work Chat Crisis", work_chat_crisis_requirement, "work_chat_crisis_label")
     crisis_list.append([work_chat_crisis,12])
 
@@ -1586,12 +1593,7 @@ label work_chat_crisis_label:
     if not mc.business.is_open_for_business() or not mc.is_at_work():
         return
 
-    $ possible_people = []
-    python:
-        for person in mc.location.people:
-            if mc.business.get_employee_title(person) != "None" and not person.get_opinion_score("small talk") < 0:
-                possible_people.append(person)
-    $ the_person = get_random_from_list(possible_people)
+    $ the_person = work_chat_get_candidate()
     if the_person is None:
         return #Everyone here must hate small talk. Oh well.
 
