@@ -9124,6 +9124,8 @@ label interview_action_description:
 
             else:
                 "You decide against hiring anyone new for now."
+
+            $ candidates = None # Release variables
             call advance_time from _call_advance_time_6
         "Nevermind.":
             $ temp = 0 #NOTE: just here so that this isn't technically an empty block.
