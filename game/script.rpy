@@ -1707,8 +1707,6 @@ init -2 python:
 
 
         def run_day(self): #Called at the end of the day.
-            self.outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #Put on a new outfit for the day!
-
             if renpy.random.randint(0,100) < 8 and self.title: #There's an 8% chance they want a title change on any given day, if they are already introduced. TODO: Tweak this or make it dependent on other stuff.
                 self.event_triggers_dict["wants_titlechange"] = True
             else:
