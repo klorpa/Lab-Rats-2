@@ -270,11 +270,8 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
 
 
                 $ column_elements = elements_list[count][1:]
-                viewport:
-                    if renpy.variant("touch"):
-                        scrollbars "vertical" #But if we aren't on a PC we need to make sure the player can scroll since they won't have a mouse wheel.
-                    else:
-                        scrollbars None # By making this none we remove the issue of the box requiring extra space to the side, screwing up the offset.
+                viewport id title_element:
+                    #scrollbars "vertical" #But if we aren't on a PC we need to make sure the player can scroll since they won't have a mouse wheel.
 
                     mousewheel True
                     xalign 0.5
@@ -363,7 +360,11 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                     tooltip the_tooltip
                                     sensitive is_sensitive
 
-
+                vbar:
+                    value YScrollValue(title_element)
+                    xalign 0.99
+                    yalign 0.99
+                    ysize 585
 
 screen person_choice(people, draw_hearts = False, person_prefix = None, person_suffix = None, show_person_preview = True, person_preview_args = None):
     style_prefix "choice"
