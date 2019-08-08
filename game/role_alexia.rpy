@@ -423,7 +423,7 @@ label alexia_photography_list_label(the_person):
     "[the_person.title] grabs the camera from her desk and hands it to you."
 
     if the_person.planned_uniform is not None: #Check to see if she should have a uniform on.
-        if the_person.outfit.slut_require > the_person.sluttiness + (the_person.get_opinion_score("skimpy uniforms")*5):
+        if the_person.outfit.slut_requirement > the_person.sluttiness + (the_person.get_opinion_score("skimpy uniforms")*5):
             the_person.char "Do I get to change into something more reasonable, or do you want me in my uniform?"
         else:
             the_person.char "Is my uniform fine for the shoot, or should I put something else on?"

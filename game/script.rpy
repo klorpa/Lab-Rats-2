@@ -626,7 +626,7 @@ init -2 python:
                 if not multiplier_source[0] in multipilers_used:
                     multipilers_used[multiplier_source[0]] = multiplier_source[1]
                 elif multiplier_source[1] > multipliers_used.get(multiplier_source[0]):
-                    multiplers_used[multiplier_source[0]] = multiplier_source[1]
+                    multipilers_used[multiplier_source[0]] = multiplier_source[1]
 
             for maxed_multiplier in multipilers_used:
                 value_change = multipilers_used.get(maxed_multiplier)
@@ -6899,7 +6899,7 @@ screen outfit_select_manager(slut_limit = 999, show_outfits = True, show_overwea
 
     $ outfit_info_array = []
     ## ["Catagory name", is_catagory_enabled, "return value when new is made", slut score calculation field/function, "export field type", add_outfit_to_wardrobe_function] ##
-    $ outfit_info_array.append([show_outfits, "Full Outfit", "new_full", Outfit.get_slut_requirement , "Fullsets", Wardrobe.add_outfit, Wardrobe.get_outfit_list])
+    $ outfit_info_array.append([show_outfits, "Full Outfit", "new_full", Outfit.get_slut_requirement , "FullSets", Wardrobe.add_outfit, Wardrobe.get_outfit_list])
     $ outfit_info_array.append([show_overwear, "Overwear Set", "new_over", Outfit.get_overwear_slut_score, "OverwearSets",  Wardrobe.add_overwear_set, Wardrobe.get_overwear_sets_list])
     $ outfit_info_array.append([show_underwear, "Underwear Set", "new_under", Outfit.get_underwear_slut_score, "UnderwearSets", Wardrobe.add_underwear_set, Wardrobe.get_underwear_sets_list])
 
@@ -6912,11 +6912,11 @@ screen outfit_select_manager(slut_limit = 999, show_outfits = True, show_overwea
                 frame:
                     background "#888888"
                     xsize 450
-                    ysize 750
+                    ysize 850
                     viewport:
                         scrollbars "vertical"
                         xsize 450
-                        ysize 750
+                        ysize 850
                         mousewheel True
                         vbox:
                             spacing -10
@@ -7837,60 +7837,8 @@ label outfit_master_manager(): #WIP new outfit manager that centralizes exportin
 
     call outfit_master_manager() from _call_outfit_master_manager #Loop around until the player decides they want to leave.
     return
-#
-# label create_outfit(the_outfit, overwrite_outfit = None): #TODO: Finish recreating all of this
-#     if the_outfit is None:
-#         call screen outfit_creator(Outfit("New Outfit"))
-#     else:
-#         call screen outfit_creator(the_outfit)
-#     $ new_outfit = _return
-#     $ outfit_type = "full"
-#     if not new_outfit == "Not_New": ##Only try and save the outfit if there was actually a new outfit made
-#         if overwrite_outfit is None: #We're
-#             menu:
-#                 "Save as a full outfit.":
-#                     $ outfit_type = "full"
-#
-#                 "Save as an underwear set." if new_outfit.is_suitable_underwear_set():
-#                     $ outfit_type = "under"
-#
-#                 "Save as an underwear set. (disabled)" if not new_outfit.is_suitable_underwear_set():
-#                     pass
-#
-#                 "Save as an overwear set." if new_outfit.is_suitable_overwear_set():
-#                     $ outfit_type = "over"
-#
-#                 "Save as an overwear set. (disabled)" if not new_outfit.is_suitable_overwear_set():
-#                     pass
-#
-#
-#             $ new_outfit_name = renpy.input ("Please name this outfit.")
-#             while new_outfit_name is None:
-#                 $ new_outfit_name = renpy.input ("Please name this outfit.")
-#
-#             $ mc.save_design(new_outfit, new_outfit_name, outfit_type)
-#
-#         #else:
 
 
-        # Removed as of v0.19.0. We no longer worry about outfits having the same name.
-        #if mc.designed_wardrobe.has_outfit_with_name(new_outfit_name):
-        #     "An outfit with this name already exists. Would you like to overwrite it?"
-        #
-        #     menu:
-        #         "Overwrite existing outfit.":
-        #             $ mc.designed_wardrobe.remove_outfit(mc.designed_wardrobe.get_outfit_with_name(new_outfit_name))
-        #             $ mc.save_design(new_outfit, new_outfit_name, outfit_type)
-        #
-        #         "Rename outfit.":
-        #             $ new_outfit_name = renpy.input ("Please input a new name.")
-        #             while mc.designed_wardrobe.has_outfit_with_name(new_outfit_name):
-        #                 $ new_outfit_name = renpy.input ("That name already exists. Please input a new name.")
-        #             $ mc.save_design(new_outfit, new_outfit_name, outfit_type)
-        # else:
-
-
-    # return
 
 label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS YOU TAKE
     # $ mc.can_skip_time = True
@@ -7907,7 +7855,8 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
 
     $ actions_list = ["Do Something"]
     if time_of_day == 4:
-        $ actions_list.append(["Go home and sleep.{image=gui/heart/Time_Advance.png} (tooltip)It's late. Go home and sleep.", "Wait"])
+        if sleep_action not in mc.location.actions: #If they're in a location they can sleep we shouldn't show this because they can just sleep here.
+            $ actions_list.append(["Go home and sleep.{image=gui/heart/Time_Advance.png} (tooltip)It's late. Go home and sleep.", "Wait"])
     else:
         $ actions_list.append(["Wait here. (tooltip)Kill some time and wait around.", "Wait"])
     $ actions_list.append(["Go somewhere else.", "Travel"])
@@ -7981,90 +7930,6 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
             $ mc.change_location(bedroom)
         call advance_time from _call_advance_time_15
 
-
-    # $ mc.can_skip_time = True
-    # menu:
-    #     "Talk to someone..." if (len(mc.location.people) > 0):
-    #         $ mc.can_skip_time = False
-    #         $tuple_list = mc.location.people + ["Back"]
-    #         call screen person_choice(tuple_list, draw_hearts = True)
-    #         $ person_choice = _return
-    #         if person_choice == "Back":
-    #             $ renpy.jump("game_loop")
-    #         else:
-    #             $ person_choice.draw_person()
-    #             $ enabled_talk_events = []
-    #             python:
-    #                 for possible_talk_event in person_choice.on_talk_event_list:
-    #                     if possible_talk_event.is_action_enabled(person_choice):
-    #                         enabled_talk_events.append(possible_talk_event)
-    #             if enabled_talk_events:
-    #                 #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
-    #                 $ talk_action = get_random_from_list(enabled_talk_events)
-    #                 $ talk_action.call_action(person_choice)
-    #                 $ person_choice.on_talk_event_list.remove(talk_action)
-    #
-    #
-    #             else:
-    #                 if person_choice.title is None:
-    #                     "You decide to approach the stranger and introduce yourself."
-    #                 else:
-    #                     "You approach [person_choice.title] and chat for a little bit."
-    #                     $ person_choice.call_dialogue("greetings")
-    #
-    #                 call talk_person(person_choice) from _call_talk_person
-    #
-    #     "Talk to someone... (disabled)" if (len(mc.location.people)) == 0:
-    #         pass
-    #
-    #     "Go somewhere else..." if (len(mc.location.connections) > 0):
-    #         $ mc.can_skip_time = False
-    #         call screen map_manager
-    #         $ new_location = _return
-    #         call change_location(new_location) from _call_change_location #_return is the location returned from the map manager.
-    #
-    #         if new_location.people: #There are people in the room, let's see if there are any room events
-    #             $ enabled_room_events = []
-    #             python: #Scan through all the people and...
-    #                 for a_person in new_location.people:
-    #                     for possible_room_event in a_person.on_room_enter_event_list:
-    #                         if possible_room_event.is_action_enabled(a_person): #See what events the are enabled...
-    #                             enabled_room_events.append([a_person, possible_room_event]) #Then keep track of the person so we know who to remove it from if it triggers.
-    #
-    #
-    #
-    #             if enabled_room_events: #If there are room events to take care of run those right now.
-    #                 $ picked_event = get_random_from_list(enabled_room_events)
-    #                 $ picked_event[0].on_room_enter_event_list.remove(picked_event[1]) #Remove the event from their list since we will be running it.
-    #                 $ picked_event[1].call_action(picked_event[0]) #Run the action with the person as an extra argument.
-    #
-    #             elif new_location in [mc.business.m_div, mc.business.p_div, mc.business.r_div, mc.business.s_div, mc.business.h_div]: #There are no room events, so generate a quick room greeting from an employee if one is around.
-    #                 $ possible_greetings = []
-    #                 python:
-    #                     for a_person in new_location.people:
-    #                         if mc.business.get_employee_title(a_person) != "None":
-    #                             possible_greetings.append(a_person)
-    #                 $ the_greeter = get_random_from_list(possible_greetings)
-    #                 if the_greeter:
-    #                     $ the_greeter.draw_person()
-    #                     $ the_greeter.call_dialogue("work_enter_greeting")
-    #                     $ renpy.scene("Active")
-    #
-    #
-    #     "Do something..." if (mc.location.valid_actions() > 0): ##If mc.locations.valid_actions returns 1 or higher, something goes very wrong with the loop. The first menu is not shown, even when the actual body is commented out.
-    #         $ mc.can_skip_time = False
-    #         python:
-    #             act_choice = call_formated_action_choice(mc.location.actions + ["Back"])
-    #             if act_choice == "Back":
-    #                 renpy.jump("game_loop")
-    #             else:
-    #                 act_choice.call_action()
-    #
-    #     "Do something... (disabled)" if (mc.location.valid_actions() == 0):
-    #         pass
-
-
-
     jump game_loop
 
 
@@ -8075,7 +7940,7 @@ label change_location(the_place):
     if the_place.trigger_tutorial and the_place.tutorial_label is not None and mc.business.event_triggers_dict["Tutorial_Section"] == True:
         $ the_place.trigger_tutorial = False
         $ renpy.call(the_place.tutorial_label)
-#    "You spend some time travelling to [the_place.name]." #TODO: Only show this when there is a significant time use? Otherwise takes up too much time changing between locations.
+
     return
 
 label talk_person(the_person):
@@ -8140,346 +8005,6 @@ label talk_person(the_person):
     $ renpy.scene("Active")
     return
 
-    #Removed as of v0.19.0, kept only in case something is needed again before being tidied up.
-    # menu:
-    #     "Chat for a while... (tooltip)A simple conversation is the best way to raise a girls love and learn more about her. These options will also give you a chance to observe the effects of any serum traits on her and raise their mastery level.":
-    #         # TODO: we want to format all of these as actions and hand them to the choice screen.
-    #         # $ Formatted_Compliment_String = "Compliment her outfit.\n{size=22}Max Effect: {/size}" + get_red_heart(40)
-    #         # $ Formatted_Flirt_String = "Flirt with her.\n{size=22}Max Effect: {/size}" + get_red_heart(20)
-    #
-    #         # $ change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
-    #         #     menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.")
-    #         # $ small_talk_action = Action("Make small talk. {image=gui/heart/Time_Advance.png}", requirement = small_talk_requirement, effect = "small_talk_person", args=the_person, requirement_args=the_person,
-    #         #     menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
-    #         # $ compliment_action = Action("Compliment her. {image=gui/heart/Time_Advance.png}", requirement = compliment_requirement, effect = "compliment_person", args=the_person, requirement_args=the_person,
-    #         #     menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to recieve a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
-    #         # $ flirt_action = Action("Flirt with her. {image=gui/heart/Time_Advance.png}", requirement = flirt_requirement, effect = "flirt_person", args=the_person, requirement_args=the_person,
-    #         #     menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
-    #         # $ date_action = Action("Ask her on a date.", requirement = date_requirement, effect = "date_person", args=the_person, requirement_args=the_person,
-    #         #     menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
-    #
-    #         $ act_choice = call_formated_action_choice([change_titles_action,small_talk_action, compliment_action, flirt_action, date_action, "Back"])
-    #
-    #         if act_choice == "Back":
-    #             call talk_person(the_person) from _call_talk_person_4
-    #         else:
-    #             $ act_choice.call_action()
-    #             if act_choice == small_talk_action or act_choice ==compliment_action or act_choice ==flirt_action:
-    #                 call advance_time from _call_advance_time_15
-    #             else:
-    #                 call talk_person(the_person) from _call_talk_person_5
-    #
-    #     "Ask to change her wardrobe. (tooltip)Add and remove outfits from her wardrobe, or ask her to put on a specific outfit." if the_person.obedience >= 120:
-    #         # menu:
-    #         #     "Add an outfit.":
-    #         #         mc.name "[the_person.title], I've got something I'd like you to wear for me." ## Do we want a completely silent protag? Speaks only through menu input maybe?
-    #         #         $ renpy.scene("Active")
-    #         #         call screen outfit_select_manager(show_sets = True, show_outfits = True)
-    #         #         $ the_person.draw_person()
-    #         #         if not _return == "No Return":
-    #         #             $ new_outfit = _return
-    #         #             menu:
-    #         #                 "Save as a full outfit.":
-    #         #                     $ outfit_type = "full"
-    #         #
-    #         #                 "Save as an underwear set." if new_outfit.is_suitable_underwear_set():
-    #         #                     $ outfit_type = "under"
-    #         #
-    #         #                 "Save as an underwear set. (disabled)" if not new_outfit.is_suitable_underwear_set():
-    #         #                     pass
-    #         #
-    #         #                 "Save as an overwear set." if new_outfit.is_suitable_overwear_set():
-    #         #                     $ outfit_type = "over"
-    #         #
-    #         #                 "Save as an overwear set. (disabled)" if not new_outfit.is_suitable_overwear_set():
-    #         #                     pass
-    #         #
-    #         #
-    #         #             $ slut_require = new_outfit.slut_requirement
-    #         #             if outfit_type == "under":
-    #         #                 $ slut_require = new_outfit.get_underwear_slut_score()
-    #         #             elif outfit_type == "over":
-    #         #                 $ slut_require = new_outfit.get_overwear_slut_score()
-    #         #
-    #         #             if slut_require > the_person.sluttiness:
-    #         #                 $ the_person.call_dialogue("clothing_reject")
-    #         #             else:
-    #         #                 $ the_person.add_outfit(new_outfit,outfit_type)
-    #         #                 $ the_person.call_dialogue("clothing_accept")
-    #         #
-    #         #         else:
-    #         #             mc.name "On second thought, nevermind."
-    #         #
-    #         #     "Delete an outfit.":
-    #         #         mc.name "[the_person.title], lets have a talk about what you've been wearing."
-    #         #         $ renpy.scene("Active")
-    #         #         call screen outfit_delete_manager(the_person.wardrobe)
-    #         #         $ the_person.draw_person()
-    #         #         #TODO: Figure out what happens when someone doesn't have anything in their wardrobe.
-    #         #
-    #         #     "Wear an outfit right now.":
-    #         #         mc.name "[the_person.title], I want you to get changed for me."
-    #         #         $ renpy.scene("Active")
-    #         #         call screen girl_outfit_select_manager(the_person.wardrobe)
-    #         #         if _return != "None":
-    #         #             $ the_person.set_outfit(_return)
-    #         #
-    #         #         $ the_person.draw_person()
-    #         #         the_person.char "Is this better?"
-    #
-    #         call talk_person(the_person) from _call_talk_person_1
-    #
-    #     "Ask to change her wardrobe. (disabled)\n{size=22}Requires: Obedience 120{/size}" if the_person.obedience < 120:
-    #         pass
-    #
-    #     # "Take a closer look at [the_person.title].":
-    #     #     call examine_person(the_person) from _call_examine_person
-    #     #     call talk_person(the_person) from _call_talk_person_2
-    #
-    #     "Try to give her a dose of serum..." if mc.inventory.get_any_serum_count() > 0:
-    #         # $ sneak_serum_chance = 70 + (mc.int*5) - (the_person.focus*5)  #% chance that you will successfully give serum to someone sneaklily. Less focused people are easier to fool.
-    #         # $ ask_serum_chance = 10*mc.charisma + 5*the_person.int #The more charismatic you are and the more intellectually curious they are the better the chance of success
-    #         # $ demand_serum_chance = mc.charisma * (the_person.obedience - 90) #The more charismatic you are and the more obedient they are the more likely this is to succeed.
-    #         #
-    #         # if sneak_serum_chance < 0:
-    #         #     $ sneak_serum_chance = 0
-    #         # elif sneak_serum_chance > 100:
-    #         #     $ sneak_serum_chance = 100
-    #         #
-    #         # if ask_serum_chance < 0:
-    #         #     $ ask_serum_chance = 0
-    #         # elif ask_serum_chance > 100:
-    #         #     $ ask_serum_chance = 100
-    #         #
-    #         # if mc.business.get_employee_title(the_person) == "None":
-    #         #     $demand_serum_chance += -35 #if she doesn't work for you there is a much lower chance she will listen to your demand (unless you are very charismatic or she is highly obedient.)
-    #         # if demand_serum_chance < 0:
-    #         #     $ demand_serum_chance = 0
-    #         # elif demand_serum_chance > 100:
-    #         #     $ demand_serum_chance = 100
-    #         #
-    #         # $ pay_serum_cost = the_person.salary * 5
-    #         # $ rand_chance = renpy.random.randint(0,100)
-    #         #
-    #         # menu:
-    #         #     "Give it to her stealthily.\n{size=22}Success Chance: [sneak_serum_chance]%%{/size}": #TODO: Have this modified by something so there are interesting gameplay decisions
-    #         #         "You chat with [the_person.title] for a couple of minutes. Waiting to find a chance to deliver a dose of serum."
-    #         #         if rand_chance < sneak_serum_chance:
-    #         #             #Success
-    #         #             "You're able to distract [the_person.title] and have a chance to give her a dose of serum."
-    #         #             call give_serum(the_person) from _call_give_serum
-    #         #
-    #         #         else:
-    #         #             #Caught!
-    #         #             "You finally distract [the_person.title] and have a chance to give her a dose of serum."
-    #         #             the_person.char "Hey, what's that?"
-    #         #             "You nearly jump as [the_person.title] points down at the small vial of serum you have clutched in your hand."
-    #         #             $ avoid_chance = renpy.random.randint(0,10)
-    #         #             if avoid_chance < mc.charisma:
-    #         #                 if mc.business.get_employee_title(the_person) == "None":
-    #         #                     mc.name "This? Oh, it's just something we're working on at the lab that I thought you might be interested in."
-    #         #                     "You dive into a technical description of your work, hoping to distract [the_person.title] from your real intentions."
-    #         #
-    #         #                 else:
-    #         #                     mc.name "This? Oh, it's just one of the serums I grabbed from production for quality control. I was just fidgeting with it I guess."
-    #         #                     "You make small talk with [the_person.title], hoping to distract her from your real intentions."
-    #         #                 "After a few minutes you've managed to avoid her suspicion, but haven't been able to deliver the dose of serum."
-    #         #
-    #         #             else:
-    #         #                 mc.name "This? Uh..."
-    #         #                 $ the_person.draw_person(emotion="angry")
-    #         #                 $ the_person.change_obedience(-10)
-    #         #                 $ the_person.change_happiness(-10)
-    #         #                 $ the_person.change_love(-5)
-    #         #                 the_person.char "Were you about to put that in my drink? Oh my god [the_person.mc_title]!"
-    #         #                 mc.name "Me? Never!"
-    #         #                 "[the_person.title] shakes her head and storms off. You can only hope this doesn't turn into soemthing more serious."
-    #         #                 $renpy.scene("Active")
-    #         #                 return
-    #         #
-    #         #     "Ask her to take it.\n{size=22}Success Chance: [ask_serum_chance]%%{/size}" if not mandatory_unpaid_serum_testing_policy.is_owned() or mc.business.get_employee_title(the_person) == "None":
-    #         #         if mc.business.get_employee_title(the_person) == "None":
-    #         #             mc.name "[the_person.title], I've got a project going on at work that could really use a test subject. Would you be interested in helping me out?"
-    #         #
-    #         #         else:
-    #         #             mc.name "[the_person.title], there's a serum design that is in need of a test subject. Would you be interested in helping out with a quick field study?"
-    #         #
-    #         #         if rand_chance < ask_serum_chance:
-    #         #             #Success
-    #         #             if mc.business.get_employee_title(the_person) == "None":
-    #         #                 the_person.char "I'd be happy to help, as long as you promise it's not dangerous of course. I've always wanted to be a proper scientist!"
-    #         #             else:
-    #         #                 the_person.char "I'll admit I'm curious what it would do to me. Okay, as long as it's already passed the safety test requirements, of course."
-    #         #             mc.name "It's completely safe, we just need to test what the results from it will be. Thank you."
-    #         #             call give_serum(the_person) from _call_give_serum_2
-    #         #
-    #         #         else:
-    #         #             #Denies
-    #         #             $ the_person.change_obedience(-2)
-    #         #             the_person.char "I'm... I don't think I would be comfortable with that. Is that okay?"
-    #         #             mc.name "Of course it is, that's why I'm asking in the first place."
-    #         #
-    #         #     "Ask her to take it.\n{size=22}Success Chance: Required by Policy{/size}" if mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None":
-    #         #         #Auto success
-    #         #         mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this."
-    #         #         call give_serum(the_person) from _call_give_serum_3
-    #         #
-    #         #     "Demand she takes it.\n{size=22}Success Chance: [demand_serum_chance]%%{/size}": #They must work for you to demand it.
-    #         #         mc.name "[the_person.title], you're going to drink this for me."
-    #         #         "You pull out a vial of serum and present it to [the_person.title]."
-    #         #         the_person.char "What is it for, is it important?"
-    #         #         mc.name "Of course it is, I wouldn't ask you to if it wasn't."
-    #         #         if rand_chance < demand_serum_chance:
-    #         #             #Success
-    #         #             the_person.char "Okay, if that's what you need me to do..."
-    #         #             call give_serum(the_person) from _call_give_serum_4
-    #         #         else:
-    #         #             #Refues
-    #         #             $ the_person.draw_person(emotion = "angry")
-    #         #             $ the_person.change_obedience(-2)
-    #         #             $ the_person.change_happiness(-2)
-    #         #             $ the_person.change_love(-2)
-    #         #             the_person.char "You expect me to just drink random shit you hand to me? I'm sorry, but that's just rediculous."
-    #         #
-    #         #     "Pay her to take it.\n{size=22}Costs: $[pay_serum_cost]{/size}" if mandatory_paid_serum_testing_policy.is_owned() and not mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None": #This becomes redundent when they take it for free.
-    #         #         #Pay cost and proceed
-    #         #         $ mc.business.funds += -pay_serum_cost
-    #         #         mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this, a bonus will be added onto your paycheck."
-    #         #         call give_serum(the_person) from _call_give_serum_5
-    #         #
-    #         #
-    #         #     "Pay her to take it.\n{size=22}Requires: Mandatory Paid Serum Testing{/size} (disabled)" if not mandatory_unpaid_serum_testing_policy.is_owned() and not mandatory_paid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None":
-    #         #         pass
-    #         #
-    #         #     "Do nothing.":
-    #         #         pass
-    #
-    #
-    #
-    #         #  if mc.inventory.get_any_serum_count() > 0 and mandatory_serum_testing_policy.is_owned():
-    #         # $renpy.scene("Active")
-    #         # call give_serum(the_person) from _call_give_serum
-    #
-    #         call talk_person(the_person) from _call_talk_person_3
-    #
-    #     "Try to give her a dose of serum.\n{size=22}Requires: Serum in Inventory{/size} (disabled)" if not mc.inventory.get_any_serum_count() > 0:
-    #         pass
-    #
-    #     "Seduce her...\n{size=22}Uses 1 Stamina{/size} (tooltip)Try and seduce her right here and now. Love, sluttiness, obedience, and charisma all play a factor in how likely you are to succeed." if the_person.sluttiness >= 15 and mc.current_stamina > 0:
-    #         # mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
-    #         # $ the_person.call_dialogue("seduction_response")
-    #         # $ random_chance = renpy.random.randint(0,100)
-    #         # $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
-    #         # $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
-    #         # $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
-    #         #
-    #         # if chance_service_her > 100:
-    #         #     $ chance_service_her = 100
-    #         # elif chance_service_her < 0:
-    #         #     $ chance_service_her = 0
-    #         #
-    #         # if chance_both_good > 100:
-    #         #     $ chance_both_good = 100
-    #         # elif chance_both_good < 0:
-    #         #     $ chance_both_good = 0
-    #         #
-    #         # if chance_service_him > 100:
-    #         #     $ chance_service_him = 100
-    #         # elif chance_service_him < 0:
-    #         #     $ chance_service_him = 0
-    #         #
-    #         # $ seduced = False #Flip to true if our approach works
-    #         # menu:
-    #         #     "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
-    #         #         "You lean in close whisper what you want to do to her."
-    #         #         if random_chance < chance_service_her: #Success
-    #         #             $ seduced = True
-    #         #             $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
-    #         #             $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
-    #         #             $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
-    #         #             $ the_person.discover_opinion("taking control")
-    #         #         else: #Failure
-    #         #             pass
-    #         #
-    #         #     "Let's have a good time.\n{size=22}Success Chance: [chance_both_good]%%\nModifiers: None{/size} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
-    #         #         "You lean in close and whisper what you want to do together."
-    #         #         if random_chance < chance_both_good:
-    #         #             $ seduced = True
-    #         #         else:
-    #         #             pass
-    #         #
-    #         #     "I need you to get me off.\n{size=22}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
-    #         #         "You lean in close and whisper what you want her to do to you."
-    #         #         if random_chance < chance_service_him:
-    #         #             $ seduced = True
-    #         #             $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
-    #         #             $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
-    #         #             $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
-    #         #             $ the_person.discover_opinion("being submissive")
-    #         #         else:
-    #         #             pass
-    #         #
-    #         # if seduced and the_person.sexed_count < 1:
-    #         #
-    #         #     $ extra_people_count = mc.location.get_person_count() - 1
-    #         #     $ in_private = True
-    #         #     if extra_people_count > 0: #We have more than one person here
-    #         #         $ the_person.call_dialogue("seduction_accept_crowded")
-    #         #         menu:
-    #         #             "Find somewhere quiet.\n{size=22}No interuptions{/size}":
-    #         #                 "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interupted."
-    #         #
-    #         #             "Stay right here.\n{size=22}[extra_people_count] watching{/size}":
-    #         #                 if the_person.sluttiness < 50:
-    #         #                     mc.name "I think we'll be fine right here."
-    #         #                     the_person.char "I... Okay, if you say so."
-    #         #
-    #         #                 $ in_private = False
-    #         #     else:
-    #         #         $ the_person.call_dialogue("seduction_accept_alone")
-    #         #
-    #         #     $ mc.current_stamina += -1
-    #         #     call fuck_person(the_person,private = in_private) from _call_fuck_person
-    #         #     $ the_person.reset_arousal()
-    #         #     $ the_person.review_outfit()
-    #         #
-    #         #     #Tidy up our situational modifiers, if any.
-    #         #     $ the_person.clear_situational_slut("public_sex")
-    #         #     $ the_person.clear_situational_slut("seduction_approach")
-    #         #     $ the_person.clear_situational_obedience("seduction_approach")
-    #         # else:
-    #         #     $ the_person.call_dialogue("seduction_refuse")
-    #         #     $ the_person.clear_situational_slut("seduction_approach")
-    #         #     $ the_person.clear_situational_obedience("seduction_approach")
-    #         #
-    #         # $ the_person.sexed_count += 1
-    #
-    #     "Seduce her...\n{size=22}Requires: {/size}{image=gui/heart/three_quarter_red_quarter_empty_heart.png} (disabled)" if the_person.sluttiness < 15:
-    #         pass
-    #
-    #     "Seduce her...\n{size=22}Requires Stamina{/size} (disabled)" if the_person.sluttiness >= 15 and mc.current_stamina == 0:
-    #         pass
-    #
-    #     "Special Role Actions... (tooltip)A list of actions made available by this girls roles." if the_person.valid_role_actions() > 0:
-    #         python: #Generate a list of options from the actions that have their requirement met, plus a back button in case the player wants to take none of them.
-    #             role_actions = []
-    #             for role in the_person.special_role:
-    #                 for act in role.actions:
-    #                     role_actions.append([act, the_person]) #TODO: Figure out why this is broken
-    #             role_actions.append("Back")
-    #             act_choice = call_formated_action_choice(role_actions)
-    #
-    #             if act_choice == "Back":
-    #                 renpy.call("talk_person", the_person)
-    #             else:
-    #                 act_choice.call_action(the_person)
-    #
-    #     "Finish talking. (tooltip)Finish interacting with her.":
-    #         $the_person.draw_person(position = "walking_away")
-    #         "You say goodbye to [the_person.title] and the two of you separate."
-    #
-    # $renpy.scene("Active")
-    # return
 
 label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False):
     #Use a situational modifier to change sluttiness before having sex.
@@ -8531,8 +8056,8 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
                             if position.slut_requirement <= the_person.effective_sluttiness():
                                 tuple_list.append(position)
                 position_choice = get_random_from_list(tuple_list)
-                if not position_choice: #TODO: Add a way for them to decide to actually leave here.
-                    position_choice = "Girl Leave" #Needs to be a different flag because "Leave" triggers all of the checks for a girl to convince you to keep going.
+                if not position_choice:
+                    position_choice = "Girl Leave"
 
 
             else:
@@ -8545,8 +8070,33 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
                     tuple_list.append(["Leave","Leave"]) #Stop having sex, since cumming is now a locked in thing.
                 position_choice = renpy.display_menu(tuple_list,True,"Choice")
 
+    if position_choice == "Leave":
+        if the_person.effective_sluttiness() > 60:
+            if renpy.random.randint(0,the_person.arousal) + 50 < the_person.obedience:
+                $ the_person.call_dialogue("sex_take_control")
+                $ the_person.change_obedience(-3)
+                call fuck_person(the_person, private, start_position, start_object, skip_intro = True, girl_in_charge = True) from _call_fuck_person_18
 
-    if not position_choice == "Leave":
+            elif the_person.arousal > 80:
+                # They're close to their orgasm and beg you to help them finish.
+                $ the_person.call_dialogue("sex_beg_finish")
+                menu:
+                    "Keep going.":
+                        $ the_person.change_obedience(2)
+                        call fuck_person(the_person, private, start_position, start_object, skip_intro = True, hide_leave = True) from _call_fuck_person_19 #Redo all of this but don't let them leave. Start position and start_object will normally be None
+
+                    "Leave.":
+                        $ the_person.call_dialogue("sex_end_early")
+
+            else: #They're slutty but they just say they're sad to end.
+                $ the_person.call_dialogue("sex_end_early")
+        else:
+            $ the_person.call_dialogue("sex_end_early")
+
+    elif position_choice == "Girl Leave":
+        "[the_person.title] can't think of anything more to do with you."
+
+    else: #It is neither of the leave options, so it is a position and we can continue
         python:
             tuple_list = []
             if start_object and start_object in mc.location.objects:
@@ -8573,29 +8123,6 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
         if skip_intro:
             $ start_round = 1
         call sex_description(the_person, position_choice, object_choice, start_round, private=private, girl_in_charge = girl_in_charge) from _call_sex_description
-
-    else: #The position choice was "Leave" and we want to add some extra stuff.
-        if the_person.effective_sluttiness() > 60:
-            if renpy.random.randint(0,the_person.arousal) + 50 < the_person.obedience:
-                $ the_person.call_dialogue("sex_take_control")
-                $ the_person.change_obedience(-3)
-                call fuck_person(the_person, private, start_position, start_object, skip_intro = True, girl_in_charge = True) from _call_fuck_person_18
-
-            elif the_person.arousal > 80:
-                # They're close to their orgasm and beg you to help them finish.
-                $ the_person.call_dialogue("sex_beg_finish")
-                menu:
-                    "Keep going.":
-                        $ the_person.change_obedience(2)
-                        call fuck_person(the_person, private, start_position, start_object, skip_intro = True, hide_leave = True) from _call_fuck_person_19 #Redo all of this but don't let them leave. Start position and start_object will normally be None
-
-                    "Leave.":
-                        $ the_person.call_dialogue("sex_end_early")
-
-            else: #They're slutty but they just say they're sad to end.
-                $ the_person.call_dialogue("sex_end_early")
-        else:
-            $ the_person.call_dialogue("sex_end_early")
 
 
     $ the_person.clear_situational_slut("love_modifier")
@@ -8760,6 +8287,11 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
         $ the_position.current_modifier = None
         $ mc.condom = False
         call fuck_person(the_person) from _call_fuck_person_2
+
+    # elif position_choice == "Girl Leave":
+    #     $ the_position.current_modifier = None
+    #     $ mc.condom = False
+    #     "[the_person.title] can't think of anything else she wants to do with you and leaves."
 
     else:
         if not position_choice == the_position: #We are changing to a new position.

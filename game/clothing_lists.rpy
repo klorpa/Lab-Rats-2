@@ -226,7 +226,7 @@ init -1:
         dress_list.append(summer_dress)
 
         evening_dress_bottom = Clothing("evening dress", 2, False, False, "Evening_Dress", False, False, 0, is_extension = True)
-        evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.3)
+        evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4)
         dress_list.append(evening_dress)
 
         leotard_bottom = Clothing("Leotard", 2, True, True, "Leotard", False, False, 0, is_extension = True)
