@@ -174,7 +174,7 @@ label strip_ask_cowgirl(the_girl, the_clothing, the_location, the_object, the_ro
 
 label orgasm_cowgirl(the_girl, the_location, the_object, the_round):
     "[the_girl.title] works her hips faster and her breathing grows heavier."
-    $ the_girl.call_dialogue("climax_responses")
+    $ the_girl.call_dialogue("climax_responses_vaginal")
     the_girl.char "With one last gasp she collapses down against you. Her thighs quiver as she climaxes."
     "After a second [the_girl.title] regains control of herself. Her breath is warm against your ear as she whispers to you."
     the_girl.char "I can't stop now, I want you to make me cum again!"

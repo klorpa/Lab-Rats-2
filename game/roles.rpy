@@ -1,5 +1,14 @@
 # This file holds the initialization information and general storyline info for all of the roles in the game. Individual roles and individual files.
-
+init -1 python:
+    def prostitute_requirement(the_person):
+        if mc.business.funds < 200:
+            "Not enough cash"
+        elif mc.current_stamina < 1:
+            "Requires: 1 Stamina"
+        elif the_person.sexed_count >= 1:
+            "She's worn out. Maybe later."
+        else:
+            return True
 
 label instantiate_roles(): #This section instantiates all of the key roles in the game. It is placed here to ensure it is properly created, saved, ect. by Renpy.
     #All of the role labels and requirements are defined in their own file, but their Action representitions are stored here for saving purposes.
@@ -43,18 +52,31 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1, visit_nora_intro, advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
 
+
+        #MODEL ACTIONS#
+
+        model_ad_photo_list = Action("Shoot pictures for an advertisement. {image=gui/heart/Time_Advance.png}", model_photography_list_requirement, "model_photography_list_label")
+
+        fire_model_action = Action("Remove her as your company model.", fire_model_requirment, "fire_model_label",
+            menu_tooltip = "Remove her as your company model so you can give the position to someone else. Effects from existing ad campaigns will continue until they expire.")
+
+        company_model_role = Role("Model", [model_ad_photo_list])
+
+
         #STEPH ACTIONS#
 
         steph_role = Role("Stephanie", [], hidden = True) #Used to hold any Stephanie specific actions not tied to another role, and to guarantee this is Steph even if she undergoes a personality change.
 
+        #NORA ROLE#
+
+        nora_role = Role("Nora", [], hidden = True)
+
         #ALEXIA ACTIONS#
         alexia_ad_reintro = Action("Have her order photography equipment. -$500", alexia_ad_suggest_reintro_requirement, "alexia_ad_suggest_reintro_label")
 
-        alexia_ad_photo_intro = Action("Shoot pictures for your business cards. {image=gui/heart/Time_Advance.png}", alexia_photography_intro_requirement, "alexia_photography_intro_label")
+        alexia_ad_photo_intro = Action("Shoot pictures for your business cards. {image=gui/heart/Time_Advance.png}", alexia_photography_intro_requirement, "alexia_photography_intro_label") #This vent leads to Alexia being given the model role.
 
-        alexia_ad_photo_list = Action("Shoot pictures for an advertisement. {image=gui/heart/Time_Advance.png}", alexia_photography_list_requirement, "alexia_photography_list_label")
-
-        alexia_role = Role("Alexia", [alexia_ad_reintro, alexia_ad_photo_intro, alexia_ad_photo_list], hidden = True) #Hide her role because we don't want to display it.
+        alexia_role = Role("Alexia", [alexia_ad_reintro, alexia_ad_photo_intro], hidden = True) #Hide her role because we don't want to display it.
 
         #SISTER ACTIONS#
         sister_reintro_action = Action("Ask if she needs extra work.", sister_reintro_action_requirement, "sister_reintro_label",
@@ -127,7 +149,14 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         affaire_role = Role("Affaire", []) #A women who, if she were single, would be your girlfriend but is in a relationship.
 
 
+        ###################
+        ### OTHER ROLES ###
+        ###################
 
+        prostitute_action = Action("Pay her for sex. -$200", prostitute_requirement, "prostitute_label",
+            menu_tooltip = "You know she's a prostitute, pay her to have sex with you.")
+
+        prostitute_role = Role("Prostitute", [prostitute_action])
     return
 
 
@@ -247,31 +276,32 @@ label pay_strip_scene(the_person):
         # Low obedience characters will strip off less when told but can be left to run the show on their own and will remove some.
         python:
             for item in the_person.outfit.get_unanchored():
-                test_outfit = the_person.outfit.get_copy()
-                test_outfit.remove_clothing(item)
-                new_willingness = the_person.sluttiness + (5*the_person.get_opinion_score("not wearing anything")) - test_outfit.slut_requirement
-                if new_willingness + (the_person.obedience-100) >= 0:
-                    #They're willing to strip it off.
-                    price = 0 # Default value
-                    if new_willingness >= 40:
-                        price = 0 #They'll do it for free!
+                if not item.is_extension:
+                    test_outfit = the_person.outfit.get_copy()
+                    test_outfit.remove_clothing(item)
+                    new_willingness = the_person.sluttiness + (5*the_person.get_opinion_score("not wearing anything")) - test_outfit.slut_requirement
+                    if new_willingness + (the_person.obedience-100) >= 0:
+                        #They're willing to strip it off.
+                        price = 0 # Default value
+                        if new_willingness >= 40:
+                            price = 0 #They'll do it for free!
 
-                    elif new_willingness >= 20:
-                        price = (strip_willingness - new_willingness) * 3 #They feel pretty good about how they'll be dressed after, so the price is decent.
+                        elif new_willingness >= 20:
+                            price = (strip_willingness - new_willingness) * 3 #They feel pretty good about how they'll be dressed after, so the price is decent.
+
+                        else:
+                            price = (strip_willingness - new_willingness) * 10 #THey will feel pretty uncomfortable, so they expect to be paid well.
+
+                        price = math.ceil((price/5.0))*5 #Round up to the next $5 increment
+
+                        display_string = "Strip " + item.name + "\n{size=22}$" + str(price) + "{/size}"
+                        if price > mc.business.funds:
+                            display_string += " (disabled)"
+
+                        menu_list.append([display_string, [item,price]])
 
                     else:
-                        price = (strip_willingness - new_willingness) * 10 #THey will feel pretty uncomfortable, so they expect to be paid well.
-
-                    price = math.ceil((price/5.0))*5 #Round up to the next $5 increment
-
-                    display_string = "Strip " + item.name + "\n{size=22}$" + str(price) + "{/size}"
-                    if price > mc.business.funds:
-                        display_string += " (disabled)"
-
-                    menu_list.append([display_string, [item,price]])
-
-                else:
-                    menu_list.append(["Strip " + item.name + "\n{size=22}Too Slutty{/size} (disabled)", [item,-1]])
+                        menu_list.append(["Strip " + item.name + "\n{size=22}Too Slutty{/size} (disabled)", [item,-1]])
 
             menu_list.append(["Just watch.","Watch"])
             menu_list.append(["Tell her to pose.","Pose"])
@@ -398,4 +428,25 @@ label pay_strip_scene(the_person):
                 $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
                 "[the_person.title] strips off her [the_clothing.name] for free, leaving it on the ground at her feet."
 
+    return
+
+
+label prostitute_label(the_person):
+    mc.name "[the_person.title], I'm looking for a friend to spend some time with. Are you available?"
+    the_person.char "If you're paying I am."
+    $ mc.business.funds += -200
+    $ the_person.change_obedience(1)
+
+    $ add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
+    call fuck_person(private = True) from _call_fuck_person_23
+    $ the_person.clear_situational_obedience("prostitute")
+    if the_person.arousal >= 100:
+        "It takes [the_person.title] a few moments to catch her breath."
+        the_person.char "Maybe I should be paying you... Whew!"
+    $ the_person.reset_arousal()
+    $ the_person.review_outfit()
+
+    the_person.char "That was fun, I hope you had a good time [the_person.mc_title]."
+    "She gives you a quick peck on the cheek."
+    $ renpy.scene("Active")
     return

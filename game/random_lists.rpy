@@ -105,6 +105,9 @@ init -2:
         list_of_names.append("Bailey")
         list_of_names.append("Sierra")
         list_of_names.append("Terry")
+        list_of_names.append("Cordula")
+        list_of_names.append("Suzy")
+        list_of_names.append("Elizabeth")
 
 
         def get_random_name():
@@ -181,6 +184,9 @@ init -2:
         list_of_last_names.append("Rosen")
         list_of_last_names.append("Mayfair")
         list_of_last_names.append("Morgan")
+        list_of_last_names.append("Grün")
+        list_of_last_names.append("Berry")
+        list_of_last_names.append("Sanders")
 
 
         def get_random_last_name():
@@ -623,7 +629,7 @@ init 1 python:
             eyes = "brown", personality = stephanie_personality, name_color = "#cf3232", dial_color = "#cf3232" , starting_wardrobe = stephanie_wardrobe, \
             stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 7, \
             title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
-
+        stephanie.generate_home()
 
         ### NORA ##
         nora_wardrobe = wardrobe_from_xml("Nora_Wardrobe")
@@ -633,7 +639,10 @@ init 1 python:
             eyes = "grey", personality = nora_personality, name_color = "#dddddd", dial_color = "#dddddd", starting_wardrobe = nora_wardrobe, \
             stat_array = [1,5,4], skill_array = [1,1,5,3,1], sex_array = [3,2,4,1], start_sluttiness = 4, start_obedience = 2, start_happiness = 0, start_love = 3, \
             title = "Nora", possessive_title = "Your old boss", mc_title = mc.name, relationship = "Single", kids = 0)
-        nora.set_work([0,1,2,3,4], nora.home)
+
+        nora.generate_home()
+        nora.special_role.append(nora_role)
+        nora.set_schedule([0,1,2,3,4], nora.home)
         nora.home.add_person(nora)
 
         ### ALEXIA ###
@@ -644,6 +653,7 @@ init 1 python:
             eyes = "brown", personality = alexia_personality, name_color = "#ffff6e", dial_color = "#ffff6e", starting_wardrobe = alexia_wardrobe, \
             stat_array = [4,3,3], skill_array = [1,3,2,1,1], sex_array = [2,2,1,0], start_sluttiness = 3, start_obedience = 0, start_happiness = 102, start_love = 3, \
             title = "Alexia", possessive_title = "Your old classmate",mc_title = mc.name, relationship = "Girlfriend", SO_name = get_random_male_name(), kids = 0)
+        alexia.generate_home()
 
         alexia_intro_phase_zero_action = Action("Alexia Set Schedule", alexia_intro_phase_zero_requirement, "alexia_phase_zero_label", requirement_args = renpy.random.randint(14, 21))
         mc.business.mandatory_crises_list.append(alexia_intro_phase_zero_action)
@@ -651,7 +661,7 @@ init 1 python:
         alexia_intro_phase_one_action = Action("Alexia Intro Phase One", alexia_intro_phase_one_requirement, "alexia_intro_phase_one_label")
         alexia.on_room_enter_event_list.append(alexia_intro_phase_one_action)
 
-        alexia.special_role = [alexia_role]
+        alexia.special_role.append(alexia_role)
         for i in range(0,5):
             alexia.schedule[i] = alexia.home #Hide them in their bedroom off the map until they're ready.
         alexia.home.add_person(alexia)
@@ -666,9 +676,9 @@ init 1 python:
             stat_array = [5,2,2], skill_array = [2,2,0,1,1], sex_array = [2,1,0,0], start_sluttiness = 8, start_obedience = -26, start_happiness = 122, start_love = 15, \
             title = "Lily", possessive_title = "Your sister", mc_title = mc.name, relationship = "Single", kids = 0)
 
-        lily.special_role = [sister_role]
+        lily.special_role.append(sister_role)
         lily.schedule[3] = lily.home
-        lily.set_work([1,2],university)
+        lily.set_schedule([1,2],university)
 
         sister_intro_crisis = Action("sister_intro_crisis", sister_intro_crisis_requirements, "sister_intro_crisis_label", args=lily, requirement_args = [lily, renpy.random.randint(7,14)]) #Def is in roles.rpy
         sister_strip_intro_crisis = Action("sister_strip_intro_crisis", sister_strip_intro_requirement, "sister_strip_intro_label", args=lily, requirement_args = lily)
@@ -682,12 +692,12 @@ init 1 python:
         mom_wardrobe = wardrobe_from_xml("Mom_Wardrobe")
 
         global mom
-        mom = create_random_person(name = "Jennifer", last_name = mc.last_name, age = 49, body_type = "standard_body", face_style = "Face_1", tits = "DD", height = 0.94, hair_colour = "black", hair_style = long_hair, skin="white", \
+        mom = create_random_person(name = "Jennifer", last_name = mc.last_name, age = 42, body_type = "standard_body", face_style = "Face_1", tits = "DD", height = 0.94, hair_colour = "black", hair_style = long_hair, skin="white", \
             eyes = "brown", personality = mom_personality, name_color = "#8fff66", dial_color = "#8fff66", starting_wardrobe = mom_wardrobe, start_home = mom_bedroom, \
             stat_array = [3,2,4], skill_array = [5,2,0,0,2], sex_array = [2,1,3,0], start_sluttiness = 7, start_obedience = 12, start_happiness = 108, start_love = 25, \
             title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2)
 
-        mom.special_role = [mother_role]
+        mom.special_role.append(mother_role)
         mom.schedule[3] = kitchen
 
         mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
@@ -699,13 +709,13 @@ init 1 python:
         aunt_wardrobe = wardrobe_from_xml("Aunt_Wardrobe")
 
         global aunt
-        aunt = create_random_person(name = "Rebecca", last_name = get_random_last_name(), age = 46, body_type = "thin_body", face_style = "Face_1", tits = "DD", height = 0.92, hair_colour = "blond", hair_style = bobbed_hair, skin="white", \
+        aunt = create_random_person(name = "Rebecca", last_name = get_random_last_name(), age = 39, body_type = "thin_body", face_style = "Face_1", tits = "DD", height = 0.92, hair_colour = "blond", hair_style = bobbed_hair, skin="white", \
             eyes = "brown", personality = aunt_personality, name_color = "#66FF8A", dial_color = "#66FF8A", starting_wardrobe = aunt_wardrobe, start_home = aunt_bedroom, \
             stat_array = [5,2,1], skill_array = [1,2,0,0,0], sex_array = [3,5,3,2], start_sluttiness = 11, start_obedience = 0, start_happiness = 70, start_love = 5, \
             title = "Rebecca", possessive_title = "Your aunt", mc_title = mc.name, relationship = "Single", kids = 1)
 
 
-        aunt.special_role = [aunt_role]
+        aunt.special_role.append(aunt_role)
         for i in range(0,5):
             aunt.schedule[i] = aunt_bedroom #Hide them in their bedroom off the map until they're ready.
         aunt.home.add_person(aunt)
@@ -723,7 +733,7 @@ init 1 python:
             stat_array = [0,4,2], skill_array = [0,0,2,1,0], sex_array = [3,0,0,0], start_sluttiness = 8, start_obedience = -30, start_happiness = 70, start_love = -20, \
             title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = "Single", kids = 0)
 
-        cousin.special_role = [cousin_role]
+        cousin.special_role.append(cousin_role)
         for i in range(0,5):
             cousin.schedule[i] = cousin_bedroom #Hide them in their bedroom off the map until they're ready
         cousin.home.add_person(cousin)

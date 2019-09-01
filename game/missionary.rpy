@@ -284,7 +284,7 @@ label strip_ask_missionary(the_girl, the_clothing, the_location, the_object, the
 
 label orgasm_missionary(the_girl, the_location, the_object, the_round):
     "[the_girl.title] turns her head and pants loudly. Suddenly she bucks her hips up against yours and gasps."
-    $ the_girl.call_dialogue("climax_responses")
+    $ the_girl.call_dialogue("climax_responses_vaginal")
     "Her pussy is dripping wet as you fuck through her climax. She paws at the [the_object.name], trying to find something to hold onto."
     "After a few seconds she lets out a long sigh and all the tension drains out of her body. You slow down your thrusts to catch your own breath."
     the_girl.char "Don't stop [the_girl.mc_title], I might be able to get there again..."

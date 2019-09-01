@@ -151,6 +151,76 @@ init -1:
         def nora_suggest_up_on_remove(the_person, add_to_log):
             the_person.remove_suggest_effect(50)
 
+        def nora_nightmares_on_day(the_person, add_to_log):
+            the_person.change_happiness(-15, add_to_log)
+
+        def nora_obedience_swing_on_turn(the_person, add_to_log):
+            change_amount = renpy.random.randint(-15,15)
+            the_person.change_obedience(change_amount)
+
+        def nora_sluttiness_boost_on_apply(the_person, add_to_log):
+            the_person.change_slut_core(20, add_to_log, fire_event = False)
+            the_person.change_slut_temp(20, add_to_log)
+
+        def nora_sluttiness_boost_on_remove(the_person, add_to_log):
+            the_person.change_slut_core(-20, add_to_log, fire_event = False)
+            the_person.change_slut_temp(-20, add_to_log)
+
+
+        ## nora_special_unlock_taits
+        def nora_reward_mother_trait_on_turn(the_person, add_to_log):
+            amount_change = __builtin__.round((the_person.sluttiness - the_person.love)/10)
+            if amount_change > 0:
+                the_person.change_love(amount_change, add_to_log)
+
+
+        def nora_reward_sister_trait_on_day(the_person, add_to_log):
+            amount_change = __builtin__.round((the_person.obedience - 100)/10)
+            if amount_change > 0:
+                the_person.change_slut_core(amount_change, add_to_log)
+
+        def nora_reward_cousin_trait_on_day(the_person, add_to_log):
+            amount_change = __builtin__.round((the_person.love)/-5)
+            if amount_change > 0:
+                the_person.change_slut_core(amount_change, add_to_log)
+
+        def nora_reward_nora_trait_on_apply(the_person, add_to_log):
+            amount = 5 * mc.int
+            the_person.change_slut_temp(amount, add_to_log)
+            the_person.change_obedience(amount, add_to_log)
+
+        def nora_reward_nora_trait_on_remove(the_person, add_to_log):
+            amount = 5 * mc.int
+            the_person.change_slut_temp(-amount, add_to_log)
+            the_person.change_obedience(-amount, add_to_log)
+
+        def nora_reward_high_love_trait_on_turn(the_person, add_to_log):
+            if the_person.core_slut > the_person.love:
+                the_person.change_slut_core(-1, add_to_log)
+                the_person.change_love(1, add_to_log)
+
+        def nora_reward_low_love_trait_on_apply(the_person, add_to_log):
+            the_person.change_love(-50, add_to_log)
+
+        def nora_reward_low_love_trait_on_remove(the_person, add_to_log):
+            the_person.change_love(50, add_to_log)
+
+        def nora_reward_high_obedience_trait_on_turn(the_person, add_to_log):
+            amount = __builtin__.round((the_person.obedience-100)/5)
+            the_person.change_happiness(amount, add_to_log)
+
+        def nora_reward_high_slut_trait_on_apply(the_person, add_to_log):
+            amount = the_person.sluttiness - the_person.core_slut
+            if amount > 5:
+                amount = 5
+            if amount > 0:
+                the_person.change_slut_temp(-amount)
+                the_person.change_slut_core(amount, add_to_log)
+
+        def nora_reward_genius_trait_on_apply(the_person, add_to_log):
+            the_person.charisma = 5
+            the_person.int = 5
+            the_person.focus = 5
 
 
 label instantiate_serum_traits(): #Creates all of the default LR2 serum trait objects.
@@ -556,6 +626,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
     ### SPECIAL TRAITS ###
 
+        ### Nora research traits ###
         nora_suggest_up = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Raises suggestibility significantly, but is guaranteed to generate a side effect and negatively effects value.",
             positive_slug = "+50 Suggestibility",
@@ -565,12 +636,170 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             base_side_effect_chance = 1000000,
             on_apply = nora_suggest_up_on_apply,
             on_remove = nora_suggest_up_on_remove,
-            #requires = [list_of_other_traits],
             tier = 2,
             start_researched = False,
             research_needed = 1000000,
             exclude_tags = "Suggest")
 
+        nora_nightmares = SerumTrait(name = "Nora's Research Trait",
+            desc = "The manufacturing details for a serum trait developed by Nora. Negatively affects the recipient's sleep, as well as generating a side effect and negatively effecting value.",
+            negative_slug = "+75 Serum Research, -15 Happiness/Night, -$150 Value",
+            value_added = -150,
+            research_added = 75,
+            base_side_effect_chance = 1000000,
+            on_day = nora_nightmares_on_day,
+            tier = 2,
+            start_researched = False,
+            research_needed = 1000000)
+
+        nora_obedience_swing = SerumTrait(name = "Nora's Research Trait",
+            desc = "The manufacturing details for a serum trait developed by Nora. Causes wild fluctuations in the recipient's willingness to follow orders, as well as generating a side effect and negatively effecting value.",
+            negative_slug = "+75 Serum Research, Random Obedience Changes, -$150 Value",
+            value_added = -150,
+            research_added = 75,
+            base_side_effect_chance = 1000000,
+            on_turn = nora_obedience_swing_on_turn,
+            tier = 2,
+            start_researched = False,
+            research_needed = 1000000)
+
+        nora_sluttiness_boost = SerumTrait(name = "Nora's Research Trait",
+            desc = "The manufacturing details for a serum trait developed by Nora. Causes a sudden spike in the recipients sluttiness, as well as generating a side effect and negatively effecting value.",
+            positive_slug = "+20 Sluttiness",
+            negative_slug = "+75 Serum Research, -$150 Value",
+            value_added = -150,
+            research_added = 75,
+            base_side_effect_chance = 1000000,
+            on_apply = nora_sluttiness_boost_on_apply,
+            on_remove = nora_sluttiness_boost_on_remove,
+            tier = 2,
+            start_researched = False,
+            research_needed = 1000000)
+
+
+        ### Nora boss unlock traits ###
+
+        nora_reward_mother_trait = SerumTrait(name = "Motherly Devotion",
+            desc = "A special serum trait developed by Nora after studying your mother. Permanently increases the recipient's Love by 1 per turn for every 10 points that their Sluttiness is higher than Love.",
+            positive_slug = "+1 Love per Turn per 10 Sluttiness greater than Love, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 50,
+            on_turn = nora_reward_mother_trait_on_turn,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_sister_trait = SerumTrait(name = "Sisterly Obedience",
+            desc = "A special serum trait developed by Nora after studying your sister. Permanently increases the recipient's Sluttiness by 1 per day for every 10 points that their Obedience is above 100.",
+            positive_slug = "+1 Core Sluttiness/day per 10 Obedience over 100, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 75,
+            on_day = nora_reward_sister_trait_on_day,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_cousin_trait = SerumTrait(name = "Cousinly Hate",
+            desc = "A special serum trait developed by Nora after studying your cousin. Permanently increases the recipient's Sluttiness by 1 per day for every 5 Love that they are below 0.",
+            positive_slug = "+1 Core Sluttiness/day per 5 Love below 0, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 50,
+            on_day = nora_reward_cousin_trait_on_day,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_aunt_trait = SerumTrait(name = "Auntly Potential",
+            desc = "A special serum trait developed by Nora after studying your aunt. Increases the number of traits a serum design may contain by 2.",
+            positive_slug = "+2 Extra Trait Slots",
+            negative_slug = "+300 Serum Research",
+            value_added = 0,
+            research_added = 300,
+            slots_added = 3,
+            base_side_effect_chance = 100,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_nora_trait = SerumTrait(name = "Meritocratic Attraction",
+            desc = "A special serum trait developed by Nora after studying herself. Increases the recipients Obedience and Sluttiness for the duration by 5 for every point of Intelligence you have.",
+            positive_slug = "+5 Obedience and Sluttiness per Intelligence, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 50,
+            on_apply = nora_reward_nora_trait_on_apply,
+            on_remove = nora_reward_nora_trait_on_remove,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_high_love_trait = SerumTrait(name = "Lovers Attraction",
+            desc = "A special serum trait developed by Nora after studying someone who adores you. Each turn permanently converts one point of Sluttiness into Love until they are equal.",
+            positive_slug = "Converts 1 Sluttiness to Love per turn until equal, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 75,
+            on_turn = nora_reward_high_love_trait_on_turn,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_low_love_trait = SerumTrait(name = "Distilled Disgust",
+            desc = "A special serum trait developed by Nora after studying someone who absolutely hates you. Gives a massive penalty to love for the duration of the serum.",
+            positive_slug = "+$10 Value",
+            negative_slug = "-50 Love, +300 Serum Research",
+            value_added = 10,
+            research_added = 300,
+            base_side_effect_chance = 10,
+            on_apply = nora_reward_low_love_trait_on_apply,
+            on_remove = nora_reward_low_love_trait_on_remove,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_high_obedience_trait = SerumTrait(name = "Pleasurable Obedience",
+            desc = "A special serum trait developed by Nora after studying someone who was completely subservient to you. Increases happiness by 1 for every 5 points of Obedience over 100 per turn.",
+            positive_slug = "+1 Happiness per 5 Obedience over 100 per turn, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 50,
+            on_turn = nora_reward_high_obedience_trait_on_turn,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_high_slut_trait = SerumTrait(name = "Rapid Corruption",
+            desc = "A special serum trait developed by Nora after studying someone who was a complete slut. Instantly and permanently converts up to 5 Temporary Sluttiness into Core Sluttiness when applied.",
+            positive_slug = "5 Temp to Core Sluttiness, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 50,
+            on_apply = nora_reward_high_slut_trait_on_apply,
+            tier = 2,
+            start_researched = False,
+            research_needed = 750)
+
+        nora_reward_genius_trait = SerumTrait(name = "Natural Talent",
+            desc = "A special serum trait developed by Nora after studying someone who was a genius. Instantly and permanetly sets the recipients Intelligence, Charisma, and Focus to 5.",
+            positive_slug = "Sets Charisma, Intelligence, Focus to 5, +$50 Value",
+            negative_slug = "+1000 Serum Research",
+            value_added = 50,
+            research_added = 1000,
+            base_side_effect_chance = 300,
+            on_apply = nora_reward_genius_trait_on_apply,
+            tier = 2,
+            start_researched = False,
+            research_needed = 4000)
 
         # Tier 0
         list_of_traits.append(primitive_serum_prod)
@@ -607,5 +836,11 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(futuristic_serum_prod)
         list_of_traits.append(mind_control_agent)
         list_of_traits.append(permanent_bimbo)
+
+    # Nora research traits
+        list_of_nora_traits.append(nora_suggest_up)
+        list_of_nora_traits.append(nora_nightmares)
+        list_of_nora_traits.append(nora_obedience_swing)
+        list_of_nora_traits.append(nora_sluttiness_boost)
 
     return

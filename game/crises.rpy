@@ -1221,9 +1221,11 @@ label home_fuck_crisis_label():
     $ meets_sluttiness_list = []
     python:
         for person in mc.business.get_employee_list():
-            if person.sluttiness >= 15:
+            if person.sluttiness >= 15 and (person.relationship == "Single" or person.get_opinion_score("cheating on men") > 0):
                 meets_sluttiness_list.append(person)
     $ the_person = get_random_from_list(meets_sluttiness_list)
+    if the_person is None:
+        return
 
     "Some time late in the night, you're awoken by the buzz of your phone getting a text. You roll over and ignore it."
     "A few minutes later it buzzes again, then again. You're forced to wake up and see what is the matter."
@@ -1232,23 +1234,33 @@ label home_fuck_crisis_label():
     "You drag yourself out of bed and stumble out to the front hall. You move to a window and peek out at your front door."
     $ the_person.draw_person(emotion = "happy") #TODO: Create a set of late night outfits that she can be wearing.
     $ the_person.add_situational_slut("drunk", 20, "More than a little tipsy.")
-
     "You see [the_person.title] standing outside. You open the door before she goes to knock."
     mc.name "[the_person.title], what are you doing here? It's the middle of the night."
     "[the_person.possessive_title] takes a step towards you, running a hand down your chest. You guide her outside so she won't wake up your mother or sister."
     the_person.char "Oh [the_person.mc_title], I just had the worst night and I need you to help me!"
     "You can smell alcohol on her breath."
     the_person.char "I was out with some friends, and I got talking with this guy..."
-    # "She steps fully into your house and drops her purse at the side of the door." #TODO: Have girls have relationships like married, mother, etc. This event should "respect" marriages.
-    the_person.char "We were getting along so well, so I went home with him. Well, we get to his place and make out in his car for a while..."
+    if the_person.relationship != "Single":
+        $ SO_title = SO_relationship_to_title(the_person.relationship)
+        mc.name "Wait, don't you have a [SO_title]?"
+        the_person.char "So? He doesn't need to know about everything I do. So there I was with this guy..."
+    the_person.char "We were getting along so well, so I went home with him. We get to his place and make out in his car for a while..."
     "You stay silent, listening to [the_person.title]'s rambling story."
     $ the_person.draw_person(emotion = "angry")
-    #the_person.char "Then he tells me he's married and his wife is home! So he calls me a cab and leaves me all alone! Worst of all, he left me so fucking horny!"
-    the_person.char "Then he tells me he's married, his wife is home, and he wants to fuck in his car like I'm some highschool slut!"
-    if the_person.sluttiness > 50:
-        the_person.char "Well, I told him that I could find someone to fuck me on an actual bed! I got a taxi and you were the first person I thought of..."
+    the_person.char "Then he tells me, suprise, he's married and his wife is home."
+    if the_person.get_opinion_score("cheating on men") < 0:
+        the_person.char "I don't want to be a home wrecker, so I got out of there as fast as I could. I'm here because I'm still a little horny, and you're the first guy I thought of."
+    elif the_person.get_opinion_score("cheating on men") > 0:
+        $ the_person.discover_opinion("cheating on men")
+        the_person.char "That just got me more turned on, but before I get some his wife called. He got spooked and called it off."
+        the_person.char "I took a cab here because I'm still horny and you're the first guy I thought of."
+    elif the_person.sluttiness > 50:
+        the_person.char "Well I wasn't going to let that stop me, so I say we should fuck in his car."
+        the_person.char "We're just getting warmed up when his wife calls, then he gets spooked and says that it's a bad idea..."
+        the_person.char "So I took a cab here, because I'm still horny and I want {i}someone{/i} to fuck me tonight."
     else:
-        the_person.char "I called a taxi and got out of there, but I didn't want the night to end like that. I figured you wouldn't mind a quick visit..."
+        the_person.char "He wanted to have sex in his car, but I'm not that easy. I told him I knew someone with a bed who would love to have me..."
+        the_person.char "So I got a taxi and came here, because you're the first guy I thought of."
 
     "[the_person.possessive_title] takes a not very subtle look at your crotch."
     $ the_person.draw_person(emotion = "happy")
@@ -1256,7 +1268,7 @@ label home_fuck_crisis_label():
     the_person.char "Can you help me? I need you to make me cum so fucking badly right now..."
     "She places her hands on your hips and steps close."
     menu:
-        "Fuck her. (tooltip)She would love to climax right now, but seems like she would be very disappointed if you can't get here there." if mc.current_stamina > 0:
+        "Help her cum. (tooltip)She would love to climax right now, but seems like she would be very disappointed if you can't get here there." if mc.current_stamina > 0:
             "You take [the_person.title]'s hands and lead her through your house to your room."
             mc.name "You'll need to be quiet, there are other people in the house."
             the_person.char "That's fine, as long as none of them are your wife!"
@@ -1280,7 +1292,7 @@ label home_fuck_crisis_label():
             $ renpy.scene("Active")
             "A few minutes later [the_person.title] is gone, and you're able to get back to bed."
 
-        "Fuck her.\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
+        "Help her cum.\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
             pass
 
         "Ask her to leave. (tooltip)She would love to climax, but seems like she would be very disappointed if you can't get here there.":

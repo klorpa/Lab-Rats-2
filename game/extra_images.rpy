@@ -14,6 +14,7 @@ init -1:
     define outside_background = Image("Outside_Background.png")
 
     define bar_background = Image("Bar_Background.png")
+    define stripclub_background = Image("Club_Background.jpg")
 
     define campus_background = Image("Campus.jpg")
 

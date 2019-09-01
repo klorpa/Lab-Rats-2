@@ -85,7 +85,7 @@ init -2 python:
     def visit_nora_intro_requirement(the_person):
         if steph_role not in the_person.special_role: #Only Stephanie gets to have this event trigger while she is head researcher.
             return False
-        elif not mc.business.event_triggers_dict.get("intro_nora", False): #TODO: Also make sure you can't visit her again after you accept her quest.
+        elif not mc.business.event_triggers_dict.get("intro_nora", False):
             return False
         elif mc.location != mc.business.r_div:
             return False
@@ -225,7 +225,7 @@ label advanced_serum_stage_1_label(the_person):
         "Try and secure a prototype serum.\n{size=22}Costs $2000{/size} (disabled)" if mc.business.funds < 2000:
             pass
 
-        "Contact Nora."if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False):
+        "Contact Nora."if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False) and mc.business.event_triggers_dict.get("nora_trait_researched",None) is None:
             $ mc.business.event_triggers_dict["intro_nora"] = True
             mc.name "I think [nora.title] is the right choice."
             the_person.char "I'll call and see when she's available. Come back and talk to me when you want to go visit her."

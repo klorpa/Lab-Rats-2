@@ -14,14 +14,22 @@ init -2 python:
     import zipfile
 #    import shader
 
-    config.image_cache_size = 16
+    config.predict_screen_statements = True
+    config.predict_statements = 0
+    config.predict_screens = False
+
+    config.image_cache_size = 1
     config.layers.insert(1,"Active") ## The "Active" layer is used to display the girls images when you talk to them. The next two lines signal it is to be hidden when you bring up the menu and when you change contexts (like calling a screen)
     config.menu_clear_layers.append("Active")
     config.context_clear_layers.append("Active")
     config.has_autosave = False
     config.autosave_frequency = None
     config.has_quicksave = True
-    config.rollback_enabled = True
+
+
+    config.rollback_enabled = False #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
+    config.rollback_length = 4
+
 
     if persistent.colour_palette is None:
         persistent.colour_palette = [[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1]]
@@ -39,7 +47,6 @@ init -2 python:
     config.images_directory = None
 
     preferences.gl_tearing = True ## Prevents juttery animation with text while using advanced shaders to display images
-
 
     def get_obedience_plaintext(obedience_amount):
         obedience_string = "ERROR - Please Tell Vren!"
@@ -362,6 +369,7 @@ init -2 python:
             self.hr_team = [] # Manages everyone else and improves effectiveness. Needed as company grows.
 
             self.head_researcher = None #A reference to the head researcher is stored here, for use in important events.
+            self.company_model = None #A reference to the currnet company model. May be used for some events.
 
             self.max_employee_count = 5
 
@@ -621,15 +629,15 @@ init -2 python:
                 sluttiness_multiplier = (slut_modifier/100.0) + 1
                 serum_value_multiplier = serum_value_multiplier * (sluttiness_multiplier)
 
-            multipilers_used = {} #Generate a dict with only the current max multipiers of each catagory.
+            multipliers_used = {} #Generate a dict with only the current max multipliers of each catagory.
             for multiplier_source in self.sales_multipliers:
-                if not multiplier_source[0] in multipilers_used:
-                    multipilers_used[multiplier_source[0]] = multiplier_source[1]
+                if not multiplier_source[0] in multipliers_used:
+                    multipliers_used[multiplier_source[0]] = multiplier_source[1]
                 elif multiplier_source[1] > multipliers_used.get(multiplier_source[0]):
-                    multipilers_used[multiplier_source[0]] = multiplier_source[1]
+                    multipliers_used[multiplier_source[0]] = multiplier_source[1]
 
-            for maxed_multiplier in multipilers_used:
-                value_change = multipilers_used.get(maxed_multiplier)
+            for maxed_multiplier in multipliers_used:
+                value_change = multipliers_used.get(maxed_multiplier)
                 serum_value_multiplier = serum_value_multiplier * value_change
                 if value_change > 1:
                     self.add_normal_message("+" + str((value_change-1)*100) + "% serum value due to " + maxed_multiplier + ".")
@@ -816,9 +824,10 @@ init -2 python:
             the_person.special_role.remove(employee_role)
 
             if the_person == self.head_researcher:
-                renpy.call("fire_head_researcher", the_person) #Call the lable we use for firing the person as a role action. This should trigger it any time you fire or move your head researcher.
+                renpy.call("fire_head_researcher", the_person) #Call the label we use for firing the person as a role action. This should trigger it any time you fire or move your head researcher.
 
-
+            if the_person == self.company_model:
+                renpy.call("fire_model_label", the_person)
 
         def get_employee_list(self):
             return self.research_team + self.production_team + self.supply_team + self.market_team + self.hr_team
@@ -1256,6 +1265,8 @@ init -2 python:
             self.max_stamina = 2 # How many times you can seduce someone each day
             self.current_stamina = 2 # Current stamina.
 
+            self.main_character_actions = [] # A list of actions enabld for the main character when they talk to people. Kind of like a "role" for the MC.
+
             self.condom = False #True if you currently have a condom on. (maintained by sex scenes). TODO: Allow a third "broken" state and add dialgoue and descriptions for that.
 
             self.known_home_locations = [] #When the MC learns a character's home location the room reference should be added here. They can then get to it from the map.
@@ -1437,7 +1448,7 @@ init -2 python:
             else:
                 self.mc_title = "Stranger"
 
-            self.home = home #The room the character goes to at night. If none a default location is used.
+            self.home = home #The room the character goes to at night. If none a ranjdom public location is picked.
             self.work = work #The room the character goes to for work.
             self.schedule = {0:home,1:None,2:None,3:None,4:home} #A character's schedule is a dict of 0,1,2,3,4 (time periods) mapped to locations.
             #If there is a place in the schedule the character will go there. Otherwise they have free time and will do whatever they want.
@@ -1457,7 +1468,7 @@ init -2 python:
             if kids:
                 self.kids = kids
             else:
-                self.kids = 0 #If she has kids, how many. (More likely for older characters.
+                self.kids = 0
 
 
             self.personality = personality
@@ -1605,8 +1616,25 @@ init -2 python:
             ## Conversation things##
             self.sexed_count = 0
 
-        def run_turn(self):
+        def generate_home(self, set_home_time = True): #Creates a home location for this person and adds it to the master list of locations so their turns are processed.
+            if self.home is None:
+                start_home = Room(self.name+"'s home", self.name+"'s home", [], apartment_background, [],[],[],False,[0.5,0.5], visible = False, hide_in_known_house_map = False)
+                start_home.link_locations_two_way(downtown)
 
+                start_home.add_object(make_wall())
+                start_home.add_object(make_floor())
+                start_home.add_object(make_bed())
+                start_home.add_object(make_window())
+
+                self.home = start_home
+                if set_home_time:
+                    self.set_schedule([0,4], start_home)
+                list_of_places.append(start_home)
+            return self.home
+
+
+
+        def run_turn(self):
             self.bleed_slut() #if our sluttiness is over our core slut, bleed some off and, if we have suggest, turn it into core slut.
 
             remove_list = []
@@ -1707,7 +1735,7 @@ init -2 python:
 
 
         def run_day(self): #Called at the end of the day.
-            self.outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #Put on a new outfit for the day!
+            #self.outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #Put on a new outfit for the day!
 
             if renpy.random.randint(0,100) < 8 and self.title: #There's an 8% chance they want a title change on any given day, if they are already introduced. TODO: Tweak this or make it dependent on other stuff.
                 self.event_triggers_dict["wants_titlechange"] = True
@@ -2393,6 +2421,11 @@ init -2 python:
                 self.schedule[time_chunk] = the_location
             self.work = the_location
 
+        def set_schedule(self, times = None, location = None):
+            for time_chunk in times:
+                self.schedule[time_chunk] = location
+
+
         def person_meets_requirements(self, slut_required = 0, core_slut_required = 0, obedience_required = 0, obedience_max = 2000, love_required = -200):
             if self.sluttiness >= slut_required and self.core_sluttiness >= core_slut_required and self.obedience >= obedience_required and self.obedience <= obedience_max and self.love >= love_required:
                 return True
@@ -2441,8 +2474,9 @@ init -2 python:
             self.player_titles_function = player_titles_function
 
             #These are the labels we will be trying to get our dialogue. If the labels do not exist we will get their defaults instead. A default should _always_ exist, if it does not our debug check will produce an error.
-            self.response_label_ending = ["greetings", "sex_responses", "climax_responses", "clothing_accept", "clothing_reject", "clothing_review", "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
-            "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse", "flirt_response", "cum_face", "cum_mouth", "suprised_exclaim", "talk_busy",
+            self.response_label_ending = ["greetings", "sex_responses", "climax_responses_foreplay", "climax_responses_oral", "climax_responses_vaginal", "climax_responses_anal",
+            "clothing_accept", "clothing_reject", "clothing_review", "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
+            "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse", "flirt_response", "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
             "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction"]
 
             self.response_dict = {}
@@ -2645,18 +2679,16 @@ init -2 python:
             start_sluttiness += 20
 
         if starting_wardrobe is None:
-            starting_wardrobe = default_wardrobe.get_random_selection(40)
+            starting_wardrobe = default_wardrobe.get_random_selection(25)
 
-        if start_home is None:
-            start_home = Room(name+"'s home", name+"'s home", [], apartment_background, [],[],[],False,[0.5,0.5], visible = False, hide_in_known_house_map = False)
-            start_home.link_locations_two_way(downtown)
-            start_home.add_object(make_wall())
-            start_home.add_object(make_floor())
-            start_home.add_object(make_bed())
-            start_home.add_object(make_window())
-            list_of_places.append(start_home)
-
-            #start_home = downtown
+        # if start_home is None:
+        #     start_home = Room(name+"'s home", name+"'s home", [], apartment_background, [],[],[],False,[0.5,0.5], visible = False, hide_in_known_house_map = False)
+        #     start_home.link_locations_two_way(downtown)
+        #     start_home.add_object(make_wall())
+        #     start_home.add_object(make_floor())
+        #     start_home.add_object(make_bed())
+        #     start_home.add_object(make_window())
+        #     list_of_places.append(start_home)
 
         if relationship is None:
             relationship = get_random_from_weighted_list([["Single",100-age],["Girlfriend",50],["Fiancée",120-age*2],["Married",20+age*4]]) #Age plays a major factor.
@@ -2771,6 +2803,10 @@ init -2 python:
             self.accessable = True #If true you can move to this room. If false it is disabled
 
             #TODO: add an "appropriateness" or something trait that decides how approrpaite it would be to have sex, be seduced, etc. in this location.
+
+        def show_background(self):
+            renpy.scene("master")
+            renpy.show(name = self.name, what = self.background_image, layer = "master")
 
         def link_locations(self,other): #This is a one way connection!
             self.connections.append(other)
@@ -4373,8 +4409,20 @@ init -2 python:
         return True
 
     def head_researcher_select_requirement():
-        if  mc.business.head_researcher is not None:
+        if mc.business.head_researcher is not None:
             return False
+        elif __builtin__.len(mc.business.research_team) == 0:
+            return "Nobody to pick."
+        else:
+            return True
+
+    def pick_company_model_requirement():
+        if mc.business.company_model is not None:
+            return False
+        elif not public_advertising_license_policy.is_owned():
+            return False
+        elif mc.business.get_employee_count == 0:
+            return "Nobody to pick."
         else:
             return True
 
@@ -4739,7 +4787,7 @@ screen goal_hud_ui():
                         ysize 60
                         background None
                         bar value goal.get_progress_fraction() range 1 xalign 0.5
-                        textbutton goal.name + "\n" + goal.get_reported_progress() text_style "menu_text_style" xalign 0.5 yanchor 0.5 yalign 0.5 text_size 16 text_text_align 0.5 action NullAction() sensitive True tooltip goal.description
+                        textbutton goal.name + "\n" + goal.get_reported_progress() text_style "menu_text_style" xalign 0.5 yanchor 0.5 yalign 0.5 text_size 12 text_text_align 0.5 action NullAction() sensitive True tooltip goal.description
 
 transform phone_slide(start_yalign, goal_yalign, duration = 0.4):
     yalign start_yalign
@@ -4777,9 +4825,7 @@ screen phone_hud_ui():
                 $ time_diff = time.time() - log_item[2]
                 if time_diff > fade_time:
                     $ time_diff = fade_time
-                    # background None
-                    # xsize 320
-                    # yfill False
+
                 frame:
                     background "#33333388"
                     xsize 320
@@ -4795,18 +4841,6 @@ screen phone_hud_ui():
                     ypadding 0
                     at background_fade(5, time_diff)
                 null height 4
-                    # frame:
-                    #     background "#ff0000"
-                    #     xsize 320
-                    #     ymaximum 10
-                    #     yanchor 1.0
-                    #     yalign 0.9
-                    #     xpadding 0
-                    #     ypadding 0
-                    #
-                    #     text log_item[0] style log_item[1] size 18 xsize 320 first_indent 20 color "#ffffff00" #This is a dummy to make sure the spacing of our frames is correct!
-                    # frame:
-
 
 
 
@@ -4829,7 +4863,7 @@ screen business_ui(): #Shows some information about your business.
                 tooltip "Your current and maximum number of employees. Purchase new business policies from your main office to increase the number of employees you can have."
                 action NullAction()
                 sensitive True
-            # text "Employee Count: " + str(mc.business.get_employee_count()) + "/" + str(mc.business.max_employee_count) style "menu_text_style"
+
             if mc.business.funds < 0:
                 textbutton "Company Funds: $[mc.business.funds]":
                     ysize 28
@@ -4852,15 +4886,13 @@ screen business_ui(): #Shows some information about your business.
                 tooltip "The amount of money spent daily to pay your employees. Employees are not paid on weekends."
                 action NullAction()
                 sensitive True
-            #text "Daily Salary Cost: $"+ str(mc.business.calculate_salary_cost()) style "menu_text_style"
+
             textbutton "Company Efficency: [mc.business.team_effectiveness]%":
                 ysize 28
                 text_style "menu_text_style"
                 tooltip "The more employees you have the faster your company will become inefficent. Perform HR work at your office or hire someone to do it for you to raise your company efficency. All productivity is modified by company efficency."
                 action NullAction()
                 sensitive True
-            #text "Company Efficency: [mc.business.team_effectiveness]%" style "menu_text_style"
-#            text "Company Marketability: [mc.business.marketability]" style "menu_text_style"
 
             textbutton "Current Raw Supplys: " + str(int(mc.business.supply_count)) +"/[mc.business.supply_goal]":
                 ysize 28
@@ -4868,9 +4900,8 @@ screen business_ui(): #Shows some information about your business.
                 tooltip "Your current and goal amounts of serum supply. Manufacturing serum requires supplies, spend time ordering supplies from your office or hire someone to do it for you. Raise your supply goal from your office if you want to keep more supply stockpiled."
                 action NullAction()
                 sensitive True
-            #text "Current Raw Supplys: [mc.business.supply_count]/[mc.business.supply_goal]" style "menu_text_style"
-            if not mc.business.active_research_design == None:
 
+            if not mc.business.active_research_design == None:
                 text "  Current Research: " style "menu_text_style"
                 textbutton "    [mc.business.active_research_design.name] (" + str(__builtin__.int(mc.business.active_research_design.current_research))+"/[mc.business.active_research_design.research_needed])":
                     ysize 28
@@ -4878,7 +4909,7 @@ screen business_ui(): #Shows some information about your business.
                     tooltip "The current research task of your R&D division. Visit them to set a new goal or to assemble a new serum design."
                     action NullAction()
                     sensitive True
-                #text "    [mc.business.active_research_design.name] (" + str(__builtin__.int(mc.business.active_research_design.current_research))+"/[mc.business.active_research_design.research_needed])" style "menu_text_style"
+
             else:
                 textbutton "Current Research: None!":
                     ysize 28
@@ -4887,7 +4918,6 @@ screen business_ui(): #Shows some information about your business.
                     tooltip "The current research task of your R&D division. Visit them to set a new goal or to assemble a new serum design."
                     action NullAction()
                     sensitive True
-                #text "Current Research: None!" style "menu_text_style" color "#DD0000"
 
             textbutton "Review Staff" action Show("employee_overview") style "textbutton_style" text_style "textbutton_text_style" xsize 220 tooltip "Review all of your current employees."
             textbutton "Check Stock" action ui.callsinnewcontext("check_business_inventory_loop") style "textbutton_style" text_style "textbutton_text_style" xsize 220 tooltip "Check the doses of serum currently waiting to be sold or sitting in your production area."
@@ -5796,7 +5826,12 @@ screen serum_design_ui(starting_serum,current_traits):
                                                 for checking_tag in checking_trait.exclude_tags:
                                                     if tag == checking_tag:
                                                         trait_allowed = False
-                                    $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: %" + str(trait.get_effective_side_effect_chance())
+                                    $ side_effect_chance = trait.get_effective_side_effect_chance()
+                                    if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
+                                        $ side_effect_chance_string = "Always Guaranteed"
+                                    else:
+                                        $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                    $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
                                     textbutton trait.name + trait_tags + trait_side_effects action [Hide("trait_tooltip"),Function(starting_serum.add_trait,trait)] sensitive trait_allowed style "textbutton_style" text_style "textbutton_text_style" hovered Show("trait_tooltip",None,trait,0.315,0.57) unhovered Hide("trait_tooltip") xsize 520
 
                             null height 30
@@ -5815,7 +5850,12 @@ screen serum_design_ui(starting_serum,current_traits):
                                                 for checking_tag in checking_trait.exclude_tags:
                                                     if tag == checking_tag:
                                                         trait_allowed = False
-                                    $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: %" + str(trait.get_effective_side_effect_chance())
+                                    $ side_effect_chance = trait.get_effective_side_effect_chance()
+                                    if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
+                                        $ side_effect_chance_string = "Always Guaranteed"
+                                    else:
+                                        $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                    $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
                                     textbutton trait.name + trait_tags + trait_side_effects action [Hide("trait_tooltip"),Function(starting_serum.add_trait,trait)] sensitive trait_allowed style "textbutton_style" text_style "textbutton_text_style" hovered Show("trait_tooltip",None,trait,0.315,0.57) unhovered Hide("trait_tooltip") xsize 530
 
         frame:
@@ -5839,7 +5879,12 @@ screen serum_design_ui(starting_serum,current_traits):
                                     $ trait_tags = " - "
                                     for a_tag in trait.exclude_tags:
                                         $ trait_tags += "[[" + a_tag + "]"
-                                $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: %" + str(trait.get_effective_side_effect_chance())
+                                $ side_effect_chance = trait.get_effective_side_effect_chance()
+                                if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
+                                    $ side_effect_chance_string = "Always Guaranteed"
+                                else:
+                                    $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
                                 textbutton trait.name + trait_tags + trait_side_effects action[Hide("trait_tooltip"), Function(starting_serum.remove_trait,trait)] style "textbutton_style" text_style "textbutton_text_style" hovered Show("trait_tooltip",None,trait,0.635,0.57) unhovered Hide("trait_tooltip") xsize 550
 
         frame:
@@ -6113,7 +6158,12 @@ screen serum_select_ui: #How you select serum and trait research
                                     $ trait_tags = "\nExcludes Other: "
                                     for a_tag in trait.exclude_tags:
                                         $ trait_tags += "[[" + a_tag + "]"
-                                $ trait_title = trait.name + " " + "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")" + trait_tags
+
+                                if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
+                                    $ research_needed_string = "Research Impossible"
+                                else:
+                                    $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
+                                $ trait_title = trait.name + " " + research_needed_string  + trait_tags
                                 textbutton trait_title:
                                     text_xalign 0.5
                                     text_text_align 0.5
@@ -6140,7 +6190,18 @@ screen serum_select_ui: #How you select serum and trait research
                                     $ trait_tags = "\nExcludes Other: "
                                     for a_tag in trait.exclude_tags:
                                         $ trait_tags += "[[" + a_tag + "]"
-                                $ trait_title = trait.name + " " + "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")" + trait_tags + "\nMastery Level: " + str(trait.mastery_level) + "\nSide Effect Chance: %" + str(trait.get_effective_side_effect_chance())
+
+                                if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
+                                    $ research_needed_string = "Research Impossible"
+                                else:
+                                    $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
+
+                                $ side_effect_chance = trait.get_effective_side_effect_chance()
+                                if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
+                                    $ side_effect_chance_string = "Always Guaranteed"
+                                else:
+                                    $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                $ trait_title = trait.name + " " + research_needed_string + trait_tags + "\nMastery Level: " + str(trait.mastery_level) + "\nSide Effect Chance: " + str(side_effect_chance)
                                 textbutton trait_title:
                                     text_xalign 0.5
                                     text_text_align 0.5
@@ -7423,7 +7484,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.18.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.20.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -7463,37 +7524,41 @@ label tutorial_start:
     "Little by litle the women slid back into into their previous lives."
 
     scene
-    $ renpy.show(bedroom.name,what=bedroom.background_image) #Start our story at home.
+    $ bedroom.show_background()
+    #$ renpy.show(bedroom.name,what=bedroom.background_image) #Start our story at home.
 
     "Four months ago you graduated from university with a degree in chemical engineering."
     "Since then you have been living at home and sending out resumes. You have had several interviews, but no job offers yet."
     "Today you have have an interview with a small pharmacutical company. You've gotten up early and dressed in your finest suit."
-    $renpy.show(hall.name, what=hall.background_image)
+    #$ renpy.show(hall.name, what=hall.background_image)
+    $ hall.show_background()
     "You head for the front door, eager to get to your interview early."
-    mom.title "[mom.mc_title], are you leaving already?"
+    mom.char "[mom.mc_title], are you leaving already?"
     "[mom.possessive_title]'s voice comes from the kitchen, along with the smell of breakfast."
     mc.name "Yeah, I want make sure I make it on time."
-    mom.title "You haven't had any breakfast yet. You should eat, I'll drive you if you're running late."
+    mom.char "You haven't had any breakfast yet. You should eat, I'll drive you if you're running late."
     "The smell of cooked toast and frying eggs wins you over and you head to the kitchen."
-    $ renpy.show(kitchen.name, what=kitchen.background_image)
+    $ kitchen.show_background()
+    #$ renpy.show(kitchen.name, what=kitchen.background_image)
     $ mom.draw_person(emotion = "happy", position = "back_peek")
     "[mom.possessive_title] is at the stove and looks back at you when you come into the room."
-    mom.title "The food's almost ready. Just take a seat and I'll make you a plate."
+    mom.char "The food's almost ready. Just take a seat and I'll make you a plate."
     mc.name "Thanks Mom, I didn't realize how hungry I was. Nerves, I guess."
-    mom.title "Don't worry, I'm sure they'll love you."
+    mom.char "Don't worry, I'm sure they'll love you."
     "She turns back and focuses her attention on her cooking. A few minutes later she presents you with a plate."
     $ mom.draw_person(emotion = "happy")
-    mom.title "Here you go sweetheart. You look very sharp in your suit, by the way. My little boy is all grown up."
+    mom.char "Here you go sweetheart. You look very sharp in your suit, by the way. My little boy is all grown up."
     "You eat quickly, keeping a sharp eye on the time. When you're done you stand up and move to the front door again."
     mc.name "Okay, I've got to go if I'm going to catch my bus. I'll talk to you later and let you know how it goes."
-    mom.title "Wait."
+    mom.char "Wait."
     "Mom follows you to the front door. She straightens your tie and brushes some lint off of your shoulder."
-    mom.title "Oh, I should have ironed this for you."
+    mom.char "Oh, I should have ironed this for you."
     mc.name "It's fine, Mom. Really."
-    mom.title "I know, I know, I'll stop fussing. Good luck sweety."
+    mom.char "I know, I know, I'll stop fussing. Good luck sweety."
     "She wraps her arms around you and gives you a tight hug. You hug her back then hurry out the door."
     $ renpy.scene("Active")
-    $ renpy.show(downtown.name,what=downtown.background_image)
+    $ downtown.show_background()
+    #$ renpy.show(downtown.name,what=downtown.background_image)
     "It takes an hour on public transit then a short walk to find the building. It's a small single level office attached to a slightly larger warehouse style building."
     "You pull on the door handle. It thunks loudly - locked. You try the other one and get the same result."
     mc.name "Hello?"
@@ -7507,7 +7572,7 @@ label tutorial_start:
     mc.name "What? That can't be right, I was talking to them less than a week ago."
     "Janitor" "Here, take a look for yourself."
     "The man, who you assume is a janitor of some sort, hands you one of the sheets of paper he's holding."
-    "It features a picture of the building along with an address matching the one you were given and a large \"FORECLOSED\" lable along the top."
+    "It features a picture of the building along with an address matching the one you were given and a large \"FORECLOSED\" label along the top."
     "The janitor turns around and holds a page up to the front door, then sticks it in place with tape around all four edges."
     "Janitor" "They must have been neck deep in dept, if that makes you feel better about not working for 'em."
     "Janitor" "They left all their science stuff behind; must've been worth less than the debt they're ditching."
@@ -7530,71 +7595,74 @@ label tutorial_start:
     "You look up the price of some of the pieces of equipment you saw and confirm your suspicion. The bank has no idea how valuable the property really is."
     scene
     $ renpy.with_statement(fade)
-    $ renpy.show(kitchen.name,what=kitchen.background_image)
+    $ kitchen.show_background()
+    #$ renpy.show(kitchen.name,what=kitchen.background_image)
     "Three days later..."
     $ mom.draw_person(position = "sitting")
     "Mom looks over the paperwork you've laid out. Property cost, equipment value, and potential earnings are all listed."
-    mom.title "And you've checked all the numbers?"
+    mom.char "And you've checked all the numbers?"
     mc.name "Three times."
-    mom.title "It's just... this is a lot of money [mom.mc_title]. I would need to take a second morgage out on the house."
+    mom.char "It's just... this is a lot of money [mom.mc_title]. I would need to take a second morgage out on the house."
     mc.name "And I'll be able to pay for that. This is the chance of a life time Mom."
-    mom.title "What was it you said you were going to make again?"
+    mom.char "What was it you said you were going to make again?"
     mc.name "When I was working at the lab last summer we developed some prototype chemical carriers. I think they have huge commercial potential."
     mc.name "And there's no regulation around them yet, because they're so new. I can start production and be selling them tomorrow."
     "[mom.possessive_title] leans back in her chair and pinches the brow of her nose."
-    mom.title "Okay, you've convinced me. I'll get in touch with the bank and put a loan on the house."
+    mom.char "Okay, you've convinced me. I'll get in touch with the bank and put a loan on the house."
     "You jump up and throw your arms around [mom.possessive_title]. She laughs and hugs you back."
 
-    lily.title "What's going on?"
+    lily.char "What's going on?"
     $ lily.draw_person()
     "[lily.possessive_title] steps into the doorway and looks at you both."
     $ mom.draw_person(position = "sitting")
-    mom.title "Your brother is starting a business. I'm his first investor."
+    mom.char "Your brother is starting a business. I'm his first investor."
     $ lily.draw_person(emotion = "happy")
-    lily.title "Is that what you've been excited about the last couple days? What're you actually making?"
+    lily.char "Is that what you've been excited about the last couple days? What're you actually making?"
     mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
     $ renpy.scene("Active")
     "You leave [mom.possessive_title] and sister in the kitchen to talk retreat to your room for some privacy."
 
-    $ renpy.show(bedroom.name, what=bedroom.background_image)
+    #$ renpy.show(bedroom.name, what=bedroom.background_image)
+    $ bedroom.show_background()
     "You can manage the machinery of the lab, but you're going to need help refining the serum design from last year."
     "You pick up your phone and call [stephanie.title]."
-    stephanie.title "Hello?"
+    stephanie.char "Hello?"
     mc.name "Stephanie, this is [mc.name]."
-    stephanie.title "[stephanie.mc_title]! Good to hear from you, what's up?"
+    stephanie.char "[stephanie.mc_title]! Good to hear from you, what's up?"
     mc.name "I'd like to talk to you about a business offer. Any chance we could meet somewhere?"
-    stephanie.title "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
+    stephanie.char "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
     mc.name "Done. Where's convenient for you?"
     "Stephanie sends you the address of a bar close to the university."
     scene
-    $ renpy.show(bedroom.name,what=bar_background)
+    #$ renpy.show(bedroom.name,what=bar_background)
+    $ bedroom.show_background()
     "It takes you an hour to get your pitch prepared and to get over to the bar."
     "When you arrive [stephanie.title] is sitting at the bar with a drink already. She smiles and raises her glass."
     $ stephanie.draw_person(position = "sitting", emotion = "happy")
-    stephanie.title "Hey [stephanie.mc_title], it's great to see you!"
+    stephanie.char "Hey [stephanie.mc_title], it's great to see you!"
     "She she stands and gives you a hug."
-    stephanie.title "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
+    stephanie.char "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
     mc.name "Me too, that's actually part of what I want to talk to you about."
     "You order a drink for yourself and sit down."
     "You lay out your idea to [stephanie.title]: the commercial production and distribution of the experimental serum."
-    stephanie.title "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
+    stephanie.char "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
     mc.name "Right. Production processes are my bread and butter, but I need your help to figure out what we're actually making."
     "Stephanie finishes off her drink and flags down the bartender for another."
-    stephanie.title "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
+    stephanie.char "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
     mc.name "Correct."
-    stephanie.title "Do have any clients?"
+    stephanie.char "Do have any clients?"
     mc.name "Not yet. It's hard to have clients without a product."
     "Stephanie gets her drink and sips it thoughtfully."
     mc.name "The pay won't be great either, but I can promise..."
-    stephanie.title "I'm in."
+    stephanie.char "I'm in."
     mc.name "I... what?"
-    stephanie.title "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
-    stephanie.title "I think this is it."
+    stephanie.char "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
+    stephanie.char "I think this is it."
     "She raises her drink and smiles a huge smile."
-    stephanie.title "A toast: To us, and stupid risks!"
+    stephanie.char "A toast: To us, and stupid risks!"
     mc.name "To us!"
     "You clink glasses together and drink."
-    stephanie.title "Ah... Okay, so I've got some thoughts already..."
+    stephanie.char "Ah... Okay, so I've got some thoughts already..."
     "Stephanie grabs a napkin and starts doodling on it. You spend the rest of the night with her, drinking and talking until you have to say goodbye."
     $ renpy.scene("Active")
     "A week later [mom.possessive_title] has a new morgage on the house and purchases the lab in your name."
@@ -7615,7 +7683,8 @@ label normal_start:
     show screen business_ui
     show screen goal_hud_ui
     show screen main_ui
-    $ renpy.show(bedroom.name,what=bedroom.background_image) #show the bedroom background as our starting point.
+    #$ renpy.show(bedroom.name,what=bedroom.background_image) #show the bedroom background as our starting point.
+    $ bedroom.show_background()
     "It's Monday, and the first day of operation for your new business!"
     "[stephanie.title] said she would meet you at your new office for a tour."
 
@@ -7936,8 +8005,9 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
 
 label change_location(the_place):
     $ renpy.scene()
-    $ renpy.show(the_place.name,what=the_place.background_image)
-    if the_place.trigger_tutorial and the_place.tutorial_label is not None and mc.business.event_triggers_dict["Tutorial_Section"] == True:
+    #$ renpy.show(the_place.name,what=the_place.background_image)
+    $ the_place.show_background()
+    if the_place.trigger_tutorial and the_place.tutorial_label is not None and mc.business.event_triggers_dict.get("Tutorial_Section",False):
         $ the_place.trigger_tutorial = False
         $ renpy.call(the_place.tutorial_label)
 
@@ -7989,6 +8059,10 @@ label talk_person(the_person):
                 special_role_actions.append([act,the_person]) #They're a list of actions and their extra arg so that gets passed through properly.
                 roles_that_need_people_args.append(act) #All role actions need to be passed the specific person, so we keep a list of these actions here and check it below.
 
+        for act in mc.main_character_actions: #The main character has a "role" that lets us add special actions as well.
+            special_role_actions.append([act,the_person])
+            roles_that_need_people_args.append(act)
+
 
     call screen main_choice_display([chat_list,specific_action_list, special_role_actions])
 
@@ -8006,7 +8080,7 @@ label talk_person(the_person):
     return
 
 
-label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False):
+label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False):
     #Use a situational modifier to change sluttiness before having sex.
     $ use_love = True
     if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in the_person.special_role): #Check if any of the roles the person has belong to the list of family roles.
@@ -8067,7 +8141,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
                         tuple_list.append([position.build_position_willingness_string(the_person), position])
 
                 if not hide_leave: #Some events don't let you leave.
-                    tuple_list.append(["Leave","Leave"]) #Stop having sex, since cumming is now a locked in thing.
+                    tuple_list.append(["Leave","Leave"]) #Stop having sex.
                 position_choice = renpy.display_menu(tuple_list,True,"Choice")
 
     if position_choice == "Leave":
@@ -8122,7 +8196,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
         $ start_round = 0
         if skip_intro:
             $ start_round = 1
-        call sex_description(the_person, position_choice, object_choice, start_round, private=private, girl_in_charge = girl_in_charge) from _call_sex_description
+        call sex_description(the_person, position_choice, object_choice, start_round, private=private, girl_in_charge = girl_in_charge, position_locked = position_locked) from _call_sex_description
 
 
     $ the_person.clear_situational_slut("love_modifier")
@@ -8133,7 +8207,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
     $ mc.condom = False
     return
 
-label sex_description(the_person, the_position, the_object, round, private = True, girl_in_charge = False):
+label sex_description(the_person, the_position, the_object, round, private = True, girl_in_charge = False, position_locked = False):
     #NOTE: the private variable decides if you are in private or not relative to the location you are in. If True other people in the room do not get a chance to interact.
 
     ##Describe the current round
@@ -8262,12 +8336,16 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
             else:
                 tuple_list = []
                 tuple_list.append(["Keep going.",the_position])
-                tuple_list.append(["Back off and change positions.","Pull Out"])
                 if (mc.arousal > 80): #Only let you finish if you've got a high enough arousal score. #TODO: Add stat that controls how much control you have over this.
                     tuple_list.append(["Cum!","Finish"])
+
+                if not position_locked: #If we're locked into a position we can't leave and change positions. Note: this means we can't finish early I guess?
+                    tuple_list.append(["Back off and change positions.","Pull Out"])
+
                 tuple_list.append(["Strip her down.","Strip"])
+
                 for position in the_position.connections:
-                    if the_object.has_trait(position.requires_location):
+                    if the_object.has_trait(position.requires_location) and not position_locked:
                         appended_name = "Change to " + position.build_position_willingness_string(the_person) #Note: clothing check is now done in build_position_willingness_string() call and marks them as (disabled)
                         tuple_list.append([appended_name,position])
                 position_choice = renpy.display_menu(tuple_list,True,"Choice")
@@ -8613,9 +8691,11 @@ label interview_action_description:
             show screen goal_hud_ui
             show screen main_ui
             $ renpy.scene("Active")
-            $ renpy.show(mc.location.name,what=mc.location.background_image)
+            #$ renpy.show(mc.location.name,what=mc.location.background_image)
+            $ mc.location.show_background()
             if not _return == "None":
                 $ new_person = _return
+                $ new_person.generate_home() #Generate them a home location so they have somewhere to go at night
                 $ new_person.event_triggers_dict["employed_since"] = day
                 $ mc.business.listener_system.fire_event("new_hire", the_person = new_person)
                 $ new_person.special_role.append(employee_role)
@@ -8770,6 +8850,14 @@ label head_researcher_select_description:
     $ new_head = _return
     $ mc.business.head_researcher = new_head
     $ new_head.special_role.append(head_researcher)
+    return
+
+label pick_company_model_description:
+    call screen employee_overview(person_select = True)
+    $ new_model = _return
+    if new_model is not None:
+        $ mc.business.company_model = new_model
+        $ new_model.special_role.append(company_model_role)
     return
 
 label set_uniform_description:
@@ -8978,7 +9066,8 @@ label advance_time:
             $ renpy.scene("Active")
             $ clear_list.append(crisis)
         $ count += 1
-    $ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
+    #$ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
+    $ mc.location.show_background()
     python: #Needs to be a different python block, otherwise the rest of the block is not called when the action returns.
         for crisis in clear_list:
             mc.business.mandatory_crises_list.remove(crisis) #Clean up the list.
@@ -8998,7 +9087,8 @@ label advance_time:
 
     $ renpy.scene("Active")
     $ renpy.scene()
-    $ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
+    #$ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
+    $ mc.location.show_background()
     show screen business_ui
 
     if time_of_day == 4: ##First, determine if we're going into the next chunk of time. If we are, advance the day and run all of the end of day code.
@@ -9037,7 +9127,8 @@ label advance_time:
                 $ renpy.scene("Active")
                 $ clear_list.append(crisis)
             $ count += 1
-        $ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
+        #$ renpy.show(mc.location.name,what=mc.location.background_image) #Make sure we're showing the correct background for our location, which might have been temporarily changed by a crisis.
+        $ mc.location.show_background()
         python: #Needs to be a different python block, otherwise the rest of the block is not called when the action returns.
             for crisis in clear_list:
                 mc.business.mandatory_morning_crises_list.remove(crisis) #Clean up the list.
@@ -9063,15 +9154,17 @@ label advance_time:
         for (people,place) in people_to_process: #Now move everyone to where the should be in the next time chunk. That may be home, work, etc.
             people.run_move(place)
 
-    #$mc.can_skip_time = True #Now give the player the ability to skip time again, because they should be back in control.
+    $ renpy.free_memory()
     return
+
 
 label create_test_variables(character_name,business_name,last_name,stat_array,skill_array,_sex_array,max_num_of_random=4): #Gets all of the variables ready. TODO: Move some of this stuff to an init block?
 
     $ list_of_traits = [] #List of serum traits that can be used. Established here so they play nice with rollback, saving, etc.
+    $ list_of_nora_traits = []
     $ list_of_side_effects = [] #List of special serum traits that are reserved for bad results.
 
-    call instantiate_serum_traits() from _call_instantiate_serum_traits #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has lables that can be externally added and called here.
+    call instantiate_serum_traits() from _call_instantiate_serum_traits #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has labels that can be externally added and called here.
     call instantiate_side_effect_traits() from _call_instantiate_side_effect_traits
 
     python:
@@ -9112,12 +9205,24 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         review_designs_action = Action("Review serum designs.", review_designs_action_requirement, "review_designs_action_description",
             menu_tooltip = "Shows all existing serum designs and allows you to delete any you no longer desire.")
 
+        set_company_model_action = Action("Pick a company model.", pick_company_model_requirement, "pick_company_model_description",
+            menu_tooltip = "Pick one your employees to be your company model. You can run ad campaigns with your model, increasing the value of every dose of serum sold.")
+
         sleep_action = Action("Go to sleep for the night. {image=gui/heart/Time_Advance.png}",sleep_action_requirement,"sleep_action_description",
             menu_tooltip = "Go to sleep and advance time to the next day. Night time counts as three time chunks when calculating serum durations.")
         faq_action = Action("Check the FAQ.",faq_action_requirement,"faq_action_description",
             menu_tooltip = "Answers to frequently asked questions about Lab Rats 2.")
 
+        downtown_search_action = Action("Wander the streets. {image=gui/heart/Time_Advance.png}", downtown_search_requirement, "downtown_search_label",
+            menu_tooltip = "Spend time exploring the city and seeing what interesting locations it has to offer.")
+
+
+        strip_club_show_action = Action("Watch a show.", stripclub_show_requirement, "stripclub_dance",
+            menu_tooltip = "Take a seat and wait for the next girl to come out on stage.")
+
         test_action = Action("This is a test.", faq_action_requirement, "faq_action_description")
+
+
 
         ##Roles##
     call instantiate_roles() from _call_instantiate_roles #Broken out as a renpy statement instead of using the python equivalent because returning from a label might skip to the end of the whole pyton statement.
@@ -9137,13 +9242,13 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         ##PC's Work##
         lobby = Room(business_name + " lobby",business_name + " Lobby",[],office_background,[],[],[],False,[11,3], tutorial_label = "lobby_tutorial_intro")
         office = Room("main office","Main Office",[],office_background,[],[],[policy_purhase_action,hr_work_action,supplies_work_action,interview_action,sell_serum_action,pick_supply_goal_action,set_uniform_action,set_serum_action],False,[11,2], tutorial_label = "office_tutorial_intro")
-        m_division = Room("marketing division","Marketing Division",[],office_background,[],[],[market_work_action],False,[12,3], tutorial_label = "marketing_tutorial_intro")
+        m_division = Room("marketing division","Marketing Division",[],office_background,[],[],[market_work_action,set_company_model_action],False,[12,3], tutorial_label = "marketing_tutorial_intro")
         rd_division = Room("R&D division","R&D Division",[],lab_background,[],[],[research_work_action,design_serum_action,pick_research_action,review_designs_action,set_head_researcher_action],False,[12,4], tutorial_label = "research_tutorial_intro")
         p_division = Room("Production division", "Production Division",[],office_background,[],[],[production_work_action,pick_production_action,trade_serum_action],False,[11,4], tutorial_label = "production_tutorial_intro")
 
 
         ##Connects all Locations##
-        downtown = Room("downtown","Downtown",[],outside_background,[],[],[],True,[6,4])
+        downtown = Room("downtown","Downtown",[],outside_background,[],[],[downtown_search_action],True,[6,4])
 
         ##A mall, for buying things##
         mall = Room("mall","Mall",[],mall_background,[],[],[],True,[8,2])
@@ -9161,6 +9266,8 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
 
         university = Room("university Campus", "University Campus", [], campus_background, [], [], [], False, [9,5], None, False)
 
+        strip_club_owner = get_random_male_name()
+        strip_club = Room(strip_club_owner + "'s Gentlemen's Club", strip_club_owner + "'s Gentlemen's Club", [], stripclub_background, [], [], [strip_club_show_action], False, [6,5], None, False)
 
         ##PC starts in his bedroom##
         main_business = Business(business_name, m_division, p_division, rd_division, office, office)
@@ -9195,6 +9302,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         list_of_places.append(aunt_bedroom)
         list_of_places.append(cousin_bedroom)
         list_of_places.append(university)
+        list_of_places.append(strip_club)
 
         hall.link_locations_two_way(bedroom)
         hall.link_locations_two_way(kitchen)
@@ -9206,6 +9314,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         downtown.link_locations_two_way(mall)
         downtown.link_locations_two_way(aunt_apartment)
         downtown.link_locations_two_way(university)
+        downtown.link_locations_two_way(strip_club)
 
         aunt_apartment.link_locations_two_way(aunt_bedroom)
         aunt_apartment.link_locations_two_way(cousin_bedroom)
@@ -9309,7 +9418,18 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
                 else:
                     random_count = 0;
                 for x in range(0,random_count):
-                    place.add_person(create_random_person()) #We are using create_random_person instead of make_person because we want premade character bodies to be hirable instead of being eaten up by towns-folk.
+                    the_person = create_random_person()
+                    the_person.generate_home()
+                    place.add_person(the_person) #We are using create_random_person instead of make_person because we want premade character bodies to be hirable instead of being eaten up by towns-folk.
+
+        stripclub_strippers = []
+        stripclub_wardrobe = wardrobe_from_xml("Stripper_Wardrobe")
+        for i in __builtin__.range(0,4):
+            a_girl = create_random_person(start_sluttiness = renpy.random.randint(15,30))
+            a_girl.generate_home()
+            a_girl.set_schedule([3,4],strip_club)
+            stripclub_strippers.append(a_girl)
+            strip_club.add_person(a_girl)
 
         ##Global Variable Initialization##
         day = 0 ## Game starts on day 0.

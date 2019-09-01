@@ -266,6 +266,7 @@ label strip_ask_kissing(the_girl, the_clothing, the_location, the_object, the_ro
 label orgasm_kissing(the_girl, the_location, the_object, the_round):
     "[the_girl.title] suddenly pulls you tight against her. You feel her body shiver against yours."
     "It takes you a second before you realise she's cumming. You return the passion of her kiss and grind your body against hers."
+    $ the_girl.call_dialogue("climax_responses_foreplay")
     "After a few seconds she twitches one last time, then relaxes as all the tension drains from her body."
     "You break the kiss and look into each others eyes."
     the_girl.char "That was... amazing [the_girl.mc_title]."

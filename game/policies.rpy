@@ -117,7 +117,6 @@ init 1300 python:
     uniform_policies_list.append(male_focused_marketing_policy)
 
 
-
     #### SERUM TESTING POLICY SECTION ####
 
     def mandatory_paid_serum_testing_policy_requirement():
@@ -425,3 +424,13 @@ init 1300 python:
         on_buy_function = increase_max_employee_size,
         on_buy_arguments = {"amount":20})
     organisation_policies_list.append(business_size_4_policy)
+
+    def public_advertising_license_requirement():
+        return True
+
+    public_advertising_license_policy = Policy(name = "Public Advertising License",
+        desc = "After filling out the proper paperwork and familiarizing yourself with publishing regultions you will be ready to advertise your product in print publications. Allows you to pick a girl as your company model and launch ad campaigns.",
+        cost = 2500,
+        requirement = public_advertising_license_requirement)
+
+    organisation_policies_list.append(public_advertising_license_policy)

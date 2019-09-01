@@ -58,33 +58,45 @@ label debug_start:
     $ log_message("Starting our debugging!")
     $ log_message("Creating town with no people.")
     $ town_time = time.time()
-    call create_test_variables("DEBUG", "DEBUG INC.",[0,0,0], [0,0,0,0,0], [0,0,0,0,0],max_num_of_random=0) from _call_create_test_variables_1
+    call create_test_variables("DEBUG", "DEBUG INC.","LASTNAME",[0,0,0], [0,0,0,0,0], [0,0,0,0,0],max_num_of_random=0) from _call_create_test_variables_1
     $ log_message("Finished. Took: " + str(time.time()-town_time) + " Seconds")
+    $ people_per_location = 20
 
-
-    $ log_message("Populating town now. Adding 5 people to each location.")
+    $ log_message("Populating town now. Adding " + str(people_per_location) + " people to each location.")
     $ person_time = time.time()
     $ location_count = 0
     python:
         for place in list_of_places:
-            location_count += 1
-            for x in range(0,5):
-                place.add_person(create_random_person())
-    $ log_message("Finished. Added " + str(location_count*5) + " people total to " + str(location_count) + " places.")
-    $ log_message("Total time: " + str(time.time()-person_time) + " Seconds. Average time per person: " + str((time.time()-person_time)/(5.0*location_count)) + " Seconds.")
+            if place.public:
+                location_count += 1
+                for x in range(0,people_per_location):
+                    the_person = create_random_person()
+                    the_person.generate_home()
+                    place.add_person(the_person)
+    $ log_message("Finished. Added " + str(location_count*people_per_location) + " people total to " + str(location_count) + " places.")
+    $ log_message("Total time: " + str(time.time()-person_time) + " Seconds. Average time per person: " + str((time.time()-person_time)/(people_per_location*location_count)) + " Seconds.")
 
     $ log_message("Now doubling number of people. Time per person should remain constant.")
     $ person_time = time.time()
     $ location_count = 0
     python:
         for place in list_of_places:
-            location_count += 1
-            for x in range(0,5):
-                place.add_person(create_random_person())
-    $ log_message("Finished. Added " + str(location_count*5) + " people total to " + str(location_count) + " places.")
-    $ log_message("Total time: " + str(time.time()-person_time) + " Seconds. Average time per person: " + str((time.time()-person_time)/(5.0*location_count)) + " Seconds.")
+            if place.public:
+                location_count += 1
+                for x in range(0,people_per_location):
+                    place.add_person(create_random_person())
+    $ log_message("Finished. Added " + str(location_count*people_per_location) + " people total to " + str(location_count) + " places.")
+    $ log_message("Total time: " + str(time.time()-person_time) + " Seconds. Average time per person: " + str((time.time()-person_time)/(people_per_location*location_count)) + " Seconds.")
 
     $ log_message("Debugging Finished.")
+    return
+
+label debug_run_turn:
+    $ log_message("Starting our turn debugging!")
+    $ log_message("Advancing time now.")
+    $ turn_time = time.time()
+    call advance_time from _call_advance_time_27
+    $ log_message("Finished. Time taken: " + str(time.time()-turn_time))
     return
 
 label edit_default_wardrobe:

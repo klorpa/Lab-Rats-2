@@ -26,8 +26,6 @@
     # @_work_enter_greeting - dialogue used when you walk into a room at work with an employee in it.
     # @_date_seduction - dialogue used after a date when the person had a good time and wants to go back to have sex/make out/whatever.
 
-
-
     python:
 
         def relaxed_titles(the_person):
@@ -398,12 +396,36 @@ label relaxed_sex_responses(the_person):
 
     return
 
-label relaxed_climax_responses(the_person):
+label relaxed_climax_responses_foreplay(the_person):
+    if the_person.sluttiness > 50:
+        the_person.char "Oh my god! I'm going to... I'm going to..."
+        the_person.char "{b}Cum!{/b} Ah!"
+    else:
+        the_person.char "Mmmmhm!"
+    return
+
+label relaxed_climax_responses_oral(the_person):
     if the_person.sluttiness > 70:
-        the_person.char "I'm going to cum! Ah! Make me cum [the_person.mc_title], I want to cum so badly! Ah!"
+        the_person.char "Oh fuck! Oh fuck, make me cum [the_person.mc_title]!"
+        "She closes her eyes and squeals with pleasure."
+    else:
+        the_person.char "Oh my god, I'm going to cum. I'm going to cum!"
+        "She closes her eyes and squeals with pleasure."
+    return
+
+label relaxed_climax_responses_vaginal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "I'm going to cum! Ah! Fuck me [the_person.mc_title], I want to cum so badly! Ah!"
         "She closes her eyes and squeals with pleasure."
     else:
         the_person.char "Ah! I'm cumming! Oh fuck! Ah!"
+    return
+
+label relaxed_climax_responses_anal(the_person):
+    if the_person.sluttiness > 80:
+        the_person.char "I'm going to cum! Fuck my ass and make me cum!"
+    else:
+        the_person.char "Oh fuck, I think... I think I'm going to cum!"
     return
 
 label relaxed_clothing_accept(the_person):
@@ -595,6 +617,17 @@ label relaxed_cum_mouth(the_person):
             "[the_person.title] licks her lips and sighs happily."
         else:
             the_person.char "Bleh, I don't know if I'll ever get use to that."
+    return
+
+label relaxed_cum_vagina(the_person):
+    if mc.condom:
+        pass
+    else:
+        pass
+    return
+
+label rexlaxed_cum_anal(the_person):
+    #TODO
     return
 
 label relaxed_suprised_exclaim(the_person):
@@ -868,12 +901,38 @@ label reserved_sex_responses(the_person):
 
     return
 
-label reserved_climax_responses(the_person):
+label reserved_climax_responses_foreplay(the_person):
+    if the_person.sluttiness > 50:
+        the_person.char "Oh my... I'm going to... cum!"
+    else:
+        the_person.char "I... Oh my god, this feeling is..."
+        "She pauses and moans excitedly."
+        the_person.char "So good!"
+    return
+
+label reserved_climax_responses_oral(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Keep going [the_person.mc_title], you're going to make me..."
+        "She barely finishes her sentence as her body shivers with pleasure."
+        the_person.char "... Orgasm!"
+    else:
+        the_person.char "This feeling... Oh... Oh!"
+        "Her eyes close and she takes a deep breath."
+    return
+
+label reserved_climax_responses_vaginal(the_person):
     if the_person.sluttiness > 70:
         the_person.char "You're going to... Ah! You're going to make me climax [the_person.mc_title]!"
         "She closes her eyes as she tenses up. She freezes for a long second, then lets out a long, slow breath."
     else:
         the_person.char "Oh, I think I'm about to... Oh yes!"
+    return
+
+label reserved_climax_responses_anal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Mmmm, fuck me [the_person.mc_title], fuck my ass and make me cum!"
+    else:
+        the_person.char "Oh lord, I think I'm going to climax. You're going to make me cum by fucking my ass!"
     return
 
 label reserved_clothing_accept(the_person):
@@ -1062,6 +1121,14 @@ label reserved_cum_mouth(the_person):
             the_person.char "You're making me act like such a slut [the_person.mc_title], what would the other women think if they knew what I just did?"
         else:
             the_person.char "Well, at least there's no mess to clean up. I need to go wash my mouth out after that though."
+    return
+
+label reserved_cum_vagina(the_person):
+    #TODO
+    return
+
+label reserved_cum_anal(the_person):
+    #TODO
     return
 
 label reserved_suprised_exclaim(the_person):
@@ -1327,12 +1394,37 @@ label wild_sex_responses(the_person):
 
     return
 
-label wild_climax_responses(the_person):
+label wild_climax_responses_foreplay(the_person):
+    if the_person.sluttiness > 50:
+        the_person.char "Oh fuck yes, I'm going to cum! I'm cumming!"
+    else:
+        the_person.char "Oh fuck, you're going to make me cum! Fuck!"
+        "She goes silent, then lets out a shuddering moan."
+    return
+
+label wild_climax_responses_oral(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Fuck yes, I'm going to cum! Make me cum!"
+    else:
+        the_person.char "Oh my god, you're good at that! I'm going to... I'm going to cum!"
+    return
+
+label wild_climax_responses_vaginal(the_person):
     if the_person.sluttiness > 70:
         the_person.char "Ah! More! I'm going to... Ah! Cum! Fuck!"
         "She closes her eyes and squeals with pleasure."
     else:
         the_person.char "Oh god, I'm going to... Oh fuck me! Ah!"
+    return
+
+label wild_climax_responses_anal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Oh fuck, your cock feels so huge in my ass! It's going to make me cum!"
+        the_person.char "Ah! Mmhmmm!"
+    else:
+        the_person.char "Oh fucking shit, I think you're going to make me..."
+        "She barely finishes her sentence before her body is wracked with pleasure."
+        the_person.char "Cum!"
     return
 
 label wild_clothing_accept(the_person):
@@ -1527,6 +1619,14 @@ label wild_cum_mouth(the_person):
             the_person.char "Mmm, you taste great [the_person.mc_title]. Was it nice to watch me take your load in my mouth?"
         else:
             the_person.char "Ugh, that's such a... unique taste."
+    return
+
+label wild_cum_vagina(the_person):
+    #TODO
+    return
+
+label wild_cum_anal(the_person):
+    #TODO
     return
 
 label wild_suprised_exclaim(the_person):
@@ -1742,7 +1842,6 @@ label wild_improved_serum_unlock(the_person):
 label introvert_introduction(the_person):
     mc.name "Excuse me, could I bother you for a moment?"
     "She freezes, then turns around slowly to face you."
-    #TODO: Have this differ based on personality
     $ the_person.set_title("???")
     the_person.char "What do you want?"
     mc.name "I know this is sudden, but I just saw you walking by and I felt like I needed to say hi and get your name."
@@ -1799,12 +1898,35 @@ label introvert_sex_responses(the_person):
 
     return
 
+label introvert_climax_responses_foreplay(the_person):
+    if the_person.sluttiness > 50:
+        the_person.char "... Mmmfh!"
+        "She tenses up and moans to herself."
+    else:
+        the_person.char "I... I think I'm going to cum!"
+    return
 
-label introvert_climax_responses(the_person):
+label introvert_climax_responses_oral(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Oh fuck, I'm cumming!"
+    else:
+        the_person.char "Oh... Oh! {b}Oh!{/b}"
+    return
+
+label introvert_climax_responses_vaginal(the_person):
     if the_person.sluttiness > 70:
         the_person.char "I'm... Cumming!"
     else:
         the_person.char "Shit..."
+    return
+
+label introvert_climax_responses_anal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Your going to make me cum! Ah!"
+    else:
+        the_person.char "Oh fuck, I'm..."
+        "She tenses up and moans loudly."
+        the_person.char "Cumming!"
     return
 
 label introvert_clothing_accept(the_person):
@@ -2008,6 +2130,14 @@ label introvert_cum_mouth(the_person):
             the_person.char "Mmm, you taste great."
         else:
             the_person.char "Ugh."
+    return
+
+label introvert_cum_vagina(the_person):
+    #TODO
+    return
+
+label introvert_cum_anal(the_person):
+    #TODO
     return
 
 label introvert_suprised_exclaim(the_person):
@@ -2222,7 +2352,6 @@ label introvert_improved_serum_unlock(the_person):
 label bimbo_introduction(the_person):
     mc.name "Excuse me, could I bother you for a moment?"
     "She turns around at you. She doesn't hide the way she looks your body up and down."
-    #TODO: Have this differ based on personality
     $ the_person.set_title("???")
     the_person.char "Oh you're cute! Okay, cutie, what do you need?"
     mc.name "I just wanted to get your name. I saw you walking past and..."
@@ -2282,12 +2411,38 @@ label bimbo_sex_responses(the_person):
             the_person.char "Oh my god, you're... You might make me cum if you keep going!"
     return
 
-label bimbo_climax_responses(the_person):
+label bimbo_climax_responses_foreplay(the_person):
+    if the_person.sluttiness > 50:
+        the_person.char "Oh god, I'm going to cum! All I want to do is cum [the_person.mc_title], ah!"
+        "She squeals with pleasure and excitement."
+    else:
+        the_person.char "Oh my god, this feeling. I'm... I'm... cumming!"
+
+    return
+
+label bimbo_climax_responses_oral(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Oh god, make me cum [the_person.mc_title]! My mind is going blank, I just need to cum!"
+    else:
+        the_person.char "That feels, like, {i}so good{/i}!"
+        "She closes her eyes and squeals with pleasure."
+    return
+
+label bimbo_climax_responses_vaginal(the_person):
     if the_person.sluttiness > 70:
         the_person.char "Oh god I'm going to cum! Ahh, make me cum [the_person.mc_title], it's all I want right now!"
         "She closes her eyes and squeals with pleasure."
     else:
         the_person.char "Yes, yes, yes! Make me cum! Make me cum hard!"
+    return
+
+label bimbo_climax_responses_anal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Oh my god! I'm going to cum with your cock up my ass!"
+        "She squeals loudly."
+    else:
+        the_person.char "Oh my god! I'm such a slut, I'm about to cum! Oh fuck!"
+
     return
 
 label bimbo_clothing_accept(the_person):
@@ -2439,6 +2594,14 @@ label bimbo_cum_mouth(the_person):
             "[the_person.title] licks her lips and sighs happily."
         else:
             the_person.char "Bleh, I don't know if I'll ever get use to that."
+    return
+
+label bimbo_cum_vagina(the_person):
+    #TODO
+    return
+
+label bimbo_cum_anal(the_person):
+    #TODO
     return
 
 label bimbo_suprised_exclaim(the_person):
@@ -2679,6 +2842,14 @@ label stephanie_cum_mouth(the_person):
             the_person.char "Mmm, that was nice."
     return
 
+label stephanie_cum_vagina(the_person):
+    #TODO
+    return
+
+label stephanie_cum_anal(the_person):
+    #TODO
+    return
+
 label stephanie_improved_serum_unlock(the_person):
     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
     the_person.char "Okay, how can I help?"
@@ -2898,6 +3069,14 @@ label lily_cum_mouth(the_person):
             the_person.char "Mmm, who knew my brother had such good tasting cum... If I had known I would have done this with you way earlier!"
         else:
             the_person.char "I... I can't believe we just did that. We really shouldn't do it again, okay?"
+    return
+
+label lily_cum_vagina(the_person):
+    #TODO
+    return
+
+label lily_cum_anal(the_person):
+    #TODO
     return
 
 label lily_sex_strip(the_person):
@@ -3224,9 +3403,17 @@ label mom_cum_mouth(the_person):
             the_person.char "I... Oh I'm not sure I'm going to be able to to get use to that. I'll try for you though sweetheart."
     else:
         if the_person.sluttiness > 70:
-            the_person.char "Mmm, you taste great sweetheart. Thank you for giving your mom such a wonderful reward."
+            the_person.char "Mmm, you taste great sweetheart. Thank you for giving mommy such a wonderful reward."
         else:
             the_person.char "Oh sweetheart... We really shouldn't have done that."
+    return
+
+label mom_cum_vagina(the_person):
+    #TODO
+    return
+
+label mom_cum_anal(the_person):
+    #TODO
     return
 
 label mom_sex_strip(the_person):
@@ -3330,6 +3517,44 @@ label mom_being_watched(the_person, the_watcher, the_position):
         $ the_person.change_slut_temp(1)
         "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
 
+    return
+
+label mom_climax_responses_foreplay(the_person):
+    if the_person.sluttiness > 50:
+        the_person.char "Oh my..."
+        "She pauses and moans passionately."
+        the_person.char "You know just what to do to your mother feel alive. I'm going to cum!"
+    else:
+        the_person.char "I... I shouldn't be feeling like this... I shouldn't but you're going to..."
+        "She hesitates before continuing, almost at a whisper."
+        the_person.char "Make me cum."
+    return
+
+label mom_climax_responses_oral(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Keep going [the_person.mc_title], make your mommy cum!"
+        "[the_person.possessive_title] closes her eyes and moans passionately."
+    else:
+        the_person.char "This feeling... Oh... Oh this is so wrong!"
+        "Her eyes close and she takes a slow, deep breath."
+    return
+
+label mom_climax_responses_vaginal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "That's it, fuck me [the_person.mc_title]! Fuck me like you mean it, you're going to make your mommy cum!"
+        "She closes her eyes as she tenses up. She freezes for a long second, then lets out a long, slow breath."
+    else:
+        the_person.char "Oh god, I shouldn't be... I shouldn't be feeling like this..."
+        the_person.char "I'm going to cum sweetheart, you're about to make mommy cum! Ah!"
+    return
+
+label mom_climax_responses_anal(the_person):
+    if the_person.sluttiness > 70:
+        the_person.char "Fuck me [the_person.mc_title], fuck mommy in the ass with your big cock and make her cum!"
+    else:
+        the_person.char "Oh no, this isn't happening... I'm about to..."
+        "She gasps and shivers with pleasure."
+        the_person.char "Cum! Ah!"
     return
 
 label mom_date_seduction(the_person):

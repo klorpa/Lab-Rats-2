@@ -278,7 +278,7 @@ label strip_ask_piledriver(the_girl, the_clothing, the_location, the_object, the
 
 label orgasm_piledriver(the_girl, the_location, the_obejct, the_round):
     "[the_girl.title] takes a sharp breath in and you feel her legs try and clench together."
-    $ the_girl.call_dialogue("climax_responses")
+    $ the_girl.call_dialogue("climax_responses_vaginal")
     "You keep fucking [the_girl.possessive_title] through her climax, enjoying her sopping wet cunt while she twitches and moans underneath you."
     "A few seconds later she relaxes and all the tension drains from her body."
     the_girl.char "Keep going [the_girl.mc_title], please make me cum again!"

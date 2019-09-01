@@ -278,7 +278,7 @@ label strip_ask_doggy(the_girl, the_clothing, the_location, the_object, the_roun
 
 label orgasm_doggy(the_girl, the_location, the_object, the_round):
     "[the_girl.title]'s breathing gets heavier and faster, until finally she takes a sharp breath and tenses up."
-    $ the_girl.call_dialogue("climax_responses")
+    $ the_girl.call_dialogue("climax_responses_vaginal")
     "You keep up your pace while [the_girl.possessive_title] cums. You think you can feel her pussy twitch around your cock."
     "After a couple of seconds [the_girl.title] sighs and the tension drains from her body."
     the_girl.char "Keep... keep going and see if you can make me to cum again!"

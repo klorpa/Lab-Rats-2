@@ -74,9 +74,10 @@ init -2 python:
             return True
 
 
-label person_introduction(the_person):
+label person_introduction(the_person, girl_introduction = True):
 
-    $ the_person.call_dialogue("introduction")
+    if girl_introduction:
+        $ the_person.call_dialogue("introduction")
 
     #She's given us her name, now she asks for yours.
     $ title_tuple = []
@@ -120,7 +121,7 @@ label new_title_menu(the_person):
     python:
         for title in get_titles(the_person):
             title_tuple.append([title,title])
-        tuple_list.append(["Do not change her title.","Back"])
+        title_tuple.append(["Do not change her title.","Back"])
         title_choice = renpy.display_menu(title_tuple,True,"Choice")
     return title_choice
 
@@ -140,7 +141,7 @@ label new_possessive_title_menu(the_person):
     python:
         for title in get_possessive_titles(the_person):
             title_tuple.append([title,title])
-        tuple_list.append(["Do not change your title.","Back"])
+        title_tuple.append(["Do not change your title.","Back"])
         title_choice = renpy.display_menu(title_tuple,True,"Choice")
     return title_choice
 
@@ -828,7 +829,14 @@ label serum_give_label(the_person):
 
 label seduce_label(the_person):
     mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
-    $ the_person.call_dialogue("seduction_response")
+
+    if prostitute_role in the_person.special_role and the_person.love < 20:
+        the_person.char "I've been thinking about you too, but I've got bills to pay and I can't do this for free."
+        return
+    elif prostitute_role in the_person.special_role and the_person.love >= 20:
+        the_person.char "I should really make you pay for this... but you're one of my favourites and I'm curious what you had in mind."
+    else:
+        $ the_person.call_dialogue("seduction_response")
     $ random_chance = renpy.random.randint(0,100)
     $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
     $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
@@ -849,7 +857,7 @@ label seduce_label(the_person):
     elif chance_service_him < 0:
         $ chance_service_him = 0
 
-    $ seduced = False #Flip to true if our approach works
+    $ seduced = False #Flip to true if the approach works
     menu:
         "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
             "You lean in close whisper what you want to do to her."
@@ -879,6 +887,8 @@ label seduce_label(the_person):
                 $ the_person.discover_opinion("being submissive")
             else:
                 pass
+
+
 
     if seduced and the_person.sexed_count < 1:
 
