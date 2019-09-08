@@ -401,7 +401,7 @@ label alexia_photography_intro_label(the_person):
     the_person.char "Yeah, I can do that! I don't know why but I thought it was really exciting to be in front of that camera."
     mc.name "I'll let you get back to work then. See you around [the_person.title]."
     if mc.business.company_model is not None:
-        $ mc.business.company_model.remove(company_model_role) #If we somehow ended up with her here, fire her.
+        $ mc.business.company_model.special_role.remove(company_model_role) #If we somehow ended up with her here, fire her.
     $ mc.business.company_model = the_person
     $ the_person.special_role.append(company_model_role) #Now we just make Alexia a model instead of having this be specific to her role. You get there by either buying the policy or following her storyline here.
     call advance_time from _call_advance_time_19

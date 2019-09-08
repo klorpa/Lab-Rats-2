@@ -27,8 +27,8 @@ init -2 python:
     config.has_quicksave = True
 
 
-    config.rollback_enabled = False #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
-    config.rollback_length = 4
+    config.rollback_enabled = True #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
+    config.rollback_length = 128
 
 
     if persistent.colour_palette is None:
@@ -1214,7 +1214,10 @@ init -2 python:
             if self.is_side_effect:
                 return self.negative_slug #For side effects we do not want to display the side effect chance as a negative modifier.
             else:
-                return self.negative_slug + ", " + str(self.get_effective_side_effect_chance()) + "% Chance of Side Effect"
+                if self.get_effective_side_effect_chance() >= 10000:
+                    return self.negative_slug + ", Guaranteed Side Effect"
+                else:
+                    return self.negative_slug + ", " + str(self.get_effective_side_effect_chance()) + "% Chance of Side Effect"
 
         def has_required(self):
             has_prereqs = True
@@ -1619,7 +1622,7 @@ init -2 python:
         def generate_home(self, set_home_time = True): #Creates a home location for this person and adds it to the master list of locations so their turns are processed.
             if self.home is None:
                 start_home = Room(self.name+"'s home", self.name+"'s home", [], apartment_background, [],[],[],False,[0.5,0.5], visible = False, hide_in_known_house_map = False)
-                start_home.link_locations_two_way(downtown)
+                #start_home.link_locations_two_way(downtown)
 
                 start_home.add_object(make_wall())
                 start_home.add_object(make_floor())
@@ -2288,6 +2291,13 @@ init -2 python:
                 happy_points += 14 - (day - self.event_triggers_dict.get("employed_since",0)) #Employees are much less likely to quit over the first two weeks.
             return happy_points
 
+        def get_no_condom_threshold(self, situational_modifier = 0):
+            no_condom_threshold = 70 + (self.get_opinion_score("bareback sex") * -10) + situational_modifier
+            if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
+                no_condom_threshold += 10
+
+            return no_condom_threshold
+
         def change_arousal(self,amount, add_to_log = True):
             self.arousal += __builtin__.round(amount) #Round it to an integer if it isn't one already.
             if self.arousal < 0:
@@ -2332,6 +2342,13 @@ init -2 python:
             self.change_happiness(5*self.get_opinion_score("creampies"))
             self.discover_opinion("creampies")
 
+        def cum_in_ass(self):
+            mc.listener_system.fire_event("sex_cum_ass", the_person = self)
+            #TODO: Add anal cumshot clothing item once we have rendering support for it
+            self.change_slut_temp(5*self.get_opinion_score("creampies"))
+            self.change_happiness(5*self.get_opinion_score("creampies"))
+            self.discover_opinion("creampies")
+
         def cum_on_tits(self):
             if self.outfit.can_add_accessory(tits_cum):
                 the_cumshot = tits_cum.get_copy()
@@ -2345,6 +2362,7 @@ init -2 python:
             self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
+
 
 
 
@@ -2997,7 +3015,7 @@ init -2 python:
             self.description = goal_description #A long form fluff description of the goal purpose.
             self.event_name = event_name #The event (aka a string to give to a listnener manager) that this goal listens to.
             self.listener_type = listener_type #Either "MC" or "Business", decides which object the goal will grab as their listener manager when you ask it to enroll.
-            self.valid_goal_function = valid_goal_function #A function called to check to see if the goal is a valid/reasonable one to give to the player.
+            self.valid_goal_function = valid_goal_function #A function called to check to see if the goal is a valid/reasonable one to give to the player. Also is used to make sure goals aren't completed when they are assigned.
             self.on_trigger_function = on_trigger_function #A function called by an event listener that that this goal is hooked up to.
             if arg_dict: #A dict to hold arguments you want to be used by the on_trigger function without having to get specific about what they are here.
                 self.arg_dict = arg_dict
@@ -3026,6 +3044,12 @@ init -2 python:
 
         def __hash__(self):
             return hash((self.name, self.description, self.valid_goal_function, self.on_trigger_function))
+
+        def check_valid(self, difficulty):
+            if self.valid_goal_function is not None:
+                return self.valid_goal_function(self, difficulty)
+            else:
+                return True #If a goal does not have a valid goal function it is always valid.
 
         def activate_goal(self, difficulty):
             if self.listener_type == "MC": #Figure out what listener we should be listening to
@@ -4008,7 +4032,7 @@ init -2 python:
         def pick_random_outfit(self):
             return get_random_from_list(self.outfits).get_copy() # Get a copy of _any_ full outfit in this character's wardrobe.
 
-        def get_random_appropriate_underwear(self, sluttiness_limit, sluttiness_min = 0): #Get an underwear outfit that is considered appropriate (based on underwear sluttiness, not full outfit sluttiness)
+        def get_random_appropriate_underwear(self, sluttiness_limit, sluttiness_min = 0, guarantee_output = False): #Get an underwear outfit that is considered appropriate (based on underwear sluttiness, not full outfit sluttiness)
             valid_underwear = []
             for underwear in self.underwear_sets:
                 if underwear.get_underwear_slut_score() <= sluttiness_limit and underwear.get_underwear_slut_score() >= sluttiness_min:
@@ -4017,18 +4041,30 @@ init -2 python:
             if valid_underwear:
                 return get_random_from_list(valid_underwear).get_copy()
             else:
-                return None
+                if guarantee_output: # If an output is guaranteed we always return an Outfit object (even if it is empty). Otherwise we return None to indicate failure to find something.
+                    if sluttiness_limit < 120: #Sets an effective recusion limit.
+                        return self.get_random_appropriate_underwear(sluttiness_limit+5, slittiness_min-5, guarantee_output)
+                    else:
+                        return Outfit("Nothing")
 
-        def get_random_appropriate_outfit(self, sluttiness_limit, sluttiness_min = 0): # Get a copy of a full outfit that the character is at or below the sluttiness limit.
+                else:
+                    return None
+
+        def get_random_appropriate_outfit(self, sluttiness_limit, sluttiness_min = 0, guarantee_output = False): # Get a copy of a full outfit that the character is at or below the sluttiness limit.
             valid_outfits = []
             for outfit in self.outfits:
                 if outfit.slut_requirement >= sluttiness_min and outfit.slut_requirement <= sluttiness_limit:
                     valid_outfits.append(outfit)
 
-            the_underwear = get_random_from_list(valid_outfits)
-            if the_underwear:
-                return the_underwear.get_copy()
+            the_outfit = get_random_from_list(valid_outfits)
+            if the_outfit:
+                return the_outfit.get_copy()
             else:
+                if guarantee_output:
+                    if sluttiness_limit < 120:
+                        return self.get_random_appropriate_outfit(sluttiness_limit+5, slittiness_min-5, guarantee_output)
+                    else:
+                        return Outfit("Nothing")
                 return None
 
         def build_appropriate_outfit(self, sluttiness_limit, sluttiness_min = 0): # Let's assume characters have a limited number of overwear sets but a larger set of underwear. Get an overwear set, then a decent underwear set.
@@ -4045,12 +4081,6 @@ init -2 python:
             remaining_sluttiness_min = sluttiness_min - picked_overwear.get_overwear_slut_score()
 
             picked_underwear = self.get_random_appropriate_underwear(remaining_sluttiness_limit, remaining_sluttiness_min)
-            # valid_underwear = []
-            # for underwear in self.underwear_sets:
-            #     if underwear.get_underwear_slut_score() >= remaining_sluttiness_min and underwear.get_underwear_slut_score() <= remaining_sluttiness_limit:
-            #         valid_underwear.append(underwear)
-
-            #picked_underwear = get_random_from_list(valid_underwear)
 
             if picked_underwear is None:
                 return default_outfit.get_copy() #If we weren't able to find any underwear we can't make an outfit with our selection. Return the default outfit to make sure we don't crash.
@@ -4715,7 +4745,7 @@ screen character_create_screen():
                     textbutton "<" action [SetScreenVariable("A_skill",A_skill-1), SetScreenVariable("character_points", character_points+1)] sensitive A_skill>0 style "textbutton_style" text_style "textbutton_text_style"
                     text str(A_skill)+"/[sex_skill_max]" style "textbutton_text_style"
                     textbutton ">" action [SetScreenVariable("A_skill",A_skill+1), SetScreenVariable("character_points", character_points-1)] sensitive character_points>0 and A_skill<sex_skill_max style "textbutton_style" text_style "textbutton_text_style"
-                text "     Your skill at anal sex in any position. (NOTE: No content included in this version)." style "menu_text_style"
+                text "     Your skill at anal sex in any position." style "menu_text_style"
                 null height 30
 
 screen main_ui(): #The UI that shows most of the important information to the screen.
@@ -7484,7 +7514,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.20.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.20.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8403,9 +8433,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
     return
 
 label condom_ask(the_person):
-    $ condom_threshold = 70 + (the_person.get_opinion_score("bareback sex") * -10)
-    if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in the_person.special_role):
-        $ condom_threshold += 10
+    $ condom_threshold = the_person.get_no_condom_threshold()
 
     if the_person.effective_sluttiness() < condom_threshold:
         # they demand you put on a condom.
@@ -8456,8 +8484,7 @@ label condom_ask(the_person):
                 "[the_person.title] watches impatiently while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
 
             "Fuck her raw.":
-                pass
-
+                mc.name "No arguements here."
 
 
     return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
@@ -9304,31 +9331,31 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         list_of_places.append(university)
         list_of_places.append(strip_club)
 
-        hall.link_locations_two_way(bedroom)
-        hall.link_locations_two_way(kitchen)
-        hall.link_locations_two_way(lily_bedroom)
-        hall.link_locations_two_way(mom_bedroom)
-
-        downtown.link_locations_two_way(hall)
-        downtown.link_locations_two_way(lobby)
-        downtown.link_locations_two_way(mall)
-        downtown.link_locations_two_way(aunt_apartment)
-        downtown.link_locations_two_way(university)
-        downtown.link_locations_two_way(strip_club)
-
-        aunt_apartment.link_locations_two_way(aunt_bedroom)
-        aunt_apartment.link_locations_two_way(cousin_bedroom)
-
-        lobby.link_locations_two_way(office)
-        lobby.link_locations_two_way(rd_division)
-        lobby.link_locations_two_way(m_division)
-        lobby.link_locations_two_way(p_division)
-
-        mall.link_locations_two_way(office_store)
-        mall.link_locations_two_way(clothing_store)
-        mall.link_locations_two_way(sex_store)
-        mall.link_locations_two_way(home_store)
-        mall.link_locations_two_way(gym)
+        # hall.link_locations_two_way(bedroom)
+        # hall.link_locations_two_way(kitchen)
+        # hall.link_locations_two_way(lily_bedroom)
+        # hall.link_locations_two_way(mom_bedroom)
+        #
+        # downtown.link_locations_two_way(hall)
+        # downtown.link_locations_two_way(lobby)
+        # downtown.link_locations_two_way(mall)
+        # downtown.link_locations_two_way(aunt_apartment)
+        # downtown.link_locations_two_way(university)
+        # downtown.link_locations_two_way(strip_club)
+        #
+        # aunt_apartment.link_locations_two_way(aunt_bedroom)
+        # aunt_apartment.link_locations_two_way(cousin_bedroom)
+        #
+        # lobby.link_locations_two_way(office)
+        # lobby.link_locations_two_way(rd_division)
+        # lobby.link_locations_two_way(m_division)
+        # lobby.link_locations_two_way(p_division)
+        #
+        # mall.link_locations_two_way(office_store)
+        # mall.link_locations_two_way(clothing_store)
+        # mall.link_locations_two_way(sex_store)
+        # mall.link_locations_two_way(home_store)
+        # mall.link_locations_two_way(gym)
 
         for room in [bedroom, lily_bedroom, mom_bedroom, aunt_bedroom, cousin_bedroom]:
             room.add_object(make_wall())

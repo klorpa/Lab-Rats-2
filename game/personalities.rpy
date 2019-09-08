@@ -69,7 +69,7 @@
             return mc.name
         wild_personality = Personality("wild", #Stephanie style personality
         common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work","heavy metal","punk"],
-        common_sexy_likes = ["doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "bareback sex"],
+        common_sexy_likes = ["anal creampies", "doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "bareback sex"],
         common_dislikes = ["Mondays", "the colour pink", "supply work", "conservative outfits", "work uniforms"],
         common_sexy_dislikes = ["being submissive", "being fingered", "missionary style sex", "giving handjobs"],
         titles_function = wild_titles, possessive_titles_function = wild_possessive_titles, player_titles_function = wild_player_titles)
@@ -85,7 +85,7 @@
 
         introvert_personality = Personality("introvert", #Stephanie style personality
         common_likes = ["conservative outfits", "research work", "punk", "working", "the colour black"],
-        common_sexy_likes = ["big dicks", "kissing", "vaginal sex", "anal sex", "getting head", "giving blowjobs", "masturbating", "creampies"],
+        common_sexy_likes = ["big dicks", "kissing", "vaginal sex", "anal sex", "getting head", "giving blowjobs", "masturbating", "creampies", "anal creampies"],
         common_dislikes = ["skimpy outfits", "skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
         common_sexy_dislikes = ["skimpy outfits", "not wearing underwear", "not wearing anything", "public sex", "lingerie"],
         titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles)

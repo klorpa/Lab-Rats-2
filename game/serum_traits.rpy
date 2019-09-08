@@ -195,7 +195,7 @@ init -1:
             the_person.change_obedience(-amount, add_to_log)
 
         def nora_reward_high_love_trait_on_turn(the_person, add_to_log):
-            if the_person.core_slut > the_person.love:
+            if the_person.core_sluttiness > the_person.love:
                 the_person.change_slut_core(-1, add_to_log)
                 the_person.change_love(1, add_to_log)
 
@@ -210,7 +210,7 @@ init -1:
             the_person.change_happiness(amount, add_to_log)
 
         def nora_reward_high_slut_trait_on_apply(the_person, add_to_log):
-            amount = the_person.sluttiness - the_person.core_slut
+            amount = the_person.sluttiness - the_person.core_sluttiness
             if amount > 5:
                 amount = 5
             if amount > 0:

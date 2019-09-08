@@ -846,7 +846,7 @@ label aunt_share_drinks_label(the_person):
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                     the_person.char "Okay, first one."
-                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-30)
+                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-30, guarantee_output = True)
                     $ the_person.outfit = lingerie.get_copy()
                     $ the_person.draw_person()
                     "She slips on her new set of underwear."
@@ -870,7 +870,7 @@ label aunt_share_drinks_label(the_person):
                         "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
-                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-25)
+                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-25, guarantee_output = True)
                     $ the_person.outfit = lingerie.get_copy()
                     $ the_person.draw_person()
                     "She slips on the next set of lingerie."
@@ -894,7 +894,7 @@ label aunt_share_drinks_label(the_person):
                         "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
-                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-20)
+                    $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-20, guarantee_output = True)
                     $ the_person.outfit = lingerie.get_copy()
                     $ the_person.draw_person()
                     "She slips on the last set of underwear she has to show you."

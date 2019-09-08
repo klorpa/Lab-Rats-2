@@ -2998,7 +2998,7 @@ label mom_selfie_label():
             "[the_person.possessive_title] doesn't wait for a reply and starts sending selfies."
             python:
                 for i in range(3):
-                    the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness)
+                    the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True)
                     the_person.draw_person(emotion = "happy")
                     renpy.say("","")
             the_person.char "I hope you think your mommy looks sexy in her underwear ;)"
@@ -3508,7 +3508,7 @@ label lily_morning_encounter_label():
     if the_person.sluttiness >= 60:
         $ the_person.outfit = default_wardrobe.get_outfit_with_name("Nude 1") #If sh's very slutty she doesn't mind being naked.
     else:
-        $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness) # Otherwise get an underwear set she would wear.
+        $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True) # Otherwise get an underwear set she would wear.
 
     "You wake up in the morning to your alarm. You get dressed and leave your room to get some breakfast."
     $ the_person.draw_person()
@@ -3634,11 +3634,11 @@ label family_morning_breakfast_label():
     $ sis_slutty = False
     if the_mom.sluttiness > 40:
         $ mom_slutty = True
-        $ the_mom.outfit = the_mom.wardrobe.get_random_appropriate_underwear(the_mom.sluttiness)
+        $ the_mom.outfit = the_mom.wardrobe.get_random_appropriate_underwear(the_mom.sluttiness, guarantee_output = True)
 
     if the_sister.sluttiness > 40:
         $ sis_slutty = True
-        $ the_sister.outfit = the_sister.wardrobe.get_random_appropriate_underwear(the_sister.sluttiness)
+        $ the_sister.outfit = the_sister.wardrobe.get_random_appropriate_underwear(the_sister.sluttiness, guarantee_output = True)
     $ renpy.show(bedroom.name,what=bedroom.background_image) #Make sure we're in our bedroom when the event starts.
     "You're woken up in the morning by a knock at your door."
     mc.name "Uh, come in."

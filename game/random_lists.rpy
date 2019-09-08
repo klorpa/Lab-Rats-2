@@ -438,6 +438,7 @@ init -2:
         sexy_opinions_list.append("bareback sex") #Has TEMPORARY gameplay effect
         sexy_opinions_list.append("big dicks")
         sexy_opinions_list.append("cheating on men")
+        sexy_opinions_list.append("anal creampies")
 
         def get_random_sexy_opinion():
             return get_random_from_list(sexy_opinions_list)

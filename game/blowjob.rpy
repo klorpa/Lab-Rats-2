@@ -10,7 +10,7 @@
         opinion_tags = ["giving blowjobs"])
         list_of_positions.append(blowjob)
 
-init 1400:
+init 1:
     python:
         blowjob.link_positions(deepthroat,"transition_blowjob_deepthroat")
 

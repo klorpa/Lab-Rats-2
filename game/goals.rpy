@@ -28,25 +28,38 @@
 # "Dress up" - Assign an outfit with X sluttiness to a person.
 # Reach research tier X. #TODO: Impliment goal requirements (right now all goals must be valid goals 100% of the time).
 
-init 1 python:
+init 1 python: #TODO: Prevent you from getting the game goal type twice in a row.
     def create_new_stat_goal(goal_difficulty):
-        goal_template = copy.deepcopy(get_random_from_list(stat_goals))
-        goal_template.activate_goal(goal_difficulty)
-        return goal_template
+        potential_goal = get_random_from_list(stat_goals)
+        if potential_goal.check_valid(goal_difficulty):# and potential_goal.goal_name != mc.stat_goal.goal_name:
+            goal_template = copy.deepcopy(potential_goal)
+            goal_template.activate_goal(goal_difficulty)
+            return goal_template
+        else:
+            return create_new_stat_goal(goal_difficulty) #Quick and dirty recursion to cycle through and get a goal. Note: Explodes if we don't have a goal.
 
     def create_new_work_goal(goal_difficulty):
-        goal_template = copy.deepcopy(get_random_from_list(work_goals))
-        goal_template.activate_goal(goal_difficulty)
-        return goal_template
+        potential_goal = get_random_from_list(work_goals)
+        if potential_goal.check_valid(goal_difficulty):# and potential_goal.goal_name != mc.work_goal.goal_name:
+            goal_template = copy.deepcopy(potential_goal)
+            goal_template.activate_goal(goal_difficulty)
+            return goal_template
+        else:
+            return create_new_work_goal(goal_difficulty) #Quick and dirty recursion to cycle through and get a goal. Note: Explodes if we don't have a goal.
 
     def create_new_sex_goal(goal_difficulty):
-        goal_template = copy.deepcopy(get_random_from_list(sex_goals))
-        goal_template.activate_goal(goal_difficulty)
-        return goal_template
+        potential_goal = get_random_from_list(sex_goals)
+        if potential_goal.check_valid(goal_difficulty):#and potential_goal.goal_name != mc.sex_goal.goal_name: #Prevents repeats of the same goal.
+            goal_template = copy.deepcopy(potential_goal)
+            goal_template.activate_goal(goal_difficulty)
+            return goal_template
+        else:
+            return create_new_sex_goal(goal_difficulty) #Quick and dirty recursion to cycle through and get a goal. Note: Explodes if we don't have a goal.
 
 
 
     ## STAT GOAL FUNCTIONS ##
+
     def work_time_function(the_goal):
         the_goal.arg_dict["count"] += 1
         if the_goal.arg_dict["count"] >= the_goal.arg_dict["required"]:
@@ -57,20 +70,17 @@ init 1 python:
         the_goal.arg_dict["required"] += (the_difficulty * 2)
         return
 
-
     def hire_someone_function(the_goal, the_person):
         the_goal.arg_dict["count"] += 1
         if the_goal.arg_dict["count"] >= the_goal.arg_dict["required"]:
             return True
         return False
 
-
     def serum_design_function(the_goal, the_serum):
         the_goal.arg_dict["count"] += 1
         if the_goal.arg_dict["count"] >= the_goal.arg_dict["required"]:
             return True
         return False
-
 
     def make_money_function(the_goal, amount):
         the_goal.arg_dict["count"] += amount
@@ -84,6 +94,12 @@ init 1 python:
 
     def make_money_report(the_goal):
         return "$" + str(the_goal.arg_dict["count"]) + "/$" + str(the_goal.arg_dict["required"])
+
+    def business_size_valid_function(the_goal, the_difficulty):
+        if mc.business.get_employee_count() >= __builtin__.int(the_difficulty/2): #Already large enough to succeed, goal isn't hard enough.
+            return False
+        else:
+            return True
 
     def business_size_function(the_goal):
         the_goal.arg_dict["count"] = mc.business.get_employee_count()
@@ -101,6 +117,11 @@ init 1 python:
     def business_size_fraction_function(the_goal):
         return mc.business.get_employee_count()/the_goal.arg_dict["required"]
 
+    def bank_account_size_valid_function(the_goal, the_difficulty):
+        if mc.business.funds >= 500 + (500*the_difficulty):
+            return False
+        else:
+            return True
 
     def bank_account_size_function(the_goal):
         #Checks to see if the player has made enough money yet.
@@ -172,7 +193,7 @@ init 1 python:
         return
 
     def uniform_designer_function(the_goal, the_outfit, the_type):
-        if the_outfit not in the_goal.arg_dict["outfits"]: #TODO: check to make sure this comparison works properly for outfits. Prevents adding and removing the same outfit repeatedly.
+        if the_outfit not in the_goal.arg_dict["outfits"]:
             the_goal.arg_dict["count"] += 1
             the_goal.arg_dict["outfits"].append(the_outfit)
             if the_goal.arg_dict["count"] >= the_goal.arg_dict["required"]:
@@ -282,7 +303,7 @@ init 1 python:
     def standard_progress_fraction(the_goal): #Returns a float from 0.0 to 1.0 used to display progress bars. Default assumes float and required exist
         return (the_goal.arg_dict["count"]*1.0)/the_goal.arg_dict["required"]
 
-    def always_valid_goal_function(the_goal): #Always a valid goal to give to the player. TODO: Impliment support for non-valid goals.
+    def always_valid_goal_function(the_goal, the_difficulty): #Always a valid goal to give to the player. TODO: Impliment support for non-valid goals.
         return True
 
     def flat_difficulty_function(the_goal, the_difficulty): #Does not become more difficult with time.
@@ -311,11 +332,11 @@ init 1 python:
     {"count": 0, "required": 300},
     difficulty_scale_function = make_money_difficulty_function, report_function = make_money_report, progress_fraction_function = standard_progress_fraction)
 
-    business_size_goal = Goal("Sizable Workforce", "Sometimes quantity is more important than quality. Ensure your business has the required number of employees.", "time_advance", "MC", always_valid_goal_function, business_size_function,
+    business_size_goal = Goal("Sizable Workforce", "Sometimes quantity is more important than quality. Ensure your business has the required number of employees.", "time_advance", "MC", business_size_valid_function, business_size_function,
     {"required": 1},
     difficulty_scale_function = business_size_difficulty_function, report_function = business_size_report_function, progress_fraction_function = business_size_fraction_function)
 
-    bank_acount_size_goal = Goal("Liquidity", "A depth of liquid cash gives you the ability to react quickly to the changing whims of the free market. Amass a small fortune (Checked at the end of the day).", "time_advance", "MC", always_valid_goal_function, bank_account_size_function,
+    bank_acount_size_goal = Goal("Liquidity", "A depth of liquid cash gives you the ability to react quickly to the changing whims of the free market. Amass a small fortune (Checked at the end of the day).", "time_advance", "MC", bank_account_size_valid_function, bank_account_size_function,
     {"required": 500},
     difficulty_scale_function = bank_account_size_difficulty_function, report_function = bank_account_size_report_function, progress_fraction_function = bank_account_size_fraction_function)
 

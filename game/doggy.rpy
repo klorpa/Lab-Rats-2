@@ -10,9 +10,10 @@
         opinion_tags = ["doggy style sex","vaginal sex"])
         list_of_positions.append(doggy)
 
-#init 1:
-#    python:
-#        #Here is where you would put connections if they existed.
+init 1:
+   python:
+       doggy.link_positions(doggy_anal,"transition_doggy_doggy_anal")
+       #Here is where you would put connections if they existed.
 
 label intro_doggy(the_girl, the_location, the_object, the_round):
     mc.name "[the_girl.title], I want you to get on your hands and knees for me."
@@ -238,6 +239,40 @@ label outro_doggy(the_girl, the_location, the_object, the_round):
             else:
                 the_girl.char "Oh wow, there's so much of it..."
             "You sit back and sigh contentedly, enjoying the sight of [the_girl.title] covered in your semen."
+    return
+
+label transition_doggy_doggy_anal(the_girl, the_location, the_object, the_round):
+    #transition from normal doggy style to anal. Include section to pull off condom.
+    if mc.condom:
+        "You pull out of [the_girl.title]'s pussy, pausing for a moment to pull off your condom and drop it to the ground."
+        "You line your cock up with her asshole, the tip just barely pressing against it."
+    else:
+        "You pull out of [the_girl.title]'s pussy and line your cock up with her asshole, the tip just barely pressing against it."
+
+    if the_girl.sex_skills["Anal"] > 2 or the_girl.get_opinion_score("anal sex") > 0:
+        the_girl.char "Oh god, yes. Fuck my ass [the_girl.mc_title]!"
+    else:
+        the_girl.char "Uh... Oh fuck, you'd tear me apart [the_girl.mc_title]..."
+    menu:
+        "Ram it home!":
+            "You get a firm grip on her hips, make sure you're lined up, and push yourself in with all your might."
+            if the_girl.get_opinion_score("being submissive") > 0 or the_girl.get_opinion_score("anal sex"):
+                the_girl.char "Ah! Yes! Tear that ass up!"
+                $ the_girl.change_arousal(5*( the_girl.get_opinion_score("being submissive") + the_girl.get_opinion_score("anal sex") ))
+                "Using her pussy juice as lube you lay into her tight ass, waisting no time in fucking her hard."
+
+            else:
+                the_girl.char "Oh fuck! FUCK!"
+                "She yells out in suprise and pain. You bottom out and hold still, giving her a second to get use to your size."
+                the_girl.char "Fuck... I hate that part..."
+                mc.name "It's just like ripping off a bandaid. You'll get use to it."
+                "You wait a moment, then start to move again. Using her pussy juices as lube you've soon got a good rhythm going."
+
+        "Take it slow.":
+            "You keep a firm grip on her hips as you push forward, sliding into one painful inch at a time."
+            "Using her pussy juice as lube, you manage to slip your full cock into her ass. You pause there, giving her a moment to adjust."
+            the_girl.char "Mmmhph... Fuck..."
+            "When she's finally ready you start to move, fucking her cute little ass."
     return
 
 label transition_default_doggy(the_girl, the_location, the_object, the_round):

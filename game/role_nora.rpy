@@ -237,6 +237,7 @@ label nora_research_cash_first_time(the_person):
         mc.name "I can make that work."
         the_person.char "Good. I'll send you the manufacturing details that we have prepared right away. Come and see me when your report is complete."
         $ the_trait = get_random_from_list(list_of_nora_traits)
+        $ the_trait.researched = True
         $ mc.business.event_triggers_dict["nora_cash_research_trait"] = the_trait
         $ list_of_traits.append(the_trait)
 
@@ -273,6 +274,7 @@ label nora_research_cash(the_person):
     $ university.show_background()
     "You walk upstairs together to make sure none of [the_person.possessive_title]'s co-workers are around."
     $ the_trait = mc.business.event_triggers_dict.get("nora_cash_research_trait") #We know won't be None from our initial event check.
+    $ the_trait.researched = True
     $ mc.business.event_triggers_dict["nora_cash_research_trait"] = None
 
     $ list_of_traits.remove(the_trait)
