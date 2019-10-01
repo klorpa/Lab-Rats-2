@@ -48,7 +48,7 @@ init -2:
         list_of_names.append("Charisma")
         list_of_names.append("Mayumi")
         list_of_names.append("Brendan")
-        list_of_names.append("Jose")
+        list_of_names.append("Josie")
         list_of_names.append("Saya")
         list_of_names.append("Yamiko")
         list_of_names.append("Rowena")
@@ -287,13 +287,38 @@ init -2:
             return get_random_from_list(list_of_faces)
 
         list_of_eyes = []
-        list_of_eyes.append("blue")
-        list_of_eyes.append("green")
-        list_of_eyes.append("brown")
-        list_of_eyes.append("grey")
+        list_of_eyes.append(["dark blue",[0.18, 0.33, 0.44, 1.0]])
+        list_of_eyes.append(["light blue",[0.25, 0.32, 0.37, 1.0]])
+        list_of_eyes.append(["green",[0.11, 0.47, 0.28, 1.0]])
+        list_of_eyes.append(["brown",[0.39, 0.31, 0.20, 1.0]])
+        list_of_eyes.append(["grey",[0.78, 0.84, 0.86, 1.0]])
 
         def get_random_eye():
             return get_random_from_list(list_of_eyes)
+
+        def generate_eye_colour(base_colour = None, create_variation = True):
+            if base_colour:
+                for eyes in list_of_eyes:
+                    if eyes[0] == base_colour: #If we ask for a specific base...
+                        return_eyes = copy.deepcopy(eyes)
+            else: #Otherwise just get a random one
+                return_eyes = copy.deepcopy(get_random_eye()) #Deep copy the hair colours because lists are passed by reference and it is two lists deep.
+
+            if create_variation: #The colour is modified slightly to give different characters slightly different hair colours even if they have the same base.
+                eye_colour = return_eyes[1]
+                for component_index in __builtin__.range(3): #The RGB components can be 10% lighter or darker each.
+                    component_variation_constant = 0.02 #TODO: Test how much this should vary for eye colour.
+                    if renpy.random.randint(0,1) == 0:
+                        # Shade it, it's a little darker.
+                        shade_factor = renpy.random.random() * component_variation_constant
+                        eye_colour[component_index] = eye_colour[component_index] * (1-shade_factor)
+
+                    else:
+                        # Tint it, it's a little lighter.
+                        tint_factor = renpy.random.random() * component_variation_constant
+                        eye_colour[component_index] = eye_colour[component_index] + ((1-eye_colour[component_index])*tint_factor)
+
+            return return_eyes
 
         list_of_tits = []
         list_of_tits.append(["AA",5])
@@ -439,6 +464,7 @@ init -2:
         sexy_opinions_list.append("big dicks")
         sexy_opinions_list.append("cheating on men")
         sexy_opinions_list.append("anal creampies")
+        sexy_opinions_list.append("incest")
 
         def get_random_sexy_opinion():
             return get_random_from_list(sexy_opinions_list)
@@ -646,6 +672,8 @@ init 1 python:
         nora.set_schedule([0,1,2,3,4], nora.home)
         nora.home.add_person(nora)
 
+        town_relationships.update_relationship(nora, stephanie, "Friend")
+
         ### ALEXIA ###
         alexia_wardrobe = wardrobe_from_xml("Alexia_Wardrobe")
 
@@ -673,7 +701,7 @@ init 1 python:
 
         global lily
         lily = create_random_person(name = "Lily", last_name = mc.last_name, age = 19, body_type = "thin_body", face_style = "Face_6", tits = "B", height = 0.90, hair_colour="blond", hair_style = ponytail, skin="white", \
-            eyes = "blue", personality = lily_personality, name_color = "#FFB1F8", dial_color = "#FFB1F8", starting_wardrobe = lily_wardrobe, start_home = lily_bedroom, \
+            eyes = "light blue", personality = lily_personality, name_color = "#FFB1F8", dial_color = "#FFB1F8", starting_wardrobe = lily_wardrobe, start_home = lily_bedroom, \
             stat_array = [5,2,2], skill_array = [2,2,0,1,1], sex_array = [2,1,0,0], start_sluttiness = 8, start_obedience = -26, start_happiness = 122, start_love = 15, \
             title = "Lily", possessive_title = "Your sister", mc_title = mc.name, relationship = "Single", kids = 0)
 
@@ -738,6 +766,15 @@ init 1 python:
         for i in range(0,5):
             cousin.schedule[i] = cousin_bedroom #Hide them in their bedroom off the map until they're ready
         cousin.home.add_person(cousin)
+
+
+        town_relationships.update_relationship(mom,lily, "Daughter", "Mother")
+        town_relationships.update_relationship(mom,aunt, "Sister")
+        town_relationships.update_relationship(mom, cousin, "Niece", "Aunt")
+        town_relationships.update_relationship(aunt, cousin, "Daughter", "Mother")
+        town_relationships.update_relationship(aunt, lily, "Niece", "Aunt")
+        town_relationships.update_relationship(lily, cousin, "Cousin")
+
 
     def get_premade_character(): #Get a premade character and return them when the function is called.
         person = get_random_from_list(list_of_unique_characters)

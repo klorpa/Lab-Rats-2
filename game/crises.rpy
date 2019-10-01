@@ -49,6 +49,7 @@
 # Mom changing
 # Lily new underwear
 # Mom selfies
+# Daughter introduction
 
 #todo: teach lily hoqw to deepthroat/ role to teach her how to fuck
 #todo: girl who loves you sends you sexy selfies
@@ -125,7 +126,7 @@ label broken_AC_crisis_label:
 
     "There is a sudden bang in the office, followed by a strange silence. A quick check reveals the air conditioning has died!"
     "The machines running at full speed in the production department kick out a significant amount of heat. Without air condition the temperature quickly rises to uncomfortable levels."
-    $ renpy.show(mc.business.p_div.name,what=mc.business.p_div.background_image) #Just in case another crisis had interupted us being here.
+    $ mc.business.p_div.show_background()
     #We're going to use the most slutty girl of the group lead the pack. She'll be the one we pay attention to.
     python:
         the_person = None
@@ -852,7 +853,7 @@ label lab_accident_crisis_label():
     $ the_place = mc.business.r_div
 
     if mc.location == mc.business.r_div:
-        $ renpy.show(the_place.name,what=the_place.background_image)
+        $ the_place.show_background()
         "There's a sudden crash and sharp yell of suprise as you're working in the lab."
         $the_person.call_dialogue("suprised_exclaim")
         the_person.char "[the_person.mc_title], I think I need you for a moment."
@@ -862,7 +863,7 @@ label lab_accident_crisis_label():
         "Your phone buzzes - it's a text from [the_person.title] on your research team."
         the_person.char "There's been a small accident, can I see you in the lab?"
         "You hurry over to your research and development lab to see what the problem is."
-        $ renpy.show(the_place.name,what=the_place.background_image)
+        $ the_place.show_background()
 
 
     $ the_person.draw_person(emotion = "sad")
@@ -896,7 +897,7 @@ label production_accident_crisis_label():
     $ the_place = mc.business.p_div
 
     if mc.location == mc.business.p_div:
-        $ renpy.show(the_place.name,what=the_place.background_image)
+        $ the_place.show_background()
         "There's a sudden crash and sharp yell of suprise as you're working in the lab."
         $the_person.call_dialogue("suprised_exclaim")
         the_person.char "[the_person.mc_title], I think I need you for a moment."
@@ -906,7 +907,7 @@ label production_accident_crisis_label():
         "Your phone buzzes - it's a text from [the_person.title] on your production team."
         the_person.char "There's been a small accident, can I see you in the lab?"
         "You hurry over to the production lab to see what the problem is."
-        $ renpy.show(the_place.name,what=the_place.background_image)
+        $ the_place.show_background()
 
 
     $ the_person.draw_person(emotion = "sad")
@@ -1327,7 +1328,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
     the_person.char "[the_person.mc_title], there's something important I need to talk to you about. When can we have a meeting?"
     $ the_place = mc.business.h_div
     if mc.location == mc.business.h_div: #If you're arleady in your office just kick back and relax.
-        $ renpy.show(the_place.name,what=the_place.background_image) #Just in case another crisis had interupted us being here.
+        $ the_place.show_background()
         "You type up a response."
         mc.name "I'm in my office right now, come over whenever you would like."
         "You organize the papers on your desk while you wait for [the_person.title]. After a few minutes she comes in and closes the door behind her."
@@ -1335,7 +1336,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
         "You type up a response."
         mc.name "I'm out of the office right now, but if it's important I can be back in a few minutes."
         the_person.char "It is. See you at your office."
-        $ renpy.show(the_place.name,what=the_place.background_image) #Just in case another crisis had interupted us being here.
+        $ the_place.show_background()
         "You travel back to your office. You're just in the door when [the_person.title] comes in and closes the door behind her."
 
     $the_person.draw_person()
@@ -1474,7 +1475,7 @@ label invest_rep_visit_label(rep_name):
         rep_name "Before we get started I wanted to ask you some questions about what you do here."
         mc.name "I'll answer whatever I can."
         rep_name "Your business licence says you're working in commercial pharmaceuticals. What, exactly, does that mean?"
-        $ renpy.show(lobby.name,what=lobby.background_image)
+        $ lobby.show_background()
         "You lead [rep_name] into the office lobby."
         mc.name "We have a number of different products that we produce, but they're all based on the same fundamental principle."
         mc.name "Our products remove personal inhibitions, limitations, fears. All of those mental roadblocks that stop us from achieving what we want to in life."
@@ -1552,7 +1553,7 @@ label invest_rep_visit_label(rep_name):
                     pass
 
             $ renpy.scene("Active")
-            $ renpy.show(office.name,what=office.background_image)
+            $ office.show_background()
             "Half an hour later there is a knock on your office door."
             mc.name "Come in."
             $ helper.draw_person()
@@ -1583,6 +1584,52 @@ label invest_rep_visit_label(rep_name):
                 rep_name "In the future I might visit again to reevaluate though."
                 mc.name "I understand. Thank you for your time, I'll see you out."
                 "You walk [rep_name] back to his car and watch as he drives away."
+    return
+
+init 1 python:
+    def work_relationship_change_crisis_requirement():
+        if mc.business.is_open_for_business():
+            if mc.business.get_employee_count >= 2: #Quick check to avoid doing a full array check on a starting company
+                if town_relationships.get_business_relationships(types = "Acquaintance"):
+                    return True
+        return False
+    work_relationship_change_crisis = Action("Work Relationship Change Crisis", work_relationship_change_crisis_requirement, "work_relationship_change_label")
+    crisis_list.append([work_relationship_change_crisis,12])
+
+label work_relationship_change_label():
+    $ the_relationship = get_random_from_list(town_relationships.get_business_relationships())
+    if the_relationship is None:
+        return
+
+    if renpy.random.randint(0,1) == 0:
+        $ person_one = the_relationship.person_a
+        $ person_two = the_relationship.person_b
+    else:
+        $ person_one = the_relationship.person_b
+        $ person_two = the_relationship.person_a
+
+    $ friend_chance = 50
+    python:
+        for an_opinion in person_one.opinions:
+            if person_one.get_opinion_score(an_opinion) == person_two.get_opinion_score(an_opinion):
+                friend_chance += 10
+            elif (person_one.get_opinion_score(an_opinion) > 0 and person_two.get_opinion_score(an_opinion) < 0) or (person_two.get_opinion_score(an_opinion) > 0 and person_one.get_opinion_score(an_opinion) < 0):
+                friend_chance += -10
+
+        friend_chance += (person_one.get_opinion_score("small talk")*5) + (person_two.get_opinion_score("small talk")*5)
+
+
+    if renpy.random.randint(0,100) < friend_chance:
+        #Their relationship improves
+        $ town_relationships.improve_relationship(person_one, person_two)
+        if mc.is_at_work():
+            "While working you notice [person_one.title] and [person_two.title] are spending more time together. They seem to have become friends!"
+    else:
+        #Their relationship worsens
+        $ town_relationships.worsen_relationship(person_one, person_two)
+        if mc.is_at_work():
+            "While working you notice [person_one.title] and [person_two.title] aren't getting along with each other. They seem to have developed an unfriendly rivalry."
+
     return
 
 init 1 python:
@@ -1988,10 +2035,13 @@ label work_chat_crisis_label:
 
 init 1 python:
     def cat_fight_crisis_requirement():
-        #Be at work during work hours with at least two other peopel with relatively low obedience
+        #Be at work during work hours with at least two other people who have a poor relationship
         if mc.business.is_open_for_business():
             if mc.is_at_work():
-                if len(mc.business.get_requirement_employee_list(obedience_max = 130)) >= 2: #We have at least two people around with low obedience.
+                if town_relationships.get_business_relationships(["Rival","Nemesis"]): #If we have at least one Rival or Nemesis relationship in the company this event can trigger.
+
+                #if len(mc.business.get_requirement_employee_list(obedience_max = 130)) >= 2: #We have at least two people around with low obedience. Old, now relaced by
+
                     return True
         return False
 
@@ -2003,14 +2053,18 @@ label cat_fight_crisis_label():
     if not cat_fight_crisis_requirement(): #If something has changed since we added this crisis as a valid one just return. Should not happen often.
         return
 
-    #Generate list of people with poor obedience
-    $ list_of_possible_people = mc.business.get_requirement_employee_list(obedience_max = 130)
-    $ person_one = get_random_from_list(list_of_possible_people)
-    $ list_of_possible_people.remove(person_one)
-    $ person_two = get_random_from_list(list_of_possible_people)
+    $ the_relationship = get_random_from_list(own_relationships.get_business_relationships(["Rival","Nemesis"])) #Get a random rival or nemesis relationship within the company
+    if the_relationship is None:
+        return #Just in case something goes wrong getting a relationship we'll exit gracefully.
+    if renpy.random.randint(0,1) == 1: #Randomize the order so that repeated events with the same people alternate who is person_one and two.
+        $ person_one = the_relationship.person_a
+        $ person_two = the_relationship.perosn_b
+    else:
+        $ person_one = the_relationship.person_b
+        $ person_two = the_relationship.perosn_a
 
 
-    person_one.char "Excuse me, sir?"
+    person_one.char "Excuse me, [person_one.mc_title]?"
     $ person_one.draw_person(emotion = "angry")
     "You feel a tap on your back while you're working. [person_one.title] and [person_two.title] are glaring at each other while they wait to get your attention."
     person_one.char "I was just in the break room and saw [person_two.title] digging around in the fridge looking for other people's lunches."
@@ -2071,6 +2125,7 @@ label cat_fight_crisis_label():
                 $ person_two.change_obedience(5)
                 $ slut_report = person_two.change_slut_temp(10)
                 "You give [person_two.title] a light slap on the butt to pull her attention back to you. She nods quickly and heads the other way."
+                $ town_relationships.improve_relationship(person_one, person_two)
                 $ renpy.scene("Active")
 
             else:
@@ -2089,6 +2144,7 @@ label cat_fight_crisis_label():
         "Stay silent and let them fight it out.":
             "Both of the girls look at you, waiting to see who's side you take."
             mc.name "This isn't my fight. You two are going to have to sort this out yourselves."
+            $ town_relationships.worsen_relationship(person_one, person_two)
             if renpy.random.randint(0,1) == 0: #Establish a winner and loser for the fight, random here so that the earlieer section of the event doesn't suggest which one it is.
                 $ winner = person_one
                 $ loser = person_two
@@ -2339,7 +2395,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
     if rd_staff is not None and not mc.business.is_weekend():
         if mc.location == mc.business.r_div: # The MC is in the lab, just physically get them.
             $ the_place = mc.business.r_div
-            $ renpy.show(the_place.name,what=the_place.background_image) #Just in case another crisis had interupted us being here.
+            $ the_place.show_background()
             "There's a tap on your shoulder. You turn and see [rd_staff.title], looking obviously excited."
             $ rd_staff.draw_person(emotion="happy")
             rd_staff.title "[rd_staff.mc_title], I'm sorry to bother you but I've had a breakthrough! The first test dose of serum \"[the_serum.name]\" is coming out right now!"
@@ -2369,7 +2425,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     mc.name "Excellent, I'll be down in a moment to take a look."
                     "You hang up and travel over to the lab. You're greeted by [rd_staff.title] as soon as you're in the door."
                     $ the_place = mc.business.r_div
-                    $ renpy.show(the_place.name,what=the_place.background_image)
+                    $ the_place.show_background()
                     $ rd_staff.draw_person(emotion="happy")
                     $ rd_staff.call_dialogue("greetings")
                     mc.name "We're set up over here. come this way."
@@ -2483,6 +2539,169 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         return
     return #We should always have returned by this point anyways, but just in case we'll catch it here.
 
+
+
+init 1 python:
+    def daughter_work_crisis_requirement():
+        # Requres you to have an employee over a certain age, with at least one kid, who hasn't been introduced to the game yet.
+        # Requires you and her to be at work.
+        # Requries you to have a free slot in the company
+        if mc.business.is_open_for_business() and mc.is_at_work() and mc.business.get_employee_count() < mc.business.max_employee_count:
+            for person in mc.business.get_employee_list():
+                if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person): #At least one person fits the criteria we need to select a mother, the crisis is valid.
+                    return True
+        return False
+
+        daughter_work_crisis = Action("Daughter Work Crisis", daughter_work_crisis_requirement,"daughter_work_crisis_label")
+        crisis_list.append([daughter_work_crisis,2])
+
+
+label daughter_work_crisis_label():
+    if mc.business.get_employee_count() >= mc.business.max_employee_count:
+        return #The business is full due to some other crisis triggering this time chunk.
+
+    python:
+        valid_people_list = []
+        for person in mc.business.get_employee_list():
+            if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person): #They have undiscovered kids we can add in.
+                valid_people_list.append(person)
+
+    $ the_person = get_random_from_list(valid_people_list) #Pick someone appropriate from the company.
+    if the_person is None:
+        return #We couldn't find anyone to be a parent, so the event fails.
+
+
+    $ the_daughter = the_person.generate_daughter() #Produces a person who has a high chance to share characteristics with her mother.
+
+
+    $ the_person.draw_person()
+    the_person.char "[the_person.mc_title], could I talk to you for a moment in your office?"
+    mc.name "Of course. What's up?"
+    "You and [the_person.possessive_title] step into your office. You sit down at your desk while she closes the door."
+    $ reason = renpy.random.randint(0,2)
+    if reason == 0: #TODO: Make this based on her stats?
+        the_person.char "I wanted to ask you... My daughter is living at home and I think it's time she got a job."
+        the_person.char "I promise she would be a very hard worker, and I'd keep a close eye on her."
+
+    elif reason == 1:
+        the_person.char "This is embarrassing to ask, but... my daughter was let go from her job last week."
+        the_person.char "It would mean the world to me if you would look at this and at least consider it."
+
+    else: # reason == 2
+        the_person.char "I wanted to ask you... Well, my daughter just finished school and has been looking for a job." #TOOD: Add other excuses, like 'needs to pay rent somehow' or 'can't keep out of trouble.'
+        the_person.char "I was thinking that she might be a good fit for the company. I can tell you she's very smart."
+    $ promised_sex = False
+    if the_person.sluttiness > 70:
+        "[the_person.title] hands over a printed out resume and leans forward onto your desk, bringing her breasts closer to you."
+        the_person.char "If you did hire her, I would be so very thankful. I'm sure we could find some way for me to show you how thankful."
+        $ promised_sex = True
+
+    else:
+        "[the_person.title] hands over a printed out resume waits nervously for you to look it over."
+
+    menu:
+        "Look at the resume for [the_person.name]'s daughter.":
+            pass
+
+        "Tell her you aren't hiring.":
+            "You hand the resume back."
+            mc.name "I'm sorry, but I'm not looking to hire anyone right now."
+            if the_person.sluttiness > 50 and not promised_sex:
+                the_person.char "Wait, please [the_person.mc_title], at least take a look. Maybe I could... convince you to consider her?"
+                the_person.char "She means the world to me, and I would do anything to give her a better chance. Anything at all."
+                "She puts her arms behind her back and puffs out her chest in a clear attempt to show off her tits."
+                menu:
+                    "Look at the resume for [the_person.name]'s daughter.":
+                        "Convinced, you start to read through the resume."
+                        $ promised_sex = True
+
+                    "Tell her you aren't hiring.":
+                        if the_person.love < 10:
+                            mc.name "If I want to fuck you I wouldn't need to hire your daughter to do it. Give it up, you look desparate"
+                            $ the_person.change_obedience(3)
+                            "She steps back and looks away."
+                            the_person.char "Uh, right. Sorry for taking up your time."
+                            "[the_person.possessive_title] hurries out of your office."
+                        else:
+                            mc.name "I'm not hiring right now, and that's final. Now I'm sure you have work to do."
+                            $ the_prson.change_obedience(1)
+                            "She takes the resume back and steps away from your desk, defeated."
+                            the_person.char "Right, of course. Sorry for wasting up your time."
+                        $ renpy.scene("Active")
+                        return
+            elif promised_sex:
+                the_person.char "There's nothing I could do? Nothing at all?"
+                "She moves to run a hand down your shirt, but you shove the resume back into her hand."
+                if the_person.love < 10:
+                    mc.name "If I want to fuck you I wouldn't need to hire your daughter to do it. Give it up, you look desparate"
+                    $ the_person.change_obedience(3)
+                    "She steps back and looks away."
+                    the_person.char "Uh, right. Sorry for taking up your time."
+                    "[the_person.possessive_title] hurries out of your office."
+                else:
+                    mc.name "I'm not hiring right now, and that's final. Now I'm sure you have work to do."
+                    $ the_prson.change_obedience(1)
+                    "She takes the resume back and steps away from your desk, defeated."
+                    the_person.char "Right, of course. Sorry for wasting up your time."
+                $ renpy.scene("Active")
+                return
+
+            else:
+                $ the_person.draw_person(emotion = "sad")
+                $ the_person.change_happiness(-3)
+                the_person.char "I understand. Sorry for taking up your time."
+                "She collects the resume and leaves your office."
+                $ renpy.scene("Active")
+                return
+
+    call screen interview_ui([the_daugther]) #Hire her or reject her.
+
+    if _return == the_daughter: #You've chosen to hire her.
+        if promised_sex:
+            mc.name "Alright, I'll admit this looks promising, but I need some convincing."
+            the_person.char "Of course, [the_person.mc_title]."
+            "She steps around your desk and comes closer to you."
+            $ the_person.add_situational_obedience("bribe", 30, "It's for my daughter and her future!")
+            call fuck_person(the_person) from _call_fuck_person_27
+            $ the_person.draw_person()
+            $ the_person.reset_arousal()
+            $ mc.current_stamina += -1
+            $ the_person.clear_situational_obedience("bribe")
+            $ the_person.change_obedience(2)
+            $ the_person.review_outfit()
+            the_person.char "Are we all done then?"
+            mc.name "For now. You can call your daughter and give her the good news. I won't give her any preferential treatment from here on out though."
+            the_person.char "Of course. Thank you."
+            call hire_someone(the_daughter) from _call_hire_someone_1
+        else:
+            mc.name "Alright [the_person.title], this looks promising. I can't give her any preferential treatment, but I'll give her a try."
+            $ the_person.change_happiness(5)
+            $ the_person.change_love(2)
+            the_person.char "Thank you so much!"
+            call hire_someone(the_daughter) from _call_hire_someone_2
+    else: #is "None
+        if promised_sex: #You promised to do it for sex but don't want to hire her, mom is dissapointed.
+            mc.name "I'm sorry but her credentials just aren't what they need to be. I could never justify hiring your daughter."
+            $ the_person.change_happiness(-5)
+            $ the_person.change_love(-1)
+            $ the_person.draw_person(emotion = "sad")
+            "[the_person.possessive_title] seems to deflate. She nods sadly."
+            the_person.char "I understand. Thank you for the time."
+
+
+        else:
+            mc.name "I'm sorry but I don't think her skills are where I would need them to be."
+            $ the_person.change_obedience(1)
+            the_person.char "I understand, thank you for at least taking a look for me."
+
+    $ renpy.scene("Active")
+    return
+
+
+
+
+    #TODO: Work crisis where you get horny and have to "resolve" it somehow.
+
 #################
 ## HOME CRISES ##
 #################
@@ -2506,7 +2725,7 @@ label mom_outfit_help_crisis_label():
         menu:
             "Help [the_person.possessive_title].":
                 mc.name "Sure thing, I'll be right there."
-                $ renpy.show(mom_bedroom.name,what=mom_bedroom.background_image)
+                $ mom_bedroom.show_background()
                 $ the_person.draw_person()
                 "You step into [the_person.possessive_title]. She's standing at the foot of her bed and laying out a few sets of clothing."
                 mc.name "Hey Mom, what's up?"
@@ -3405,7 +3624,7 @@ label lily_new_underwear_crisis_label():
     if the_underwear is None:
         return #Lily doesn't have any skimpy underwear to show us :(
 
-    $ renpy.show(bedroom.name,what=bedroom.background_image)
+    $ bedroom.show_background()
     $ mc.change_location(bedroom) #Make sure we're in our bedroom.
     if the_person.obedience >= 95:
         "There's a knock at your door."
@@ -3639,7 +3858,7 @@ label family_morning_breakfast_label():
     if the_sister.sluttiness > 40:
         $ sis_slutty = True
         $ the_sister.outfit = the_sister.wardrobe.get_random_appropriate_underwear(the_sister.sluttiness, guarantee_output = True)
-    $ renpy.show(bedroom.name,what=bedroom.background_image) #Make sure we're in our bedroom when the event starts.
+    $ bedroom.show_background()
     "You're woken up in the morning by a knock at your door."
     mc.name "Uh, come in."
     "You groan to yourself and sit up in bed."
@@ -3660,7 +3879,7 @@ label family_morning_breakfast_label():
 
     "You get up, get dressed, and head for the kitchen."
     $ mc.change_location(kitchen)
-    $ renpy.show(kitchen.name,what=kitchen.background_image) #Make sure we're in our bedroom when the event starts.
+    $ kitchen.show_background()
     $ the_mom.draw_person(position = "walking_away")
     if mom_slutty:
         if the_mom.outfit.wearing_panties():

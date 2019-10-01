@@ -59,7 +59,7 @@ init -2 python:
 ###AUNT ACTION LABELS###
 label aunt_intro_label():
     #NOTE: Doesn't technically countain the aunt, but intoduces the concept of her when she appears the next day
-    $ renpy.show(bedroom.name,what=bedroom.background_image)
+    $ bedroom.show_background()
     mom.char "Hey [mom.mc_title], do you have a moment?"
     $ mom.draw_person()
     "[mom.possessive_title] cracks your door open and leans in."
@@ -108,9 +108,9 @@ label aunt_intro_phase_two_label():
     #They show up at your house in the morning. Quick introductions with everyone.
     "In the morning [mom.possessive_title] wakes you up early with a knock on your door."
     mom.char "[mom.mc_title], I just got a call, your aunt and cousin are on their way over. Get ready so you can help move their stuff inside."
-    $ renpy.show(kitchen.name,what=kitchen.background_image)
+    $ kitchen.show_background()
     "You get up, get dressed, and head to the kitchen to have some breakfast. [mom.possessive_title] paces around the house nervously, looking for things to tidy."
-    $ renpy.show(hall.name,what=hall.background_image)
+    $ hall.show_background()
     "Finally the doorbell rings and she rushes to the door. You and [lily.title] join her in the front hall as she greets your guests."
     $ mom.draw_person()
     mom.char "[aunt.name], I'm so glad you made it!"
@@ -250,9 +250,9 @@ label aunt_intro_moving_apartment_label(the_person):
         "A few minutes later [aunt.title] pulls up in a rented pickup truck. You load up the back with furniture and boxes, then get in the passenger seat."
         aunt.char "Okay, let's get going! I don't know what I'd do without a big strong man like you to lift things for me. I'd be helpless!"
         $ aunt.change_love(1)
-        $ renpy.show(downtown.name,what=downtown.background_image)
+        $ downtown.show_background()
         "It doesn't take long to drive to [aunt.title]'s new apartment. She parks out front and you grab a box to bring up with you."
-        $ renpy.show(aunt_apartment.name, what=aunt_apartment.background_image)
+        $ aunt_apartment.show_background()
         "The apartment is small but tidy, with two bedrooms and a combined living area and kitchen. [aunt.title] gestures to one of the bedrooms."
         aunt.char "My room will be in there, and the other one will be [cousin.title]'s room. You can put that box down and go get another, I'll start unpacking."
         "The next couple of hours are spent unloading the truck and bringing everything up to [aunt.possessive_title]."
@@ -279,7 +279,7 @@ label aunt_intro_moving_apartment_label(the_person):
         aunt.char "Anyways, we have work to get done. I think we can fit all of my clothes in the back of my car, so we don't need a truck today."
         aunt.char "Let's load it up and we can bring it all over."
         "You and [aunt.title] load up her hatchback with boxes filled with clothes. Once the car is loaded to capacity you get in and drive to her new apartment."
-        $ renpy.show(aunt_apartment.name, what=aunt_apartment.background_image)
+        $ aunt_apartment.show_background()
         "When you arrive you start to shuttle boxes up to [aunt.possessive_title]'s bedroom. [aunt.title] is kept busy unpacking the boxes and putting everything away."
         $ aunt.draw_person(position = "sitting")
         "After some hard work the car is empty and the last box is in [aunt.title]'s room."
@@ -339,7 +339,7 @@ label aunt_intro_moving_apartment_label(the_person):
         aunt.char "Sorry about that [aunt.mc_title], she doesn't always play nice with others and this whole move has been tough on her. Could you help me load up the car?"
         mc.name "Sure. Just tell me where to put things."
         "You fill up [aunt.title]'s hatchback and get in the back seat with the last box sitting on your lap. [cousin.title] puts on headphones and ignores both of you."
-        $ renpy.show(cousin_bedroom.name, what=cousin_bedroom.background_image)
+        $ cousin_bedroom.show_background()
         "When you arrive you start to shuttle everything up to [cousin.possessive_title]'s room."
         $ cousin.draw_person(position = "sitting")
         "[cousin.title] sits down on her bed and gets her phone out. She looks up occasionally to tell you where to put boxes down."
@@ -414,7 +414,7 @@ label aunt_intro_moving_apartment_label(the_person):
         "You head to the garage and look at the small pile of boxes left."
         aunt.char "I think it's just the kitchen stuff left. Let's get this packed in the car and we'll have everything moved over!"
         "You fill up [aunt.possessive_title]'s hatchback and head for her apartment."
-        $ renpy.show(aunt_apartment.name, what=aunt_apartment.background_image)
+        $ aunt_apartment.show_background()
         "You and [aunt.possessive_title] get to work shifting boxes upstairs."
         "After the first couple boxes are upstairs she starts to unpack them while you keep unloading the car."
         "It takes a couple of hours to get everything moved and unpacked. You and [aunt.title] are happy when the last box is emptied and you're finished with the move."

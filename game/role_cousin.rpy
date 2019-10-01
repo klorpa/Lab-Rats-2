@@ -63,7 +63,7 @@ init -2 python:
         elif the_person in mc.location.people:
             return the_person.title + " is in the room."
         else:
-            return
+            return True
 
     def blackmail_2_confront_requirement(the_person):
         if the_person.event_triggers_dict.get("blackmail_level", -1) != 1:

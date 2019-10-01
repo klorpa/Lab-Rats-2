@@ -575,7 +575,7 @@ label photo_sex(the_person):
     $ mc.condom = False #Just in case we didn't maintain it properly or something
     call condom_ask(the_person) from _call_condom_ask_2
     "You pull on [the_person.title]'s hips and thrust forward. Her pussy is warm and wet, inviting you in."
-    $ the_person.call_dialogue("sex_responses")
+    $ the_person.call_dialogue("sex_responses_vaginal")
     "You thrust as best you can from a kneeling position, your hands busy with the camera."
     "You take pictures of [the_person.possessive_title]'s face as you fuck her and her cunt as you slide in and out."
     if the_person.relationship != "Single" and the_person.sluttiness > 65:

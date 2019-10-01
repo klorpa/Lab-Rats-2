@@ -266,13 +266,15 @@ label alexia_hire_label(the_person):
     $ the_person.draw_person(emotion = "happy") #TODO: When we have a hugging position draw them as happy.
     the_person.char "So, when can I start?"
     "You give [the_person.title] all of the details about her new job. She phones the coffee shop and quits on the spot."
-    python:
+    python: #TODO: Consider calling hte "hire someone" label instead of having a special section for this.
         the_person.event_triggers_dict["employed_since"] = day
         mc.business.listener_system.fire_event("new_hire", the_person = the_person)
         the_person.special_role.append(employee_role)
+        for other_employee in mc.business.get_employee_list():
+            town_relationships.begin_relationship(the_person, other_employee) #She is introduced to everyone at work
+
         mc.business.add_employee_marketing(the_person)
         the_person.set_work([1,2,3], mc.business.m_div)
-
         the_person.get_role_reference_by_name("Alexia").actions.remove(alexia_hire_action) #Remove the hire action because this story event has played itself out.
 
         ad_suggest_event = Action("Ad Suggestion", alexia_ad_suggest_requirement, "alexia_ad_suggest_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(7,12)])

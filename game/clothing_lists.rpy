@@ -238,7 +238,7 @@ init -1:
         dress_list.append(nightgown_dress)
 
         bath_robe_bottom = Clothing("Bathrobe", 2, False, False, "Bath_Robe", False, False, 0, is_extension = True)
-        bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, whiteness_adjustment = 0.4, contrast_adjustment = 1.2, supported_patterns = {"Flowers":"Pattern_1"})
+        bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, supported_patterns = {"Flowers":"Pattern_1"})
         dress_list.append(bath_robe)
 
         lacy_one_piece_underwear_bottom = Clothing("lacy one piece", 1, True, True, "Lacy_One_Piece_Underwear", False, True, 0, is_extension = True)

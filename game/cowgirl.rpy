@@ -86,7 +86,8 @@ label outro_cowgirl(the_girl, the_location, the_object, the_round):
         the_girl.char "Yes! Ah!"
         "[the_girl.title] drops herself down, grinding her hips against yours and pushing cock as deep into her as possible."
         "Her breath catches in her throat when you pulse out your hot load of cum deep inside of her."
-        the_girl.char "Oh my god... Give it all to me [the_girl.mc_title]... Fill me up..."
+        $ the_girl.call_dialogue("cum_vagina")
+        #the_girl.char "Oh my god... Give it all to me [the_girl.mc_title]... Fill me up..."
         if mc.condom:
             "She rocks herself back and forth on you until you're completely spent, then she pulls up and lets your dick fall out of her."
             "The tip of your condom is ballooned out and hanging to the side, filled with your warm seed."
@@ -126,7 +127,8 @@ label outro_cowgirl(the_girl, the_location, the_object, the_round):
             "Pull her down and cum inside her.":
                 "You reach up and grab [the_girl.possessive_title] by the hips. With one confident pull she plunges back onto your cock, gasping with pleasure."
                 "The feeling of her warm, wet pussy sliding down and englufing your cock again pushes you over the edge. You pull [the_girl.title] tight against you and unload inside of her."
-                the_girl.char "Ah! Just... Just this once..."
+                the_girl.char "Ah! Just... Just this once!"
+                $ the_girl.call_dialogue("cum_vagina")
                 $ the_girl.change_obedience(3)
                 "You give a few half-hearted pumps when you're done, then tap [the_girl.title] on the ass. She slides off of your dick and collapses beside you."
 

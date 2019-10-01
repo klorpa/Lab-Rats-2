@@ -13,11 +13,11 @@
 ### MOM ACTION LABELS ###
 
 label mom_weekly_pay_label(the_person):
-    $ renpy.show(bedroom.name,what=bedroom.background_image)
+    $ bedroom.show_background()
     "You're getting ready for bed when [the_person.possessive_title] calls from downstairs."
     the_person.char "[the_person.mc_title], could we talk for a moment?"
     mc.name "Sure, down in a second."
-    $ renpy.show(kitchen.name,what=kitchen.background_image)
+    $ kitchen.show_background()
     $ the_person.draw_person(position = "sitting")
     "[the_person.title] is sitting at the kitchen table, a collection of bills laid out in front of her."
 
@@ -144,7 +144,7 @@ label mom_offer_make_dinner_label(the_person):
     mc.name "Yeah, I think I can take care of it."
     the_person.char "Well thank you, you're always such a help around here!"
     $ renpy.scene("Active")
-    $ renpy.show(kitchen.name,what=kitchen.background_image)
+    $ kitchen.show_background()
     "You head to the kitchen and get to work. The cooking isn't hard, but it takes up most of your evening."
     "As you're plating out dinner you have a perfect opportunity to give your mother or sister some serum in secret."
     menu:

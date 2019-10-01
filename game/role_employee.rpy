@@ -134,7 +134,7 @@ label employee_performance_review(the_person):
     else:
         the_person.char "Uh, I guess. so."
 
-    $ renpy.show(office.name,what=office.background_image)
+    $ office.show_background()
     $ mc.location.move_person(the_person, office)
 
     "You lead [the_person.title] into your office and close the door behing her. You take your seat at your desk and motion to a chair opposite you."

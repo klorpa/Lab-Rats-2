@@ -62,7 +62,7 @@ label scene_missionary_1(the_girl, the_location, the_object, the_round):
                 the_girl.char "I... oh god, I am."
                 "She blushes and turns away from you, panting for breath while you fuck her."
 
-    # $ the_girl.call_dialogue("sex_responses")
+    # $ the_girl.call_dialogue("sex_responses_vaginal")
     # "[the_girl.title] digs her fingers into your back as you pump in and out of her tight slit. She moans into your ear, letting you hear her soft gasps and yelps."
     # if the_girl.arousal > 50:
     #     "Her pussy is dripping wet now, practically begging you to fuck it more. You kiss her and keep going."
@@ -179,15 +179,6 @@ label scene_missionary_2(the_girl, the_location, the_object, the_round):
                     the_girl.char "That was... that felt great, it was so intense."
                     "She licks at your ear, then whispers into it."
                     the_girl.char "Don't stop..."
-
-
-    # the_girl.char "Oh fuck... Kiss me [the_girl.mc_title]!"
-    # "[the_girl.title] puts her arms around your head and neck and pulls you down to her. She closes her eyes and kisses you, sending her tongue out to twirl around yours."
-    # "You return the kiss, making out with her as you pump your hips back and forth. Her own hips rise and fall to meet yours."
-    # if the_girl.arousal > 50:
-    #     "Her wet, hot pussy feels amazing wrapped around your cock. She's dripping wet now and obviously enjoying your treatment."
-    # else:
-    #     "Her tight pussy feels amazing wrapped around your cock. From her moans and gasps you can tell she's enjoying your treatment."
     return
 
 label outro_missionary(the_girl, the_location, the_object, the_round):
@@ -204,13 +195,9 @@ label outro_missionary(the_girl, the_location, the_object, the_round):
     menu:
         "Cum inside of her.":
             "You use your full weight to push your cock deep inside of [the_girl.possessive_title]'s cunt as you climax. She gasps and claws lightly at your back as you pump your seed into her."
+            $ the_girl.call_dialogue("cum_vagina")
             if mc.condom:
-                if the_girl.get_opinion_score("creampies") > 0:
-                    the_girl.char "Ah... Imagine if you broke the condom and you just got me pregnant..."
-                    "She moans and rolls her hips against you one last time."
-                else:
-                    the_girl.char "Ah... I hope the condom didn't break!"
-                "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her. Your condom is balloond with your seed and hangs to one side."
+                "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her. Your condom is ballooned with your seed and hangs to one side."
                 if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
                     $ the_girl.discover_opinion("drinking cum")
                     "[the_girl.possessive_title] reaches over for your cock. With delicate fingers she slides the condom off of you, pinching it off do your cum doesn't spill out."
@@ -222,10 +209,6 @@ label outro_missionary(the_girl, the_location, the_object, the_round):
                     the_girl.char "Look at all that cum. Well done."
 
             else:
-                if the_girl.sluttiness > 120:
-                    the_girl.char "That's it... Ah..."
-                else:
-                    the_girl.char "Fuck! I said not to... Ah... Not to do that! You're lucky I'm on the pill."
                 $ the_girl.cum_in_vagina()
                 $ missionary.redraw_scene(the_girl)
             "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."

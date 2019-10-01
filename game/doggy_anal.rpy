@@ -47,8 +47,7 @@ label intro_doggy_anal(the_girl, the_location, the_object, the_round):
 label scene_doggy_anal_1(the_girl, the_location, the_object, the_round):
 
     "You hold onto [the_girl.title]'s hips and settle into a steady rhythm, sliding your cock in and out out of her tight ass."
-    $ the_girl.call_dialogue("sex_responses") #TODO: Seperate normal sex responses to into sex and anal.
-    # Concept: make it purely a personality thing?
+    $ the_girl.call_dialogue("sex_responses_anal")
 
     if the_girl.has_large_tits() and the_girl.outfit.tits_visible():
         "With each thrust [the_girl.title]'s large tits pendulum underneath her. You reach a hand around and grab one of them, squeezing it hard."
@@ -65,7 +64,7 @@ label scene_doggy_anal_2(the_girl, the_location, the_object, the_round):
         "[the_girl.title] grunts and pants as your cock stretches out her asshole. Her hands ball into fists as she tries to adjust."
 
     "You reach forward and place your hands on her shoulders, pulling her against you with each stroke."
-    $ the_girl.call_dialogue("sex_responses")
+    $ the_girl.call_dialogue("sex_responses_anal")
     "Her ass squeezes down on your dick, so tight it's almost difficult to move."
     return
 
@@ -73,13 +72,14 @@ label outro_doggy_anal(the_girl, the_location, the_object, the_round):
 
     "Fucking [the_girl.possessive_title]'s tight asshole feels amazing, and you come closer and closer to your climax."
     "You pass the point of no return and speed up, slamming your cock into her with each thrust."
-    $ the_girl.call_dialogue("sex_responses")
+    $ the_girl.call_dialogue("sex_responses_anal")
     mc.name "Fuck, here I cum!"
 
     menu:
         "Cum inside of her.":
             "You push yourself balls deep into [the_girl.title]'s ass and dump your load."
-            the_girl.char "Ah! Ah!"
+            #This is where the "cum in me" section would go instead
+            #the_girl.char "Ah! Ah!"
             "You hold yourself inside of her until your climax has passed, then pull out slowly and sit back."
             "She is left on her hands and knees, trying to catch her breath, as your cum drips out of her gaping asshole."
             $ the_girl.cum_in_ass()
@@ -91,7 +91,7 @@ label outro_doggy_anal(the_girl, the_location, the_object, the_round):
                 mc.name "What?"
                 the_girl.char "Your cock, put it back in me... Just a little bit more, please!"
                 "She lowers her shoulders to the [the_object.name] and wiggles ass at you. You slide the tip of your still-hard dick into her asshole."
-                the_girl.char "Ah! Oh god, ah! Ah..."
+                the_girl.char "Ah..."
                 "Your semen gives you the lubrication you need to slide into her smoothly and easily. She shivers with pleasure as you push yourself in balls deep."
                 the_girl.char "Just... hold it there. Mphfhhh."
                 "She bites her lip, closes her eyes, and moans."

@@ -56,7 +56,7 @@ init -2 python:
 
 label sister_intro_crisis_label(the_person):
     #This is a mantatory crisis, so we assume that our requirements are tight enough to always trigger correctly. If you want to do crisis requirement checks here you need to re-add the crisis to the mandatory list!
-    $ renpy.show(bedroom.name,what=bedroom.background_image)
+    $ bedroom.show_background()
     "There's a knock at your bedroom door."
     mc.name "Come in."
     $ the_person.draw_person()
@@ -150,7 +150,7 @@ label sister_serum_test_label(the_person):
 
 label sister_strip_intro_label(the_person):
     #Give your sister some cash in exchange for her stripping. Higher sluttiness means she'll strip more (for less).
-    $ renpy.show(bedroom.name,what=bedroom.background_image)
+    $ bedroom.show_background()
     "There's a knock at your bedroom door."
     mc.name "Come in."
     $ the_person.draw_person()
@@ -238,7 +238,7 @@ label sister_strip_label(the_person):
 
 label sister_instathot_intro_label(the_person):
     # Your sister needs you to take pictures for her.
-    # She's got an instapic (genius, they'll never guess!) account and wants to be an "influencer"
+    # She's got an insta-pic (genius, they'll never guess!) account and wants to be an "influencer"
 
 
 label sister_cam_girl_intro_label(the_person):

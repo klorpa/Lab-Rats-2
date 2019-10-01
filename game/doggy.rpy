@@ -34,7 +34,7 @@ label intro_doggy(the_girl, the_location, the_object, the_round):
 label scene_doggy_1(the_girl, the_location, the_object, the_round):
     # CHOICE CONCEPT: Slap her ass // Talk dirty to her
     "You grab onto [the_girl.title] by her hips and settle into a steady rhythm, pumping your cock in and out of her tight pussy."
-    $ the_girl.call_dialogue("sex_responses")
+    $ the_girl.call_dialogue("sex_responses_vaginal")
     menu:
         "Talk dirty to her.":
             mc.name "How does that feel? Do you like getting railed from behind?"
@@ -188,7 +188,7 @@ label scene_doggy_2(the_girl, the_location, the_object, the_round):
     # "[the_girl.title] lowers her shoulders against [the_object.name] and moans as you fuck her from behind."
     # the_girl.char "Ah... it feels so big!"
     # "You reach forward and place a hand around [the_girl.title]'s neck, using it as leverage to thrust even faster. She arches her back and lets out a series of satisfied yelps."
-    # $the_girl.call_dialogue("sex_responses")
+    # $the_girl.call_dialogue("sex_responses_vaginal")
     # if the_girl.arousal > 80:
     #     "[the_girl.title]'s pussy is dripping wet, warm and tight around your cock. She twitches and gasps occasionally as you slide in, practically begging you to fuck her more."
     # else:
@@ -197,12 +197,13 @@ label scene_doggy_2(the_girl, the_location, the_object, the_round):
 
 label outro_doggy(the_girl, the_location, the_object, the_round):
     "[the_girl.title]'s tight cunt draws you closer to your orgasm with each thrust. You finally pass the point of no return and speed up, fucking her as hard as you can manage."
-    $the_girl.call_dialogue("sex_responses")
+    $the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Ah, I'm going to cum!"
     menu:
         "Cum inside of her.":
             if mc.condom:
                 "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps as you dump your load into her, barely contained by your condom."
+                $ the_girl.call_dialogue("cum_vagina")
                 "You wait until your orgasm has passed completely, then pull out and sit back. The condom is ballooned and sagging with the weight of your seed."
                 if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
                     $ the_girl.discover_opinion("drinking cum")
@@ -216,6 +217,7 @@ label outro_doggy(the_girl, the_location, the_object, the_round):
                 "You sigh contentedly and enjoy the post-orgasm feeling of relaxation."
             else:
                 "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps softly in time with each new shot of hot semen inside of her."
+                $ the_girl.call_dialogue("cum_vagina")
                 $ the_girl.cum_in_vagina()
                 $ doggy.redraw_scene(the_girl)
                 if the_girl.sluttiness > 80:

@@ -21,7 +21,7 @@ label intro_piledriver(the_girl, the_location, the_object, the_round):
     "You get your hard cock out and kneel down in front of her. She yelps in suprise when you grab her ankles and bring them up and over her waist."
     mc.name "There we go, this will be even better."
     "You rub the tip of your cock against her clit a few times, then press forward and slide yourself inside of her."
-    $the_girl.call_dialogue("sex_responses")
+    $the_girl.call_dialogue("sex_responses_vaginal")
     return
 
 label scene_piledriver_1(the_girl, the_location, the_object, the_round):
@@ -81,7 +81,7 @@ label scene_piledriver_1(the_girl, the_location, the_object, the_round):
 
     else:
         #Takes it fine, asks for more.
-        $ the_girl.call_dialogue("sex_responses")
+        $ the_girl.call_dialogue("sex_responses_vaginal")
         "[the_girl.title] holds her legs out wide for you, spreading herself so you can fuck her hard and fast against the [the_object.name]."
         menu:
             "Talk dirty to her.":
