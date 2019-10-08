@@ -274,7 +274,6 @@ label nora_research_cash(the_person):
     $ university.show_background()
     "You walk upstairs together to make sure none of [the_person.possessive_title]'s co-workers are around."
     $ the_trait = mc.business.event_triggers_dict.get("nora_cash_research_trait") #We know won't be None from our initial event check.
-    $ the_trait.researched = True
     $ mc.business.event_triggers_dict["nora_cash_research_trait"] = None
 
     $ list_of_traits.remove(the_trait)
@@ -289,6 +288,7 @@ label nora_research_cash(the_person):
         the_person.char "I have another trait I would like studied, if you are still interested. I will send you the production details." #I'll mark the location of the setlement on your mp
         $ the_new_trait = get_random_from_list(list_of_nora_traits)
         $ mc.business.event_triggers_dict["nora_cash_research_trait"] = the_new_trait
+        $ the_new_trait.researched = True
         $ list_of_traits.append(the_new_trait)
         mc.name "Okay, I'll see what I can do. Thank you for your business, [the_person.title]."
         "You say goodbye to [the_person.possessive_title] and split up. Your payment is sent soon after."

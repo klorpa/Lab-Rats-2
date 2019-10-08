@@ -185,7 +185,7 @@ label meet_person_label():
             "She smiles and steps onto the bus, waving briefly from one of the windows."
 
 
-        "Keep the cash.":
+        "Keep the cash.\n{color=#0F0}+$200{/color}":
             $ mc.business.funds += 200
             "You slip the cash out of the womans wallet and watch as she rushes to catch her bus."
             $ renpy.scene("Active")

@@ -26,7 +26,7 @@
 #GOALS TO MAKE#
 # Have X number of dollars (at end of time chunk? We could change all of the .funds += to .change_funds() and then add a listener to that. TODO: This
 # "Dress up" - Assign an outfit with X sluttiness to a person.
-# Reach research tier X. #TODO: Impliment goal requirements (right now all goals must be valid goals 100% of the time).
+# Reach research tier X.
 
 init 1 python: #TODO: Prevent you from getting the game goal type twice in a row.
     def create_new_stat_goal(goal_difficulty):

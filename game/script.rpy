@@ -18,7 +18,7 @@ init -2 python:
     config.predict_statements = 0
     config.predict_screens = False
 
-    config.image_cache_size = 32
+    config.image_cache_size = 8
     config.layers.insert(1,"Active") ## The "Active" layer is used to display the girls images when you talk to them. The next two lines signal it is to be hidden when you bring up the menu and when you change contexts (like calling a screen)
     config.menu_clear_layers.append("Active")
     config.context_clear_layers.append("Active")
@@ -39,7 +39,7 @@ init -2 python:
     #config.debug_text_overflow = True
     config.debug_text_overflow = False #If enabled finds locations with text overflow. Turns out I have a lot, kind of blows up when enabled and generates a large text file. A problem for another day.
 
-    config.debug_image_cache = True
+    config.debug_image_cache = False
     config.debug = True
 
     # THIS IS WHAT PREVENTS IT FROM INDEXING IMAGES
@@ -793,6 +793,13 @@ init -2 python:
             self.team_effectiveness += restore_amount
             return restore_amount
 
+        def change_team_effectiveness(self, the_amount):
+            self.team_effectiveness += the_amount
+            if self.team_effectiveness > self.effectiveness_cap:
+                self.team_effectiveness = self.effectiveness_cap
+            elif self.team_effectiveness < 50:
+                self.team_effectiveness = 50
+
         def add_employee_research(self, new_person):
             self.research_team.append(new_person)
             new_person.job = self.get_employee_title(new_person)
@@ -1308,7 +1315,7 @@ init -2 python:
 
             self.can_skip_time = False #A flag used to determine when it is safe to skip time and when it is not. Left in as of v0.19.0 to ensure missed references do not cause a crash; has no function.
 
-        def change_location(self,new_location):
+        def change_location(self,new_location): #TODO: Check if we can add the "show_background" command for our new location here. Is there any time where we want to be in a location but _not_ show it's background?
             self.location = new_location
 
         def use_energy(self,amount):
@@ -2136,6 +2143,8 @@ init -2 python:
                 if amount != 0:
                     log_string += "Love limit reached for interaction. "
                 amount = max_modified_to - self.love
+                if amount < 0: #Never subtract love because of a cap, only limit how much they gain.
+                    amount = 0
 
 
             self.love += amount
@@ -2941,7 +2950,7 @@ init -2 python:
             return final_image
             # renpy.show(self.name+position+emotion+self.facial_style,at_list=[right,scale_person(height)],layer="Active",what=self.position_dict[position][emotion],tag=self.name+position+emotion)
 
-    class Relationship(renpy.store.object): #A class used to store information about the relationship between two people. Do not manipulate directly, use RelationshipArray to change things.
+    class Relationship(): #A class used to store information about the relationship between two people. Do not manipulate directly, use RelationshipArray to change things.
         def __init__(self, person_a, person_b, type_a, type_b = None, visible = None):
             self.person_a = person_a #Person a and b are Person objects.
             self.person_b = person_b
@@ -2970,7 +2979,7 @@ init -2 python:
             elif the_person == self.person_b:
                 return self.type_b
 
-    class RelationshipArray(renpy.store.object):
+    class RelationshipArray():
         def __init__(self):
             self.relationships = [] #List of relationships. Relationships are bi-directional, so if you look for person_a, person_b you'll get the same object as person_b, person_a (but the type can be relative to the order).
             ### Types of Relationships (* denotes currently unused but planned roles)
@@ -5668,7 +5677,7 @@ screen person_info_detailed(the_person):
                     if list_of_relationships:
                         text "Other relationships:"  style "menu_text_style"
                         for relationship in list_of_relationships:
-                            text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style"
+                            text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style" size 12
 
             frame:
                 background "#1a45a1aa"
@@ -7862,7 +7871,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.21.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.21.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8733,6 +8742,8 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
 
                 if not position_locked: #If we're locked into a position we can't leave and change positions. Note: this means we can't finish early I guess?
                     tuple_list.append(["Back off and change positions.","Pull Out"])
+                else:
+                    tuple_list.append(["Back off and change positions.\n{size=22}Position locked{/size} (disabled)", "Pull Out"])
 
                 tuple_list.append(["Strip her down.","Strip"])
 
@@ -8790,7 +8801,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                         $ position_choice.call_transition(the_position, the_person, mc.location, the_object, round)
                         $ position_choice = the_position
 
-        call sex_description(the_person, position_choice, the_object, round+1, private = private, girl_in_charge = girl_in_charge) from _call_sex_description_2
+        call sex_description(the_person, position_choice, the_object, round+1, private = private, girl_in_charge = girl_in_charge, position_locked = position_locked) from _call_sex_description_2
 
     return
 
@@ -8846,7 +8857,7 @@ label condom_ask(the_person):
                 "[the_person.title] watches impatiently while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
 
             "Fuck her raw.":
-                mc.name "No arguements here."
+                mc.name "No arguments here."
 
 
     return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
