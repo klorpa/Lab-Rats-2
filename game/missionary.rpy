@@ -7,7 +7,7 @@
         "transition_default_missionary",
         "strip_missionary", "strip_ask_missionary",
         "orgasm_missionary",
-        opinion_tags = ["missionary style sex","vaginal sex"])
+        opinion_tags = ["missionary style sex","vaginal sex"], record_class = "Vaginal Sex")
         list_of_positions.append(missionary)
 
 init 1:

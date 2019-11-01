@@ -46,11 +46,17 @@
 # Investment Opportunity
 # Mastery Boost
 # Random trait for side effect
+# horny at work
 # Mom changing
 # Lily new underwear
 # Mom selfies
 # Daughter introduction
+
+
+### RELATIONSHIP CRISES ###
 # Friend state change
+
+
 
 #todo: teach lily hoqw to deepthroat/ role to teach her how to fuck
 #todo: girl who loves you sends you sexy selfies
@@ -2655,7 +2661,7 @@ label daughter_work_crisis_label():
                 $ renpy.scene("Active")
                 return
 
-    call screen interview_ui([the_daugther]) #Hire her or reject her.
+    call screen interview_ui([the_daughter]) #Hire her or reject her.
 
     if _return == the_daughter: #You've chosen to hire her.
         if promised_sex:
@@ -3574,7 +3580,7 @@ init 1 python:
     def mom_selfie_requirement():
         if not mc_at_home() and not (time_of_day == 0 or time_of_day == 4): #She always sents you text while you're not at home for the middle part of the day
             if not mom in mc.location.people: #Obviously don't do it if she's right there with you.
-                if mom.love >= 30:
+                if mom.love >= 15:
                     return True
         return False
 
@@ -3808,7 +3814,6 @@ init 1 python:
     morning_crisis_list.append([mom_morning_surprise_crisis, 5])
 
 label mom_morning_surprise_label():
-    #TODO: Finish all of the side functionalit this event requires to be implemented.
     $ the_person = mom
     if the_person.sluttiness < 50:
         the_person.char "[the_person.mc_title], it's time to wake up."
@@ -4456,7 +4461,7 @@ label family_morning_breakfast_label():
 
 
     elif sis_slutty and not mom_slutty:
-        #MOm thinks lilly is way too underdressed and sends her back to get dressed.
+        #Mom thinks lilly is way too underdressed and sends her back to get dressed.
         $ the_sister.draw_person(position = "sitting")
         "Your mother turns around and gasps."
         $ the_mom.draw_person(emotion = "angry")
@@ -4515,4 +4520,122 @@ label family_morning_breakfast_label():
         "When you're done you help Mom put the dirty dishes away and get on with your day."
 
     $ renpy.scene("Active")
+    return
+
+init 1 python:
+    def so_relationship_improve_requirement():
+        for place in list_of_places:
+            for a_person in place.people:
+                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
+                    if not affair_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                    # You have at least one person you know who is in a relationship. People you're having an affair never have it get better.
+                    # Your also family never forms relationships, because we do that through direct story stuff.
+                        return True
+        return False
+
+    def so_relationship_worsen_requirement():
+        for place in list_of_places:
+            for a_person in place.people:
+                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Single":
+                    if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                    # We only change thse relationships in events. If we can find anyone who meets the requirements the event can proceed.
+                        return True
+        return False
+
+    so_relationship_improve_crisis = Action("Friend SO relationship improve", so_relationship_improve_requirement, "so_relationship_improve_label")
+    crisis_list.append([so_relationship_improve_crisis, 3])
+
+    so_relationship_worsen_crisis = Action("Friend SO relationship worsen", so_relationship_worsen_requirement, "so_relationship_worsen_label")
+    crisis_list.append([so_relationship_worsen_crisis, 1])
+
+label so_relationship_improve_label():
+    $ potential_people = []
+    python:
+        for place in list_of_places:
+            for a_person in place.people:
+                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
+                    if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                        potential_people.append(a_person)
+
+    $ the_person = get_random_from_list(potential_people)
+    if the_person is None:
+        return #Something's changed and there is no longer a valid person
+
+    if the_person.relationship == "Single":
+        $ the_person.change_happiness(10)
+        "You get a notification on your phone."
+        $ guy_name = get_random_male_name()
+        "[the_person.title] has just changed her status on social media. She's now in a relationship with someone named [guy_name]."
+        $ the_person.relationship = "Girlfriend"
+        $ the_person.SO_name = guy_name
+
+    elif the_person.relationship == "Girlfriend":
+        $ the_person.change_happiness(20)
+        if the_person.love > 30: #You're a good friend.
+            "You get a text from [the_person.title]."
+            the_person.char "Hey [the_person.mc_title], I have some exciting news!"
+            the_person.char "My boyfriend proposed, me and [the_person.SO_name] are getting married! I'm so excited, I just had to tell you!"
+            menu:
+                "Congratulate her.":
+                    "You text back."
+                    mc.name "Congradulations! I'm sure you're the happiest girl in the world."
+                    $ the_person.change_love(1)
+                    the_person.char "I am! I've got other people to tell now, talk to you later!"
+
+                "Warn her against it.":
+                    "You text back."
+                    mc.name "I don't know if that's such a good idea. Do you even know him that well?"
+                    "Her response is near instant."
+                    the_person.char "What? What do you even mean by that?"
+                    mc.name "I mean, what if he isn't who you think he is? Maybe he isn't the one for you."
+                    $ the_person.change_happiness(-10)
+                    the_person.char "I wasn't telling you because I wanted your opinion. If you can't be happy for me, you can at least be quiet."
+                    $ the_person.change_love(-5)
+                    "She seems pissed, so you take her advice and leave her alone."
+        else: #You see it on social media
+            "You get a notification on your phone."
+            "It seems [the_person.title] has gotten engaged to her boyfriend, [the_person.SO_name]. You take a moment to add your own well wishes to her social media pages."
+        $ the_person.relationship = "Fiancée"
+
+    elif the_person.relationship == "Fiancée":
+        #TODO: Add an event where you're invited to their wedding and fuck the bride.
+        "You get a notification on your phone."
+        "It seems [the_person.title]'s just had her wedding to her Fiancé, [the_person.SO_name]. You take a moment to add your congradulations to her wedding photo."
+        $ the_person.relationship = "Married"
+
+    $ potential_people = []
+    return
+
+
+
+label so_relationship_worsen_label():
+    $ potential_people = []
+    python:
+        for place in list_of_places:
+            for a_person in place.people:
+                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Single":
+                    if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                        potential_people.append(a_person)
+
+    $ the_person = get_random_from_list(potential_people)
+    if the_person is None:
+        return #Something's changed and there is no longer a valid person
+
+    $ so_title = SO_relationship_to_title(the_person.relationship)
+    if affair_role in the_person.special_role:
+        "You get a call from [the_person.title]. When you pick up she sounds tired, but happy."
+        the_person.char "Hey [the_person.mc_title], I've got some news. Me and my [so_title], [the_person.SO_name], had a fight. We aren't together any more."
+        the_person.char "We don't have to hide what's going on between us any more."
+        call transform_affair(the_person) from _call_transform_affair
+        mc.name "That's good news! I'm sure you'll want some rest, so we can talk more later. I love you."
+        $ the_person.change_love(5)
+        the_person.char "I love you too. Bye."
+
+    else:
+        $ the_person.change_happiness(-20)
+        "You get a notification on your phone."
+        "It looks like [the_person.title] has left her [so_title] and is single now."
+
+    $ the_person.relationship = "Single"
+    $ the_person.SO_name = None
     return

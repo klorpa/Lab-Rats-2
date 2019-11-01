@@ -7,7 +7,7 @@
         "transition_default_piledriver",
         "strip_piledriver", "strip_ask_piledriver",
         "orgasm_piledriver",
-        opinion_tags = ["missionary style sex","vaginal sex","being submissive"])
+        opinion_tags = ["missionary style sex","vaginal sex","being submissive"], record_class = "Vaginal Sex")
         list_of_positions.append(piledriver)
 
 init 1:

@@ -7,7 +7,7 @@
         "transition_default_doggy",
         "strip_doggy", "strip_ask_doggy",
         "orgasm_doggy",
-        opinion_tags = ["doggy style sex","vaginal sex"])
+        opinion_tags = ["doggy style sex","vaginal sex"], record_class = "Vaginal Sex")
         list_of_positions.append(doggy)
 
 init 1:

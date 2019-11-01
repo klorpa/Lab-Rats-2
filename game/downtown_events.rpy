@@ -123,7 +123,7 @@ label lady_of_the_night_label():
             $ the_person.change_obedience(1)
             "The streets are quiet this time of night. You pull your wallet out and hand over the cash."
             "She takes it with a smile and tucks it away, then wraps herself around your arm."
-            $ add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
+            $ the_person.add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
             call fuck_person(private = True) from _call_fuck_person_26
             $ the_person.clear_situational_obedience("prostitute")
 
@@ -154,7 +154,7 @@ label meet_person_label():
     "A few steps ahead of you she stumbles and trips."
     $ the_person.call_dialogue("suprised_exclaim")
     "She rushes to get back to her feet, unaware that her wallet has slipped out and is sitting on the sidewalk."
-    "You crouch down to pick it up. A discrete check reveals there is a sizeable amount of cash inside."
+    "You crouch down to pick it up. A discreet check reveals there is a sizeable amount of cash inside."
     menu:
         "Return everything.":
             $ downtown.add_person(the_person)

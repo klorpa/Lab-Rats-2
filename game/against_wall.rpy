@@ -7,7 +7,7 @@
         "transition_default_against_wall",
         "strip_against_wall", "strip_ask_against_wall",
         "orgasm_against_wall",
-        opinion_tags = ["sex standing up"])
+        opinion_tags = ["sex standing up"], record_class = "Vaginal Sex")
         list_of_positions.append(against_wall)
 
 #init 1:

@@ -7,7 +7,8 @@
         "transition_default_blowjob",
         "strip_blowjob", "strip_ask_blowjob",
         "orgasm_blowjob",
-        opinion_tags = ["giving blowjobs"])
+        verb = "throat",
+        opinion_tags = ["giving blowjobs"], record_class = "Blowjobs")
         list_of_positions.append(blowjob)
 
 init 1:

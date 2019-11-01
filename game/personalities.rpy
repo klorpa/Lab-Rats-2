@@ -856,7 +856,7 @@ label relaxed_being_watched(the_person, the_watcher, the_position):
         the_person.char "Oh my god, having you watch us do this feels so dirty. I think I like it!"
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 
@@ -1474,7 +1474,7 @@ label reserved_being_watched(the_person, the_watcher, the_position):
         the_person.char "Oh [the_watcher.title], you shouldn't be watching me do this..."
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 
@@ -2095,7 +2095,7 @@ label wild_being_watched(the_person, the_watcher, the_position):
         the_person.char "Ah, now this is a party! Maybe when he's done you can tap in and take a turn [the_watcher.title]!"
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 
@@ -2709,7 +2709,7 @@ label introvert_being_watched(the_person, the_watcher, the_position):
         "[the_person.possessive_title] glances between you and [the_watcher.title]."
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 
@@ -3299,7 +3299,7 @@ label bimbo_being_watched(the_person, the_watcher, the_position):
         the_person.char "Oh my god, having you watch us do this feels so dirty. I think I like it!"
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 
@@ -3682,7 +3682,7 @@ label lily_cum_vagina(the_person):
                 the_person.char "I know I shouldn't, but I love having my own brother's cum inside me."
                 the_person.char "I guess if I you get me pregnant I'll have to say it's my [so_title]'s though, so people don't judge us."
             else:
-                the_person.char "Pump me full of your hot cum, I don't care that you're my brother, I want you to try and get me pregnant!"
+                the_person.char "Pump me full of your hot cum, I don't care that you're my brother, I want you to get me pregnant!"
         else:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
@@ -3801,7 +3801,7 @@ label lily_being_watched(the_person, the_watcher, the_position):
         the_person.char "I know it's suppose to be wrong, but then why does it feel so good?"
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 
@@ -4036,12 +4036,12 @@ label mom_cum_vagina(the_person):
             the_person.char "Give me your cum sweetheart! I don't care if the condom works, I want to feel your seed in me!"
         else:
             the_person.char "Pump it out into that condom sweetheart, it's perfectly fine to cum in me as long as it's on!"
-    else:
-        if the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+    elif the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Give mommy your cum, I want every last drop inside of me! Try and get mommy pregnant!"
 
-        else:
-            the_person.char "Oh sweety, you can't cum inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant."
+    else:
+        the_person.char "Oh sweety, you can't cum inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant."
+
     return
 
 label mom_cum_anal(the_person):
@@ -4150,7 +4150,7 @@ label mom_being_watched(the_person, the_watcher, the_position):
         the_person.char "People say we shouldn't do this, but this is the closest I've ever felt to my son."
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
-        "[the_person.title] seems more comfortable [the_position.verb]ing you with [the_watcher.title] around."
+        "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
 

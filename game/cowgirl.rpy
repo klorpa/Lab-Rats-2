@@ -7,7 +7,7 @@
         "transition_default_cowgirl",
         "strip_cowgirl", "strip_ask_cowgirl",
         "orgasm_cowgirl",
-        opinion_tags = ["taking control"])
+        opinion_tags = ["taking control"], record_class = "Vaginal Sex")
         list_of_girl_positions.append(cowgirl)
 
 #init 1:

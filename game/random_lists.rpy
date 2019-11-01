@@ -444,14 +444,14 @@ init -2:
         sexy_opinions_list.append("sex standing up") #Has gameplay effect
         sexy_opinions_list.append("giving blowjobs") #Has gameplay effect
         sexy_opinions_list.append("getting head")
-        sexy_opinions_list.append("anal sex")
+        sexy_opinions_list.append("anal sex") #Has gameplay effect
         sexy_opinions_list.append("vaginal sex") #Has gameplay effect
         sexy_opinions_list.append("public sex") #Has gameplay effect
         sexy_opinions_list.append("kissing") #Has gameplay effect
         sexy_opinions_list.append("lingerie") #Has gameplay effect
-        sexy_opinions_list.append("masturbating") #Has gameplaye effect
+        sexy_opinions_list.append("masturbating") #Has gameplay effect
         sexy_opinions_list.append("giving handjobs")
-        sexy_opinions_list.append("being fingered")
+        sexy_opinions_list.append("being fingered") #Has gameplay effect
         sexy_opinions_list.append("skimpy uniforms") #Has gameplay effect
         sexy_opinions_list.append("skimpy outfits") #Has gameplay effect
         sexy_opinions_list.append("not wearing underwear") #Has gameplay effect
@@ -464,11 +464,11 @@ init -2:
         sexy_opinions_list.append("creampies") #Has gameplay effect
         sexy_opinions_list.append("cum facials") #Has gameplay effect
         sexy_opinions_list.append("being covered in cum") #Has gameplay effect
-        sexy_opinions_list.append("bareback sex") #Has TEMPORARY gameplay effect
+        sexy_opinions_list.append("bareback sex") #Has gameplay effect
         sexy_opinions_list.append("big dicks")
-        sexy_opinions_list.append("cheating on men")
-        sexy_opinions_list.append("anal creampies")
-        sexy_opinions_list.append("incest")
+        sexy_opinions_list.append("cheating on men") #Has gameplay effect
+        sexy_opinions_list.append("anal creampies") #Has gameplay effect
+        sexy_opinions_list.append("incest") #Has gameplay effect
 
         def get_random_sexy_opinion():
             return get_random_from_list(sexy_opinions_list)
@@ -736,6 +736,9 @@ init 1 python:
 
         mc.business.mandatory_crises_list.append(sister_intro_crisis) #Introduces Lily one to two weeks into the game. She will test serum for cash.
         mc.business.mandatory_crises_list.append(sister_strip_intro_crisis) #Lily comes asking for more money. She will strip (to varying degrees) for cash)
+
+        instathot_intro_action = Action("Instathot intro", instathot_intro_requirement, "sister_instathot_intro_label") #Event to introduce Lily taking pictures on the internet for money.
+        lily.on_room_enter_event_list.append(instathot_intro_action)
 
         lily.home.add_person(lily)
 

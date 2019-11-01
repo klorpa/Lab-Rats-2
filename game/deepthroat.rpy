@@ -7,7 +7,8 @@
         "transition_default_deepthroat",
         "strip_deepthroat", "strip_ask_deepthroat",
         "orgasm_deepthroat",
-        opinion_tags = ["giving blowjobs","being submissive"])
+        verb = "throat fuck",
+        opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs")
         list_of_positions.append(deepthroat)
 
 init 1:

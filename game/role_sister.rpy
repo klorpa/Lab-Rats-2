@@ -24,7 +24,7 @@ init -2 python:
 
     def sister_strip_intro_requirement(the_person): #Note that this only ever triggers once, so we don't need to worry if it will retrigger at any point.
         if time_of_day == 4 and mc.location == bedroom:
-            if the_person.sluttiness > 20 and mc.business.event_triggers_dict.get("sister_serum_test_count") and mc.business.event_triggers_dict.get("sister_serum_test_count") >= 4:
+            if the_person.sluttiness >= 30 and mc.business.event_triggers_dict.get("sister_serum_test_count") and mc.business.event_triggers_dict.get("sister_serum_test_count") >= 4:
                 return True
         return False
 
@@ -35,8 +35,8 @@ init -2 python:
             return False
         elif len(lily_bedroom.people) > 1:
             return False
-        elif the_person.sluttiness < 20:
-            return "Requires: " + get_red_heart(20)
+        elif the_person.sluttiness < 30:
+            return "Requires: " + get_red_heart(30)
         else:
             return True
 
@@ -47,10 +47,32 @@ init -2 python:
             return False
         elif len(lily_bedroom.people) > 1:
             return False
-        elif the_person.sluttiness < 20 or mc.business.funds < 100:
-            return "Requires: $100, " + get_red_heart(20)
+        elif the_person.sluttiness < 30 or mc.business.funds < 100:
+            return "Requires: $100, " + get_red_heart(30)
         else:
             return True
+
+    def instathot_intro_requirement(the_person): #This action sits in her room
+        if the_person.sluttiness < 20:
+            return False
+        elif the_person not in lily_bedroom.people:
+            return False
+        elif __builtin__.len(lily_bedroom.people) > 1:
+            return False
+        else:
+            return True
+
+
+    def instathot_requirement(the_person):
+        if lily not in lily_bedroom.people:
+            return False
+        elif __builtin__.len(lily_bedroom.people) > 1:
+            return False
+        elif time_of_day == 4:
+            return "Too late to take pictures."
+        else:
+            return True
+
 
 #SISTER ACTION LABELS#
 
@@ -239,6 +261,128 @@ label sister_strip_label(the_person):
 label sister_instathot_intro_label(the_person):
     # Your sister needs you to take pictures for her.
     # She's got an insta-pic (genius, they'll never guess!) account and wants to be an "influencer"
+    # Triggers at some point when you go into your sisters room. You catch her taking pictures for insta-pic, but she doesn't mind and explains what she's doing.
+    # Adds a random event where Lily posts insta-pics, similar to your mom sending you selfies.
+
+
+    # Actually, let's have her start with a relatively tame outfit and grow into really sexy ones.
+    "You open the door to [the_person.possessive_title]'s room."
+    $ the_person.draw_person(position = "kneeling1")
+    "She's posed on her bed, holding her phone high up in one hand to take a selfie. She startles when you come in, standing up quickly before calming down."
+    $ the_person.draw_person()
+    the_person.char "Oh... It's just you. Come in and close the door, please."
+    "You step inside and close the door behind you."
+    the_person.char "You scared me, I thought you were [mom.title] for a second."
+    mc.name "Why would you be worried about her? What are you up to?"
+    the_person.char "Nothing, she just wouldn't understand and I don't want to make it a big thing."
+    "She holds up her phone and smiles."
+    the_person.char "But if you have to know, I made an account on insta-pic and I'm putting up some pictures for my fans."
+    mc.name "Insta-pic?"
+    the_person.char "Oh my god, how old are you again? It's a social media thing, people post pictures and follow other people."
+    the_person.char "If you're popular some companies will even pay for you to wear their clothes or show off their stuff."
+    mc.name "So how popular are you?"
+    the_person.char "Well... Not very, yet, but I just started posting! I'm still figuring out what people want to see."
+    "Looking at her outfit it seems like she has the right idea."
+    the_person.char "Since you're here, could you use my phone and take some pictures? It's hard doing it all myself."
+    menu:
+        "Help her.":
+            mc.name "Fine, give it here."
+            $ the_person.change_happiness(5)
+            the_person.char "Yay, thank you [the_person.mc_title]!"
+            "She hands you her phone and strikes a pose."
+            $ the_person.draw_person(emotion = "happy")
+            the_person.char "Got it? Okay. Now get one like I just noticed you."
+            $ the_person.draw_person(emotion = "happy", position = "walking_away")
+            "It seems like no shot is ever perfect, but eventually she's satisfied and takes her phone back with a smile."
+            $ the_person.draw_person()
+            $ the_person.change_love(2)
+            the_person.char "Thank you so much, you're the best!"
+            "She gives you a quick kiss on the cheek."
+            the_person.char "It's so nice to have you helping me with this. I could never get any of these shots myself, and it's not like I could ask Mom for help."
+            the_person.char "If you ever have some spare time and want to be the greatest brother we could do this again. If my shots end up being popular I could even split some of the cash with you."
+            mc.name "Alright, I'll keep that in mind. Glad to help."
+
+
+        "Refuse and leave.":
+            mc.name "I'm busy right now, I was just stopping by to say hi."
+            $ the_person.change_happiness(-5)
+            $ the_person.draw_person(emotion = "sad")
+            the_person.char "Oh... Alright. If you ever have some spare time I could use a hand though. There are a ton of angles I can't get by myself."
+
+    #TODO: Add the "help take pictures" action to her role, either by addint a static action and a flag or adding it here.
+
+    $ sister_instathot_action = Action("Help her take Insta-pics.{image=gui/heart/Time_Advance.png}",instathot_requirement, "sister_instathot_label", menu_tooltip = "Help your sister grow her Insta-pic account by taking some pictures of her.")
+    $ sister_role.actions.append(sister_instathot_action)
+    return
+
+label sister_instathot_label(the_person):
+    #Help your sister take slutty pictures for the internet. Get a share of the cash she's earning on them.
+    #Requires you to be in Lily's bedroom with her, so we can assume that's true.
+    mc.name "I've got some spare time, do you want some help taking pictures for Insta-pic?"
+    "[the_person.possessive_title] smiles and nodes excitedly."
+    the_person.char "Yes! I've got a cute new outfit I want to show off, this is going to be great."
+    $ insta_ouftit = insta_wardrobe.pick_random_outfit()
+    "She hands you her phone and starts stripping down."
+    the_person.char "Just give me a moment to get changed. It'll just be a sec!"
+    $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+    while next_item:
+        $ the_person.draw_animated_removal(next_item)
+        "..."
+        $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+    $ the_person.draw_person(position = "doggy")
+    "She gets onto her knees and pulls a shopping bag from the mall out from under her bed."
+    the_person.char "I keep my stuff here so Mom doesn't find it. Okay, let's put this on!"
+    $ the_person.draw_person(emotion = "happy")
+    "[the_person.title] gets dressed in her new outfit and turns to you, smiling."
+    $ the_person.outfit = insta_ouftit
+    $ the_person.draw_person(emotion = "happy")
+    the_person.char "Well, do you think they'll like it?"
+    menu:
+        "Of course!":
+            mc.name "Of course, you look hot!"
+            $ the_person.change_slut_temp(1)
+            $ the_person.change_happiness(3)
+
+        "I don't think so.":
+            mc.name "I'm not so sure. They might be looking for something... More."
+            if the_person.sluttiness >= 30:
+                the_person.char "Yeah, I think so too. Too bad Insta-pic is run by a bunch of prudes. I wish there was somewhere I could show more..."
+            else:
+                $ the_person.change_happiness(-2)
+                the_person.char "Really? Well, this is as much as I'm allowed to show, so I guess it doesn't matter either way."
+            "She shrugs."
+            the_person.char "Come on, let's take some pics!"
+
+
+    $ the_person.draw_person(emotion = "happy", position = "kneeling1")
+    "She jumps up onto her bed and gives the camera her sluttiest pout."
+    "For the next hour you help [the_person.title] take pictures for her Insta-pic account. She looks over each one, deciding if it's worth keeping or not."
+    "Finally she's happy with what she's got and takes her phone back."
+    $ the_person.draw_person(emotion = "happy")
+    the_person.char "Thank you so much [the_person.mc_title], these look amazing!"
+    $ the_person.change_slut_temp(3)
+    the_person.char "I guess I should pay you, huh? Since you're doing all this work for me."
+    menu:
+        "Take the money. +$100":
+            mc.name "I'm not going to say no."
+            "She rolls her eyes and direct transfers you some cash."
+            $ mc.business.funds += 100
+            the_person.char "No, I didn't think you would mr.\"I own a business\"."
+
+        "Let her keep it.":
+            mc.name "Don't worry about it, I'm just happy to see you doing something cool."
+            $ the_person.change_love(1)
+            the_person.char "Aww, you're the best!"
+            "She gives you a hug and a quick kiss on the cheek."
+
+    #TODO: SHe may keep the outfit.
+    #TODO: She lets you suggest an outfit
+    $ renpy.scene("Active")
+    call advance_time() from _call_advance_time_30
+    return
+
+
 
 
 label sister_cam_girl_intro_label(the_person):

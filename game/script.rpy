@@ -16,7 +16,7 @@ init -2 python:
 
     config.predict_screen_statements = True
     config.predict_statements = 0
-    config.predict_screens = False
+    config.predict_screens = True
 
     config.image_cache_size = 8
     config.layers.insert(1,"Active") ## The "Active" layer is used to display the girls images when you talk to them. The next two lines signal it is to be hidden when you bring up the menu and when you change contexts (like calling a screen)
@@ -1620,6 +1620,19 @@ init -2 python:
             self.sex_skills["Vaginal"] = sex_list[2] #The girls skill at different positions that involve vaginal sex.
             self.sex_skills["Anal"] = sex_list[3] #The girls skill at different positions that involve anal sex.
 
+            self.sex_record = {}
+            self.sex_record["Handjobs"] = 0
+            self.sex_record["Blowjobs"] = 0
+            self.sex_record["Cunnilingus"] = 0
+            self.sex_record["Tit Fuck"] = 0
+            self.sex_record["Vaginal Sex"] = 0
+            self.sex_record["Anal Sex"] = 0
+            self.sex_record["Cum Facials"] = 0
+            self.sex_record["Cum in Mouth"] = 0
+            self.sex_record["Cum Covered"] = 0
+            self.sex_record["Vaginal Creampies"] = 0
+            self.sex_record["Anal Creampies"] = 0
+
             ## Clothing things.
             self.wardrobe = copy.copy(wardrobe) #Note: we overwrote default copy behaviour for wardrobes so they do not have any interference issues with eachother.
 
@@ -1875,6 +1888,8 @@ init -2 python:
             #final_image = Flatten(final_image)
 
             return final_image
+
+
 
         def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None): #Draw the person, standing as default if they aren't standing in any other position.
             renpy.scene("Active")
@@ -2449,12 +2464,17 @@ init -2 python:
             self.change_happiness(5*self.get_opinion_score("drinking_cum"))
             self.discover_opinion("drinking cum")
 
+            self.sex_record["Cum in Mouth"] += 1
+
+
         def cum_in_vagina(self):
             mc.listener_system.fire_event("sex_cum_vagina", the_person = self)
             #TODO: Add in vaginal cumshot clothing item once we have rendering support for it
             self.change_slut_temp(5*self.get_opinion_score("creampies"))
             self.change_happiness(5*self.get_opinion_score("creampies"))
             self.discover_opinion("creampies")
+
+            self.sex_record["Vaginal Creampies"] += 1
 
         def cum_in_ass(self):
             mc.listener_system.fire_event("sex_cum_ass", the_person = self)
@@ -2463,37 +2483,7 @@ init -2 python:
             self.change_happiness(5*self.get_opinion_score("creampies"))
             self.discover_opinion("creampies")
 
-        def cum_on_tits(self):
-            if self.outfit.can_add_accessory(tits_cum):
-                the_cumshot = tits_cum.get_copy()
-                if self.outfit.get_upper_visible():
-                    top_layer = self.outfit.get_upper_visible()[0].layer #Get the top most pice of clothing and get it's layer.
-                else:
-                    top_layer = -1
-                the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
-                self.outfit.add_accessory(the_cumshot)
-
-            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
-            self.change_happiness(5*self.get_opinion_score("being covered in cum"))
-            self.discover_opinion("being covered in cum")
-
-
-
-
-        def cum_on_stomach(self):
-            if self.outfit.can_add_accessory(stomach_cum):
-                the_cumshot = stomach_cum.get_copy()
-                if self.outfit.get_upper_visible():
-                    top_layer = self.outfit.get_upper_visible()[0].layer #Get the top most pice of clothing and get it's layer.
-                else:
-                    top_layer = -1
-                the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
-                self.outfit.add_accessory(the_cumshot)
-
-            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
-            self.change_happiness(5*self.get_opinion_score("being covered in cum"))
-            self.discover_opinion("being covered in cum")
-
+            self.sex_record["Anal Creampies"] += 1
 
         def cum_on_face(self):
             #TODO: Add this once we get a render for it
@@ -2510,6 +2500,40 @@ init -2 python:
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
 
+            self.sex_record["Cum Facials"] += 1
+
+        def cum_on_tits(self):
+            if self.outfit.can_add_accessory(tits_cum):
+                the_cumshot = tits_cum.get_copy()
+                if self.outfit.get_upper_visible():
+                    top_layer = self.outfit.get_upper_visible()[0].layer #Get the top most pice of clothing and get it's layer.
+                else:
+                    top_layer = -1
+                the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
+                self.outfit.add_accessory(the_cumshot)
+
+            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
+            self.change_happiness(5*self.get_opinion_score("being covered in cum"))
+            self.discover_opinion("being covered in cum")
+
+            self.sex_record["Cum Covered"] += 1
+
+        def cum_on_stomach(self):
+            if self.outfit.can_add_accessory(stomach_cum):
+                the_cumshot = stomach_cum.get_copy()
+                if self.outfit.get_upper_visible():
+                    top_layer = self.outfit.get_upper_visible()[0].layer #Get the top most pice of clothing and get it's layer.
+                else:
+                    top_layer = -1
+                the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
+                self.outfit.add_accessory(the_cumshot)
+
+            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
+            self.change_happiness(5*self.get_opinion_score("being covered in cum"))
+            self.discover_opinion("being covered in cum")
+
+            self.sex_record["Cum Covered"] += 1
+
         def cum_on_ass(self):
             if self.outfit.can_add_accessory(ass_cum):
                 the_cumshot = ass_cum.get_copy()
@@ -2523,6 +2547,8 @@ init -2 python:
             self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
+
+            self.sex_record["Cum Covered"] += 1
 
         def change_salary(self, amount, add_to_log = True):
             amount = __builtin__.round(amount)
@@ -2592,7 +2618,7 @@ init -2 python:
                     return role
             return None
 
-    class Personality(renpy.store.object): #How the character responds to various actions
+    class Personality(): #How the character responds to various actions
         def __init__(self, personality_type_prefix, default_prefix = None,
             common_likes = None, common_dislikes = None, common_sexy_likes = None, common_sexy_dislikes = None,
             titles_function = None, possessive_titles_function = None, player_titles_function = None):
@@ -3596,7 +3622,8 @@ init -2 python:
         def get_layer(self,body_type,tit_size):
             return self.layer
 
-        def generate_item_displayable(self,body_type, tit_size, position, lighting = None):
+
+        def generate_item_displayable(self, body_type, tit_size, position, lighting = None):
             if not self.is_extension: #We don't draw extension items, because the image is taken care of in the main object.
                 if lighting is None:
                     lighting = [1,1,1]
@@ -3688,6 +3715,7 @@ init -2 python:
             self.opacity_adjustment = opacity_adjustment
             self.whiteness_adjustment = whiteness_adjustment
             self.contrast_adjustment = contrast_adjustment
+
 
         def generate_item_displayable(self, position, face_type, emotion, special_modifiers = None, lighting = None):
             if not self.is_extension:
@@ -3855,7 +3883,8 @@ init -2 python:
                             top_items.append(item_check)
             return (bottom_items,middle_item,top_items)
 
-        def generate_clothing_list(self, body_type, tit_size, position): #Returns a properly ordered list of clothing. If used to draw them they would be displayed correctly.
+        def generate_clothing_list(self, body_type = None, tit_size = None, position = None): #Returns a properly ordered list of clothing. If used to draw them they would be displayed correctly.
+            # I don't believe position is needed for anything here.
             items_to_draw = self.accessories + self.feet + self.lower_body + self.upper_body #Throw all of our items in a list.
             items_to_draw.sort(key= lambda clothing: clothing.tucked, reverse = True)
             items_to_draw.sort(key= lambda clothing: clothing.layer) #First, sort by clothing layer.
@@ -4618,7 +4647,7 @@ init -2 python:
     class Position(renpy.store.object):
         def __init__(self,name,slut_requirement,slut_cap,position_tag,requires_location,requires_clothing,skill_tag,girl_arousal,guy_arousal,connections,intro,scenes,outro,transition_default,
         strip_description, strip_ask_description, orgasm_description,
-        verb = "fuck" , opinion_tags = None):
+        verb = "fuck", verbing = None, opinion_tags = None, record_class = None):
             self.name = name
             self.slut_requirement = slut_requirement #The required slut score of the girl. Obedience will help fill the gap if possible, at a happiness penalty. Value from 0 (almost always possible) to ~100
             self.slut_cap = slut_cap #The maximum sluttiness that this position will have an effect on.
@@ -4639,6 +4668,11 @@ init -2 python:
             self.strip_ask_description = strip_ask_description
             self.orgasm_description = orgasm_description
             self.verb = verb #A verb used to describe the position. "Fuck" is default, and mostly used for sex positions or blowjobs etc. Kiss, Fool around, etc. are also possibilities.
+            if verbing is None: #The verb used as "Go back to [verbing] her.". Added specifically to support things like grope/groping, which have different spellings depending.
+                self.verbing = verb + "ing"
+            else:
+                self.verbing = verbing
+            self.record_class = record_class #A key to Person.sex_record[] that is updated once (and only once!) per sexual encounter if this position is picked.
 
             self.current_modifier = None #We will update this if the posisiion has a special modifier that shoudl be applied, like blowjob.
 
@@ -5676,8 +5710,15 @@ screen person_info_detailed(the_person):
                     $ list_of_relationships = town_relationships.get_relationship_type_list(the_person, visible = True)
                     if list_of_relationships:
                         text "Other relationships:"  style "menu_text_style"
-                        for relationship in list_of_relationships:
-                            text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style" size 12
+                        viewport:
+                            xsize 325
+                            yfill True
+                            scrollbars "vertical"
+                            mousewheel True
+                            vbox:
+                                for relationship in list_of_relationships:
+                                    #TODO: Once we have more relationship stuff going on make this only show when the relationship is known.
+                                    text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style" size 14
 
             frame:
                 background "#1a45a1aa"
@@ -5791,7 +5832,7 @@ screen person_info_detailed(the_person):
             auto "gui/button/choice_%s_background.png"
             focus_mask "gui/button/choice_idle_background.png"
             action Hide("person_info_detailed")
-        textbutton "Return" align [0.5,0.5] style "return_button_style"
+        textbutton "Return" align [0.5,0.5] text_style "return_button_style"
 
 
 screen mc_character_sheet():
@@ -6467,14 +6508,13 @@ screen serum_trade_ui(inventory_1,inventory_2,name_1="Player",name_2="Business")
     add "Science_Menu_Background.png"
     frame:
         background "#888888"
-        xalign 0.3
+        xalign 0.5
         xanchor 0.5
         yalign 0.1
-
+        ysize 800
         vbox:
-            xsize 590
-            ysize 800
             yalign 0.0
+            spacing 20
             text "Trade Serums Between Inventories." style "menu_text_style" size 25 xalign 0.5 xanchor 0.5
             for serum in set(inventory_1.get_serum_type_list()) | set(inventory_2.get_serum_type_list()): #Gets a unique entry for each serum design that shows up in either list. Doesn't duplicate if it's in both.
                 # has a few things. 1) name of serum design. 2) count of first inventory, 3) arrows for transfering, 4) count of second inventory.
@@ -6483,9 +6523,12 @@ screen serum_trade_ui(inventory_1,inventory_2,name_1="Player",name_2="Business")
                     xalign 0.5
                     xanchor 0.5
                     yalign 0.0
+                    yanchor 0.0
                     vbox:
                         xalign 0.5
                         xanchor 0.5
+                        xsize 600
+
                         hbox:
                             textbutton serum.name + ": " style "textbutton_style" text_style "menu_text_style" action NullAction() hovered Show("serum_tooltip",None,serum) unhovered Hide("serum_tooltip") #displays the name of this particular serum
                             null width 40
@@ -7871,7 +7914,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.21.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.22.0  represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8075,7 +8118,7 @@ label normal_start:
     $ mc.business.head_researcher = stephanie
     $ stephanie.special_role = [steph_role, employee_role, head_researcher]
 
-    call examine_room(mc.location) from _call_examine_room
+    #call examine_room(mc.location) from _call_examine_room
     #TODO: movement overlay tutorial thing.
     jump game_loop
 
@@ -8302,6 +8345,10 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
     $ people_list = []
     $ people_list.extend(mc.location.people)
 
+    # python:
+    #     for person in people_list:
+    #         person.predict_person()
+
     #$ actions_list = ["Do Something"]
     $ actions_list = []
     if time_of_day == 4:
@@ -8413,7 +8460,7 @@ label talk_person(the_person):
 
 
     $ change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.")
+        menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.", priority = -5)
     $ small_talk_action = Action("Make small talk. {image=gui/heart/Time_Advance.png}", requirement = small_talk_requirement, effect = "small_talk_person", args=the_person, requirement_args=the_person,
         menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ compliment_action = Action("Compliment her. {image=gui/heart/Time_Advance.png}", requirement = compliment_requirement, effect = "compliment_person", args=the_person, requirement_args=the_person,
@@ -8422,16 +8469,18 @@ label talk_person(the_person):
         menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ date_action = Action("Ask her on a date.", requirement = date_option_requirement, effect = "date_person", args=the_person, requirement_args=the_person,
         menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
-    $ chat_list = [change_titles_action, small_talk_action, compliment_action, flirt_action, date_action]
+    $ make_girlfriend_action = Action("Ask her to be your girlfriend.", requirement = ask_girlfriend_requirement, effect = "ask_be_girlfriend_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Ask her to start an official, steady relationship and be your girlfriend.", priority = 10)
+    $ chat_list = [change_titles_action, small_talk_action, compliment_action, flirt_action, date_action, make_girlfriend_action]
 
 
     #TODO: "Do something specific", change existing sections into actions, store in chat_actions.rpy
     $ wardrobe_change_action = Action("Ask to change her wardrobe.", requirement = wardrobe_change_requirment, effect = "wardrobe_change_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Add and remove outfits from her wardrobe, or ask her to put on a specific outfit.")
+        menu_tooltip = "Add and remove outfits from her wardrobe, or ask her to put on a specific outfit.", priority = -5)
     $ serum_give_action = Action("Try to give her a dose of serum.", requirement = serum_give_requirement, effect = "serum_give_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Demand she take a dose, ask her politely, or just try and slip it into something she'll drink. Failure may result in her trusting you less or being immediately unhappy.")
     $ seduce_action = Action("Try to seduce her.", requirement = seduce_requirement, effect = "seduce_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.")
+        menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.", priority = 5)
     $ specific_action_list = ["Say goodbye.", wardrobe_change_action, serum_give_action, seduce_action]
 
 
@@ -8474,12 +8523,14 @@ label talk_person(the_person):
     return
 
 
-label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False):
+label fuck_person(the_person, private=True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False, record_log = None, affair_ask_after = True):
+    if record_log is None:
+        $ record_log = []
+
     #Use a situational modifier to change sluttiness before having sex.
     $ use_love = True
     if the_person.has_family_taboo(): #Check if any of the roles the person has belong to the list of family roles.
         $ the_person.add_situational_slut("taboo_sex", -20, "We're related, we shouldn't be doing this.")
-        $ use_love = False
 
     $ the_person.discover_opinion("cheating on men")
     if the_person.relationship == "Girlfriend":
@@ -8507,7 +8558,20 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
 
     if use_love or the_person.love < 0:
         if the_person.love > 0:
-            $ the_person.add_situational_slut("love_modifier", the_person.love, "I love you and want you close to me!")
+            if girlfriend_role in the_person.special_role: #Girlfriend and affairs gain full Love
+                $ the_person.add_situational_slut("love_modifier", the_person.love, "You're my special someone, I love you!")
+            elif affair_role in the_person.special_role:
+                $ the_person.add_situational_slut("love_modifier", the_person.love, "We may keep it a secret, but I love you!")
+            elif the_person.has_family_taboo(): #Family now only gains 1/4 (but this now helps offset the taboo penalty)
+                if mother_role in the_person.special_role:
+                    $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "Even if it's wrong, a mother should do everything she can for her son!")
+                elif sister_role in the_person.special_role:
+                    $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "I love my brother, and even if it's wrong I want to be close to him!")
+                else: #Generic family one
+                    $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "I love you, even though we're related!")
+            else: #If you aren't in a relationship with them only half their Love applies.
+                $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/2), "I really like you, let's see where this goes!")
+
         else:
             $ the_person.add_situational_slut("love_modifier", the_person.love, "I hate you, get away from me!")
 
@@ -8543,7 +8607,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
             if renpy.random.randint(0,the_person.arousal) + 50 < the_person.obedience:
                 $ the_person.call_dialogue("sex_take_control")
                 $ the_person.change_obedience(-3)
-                call fuck_person(the_person, private, start_position, start_object, skip_intro = True, girl_in_charge = True) from _call_fuck_person_18
+                call fuck_person(the_person, private, start_position, start_object, skip_intro = True, girl_in_charge = True, record_log = record_log, affair_ask_after = False) from _call_fuck_person_18
 
             elif the_person.arousal > 80:
                 # They're close to their orgasm and beg you to help them finish.
@@ -8551,7 +8615,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
                 menu:
                     "Keep going.":
                         $ the_person.change_obedience(2)
-                        call fuck_person(the_person, private, start_position, start_object, skip_intro = True, hide_leave = True) from _call_fuck_person_19 #Redo all of this but don't let them leave. Start position and start_object will normally be None
+                        call fuck_person(the_person, private, start_position, start_object, skip_intro = True, hide_leave = True, record_log = record_log, affair_ask_after = False) from _call_fuck_person_19 #Redo all of this but don't let them leave. Start position and start_object will normally be None
 
                     "Leave.":
                         $ the_person.call_dialogue("sex_end_early")
@@ -8590,8 +8654,7 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
         $ start_round = 0
         if skip_intro:
             $ start_round = 1
-        call sex_description(the_person, position_choice, object_choice, start_round, private=private, girl_in_charge = girl_in_charge, position_locked = position_locked) from _call_sex_description
-
+        call sex_description(the_person, position_choice, object_choice, start_round, private=private, girl_in_charge = girl_in_charge, position_locked = position_locked, record_log = record_log) from _call_sex_description
 
     $ the_person.clear_situational_slut("love_modifier")
     $ the_person.clear_situational_slut("cheating")
@@ -8599,11 +8662,32 @@ label fuck_person(the_person, private=True, start_position = None, start_object 
     $ the_person.clear_situational_slut("sex_object")
     $ the_person.clear_situational_obedience("sex_object")
     $ mc.condom = False
+
+    if affair_ask_after and private and ask_girlfriend_requirement(the_person) is True and not the_person.relationship == "Single":
+        if the_person.love >= 60 and the_person.sluttiness >= 30 - (the_person.get_opinion_score("cheating on men") * 5) and the_person.arousal >= 100: #If she loves you enoguh, is moderately slutty, and you made her cum
+            #She will have an affair with you
+            $ so_title = SO_relationship_to_title(the_person.relationship)
+            the_person.char "[the_person.mc_title], you make me feel ways my [so_title] never does. I feel alive! Excited! Aroused..."
+            the_person.char "We both have feeling for each other, right? Maybe we can see each other some more. My [so_title] doesn't need to know. He'll never find out."
+            $ the_person.discover_opinion("cheating on men")
+            menu:
+                "Have an affair with [the_person.title].":
+                    mc.name "I want that too, anything that will let me be close to you."
+                    $ the_person.draw_person(emotion = "happy")
+                    $ the_person.special_role.append(affair_role)
+                    $ the_person.change_slut_temp(2)
+                    "She smiles and hugs you."
+
+                "Refuse.":
+                    mc.name "That's not what I'm here for [the_person.title]. This was fun, but I don't want it to be anything but completely casual."
+                    $ the_person.change_love(-1)
+
     return
 
-label sex_description(the_person, the_position, the_object, round, private = True, girl_in_charge = False, position_locked = False):
+label sex_description(the_person, the_position, the_object, round, private = True, girl_in_charge = False, position_locked = False, record_log = None):
     #NOTE: the private variable decides if you are in private or not relative to the location you are in. If True other people in the room do not get a chance to interact.
-
+    if record_log is None: #Note: this is normally passed in by fuck_person, but is established here as well to stop it from crashing out.
+        $ record_log = []
     ##Describe the current round
 
     ## FIRST ROUND EXCLUSIVE STUFF ##
@@ -8613,7 +8697,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
             if the_position.skill_tag == "Vaginal": #She may demand you put on a condom.
                 call condom_ask(the_person) from _call_condom_ask
                 if not _return:
-                    call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_20
+                    call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge, record_log = record_log, affair_ask_after = False) from _call_fuck_person_20
                     return
 
             $ the_position.call_intro(the_person, mc.location, the_object, round)
@@ -8626,7 +8710,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                 if the_position.skill_tag == "Vaginal":
                     call condom_ask(the_person) from _call_condom_ask_1
                     if not _return:
-                        call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge) from _call_fuck_person_21
+                        call fuck_person(the_person, private = private, girl_in_charge = girl_in_charge, record_log = record_log, affair_ask_after = False) from _call_fuck_person_21
                         return
                 $ the_position.redraw_scene(the_person)
                 $ change_amount = the_position.slut_requirement - the_person.sluttiness
@@ -8642,12 +8726,16 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                     return #Don't do anything else, just return.
                 else:
                     $ the_person.call_dialogue("sex_gentle_reject")
-                    call fuck_person(the_person) from _call_fuck_person_1 #Gives you a chance to fuck them some other way, but this path is ended by the return right after you finish having sex like that.
+                    call fuck_person(the_person, record_log = record_log, affair_ask_after = False) from _call_fuck_person_1 #Gives you a chance to fuck them some other way, but this path is ended by the return right after you finish having sex like that.
                     return
 
     ## ONCE WE HAVE DONE FIRST ROUND CHECKS WE GO HERE ##
     $ the_position.redraw_scene(the_person)
     $ the_position.call_scene(the_person, mc.location, the_object, round) #HERE IS WHERE THE SCENE SCRIPT IS CALLED
+    if the_position.record_class is not None and the_position.record_class not in record_log: #Logs that this type of scene happened, but only up to once per encounter.
+        $ the_person.sex_record[the_position.record_class] += 1
+        $ record_log.append(the_position.record_class)
+
     $ mc.listener_system.fire_event("sex_event", the_person = the_person, the_position = the_position, the_object = the_object)
 
     $ change_amount = the_position.girl_arousal + (the_position.girl_arousal * mc.sex_skills[the_position.skill_tag] * 0.1) #How much we increase her arousal.
@@ -8702,7 +8790,34 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
     ## IF OTHER PEOPLE ARE AROUND SEE WHAT THEY THINK ##
     if not private:
         $ other_people = [person for person in mc.location.people if person is not the_person] #Build a list with all the _other_ people in the room other than the one we're fucking.
+        python: #Checks to see if anyone watching is in a realtionship, and if they are sets up an event where they confront you later about you actively cheating in front of the,
+            for a_person in other_people:
+                if girlfriend_role in a_person.special_role and the_position.slut_requirement > (a_person.sluttiness/2): #You can get away with stuff half as slutty as she would do
+                    caught_cheating_action = Action("Caught cheating action", caught_cheating_requirement, "caught_cheating_label", args = the_person)
+                    not_already_in = True
+                    for an_action in a_person.on_room_enter_event_list:
+                        if an_action == caught_cheating_action:
+                            not_already_in = False
+
+                    if not_already_in:
+                        a_person.on_room_enter_event_list.append(caught_cheating_action)
+                        renpy.say("",a_person.title + " gasps when she sees what you and " + the_person.title + " are doing.")
+
+
+                elif affair_role in a_person.special_role and the_position.slut_requirement > ((a_person.sluttiness*2)/3): #You can get away with stuff two thirds as slutty as what she would do.
+                    caught_affair_cheating_action = Action("Caught affair cheating action", caught_affair_cheating_requirement, "caught_affair_cheating_label", args = the_person)
+                    not_already_in = True
+                    for an_action in a_person.on_room_enter_event_list:
+                        if an_action == caught_affair_cheating_action:
+                            not_already_in = False
+
+                    if not_already_in:
+                        a_person.on_room_enter_event_list.append(caught_affair_cheating_action)
+                        renpy.say("",a_person.title + " gasps when she sees what you and " + the_person.title + " are doing.")
+
         $ watcher = get_random_from_list(other_people) #Get a random person from the people in the area, if there are any.
+
+
         if watcher:
             # NOTE: the dialogue here often draws the person talking with various emotions or positions, so we redraw the scene after we call them.
             $ watcher.call_dialogue("sex_watch", the_sex_person = the_person, the_position = the_position) #Get the watcher's reaction to the people having sex. This might include dialogue calls from other personalities as well!
@@ -8760,14 +8875,14 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
         # TODO: have you finishing bump her arousal up so you might both cum at once.
 
     elif position_choice == "Strip":
-        call strip_menu(the_person) from _call_strip_menu
+        call strip_menu(the_person, the_position.verbing) from _call_strip_menu
         $ the_position.redraw_scene(the_person)
         call sex_description(the_person, the_position, the_object, round+1, private = private) from _call_sex_description_1
 
     elif position_choice == "Pull Out": #Also how you leave if you don't want to fuck till you cum.
         $ the_position.current_modifier = None
         $ mc.condom = False
-        call fuck_person(the_person) from _call_fuck_person_2
+        call fuck_person(the_person, record_log = record_log, affair_ask_after = False) from _call_fuck_person_2
 
     # elif position_choice == "Girl Leave":
     #     $ the_position.current_modifier = None
@@ -8801,7 +8916,7 @@ label sex_description(the_person, the_position, the_object, round, private = Tru
                         $ position_choice.call_transition(the_position, the_person, mc.location, the_object, round)
                         $ position_choice = the_position
 
-        call sex_description(the_person, position_choice, the_object, round+1, private = private, girl_in_charge = girl_in_charge, position_locked = position_locked) from _call_sex_description_2
+        call sex_description(the_person, position_choice, the_object, round+1, private = private, girl_in_charge = girl_in_charge, position_locked = position_locked, record_log = record_log) from _call_sex_description_2
 
     return
 
@@ -8862,13 +8977,13 @@ label condom_ask(the_person):
 
     return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
 
-label strip_menu(the_person):
+label strip_menu(the_person, the_verbing = "fucking"):
     python:
         second_tuple_list = []
         for clothing in the_person.outfit.get_unanchored():
             if not clothing.is_extension: #Extension clothing is placeholder for multi-slot items like dresses.
                 second_tuple_list.append(["Take off " + clothing.name + ".",clothing])
-        second_tuple_list.append(["Go back to fucking her.","Finish"])
+        second_tuple_list.append(["Go back to " + the_verbing + " her.","Finish"])
         strip_choice = renpy.display_menu(second_tuple_list,True,"Choice")
 
     if not strip_choice == "Finish":
@@ -8877,11 +8992,11 @@ label strip_menu(the_person):
         if the_person.judge_outfit(test_outfit):
             $ the_person.draw_animated_removal(strip_choice)
             $ renpy.say("", "You pull her " + strip_choice.name + " off, dropping it to the ground.")
-            $ renpy.call("strip_menu", the_person) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
+            $ renpy.call("strip_menu", the_person, the_verbing) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
         else:
             $ renpy.say("", "You start to pull off " + the_person.title + "'s " + strip_choice.name + " when she grabs your hand and stops you.")
             $ the_person.call_dialogue("strip_reject")
-            $ renpy.call("strip_menu", the_person) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
+            $ renpy.call("strip_menu", the_person, the_verbing) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
     return
 
 label examine_room(the_room):
@@ -9528,7 +9643,8 @@ label advance_time:
                 $ renpy.full_restart()
             else:
                 $ days_remaining = mc.business.max_bankrupt_days-mc.business.bankrupt_days
-                $ renpy.say("","Warning! Your company is losing money and unable to pay salaries or purchase necessary supplies! You have [days_remaining] days to restore yourself to positive funds or you will be foreclosed upon!")
+                $ renpy.say("","Warning! Your company is losing money and unable to pay salaries or purchase necessary supplies!")
+                $ renpy.say("","You have [days_remaining] days to restore yourself to positive funds or the bank will reclaim the business!")
         else:
             $ mc.business.bankrupt_days = 0
 
@@ -9580,6 +9696,8 @@ label advance_time:
     $ mc.location.show_background()
     if mandatory_advance_time: #If a crisis has told us to advance time after it we do so.
         call advance_time from _call_advance_time_28
+
+    $ people_to_process = [] #Clears the memory used here.
     return
 
 
@@ -9673,7 +9791,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
 
 
         ##Connects all Locations##
-        downtown = Room("downtown","Downtown",[],standard_downtown_backgrounds[:],[],[],[downtown_search_action],True,[6,4], standard_outdoor_lighting)
+        downtown = Room("downtown","Downtown",[],standard_downtown_backgrounds[:],[],[],[downtown_search_action],True,[6,4], lighting_conditions = standard_outdoor_lighting)
 
         ##A mall, for buying things##
         mall = Room("mall","Mall",[],standard_mall_backgrounds[:],[],[],[],True,[8,2], lighting_conditions = standard_indoor_lighting)

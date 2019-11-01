@@ -252,7 +252,6 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
     #[["Title",["Item",Return] ]]
 
 
-    $ predicted_images = []
     hbox:
         spacing 10
         xalign 0.518
@@ -318,11 +317,7 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                     $ person_preview_args = {}
 
                                 $ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
-                                # if person_displayable not in predicted_images:
-                                #     $ renpy.start_predict(person_displayable)
-                                #     $ predicted_images.append(person_displayable)
                                 $ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="Active",what=person_displayable,tag=item.name))
-                                #$ hovered_list.append(Function(item.draw_person, **person_preview_args))
                                 $ unhovered_list.append(Function(renpy.scene, "Active"))
 
                             if isinstance(item,Action):
@@ -366,7 +361,7 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                     text_align (0.5,0.5)
                                     hovered hovered_list
                                     unhovered unhovered_list
-                                    action [Function(unpredict_group_of_displayables,predicted_images), Return(return_value)]
+                                    action Return(return_value)
                                     tooltip the_tooltip
                                     sensitive is_sensitive
 
@@ -376,17 +371,11 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                     yalign 0.99
                     ysize 585
 
-init -1 python:
-    def unpredict_group_of_displayables(the_list):
-        for item in the_list:
-            renpy.stop_predict(item)
-
 screen person_choice(people, draw_hearts = False, person_prefix = None, person_suffix = None, show_person_preview = True, person_preview_args = None):
     style_prefix "choice"
     #We want to have 2 vboxes, seperated so that they are staggered as they go down.
     #if len(items) > 10: #TODO: see if we can have the viewport all the time but only show it as scrollable when there are enough items in it, to simplify this section.
 
-    $ predicted_images = []
     viewport:
         scrollbars "vertical"
         mousewheel True
@@ -413,10 +402,8 @@ screen person_choice(people, draw_hearts = False, person_prefix = None, person_s
                         $ person_preview_args = {}
 
                     $ person_displayable = i.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
-                    #$ renpy.start_predict(person_displayable)
-                    #$ predicted_images.append(person_displayable)
                     textbutton her_title:
-                        action [Function(unpredict_group_of_displayables,predicted_images), Return(i)]
+                        action Return(i)
                         if show_person_preview:
                             hovered Function(renpy.show, i.name, at_list=[character_right, scale_person(i.height)],layer="Active",what=person_displayable,tag=i.name)
                             unhovered Function(renpy.scene,"Active")
@@ -444,10 +431,8 @@ screen person_choice(people, draw_hearts = False, person_prefix = None, person_s
                         $ person_preview_args = {}
 
                     $ person_displayable = j.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
-                    # $ renpy.start_predict(person_displayable)
-                    # $ predicted_images.append(person_displayable)
                     textbutton her_title:
-                        action [Function(unpredict_group_of_displayables,predicted_images), Return(j)]
+                        action Return(i)
                         if show_person_preview:
                             hovered Function(renpy.show, j.name, at_list=[character_right, scale_person(j.height)],layer="Active",what=person_displayable,tag=j.name)
                             unhovered Function(renpy.scene,"Active")

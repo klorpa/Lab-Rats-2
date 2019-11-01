@@ -89,6 +89,15 @@ init -1:
         bowl_hair = Clothing("Bowl Hair", 1, True, True, "Coco_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
         hair_styles.append(bowl_hair)
 
+        braided_bun = Clothing("Braided Hair", 1, True, True, "Braided_Bun", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
+        hair_styles.append(braided_bun)
+
+        curly_bun = Clothing("Curly Bun Hair", 1, True, True, "Curly_Bun", False, False, 0, whiteness_adjustment = 0.1, contrast_adjustment = 1.15)
+        hair_styles.append(curly_bun)
+
+        windswept_hair = Clothing("Messy Short Hair", 1, True, True, "Wind_Swept_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
+        hair_styles.append(windswept_hair)
+
 
 
         bow_hair = Clothing("Bow Hair", 1, True, True, "Bow_Hair", False, False, 0) #NO IMAGES
@@ -108,6 +117,9 @@ init -1:
 
         panties = Clothing("Panties", 1, True, True, "Panties", False, True, 0, tucked = True, whiteness_adjustment = 0.2, contrast_adjustment = 1.4)
         panties_list.append(panties)
+
+        boy_shorts = Clothing("Boy Panties", 1, True, True, "Boy_Shorts", False, True, 0, tucked = True)
+        panties_list.append(boy_shorts)
 
         cute_panties = Clothing("Cute Panties", 1, True, True, "Cute_Panties", False, True, 0, tucked = True)
         panties_list.append(cute_panties)
@@ -176,6 +188,9 @@ init -1:
         jean_hotpants = Clothing("Jean Hotpants", 2, True, True, "Jean_Hotpants", False, False, 4, whiteness_adjustment = 0.1)
         pants_list.append(jean_hotpants)
 
+        daisy_dukes = Clothing("Daisy Dukes", 2, True, True, "Daisy_Dukes", False, False, 6)
+        pants_list.append(daisy_dukes)
+
         jeans = Clothing("Jeans", 2, True, True, "Jeans", False, False, 0)
         pants_list.append(jeans)
 
@@ -218,11 +233,11 @@ init -1:
         dress_list.append(two_part_dress)
 
         thin_dress_bottom = Clothing("thin dress", 2, False, False, "Thin_Dress", False, False, 0, is_extension = True)
-        thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.2, contrast_adjustment = 1.1)
+        thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.3, contrast_adjustment = 1.15)
         dress_list.append(thin_dress)
 
         summer_dress_bottom = Clothing("summer dress", 2, False, False, "Summer_Dress", False, False, 0, is_extension = True)
-        summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = -0.1)
+        summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1)
         dress_list.append(summer_dress)
 
         evening_dress_bottom = Clothing("evening dress", 2, False, False, "Evening_Dress", False, False, 0, is_extension = True)
@@ -252,6 +267,10 @@ init -1:
         towel_bottom = Clothing("Towel", 1, True, True, "Towel", False, False, 0, is_extension = True)
         towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom)
         # dress_list.append(towel) #TEMPORARY FOR TESTING
+
+        apron_bottom = Clothing("Apron", 3, False, False, "Apron", False, False, 0, is_extension = True)
+        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"})
+        dress_list.append(apron)
 
         ##Shirts
         shirts_list = []
@@ -291,6 +310,9 @@ init -1:
 
         short_sleeve_blouse = Clothing("Short Sleeve Blouse", 2, True, True, "Short_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.3)
         shirts_list.append(short_sleeve_blouse)
+
+        wrapped_blouse = Clothing("Wrapped Blouse", 2, True, True, "Wrapped_Blouse", True, False, 0, whiteness_adjustment = 0.25, contrast_adjustment = 1.05)
+        shirts_list.append(wrapped_blouse)
 
         tube_top = Clothing("Tube Top", 2, True, True, "Tube_Top", True, False, 4, supported_patterns = {"Cougar Print":"Pattern_1"})
         shirts_list.append(tube_top)
@@ -536,500 +558,8 @@ init -1:
         default_outfit.add_upper(long_tshirt.get_copy(),colour_black)
         default_outfit.add_feet(sandles.get_copy(),colour_black)
 
-
-        # These are the old outfit declarations before we moved over to an xml based system.
-        #
-        # nude_1 = Outfit("Nude 1") #A default nude look, so slutty girls can look slutty.
-        #
-        # conservative_1 = Outfit("Conservative 1")
-        # conservative_1.add_lower(panties.get_copy(),colour_white)
-        # conservative_1.add_lower(leggings.get_copy(),colour_black)
-        # conservative_1.add_upper(bra.get_copy(),colour_pink)
-        # conservative_1.add_upper(long_sweater.get_copy(),colour_sky_blue)
-        # conservative_1.add_feet(high_socks.get_copy(),colour_white)
-        # conservative_1.add_feet(sneakers.get_copy(),colour_white)
-        #
-        # conservative_2 = Outfit("Conservative 2")
-        # conservative_2.add_lower(panties.get_copy(),colour_white)
-        # conservative_2.add_upper(bra.get_copy(),colour_pink)
-        # conservative_2.add_dress(sweater_dress.get_copy(),colour_red)
-        # conservative_2.add_feet(high_socks.get_copy(),colour_white)
-        # conservative_2.add_feet(sneakers.get_copy(),colour_white)
-        #
-        # conservative_3 = Outfit("Conservative 3")
-        # conservative_3.add_lower(panties.get_copy(),colour_red)
-        # conservative_3.add_upper(bra.get_copy(),colour_red)
-        # conservative_3.add_lower(capris.get_copy(),colour_black)
-        # conservative_3.add_upper(lace_sweater.get_copy(),colour_black)
-        # conservative_3.add_feet(sandles.get_copy(),colour_red)
-        #
-        # conservative_4 = Outfit("Conservative 4")
-        # conservative_4.add_lower(panties.get_copy(),colour_red)
-        # conservative_4.add_upper(bra.get_copy(),colour_pink)
-        # conservative_4.add_lower(capris.get_copy(),colour_sky_blue)
-        # conservative_4.add_upper(long_tshirt.get_copy(),colour_black)
-        # conservative_4.add_feet(sandles.get_copy(),colour_white)
-        #
-        # conservative_5 = Outfit("Conservative 5")
-        # conservative_5.add_lower(thin_panties.get_copy(),colour_pink)
-        # conservative_5.add_upper(thin_bra.get_copy(),colour_pink)
-        # conservative_5.add_lower(jeans.get_copy(),colour_sky_blue)
-        # conservative_5.add_upper(tshirt.get_copy(),colour_white)
-        # conservative_5.add_feet(sneakers.get_copy(),colour_white)
-        #
-        # conservative_6 = Outfit("Conservative 6")
-        # conservative_6.add_lower(thin_panties.get_copy(),colour_pink)
-        # conservative_6.add_upper(thin_bra.get_copy(),colour_pink)
-        # conservative_6.add_lower(lace_skirt.get_copy(),colour_black)
-        # conservative_6.add_upper(tie_sweater.get_copy(),colour_green)
-        # conservative_6.add_feet(high_socks.get_copy(),colour_green)
-        # conservative_6.add_feet(sneakers.get_copy(),colour_white)
-        #
-        # conservative_7 = Outfit("Conservative 7")
-        # conservative_7.add_lower(plain_panties.get_copy(),colour_dark_blue)
-        # conservative_7.add_upper(thin_bra.get_copy(),colour_dark_blue)
-        # conservative_7.add_feet(sandle_heels.get_copy(),colour_black)
-        # conservative_7.add_lower(belted_skirt.get_copy(),colour_sky_blue)
-        # conservative_7.add_upper(long_sweater.get_copy(),colour_black)
-        #
-        # business_1 = Outfit("Business 1")
-        # business_1.add_lower(plain_panties.get_copy(),colour_sky_blue)
-        # business_1.add_upper(bra.get_copy(),colour_sky_blue)
-        # business_1.add_upper(dress_shirt.get_copy(),colour_black)
-        # business_1.add_feet(heels.get_copy(),colour_black)
-        # business_1.add_lower(pencil_skirt.get_copy(),colour_black)
-        # business_1.add_accessory(blush.get_copy(), [0.6,0.1,0.1,0.8])
-        # business_1.add_accessory(lipstick.get_copy(), [0.6,0.1,0.1,0.8])
-        # business_1.add_accessory(light_eye_shadow.get_copy(), [0.1,0.1,0.1,0.8])
-        #
-        # business_2 = Outfit("Business 2")
-        # business_2.add_lower(plain_panties.get_copy(),colour_sky_blue)
-        # business_2.add_upper(bra.get_copy(),colour_sky_blue)
-        # business_2.add_upper(dress_shirt.get_copy(),colour_black)
-        # business_2.add_feet(heels.get_copy(),colour_black)
-        # business_2.add_lower(suitpants.get_copy(),colour_black)
-        # business_2.add_accessory(blush.get_copy(), [0.6,0.1,0.1,0.8])
-        # business_2.add_accessory(lipstick.get_copy(), [0.6,0.1,0.1,0.8])
-        # business_2.add_accessory(light_eye_shadow.get_copy(), [0.1,0.1,0.1,0.8])
-        #
-        # business_3 = Outfit("Business 3")
-        # business_3.add_feet(high_socks.get_copy(),colour_white)
-        # business_3.add_lower(plain_panties.get_copy(),colour_red)
-        # business_3.add_upper(bra.get_copy(),colour_red)
-        # business_3.add_upper(dress_shirt.get_copy(),colour_red)
-        # business_3.add_feet(sneakers.get_copy(),colour_black)
-        # business_3.add_lower(jeans.get_copy(),colour_black)
-        # business_3.add_accessory(blush.get_copy(), [0.6,0.1,0.1,0.8])
-        # business_3.add_accessory(lipstick.get_copy(), [0.6,0.1,0.1,0.8])
-        # business_3.add_accessory(light_eye_shadow.get_copy(), [0.1,0.1,0.1,0.8])
-        #
-        #
-        # risque_1 = Outfit("Risque 1")
-        # risque_1.add_lower(panties.get_copy(),colour_black)
-        # risque_1.add_lower(mini_skirt.get_copy(),colour_red)
-        # risque_1.add_upper(bra.get_copy(),colour_black)
-        # risque_1.add_upper(tanktop.get_copy(),colour_black)
-        # risque_1.add_feet(sandles.get_copy(),colour_black)
-        #
-        # risque_2 = Outfit("Risque 2")
-        # risque_2.add_lower(panties.get_copy(),colour_black)
-        # risque_2.add_upper(corset.get_copy(),colour_black)
-        # risque_2.add_feet(heels.get_copy(),colour_black)
-        # risque_2.add_dress(thin_dress.get_copy(),colour_black)
-        #
-        # risque_3 = Outfit("Risque 3")
-        # risque_3.add_lower(thin_panties.get_copy(),colour_black)
-        # risque_3.add_upper(thin_bra.get_copy(),colour_black)
-        # risque_3.add_feet(sandle_heels.get_copy(),colour_white)
-        # risque_3.add_lower(lace_skirt.get_copy(),colour_black)
-        # risque_3.add_upper(lace_crop_top.get_copy(),colour_green)
-        #
-        # risque_4 = Outfit("Risque 4")
-        # risque_4.add_lower(plain_panties.get_copy(),colour_pink)
-        # risque_4.add_upper(thin_bra.get_copy(),colour_pink)
-        # risque_4.add_feet(sandles.get_copy(),colour_black)
-        # risque_4.add_lower(capris.get_copy(),colour_black)
-        # risque_4.add_upper(camisole.get_copy(),colour_red)
-        #
-        # risque_5 = Outfit("Risque 5")
-        # risque_5.add_lower(thong.get_copy(), colour_black)
-        # risque_5.add_upper(lace_bra.get_copy(), colour_black)
-        # risque_5.add_feet(sneakers.get_copy(), [0.24,0.24,0.24,1.0])
-        # risque_5.add_lower(leggings.get_copy(), [0.79, 0.79, 0.79, 0.8])
-        # risque_5.add_upper(tanktop.get_copy(), [0.61, 0.79, 0.79, 0.8])
-        #
-        # risque_6 = Outfit("Risque 6")
-        # risque_6.add_lower(thong.get_copy(), colour_black)
-        # risque_6.add_accessory(lipstick.get_copy(), colour_black)
-        # risque_6.add_accessory(heavy_eye_shadow.get_copy(), colour_black)
-        # risque_6.add_accessory(blush.get_copy(), [0.76, 0.376, 0.368, 0.8])
-        # risque_6.add_feet(garter_with_fishnets.get_copy(), colour_black)
-        # risque_6.add_accessory(bead_bracelet.get_copy(), colour_white)
-        # risque_6.add_accessory(spiked_bracelet.get_copy(), colour_white)
-        # risque_6.add_accessory(copper_ring_set.get_copy(), colour_white)
-        # risque_6.add_feet(boot_heels.get_copy(), colour_white)
-        # risque_6.add_lower(jean_hotpants.get_copy(), colour_black)
-        # risque_6.add_upper(tube_top.get_copy(), colour_black)
-        # risque_6.add_accessory(spiked_choker.get_copy(), colour_black)
-        # risque_6.add_upper(vest.get_copy(), colour_black)
-        #
-        # slutty_1 = Outfit("Slutty 1")
-        # slutty_1.add_upper(bra.get_copy(),colour_red)
-        # slutty_1.add_lower(panties.get_copy(),colour_red)
-        # slutty_1.add_feet(heels.get_copy(),colour_red)
-        #
-        #
-        # ##Underwear Sets##
-        # no_underwear_1 = Outfit("No Underwear")
-        #
-        # underwear_1 = Outfit("Underwear 1")
-        # underwear_1.add_upper(bra.get_copy(),colour_red)
-        # underwear_1.add_lower(panties.get_copy(),colour_red)
-        #
-        # underwear_2 = Outfit("Underwear 2")
-        # underwear_2.add_upper(bra.get_copy(),colour_black)
-        # underwear_2.add_lower(panties.get_copy(),colour_black)
-        #
-        # simple_underwear_1 = Outfit("Simple Underwear 1")
-        # simple_underwear_1.add_lower(plain_panties.get_copy(), colour_black)
-        # simple_underwear_1.add_upper(bra.get_copy(),colour_black)
-        #
-        # simple_underwear_2 = Outfit("Simple Underwear 2")
-        # simple_underwear_2.add_lower(panties.get_copy(),colour_pink)
-        # simple_underwear_2.add_upper(bra.get_copy(),colour_pink)
-        # simple_underwear_2.add_feet(high_socks.get_copy(),colour_white)
-        #
-        # simple_underwear_3 = Outfit("Simple Underwear 3")
-        # simple_underwear_3.add_lower(panties.get_copy(),colour_black)
-        # simple_underwear_3.add_upper(bra.get_copy(),colour_red)
-        #
-        # simple_underwear_4 = Outfit("Simple Underwear 4")
-        # simple_underwear_4.add_lower(thin_panties.get_copy(),colour_black)
-        # simple_underwear_4.add_upper(bra.get_copy(),colour_pink)
-        # simple_underwear_4.add_feet(high_socks.get_copy(),colour_sky_blue)
-        #
-        # sexy_underwear_1 = Outfit("Sexy Underwear 1")
-        # sexy_underwear_1.add_lower(panties.get_copy(),colour_sky_blue)
-        # sexy_underwear_1.add_upper(bra.get_copy(),colour_sky_blue)
-        # sexy_underwear_1.add_feet(thigh_highs.get_copy(),colour_sky_blue)
-        #
-        # sexy_underwear_2 = Outfit("Sexy Underwear 2")
-        # sexy_underwear_2.add_lower(thong.get_copy(), colour_black)
-        # sexy_underwear_2.add_upper(thin_bra.get_copy(), colour_black)
-        # sexy_underwear_2.add_feet(high_socks.get_copy(),colour_black)
-        #
-        # white_underwear_1 = Outfit("White Underwear 1")
-        # white_underwear_1.add_lower(lace_panties.get_copy(),colour_white)
-        # white_underwear_1.add_upper(lace_bra.get_copy(),colour_white)
-        # white_underwear_1.add_feet(thigh_highs.get_copy(),colour_white)
-        #
-        # white_underwear_2 = Outfit("White Underwear 2")
-        # white_underwear_2.add_lower(plain_panties.get_copy(),colour_white)
-        # white_underwear_2.add_upper(lace_bra.get_copy(),colour_white)
-        # white_underwear_2.add_feet(high_socks.get_copy(),colour_white)
-        #
-        # white_underwear_3 = Outfit("White Underwear 3")
-        # white_underwear_3.add_lower(lace_panties.get_copy(),colour_white)
-        # white_underwear_3.add_upper(lace_bra.get_copy(),colour_white)
-        #
-        # white_underwear_4 = Outfit("White Underwear 4")
-        # white_underwear_4.add_lower(thong.get_copy(),colour_white)
-        #
-        # white_underwear_5 = Outfit("White Underwear 5")
-        # white_underwear_5.add_lower(thong.get_copy(), colour_white)
-        # white_underwear_5.add_feet(garter_with_fishnets.get_copy(), colour_white)
-        # white_underwear_5.add_upper(bra.get_copy(), colour_white)
-        #
-        # thong_underwear_1 = Outfit("Thong Underwear 1")
-        # thong_underwear_1.add_lower(thong.get_copy(),colour_black)
-        #
-        # pink_underwear_1 = Outfit("Pink Underwear 1")
-        # pink_underwear_1.add_lower(plain_panties.get_copy(),colour_pink)
-        # pink_underwear_1.add_upper(thin_bra.get_copy(),colour_pink)
-        # pink_underwear_1.add_feet(high_socks.get_copy(),colour_white)
-        #
-        # pink_underwear_2 = Outfit("Pink Underwear 2")
-        # pink_underwear_2.add_lower(plain_panties.get_copy(),colour_pink)
-        # pink_underwear_2.add_feet(fishnets.get_copy(),colour_pink)
-        #
-        # blue_underwear_1 = Outfit("Blue Underwear 1")
-        # blue_underwear_1.add_lower(panties.get_copy(),colour_dark_blue)
-        # blue_underwear_1.add_upper(bra.get_copy(), colour_dark_blue)
-        # blue_underwear_1.add_feet(high_socks.get_copy(), colour_black)
-        #
-        # blue_underwear_2 = Outfit("Blue Underwear 2")
-        # blue_underwear_2.add_lower(plain_panties.get_copy(),colour_dark_blue)
-        # blue_underwear_2.add_upper(lace_bra.get_copy(),colour_dark_blue)
-        # blue_underwear_2.add_feet(high_socks.get_copy(),colour_sky_blue)
-        #
-        # mismatched_underwear_1 = Outfit("Mismatched Underwear 1")
-        # mismatched_underwear_1.add_lower(thin_panties.get_copy(),colour_green)
-        # mismatched_underwear_1.add_upper(bra.get_copy(), colour_black)
-        #
-        # mismatched_underwear_2 = Outfit("Mismatched Underwear 2")
-        # mismatched_underwear_2.add_lower(lace_panties.get_copy(),colour_red)
-        # mismatched_underwear_2.add_upper(bra.get_copy(),colour_black)
-        #
-        # mismatched_underwear_3 = Outfit("Mismatched Underwear 3")
-        # mismatched_underwear_3.add_lower(panties.get_copy(),colour_white)
-        # mismatched_underwear_3.add_upper(bra.get_copy(),colour_pink)
-        # mismatched_underwear_3.add_feet(high_socks.get_copy(),colour_red)
-        #
-        # lingerie_underwear_1 = Outfit("Lingerie Underwear 1")
-        # lingerie_underwear_1.add_lower(thong.get_copy(),colour_white)
-        # lingerie_underwear_1.add_upper(corset.get_copy(),colour_white)
-        # lingerie_underwear_1.add_feet(fishnets.get_copy(),colour_white)
-        #
-        # lingerie_underwear_2 = Outfit("Lingerie Underwear 2")
-        # lingerie_underwear_2.add_lower(thong.get_copy(),colour_red)
-        # lingerie_underwear_2.add_upper(corset.get_copy(),colour_red)
-        # lingerie_underwear_2.add_feet(fishnets.get_copy(),colour_red)
-        #
-        # lingerie_underwear_3 = Outfit("Lingerie Underwear 3")
-        # lingerie_underwear_3.add_lower(thong.get_copy(),colour_black)
-        # lingerie_underwear_3.add_upper(corset.get_copy(),colour_black)
-        # lingerie_underwear_3.add_feet(fishnets.get_copy(),colour_black)
-        #
-        # lingerie_underwear_4 = Outfit("Lingerie Underwear 4")
-        # lingerie_underwear_4.add_lower(thong.get_copy(),colour_black)
-        # lingerie_underwear_4.add_feet(fishnets.get_copy(),colour_black)
-        #
-        # lingerie_underwear_5 = Outfit("Lingerie Underwear 5")
-        # lingerie_underwear_5.add_upper(corset.get_copy(),colour_black)
-        #
-        # lingerie_underwear_6 = Outfit("Lingerie Underwear 6")
-        # lingerie_underwear_6.add_lower(thin_panties.get_copy(),colour_black)
-        #
-        # lingerie_underwear_7 = Outfit("Lingerie Underwear 7")
-        # lingerie_underwear_7.add_dress(lacy_one_piece_underwear.get_copy(), [1.0,0.25,0.26,1.0])
-        # lingerie_underwear_7.add_feet(garter_with_fishnets.get_copy(), [0.75,0.22,0.22,1.0])
-        #
-        # lingerie_underwear_8 = Outfit("Lingerie Underwear 8")
-        # lingerie_underwear_8.add_lower(thong.get_copy(),colour_black)
-        # lingerie_underwear_8.add_feet(garter_with_fishnets.get_copy(), [0.22,0.22,0.22, 1.0])
-        # lingerie_underwear_8.add_upper(thin_bra.get_copy(), colour_black)
-        #
-        # lingerie_underwear_9 = Outfit("Lingerie Underwear 9")
-        # lingerie_underwear_9.add_lower(thin_panties.get_copy(), [0.0,0.315,0.60, 1.0])
-        # lingerie_underwear_9.add_feet(high_socks.get_copy(), colour_white)
-        # lingerie_underwear_9.add_upper(corset.get_copy(), [0.0, 0.315, 0.60, 1.0])
-        #
-        # lingerie_underwear_10 = Outfit("Lingerie Underwear 10")
-        # lingerie_underwear_10.add_dress(lingerie_one_piece.get_copy(), colour_white)
-        # lingerie_underwear_10.add_feet(thigh_highs.get_copy(), colour_white)
-        #
-        # yellow_underwear_1 = Outfit("Yellow Underwear 1")
-        # yellow_underwear_1.add_lower(thong.get_copy(),colour_yellow)
-        # yellow_underwear_1.add_upper(thin_bra.get_copy(),colour_yellow)
-        # yellow_underwear_1.add_feet(high_socks.get_copy(),colour_black)
-        #
-        # green_underwear_1 = Outfit("Green Underwear 1")
-        # green_underwear_1.add_lower(panties.get_copy(),colour_green)
-        # green_underwear_1.add_upper(bra.get_copy(),colour_green)
-        # green_underwear_1.add_feet(high_socks.get_copy(),colour_green)
-        #
-        # black_underwear_1 = Outfit("Black Underwear 1")
-        # black_underwear_1.add_lower(panties.get_copy(),colour_black)
-        # black_underwear_1.add_upper(bra.get_copy(),colour_black)
-        # black_underwear_1.add_feet(thigh_highs.get_copy(),colour_black)
-        #
-        # red_underwear_1 = Outfit("Red Underwear 1")
-        # red_underwear_1.add_lower(plain_panties.get_copy(),colour_red)
-        # red_underwear_1.add_upper(lace_bra.get_copy(),colour_red)
-        # red_underwear_1.add_feet(high_socks.get_copy(),colour_red)
-        #
-        #
-        #
-        # ##Overwear Sets##
-        # no_overwear_1 = Outfit("No Overwear")
-        #
-        # overwear_1 = Outfit("Overwear 1")
-        # overwear_1.add_upper(lace_sweater.get_copy(),colour_black)
-        # overwear_1.add_lower(capris.get_copy(),colour_black)
-        # overwear_1.add_feet(sandles.get_copy(),colour_red)
-        #
-        # overwear_2 = Outfit("Overwear 2")
-        # overwear_2.add_upper(long_tshirt.get_copy(),colour_black)
-        # overwear_2.add_lower(capris.get_copy(),colour_sky_blue)
-        # overwear_2.add_feet(sandles.get_copy(),colour_white)
-        #
-        # rocker_1 = Outfit("Rocker 1")
-        # rocker_1.add_upper(belted_top.get_copy(),colour_black)
-        # rocker_1.add_lower(jean_hotpants.get_copy(),colour_black)
-        # rocker_1.add_feet(boot_heels.get_copy(), colour_black)
-        # rocker_1.add_accessory(spiked_bracelet.get_copy(), colour_white)
-        # rocker_1.add_accessory(gold_chain_necklace.get_copy(), colour_white)
-        # rocker_1.add_accessory(garnet_ring.get_copy(), colour_white)
-        #
-        # rocker_2 = Outfit("Rocker 2")
-        # rocker_2.add_accessory(spiked_bracelet.get_copy(), colour_white)
-        # rocker_2.add_accessory(garnet_ring.get_copy(), colour_white)
-        # rocker_2.add_feet(boot_heels.get_copy(), colour_black)
-        # rocker_2.add_lower(jean_hotpants.get_copy(), colour_black)
-        # rocker_2.add_upper(belted_top.get_copy(), colour_black)
-        # rocker_2.add_accessory(spiked_choker.get_copy(), colour_white)
-        #
-        # business_overwear_1 = Outfit("Business Overwear 1")
-        # business_overwear_1.add_upper(dress_shirt.get_copy(),colour_sky_blue)
-        # business_overwear_1.add_accessory(gold_earings.get_copy(),colour_white)
-        # business_overwear_1.add_feet(heels.get_copy(),colour_black)
-        # business_overwear_1.add_lower(pencil_skirt.get_copy(),colour_black)
-        #
-        # business_overwear_2 = Outfit("Business Overwear 2")
-        # business_overwear_2.add_upper(dress_shirt.get_copy(),colour_white)
-        # business_overwear_2.add_accessory(gold_earings.get_copy(),colour_white)
-        # business_overwear_2.add_feet(heels.get_copy(),colour_black)
-        # business_overwear_2.add_lower(pencil_skirt.get_copy(),colour_red)
-        #
-        # casual_overwear_1 = Outfit("Casual Overwear 1")
-        # casual_overwear_1.add_feet(sandle_heels.get_copy(), colour_green)
-        # casual_overwear_1.add_lower(long_skirt.get_copy(), colour_black)
-        # casual_overwear_1.add_upper(long_sweater.get_copy(), colour_green)
-        # casual_overwear_1.add_accessory(necklace_set.get_copy(), colour_white)
-        #
-        # casual_overwear_2 = Outfit("Casual Overwear 2")
-        # casual_overwear_2.add_accessory(bead_bracelet.get_copy(), colour_white)
-        # casual_overwear_2.add_feet(sandle_heels.get_copy(), colour_white)
-        # casual_overwear_2.add_lower(long_skirt.get_copy(), colour_pink)
-        # casual_overwear_2.add_upper(lace_crop_top.get_copy(), colour_pink)
-        #
-        # casual_overwear_3 = Outfit("Casual Overwear 3")
-        # casual_overwear_3.add_accessory(chandelier_earings.get_copy(), colour_white)
-        # casual_overwear_3.add_feet(sandle_heels.get_copy(), colour_white)
-        # casual_overwear_3.add_dress(sweater_dress.get_copy(), colour_dark_blue)
-        #
-        # casual_overwear_4 = Outfit("Casual Overwear 4")
-        # casual_overwear_4.add_accessory(chandelier_earings.get_copy(), colour_white)
-        # casual_overwear_4.add_feet(heels.get_copy(), colour_red)
-        # casual_overwear_4.add_lower(belted_skirt.get_copy(), colour_black)
-        # casual_overwear_4.add_upper(tshirt.get_copy(), colour_black)
-        #
-        # casual_overwear_5 = Outfit("Casual Overwear 5")
-        # casual_overwear_5.add_accessory(copper_bracelet.get_copy(), colour_white)
-        # casual_overwear_5.add_accessory(bead_bracelet.get_copy(), colour_black)
-        # casual_overwear_5.add_feet(sandle_heels.get_copy(), colour_black)
-        # casual_overwear_5.add_lower(skirt.get_copy(), colour_pink)
-        # casual_overwear_5.add_upper(tshirt.get_copy(), colour_sky_blue)
-        # casual_overwear_5.add_accessory(gold_chain_necklace.get_copy(), colour_white)
-        #
-        # casual_overwear_6 = Outfit("Casual Overwear 6")
-        # casual_overwear_6.add_accessory(copper_bracelet.get_copy(), colour_white)
-        # casual_overwear_6.add_accessory(garnet_ring.get_copy(), colour_white)
-        # casual_overwear_6.add_accessory(copper_ring_set.get_copy(), colour_white)
-        # casual_overwear_6.add_feet(sandle_heels.get_copy(), colour_black)
-        # casual_overwear_6.add_lower(leggings.get_copy(), colour_black)
-        # casual_overwear_6.add_upper(tanktop.get_copy(), colour_white)
-        # casual_overwear_6.add_accessory(gold_chain_necklace.get_copy(), colour_white)
-        #
-        # casual_overwear_7 = Outfit("Casual Overwear 7")
-        # casual_overwear_7.add_accessory(copper_bracelet.get_copy(), colour_white)
-        # casual_overwear_7.add_accessory(garnet_ring.get_copy(), colour_white)
-        # casual_overwear_7.add_accessory(copper_ring_set.get_copy(), colour_white)
-        # casual_overwear_7.add_feet(sandle_heels.get_copy(), colour_black)
-        # casual_overwear_7.add_lower(jeans.get_copy(), colour_sky_blue)
-        # casual_overwear_7.add_upper(camisole.get_copy(), colour_black)
-        # casual_overwear_7.add_accessory(gold_chain_necklace.get_copy(), colour_white)
-        #
-        # casual_overwear_8 = Outfit("Casual Overwear 8")
-        # casual_overwear_8.add_accessory(copper_bracelet.get_copy(), colour_white)
-        # casual_overwear_8.add_accessory(diamond_ring.get_copy(), colour_white)
-        # casual_overwear_8.add_feet(shoes.get_copy(), colour_black)
-        # casual_overwear_8.add_lower(capris.get_copy(), colour_black)
-        # casual_overwear_8.add_upper(tie_sweater.get_copy(), colour_red)
-        # casual_overwear_8.add_accessory(gold_chain_necklace.get_copy(), colour_white)
-        #
-        # casual_overwear_9 = Outfit("Casual Overwear 9")
-        # casual_overwear_9.add_feet(sandles.get_copy(), colour_yellow)
-        # casual_overwear_9.add_lower(belted_skirt.get_copy(), colour_yellow)
-        # casual_overwear_9.add_upper(long_tshirt.get_copy(), colour_green)
-        #
-        # casual_overwear_10 = Outfit("Casual Overwear 10")
-        # casual_overwear_10.add_feet(high_heels.get_copy(), colour_dark_blue)
-        # casual_overwear_10.add_lower(jeans.get_copy(), colour_sky_blue)
-        # casual_overwear_10.add_upper(sweater.get_copy(), colour_white)
-        #
-        # casual_overwear_11 = Outfit("Casual Overwear 11")
-        # casual_overwear_11.add_accessory(diamond_ring.get_copy(), colour_white)
-        # casual_overwear_11.add_feet(heels.get_copy(), colour_black)
-        # casual_overwear_11.add_lower(capris.get_copy(), colour_black)
-        # casual_overwear_11.add_upper(lace_sweater.get_copy(), colour_sky_blue)
-        # casual_overwear_11.add_accessory(wool_scarf.get_copy(), colour_black)
-        #
-        # casual_overwear_12 = Outfit("Casual Overwear 12")
-        # casual_overwear_12.add_feet(sandles.get_copy(), colour_white)
-        # casual_overwear_12.add_lower(skirt.get_copy(), colour_white)
-        # casual_overwear_12.add_upper(long_sweater.get_copy(), colour_yellow)
-        #
-        # sexy_overwear_1 = Outfit("Sexy Overwear 1")
-        # sexy_overwear_1.add_feet(high_heels.get_copy(), colour_red)
-        # sexy_overwear_1.add_lower(mini_skirt.get_copy(), colour_black)
-        # sexy_overwear_1.add_upper(lace_crop_top.get_copy(), colour_red)
-        #
-        # sexy_overwear_2 = Outfit("Sexy Overwear 2")
-        # sexy_overwear_2.add_accessory(lace_choker.get_copy(), colour_black)
-        # sexy_overwear_2.add_feet(high_heels.get_copy(), colour_black)
-        # sexy_overwear_2.add_lower(booty_shorts.get_copy(), colour_black)
-        # sexy_overwear_2.add_upper(tanktop.get_copy(), colour_black)
-        #
-        # sexy_overwear_3 = Outfit("Sexy Overwear 3")
-        # sexy_overwear_3.add_accessory(lace_choker.get_copy(), colour_black)
-        # sexy_overwear_3.add_accessory(copper_ring_set.get_copy(), colour_white)
-        # sexy_overwear_3.add_accessory(gold_earings.get_copy(), colour_white)
-        # sexy_overwear_3.add_feet(heels.get_copy(), colour_red)
-        # sexy_overwear_3.add_dress(two_part_dress.get_copy(), colour_red)
-        #
-        # sexy_overwear_4 = Outfit("Sexy Overwear 4")
-        # sexy_overwear_4.add_accessory(copper_ring_set.get_copy(), colour_white)
-        # sexy_overwear_4.add_accessory(gold_earings.get_copy(), colour_black)
-        # sexy_overwear_4.add_feet(sandles.get_copy(), colour_black)
-        # sexy_overwear_4.add_lower(mini_skirt.get_copy(), colour_sky_blue)
-        # sexy_overwear_4.add_upper(belted_top.get_copy(), colour_black)
-        # sexy_overwear_4.add_accessory(spiked_choker.get_copy(), colour_white)
-        #
-        # sexy_overwear_5 = Outfit("Sexy Overwear 5")
-        # sexy_overwear_5.add_upper(dress_shirt.get_copy(), colour_black)
-        # sexy_overwear_5.add_accessory(lace_choker.get_copy(), colour_black)
-        # sexy_overwear_5.add_accessory(diamond_ring.get_copy(), colour_white)
-        # sexy_overwear_5.add_feet(heels.get_copy(), colour_black)
-        # sexy_overwear_5.add_lower(long_skirt.get_copy(), colour_black)
-        #
-        # sexy_overwear_6 = Outfit("Sexy Overwear 6")
-        # sexy_overwear_6.add_feet(heels.get_copy(), colour_black)
-        # sexy_overwear_6.add_dress(thin_dress.get_copy(), colour_black)
-        # sexy_overwear_6.add_accessory(necklace_set.get_copy(), colour_white)
-        #
-        # slutty_overwear_1 = Outfit("Slutty Overwear 1")
-        # slutty_overwear_1.add_feet(sandles.get_copy(), colour_black)
-        # slutty_overwear_1.add_lower(jean_hotpants.get_copy(), colour_black)
-        #
-        # slutty_overwear_2 = Outfit("Slutty Overwear 2")
-        # slutty_overwear_2.add_lower(booty_shorts.get_copy(), colour_dark_blue)
-        # slutty_overwear_2.add_feet(sandles.get_copy(), colour_black)
-        #
-        # slutty_overwear_3 = Outfit("Slutty Overwear 3")
-        # slutty_overwear_3.add_upper(camisole.get_copy(), colour_red)
-        # slutty_overwear_3.add_feet(sandles.get_copy(), colour_black)
-        #
-        # slutty_overwear_4 = Outfit("Slutty Overwear 4")
-        # slutty_overwear_4.add_feet(shoes.get_copy(), colour_black)
-        # slutty_overwear_4.add_upper(long_tshirt.get_copy(), colour_red)
-        #
-        # slutty_overwear_5 = Outfit("Slutty Overwear 5")
-        # slutty_overwear_5.add_accessory(spiked_choker.get_copy(), colour_white)
-        # slutty_overwear_5.add_feet(heels.get_copy(), colour_black)
-        #
-        # slutty_overwear_6 = Outfit("Slutty Overwear 6")
-        # slutty_overwear_6.add_accessory(lace_choker.get_copy(), colour_black)
-        # slutty_overwear_6.add_feet(heels.get_copy(), colour_black)
-
-
-
-        ##WARDROBES##
-
-        # default_wardrobe = Wardrobe("Default Wardrobe", [nude_1, conservative_1, conservative_2, conservative_3, conservative_4, conservative_5, conservative_6, conservative_7, business_1, business_2 , business_3, risque_1, risque_2, risque_3, risque_4, risque_5, risque_6, slutty_1],
-        #     [no_underwear_1, underwear_1,underwear_2, simple_underwear_1, simple_underwear_2, simple_underwear_3, simple_underwear_4, sexy_underwear_1, sexy_underwear_2, white_underwear_1, white_underwear_2, white_underwear_3, white_underwear_4, white_underwear_5, thong_underwear_1, pink_underwear_1, pink_underwear_2, blue_underwear_1, blue_underwear_2, mismatched_underwear_1, mismatched_underwear_2, mismatched_underwear_3, lingerie_underwear_1, lingerie_underwear_2, lingerie_underwear_3, lingerie_underwear_4, lingerie_underwear_5, lingerie_underwear_6, lingerie_underwear_7, lingerie_underwear_8, lingerie_underwear_9, lingerie_underwear_10, yellow_underwear_1, green_underwear_1, black_underwear_1, red_underwear_1],
-        #     [no_overwear_1, overwear_1,overwear_2, rocker_1, rocker_2, casual_overwear_1, casual_overwear_2, casual_overwear_3, casual_overwear_4, casual_overwear_5, casual_overwear_6, casual_overwear_7, casual_overwear_8, casual_overwear_9, casual_overwear_10, casual_overwear_11, casual_overwear_12, sexy_overwear_1, sexy_overwear_2, sexy_overwear_3, sexy_overwear_4, sexy_overwear_5, sexy_overwear_6, slutty_overwear_1, slutty_overwear_2, slutty_overwear_3, slutty_overwear_4, slutty_overwear_5, slutty_overwear_6 ])
-
         default_wardrobe = wardrobe_from_xml("Master_Default_Wardrobe")
 
         lingerie_wardrobe = wardrobe_from_xml("Lingerie_Wardrobe")
+
+        insta_wardrobe = wardrobe_from_xml("Insta_Wardrobe")

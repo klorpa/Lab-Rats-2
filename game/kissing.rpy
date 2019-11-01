@@ -1,6 +1,6 @@
 ﻿init:
     python:
-        kissing = Position("Kissing",10,40,"kissing","Stand","None","Foreplay",14,14,[],
+        kissing = Position("Kissing",10,40,"kissing","Stand","None","Foreplay",8,3,[],
         "intro_kissing",
         ["scene_kissing_1","scene_kissing_2"],
         "outro_kissing",
