@@ -4071,6 +4071,8 @@ init -2 python:
                 #Just remove the very top layer
                 if self.get_upper_unanchored():
                     to_remove = self.get_upper_unanchored()[0]
+                    if to_remove.is_extension:
+                        return None #Extensions can't be removed directly.
                 else:
                     return None
             else:
@@ -4086,6 +4088,8 @@ init -2 python:
                 #Just remove the very top layer
                 if self.get_lower_unanchored():
                     to_remove = self.get_lower_unanchored()[0]
+                    if to_remove.is_extension:
+                        return None #Extensions can't be removed directly.
                 else:
                     return None
             else:
@@ -4101,6 +4105,8 @@ init -2 python:
                 #Just remove the very top layer
                 if self.get_foot_unanchored():
                     to_remove = self.get_foot_unanchored()[0]
+                    if to_remove.is_extension:
+                        return None #Extensions can't be removed directly.
                 else:
                     return None
             else:
@@ -4424,7 +4430,7 @@ init -2 python:
             else:
                 if guarantee_output: # If an output is guaranteed we always return an Outfit object (even if it is empty). Otherwise we return None to indicate failure to find something.
                     if sluttiness_limit < 120: #Sets an effective recusion limit.
-                        return self.get_random_appropriate_underwear(sluttiness_limit+5, slittiness_min-5, guarantee_output)
+                        return self.get_random_appropriate_underwear(sluttiness_limit+5, sluttiness_min-5, guarantee_output)
                     else:
                         return Outfit("Nothing")
 
@@ -4443,7 +4449,7 @@ init -2 python:
             else:
                 if guarantee_output:
                     if sluttiness_limit < 120:
-                        return self.get_random_appropriate_outfit(sluttiness_limit+5, slittiness_min-5, guarantee_output)
+                        return self.get_random_appropriate_outfit(sluttiness_limit+5, sluttiness_min-5, guarantee_output)
                     else:
                         return Outfit("Nothing")
                 return None
@@ -5535,7 +5541,7 @@ screen employee_overview(white_list = None, black_list = None, person_select = F
                 auto "gui/button/choice_%s_background.png"
                 focus_mask "gui/button/choice_idle_background.png"
                 action Hide("employee_overview")
-            textbutton "Return" align [0.5,0.5] style "return_button_style"
+            textbutton "Return" align [0.5,0.5] style "return_button_style" text_style "return_button_style"
 
 
 screen person_info_ui(the_person): #Used to display stats for a person while you're talking to them.
@@ -5703,9 +5709,17 @@ screen person_info_detailed(the_person):
                     text "Obedience: [the_person.obedience] - " + get_obedience_plaintext(the_person.obedience) style "menu_text_style"
 
                     text "Age: [the_person.age]" style "menu_text_style"
-                    text "Relationship:  [the_person.relationship]" style "menu_text_style"
+                    text "Cup Size: [the_person.tits]" style "menu_text_style"
+                    if girlfriend_role in the_person.special_role:
+                        text "Relationship: Girlfriend" style "menu_text_style"
+                    else:
+                        text "Relationship: [the_person.relationship]" style "menu_text_style"
+
                     if the_person.relationship != "Single":
                         text "Significant Other: [the_person.SO_name]" style "menu_text_style"
+                    elif girlfriend_role in the_person.special_role:
+                        text "Significant Other: [mc.name]" style "menu_text_style"
+
                     text "Kids: [the_person.kids]" style "menu_text_style"
                     $ list_of_relationships = town_relationships.get_relationship_type_list(the_person, visible = True)
                     if list_of_relationships:
@@ -5751,6 +5765,18 @@ screen person_info_detailed(the_person):
                     text "Oral Skill: " + str(the_person.sex_skills["Oral"]) style "menu_text_style"
                     text "Vaginal Skill: " + str(the_person.sex_skills["Vaginal"]) style "menu_text_style"
                     text "Anal: " + str(the_person.sex_skills["Anal"]) style "menu_text_style"
+                    text "Sex Record:"  style "menu_text_style" size 22
+                    viewport:
+                        xsize 325
+                        yfill True
+                        scrollbars "vertical"
+                        mousewheel True
+                        vbox:
+                            for the_record in the_person.sex_record:
+                                text the_record + ": " + str(the_person.sex_record.get(the_record, 0)) style "menu_text_style" size 14
+                            # for relationship in list_of_relationships:
+                            #     #TODO: Once we have more relationship stuff going on make this only show when the relationship is known.
+                            #     text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style" size 14
 
             frame:
                 background "#1a45a1aa"
@@ -6206,7 +6232,7 @@ screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_name
             auto "gui/button/choice_%s_background.png"
             focus_mask "gui/button/choice_idle_background.png"
             action Return()
-        textbutton "Return" align [0.5,0.5] style "return_button_style"
+        textbutton "Return" align [0.5,0.5] style "return_button_style" text_style "return_button_style"
 
 
 
@@ -6258,7 +6284,7 @@ screen serum_design_ui(starting_serum,current_traits):
                                     if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
                                         $ side_effect_chance_string = "Always Guaranteed"
                                     else:
-                                        $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                        $ side_effect_chance_string = str(side_effect_chance) + "%"
                                     $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
                                     textbutton trait.name + trait_tags + trait_side_effects action [Hide("trait_tooltip"),Function(starting_serum.add_trait,trait)] sensitive trait_allowed style "textbutton_style" text_style "textbutton_text_style" hovered Show("trait_tooltip",None,trait,0.315,0.57) unhovered Hide("trait_tooltip") xsize 520
 
@@ -6282,7 +6308,7 @@ screen serum_design_ui(starting_serum,current_traits):
                                     if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
                                         $ side_effect_chance_string = "Always Guaranteed"
                                     else:
-                                        $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                        $ side_effect_chance_string = str(side_effect_chance) + "%"
                                     $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
                                     textbutton trait.name + trait_tags + trait_side_effects action [Hide("trait_tooltip"),Function(starting_serum.add_trait,trait)] sensitive trait_allowed style "textbutton_style" text_style "textbutton_text_style" hovered Show("trait_tooltip",None,trait,0.315,0.57) unhovered Hide("trait_tooltip") xsize 530
 
@@ -6311,7 +6337,7 @@ screen serum_design_ui(starting_serum,current_traits):
                                 if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
                                     $ side_effect_chance_string = "Always Guaranteed"
                                 else:
-                                    $ side_effect_chance_string = "%" + str(side_effect_chance)
+                                    $ side_effect_chance_string =  str(side_effect_chance) + "%"
                                 $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
                                 textbutton trait.name + trait_tags + trait_side_effects action[Hide("trait_tooltip"), Function(starting_serum.remove_trait,trait)] style "textbutton_style" text_style "textbutton_text_style" hovered Show("trait_tooltip",None,trait,0.635,0.57) unhovered Hide("trait_tooltip") xsize 550
 
@@ -6580,6 +6606,7 @@ screen serum_select_ui: #How you select serum and trait research
                     mousewheel True
                     vbox:
                         xsize 320
+                        spacing 0
                         text "Research New Traits" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
                         for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
                             if not trait.researched and trait.has_required():
@@ -6602,7 +6629,7 @@ screen serum_select_ui: #How you select serum and trait research
                                     text_style "textbutton_text_style"
                                     hovered Show("trait_tooltip",None,trait)
                                     unhovered Hide("trait_tooltip")
-                                    xsize 320
+                                    xsize 300
 
                 viewport:
                     xsize 320
@@ -6630,8 +6657,8 @@ screen serum_select_ui: #How you select serum and trait research
                                 if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
                                     $ side_effect_chance_string = "Always Guaranteed"
                                 else:
-                                    $ side_effect_chance_string = "%" + str(side_effect_chance)
-                                $ trait_title = trait.name + " " + research_needed_string + trait_tags + "\nMastery Level: " + str(trait.mastery_level) + "\nSide Effect Chance: " + str(side_effect_chance)
+                                    $ side_effect_chance_string = str(side_effect_chance) + "%"
+                                $ trait_title = trait.name + " " + research_needed_string + trait_tags + "\nMastery Level: " + str(trait.mastery_level) + "\nSide Effect Chance: " + side_effect_chance_string
                                 textbutton trait_title:
                                     text_xalign 0.5
                                     text_text_align 0.5
@@ -6640,7 +6667,7 @@ screen serum_select_ui: #How you select serum and trait research
                                     text_style "textbutton_text_style"
                                     hovered Show("trait_tooltip",None,trait)
                                     unhovered Hide("trait_tooltip")
-                                    xsize 320
+                                    xsize 300
 
 
                 viewport:
@@ -6661,7 +6688,7 @@ screen serum_select_ui: #How you select serum and trait research
                                     text_style "textbutton_text_style"
                                     hovered Show("serum_tooltip",None,serum)
                                     unhovered Hide("serum_tooltip")
-                                    xsize 320
+                                    xsize 300
 
             textbutton "Do not change research." action Return("None") style "textbutton_style" text_style "textbutton_text_style" yalign 0.995 xanchor 0.5 xalign 0.5
 
@@ -7914,7 +7941,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.22.0  represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.22.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":

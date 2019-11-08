@@ -1229,7 +1229,7 @@ label home_fuck_crisis_label():
     $ meets_sluttiness_list = []
     python:
         for person in mc.business.get_employee_list():
-            if person.sluttiness >= 15 and (person.relationship == "Single" or person.get_opinion_score("cheating on men") > 0):
+            if person.sluttiness >= 15 and (person.relationship == "Single" or person.get_opinion_score("cheating on men") > 0) and not girlfriend_role in person.special_role:
                 meets_sluttiness_list.append(person)
     $ the_person = get_random_from_list(meets_sluttiness_list)
     if the_person is None:
@@ -1247,33 +1247,39 @@ label home_fuck_crisis_label():
     "[the_person.possessive_title] takes a step towards you, running a hand down your chest. You guide her outside so she won't wake up your mother or sister."
     the_person.char "Oh [the_person.mc_title], I just had the worst night and I need you to help me!"
     "You can smell alcohol on her breath."
-    the_person.char "I was out with some friends, and I got talking with this guy..."
-    if the_person.relationship != "Single":
+    if affair_role in the_person.special_role:
         $ SO_title = SO_relationship_to_title(the_person.relationship)
-        mc.name "Wait, don't you have a [SO_title]?"
-        the_person.char "So? He doesn't need to know about everything I do. So there I was with this guy..."
-    the_person.char "We were getting along so well, so I went home with him. We get to his place and make out in his car for a while..."
-    "You stay silent, listening to [the_person.title]'s rambling story."
-    $ the_person.draw_person(emotion = "angry")
-    the_person.char "Then he tells me, suprise, he's married and his wife is home."
-    if the_person.get_opinion_score("cheating on men") < 0:
-        the_person.char "I don't want to be a home wrecker, so I got out of there as fast as I could. I'm here because I'm still a little horny, and you're the first guy I thought of."
-    elif the_person.get_opinion_score("cheating on men") > 0:
-        $ the_person.discover_opinion("cheating on men")
-        the_person.char "That just got me more turned on, but before I get some his wife called. He got spooked and called it off."
-        the_person.char "I took a cab here because I'm still horny and you're the first guy I thought of."
-    elif the_person.sluttiness > 50:
-        the_person.char "Well I wasn't going to let that stop me, so I say we should fuck in his car."
-        the_person.char "We're just getting warmed up when his wife calls, then he gets spooked and says that it's a bad idea..."
-        the_person.char "So I took a cab here, because I'm still horny and I want {i}someone{/i} to fuck me tonight."
+        the_person.char "I was out for dinner my [so_title] and I started thinking about you."
+        the_person.char "When we finished he wanted to go home and fuck, but all I could think about was your cock."
+        the_person.char "I lied and told him I had plans with some of my other friends and came over here."
     else:
-        the_person.char "He wanted to have sex in his car, but I'm not that easy. I told him I knew someone with a bed who would love to have me..."
-        the_person.char "So I got a taxi and came here, because you're the first guy I thought of."
+        the_person.char "I was out with some friends, and I got talking with this guy..."
+        if the_person.relationship != "Single":
+            $ SO_title = SO_relationship_to_title(the_person.relationship)
+            mc.name "Wait, don't you have a [SO_title]?"
+            the_person.char "So? He doesn't need to know about everything I do. So there I was with this guy..."
+        the_person.char "We were getting along so well, so I went home with him. We get to his place and make out in his car for a while..."
+        "You stay silent, listening to [the_person.title]'s rambling story."
+        $ the_person.draw_person(emotion = "angry")
+        the_person.char "Then he tells me, suprise, he's married and his wife is home."
+        if the_person.get_opinion_score("cheating on men") < 0:
+            the_person.char "I don't want to be a home wrecker, so I got out of there as fast as I could. I'm here because I'm still a little horny, and you're the first guy I thought of."
+        elif the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.discover_opinion("cheating on men")
+            the_person.char "That just got me more turned on, but before I get some his wife called. He got spooked and called it off."
+            the_person.char "I took a cab here because I'm still horny and you're the first guy I thought of."
+        elif the_person.sluttiness > 50:
+            the_person.char "Well I wasn't going to let that stop me, so I say we should fuck in his car."
+            the_person.char "We're just getting warmed up when his wife calls, then he gets spooked and says that it's a bad idea..."
+            the_person.char "So I took a cab here, because I'm still horny and I want {i}someone{/i} to fuck me tonight."
+        else:
+            the_person.char "He wanted to have sex in his car, but I'm not that easy. I told him I knew someone with a bed who would love to have me..."
+            the_person.char "So I got a taxi and came here, because you're the first guy I thought of."
 
     "[the_person.possessive_title] takes a not very subtle look at your crotch."
     $ the_person.draw_person(emotion = "happy")
 
-    the_person.char "Can you help me? I need you to make me cum so fucking badly right now..."
+    the_person.char "Can you help me? I need to cum so badly right now..."
     "She places her hands on your hips and steps close."
     menu:
         "Help her cum. (tooltip)She would love to climax right now, but seems like she would be very disappointed if you can't get here there." if mc.current_stamina > 0:
@@ -2761,11 +2767,11 @@ label horny_at_work_crisis_label():
             "You're at your desk, trying hard to focus. Unfortunately, [the_person.title]'s tits are on prominent display, bouncing pleasently every time she takes a step."
             "The more you try and ignore them the hornier you get, and it's starting to get in the way of your work."
         else:
-            "You're at your desk, trying hard to focus. Unfortunately, [the_person.title]'s tits are on display, pleasantly perky."
+            "You're at your desk, trying hard to focus. Unfortunately, [the_person.title]'s tits are on display and pleasantly perky."
             "The more you try and ignore them the hornier you get, and it's starting to get in the way of your work."
 
     else:
-        "You're at your desk, trying hard to focus. Unfortunately your libedo is getting the better of you, and you're getting horny."
+        "You're at your desk, trying hard to focus. Unfortunately your libido  is getting the better of you, and you're getting horny."
         "The more you try and ignore your growing erection the more distracting it becomes, and it's starting to get in the way of your work."
 
 
@@ -2933,7 +2939,8 @@ label horny_at_work_crisis_label():
 
         "Sneak away to the bathroom and jerk off. (tooltip)A few minutes in private should fix this right up." if mc.location.people: #If there are people around here's an option to jerk off. There might
             $ renpy.scene("Active")
-            "You're going to need to get this taken care of if you want to get any work done. You get up from your desk and head for the washrooms, attempting to hide your erection from your staff as you go."
+            "You're going to need to get this taken care of if you want to get any work done."
+            "You get up from your desk and head for the washrooms, attempting to hide your erection from your staff as you go."
 
             $ potential_follower = []
             python:
@@ -3118,14 +3125,14 @@ label horny_at_work_crisis_label():
                             else:
                                 "You grab [the_person.possessive_title] by her hips and lay her down in front of you, spreading her legs around you."
 
-                            $ the_item = the_person.outfit.get_lower_top_layer() #Start by stripping off her bottom.
+                            $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True) #Start by stripping off her bottom.
                             while (the_item is not None and not the_person.outfit.vagina_available()):
                                 $ the_person.draw_animated_removal(the_item)
                                 if the_person.outfit.vagina_available():
                                     "You pull off her [the_item.name] and reveal her pussy, ready for you to use."
                                 else:
                                     "You pull off her [the_item.name], getting closer to revealing her pussy for you to use."
-                                $ the_item = the_person.outfit.get_lower_top_layer()
+                                $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
 
                             $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove= True) #If that fails we need to strip off her top, because she might have a dress style thing on blocking it.
                             while (the_item is not None and not the_person.outfit.vagina_available()):
@@ -3145,7 +3152,7 @@ label horny_at_work_crisis_label():
                                 else:
                                     "You pull back a little and line the tip of your dick up with [the_person.title]'s cunt."
                                     "With one smooth thrust you push yourself inside of her. She arches her head back and moans as you bottom out inside of her."
-                                    call fuck_person(the_person, private = False, start_position = missionary, start_object = desk) from _call_fuck_person_32
+                                    call fuck_person(the_person, private = False, start_position = missionary, start_object = desk, skip_intro = True) from _call_fuck_person_32
                                 $ the_person.reset_arousal()
                                 $ the_person.review_outfit()
 
@@ -4526,8 +4533,8 @@ init 1 python:
     def so_relationship_improve_requirement():
         for place in list_of_places:
             for a_person in place.people:
-                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
-                    if not affair_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                if (a_person.love > 10 or employee_role in a_person.special_role) and not a_person.title is None and not a_person.relationship == "Married":
+                    if not affair_role in a_person.special_role and not girlfriend_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
                     # You have at least one person you know who is in a relationship. People you're having an affair never have it get better.
                     # Your also family never forms relationships, because we do that through direct story stuff.
                         return True
@@ -4536,7 +4543,7 @@ init 1 python:
     def so_relationship_worsen_requirement():
         for place in list_of_places:
             for a_person in place.people:
-                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Single":
+                if (a_person.love > 10 or employee_role in a_person.special_role) and not a_person.title is None and not a_person.relationship == "Single":
                     if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
                     # We only change thse relationships in events. If we can find anyone who meets the requirements the event can proceed.
                         return True
@@ -4554,7 +4561,7 @@ label so_relationship_improve_label():
         for place in list_of_places:
             for a_person in place.people:
                 if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
-                    if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                    if not affair_role in a_person.special_role and not girlfriend_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
                         potential_people.append(a_person)
 
     $ the_person = get_random_from_list(potential_people)

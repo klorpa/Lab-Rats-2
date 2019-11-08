@@ -1015,6 +1015,7 @@ style slot_time_text is slot_button_text
 style slot_name_text is slot_button_text
 
 style page_label:
+    yalign 0.05
     xpadding 75
     ypadding 5
 
@@ -1274,6 +1275,7 @@ style history_name:
 style history_name_text:
     min_width gui.history_name_width
     text_align gui.history_name_xalign
+    size 28
 
 style history_text:
     xpos gui.history_text_xpos
@@ -1282,6 +1284,7 @@ style history_text:
     xsize gui.history_text_width
     min_width gui.history_text_width
     text_align gui.history_text_xalign
+    size 24
     layout ("subtitle" if gui.history_text_xalign else "tex")
 
 style history_label:

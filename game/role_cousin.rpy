@@ -71,6 +71,50 @@ init -2 python:
         else:
             return True
 
+    def cousin_boobjob_ask_requirement(start_day, the_person):
+        if day < start_day:
+            return False
+        elif the_person.event_triggers_dict.get("getting boobjob", False):
+            return False
+        elif rank_tits(the_person.tits) >= 8:
+            return False #She already has F sized tits, which she thinks is good enough.
+        elif the_person.sluttiness < 40:
+            return False
+        elif aunt in mc.location.people:
+            return False
+        else:
+            return True
+
+    def cousin_talk_boobjob_again_requirement(the_person):
+        if the_person.sluttiness < 40:
+            return False
+        elif the_person.event_triggers_dict.get("getting boobjob", False):
+            return False
+        elif aunt in mc.location.people:
+            return "Not while [aunt.title] is around."
+        else:
+            return True
+
+    def cousin_new_boobs_brag_requirement(the_person):
+        if aunt in mc.location.people:
+            return False
+        else:
+            return True
+
+    def cousin_boobjob_get_requirement(the_person, start_day):
+        if day < start_day:
+            return False
+        else:
+            return True
+
+    def cousin_tits_payback_requirement(the_day):
+        if day < the_day:
+            return False
+        else:
+            return True
+
+
+
 ###COUSIN ACTION LABELS###
 label cousin_intro_phase_one_label():
     #Your cousin bursts into your room at the end of the day frustrated with Lily and how little personal space she has.
@@ -409,7 +453,7 @@ label cousin_blackmail_list(the_person):
 
         "Fuck me." if the_person.event_triggers_dict.get("blackmail_level", -1) >= 2:
             #Requires min sluttiness and more blackmail (Or high sluttiness). Generic fuck_person call with a large obedience boost so she'll do things you tell her to do.
-            mc.name "I want your body, all of it."
+            mc.name "I want your body. All of it."
             if the_person.sluttiness >= 30:
                 the_person.char "Ugh, really?"
                 "She sighs and rolls her eyes dramatically."
@@ -512,6 +556,7 @@ label cousin_blackmail_ask_label(the_person):
         the_person.char "Yeah, yeah, I know what else you want. I'll let you touch me sometimes, if you promise to keep your mouth shut."
         mc.name "I think that might be enough."
         $ the_person.event_triggers_dict["blackmail_level"] = 2
+        call begin_boobjob_story(the_person) from _call_begin_boobjob_story
         $ told = True
 
     elif the_person.obedience >= 130:
@@ -534,6 +579,7 @@ label cousin_blackmail_ask_label(the_person):
         the_person.char "And... I'll let you touch me sometimes, if you promise to stay quiet."
         mc.name "I think that might be enough."
         $ the_person.event_triggers_dict["blackmail_level"] = 2
+        call begin_boobjob_story(the_person) from _call_begin_boobjob_story_1
         $ told = True
 
     else:
@@ -630,6 +676,387 @@ label cousin_blackmail_level_2_confront_label(the_person):
     the_person.char "God, you fucking perv. Fine, if you can keep quiet I might also let you... touch me. Deal?"
     mc.name "I think that might be enough."
     $ the_person.event_triggers_dict["blackmail_level"] = 2
+    call begin_boobjob_story(the_person) from _call_begin_boobjob_story_2
+    return
+
+
+label begin_boobjob_story(the_person):
+    #Creates and adds the boobjob quest. Broken out here to make it easier to run in multiple places once you know about her job.
+    $ cousin_boobjob_ask_action = Action("Cousin Boobjob Ask", cousin_boobjob_ask_requirement, "cousin_boobjob_ask_label", requirement_args = day + renpy.random.randint(3,6))
+    $ the_person.on_talk_event_list.append(cousin_boobjob_ask_action)
+    return
+
+label cousin_boobjob_ask_label(the_person):
+    # TODO: Also add a specific event for Lily after you discover her new "career", maybe if she has a minimum sluttiness we can suggest it to her in that event.
+    #Add event to on_talk_event_list at some point, probably using a random event timed after you find out what her new job is.
+    $ the_person.draw_person()
+    if the_person.love < 10: #Check to make sure she still hates your guts, otherwise you get a toned down version of the dialogue since you've made friends with her.
+        the_person.char "Hey, I'm glad you're here."
+        $ the_person.draw_person(emotion = "happy")
+        "She gives you a wide, fake smile."
+        mc.name "That's not a good sign. What do you want?"
+        the_person.char "Want? Why would I want anything?"
+        the_person.char "Maybe I just want to spend time with my pervy, blackmailer of a cousin. Is that so weird?"
+        mc.name "Come on, spit it out."
+        $ the_person.draw_person()
+
+    else:
+        the_person.char "Hey, I'm glad you're here, I wanted to ask you about something."
+
+    the_person.char "I need money for a boob job."
+    mc.name "Why do you need a boob job, and why should I be paying for it?"
+    the_person.char "Come on, you know where I work. Girls with bigger tits get tipped more."
+    if the_person.has_large_tits() and the_person.love < 10: #Just in case you shrink them with serum so this doesn't make sense any more:
+        "You gesture to her already sizeable tits."
+        mc.name "Those udders aren't enough? Maybe it's more of a personality thing."
+        the_person.char "Oh, thank you for the input. I'll let all my customers know my cousin thinks my tits are already big enough."
+        mc.name "Whatever, fine. THat doesn't explain why I should be paying for it though."
+    else:
+        mc.name "That doesn't explain why I should be paying for it though."
+    the_person.char "Because I don't have all the money I need right now, and if I get this done I can earn it back quicker."
+    the_person.char "If you spot me the cash now I can pay you back as soon as I earn it."
+    mc.name "How much would you need?"
+    the_person.char "I've got some money, but I'd need another five grand from you."
+    the_person.char "Please [the_person.mc_title], it's a rock solid investment."
+    $ has_boob_enhancement_serum = False
+    python:
+        for serum_design in mc.inventory.get_serum_type_list():
+            if breast_enhancement in serum_design.traits:
+                has_boob_enhancement_serum = True #The player has a serum in their inventory that can grow her breasts, so you can do that instead of getting her surgery.
+    menu:
+        "Pay for it. -$5000" if mc.business.funds >= 5000:
+            mc.name "Fine. Send me over the bill and I'll pay it."
+            the_person.char "Really? Just like that?"
+            if the_person.love < 10:
+                mc.anme "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
+                the_person.char "Ugh. You're the worst."
+
+            else:
+                mc.name "Just like that. I think you'll look good with bigger tits."
+                the_person.char "Thanks, I guess."
+
+            $ the_person.change_obedience(5)
+            $ the_person.change_slut_temp(2)
+            $ mc.business.funds += -5000
+
+        "Pay for it. -$5000 (disabled)" if mc.business.funds < 5000:
+            pass
+
+        "Offer breast enhancing serum instead." if has_boob_enhancement_serum:
+            mc.name "Why go thorugh all that trouble when I have a serum that could do this for you right now."
+            the_person.char "Wait, you do?"
+            mc.name "Of course I do, it's what my business does. I have a dose right here, if you'd like to try it out."
+            the_person.char "And this stuff really works? I always thought you were running a scam."
+            mc.name "Yes it really works. Do you want it or not."
+            "She eyes you up cautiously, then nods."
+            the_person.char "Fine, give it here."
+            call give_serum(the_person) from _call_give_serum_15
+            if _return == False:
+                mc.name "Actually, I don't think this particular serum would be good for you."
+                $ the_person.change_love(-1)
+                the_person.char "I knew you were running a scam. If you didn't want to pay you could have just said so instead of lying."
+                call talk_person(the_person) from _call_talk_person_2
+
+                $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
+                return
+
+            else:
+                "She drinks the serum down, hands the vial back to you, and then looks down at her chest."
+                the_person.char "So... Should they be doing something?"
+                mc.name "I'm a chemical engineer, not a wizard. It will take some time for the effects to be apparent, and the effectiveness varies from person to person."
+                the_person.char "Right, of course. I guess I'll let you know if it actually works then. I'm going to be pissed if this is all a scam though."
+                call talk_person(the_person) from _call_talk_person_3
+
+                $ cousin_serum_boobjob_check_action = Action("Cousin serum boobjob check", cousin_serum_boobjob_check_requirement, "cousin_serum_boobjob_label", args = [the_person, the_person.tits], requirement_args = [the_person, the_person.tits, day + 3])
+                $ mc.business.mandatory_crises_list.append(cousin_serum_boobjob_check_action)
+                return
+
+        "Offer breast enhancing serum instead.\nRequires: Serum with Breast Enhancement trait (disabled)" if not has_boob_enhancement_serum and mc.business.research_tier >= 2:
+            pass #Shows as a disabled when you could get the research, until then does not show up at all (unless you somehow have something with the trait, from a random event for example)
+
+        "Refuse to pay.":
+            mc.name "Five thousand dollars? That's ridiculous, I can't pay that just to get you a set of bigger tits."
+            the_person.char "Come on, please? What can I do to convince you?"
+            if mc.business.funds < 5000:
+                mc.name "Nothing, because I don't have that kind of money just sitting around either."
+                $ the_person.change_happiness(-5)
+                the_person.char "Really? Ugh, you're useless."
+                call talk_person(the_person) from _call_talk_person_4
+                #Note: we add the boobjob talk option after so that the player has to come back and talk to her again.
+                $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
+                return
+            else:
+                mc.name "What can you do? I've got the money, I just don't see a reason to give it to you."
+                the_person.char "You don't see a reason to get me some big, juicy tits?"
+                "She leans close to you, standing on the tips of her toes to whisper sensually into your ear."
+                the_person.char "Maybe I can show you why... Would that be enough? If your slutty stripper cousin helped get you off, would that be enough to convince you?"
+                menu:
+                    "Pay for it and fuck her. -$5000" if mc.current_stamina >= 1:
+                        "You wrap a hand around her waist and slap her ass."
+                        mc.name "Alright then, you've got yourself a deal."
+                        $ the_person.add_situational_obedience("event", 20, "My new tits will make this all worth it!")
+                        call fuck_person(the_person) from _call_fuck_person_42
+                        $ the_person.clear_situational_obedience("event")
+                        $ mc.current_stamina += -1
+                        $ the_person.change_slut_temp(5)
+                        $ mc.business.fund += -5000
+
+                    "Pay for it and fuck her. Requires: Stamina" if mc.current_stamina < 1:
+                        pass
+
+                    "Refuse to pay.":
+                        mc.name "I don't need to pay you if I want to use you, you should know that. Sorry, but you'll have to find a way to buy your own tits."
+                        "She backs up and sulks."
+                        the_person.char "Ugh. Fine. Whatever."
+                        call talk_person(the_person) from _call_talk_person_5
+                        $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
+                        return
+
+
+
+
+
+    python: #Sets up an event that will trigger after a set number of days when she has gotten her boob job. This event, in turns, adds in an event when you talk to her.
+        the_person.event_triggers_dict["getting boobjob"] = True #Reset the flag so you can ask her to get _another_ boobjob.
+        cousin_boobjob_get_action = Action("Cousin boob job get", cousin_boobjob_get_requirement, "cousin_boobjob_get_label", args = the_person, requirement_args = [the_person, the_day + renpy.random.randint(4,6)])
+        mc.business.mandatory_crises_list.append(cousin_boobjob_get_action)
+
+    call talk_person(the_person) from _call_talk_person_7
+    return
+
+label cousin_talk_boobjob_again_label(the_person):
+    mc.name "Do you still want to get a boob job?"
+    if the_person.has_large_tits():
+        the_person.char "Yeah. Why, have you come around? Do you want to get your cousin some big..."
+        "She leans forward, accentuating her already sizeable breasts."
+        the_person.char "Juicy tits? You know if you come down to the club you'd be able to see them, right?"
+    else:
+        the_person.char "Yeah, obviously."
+
+    $ has_boob_enhancement_serum = False
+    python:
+        for serum_design in mc.inventory.get_serum_type_list():
+            if breast_enhancement in serum_design.traits:
+                has_boob_enhancement_serum = True #The player has a serum in their inventory that can grow her breasts, so you can do that instead of getting her surgery.
+
+    menu:
+        "Pay for it. -$5000" if mc.business.funds >= 5000:
+            mc.name "Fine. Send me over the bill and I'll pay it."
+            the_person.char "Really? Just like that?"
+            if the_person.love < 10:
+                mc.anme "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
+                the_person.char "Ugh. You're the worst."
+
+            else:
+                mc.name "Just like that. I think you'll look good with bigger tits."
+                the_person.char "Thanks, I guess."
+
+            python:
+                the_person.change_obedience(5)
+                the_person.change_slut_temp(2)
+                mc.business.funds += -5000
+                the_person.event_triggers_dict["getting boobjob"] = True #Reset the flag so you can ask her to get _another_ boobjob.
+                cousin_boobjob_get_action = Action("Cousin boob job get", cousin_boobjob_get_requirement, "cousin_boobjob_get_label", args = the_person, requirement_args = [the_person, the_day + renpy.random.randint(4,6)])
+                mc.business.mandatory_crises_list.append(cousin_boobjob_get_action)
+
+                for an_action in cousin_role:
+                    if an_action == cousin_talk_boobjob_again_action: #Find and remove this action.
+                        cousin_role.remove(an_action)
+                        break
+
+        "Pay for it. -$5000 (disabled)" if mc.business.funds < 5000:
+            pass
+
+        "Offer breast enhancing serum instead." if has_boob_enhancement_serum:
+            mc.name "Why go thorugh all that trouble when I have a serum that could do this for you right now."
+            the_person.char "Wait, you do?"
+            mc.name "Of course I do, it's what my business does. I have a dose right here, if you'd like to try it out."
+            the_person.char "And this stuff really works? I always thought you were running a scam."
+            mc.name "Yes it really works. Do you want it or not."
+            "She eyes you up cautiously, then nods."
+            the_person.char "Fine, give it here."
+            call give_serum(the_person) from _call_give_serum_16
+            if _return == False:
+                mc.name "Actually, I don't think this particular serum would be good for you."
+                the_person.char "I knew you were running a scam. If you didn't want to pay you could have just said so instead of lying."
+                $ the_person.change_love(-1)
+                return
+
+            else:
+                "She drinks the serum down, hands the vial back to you, and then looks down at her chest."
+                the_person.char "So... Should they be doing something?"
+                mc.name "I'm a chemical engineer, not a wizard. It will take some time for the effects to be apparent, and the effectiveness varies from person to person."
+                the_person.char "Right, of course. I guess I'll let you know if it actually works then. I'm going to be pissed if this is all a scam though."
+
+                $ cousin_serum_boobjob_check_action = Action("Cousin serum boobjob check", cousin_serum_boobjob_check_requirement, "cousin_serum_boobjob_label", args = [the_person, the_person.tits], requirement_args = [the_person, the_person.tits, day + 3])
+                $ mc.business.mandatory_crises_list.append(cousin_serum_boobjob_check_action)
+                python:
+                    for an_action in cousin_role:
+                        if an_action == cousin_talk_boobjob_again_action: #Find and remove this action.
+                            cousin_role.remove(an_action)
+                            break
+                return
+
+        "Offer breast enhancing serum instead.\nRequires: Serum with Breast Enhancement trait (disabled)" if not has_boob_enhancement_serum and mc.business.research_tier >= 2:
+            pass
+
+        "Refuse to pay.":
+            mc.name "Well, you can keep on wanting them, because I'm still not paying."
+            the_person.char "Wait, did you seriously bring that up just to say no again."
+            $ the_person.change_love(-3)
+            the_person.char "Your levels of pettiness never cease to amaze me."
+
+    return
+
+label cousin_boobjob_get_label(the_person):
+    call got_boobjob(the_person) from _call_got_boobjob
+    python: # Now set the cousin specific stuff so she'll talk about it with you after
+        cousin_new_boobs_brag_action = Action("Cousin new boobs brag", cousin_new_boobs_brag_requirement, "cousin_new_boobs_brag_label")
+        the_person.on_talk_event_list.append(cousin_new_boobs_brag_action) #Next time you talk to her she brags about her new boobs, offers to show them to you, and tells you that she'll pay you back eventually.
+    return
+
+label cousin_new_boobs_brag_label(the_person):
+    #She brags about her new boobs and offers to let you see/touch them if she's slutty enough.
+    $ the_person.draw_person()
+    the_person.char "Hey [the_person.mc_title]. Do you notice anything different?"
+    if the_person.love < 10:
+        "[the_person.possessive_title] seems unusually happy to see you. She puts her arms behind her back and sways her shoulders."
+    else:
+        "She puts her arms behind her back and sways her shoulders, emphasising her chest."
+
+    the_person.char "I got my new tits! Come on, what do you think?"
+    menu:
+        "They look good.":
+            mc.name "They look good, and they better after what I paid."
+            $ the_person.change_love(1)
+            $ the_person.change_obedience(3)
+
+        "You look like a bimbo.":
+            mc.name "They make you look like a bimbo. Big tits, no brain."
+            if the_person.personality is bimbo_personality:
+                the_person.char "Thank you! I really like them too!"
+            else:
+                the_person.char "Whatever. Who even asked you anyways."
+                mc.name "You did."
+                the_person.char "Shut up."
+            $ the_person.change_slut_temp(5)
+            $ the_person.change_love(-2)
+
+    mc.name "So, when can I expect to be paid back for your new sweater puppies?"
+    the_person.char "As soon as I actually have a chance to make some money with them, okay?"
+    the_person.char "You don't have to worry, I'm going to have to pay otherwise you'll tell my Mom everything. Right?"
+    mc.name "You've got the idea."
+
+    if the_person.outfit.tits_visible(): #They're already out, she can't exactly charge you to see them.
+        "She looks down at her chest and shakes her tits a little, obviously for her own enjoyment and not yours."
+        "After a moment watching them jiggle she turns her head back towards you."
+        the_person.char "Did you need anything else?"
+
+    else:
+        if mc.location.get_person_count() > 1: #More than just her here.
+            the_person.char "So... Do you want to see them? We can go find somewhere quiet."
+        else:
+            the_person.char "So... Do you want to see them?"
+        menu:
+            "Show them to me.":
+                mc.name "Alright, I want to see my investment."
+                $ the_person.change_slut_temp(1)
+                if mc.location.get_person_count() > 1:
+                    "You and [the_person.possessive_title] find a quiet spot away from anyone else, and she strips down in front of you."
+                else:
+                    "[the_person.possessive_title] starts to strip down in front of you."
+
+                $ old_outfit = the_person.outfit.get_copy()
+                python:
+                    while not the_person.outfit.tits_visible():
+                        the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
+                        if the_item is None:
+                            break
+                        the_person.draw_animated_removal(the_item)
+                        renpy.say("","") #Hold the game until the player interacts
+
+                if the_person.sluttiness > 50:
+                    the_person.char "There you go. Go on, give them a feel. They feel almost exactly like the real thing."
+                    "You hold [the_person.title]'s new, larger breasts in your hands. They feel a little firmer than natural tits, but they're pleasant nonetheless."
+                    "After you've had a chance to fondle them she reaches for her top."
+                else:
+                    the_person.char "There you go. Good, right? These girls are going to bring in so much more at the club."
+                    "She looks down at her own chest and gives it a shake, setting her tits jiggling. When they settle down she reaches for her top again."
+
+                $ the_person.outfit = old_outfit
+                $ the_person.draw_person()
+
+            "Not right now.":
+                $ the_person.change_obedience(1)
+                mc.name "I'm sure I'll get a chance to see them some other time. Maybe I'll stop by the club and watch you put them to work."
+                the_person.char "Oh god, could you please not? I hate knowing you might be out in the crowd watching..."
+
+    $ cousin_tits_payback_action = Action("cousin tits payback", cousin_tits_payback_requirement, "cousin_tits_payback_label", args = [the_person, 5000], requirement_args = day + 7)
+    $ mc.business.mandatory_crises_list.append(cousin_tits_payback_action) #An event where she sends you some cash in a week, which if it has not finished then re-adds itself with the new amount
+    call talk_person(the_person) from _call_talk_person_8
+    return
+
+label cousin_tits_payback_label(the_person, amount_remaining):
+    "You recieve a notification on your phone from your bank."
+    $ mc.business.funds += 1000
+    if amount_remaining > 1000:
+        "[the_person.title] has transfered you $1000 with a note saying \"You know why\"."
+        $ cousin_tits_payback_action = Action("cousin tits payback", cousin_tits_payback_requirement, "cousin_tits_payback_label", args = [the_person, amount_remaining-1000], requirement_args = day + 7)
+        $ mc.business.mandatory_crises_list.append(cousin_tits_payback_action) #An event where she sends you some cash in a week, which if it has not finished then re-adds itself with the new amount
+    else:
+        "[the_person.title] has transfered the last of the $5000 you loaned her for her surgery. You get a text shortly afterwards."
+        the_person.char "There, I'm finally done with your tits payment plan."
+        mc.name "For now. Maybe you'll want them even bigger some day."
+        the_person.char "You wish, perv."
+    return
+
+label cousin_serum_boobjob_label(the_person, starting_tits):
+    if rank_tits(the_person.tits) == rank_tits(starting_tits):
+        #No change.
+        "You get a text from [the_person.title]."
+        $ the_person.change_love(-1)
+        $ the_person.change_obedience(-3)
+        the_person.char "Hey [the_person.mc_title], your serum thing didn't do anything for me."
+        the_person.char "I'm going to need some cash so I can go to an actual doctor to do this for me. Come talk to me."
+
+
+
+    elif rank_tits(the_person.tits) < rank_tits(starting_tits):
+        "You get an angry text from [the_person.title]."
+        $ the_person.change_happiness(-10)
+        $ the_person.change_love(-5)
+        $ the_person.change_obedience(-5)
+        the_person.char "What the fuck, your serum thing made my tits smaller, not bigger!"
+        the_person.char "I'm going to need to go see an actual doctor now, these things aren't going to make me any money!"
+        the_person.char "Come talk to me, I need cash for my boob job."
+        #YOu actually made her tits smaller
+
+    elif rank_tits(the_person.tits) - rank_tits(starting_tits) == 1:
+        # One level bigger which she's kind of ahppy with but wanted more.
+        "You get a text from [the_person.title]."
+        $ the_person.change_obedience(2)
+        the_person.char "Hey, I think your serum thing stopped working. My boobs seem a little bigger, but I was hoping for more."
+        the_person.char "I still want to get my tits done properly. Come see me when I'm not doing anything important."
+
+    else:
+        # At least two levels, which is hat she was aiming for.
+        "You get a text from [the_person.title]."
+        $ the_person.change_obedience(3)
+        $ the_person.change_love(1)
+        the_person.char "I can't believe it, but your freaky serum stuff actually worked, my tits are way bigger now!"
+        "There's a pause, then you get a picture attached."
+        $ old_outfit = the_person.outfit.get_copy()
+        #She'll show you her tits.
+        while not the_person.outfit.tits_visible():
+            $ the_person.outfit.remove_random_upper(top_layer_first = True)
+
+        $ the_person.draw_person(emotion = "happy")
+        "It's a selfie of her in the bathroom, tits on display for you."
+        the_person.char "You've saved me a ton of cash, so I thought you might enjoy that."
+        $ renpy.scene("Active")
+        return #Note: we're returning without adding the boobjob ask again event, which means we can consider this "done" at this point.
+
+    $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
     return
 
 label stripclub_dance():

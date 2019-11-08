@@ -12,7 +12,7 @@
     # @_sex_accept - dialogue when you offer a sex position to a girl and she agrees because she's slutty. (Not just when you seduce them, that's below!)
     # @_sex_obedience_accept - dialogue used when you offer a sex position to a girl but she only agrees because she's obedient
     # @_sex_gentle_reject - dialouge used when you try and offer a sex position to a girl but she refuse without being angry
-    # @_sex_angry_reject - dialogue used when you try and offer a sex position to a girl with a psotiion she finds rediculously inappropriate.
+    # @_sex_angry_reject - dialogue used when you try and offer a sex position to a girl with a psotiion she finds ridiculously inappropriate.
     # @_seduction_response - dialogue used when you seduce a girl and she accepts
     # @_flirt_response - dialogue when you "chat with" and "flirt" with a girl.
     # @_cum_face - dialogue when you cum on a girls face.
@@ -142,9 +142,9 @@
             return valid_titles
 
         nora_personality = Personality("nora", default_prefix = "reserved",
-        common_likes = ["pants", "working", "research work", "classial"],
+        common_likes = ["pants", "working", "research work", "classical"],
         common_sexy_likes = ["vaginal sex", "skimpy uniforms", "lingerie", "masturbating"],
-        common_dislikes = ["heavy metal", "HR work", "marketting work", "sports"],
+        common_dislikes = ["heavy metal", "HR work", "marketing work", "sports"],
         common_sexy_dislikes = ["not wearing anything", "not wearing underwear", "being submissive", "creampies"],
         titles_function = nora_titles, possessive_titles_function = nora_possessive_titles, player_titles_function = nora_player_titles)
 
@@ -353,16 +353,21 @@ label relaxed_introduction(the_person):
     return
 
 label relaxed_greetings(the_person):
-    if the_person.sluttiness > 60:
-        if the_person.obedience > 130:
-            the_person.char "Hello [the_person.mc_title], it's good to see you."
-        else:
-            the_person.char "Hey there handsome, feeling good?"
+    if the_person.love < 0:
+        the_person.char "Ugh, what do you want?"
+    elif the_person.happiness < 90:
+        the_person.char "Hey..."
     else:
-        if the_person.obedience > 130:
-            the_person.char "Hello [the_person.mc_title]."
+        if the_person.sluttiness > 60:
+            if the_person.obedience > 130:
+                the_person.char "Hello [the_person.mc_title], it's good to see you."
+            else:
+                the_person.char "Hey there handsome, feeling good?"
         else:
-            the_person.char "Hey there!"
+            if the_person.obedience > 130:
+                the_person.char "Hello [the_person.mc_title]."
+            else:
+                the_person.char "Hey there!"
     return
 
 label relaxed_sex_responses_foreplay(the_person):
@@ -750,7 +755,7 @@ label relaxed_cum_vagina(the_person):
                 the_person.char "What would I do if I got pregnant?"
     return
 
-label rexlaxed_cum_anal(the_person):
+label relaxed_cum_anal(the_person):
     if the_person.sluttiness > 75 or the_person.get_opinion_score("anal creampies") > 0:
         the_person.char "Oh god yes, cum inside me!"
     else:
@@ -861,7 +866,7 @@ label relaxed_being_watched(the_person, the_watcher, the_position):
     return
 
 label relaxed_work_enter_greeting(the_person):
-    if the_person.happiness < 80:
+    if the_person.happiness < 80 or the_person.love < 0:
         if the_person.obedience > 120:
             "[the_person.title] gives you a curt nod and then turns back to what she was doing."
         else:
@@ -985,16 +990,21 @@ label reserved_introduction(the_person):
     return
 
 label reserved_greetings(the_person):
-    if the_person.sluttiness > 60:
-        if the_person.obedience > 130:
-            the_person.char "Hello [the_person.mc_title]."
-        else:
-            the_person.char "Hello, are you feeling as good as you're looking today?"
+    if the_person.love < 0:
+        the_person.char "... Do you need something?"
+    elif the_person.happiness < 90:
+        the_person.char "Hello..."
     else:
-        if the_person.obedience > 130:
-            the_person.char "Hello [the_person.mc_title]."
+        if the_person.sluttiness > 60:
+            if the_person.obedience > 130:
+                the_person.char "Hello [the_person.mc_title]."
+            else:
+                the_person.char "Hello, are you feeling as good as you're looking today?"
         else:
-            the_person.char "Hello, I hope you're doing well."
+            if the_person.obedience > 130:
+                the_person.char "Hello [the_person.mc_title]."
+            else:
+                the_person.char "Hello, I hope you're doing well."
     return
 
 label reserved_sex_responses_foreplay(the_person):
@@ -1479,7 +1489,7 @@ label reserved_being_watched(the_person, the_watcher, the_position):
     return
 
 label reserved_work_enter_greeting(the_person):
-    if the_person.happiness < 80:
+    if the_person.happiness < 80 or the_person.love < 0:
         "[the_person.title] pretends not to notice you come into the room."
 
     elif the_person.happiness > 130:
@@ -1492,7 +1502,6 @@ label reserved_work_enter_greeting(the_person):
         else:
             "You pass by [the_person.title] as you enter the room. She looks up, startled."
             the_person.char "Oh! Sorry [the_person.mc_title], I was distracted and didn't notice you come in. Let me know if you need help with anything."
-
     return
 
 label reserved_date_seduction(the_person):
@@ -1596,16 +1605,21 @@ label wild_introduction(the_person):
     return
 
 label wild_greetings(the_person):
-    if the_person.sluttiness > 60:
-        if the_person.obedience > 130:
-            the_person.char "Hello there [the_person.mc_title]. How can I help you, do you have anything that needs attention? Anything at all?"
-        else:
-            the_person.char "Hey there [the_person.mc_title], I hope this is for pleasure and not business."
+    if the_person.love < 0:
+        the_person.char "Oh god, what do you want now?"
+    elif the_person.happiness < 90:
+        the_person.char "Hey. I hope you're having a better day than I am."
     else:
-        if the_person.obedience > 130:
-            the_person.char "Hello [the_person.mc_title]"
+        if the_person.sluttiness > 60:
+            if the_person.obedience > 130:
+                the_person.char "Hello there [the_person.mc_title]. How can I help you, do you have anything that needs attention? Anything at all?"
+            else:
+                the_person.char "Hey there [the_person.mc_title], I hope this is for pleasure and not business."
         else:
-            the_person.char "Hey, how's it going?"
+            if the_person.obedience > 130:
+                the_person.char "Hello [the_person.mc_title]"
+            else:
+                the_person.char "Hey, how's it going?"
     return
 
 label wild_sex_responses_foreplay(the_person):
@@ -2100,7 +2114,7 @@ label wild_being_watched(the_person, the_watcher, the_position):
     return
 
 label wild_work_enter_greeting(the_person):
-    if the_person.happiness < 80:
+    if the_person.happiness < 80 or the_person.love < 0:
         "[the_person.title] glances at you when you enter the room. She scoffs and turns back to her work."
 
     elif the_person.happiness > 130:
@@ -2227,16 +2241,21 @@ label introvert_introduction(the_person):
     return
 
 label introvert_greetings(the_person):
-    if the_person.sluttiness > 60:
-        if the_person.obedience > 130:
-            the_person.char "Hello [the_person.mc_title]."
-        else:
-            the_person.char "Hey."
+    if the_person.love < 0:
+        the_person.char "... What? Spit it out."
+    elif the_person.happiness < 90:
+        the_person.char "..."
     else:
-        if the_person.obedience > 130:
-            the_person.char "Hello."
+        if the_person.sluttiness > 60:
+            if the_person.obedience > 130:
+                the_person.char "Hello [the_person.mc_title]."
+            else:
+                the_person.char "Hey."
         else:
-            "[the_person.title] gives you a nod."
+            if the_person.obedience > 130:
+                the_person.char "Hello."
+            else:
+                "[the_person.title] gives you a nod."
     return
 
 label introvert_sex_responses_foreplay(the_person):
@@ -2714,7 +2733,7 @@ label introvert_being_watched(the_person, the_watcher, the_position):
     return
 
 label introvert_work_enter_greeting(the_person):
-    if the_person.happiness < 80:
+    if the_person.happiness < 80 or the_person.love < 0:
         "[the_person.title] glances at you when you enter the room. She promptly ignores you and turns back to her work."
 
     elif the_person.happiness > 130:
@@ -2838,16 +2857,21 @@ label bimbo_introduction(the_person):
     return
 
 label bimbo_greetings(the_person):
-    if the_person.sluttiness > 60:
-        if the_person.obedience > 130:
-            the_person.char "Hey there [the_person.mc_title]. I mean sir! Hey there, sir!"
-        else:
-            the_person.char "Hey [the_person.mc_title], what are you doing here? Can I help with anything? Anything at all?"
+    if the_person.love < 0:
+        the_person.char "Oh, my, god... What do you want? Do I look like I want to be talking to you?"
+    elif the_person.happiness < 90:
+        the_person.char "Hi [the_person.mc_title]..."
     else:
-        if the_person.obedience > 130:
-            the_person.char "Hi there [the_person.mc_title], what can I do for you?"
+        if the_person.sluttiness > 60:
+            if the_person.obedience > 130:
+                the_person.char "Hey there [the_person.mc_title]. I mean sir! Hey there, sir!"
+            else:
+                the_person.char "Hey [the_person.mc_title], what are you doing here? Can I help with anything? Anything at all?"
         else:
-            the_person.char "Hi there [the_person.mc_title]!"
+            if the_person.obedience > 130:
+                the_person.char "Hi there [the_person.mc_title], what can I do for you?"
+            else:
+                the_person.char "Hi there [the_person.mc_title]!"
     return
 
 label bimbo_sex_responses_foreplay(the_person):
@@ -3304,7 +3328,7 @@ label bimbo_being_watched(the_person, the_watcher, the_position):
     return
 
 label bimbo_work_enter_greeting(the_person):
-    if the_person.happiness < 80:
+    if the_person.happiness < 80 or the_person.love < 0:
         "[the_person.title] looks at you, pouts, then looks back at her work."
 
     elif the_person.happiness > 120:
@@ -3396,17 +3420,22 @@ label bimbo_improved_serum_unlock(the_person):
 ############################
 # <editor-fold
 label stephanie_greetings(the_person):
-    if the_person.obedience > 130:
-        if the_person.sluttiness > 60:
-            the_person.char "Good to see you [the_person.mc_title], I hope you're here to see me about something fun."
-        else:
-            the_person.char "Good to see you [the_person.mc_title], how can I help?"
+    if the_person.love < 0:
+        the_person.char "Ugh... What do you need? Can we make this quick?"
+    elif the_person.happiness < 90:
+        the_person.char "Hey, hope you're having a better day than me. What's up?"
     else:
-        if the_person.sluttiness > 60:
-            the_person.char "Hey [the_person.mc_title], are you here for business or pleasure?"
-            "[the_person.title] smiles playfully."
+        if the_person.obedience > 130:
+            if the_person.sluttiness > 60:
+                the_person.char "Good to see you [the_person.mc_title], I hope you're here to see me about something fun."
+            else:
+                the_person.char "Good to see you [the_person.mc_title], how can I help?"
         else:
-            "Hey [the_person.mc_title], what's up?"
+            if the_person.sluttiness > 60:
+                the_person.char "Hey [the_person.mc_title], are you here for business or pleasure?"
+                "[the_person.title] smiles playfully."
+            else:
+                "Hey [the_person.mc_title], what's up?"
     return
 
 label stephanie_cum_face(the_person):
@@ -3488,18 +3517,23 @@ label stephanie_sex_strip(the_person):
 # <editor-fold
 
 label lily_greetings(the_person):
-    if the_person.obedience > 130:
-        if the_person.sluttiness > 60:
-            the_person.char "Hey [the_person.mc_title], do you need your little sister for something?"
-            "[the_person.title] crosses her arms behind her back."
-        else:
-            the_person.char "Hi [the_person.mc_title]."
+    if the_person.love < 0:
+        the_person.char "Ugh, can you tell Mom whatever you want to say to me right now? I don't want to hear it."
+    elif the_person.happiness < 90:
+        the_person.char "Hey [the_person.mc_title]..."
     else:
-        if the_person.sluttiness > 60:
-            the_person.char "Oh hey [the_person.mc_title], I was just thinking about you."
-            "[the_person.title] smiles playfully."
+        if the_person.obedience > 130:
+            if the_person.sluttiness > 60:
+                the_person.char "Hey [the_person.mc_title], do you need your little sister for something?"
+                "[the_person.title] crosses her arms behind her back."
+            else:
+                the_person.char "Hi [the_person.mc_title]."
         else:
-            the_person.char "Hey, need something?"
+            if the_person.sluttiness > 60:
+                the_person.char "Oh hey [the_person.mc_title], I was just thinking about you."
+                "[the_person.title] smiles playfully."
+            else:
+                the_person.char "Hey, need something?"
     return
 
 label lily_clothing_accept(the_person):

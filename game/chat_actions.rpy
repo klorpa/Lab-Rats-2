@@ -1263,7 +1263,7 @@ label serum_give_label(the_person):
                 $ the_person.change_obedience(-2)
                 $ the_person.change_happiness(-2)
                 $ the_person.change_love(-2)
-                the_person.char "You expect me to just drink random shit you hand to me? I'm sorry, but that's just rediculous."
+                the_person.char "You expect me to just drink random shit you hand to me? I'm sorry, but that's just ridiculous."
 
         "Pay her to take it.\n{size=22}Costs: $[pay_serum_cost]{/size}" if mandatory_paid_serum_testing_policy.is_owned() and not mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None": #This becomes redundent when they take it for free.
             #Pay cost and proceed

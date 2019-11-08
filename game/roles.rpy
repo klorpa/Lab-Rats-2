@@ -118,6 +118,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         cousin_role = Role("Cousin", [cousin_blackmail_action])
 
+        #COUSIN After start actions# - Actions that are meant to be added to her action list after the game has begun.
+        cousin_talk_boobjob_again_action = Action("Talk to her about getting a boobjob. -$5000", cousin_talk_boobjob_again_requirement, "cousin_talk_boobjob_again_label")
+        #cousin_role.actions.append(cousin_talk_boobjob_again_action)
+
 
 
         ####################
@@ -137,7 +141,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         ask_break_up_action = Action("Break up with her.", ask_break_up_requirement, "ask_be_girlfriend_label", menu_tooltip = "Breaking up may break her heart, but it'll be easier on her than catching you with another woman.")
 
-        girlfriend_role = Role("Girlfriend", [ask_break_up_action]) #Your girlfriend, and she's not in a relationship with anyone else
+        ask_get_boobjob_action = Action("Ask her to get a boob job. -$7000", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
+
+
+        girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action]) #Your girlfriend, and she's not in a relationship with anyone else
         #Getting married is some kind of victory for the game?
 
 

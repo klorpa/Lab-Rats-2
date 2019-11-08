@@ -341,13 +341,13 @@ define gui.history_height = 210
 ## The position, width, and alignment of the label giving the name of the
 ## speaking character.
 define gui.history_name_xpos = 150
-define gui.history_name_ypos = 0
+define gui.history_name_ypos = 40
 define gui.history_name_width = 225
 define gui.history_name_xalign = 1.0
 
 ## The position, width, and alignment of the dialogue text.
 define gui.history_text_xpos = 255
-define gui.history_text_ypos = 8
+define gui.history_text_ypos = 80
 define gui.history_text_width = 1110
 define gui.history_text_xalign = 0.0
 
@@ -454,6 +454,3 @@ init python:
 
         ## Quick buttons.
         gui.quick_button_text_size = 30
-
-
-

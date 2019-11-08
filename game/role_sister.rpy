@@ -313,6 +313,7 @@ label sister_instathot_intro_label(the_person):
 
     $ sister_instathot_action = Action("Help her take Insta-pics.{image=gui/heart/Time_Advance.png}",instathot_requirement, "sister_instathot_label", menu_tooltip = "Help your sister grow her Insta-pic account by taking some pictures of her.")
     $ sister_role.actions.append(sister_instathot_action)
+    $ renpy.scene("Active")
     return
 
 label sister_instathot_label(the_person):
@@ -354,6 +355,53 @@ label sister_instathot_label(the_person):
             "She shrugs."
             the_person.char "Come on, let's take some pics!"
 
+        "I've got another idea...":
+            mc.name "It's nice, but I think I know an outfit they might like even more."
+            the_person.char "Uh huh? Let me see it!"
+            call screen outfit_select_manager()
+            $ the_suggested_outfit = _return
+            if the_suggested_outfit == "No Return":
+                mc.name "On second thought, I don't think I have anything better than what you're wearing."
+                the_person.char "Well, let's get started with this then!"
+
+            elif the_suggested_outfit.vagina_visible():
+                the_person.char "Come on [the_person.mc_title], I can't have my... You know, just hanging out like that."
+                the_person.char "I'd get kicked off of Insta-pic so fast! Let's just take some pictures with what I'm wearing."
+
+            elif the_suggested_outfit.tits_visible():
+                the_person.char "I couldn't get away with that, they would ban me for showing my boobs."
+                the_person.char "It's so unfair that guys can take pictures shirtless and post them but girls can't."
+                the_person.char "Oh well, let's just take some pictures with the outfit I'm wearing."
+
+            elif the_suggested_outfit.judge_outfit(the_suggested_outfit, -30):
+                the_person.char "I mean, I guess it would be nice, but it isn't very... revealing, you know?"
+                the_person.char "Guys on the site like it when you show some skin. A little cleavage, maybe some underwear."
+                the_person.char "As long as it's not full on tits or pussy, it's fair game. Let's just go with what I'm wearing right now, okay?"
+
+            elif not the_suggested_outfit.judge_outfit(the_suggested_outfit, 20):
+                #It's so slutty she can't be convinced to try it.
+                the_person.char "Oh wow... I guess it technically covers everything that needs to be covered but..."
+                the_person.char "I don't think I could wear that [the_person.mc_title]. I wish I had that kind of confidence, but what if Mom saw these pictures?"
+                the_person.char "Let's stick with what I had picked out, okay?"
+
+            else:
+                the_person.char "Oh, that would look really cute! Okay, I'll try it on!"
+                $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                while next_item:
+                    $ the_person.draw_animated_removal(next_item)
+                    "..."
+                    $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                "Once she's stripped down she puts on the outfit you've suggested."
+                $ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want.
+                $ the_person.draw_person()
+                $ the_person.change_love(1)
+                $ the_person.change_obedience(2)
+                if the_person.judge_outfit(the_suggested_outfit):
+                    the_person.char "Alright, there we go! This is actually a really nice blend of cute and sexy."
+                    the_person.char "You've got a really good eye for fashion, I might even wear this later I like it so much! Now let's take some pics!"
+                    $ the_person.wardrobe.add_outfit(the_suggested_outfit)
+                else:
+                    the_person.char "Alright, there we go! It's perfect, just the right amount of sexy! Let's take some pics now!"
 
     $ the_person.draw_person(emotion = "happy", position = "kneeling1")
     "She jumps up onto her bed and gives the camera her sluttiest pout."
@@ -369,6 +417,7 @@ label sister_instathot_label(the_person):
             "She rolls her eyes and direct transfers you some cash."
             $ mc.business.funds += 100
             the_person.char "No, I didn't think you would mr.\"I own a business\"."
+
 
         "Let her keep it.":
             mc.name "Don't worry about it, I'm just happy to see you doing something cool."

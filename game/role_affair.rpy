@@ -149,7 +149,7 @@ label fuck_date_label(the_person):
     while done == False:
         if the_person.arousal > 100: #TODO: Have some variation to this based on how many times we've looped around.
             $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
-            $ the_person.change_slut(1)
+            $ the_person.change_slut_temp(1)
             the_person.char "Oh god... That was amazing. You're so much better at that than my [so_title]."
             "[the_person.title] lies down on her bed and catches her breath."
             the_person.char "Ready to get back to it?"
@@ -207,7 +207,7 @@ label fuck_date_label(the_person):
                                 else:
                                     "Without many options you rush to her closet. You force your way past coats and dresses, pressing yourself to the very back."
                                     "You pull the flimsy closet doors closed behind you, peering nervously through the crack left between them."
-                                    "[the_eprson.title] lies down on her bed and waits. You both listen as her [so_title] opens the front door, then walk through the house towards you."
+                                    "[the_person.title] lies down on her bed and waits. You both listen as her [so_title] opens the front door, then walk through the house towards you."
                                     $ hiding_under_bed = False
 
                                 "The door to the bedroom opens."
@@ -308,7 +308,7 @@ label fuck_date_label(the_person):
                                 "The bedroom door opens and [the_person.title] glances up at it."
                                 the_person.SO_name "Are you in here sweetheart... Oh my..."
                                 the_person.char "I'm so sorry, you weren't suppose to see me like this! Oh my god I'm so sorry!"
-                                "Her [so_title] freezes in the door, eyes wide, transfixed by what he's seeing. [the_person.titl] lifts herself up onto her arms."
+                                "Her [so_title] freezes in the door, eyes wide, transfixed by what he's seeing. [the_person.title] lifts herself up onto her arms."
                                 the_person.char "I'm sorry, but he just makes me feel so good! His cock drives me mad and it's all I can think about!"
                                 "You hold onto her hips and fuck her from behind. Her [so_title] just stares."
                                 mc.name "You should go, there's nothing for you here."

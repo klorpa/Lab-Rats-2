@@ -354,8 +354,9 @@ init -2:
                 return current_tits #This is as large as they can get on our current chart.
 
         def rank_tits(the_tits): #Useful if you need to know exactly who has larger tits and want to compare ints. Also see Person.has_large_tits(), for a flat definition of large tits as D or larger
-            if the_tits in list_of_tits:
-                return list_of_tits.index(the_tits) #Ranges from 0 (AA) to 9 (FF).
+            for a_tit_tuple in list_of_tits:
+                if the_tits == a_tit_tuple[0]:
+                    return list_of_tits.index(a_tit_tuple) #Ranges from 0 (AA) to 9 (FF).
 
         list_of_jobs = []
         list_of_jobs.append("scientist")
@@ -528,11 +529,23 @@ init -2:
                 else:
                     list_of_titles.append("Little Tits")
 
+                if the_person.sex_record.get("Vaginal Creampies", 0) >= 20:
+                    list_of_possessive_titles.append("Breeding Material")
+
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
-                list_of_titles.append("Cumslut")
+                if the_person.sex_record.get("Cum Facials", 0) > 0 or the_person.sex_record.get("Cum in Mouth", 0) > 0 or the_person.sex_record.get("Cum Covered", 0) > 0:
+                    list_of_titles.append("Cumslut")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("bareback sex")*5 + the_person.get_opinion_score("creampies")*5)):
-                list_of_titles.append("Cumdump")
+                if the_person.sex_record.get("Vaginal Creampies", 0) > 0 or the_person.sex_record.get("Anal Creampies", 0) > 0:
+                    list_of_titles.append("Cumdump")
+
+
+
+            if the_person.love >= 60 and girlfriend_role in the_person.special_role:
+                list_of_titles.append("Love")
+
+
 
             return list_of_titles #We return the list so that it can be presented to the player. In general the girl will always want to pick the first one on the list.
 
@@ -575,9 +588,24 @@ init -2:
                 if not the_person.relationship == "Single":
                     list_of_possessive_titles.append("Your cheating slut")
 
+                if the_person.sex_record.get("Vaginal Creampies", 0) >= 20:
+                    list_of_possessive_titles.append("Your breeder")
+
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
-                list_of_possessive_titles.append("Your cumslut")
-                list_of_possessive_titles.append("Your cumdump")
+                if the_person.sex_record.get("Cum Facials", 0) > 0 or the_person.sex_record.get("Cum in Mouth", 0) > 0 or the_person.sex_record.get("Cum Covered", 0) > 0:
+                    list_of_possessive_titles.append("Your cumslut")
+
+                if the_person.sex_record.get("Vaginal Creampies", 0) > 0 or the_person.sex_record.get("Anal Creampies", 0) > 0:
+                    list_of_possessive_titles.append("Your cumdump")
+
+
+
+            if the_person.love >= 60 and girlfriend_role in the_person.special_role:
+                list_of_possessive_titles.append("Your love")
+                list_of_possessive_titles.append("Your girlfriend")
+
+            if the_person.love >= 60 and affair_role in the_person.special_role:
+                list_of_possessive_titles.append("Your lover")
 
             return list_of_possessive_titles
 

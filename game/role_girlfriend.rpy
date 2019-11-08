@@ -17,6 +17,28 @@ init -1 python:
     def caught_cheating_requirement(the_person):
         return True
 
+    def ask_get_boobjob_requirement(the_person):
+        obedience_required = 130 - (the_person.get_opinion_score("showing her tits") * 5)
+        if the_person.sluttiness < (40 - the_person.get_opinion_score("showing her tits") * 5):
+            return False
+        if the_person.obedience < obedience_required or mc.business.funds < 7000:
+            return "Requires: " + str(obedience_required) + " Obedience, $7000"
+        elif the_person.event_triggers_dict.get("getting boobjob", False):
+            return "Boobjob already scheduled."
+        elif the_person.tits == "FF":
+            return "Boobs are as large as they can become."
+        else:
+            return True
+
+    def girlfriend_got_boobjob_requirement(start_day):
+        if day < start_day:
+            return False
+        else:
+            return True
+
+    def girlfriend_boob_brag_requirement(start_day):
+        return True
+
 label ask_break_up_label(the_person):
     # Stop being in a relationship.
     mc.name "[the_person.title], can we talk?"
@@ -184,12 +206,73 @@ label ask_dye_hair(the_person):
 
     return
 
-label ask_get_boobjob(the_person):
-    #Requires high obedience. Ask her to get a boob job (you foot the bill, obviously).
+label ask_get_boobjob_label(the_person):
+    mc.name "I've been thinking about something lately."
+    the_person.char "Mhmm? What about?"
+    if the_person.has_large_tits():
+        mc.name "Your breasts are great, but I think you could get some work done on them to make them even better."
+        "She looks down at her tits and frowns."
+        the_person.char "Do you think? Well, I suppose I could see someone about them."
+    else:
+        mc.name "Your breasts are nice, but I think they could stand to be a little bigger."
+        "She looks down at her tits and frowns."
+        the_person.char "Hmm, I guess you're right. If you want I could see someone about them."
 
+    mc.name "If you arrange it, I'll pay the bill."
+    $ the_person.discover_opinion("showing her tits")
+    if the_person.get_opinion_score("showing her tits") > 0:
+        $ the_person.change_happiness(10)
+        $ the_person.change_obedience(2)
+
+        the_person.char "Alright, I'll do it! Thank you [the_person.mc_title], I've always thought girls with bigger boobs looked hotter."
+    elif the_person.get_opinion_score("showing her tits") < 0:
+        $ the_person.change_happiness(-10)
+        $ the_person.change_obedience(2)
+
+        the_person.char "Okay, if that's what you'd like. I don't like it, but I'll do it because I love you."
+    else:
+        $ the_person.change_obedience(2)
+        the_person.char "Okay [the_person.mc_title], if you want it and you're going to pay for it, I'll do it for you."
+
+    the_person.char "I'll get it scheduled, if we're lucky I'll be able to have it done in a few days."
+    #TODO: Add the boob job event later
+    $ mc.business.funds += -7000
+    $ the_person.event_triggers_dict["getting boobjob"] = True #Reset the flag so you can ask her to get _another_ boobjob.
+
+    $ got_boobjob_action = Action("Girlfriend Got Boobjob", girlfriend_got_boobjob_requirement, "girlfriend_got_boobjob_label", args = the_person, requirement_args = day + renpy.random.randint(3,6))
+    $ mc.business.mandatory_crises_list.append(got_boobjob_action)
+    return
+
+label girlfriend_got_boobjob_label(the_person):
+    call got_boobjob(the_person) from _call_got_boobjob_1
+    $ girlfriend_boob_brag_action = Action("Girlfriend Boobjob Brag", girlfriend_boob_brag_requirement, "girlfriend_boob_brag_label")
+    $ the_person.on_talk_event_list.append(girlfriend_boob_brag_action)
+    return
+
+label girlfriend_boob_brag_label(the_person):
+    the_person.char "Hey [the_person.mc_title], what do you think?"
+    "She pushes her chest out towards you, shaking her tits just a little."
+    if the_person.get_opinion_score("showing her tits") < 0:
+        the_person.char "These feel so... excessive. It feels like everyone is staring at them all the time now."
+        $ the_person.change_slut_temp(-1 + the_person.get_opinion_score("showing her tits"))
+    else:
+        the_person.char "I hope you like them, maybe we can have some fun with them later."
+        $ the_person.change_slut_temp(2)
+
+    call talk_person(the_person) from _call_talk_person_9
     return
 
 label plan_date_night(the_person):
     #Special date for girlfriends only, you invite her over (or go over to her place?) and spend time watching a movie or something.
 
+    return
+
+label got_boobjob(the_person):
+    # Event called a few days after someone has been asked to get a boob job. Results in larger brests. Duh.
+    if rank_tits(the_person.tits) <= 2: #Ie. B cup or smaller.
+        $ the_person.tits = "D" #Small tits all get upgraded to "large" D cup tits as a minimum, so they can be titfucked after.
+    else: #Otherwise they get bigger by two steps.
+        $ the_person.tits = get_larger_tits(the_person.tits) #Upgrade them twice, because we want boob jobs to be immediately noticeable.
+        $ the_person.tits = get_larger_tits(the_person.tits)
+    $ the_person.event_triggers_dict["getting boobjob"] = False #Reset the flag so you can ask her to get _another_ boobjob.
     return
