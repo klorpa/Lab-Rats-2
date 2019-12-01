@@ -1,14 +1,19 @@
 ﻿init:
     python:
-        deepthroat = Position("Deepthroat",60,90,"blowjob","Kneel","None","Oral",15,30,[],
-        "intro_deepthroat",
-        ["scene_deepthroat_1","scene_deepthroat_2","scene_deepthroat_3"],
-        "outro_deepthroat",
-        "transition_default_deepthroat",
-        "strip_deepthroat", "strip_ask_deepthroat",
-        "orgasm_deepthroat",
-        verb = "throat fuck",
-        opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs")
+        deepthroat = Position(name = "Deepthroat", slut_requirement = 55, slut_cap = 80, requires_hard = True, requires_large_tits = False,
+            position_tag = "blowjob", requires_location = "Kneel", requires_clothing = "None", skill_tag = "Oral",
+            girl_arousal = 3, girl_energy = 20,
+            guy_arousal = 23, guy_energy = 5,
+            connections = [],
+            intro = "intro_deepthroat",
+            scenes = ["scene_deepthroat_1","scene_deepthroat_2","scene_deepthroat_3"],
+            outro = "outro_deepthroat",
+            transition_default = "transition_default_deepthroat",
+            strip_description = "strip_deepthroat", strip_ask_description = "strip_ask_deepthroat",
+            orgasm_description = "orgasm_deepthroat",
+            verb = "throat fuck",
+            opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs")
+
         list_of_positions.append(deepthroat)
 
 init 1:

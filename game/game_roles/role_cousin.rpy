@@ -21,7 +21,7 @@ init -2 python:
         return False
 
     def cousin_blackmail_intro_requirement(the_person):
-        if the_person in lily_bedroom.people and time_of_day == 2 and __builtin__.len(lily_bedroom.people) == 1: #Only triggers when she's in there alone (and after the event has been added to the trigger list)
+        if the_person in lily_bedroom.people and __builtin__.len(lily_bedroom.people) == 1: #Only triggers when she's in there alone (and after the event has been added to the trigger list)
             return True
         return False
 
@@ -436,7 +436,8 @@ label cousin_blackmail_list(the_person):
             $ the_person.add_situational_obedience("blackmail", 30, "This will keep him quiet.")
 
             call fuck_person(the_person, start_position = kissing, start_object = mc.location.objects_with_trait("Stand"), position_locked = True) from _call_fuck_person_24
-            if the_person.arousal >= 100:
+            $ the_report = _return
+            if the_report.get("girl orgasms", 0) > 0:
                 "[the_person.title] is left flush and panting when you're finished making out."
                 mc.name "Did you enjoy yourself? You're pretty good at that."
                 $ the_person.change_slut_temp(2)
@@ -446,7 +447,6 @@ label cousin_blackmail_list(the_person):
                 the_person.char "Finally. I'm glad that's over."
                 $ the_person.change_obedience(3)
 
-            $ the_person.reset_arousal()
             $ the_person.clear_situational_obedience("blackmail")
             $ the_person.review_outfit()
             $ the_person.event_triggers_dict["last_blackmailed"] = day
@@ -461,7 +461,8 @@ label cousin_blackmail_list(the_person):
                 $ the_person.add_situational_obedience("blackmail", 30, "This will keep him quiet.")
 
                 call fuck_person(the_person) from _call_fuck_person_25
-                if the_person.arousal >= 100:
+                $ the_report = _return
+                if the_report.get("girl orgasms", 0) > 0:
                     "[the_person.possessive_title] closes her eyes tries to catch her breath."
                     the_person.char "Fuck... God fucking damn it..."
                     mc.name "Something wrong?"
@@ -472,8 +473,6 @@ label cousin_blackmail_list(the_person):
                     mc.name "Cheer up, you'll be enjoying it soon enough."
                     the_person.char "God I hope not. Even if I was you'll never get the satisfaction of knowing about it."
 
-
-                $ the_person.reset_arousal()
                 $ the_person.clear_situational_obedience("blackmail")
                 $ the_person.review_outfit()
                 $ the_person.event_triggers_dict["last_blackmailed"] = day
@@ -728,7 +727,7 @@ label cousin_boobjob_ask_label(the_person):
             mc.name "Fine. Send me over the bill and I'll pay it."
             the_person.char "Really? Just like that?"
             if the_person.love < 10:
-                mc.anme "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
+                mc.name "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
                 the_person.char "Ugh. You're the worst."
 
             else:
@@ -791,18 +790,14 @@ label cousin_boobjob_ask_label(the_person):
                 "She leans close to you, standing on the tips of her toes to whisper sensually into your ear."
                 the_person.char "Maybe I can show you why... Would that be enough? If your slutty stripper cousin helped get you off, would that be enough to convince you?"
                 menu:
-                    "Pay for it and fuck her. -$5000" if mc.current_stamina >= 1:
+                    "Pay for it and fuck her. -$5000":
                         "You wrap a hand around her waist and slap her ass."
                         mc.name "Alright then, you've got yourself a deal."
                         $ the_person.add_situational_obedience("event", 20, "My new tits will make this all worth it!")
                         call fuck_person(the_person) from _call_fuck_person_42
                         $ the_person.clear_situational_obedience("event")
-                        $ mc.current_stamina += -1
                         $ the_person.change_slut_temp(5)
                         $ mc.business.fund += -5000
-
-                    "Pay for it and fuck her. Requires: Stamina" if mc.current_stamina < 1:
-                        pass
 
                     "Refuse to pay.":
                         mc.name "I don't need to pay you if I want to use you, you should know that. Sorry, but you'll have to find a way to buy your own tits."
@@ -844,7 +839,7 @@ label cousin_talk_boobjob_again_label(the_person):
             mc.name "Fine. Send me over the bill and I'll pay it."
             the_person.char "Really? Just like that?"
             if the_person.love < 10:
-                mc.anme "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
+                mc.name "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
                 the_person.char "Ugh. You're the worst."
 
             else:

@@ -292,7 +292,7 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
         return False
 
     def chain_orgasm_count_difficulty_function(the_goal, the_difficulty):
-        the_goal.arg_dict["required"] += __builtin__.int(the_difficulty/3)
+        the_goal.arg_dict["required"] += __builtin__.int(the_difficulty/5)
         return
 
 

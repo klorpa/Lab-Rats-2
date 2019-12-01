@@ -56,7 +56,7 @@
             return mc.name
         reserved_personality = Personality("reserved", #Mom style personality
         common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits","jazz","classical"],
-        common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies"],
+        common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies", "giving tit fucks"],
         common_dislikes = ["the colour red", "marketing work", "flirting"],
         common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "bareback sex", "cum facials"],
         titles_function = reserved_titles, possessive_titles_function = reserved_possessive_titles, player_titles_function = reserved_player_titles)
@@ -85,7 +85,7 @@
 
         introvert_personality = Personality("introvert", #Stephanie style personality
         common_likes = ["conservative outfits", "research work", "punk", "working", "the colour black"],
-        common_sexy_likes = ["big dicks", "kissing", "vaginal sex", "anal sex", "getting head", "giving blowjobs", "masturbating", "creampies", "anal creampies"],
+        common_sexy_likes = ["big dicks", "kissing", "anal sex", "getting head", "giving blowjobs", "masturbating", "anal creampies", "giving tit fucks"],
         common_dislikes = ["skimpy outfits", "skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
         common_sexy_dislikes = ["skimpy outfits", "not wearing underwear", "not wearing anything", "public sex", "lingerie"],
         titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles)

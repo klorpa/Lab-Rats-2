@@ -98,6 +98,26 @@ init -1:
         windswept_hair = Clothing("Messy Short Hair", 1, True, True, "Wind_Swept_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
         hair_styles.append(windswept_hair)
 
+        ##PUBES STYLES##
+        pube_styles = []
+
+        shaved_pubes = Clothing("Shaved Pubic Hair", 1, True, True, None, False, False, 0) #Default pubes used when she is clean shaven. Every girl before v0.23.
+        pube_styles.append(shaved_pubes)
+
+        trimmed_pubes = Clothing("Trimmed Pubic Hair", 1, True, True, "Trimmed_Pubes", False, False, 0)
+        pube_styles.append(trimmed_pubes)
+
+        landing_strip_pubes = Clothing("Landing Strip Pubic Hair", 1, True, True, "Landing_Strip_Pubes", False, False, 0)
+        pube_styles.append(landing_strip_pubes)
+
+        diamond_pubes = Clothing("Diamond Trimmed Pubes", 1, True, True, "Diamond_Pubes", False, False, 0)
+        pube_styles.append(diamond_pubes)
+
+        default_pubes = Clothing("Pubic Hair", 1, True, True, "Default_Pubes", False, False, 0)
+        pube_styles.append(default_pubes)
+
+
+
 
 
         bow_hair = Clothing("Bow Hair", 1, True, True, "Bow_Hair", False, False, 0) #NO IMAGES
@@ -142,7 +162,11 @@ init -1:
         tiny_g_string = Clothing("G String", 1, True, True, "Tiny_G_String", False, True, 4, tucked = True)
         panties_list.append(tiny_g_string)
 
+        string_panties = Clothing("String Panties", 1, True, True, "String_Panties", False, True, 4, tucked = True)
+        panties_list.append(string_panties)
 
+        strappy_panties = Clothing("Strappy Panties", 1, True, True, "Strappy_Panties", False, True, 3, tucked = True)
+        panties_list.append(strappy_panties)
 
 
         ##Bras
@@ -165,6 +189,9 @@ init -1:
 
         thin_bra = Clothing("Thin Bra", 1, True, True, "Thin_Bra", True, True, 2, whiteness_adjustment = 0.0, contrast_adjustment = 1.3)
         bra_list.append(thin_bra)
+
+        strappy_bra = Clothing("Strappy Bra", 1, True, True, "Strappy_Bra", True, True, 3)
+        bra_list.append(strappy_bra)
 
         corset = Clothing("Corset", 1, True, True, "Corset", True, True, 5, whiteness_adjustment = 0.0, contrast_adjustment = 1.4, supported_patterns = {"Two Toned":"Pattern_1"})
         bra_list.append(corset)
@@ -240,6 +267,10 @@ init -1:
         summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1)
         dress_list.append(summer_dress)
 
+        virgin_killer_bottom = Clothing("virgin killer", 2, True, True, "Virgin_Killer", False, False, 0, is_extension = True)
+        virgin_killer = Clothing("Virgin Killer", 2, True, True, "Virgin_Killer", True, False, 5, has_extension = virgin_killer_bottom)
+        dress_list.append(virgin_killer)
+
         evening_dress_bottom = Clothing("evening dress", 2, False, False, "Evening_Dress", False, False, 0, is_extension = True)
         evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4)
         dress_list.append(evening_dress)
@@ -264,12 +295,16 @@ init -1:
         lingerie_one_piece = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", True, True, 8, tucked = True, has_extension = lingerie_one_piece_bottom, supported_patterns = {"Flowers":"Pattern_1"})
         dress_list.append(lingerie_one_piece)
 
+        bodysuit_underwear_bottom = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", False, True, 0, is_extension = True)
+        bodysuit_underwear = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", True, True, 6, tucked = True, has_extension = bodysuit_underwear_bottom, whiteness_adjustment = 0.2)
+        dress_list.append(bodysuit_underwear)
+
         towel_bottom = Clothing("Towel", 1, True, True, "Towel", False, False, 0, is_extension = True)
         towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom)
         # dress_list.append(towel) #TEMPORARY FOR TESTING
 
         apron_bottom = Clothing("Apron", 3, False, False, "Apron", False, False, 0, is_extension = True)
-        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"})
+        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1)
         dress_list.append(apron)
 
         ##Shirts

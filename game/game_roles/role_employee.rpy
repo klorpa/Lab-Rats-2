@@ -31,8 +31,10 @@ init -2 python:
     def employee_performance_review_requirement(the_person):
         if not mc.business.is_open_for_business():
             return False
-        elif day - the_person.event_triggers_dict.get("day_last_performance_review", the_person.event_triggers_dict.get("employed_since",-7)) < 7:
-            return "Had a recent performance review."
+        elif day - the_person.event_triggers_dict.get("employed_since",-7) < 7:
+            return "Too recently hired."
+        elif day - the_person.event_triggers_dict.get("day_last_performance_review", -7) < 7:
+            return "Just had a recent performance review."
         else:
             return True
 
@@ -112,13 +114,12 @@ label employee_pay_cash_bonus(the_person):
             $ the_person.change_obedience(change_amount)
             $ mc.business.funds -= months_wages
             "[the_person.title] takes the bills, momentarily stunned by the amount."
-            if the_person.sluttiness > 40 and the_person.happiness > 100 and mc.current_stamina > 0:
+            if the_person.sluttiness > 40 and the_person.happiness > 100:
                 the_person.char "Wow... this is amazing sir. I'm sure there's something I can do to pay you back, right?"
                 "She steps close to you and runs a finger down your chest."
-                $ mc.current_stamina += -1
-                call fuck_person(the_person) from _call_fuck_person_3  #TODO: add a temporary obedience and sluttiness modifier to the function to allow for modifiers during situations like this (and firing her)
+                $ the_person.add_situational_slut("situation", 10, "He's given me such a generous bonus, I should repay the favour!")
+                call fuck_person(the_person) from _call_fuck_person_3
                 #Now that you've had sex, we calculate the change to her stats and move on.
-                $ the_person.reset_arousal()
                 $ the_person.review_outfit()
             else:
                 the_person.char "Wow... this is amazing sir. I'll do everything I can for you and the company!"
@@ -189,14 +190,15 @@ label employee_performance_review(the_person):
                     $ the_person.add_situational_obedience("seduction_approach", -20, "It's all about me!")
                     the_person.char "Oh [the_person.mc_title], that sounds like a great idea..."
                     call fuck_person(the_person,private = True) from _call_fuck_person_11
+                    $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
-                    if the_person.arousal >= 100: #We made her cum! Congradulations!
+                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
                         $ the_person.change_happiness(20)
                         $ the_person.change_slut_temp(5)
                         $ the_person.change_love(2)
                         the_person.char "Oh [the_person.mc_title], that was wonderful! I couldn't have asked for a better performance bonus!"
-                    elif the_person.arousal >= 80:
+                    if the_report.get("girl orgasms", 0) > 0:
                         $ the_person.change_happiness(5)
                         $ the_person.change_slut_temp(2)
                         the_person.char "Well, that was a good time [the_person.mc_title]. It's a lot more fun than a normal performance bonus, that's for sure!"
@@ -204,7 +206,6 @@ label employee_performance_review(the_person):
                         $ the_person.change_happiness(-5)
                         $ the_person.change_obedience(-2)
                         the_person.char "It's not much of a bonus if you're the only one who gets to cum. Maybe next time a cash bonus would be better, okay?"
-                    $ the_person.reset_arousal()
                     $ the_person.review_outfit()
 
         "Punish her for poor performance.":
@@ -260,14 +261,13 @@ label employee_performance_review(the_person):
                         else:
                             the_person.char "Wait, I really need this job... What if I... let you use me. Just so you'll keep me around."
                             menu:
-                                "Fuck her." if mc.current_stamina > 0:
+                                "Fuck her.":
                                     $ the_person.add_situational_slut("seduction_approach", -5, "I'm just a toy to him.")
                                     $ the_person.add_situational_obedience("seduction_approach", 25, "I'll do what I need to keep my job!")
                                     mc.name "Alright, you've got me interested. Let's see what you can do."
                                     call fuck_person(the_person,private = True) from _call_fuck_person_12
                                     $ the_person.clear_situational_slut("seduction_approach")
                                     $ the_person.clear_situational_obedience("seduction_approach")
-                                    $ the_person.reset_arousal()
                                     $ the_person.review_outfit()
 
                                     $ the_person.change_obedience(10)
@@ -278,14 +278,6 @@ label employee_performance_review(the_person):
                                         the_person.char "I'll do my best sir, I promise."
                                     else:
                                         the_person.char "Would that really be such a bad thing?"
-
-                                "Fuck her later." if mc.current_stamina == 0:
-                                    mc.name "I'm already spent for today, but I'll make sure to collect on this later."
-                                    "[the_person.title] nods."
-                                    $ the_person.change_obedience(10)
-                                    $ the_person.change_happiness(-5)
-                                    the_person.char "Understood sir. Thank you for giving me a second chance."
-
 
                                 "Fire her.":
                                     mc.name "I'm sorry, but that wouldn't be enough."
@@ -315,13 +307,13 @@ label employee_performance_review(the_person):
                     call fuck_person(the_person,private = True) from _call_fuck_person_13
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
-                    if the_person.arousal >= 100: #We made her cum! Congradulations!
+                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
                         $ the_person.change_happiness(5)
                         $ the_person.change_obedience(-10)
                         the_person.char "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't suppose to cum?"
                         "[the_person.title] seems smug about her orgasmic victory."
 
-                    elif the_person.arousal >= 80:
+                    elif the_report.get("end arousal", 0) >= 80:
                         $ the_person.change_happiness(5)
                         $ the_person.change_slut_temp(5)
                         $ the_person.change_obedience(5)
@@ -333,7 +325,7 @@ label employee_performance_review(the_person):
                         $ the_person.change_obedience(10)
                         mc.name "That felt great [the_person.title], I suppose if your performance doesn't improve you'll still be useful as a toy."
                         the_person.char "I... Yes sir, I suppose I would be."
-                    $ the_person.reset_arousal()
+
                     $ the_person.review_outfit()
 
 

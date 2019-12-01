@@ -1,14 +1,19 @@
 ﻿init:
     python:
-        blowjob = Position("Blowjob",40,60,"blowjob","Kneel","None","Oral",15,25,[],
-        "intro_blowjob",
-        ["scene_blowjob_1","scene_blowjob_2"],
-        "outro_blowjob",
-        "transition_default_blowjob",
-        "strip_blowjob", "strip_ask_blowjob",
-        "orgasm_blowjob",
-        verb = "throat",
-        opinion_tags = ["giving blowjobs"], record_class = "Blowjobs")
+        blowjob = Position(name = "Blowjob", slut_requirement = 40, slut_cap = 60, requires_hard = True, requires_large_tits = False,
+            position_tag = "blowjob", requires_location = "Kneel", requires_clothing = "None", skill_tag = "Oral",
+            girl_arousal = 3, girl_energy = 15,
+            guy_arousal = 15, guy_energy = 5,
+            connections = [],
+            intro = "intro_blowjob",
+            scenes = ["scene_blowjob_1","scene_blowjob_2"],
+            outro = "outro_blowjob",
+            transition_default = "transition_default_blowjob",
+            strip_description = "strip_blowjob", strip_ask_description = "strip_ask_blowjob",
+            orgasm_description = "orgasm_blowjob",
+            verb = "throat",
+            opinion_tags = ["giving blowjobs"], record_class = "Blowjobs")
+
         list_of_positions.append(blowjob)
 
 init 1:

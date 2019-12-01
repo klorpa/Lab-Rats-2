@@ -1,13 +1,18 @@
 ﻿init:
     python:
-        doggy = Position("Doggy",60,80,"doggy","Lay","Vagina","Vaginal",18,22,[],
-        "intro_doggy",
-        ["scene_doggy_1","scene_doggy_2"],
-        "outro_doggy",
-        "transition_default_doggy",
-        "strip_doggy", "strip_ask_doggy",
-        "orgasm_doggy",
-        opinion_tags = ["doggy style sex","vaginal sex"], record_class = "Vaginal Sex")
+        doggy = Position(name = "Doggy", slut_requirement = 60, slut_cap = 80, requires_hard = True, requires_large_tits = False,
+            position_tag = "doggy", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
+            girl_arousal = 16, girl_energy = 14,
+            guy_arousal = 22, guy_energy = 20,
+            connections = [],
+            intro = "intro_doggy",
+            scenes = ["scene_doggy_1","scene_doggy_2"],
+            outro = "outro_doggy",
+            transition_default = "transition_default_doggy",
+            strip_description = "strip_doggy", strip_ask_description = "strip_ask_doggy",
+            orgasm_description = "orgasm_doggy",
+            opinion_tags = ["doggy style sex","vaginal sex"], record_class = "Vaginal Sex")
+
         list_of_positions.append(doggy)
 
 init 1:

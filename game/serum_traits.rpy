@@ -63,6 +63,32 @@ init -1:
         def aphrodisiac_on_turn(the_person, add_to_log):
             the_person.change_obedience(-2, add_to_log)
 
+        ## caffeine_trait functions##
+        def caffeine_trait_on_apply(the_person, add_to_log):
+            the_person.change_max_energy(20, add_to_log)
+            the_person.change_energy(20, add_to_log)
+            the_person.change_obedience(-15, add_to_log)
+
+        def caffeine_trait_on_remove(the_person, add_to_log):
+            the_person.change_max_energy(-20, add_to_log)
+            the_person.change_obedience(15, add_to_log)
+
+        ## refined_caffeine_trait functions ##
+        def refined_caffeine_trait_on_apply(the_person, add_to_log):
+            the_person.change_max_energy(20, add_to_log)
+            the_person.change_energy(20, add_to_log)
+
+        def refined_caffeine_trait_on_remove(the_person, add_to_log):
+            the_person.change_max_energy(-20, add_to_log)
+
+        ## slutty_caffeine_trait functions ##
+        def slutty_caffeine_trait_on_apply(the_person, add_to_log):
+            the_person.change_max_energy(20, add_to_log)
+            the_person.change_energy(20, add_to_log)
+
+        def slutty_caffeine_trait_on_remove(the_person, add_to_log):
+            the_person.change_max_energy(-20, add_to_log)
+
         ## love_potion_functions ##
         def love_potion_on_apply(the_person, add_to_log):
             the_person.change_love(20, add_to_log)
@@ -331,6 +357,17 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = basic_med_app,
             research_needed = 100)
 
+        caffeine_trait = SerumTrait(name = "Caffeine Infusion",
+            desc = "Adding simple, well understood caffeine to the serum increase the energy levels of the recipient. Unfortunately, the stimulating effect tends to reduce obedience for the duration.",
+            positive_slug = "+$15 Value, +20 Max Energy",
+            negative_slug = "-15 Obedience, +50 Serum Research",
+            value_added = 15,
+            research_added = 50,
+            base_side_effect_chance = 20,
+            on_apply = caffeine_trait_on_apply,
+            on_remove = caffeine_trait_on_remove,
+            research_needed = 150)
+
 
         #################
         # Tier 1 Traits #
@@ -445,13 +482,26 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         mood_enhancer = SerumTrait(name = "Mood Enhancer",
             desc = "Standard antidepressants provide a general improvement in mood. The most common side effect is a lack of respect for authority figures, brought on by the chemical endorphin rush.",
-            positive_slug = "+5 Happiness/Turn, +$20 Value",
+            positive_slug = "+$20 Value, +5 Happiness/Turn",
             negative_slug = "-2 Obedience/Turn, +75 Serum Research",
             value_added = 20,
             research_added = 75,
             base_side_effect_chance = 15,
             on_turn = mood_enhancer_on_turn,
             requires = basic_med_app,
+            tier = 1,
+            research_needed = 300)
+
+        refined_caffeine_trait = SerumTrait(name = "Refined Stimulants",
+            desc = "A more carefully refined stimulant produces the same boost to baseline energy levels as ordinary caffeine, but with none of the unpleasant side effects.",
+            positive_slug = "+$20 Value, +20 Max Energy",
+            negative_slug = "50 Serum Research",
+            value_added = 20,
+            research_added = 50,
+            base_side_effect_chance = 25,
+            on_apply = refined_caffeine_trait_on_apply,
+            on_remove = refined_caffeine_trait_on_remove,
+            requires = [caffeine_trait],
             tier = 1,
             research_needed = 300)
 
@@ -575,6 +625,19 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
                 requires = [basic_med_app, clinical_testing],
                 tier = 2,
                 research_needed = 800)
+
+        slutty_caffeine_trait = SerumTrait(name = "Libido Stimulants",
+            desc = "Carefull engineering allows for the traditional side effects of stimulants to be redirected to the parasympathetic nervous system, causing an immediate spike in arousal as well as general levels.",
+            positive_slug = "+20 Max Energy, +10 Sluttiness, +$25 Value",
+            negative_slug = "150 Serum Research",
+            value_added = 25,
+            research_added = 150,
+            base_side_effect_chance = 60,
+            on_apply = slutty_caffeine_trait_on_apply,
+            on_remove = slutty_caffeine_trait_on_remove,
+            requires = [refined_caffeine_trait, aphrodisiac],
+            tier = 2,
+            research_needed = 800)
 
     #################
         # Tier 3 Traits #
@@ -808,6 +871,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(suggestion_drugs_trait)
         list_of_traits.append(high_con_drugs)
         list_of_traits.append(sedatives_trait)
+        list_of_traits.append(caffeine_trait)
 
         # Tier 1
         list_of_traits.append(improved_serum_prod)
@@ -819,6 +883,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(large_obedience_enhancer)
         list_of_traits.append(clinical_testing)
         list_of_traits.append(mood_enhancer)
+        list_of_traits.append(refined_caffeine_trait)
 
 
     # Tier 2
@@ -831,6 +896,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(cha_enhancement)
         list_of_traits.append(low_volatility_reagents)
         list_of_traits.append(happiness_tick)
+        list_of_traits.append(slutty_caffeine_trait)
 
     # Tier 3
         list_of_traits.append(futuristic_serum_prod)

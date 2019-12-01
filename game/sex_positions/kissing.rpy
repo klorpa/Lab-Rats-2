@@ -1,14 +1,18 @@
 ﻿init:
     python:
-        kissing = Position("Kissing",10,40,"kissing","Stand","None","Foreplay",8,3,[],
-        "intro_kissing",
-        ["scene_kissing_1","scene_kissing_2"],
-        "outro_kissing",
-        "transition_default_kissing",
-        "strip_kissing", "strip_ask_kissing",
-        "orgasm_kissing",
-        verb = "kiss",
-        opinion_tags = ["kissing"])
+        kissing = Position(name = "Kissing", slut_requirement = 10, slut_cap = 40, requires_hard = False, requires_large_tits = False,
+            position_tag = "kissing", requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
+            girl_arousal = 5, girl_energy = 10,
+            guy_arousal = 5, guy_energy = 10,
+            connections = [],
+            intro = "intro_kissing",
+            scenes = ["scene_kissing_1","scene_kissing_2"],
+            outro = "outro_kissing",
+            transition_default = "transition_default_kissing",
+            strip_description = "strip_kissing", strip_ask_description = "strip_ask_kissing",
+            orgasm_description = "orgasm_kissing",
+            verb = "kiss",
+            opinion_tags = ["kissing"])
         list_of_positions.append(kissing)
 
 init 1:

@@ -29,6 +29,7 @@
 
 init -15 python:
     from datetime import datetime
+
     def log_message(the_message):
         file_path = os.path.abspath(os.path.join(config.basedir, "game"))
         file_name = os.path.join(file_path,"DEBUG_LOG.txt")
@@ -97,6 +98,31 @@ label debug_run_turn:
     $ turn_time = time.time()
     call advance_time from _call_advance_time_27
     $ log_message("Finished. Time taken: " + str(time.time()-turn_time))
+    return
+
+label debug_create_position_csv():
+    python:
+        string = ""
+        full_list_of_positions = list_of_positions[:]
+        for position in list_of_positions + list_of_girl_positions:
+            for connection in position.connections:
+                full_list_of_positions.append(connection) #Get all of their stuff
+        set_of_positions = __builtin__.set(full_list_of_positions) #Trim out repeated objects.
+
+        for position in set_of_positions:
+            string += position.name + ", "
+            string += position.skill_tag + ", "
+            string += str(position.guy_arousal) + ", "
+            string += str(position.girl_arousal) + ", "
+            string += str(position.guy_energy) + ", "
+            string += str(position.girl_energy) + ", "
+            string += str(position.slut_requirement) + ", "
+            string += str(position.slut_cap) + ", "
+            for trans in position.transitions:
+                string += position.name + " -> " + trans[0].name + " | "
+            string += "\n"
+
+        log_message("Position CSV: " + string)
     return
 
 label edit_default_wardrobe:

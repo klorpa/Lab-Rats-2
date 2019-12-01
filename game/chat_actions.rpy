@@ -6,24 +6,24 @@ init -2 python:
             return True
 
     def small_talk_requirement(the_person):
-        if time_of_day >= 4:
-            return "Too late to chat."
+        if mc.energy < 15:
+            return "Requires: 15 Energy"
         else:
             return True
 
     def compliment_requirement(the_person):
-        if time_of_day >= 4:
-            return "Too late to chat."
-        elif the_person.love < 10:
+        if the_person.love < 10:
             return "Requires: 10 Love"
+        elif mc.energy < 15:
+            return "Requires: 15 Energy"
         else:
             return True
 
     def flirt_requirement(the_person):
-        if time_of_day >= 4:
-            return "Too late to chat."
-        elif the_person.love < 10:
+        if the_person.love < 10:
             return "Requires: 10 Love"
+        elif mc.energy < 15:
+            return "Requires: 15 Energy"
         else:
             return True
 
@@ -103,8 +103,6 @@ init -2 python:
     def seduce_requirement(the_person):
         if the_person.sluttiness < 15:
             return "Requires: {image=gui/heart/three_quarter_red_quarter_empty_heart.png}"
-        elif mc.current_stamina <= 0:
-            return "Requires: 1 Stamina"
         else:
             return True
 
@@ -355,6 +353,7 @@ label person_new_mc_title(the_person):
     return
 
 label small_talk_person(the_person): #Tier 0. Useful for discovering a character's opinions and the first step to building up love.
+    $ mc.change_energy(-15)
     $ smalltalk_opinion = the_person.get_opinion_score("small talk")
     mc.name "So [the_person.title], what's been on your mind recently?"
     $ the_person.discover_opinion("small talk")
@@ -448,6 +447,7 @@ label small_talk_person(the_person): #Tier 0. Useful for discovering a character
     return
 
 label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO: just have it raise love and not sluttiness.
+    $ mc.change_energy(-15)
     mc.name "Hey [the_person.title]. How are you doing today? You're looking good, that's for sure."
     the_person.char "Aww, thank you. You're too kind. I'm doing well."
     "You chat with [the_person.possessive_title] for a while and slip in a compliment when you can. She seems flattered by all the attention."
@@ -455,7 +455,6 @@ label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO
     $ the_person.change_happiness(2)
     the_person.char "It's been fun talking [the_person.mc_title], we should do this again sometime!"
     $ the_person.apply_serum_study()
-    call advance_time from _call_advance_time_22
     return
 
 
@@ -487,6 +486,7 @@ label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO
 label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a low cap while also raising their love by less than a compliment.
     #TODO: change this to be more appropriate for a love changing action (and maybe move the current stuff somewhere else?)
     #TODO: Vary the flirting intro and response based on sluttiness.
+    $ mc.change_energy(-15)
     mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
     $ mc.listener_system.fire_event("player_flirt", the_person = the_person)
     $ change_amount = mc.charisma + 1 + the_person.get_opinion_score("flirting") #We still cap out at 20, but we get there a little faster or slower depending on if they like flirting
@@ -501,7 +501,6 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
     $ the_person.discover_opinion("flirting")
     $ the_person.call_dialogue("flirt_response")
     $ the_person.apply_serum_study()
-    call advance_time from _call_advance_time_23
     return
 
 
@@ -875,7 +874,6 @@ label movie_date_label(the_person):
                                 $ mc.change_arousal(40)
                                 "You hurry into the womens bathroom and lock yourselves in an empty stall."
                                 call fuck_person(the_person, private = True) from _call_fuck_person_28
-                                $ the_person.reset_arousal()
                                 $ the_person.review_outfit()
                                 $ renpy.show("Theater", what = theater_background)
                                 "You slip out of the bathroom as quickly as possible and return to your seats with some time pleasantly passed."
@@ -1051,7 +1049,6 @@ label dinner_date_label(the_person):
                     "[the_person.possessive_title] leads you into her room and closes the door behind you."
                     $ the_person.add_situational_slut("Romanced",25,"What a wonderful date!")
                     call fuck_person(the_person, private = True) from _call_fuck_person_16
-                    $ the_person.reset_arousal()
                     $ the_person.clear_situational_slut("Romanced")
 
                     #TODO: add support for spending the night somewhere other than home.
@@ -1082,7 +1079,6 @@ label dinner_date_label(the_person):
 
                     $ the_person.add_situational_slut("Romanced",25,"What a wonderful date!")
                     call fuck_person(the_person, private = True) from _call_fuck_person_17
-                    $ the_person.reset_arousal()
                     $ the_person.clear_situational_slut("Romanced")
 
                     #TODO: add support for spending the night somewhere other than home.
@@ -1362,12 +1358,10 @@ label seduce_label(the_person):
         else:
             $ the_person.call_dialogue("seduction_accept_alone")
 
-        $ mc.current_stamina += -1
         call fuck_person(the_person,private = in_private) from _call_fuck_person
 
         #TODO: This is where we put stuff for her being in a relationship but wants to start an affair with you.
 
-        $ the_person.reset_arousal()
         $ the_person.review_outfit()
 
         #Tidy up our situational modifiers, if any.

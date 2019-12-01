@@ -1003,14 +1003,10 @@ label aunt_share_drinks_label(the_person):
                     "Inch by inch it moves up your leg until it brushes against the tip of your soft cock. She rubs it gently through your pants, coaxing it to life."
                     the_person.char "I... I know we shouldn't, but nobody needs to know. Right?"
                     menu:
-                        "Fuck her." if mc.current_stamina > 0:
+                        "Fuck her.":
                             call fuck_person(the_person) from _call_fuck_person_22
-                            $ the_person.reset_arousal()
                             "[the_person.possessive_title] is exhausted when you're finished fooling around. She lies back on the couch and quickly falls asleep."
                             "You get yourself tidied up, move the dirty glasses of wine to the kitchen, and get ready to leave."
-
-                        "Fuck her. (disabled)" if mc.current_stamina == 0:
-                            pass
 
                         "Turn her down.":
                             mc.name "I don't think that's a good idea right now [the_person.title]. You're in no state to make that kind of decision."

@@ -373,12 +373,12 @@ label sister_instathot_label(the_person):
                 the_person.char "It's so unfair that guys can take pictures shirtless and post them but girls can't."
                 the_person.char "Oh well, let's just take some pictures with the outfit I'm wearing."
 
-            elif the_suggested_outfit.judge_outfit(the_suggested_outfit, -30):
+            elif the_person.judge_outfit(the_suggested_outfit, -30):
                 the_person.char "I mean, I guess it would be nice, but it isn't very... revealing, you know?"
                 the_person.char "Guys on the site like it when you show some skin. A little cleavage, maybe some underwear."
                 the_person.char "As long as it's not full on tits or pussy, it's fair game. Let's just go with what I'm wearing right now, okay?"
 
-            elif not the_suggested_outfit.judge_outfit(the_suggested_outfit, 20):
+            elif not the_person.judge_outfit(the_suggested_outfit, 20):
                 #It's so slutty she can't be convinced to try it.
                 the_person.char "Oh wow... I guess it technically covers everything that needs to be covered but..."
                 the_person.char "I don't think I could wear that [the_person.mc_title]. I wish I had that kind of confidence, but what if Mom saw these pictures?"

@@ -1,14 +1,18 @@
 init:
     python:
-        standing_finger = Position("Fingering",25,50, "walking_away" ,"Stand","None","Foreplay",15,4,[],
-        "intro_standing_finger",
-        ["scene_standing_finger_1","scene_standing_finger_2"],
-        "outro_standing_finger",
-        "transition_default_standing_finger",
-        "strip_standing_finger", "strip_ask_standing_finger",
-        "orgasm_standing_finger",
-        verb = "finger",
-        opinion_tags = ["being fingered"])
+        standing_finger = Position(name = "Fingering", slut_requirement = 25, slut_cap = 50, requires_hard = False, requires_large_tits = False,
+            position_tag = "walking_away", requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
+            girl_arousal = 15, girl_energy = 5,
+            guy_arousal = 5, guy_energy = 20,
+            connections = [],
+            intro = "intro_standing_finger",
+            scenes = ["scene_standing_finger_1","scene_standing_finger_2"],
+            outro = "outro_standing_finger",
+            transition_default = "transition_default_standing_finger",
+            strip_description = "strip_standing_finger", strip_ask_description = "strip_ask_standing_finger",
+            orgasm_description = "orgasm_standing_finger",
+            verb = "finger",
+            opinion_tags = ["being fingered"])
         #list_of_positions.append(standing_finger) #Only reachable by massaging her first.
 
 init 1:

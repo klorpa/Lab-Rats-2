@@ -51,7 +51,7 @@ label ask_leave_SO_label(the_person): #
     return
 
 label plan_fuck_date_label(the_person):
-    # A special date available to people you're in an affair with. Just hard core fucking, as long as you have the stamina for.
+    # A special date available to people you're in an affair with. Just hard core fucking, as long as you have the energy for.
     # Raises her love and sluttiness, with a small chance each time that her SO will come home and catch you.
     # If he comes home, chance to assert dominance and just keep fucking her (if she would normally leave her SO, or if you can make her cum when he comes in).
 
@@ -81,7 +81,7 @@ label plan_fuck_date_label(the_person):
     return
 
 label fuck_date_label(the_person):
-    #You go to her home and fuck her as much as your stamina can support. Small chance her SO either calls or walks in.
+    #You go to her home and fuck her as much as your energy can support. Small chance her SO either calls or walks in.
     # Occures at night. You go to her place.
 
     $ mc.business.event_triggers_dict["date_scheduled"] = False #Deflag this event so you can schedule a date with another person for next week.
@@ -126,7 +126,6 @@ label fuck_date_label(the_person):
         #She picks a slutty outfit, but nothing truely "special".
         $ the_person.outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0)
 
-
     if the_person.obedience > 130 or the_person.get_opinion_score("being submissive") > 0 or the_person.get_opinion_score("giving blowjobs") > 0:
         #She's on her knees and ready to suck you off as soon as you come in.
         $ the_person.draw_person(position = "kneeling1")
@@ -143,27 +142,29 @@ label fuck_date_label(the_person):
         "She wastes no time wrapping her arms around you and kissing you."
         call fuck_person(the_person, private = True, start_position = kissing) from _call_fuck_person_35
 
+    $ the_report = _return
+
     $ done = False
     $ girl_came = False
     $ so_called = False
+    $ energy_gain_amount = 50 #Drops each round, representing your flagging endurance.
     while done == False:
-        if the_person.arousal > 100: #TODO: Have some variation to this based on how many times we've looped around.
+        if the_report.get("girl_orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
             $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
             $ the_person.change_slut_temp(1)
             the_person.char "Oh god... That was amazing. You're so much better at that than my [so_title]."
             "[the_person.title] lies down on her bed and catches her breath."
             the_person.char "Ready to get back to it?"
-            $ the_person.reset_arousal()
             $ girl_came = True
 
         else:
             the_person.char "Whew, good job. Get some water and let's go for another so we can get back to it!"
             "You take some time to catch your breath, drink some water, and wait for your refractory period to pass."
             "You hold [the_person.title] in bed while she caresses you and touches herself, keeping herself ready for you."
-            $ the_person.arousal = __builtin__.int(the_person.arousal/2) #Keep some progress to making them orgasm so you can claim your love bonus eventually.
 
-        $ mc.current_stamina += -1 #TODO: change the sex stamina system, but for now this will all do.
-        if mc.current_stamina == 0: #Forced to end the fuck date, so we set done to True.
+
+
+        if mc.current_energy < 40 and energy_gain_amount <= 20: #Forced to end the fuck date, so we set done to True.
             "The spirit is willing, but the flesh is spent. Try as she might [the_person.title] can't coax your erection back to life."
             if girl_came:
                 the_person.char "Well, I guess that's all I'm going to be drawing out of you for tonight. That was fun."
@@ -177,9 +178,12 @@ label fuck_date_label(the_person):
                 the_person.char "Well I guess we're done then... Maybe next time we can get me off as well."
 
             $ done = True
-            $ the_person.reset_arousal()
             "You get dressed, triple check you haven't forgotten anything, and leave. [the_person.title] kisses you goodbye at the door."
         else:
+            "After a short rest you've recovered some of you're energy and [the_person.possessive_title]'s eager to get back to work."
+            $ mc.change_energy(energy_gain_amount)
+            if energy_gain_amount >= 10:
+                $ energy_gain_amount += -10 #Gain less and less energy back each time until eventually you're exhausted and gain nothing back.
             menu:
                 "Fuck her again.":
                     "Soon you're ready to go again and you wrap your arms around [the_person.title]."
@@ -319,6 +323,7 @@ label fuck_date_label(the_person):
                                 "He gibbers weakly to himself and turns around, leaving the room. Shortly after you hear the engine of his car start up and he drives away."
 
                                 call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True) from _call_fuck_person_36
+                                $ the_report = _return
                                 call transform_affair(the_person) from _call_transform_affair_1 #She's no longer with her husband, obviously.
 
                                 $ the_person.change_obedience(5)
@@ -349,6 +354,7 @@ label fuck_date_label(the_person):
                                 mc.name "Do you think he knows?"
                                 the_person.char "He doesn't have a clue. Now, where were we?"
                                 call fuck_person(the_person, private = True) from _call_fuck_person_37 #Just normal start.
+                                $ the_report = _return
 
                             "Grope her.":
                                 #Basically an extended intro.
@@ -372,6 +378,7 @@ label fuck_date_label(the_person):
                                 "[the_person.title] laughs and sits back into your arms."
                                 the_person.char "Now come here and fuck me!"
                                 call fuck_person(the_person, private = True) from _call_fuck_person_38
+                                $ the_report = _return
 
                             "Make her suck your cock." if the_person.effective_sluttiness() >= 60:
                                 #Basically an extended intro
@@ -388,6 +395,7 @@ label fuck_date_label(the_person):
                                 the_person.char "I love you too, love you sweetheart."
                                 "She slides you back into her mouth and holds her phone up to show to you as she ends the call."
                                 call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True) from _call_fuck_person_39
+                                $ the_report = _return
 
                             "Fuck her while she's talking." if the_person.effective_sluttiness() >= 80:
                                 #This is basically an extended intro
@@ -447,6 +455,7 @@ label fuck_date_label(the_person):
                                 mc.name "We'll deal with that if it happens. Just relax and enjoy."
 
                                 call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True) from _call_fuck_person_40
+                                $ the_report = _return
 
                         #TODO: At this point run a check on her arousal.
 
@@ -457,6 +466,7 @@ label fuck_date_label(the_person):
 
                     else:
                         call fuck_person(the_person) from _call_fuck_person_41
+                        $ the_report = _return
 
                 "Call it a night.":
                     mc.name "I have to get going. This was fun."

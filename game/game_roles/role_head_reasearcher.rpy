@@ -307,7 +307,8 @@ label advanced_serum_stage_2_label(the_person):
             "You smile back at [the_person.title]. She lets out a happy giggle when you wrap your arms around her waist."
             $ the_person.change_int(-1)
             call fuck_person(the_person) from _call_fuck_person_8
-            if the_person.arousal > 100:
+            $ the_report = _return
+            if the_report.get("girl orgasms", 0) > 0:
                 $ the_person.change_obedience(10)
                 the_person.char "Oh... my... god... [the_person.mc_title] that felt so good! If you could make me feel like that all the time I swear I would do anything for you. Anything at all."
             else:
@@ -320,13 +321,11 @@ label advanced_serum_stage_2_label(the_person):
             menu:
                 "Give [the_person.title] the reversal serum.":
                     $ had_sex = True
-                    $ the_person.reset_arousal()
                     pass #This falls through to the previous section.
 
                 "Leave [the_person.title] the way she is.":
                     "You think about giving [the_person.title] the reversal serum but decide against it. You aren't sure if the serum effects will wear off, but she seems happy enough as she is."
                     "[the_person.title] certainly doesn't seem like she's in any state to run your research department. It would be a good idea to pick a successor to continue [the_person.title]'s work."
-                    $ the_person.reset_arousal()
                     mc.name "Okay [the_person.title], we're all done here."
                     "Her eyebrows knit together, like a child's attempt to concentrate."
                     the_person.char "I... wasn't there something I was suppose to do first? Or have done? Uh... I'm sorry [the_person.mc_title], I'm having a real hard time thinking right."

@@ -1,13 +1,17 @@
 ﻿init:
     python:
-        missionary = Position("Missionary",50,70,"missionary","Lay","Vagina","Vaginal",20,18,[],
-        "intro_missionary",
-        ["scene_missionary_1","scene_missionary_2"],
-        "outro_missionary",
-        "transition_default_missionary",
-        "strip_missionary", "strip_ask_missionary",
-        "orgasm_missionary",
-        opinion_tags = ["missionary style sex","vaginal sex"], record_class = "Vaginal Sex")
+        missionary = Position(name = "Missionary", slut_requirement = 50, slut_cap = 70, requires_hard = True, requires_large_tits = False,
+            position_tag = "missionary", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
+            girl_arousal = 16, girl_energy = 12,
+            guy_arousal = 15, guy_energy = 14,
+            connections = [],
+            intro = "intro_missionary",
+            scenes = ["scene_missionary_1","scene_missionary_2"],
+            outro = "outro_missionary",
+            transition_default = "transition_default_missionary",
+            strip_description = "strip_missionary", strip_ask_description = "strip_ask_missionary",
+            orgasm_description = "orgasm_missionary",
+            opinion_tags = ["missionary style sex","vaginal sex"], record_class = "Vaginal Sex")
         list_of_positions.append(missionary)
 
 init 1:

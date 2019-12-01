@@ -1,13 +1,17 @@
 ﻿init:
     python:
-        piledriver = Position("Piledriver",70,90,"missionary","Lay","Vagina","Vaginal",18,24,[],
-        "intro_piledriver",
-        ["scene_piledriver_1","scene_piledriver_2"],
-        "outro_piledriver",
-        "transition_default_piledriver",
-        "strip_piledriver", "strip_ask_piledriver",
-        "orgasm_piledriver",
-        opinion_tags = ["missionary style sex","vaginal sex","being submissive"], record_class = "Vaginal Sex")
+        piledriver = Position(name = "Piledriver", slut_requirement = 70, slut_cap = 90, requires_hard = True, requires_large_tits = False,
+            position_tag = "missionary", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
+            girl_arousal = 14, girl_energy = 12,
+            guy_arousal = 26, guy_energy = 20,
+            connections = [],
+            intro = "intro_piledriver",
+            scenes = ["scene_piledriver_1","scene_piledriver_2"],
+            outro ="outro_piledriver",
+            transition_default = "transition_default_piledriver",
+            strip_description = "strip_piledriver", strip_ask_description = "strip_ask_piledriver",
+            orgasm_description = "orgasm_piledriver",
+            opinion_tags = ["missionary style sex","vaginal sex","being submissive"], record_class = "Vaginal Sex")
         list_of_positions.append(piledriver)
 
 init 1:

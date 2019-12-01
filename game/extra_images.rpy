@@ -6,6 +6,9 @@ init -1:
 
     define bedroom_background = Image("Bedroom_1.png")
     define bedroom_background_dark = Image("Bedroom_1_Dark.png")
+
+    define home_bathroom_background = Image("Home_Bathroom_Background.jpg")
+
     define kitchen_background = Image("Kitchen_1.png")
     define kitchen_background_dark = Image("Kitchen_Dark.png")
 

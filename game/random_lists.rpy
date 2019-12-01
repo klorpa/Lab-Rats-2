@@ -108,6 +108,9 @@ init -2:
         list_of_names.append("Cordula")
         list_of_names.append("Suzy")
         list_of_names.append("Elizabeth")
+        list_of_names.append("Danny")
+        list_of_names.append("Kanya")
+        list_of_names.append("Kay")
 
 
         def get_random_name():
@@ -187,6 +190,10 @@ init -2:
         list_of_last_names.append("Grün")
         list_of_last_names.append("Berry")
         list_of_last_names.append("Sanders")
+        list_of_last_names.append("Samson")
+        list_of_last_names.append("Chailai")
+        list_of_last_names.append("Hara")
+        list_of_last_names.append("Newman")
 
 
         def get_random_last_name():
@@ -265,6 +272,13 @@ init -2:
                         hair_colour[component_index] = hair_colour[component_index] + ((1-hair_colour[component_index])*tint_factor)
 
             return return_hair
+
+        def get_darkened_colour(the_colour, variation_constant = 0.07):
+            return_list = the_colour[:]
+            for component_index in __builtin__.range(3): #In case there's an alpha component, we don't want to change that.
+                return_list[component_index] = return_list[component_index] * (1-variation_constant)
+
+            return return_list
 
 
         list_of_skins = []
@@ -444,14 +458,15 @@ init -2:
         sexy_opinions_list.append("missionary style sex") #Has gameplay effect
         sexy_opinions_list.append("sex standing up") #Has gameplay effect
         sexy_opinions_list.append("giving blowjobs") #Has gameplay effect
-        sexy_opinions_list.append("getting head")
+        sexy_opinions_list.append("getting head") #Has gameplay effect
         sexy_opinions_list.append("anal sex") #Has gameplay effect
         sexy_opinions_list.append("vaginal sex") #Has gameplay effect
         sexy_opinions_list.append("public sex") #Has gameplay effect
         sexy_opinions_list.append("kissing") #Has gameplay effect
         sexy_opinions_list.append("lingerie") #Has gameplay effect
         sexy_opinions_list.append("masturbating") #Has gameplay effect
-        sexy_opinions_list.append("giving handjobs")
+        sexy_opinions_list.append("giving handjobs") #Has gameplay effect
+        sexy_opinions_list.append("giving tit fucks") #Has gameplay effect
         sexy_opinions_list.append("being fingered") #Has gameplay effect
         sexy_opinions_list.append("skimpy uniforms") #Has gameplay effect
         sexy_opinions_list.append("skimpy outfits") #Has gameplay effect

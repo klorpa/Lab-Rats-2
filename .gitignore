@@ -1,11 +1,15 @@
 # Exclude Everything except GIT ignore
 /lib/
 /renpy/
+/game/OpenGL
+/game/mods
+/game/saves
+/game/shader
 *.*
 !.gitignore
 
 # Only include Ren'Py Game Code
-/game/**
-!/game/*.rpy
-
-
+!/game/game_roles/*
+!/game/sex_positions/*
+*.rpyc
+!*.rpy

@@ -1,13 +1,19 @@
 ﻿init:
     python:
-        against_wall = Position("Against the Wall",60,80,"against_wall","Lean","Vagina","Vaginal",20,20,[],
-        "intro_against_wall",
-        ["scene_against_wall_1","scene_against_wall_2","scene_against_wall_3"],
-        "outro_against_wall",
-        "transition_default_against_wall",
-        "strip_against_wall", "strip_ask_against_wall",
-        "orgasm_against_wall",
-        opinion_tags = ["sex standing up"], record_class = "Vaginal Sex")
+        against_wall = Position(name = "Against the Wall", slut_requirement = 60, slut_cap = 80, requires_hard = True, requires_large_tits = False,
+            position_tag = "against_wall", requires_location = "Lean", requires_clothing = "Vagina", skill_tag = "Vaginal",
+            girl_arousal = 20, girl_energy = 16,
+            guy_arousal = 18, guy_energy = 16,
+            connections = [],
+            intro = "intro_against_wall",
+            scenes = ["scene_against_wall_1","scene_against_wall_2","scene_against_wall_3"],
+            outro = "outro_against_wall",
+            transition_default = "transition_default_against_wall",
+            strip_description = "strip_against_wall", strip_ask_description = "strip_ask_against_wall",
+            orgasm_description = "orgasm_against_wall",
+            opinion_tags = ["sex standing up"], record_class = "Vaginal Sex")
+
+
         list_of_positions.append(against_wall)
 
 #init 1:

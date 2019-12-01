@@ -3,8 +3,6 @@ init -1 python:
     def prostitute_requirement(the_person):
         if mc.business.funds < 200:
             "Not enough cash"
-        elif mc.current_stamina < 1:
-            "Requires: 1 Stamina"
         elif the_person.sexed_count >= 1:
             "She's worn out. Maybe later."
         else:
@@ -60,7 +58,7 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         fire_model_action = Action("Remove her as your company model.", fire_model_requirment, "fire_model_label",
             menu_tooltip = "Remove her as your company model so you can give the position to someone else. Effects from existing ad campaigns will continue until they expire.")
 
-        company_model_role = Role("Model", [model_ad_photo_list])
+        company_model_role = Role("Model", [model_ad_photo_list, fire_model_action])
 
 
         #STEPH ACTIONS#
@@ -139,7 +137,7 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         # Adds more love to seduction attempts (reduce love from other sources)
         # Fallout if your girlfriend catches you with someone else.
 
-        ask_break_up_action = Action("Break up with her.", ask_break_up_requirement, "ask_be_girlfriend_label", menu_tooltip = "Breaking up may break her heart, but it'll be easier on her than catching you with another woman.")
+        ask_break_up_action = Action("Break up with her.", ask_break_up_requirement, "ask_break_up_label", menu_tooltip = "Breaking up may break her heart, but it'll be easier on her than catching you with another woman.")
 
         ask_get_boobjob_action = Action("Ask her to get a boob job. -$7000", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
 
@@ -302,6 +300,9 @@ label pay_strip_scene(the_person):
                         else:
                             price = (strip_willingness - new_willingness) * 10 #THey will feel pretty uncomfortable, so they expect to be paid well.
 
+                        if price < 0:
+                            price = 0
+
                         price = math.ceil((price/5.0))*5 #Round up to the next $5 increment
 
                         display_string = "Strip " + item.name + "\n{size=22}$" + str(price) + "{/size}"
@@ -449,11 +450,12 @@ label prostitute_label(the_person):
 
     $ add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
     call fuck_person(private = True) from _call_fuck_person_23
+    $ the_report = _return
+
     $ the_person.clear_situational_obedience("prostitute")
-    if the_person.arousal >= 100:
+    if the_report.get("girl orgasms", 0) > 0:
         "It takes [the_person.title] a few moments to catch her breath."
         the_person.char "Maybe I should be paying you... Whew!"
-    $ the_person.reset_arousal()
     $ the_person.review_outfit()
 
     the_person.char "That was fun, I hope you had a good time [the_person.mc_title]."

@@ -27,6 +27,7 @@ style gui_text:
     font gui.interface_font
     color gui.interface_text_color
     size gui.interface_text_size
+    yanchor 0.0
 
 
 style button:
@@ -448,11 +449,13 @@ screen choice(items):
     viewport:
         scrollbars "vertical"
         mousewheel True
-        child_size (1920,400+125*(len(items)//2))
+        child_size (1920,125*len(items)//2)
+        yalign 0.5
+        yanchor 0.5
         vbox:
             xalign 0.34
             yalign 0.5
-            null height 400
+            null height 490
             for i in items[0::2]:
                 #Check if " (tooltip)" in i.caption, and if it is remove it and everything after it and add it as a tooltip
                 $ the_tooltip = ""
@@ -469,7 +472,7 @@ screen choice(items):
         vbox:
             xalign 0.67
             yalign 0.5
-            null height 400
+            null height 490
             if len(items)%2 == 0:
                 null height 125 #Add an empty list element to keep the alignment correct if there are an even number of elements in both lists.
             for j in items[1::2]:
@@ -488,9 +491,9 @@ screen choice(items):
 define config.narrator_menu = True
 
 
-style choice_vbox is vbox
-style choice_button is button
-style choice_button_text is button_text
+# style choice_vbox is vbox
+# style choice_button is button
+# style choice_button_text is button_text
 
 style choice_vbox:
     xalign 0.5

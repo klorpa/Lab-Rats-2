@@ -61,6 +61,10 @@
 #todo: teach lily hoqw to deepthroat/ role to teach her how to fuck
 #todo: girl who loves you sends you sexy selfies
 #todo: Lily invites you to a university party as her +1.
+#todo: Help Lily study, punish/reward her answers (maybe work a little quiz mini-game into it too?)
+#todo: early morning shower event
+#todo: friends help friends be sluts
+#todo: write something "special" on her performance review. "great cock sucker.", "very tight pussy"
 
 
 ### SPECIAL CRISES ###
@@ -499,15 +503,15 @@ label no_uniform_punishment_label():
                     $ the_person.discover_opinion("not wearing anything")
                     "You watch [the_person.title] as she walks away completely naked, then get back to work yourself."
 
-                "Deny her an orgasm." if the_person.sluttiness > 60 and mc.current_stamina > 0:
+                "Deny her an orgasm." if the_person.sluttiness > 60:
                     mc.name "I'm starting to think there's only one thing that will actually teach you a lesson though..."
                     "You step close to [the_person.title] and reach a hand around, grabbing onto her ass and squeezing it hard."
                     the_person.char "Ah... What are you doing?"
                     mc.name "Showing a disobedient slut why she should follow the rules."
                     "The closer you can bring [the_person.possessive_title] to orgasm without allowing her to the more effective this will be."
-                    $ mc.current_stamina += -1
                     call fuck_person(the_person) from _call_fuck_person_6
-                    if the_person.arousal > 100:
+                    $ the_report = _return
+                    if the_report.get("girl orgasms") > 0:
                         #You made her cum, she gets even more disobedient
                         the_person.char "Oh wow... I need to ignore this uniform thing more often. That felt amazing."
                         mc.name "Please, I need you to at least try and follow the rules [the_person.title]."
@@ -515,12 +519,12 @@ label no_uniform_punishment_label():
                         $ obedience_change = -5
                         $ the_person.change_love(2)
 
-                    elif the_person.arousal > 80:
+                    elif the_report.get("end arousal") >= 0.8*the_person.max_arousal or the_report.get("beg finish", 0) > 0: #Get her within 80% of cumming or otherwise get her to beg for it without finishing her
                         #You got her close but didn't push her over the edge. Full gain.
                         the_person.char "Ah... damn it [the_person.mc_title], I was so close!"
                         mc.name "If you were in uniform I would have let you cum, but I can't reward you unless you're following the rules. Understood?"
                         "[the_person.title] bites her lip and nods. Her face is flush and she's still breathing deeply."
-                        $obedience_change = 10
+                        $ obedience_change = 10
 
                     else:
                         #You probably just got a blowjob or something. partial gain.
@@ -531,12 +535,8 @@ label no_uniform_punishment_label():
                         $obedience_change = 5
 
                     $ the_person.change_obedience(obedience_change)
-                    $ the_person.reset_arousal()
                     $ the_person.review_outfit()
                     "You leave [the_person.title] to get cleaned up and get back to work."
-
-                "Deny her an orgasm.\n{size=22}Requires Stamina{/size} (disabled)" if the_person.sluttiness > 60 and mc.current_stamina == 0:
-                        pass
 
     $renpy.scene("Active")
     return
@@ -735,19 +735,12 @@ label office_flirt_label():
                         "She runs a finger down the front of your chest, then down to your crotch. She bites her lip and looks at you."
                         the_person.char "Come on, lets slip into the supply closet for a moment. Being watched like that gets me so worked up, I'll let you do whatever dirty things you want to me."
                         menu:
-                            "Have sex with [the_person.title]." if mc.current_stamina > 0:
+                            "Have sex with [the_person.title].":
                                 "You take [the_person.title]'s hand and pull her into the supply closet."
                                 $ the_person.add_situational_slut("situation",10, "Showing off got me horny.")
-                                $ the_person.sluttiness += 10
-                                $ mc.current_stamina += -1
                                 call fuck_person(the_person) from _call_fuck_person_7
-                                $ change_amount = __builtin__.int(the_person.arousal/10)
-                                $ slut_report = the_person.change_slut_temp(change_amount)
                                 $ the_person.clear_situational_slut("situation")
                                 "Once you've gotten yourself dressed you slip out of the closet again and head back to your desk. [the_person.possessive_title] comes out after, walking past your desk with the binder she was looking for held close."
-
-                            "Have sex with [the_person.title].\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
-                                pass
 
                             "Get back to work.":
                                 mc.name "Sorry [the_person.title], but I've got stuff to get done right now. You'll have to take care of that yourself."
@@ -1282,14 +1275,14 @@ label home_fuck_crisis_label():
     the_person.char "Can you help me? I need to cum so badly right now..."
     "She places her hands on your hips and steps close."
     menu:
-        "Help her cum. (tooltip)She would love to climax right now, but seems like she would be very disappointed if you can't get here there." if mc.current_stamina > 0:
+        "Help her cum. (tooltip)She would love to climax right now, but seems like she would be very disappointed if you can't get here there.":
             "You take [the_person.title]'s hands and lead her through your house to your room."
             mc.name "You'll need to be quiet, there are other people in the house."
             the_person.char "That's fine, as long as none of them are your wife!"
-            $ mc.current_stamina += -1
             call fuck_person(the_person) from _call_fuck_person_4
+            $ the_report = _return
             #Now that you've had sex, we calculate the change to her stats and move on.
-            if the_person.arousal > 100:
+            if the_report.get("girl orgasms",0) > 0:
                 $ the_person.change_obedience(3)
                 $ the_person.change_love(5)
                 $ the_person.change_happiness(5)
@@ -1297,17 +1290,19 @@ label home_fuck_crisis_label():
                 "You and [the_person.title] lounge around for a few minutes until she has completely recovered."
                 the_person.char "I had a great time [the_person.mc_title], but I should be getting home. Could you call me a cab?"
 
+            elif the_report.get("guy orgasms",0) > 0:
+                the_person.char "Ugh, could you at least pay some attention to me next time?"
+                $ the_person.change_love(-2)
+                $ the_person.change_happiness(-5)
+                $ the_person.change_obedience(-2)
+                the_person.char "Screw it, I'll take care of this at home! Call me a cab, please."
             else:
                 $ the_person.change_obedience(-2)
                 $ the_person.change_happiness(-5)
                 the_person.char "Ugh, fuck! This is worse than it was before! Screw it, I'll take care of this at home. Call me a cab, please."
 
-            $ the_person.reset_arousal()
             $ renpy.scene("Active")
             "A few minutes later [the_person.title] is gone, and you're able to get back to bed."
-
-        "Help her cum.\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
-            pass
 
         "Ask her to leave. (tooltip)She would love to climax, but seems like she would be very disappointed if you can't get here there.":
             mc.name "[the_person.title], you're drunk and not thinking straight. I'll call you a cab to get you home, in the morning this will all seem like a bad idea."
@@ -1387,7 +1382,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
                     $ mc.business.remove_employee(the_person)
 
 
-        "Make her cum to convince her to stay." if the_person.effective_sluttiness() > 60 and mc.current_stamina > 0:
+        "Make her cum to convince her to stay." if the_person.effective_sluttiness() > 60:
             "You stand up from your desk and walk over to [the_person.title]."
             mc.name "[the_person.title], you've always been a good employee of mine."
             if the_person.outfit.vagina_available():
@@ -1398,9 +1393,9 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
                 "You reach around and grab [the_person.title]'s ass with one hand, squeezing it gently."
             mc.name "Let me show you the perks of working around here, if you still want to quit after then I won't stop you."
             "[the_person.possessive_title] thinks for a moment, then nods."
-            $ mc.current_stamina += -1
             call fuck_person(the_person) from _call_fuck_person_5
-            if the_person.arousal > 100: #If you made them cum, they'll stay on for a little while.
+            $ the_report = _return
+            if the_report.get("girl orgasms",0) > 0: #If you made them cum, they'll stay on for a little while.
                 the_person.char "Ah... Ah..."
                 mc.name "Well [the_person.title], are you still thinking of leaving?"
                 "[the_person.title] pants slowly and shakes her head."
@@ -1412,10 +1407,6 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
                 the_person.char "I'm sorry [the_person.mc_title], but I haven't changed my mind. I'll clear out my desk and be gone by the end of the day."
                 "[the_person.possessive_title] takes a moment to put herself back together, then steps out of your office."
                 $ mc.business.remove_employee(the_person)
-            $ the_person.reset_arousal()
-
-        "Make her cum to convince her to stay.\n{size=22}Requires Stamina{/size} (disabled)" if the_person.effective_sluttiness() > 60 and mc.current_stamina == 0:
-            pass
 
         "Let her go.":
             mc.name "I'm sorry to hear that [the_person.title], but if that's the way you feel then it's probably for the best."
@@ -1765,7 +1756,7 @@ label work_chat_crisis_label:
                             "[the_person.possessive_title] wiggles her butt at you."
                             the_person.char "I guess everyone's already had a good look at my ass anyways..."
                             $the_person.draw_person()
-                            "[the_person.anme] stands up suddenly and turns back towards you."
+                            "[the_person.name] stands up suddenly and turns back towards you."
                             the_person.char "I'm sorry, I don't know what came over me [the_person.mc_title]. I'll just... I'll just sit down again."
 
                         $the_person.draw_person(position="sitting")
@@ -1825,7 +1816,7 @@ label work_chat_crisis_label:
                 the_person.char "Ah... I really needed this. If you need to do the same I understand."
                 "She sighs and leans back in her office chair, legs spread while she touches herself."
                 menu:
-                    "Masturbate with [the_person.title]." if mc.current_stamina>0:
+                    "Masturbate with [the_person.title].":
                         mc.name "You know, I think that's a good idea."
                         "You slide your own chair away from the desk and unzip your pants. [the_person.possessive_title] watches as you pull your cock free."
                         if the_person.get_opinion_score("masturbating") > 0:
@@ -1887,10 +1878,6 @@ label work_chat_crisis_label:
                         the_person.char "That was really nice [the_person.mc_title], I feel like I can finally focus."
                         "She spins her chair back to her desk and gets back to work, as if nothing out of the ordinary happened."
                         "You zip your pants up and do the same."
-                        $ mc.current_stamina += -1
-
-                    "Masturbate with [the_person.title].\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
-                        pass
 
                     "Focus on your work.":
                         mc.name "Thanks, but I think I'll just enjoy the show."
@@ -1986,27 +1973,23 @@ label work_chat_crisis_label:
             "She finds your zipper and slides it down, letting her get at your already hardening cock."
             the_person.char "Think you can help me?"
             menu:
-                "Fuck [the_person.title].\n{size=22}Modifiers: +10 Sluttiness, -5 Obedience{/size}" if mc.current_stamina > 0:
+                "Fuck [the_person.title].\n{size=22}Modifiers: +10 Sluttiness, -5 Obedience{/size}":
                     the_person.char "I think I can."
                     $ the_person.add_situational_slut("seduction_approach",10,"You promised to focus on me.")
                     $ the_person.add_situational_obedience("seduction_approach",-5,"You promised to focus on me.")
                     $ the_person.change_arousal(10+5*the_person.get_opinion_score("taking control"))
                     $ the_person.discover_opinion("taking control")
-                    $ mc.current_stamina += -1
                     call fuck_person(the_person,private = False) from _call_fuck_person_9
-                    if the_person.arousal >= 100:
+                    $ the_report = _return
+                    if the_report.get("girl orgasms") > 0:
                         the_person.char "Ah... I think I'll actually be able to focus after that. Thanks [the_person.mc_title]."
                     else:
                         the_person.char "Fuck... I don't think that's made the situation any better. All I can think about is getting off..."
-                    $ the_person.reset_arousal()
                     $ the_person.review_outfit()
                     #Tidy up our situational modifiers, if any.
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
                     "Once [the_person.title] gets herself tidied up she sits down at her desk and goes back to work, as if nothing out of the ordinary happened."
-
-                "Fuck [the_person.title].\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
-                    pass
 
                 "Focus on your work.":
                     mc.name "I don't think so [the_person.title], we've both got work to do right now."
@@ -2019,23 +2002,18 @@ label work_chat_crisis_label:
             the_person.char "You know if you need anything I'm here for you to use, sir. I know how stressful your job can be..."
             "Her hands move higher, rubbing at your crotch."
             menu:
-                "Fuck [the_person.title].\n{size=22}Modifiers: +15 Obedience{/size}" if mc.current_stamina > 0:
+                "Fuck [the_person.title].\n{size=22}Modifiers: +15 Obedience{/size}":
                     the_person.char "I think I can."
                     $ the_person.add_situational_obedience("seduction_approach",+15)
                     $ the_person.change_arousal(10+5*the_person.get_opinion_score("being submissive"))
                     $ the_person.discover_opinion("being submissive")
-                    $ mc.current_stamina += -1
                     call fuck_person(the_person,private = False) from _call_fuck_person_10
                     the_person.char "Ah... Thank you sir, I hope that helps you focus on all your hard, hard work."
-                    $ the_person.reset_arousal()
                     $ the_person.review_outfit()
                     #Tidy up our situational modifiers, if any.
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
                     "Once [the_person.title] gets herself tidied up she sits down at her desk and goes back to work, as if nothing out of the ordinary happened."
-
-                "Fuck [the_person.title].\n{size=22}Requires Stamina{/size} (disabled)" if mc.current_stamina == 0:
-                    pass
 
                 "Focus on your work.":
                     mc.name "I'm fine right now, thank you though. If I need you I'll make sure to let you know."
@@ -2411,8 +2389,8 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
             $ the_place.show_background()
             "There's a tap on your shoulder. You turn and see [rd_staff.title], looking obviously excited."
             $ rd_staff.draw_person(emotion="happy")
-            rd_staff.title "[rd_staff.mc_title], I'm sorry to bother you but I've had a breakthrough! The first test dose of serum \"[the_serum.name]\" is coming out right now!"
-            rd_staff.title "What would you like me to do?"
+            rd_staff.char "[rd_staff.mc_title], I'm sorry to bother you but I've had a breakthrough! The first test dose of serum \"[the_serum.name]\" is coming out right now!"
+            rd_staff.char "What would you like me to do?"
             menu:
                 "Insist on a final test of [the_serum.name].":
                     mc.name "Excellent, show me what you've done."
@@ -2421,18 +2399,20 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                 "Finalize the design of [the_serum.name].":
                     mc.name "Thank you for letting me know [rd_staff.title]. Make sure you all of the safety documentation written up and send the design along. I trust you can take care of that."
                     $ rd_staff.change_happiness(5)
-                    $ change_amount = 5
+                    $ change_amount = 3
                     $ rd_staff.change_obedience(change_amount)
-                    rd_staff.title "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
-                    $renpy.scene("Active")
+                    rd_staff.char "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
+                    rd_staff.char "I'll put the prototype serum in the stockpile as well, if you need it."
+                    $ mc.business.inventory.change_serum(the_serum, 1)
+                    $ renpy.scene("Active")
                     return
 
         else: # The MC is somewhere else, bring them to the lab for this.
             "Your phone buzzes, grabbing your attention. It's a call from the R&D section of your buisness."
             "As soon as you answer you hear the voice of [rd_staff.title]."
             show screen person_info_ui(rd_staff)
-            rd_staff.title "[rd_staff.mc_title], I've had a breakthrough! The first test dose of serum \"[the_serum.name]\" is coming out right now!"
-            rd_staff.title "What would you like me to do?"
+            rd_staff.char "[rd_staff.mc_title], I've had a breakthrough! The first test dose of serum \"[the_serum.name]\" is coming out right now!"
+            rd_staff.char "What would you like me to do?"
             menu:
                 "Insist on a final test of [the_serum.name].":
                     mc.name "Excellent, I'll be down in a moment to take a look."
@@ -2447,17 +2427,19 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                 "Finalize the design of [the_serum.name].":
                     mc.name "Thank you for letting me know [rd_staff.title]. Make sure all of the safety documentation is written up and send the design along. I trust you can take care of that."
                     $ rd_staff.change_happiness(5)
-                    $ change_amount = 5
+                    $ change_amount = 3
                     $ rd_staff.change_obedience(change_amount)
-                    rd_staff.title "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
+                    rd_staff.char "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
+                    rd_staff.char "I'll put the prototype serum in the stockpile as well, if you need it."
                     "[rd_staff.title] hangs up."
-                    $renpy.scene("Active")
+                    $ mc.business.inventory.change_serum(the_serum, 1)
+                    $ renpy.scene("Active")
                     return
 
         ## Test the serum out on someone.
         "[rd_staff.title] brings you to her work bench. A centrifuge is finished a cycle and spinning down."
         $ technobabble = get_random_from_list(technobabble_list)
-        rd_staff.title "Perfect, it's just finishing now. I had this flash of inspiration and realised all I needed to do was [technobabble]."
+        rd_staff.char "Perfect, it's just finishing now. I had this flash of inspiration and realised all I needed to do was [technobabble]."
         "[rd_staff.possessive_title] opens the centrifuge lid and takes out a small glass vial. She holds it up to the light and nods approvingly, then hands it to you."
         menu:
             "Give the serum back for final testing.":
@@ -2466,7 +2448,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                 $ change_amount = 5
                 $ rd_staff.change_obedience(change_amount)
 
-                rd_staff.title "I'll do my best sir, thank you!"
+                rd_staff.char "I'll do my best sir, thank you!"
                 if rd_staff.sluttiness < 10:
                     mc.name "I'm sure you will. Keep up the good work."
                 elif rd_staff.sluttiness < 30:
@@ -2544,7 +2526,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         "You leave her to get back to her work and return to what you were doing."
         $ change_amount = 5
         $ rd_staff.change_obedience(change_amount)
-        $renpy.scene("Active")
+        $ renpy.scene("Active")
         return
 
     else: #There's nobody else in the lab, guess you've done all the hard work yourself!
@@ -2677,8 +2659,6 @@ label daughter_work_crisis_label():
             $ the_person.add_situational_obedience("bribe", 30, "It's for my daughter and her future!")
             call fuck_person(the_person) from _call_fuck_person_27
             $ the_person.draw_person()
-            $ the_person.reset_arousal()
-            $ mc.current_stamina += -1
             $ the_person.clear_situational_obedience("bribe")
             $ the_person.change_obedience(2)
             $ the_person.review_outfit()
@@ -2713,7 +2693,7 @@ label daughter_work_crisis_label():
 init 1 python:
     def horny_at_work_crisis_requirement():
         if mc.business.is_open_for_business() and mc.is_at_work():
-            if mc.current_stamina == mc.max_stamina: #If you're at work and haven't had sex today (ie. have max stamina) this can trigger
+            if mc.energy >= mc.max_energy/2: #If you're at work and haven't had sex today (ie. have max stamina) this can trigger
                 return True
 
         return False
@@ -2887,7 +2867,8 @@ label horny_at_work_crisis_label():
                     $ exit_option = "Just have her watch."
 
                 call screen person_choice(helpful_people, person_prefix = "Pick") #Shows a list of people w/ predictive imaging when you hover
-                if _return == exit_option:
+                $ the_choice = _return
+                if the_choice == exit_option:
                     #Power move, just jerk yourself off as they watch.
                     mc.name "I've got things under control, but I'd like you to stay and watch."
                     "You stroke your cock faster and faster, pulling yourself towards your orgasm."
@@ -2916,12 +2897,12 @@ label horny_at_work_crisis_label():
                         "You pull your pants up and get back to work, basking in your post orgasm clarity."
 
                 else:
-                    "You stand up, pants around your ankles, and motion for [_return.title] to come over to you."
-                    call fuck_person(_return, private = False) from _call_fuck_person_29
-                    $ _return.reset_arousal()
-                    $ _return.review_outfit()
+                    "You stand up, pants around your ankles, and motion for [the_choice.title] to come over to you."
+                    call fuck_person(the_choice, private = False) from _call_fuck_person_29
+                    $ the_report = _return
+                    $ the_choice.review_outfit()
 
-                    if mc.arousal != 0:
+                    if the_report.get("guy orgasms",0) == 0:
                         "You still haven't gotten off, so you stroke your cock until you cum. With that finally taken care of, you get yourself cleaned up and get back to work."
                         "Thanks to your post orgasm clarity you're able to focus perfectly."
                     else:
@@ -2965,9 +2946,9 @@ label horny_at_work_crisis_label():
                     "Let her join you.":
                         mc.name "Alright then, get over here."
                         call fuck_person(your_follower, private = True) from _call_fuck_person_30
-                        $ your_follower.reset_arousal()
+                        $ the_report = _return
                         $ your_follower.review_outfit()
-                        if mc.arousal != 0:
+                        if the_report.get("guy orgasms", 0) == 0:
                             "Despite the fun you had with [your_follower.title] you still haven't cum yet."
                             mc.name "You run along, I've still got to deal with this."
                             $ renpy.scene("Active")
@@ -3097,9 +3078,9 @@ label horny_at_work_crisis_label():
                             "You unzip your pants and pull them down, letting your hard cock fall out onto [the_person.possessive_title]'s face."
                             "She places her hands on your thighs and slides your cock into her mouth, licking the tip to get it wet before slipping it further back."
                             call fuck_person(the_person, private = False, start_position = blowjob, skip_intro = True, position_locked = True) from _call_fuck_person_31
-                            $ the_person.reset_arousal()
+                            $ the_report = _return
                             $ the_person.review_outfit()
-                            if mc.arousal != 0:
+                            if the_report.get("guy orgasms", 0) == 0:
                                 "Frustrated with her service, you let [the_person.title] out from under your desk and finish yourself off with your hand."
                             else:
                                 "Fully spent, you let [the_person.title] out from under your desk and get back to work, mind now crystal clear."
@@ -3153,14 +3134,14 @@ label horny_at_work_crisis_label():
                                     "You pull back a little and line the tip of your dick up with [the_person.title]'s cunt."
                                     "With one smooth thrust you push yourself inside of her. She arches her head back and moans as you bottom out inside of her."
                                     call fuck_person(the_person, private = False, start_position = missionary, start_object = desk, skip_intro = True) from _call_fuck_person_32
-                                $ the_person.reset_arousal()
-                                $ the_person.review_outfit()
+                                    $ the_report = _return
+                                    $ the_person.review_outfit()
 
-                                if mc.arousal != 0:
-                                    "You still haven't gotten off, so you stroke your cock until you cum. With that finally taken care of, you get yourself cleaned up and get back to work."
-                                    "Thanks to your post orgasm clarity you're able to focus perfectly."
-                                else:
-                                    "You get yourself cleaned up and get back to work. You're able to focus perfectly now thanks to your post orgasm clarity."
+                                    if the_report.get("guy orgasms", 0) == 0:
+                                        "You still haven't gotten off, so you stroke your cock until you cum. With that finally taken care of, you get yourself cleaned up and get back to work."
+                                        "Thanks to your post orgasm clarity you're able to focus perfectly."
+                                    else:
+                                        "You get yourself cleaned up and get back to work. You're able to focus perfectly now thanks to your post orgasm clarity."
 
                             else: #We've been thwarted somehow and can't get to her pussy.
                                 "Thwarted by her clothing and unable to dress her down any further, you give up and let her go. The shame of your defeat has, thankfully, killed your erection and you're able to get back to work."
@@ -3539,7 +3520,7 @@ label mom_lingerie_surprise_label():
     "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
     the_person.char "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
     menu:
-        "Ask for her help.(tootlip) Ask your mother to help satisfy your phsyical desires." if mc.current_stamina > 0:
+        "Ask for her help.(tootlip) Ask your mother to help satisfy your phsyical desires.":
             mc.name "That would be amazing Mom, I could really use your help."
             $ the_person.change_slut_temp(2)
             "[the_person.possessive_title] smiles and bounces slightly on your bed."
@@ -3555,7 +3536,8 @@ label mom_lingerie_surprise_label():
 
             $ the_person.add_situational_obedience("crisis_stuff", 25, "I'm doing it for my family.")
             call fuck_person(the_person) from _call_fuck_person_14
-            if the_person.arousal >= 100:
+            $ the_report = _return
+            if the_report.get("girl orgasms", 0):
                 "[the_person.possessive_title] needs a few minutes to lie down when you're finished. Bit by bit her breathing slows down."
                 $ the_person.change_love(5)
                 the_person.char "Oh [the_person.mc_title], that was magical. I've never felt so close to you before..."
@@ -3566,12 +3548,7 @@ label mom_lingerie_surprise_label():
                 $ the_person.draw_person(position = "back_peek")
                 the_person.char "Sweet dreams."
 
-            $ the_person.reset_arousal()
             $ the_person.clear_situational_obedience("crisis_stuff")
-            $ mc.current_stamina += -1
-
-        "Ask for her help. \nRequires: Stamina (disabled)" if mc.current_stamina == 0:
-            pass
 
         "Not tonight.":
             mc.name "That's very sweet of you Mom, and you look very nice, but I really just need a good nights sleep."
@@ -4037,14 +4014,14 @@ label mom_morning_surprise_label():
         "She grinds her hips back and forth, rubbing your shaft along the lips of her cunt."
         the_person.char "Would you like me to take care of this for you?"
         menu:
-            "Let Mom fuck you." if mc.current_stamina > 0:
+            "Let Mom fuck you.":
                 mc.name "That would be great Mom."
                 $ the_person.change_happiness(5)
                 $ the_person.change_love(2)
                 "You lie back relax as [the_person.possessive_title] lowers herself down onto your hard cock."
                 call fuck_person(the_person, start_position = cowgirl, start_object = bedroom.get_object_with_name("bed"), skip_intro = True, girl_in_charge = True) from _call_fuck_person_15
-                $ mc.current_stamina += -1
-                if the_person.arousal >= 100:
+                $ the_report = _return
+                if the_report.get("girl orgasms", 0) > 0:
                     $ the_person.change_love(5)
                     the_person.char "That was amazing [the_person.mc_title], you know how to make me feel like women again!"
                     "She rolls over and kisses you, then rests her head on your chest."
@@ -4055,11 +4032,7 @@ label mom_morning_surprise_label():
                     the_person.char "I'm glad I could help [the_person.mc_title]. Now you should hurry up before you're late!"
                     "[the_person.possessive_title kisses you on the forehead and stands up to leave."
                     "You get yourself put together and rush to make up for lost time."
-                $ the_person.reset_arousal()
                 $ the_person.review_outfit()
-
-            "Let Mom fuck you.\nRequires: 1 Stamina (disabled)" if mc.current_stamina <= 0:
-                pass
 
             "Ask her to get off.":
                 mc.name "Sorry Mom, but I need to save my energy for later today."
@@ -4527,6 +4500,200 @@ label family_morning_breakfast_label():
         "When you're done you help Mom put the dirty dishes away and get on with your day."
 
     $ renpy.scene("Active")
+    return
+
+init 1 python:
+    def morning_shower_requirement():
+        if mc_at_home() and time_of_day == 0:
+            return True #You're at home for the night, when you take a shower in the morning something might happen.
+        return False
+    morning_shower_criris = Action("Morning Shower", morning_shower_requirement, "morning_shower_label")
+    morning_crisis_list.append([morning_shower_criris, 15])
+
+label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
+    # You wake up and go to take a shower, lily or your mom are already in there.
+    "You wake up in the morning uncharacteristically early feeling refreshed and energized. You decide to take an early shower to kickstart the day."
+    $ the_person = get_random_from_list([mom, lily, None])
+    if the_person is None:
+        #You run into nobody, gain some extra energy. TODO: One of the girls comes to join you.
+        "You head to the bathroom and start the shower. You step in and let the water just flow over you, carrying away your worries for the day."
+        "After a few long, relaxing minutes it's time to get out. You start the day feeling energized."
+        $ mc.change_energy(20)
+
+    else:
+        "You head to the bathroom, but hear the shower already running inside when you arrive."
+        $ initial_outfit = the_person.outfit.get_copy()
+        $ towel_outfit = Outfit("Towel")
+        $ towel_outfit.add_dress(towel.get_copy()) #TODO: Decide if we want a head towel here, maybe just for mom or just for Lily
+
+        menu:
+            "Skip your shower.":
+                "With the bathroom occupied you decide to get some extra sleep instead."
+
+            "Knock on the door.":
+                # She says she'll be "out in a minute", or invites you in. Give her a shower outfit.
+                "You knock on the door a couple of times and wait for a response."
+                if the_person.effective_sluttiness() > 30:
+                    the_person.char "It's open, come on in!"
+                    call girl_shower_enter(the_person, suprised = False) from _call_girl_shower_enter
+                else:
+                    the_person.char "Just a second!"
+                    call girl_shower_leave(the_person) from _call_girl_shower_leave
+
+            "Barge in anyways.":
+                # Locked, unless the girl is slutty enough that you wouldn't mind (TODO: add a "make changes to the house" option where you can't lock the door so you can barge in on lily.)
+                if the_person.effective_sluttiness() < 20:
+                    "You try and open the door, but find it locked."
+                    the_person.char "One second!"
+                    call girl_shower_leave(the_person) from _call_girl_shower_leave_1
+                elif the_person.effective_sluttiness <= 30:
+                    #She's angry that you've barged in on her (but she doesn't mind enough to have locked the door).
+                    $ the_person.outfit = Outfit("Nude")
+                    $ the_person.draw_person(emotion = "angry")
+                    "You open the door. [the_person.possessive_title] is standing naked in the shower. She spins around and yells in suprise."
+                    the_person.char "[the_person.mc_title]! I'm already in here, what are you doing?"
+                    mc.name "The door was unlocked, I thought you might have already been finished."
+                    the_person.char "Knock next time, okay? I'll be done in a minute."
+                    "She shoos you out of the room, seeming more upset about being interupted than being seen naked."
+                    $ renpy.scene("Active")
+                    $ the_person.change_love(-1)
+                    $ the_person.change_slut_temp(2)
+                    call girl_shower_leave(the_person) from _call_girl_shower_leave_2
+                else:
+                    call girl_shower_enter(the_person, suprised = True) from _call_girl_shower_enter_1 #TODO: Decide if we need different dialogue for this (maybe just a "suprised" tag we can pass)
+
+        $ the_person.outfit = initial_outfit #put her back in her normal outfit after her shower
+
+    $ renpy.scene("Active")
+    return
+
+label girl_shower_leave(the_person):
+    "After a short pause the shower stops and you hear movement on the other side of the door."
+    $ the_person.outfit = towel_outfit
+    $ the_person.draw_person()
+    "The bathroom door opens and [the_person.possessive_title] steps out from the steamy room in a towel."
+    if the_person is mom:
+        the_person.char "There you go [the_person.mc_title], go right ahead."
+        "She gives you a quick kiss and steps past you."
+    else:
+        the_person.char "There, it's all yours. I might have used up all of the hot water."
+        "She steps past you and heads to her room."
+    return
+
+label girl_shower_enter(the_person, suprised):
+    $ the_person.outfit = Outfit("Nude")
+    $ the_person.draw_person(position = "back_peek")
+    "You open the door and see [the_person.possessive_title] in the shower."
+    if suprised:
+        "She looks up at you, slightly startled, and turns her body away from you."
+        the_person.char "Oh, [the_person.mc_title]!"
+        mc.name "I'm just here to have a shower."
+    the_person.char "I should be finished soon, if you don't mind waiting."
+    menu:
+        "Wait and watch her shower.":
+            "You nod and head to the sink to brush your teeth. You lean on the sink and watch [the_person.title] while you brush."
+            if the_person.effective_sluttiness() > 40 - (5 * (the_person.get_opinion_score("showing her tits")+the_person.get_opinion_score("showing her ass"))):
+                $ the_person.discover_opinion("showing her tits")
+                $ the_person.discover_opinion("showing her ass")
+                "She notices you watching, but doesn't seem to mind the attention."
+                $ the_person.change_slut_temp(1+(the_person.get_opinion_score("showing her tits")+the_person.get_opinion_score("showing her ass")))
+            else:
+                the_person.char "It's strange to shower with someone else in the room."
+                mc.name "Nothing to worry about, we're all family here, right?"
+                "She shrugs and nods, but you notice she's always trying to shield her body from your view."
+                $ the_person.change_slut_temp(1)
+                $ the_person.change_obedience(1)
+
+            "Soon enough she's finished. She steps out and grabs a towel, but leaves the shower running for you."
+            $ the_person.outfit = Outfit("Towel")
+            $ the_person.outfit.add_dress(towel.get_copy())
+            $ the_person.draw_person()
+            the_person.char "There you go. Enjoy!"
+            $ renpy.scene("Active")
+            "She steps past you and leaves. You get into the shower and enjoy the relaxing water yourself."
+            $ mc.change_energy(20)
+
+        "Join her in the shower." if the_person.obedience >= 120:
+            mc.name "How about I just jump in, I can get your back and we'll both save some time."
+            if the_person.effective_sluttiness() > 40:
+                the_person.char "Sure, if you're okay with that. I will put you to work though."
+                "She gives you a warm smile and invites you in with her."
+            else:
+                the_person.char "I'm not sure..."
+                mc.name "I've got work to get to today, so I'm getting in that shower."
+                "[the_person.possessive_title] nods meekly."
+                the_person.char "Okay."
+
+            "You strip down and get in the shower with [the_person.title]. The space isn't very big, so she puts her back to you."
+            "You're left with her ass inches from your crotch, and when she leans over to pick up the shampoo she grinds up against you."
+            $ mc.change_arousal(5)
+            the_person.char "Oops, sorry about that."
+            "Your cock, already swollen, hardens in response, and now even stood up the tip brushes against [the_person.possessive_title]'s ass."
+            if the_person.effective_sluttiness() <= 60:
+                the_person.char "I think I'm just about done, so you can take care of this..."
+                "She wiggles her butt and strokes your tip against her cheeks."
+                $ the_person.change_slut_temp(3 + the_person.get_opinion_score("showing her ass"))
+                "She steps out of the shower and grabs a towel."
+                $ the_person.outfit = Outfit("Towel")
+                $ the_person.outfit.add_dress(towel.get_copy())
+
+            # elif the_person.effective_sluttiness() <= 60: #TODO: Add a "hot dog" position and make it a starting position for this.
+            #     "She wiggles her butt and strokes your tip against her cheeks."
+            #     the_person.char "Do you need some help with this? How about you just... use my butt?"
+            #     $ the_person.draw_person("walking_away")
+            #     "She rubs up against you while you talk, stroking your shaft with her wet, slippery ass."
+            #     menu:
+            #         "Jerk off with her ass.":
+            #
+            #         "Just have a shower.":
+
+
+            else:
+                the_person.char "What is this?"
+                "She wiggles her butt and strokes your tip agianst her cheeks."
+                the_person.char "Well we need to take care of this, don't we..."
+                "She turns around and faces you. It might be the hot water, but her face is flush."
+                $ the_person.change_slut_temp(2)
+                menu:
+                    "Fuck her.":
+                        $ bathroom = Room("bathroom", "Bathroom", [], home_bathroom_background, [], [], [], False, [0,0], visible = False) #TODO: Decide if we need any objects in the bathroom
+                        $ bathroom.show_background()
+                        $ bathroom.add_object(make_wall())
+                        $ bathroom.add_object(Object("shower door", ["Lean"], sluttiness_modifier = 5, obedience_modifier = 5))
+                        $ bathroom.add_object(make_floor())
+                        $ mc.change_location(bathroom)
+                        call fuck_person(the_person, skip_intro = True) from _call_fuck_person_1
+                        $ the_report = _return
+
+                        $ the_person.outfit = Outfit("Towel")
+                        $ the_person.outfit.add_dress(towel.get_copy())
+                        $ the_person.draw_person()
+                        "When you're finished [the_person.title] steps out of the shower and grabs a towel. She dries herself off, then wraps herself in it then turns to you."
+                        if the_report.get("girl_orgasms",0)>0:
+                            the_person.char "Well that a good way to start the day. See you later."
+                        elif the_report.get("guy_orgasms",0)>0:
+                            the_person.char "Well I hope you enjoyed your start to the day. See you later."
+                        else:
+                            the_person.char "Well maybe we can pick this up some other time. See you later."
+
+                        $ renpy.scene("Active")
+                        "She leaves the room and you finish your shower alone, feeling refreshed by the water."
+                        $ mc.change_location(bedroom)
+
+                    "Just have a shower.":
+                        mc.name "Maybe some other time, I've got to hurry up though."
+                        "She pouts and nods."
+                        $ the_person.change_obedience(1)
+                        the_person.char "Alright, up to you."
+
+            $ mc.change_energy(20)
+
+
+        "Join her in the shower.\nRequires: 120 Obedience (disabled)" if the_person.obedience < 120:
+            pass
+
+
+
     return
 
 init 1 python:

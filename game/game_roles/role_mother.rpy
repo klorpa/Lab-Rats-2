@@ -155,7 +155,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
         #     mc.name "Now that I'm the man of the house, I want to make some changes around the house."
         #     the_person.char "What sorts of changes?"
         #     call mom_make_house_changes(the_person)
-        #
+        # 
         # "I want to make some changes around here.\nRequires: 120 Obedience (disabled)" if the_person.obedience < 120:
         #     pass
 
@@ -184,13 +184,13 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
             "With that she opens her mouth and slides the tip of your hard cock inside. Her tongue swirls around the tip, sending a jolt of pleasure up your spine."
             call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True, position_locked = True) from _call_fuck_person_33
-            if the_person.arousal >= 100:
+            $ the_report = _return
+            if the_report.get("girl orgasms", 0) > 0:
                 "You pull up your pants while [the_person.possessive_title] is on her knees panting, trying to get her breath back."
                 mc.name "I didn't know you were going to enjoy that so much. Maybe you should be paying me next time."
                 the_person.char "Ah... I hope we can come to some sort of deal... Ah... In the future..."
             else:
                 "You pull your pants up while [the_person.possessive_title] gets off of her kness and cleans herself up."
-            $ the_person.reset_arousal()
             $ the_person.review_outfit()
             $ the_person.change_obedience(4)
 
@@ -211,13 +211,16 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
 
     return
-
+#
 # label mom_make_house_changes(the_person):
 #     # A list of house rules to put into place.
+#     # TODO: This entire event
 #     menu:
 #         "I want breakfast in my room every morning.":
+#             pass
 #
-#         "I want
+#         "I want to be in charge of Lily's discipline.":
+#             pass
 #
 #         "Never mind.":
 #             call mom_high_sluttiness_weekly_pay(the_person) #Go back and pick something else.

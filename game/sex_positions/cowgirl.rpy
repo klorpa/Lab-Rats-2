@@ -1,13 +1,18 @@
 ﻿init:
     python:
-        cowgirl = Position("Cowgirl",60,80,"cowgirl","Lay","Vagina","Vaginal",22,18,[],
-        "intro_cowgirl",
-        ["scene_cowgirl_1","scene_cowgirl_2","scene_cowgirl_3"],
-        "outro_cowgirl",
-        "transition_default_cowgirl",
-        "strip_cowgirl", "strip_ask_cowgirl",
-        "orgasm_cowgirl",
-        opinion_tags = ["taking control"], record_class = "Vaginal Sex")
+        cowgirl = Position(name = "Cowgirl", slut_requirement = 60, slut_cap = 80, requires_hard = True, requires_large_tits = False,
+            position_tag = "cowgirl", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
+            girl_arousal = 18, girl_energy = 14,
+            guy_arousal = 14, guy_energy = 10,
+            connections = [],
+            intro = "intro_cowgirl",
+            scenes = ["scene_cowgirl_1","scene_cowgirl_2","scene_cowgirl_3"],
+            outro = "outro_cowgirl",
+            transition_default = "transition_default_cowgirl",
+            strip_description = "strip_cowgirl", strip_ask_description = "strip_ask_cowgirl",
+            orgasm_description = "orgasm_cowgirl",
+            opinion_tags = ["taking control"], record_class = "Vaginal Sex")
+
         list_of_girl_positions.append(cowgirl)
 
 #init 1:
