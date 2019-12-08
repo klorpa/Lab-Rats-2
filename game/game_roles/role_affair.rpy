@@ -57,9 +57,9 @@ label plan_fuck_date_label(the_person):
 
     $ so_title = SO_relationship_to_title(the_person.relationship)
     "You place a hand on [the_person.possessive_title]'s hips and caress her leg. She smiles and leans into your hand."
-    mc.name "I want to be alone with you. When will your [so_title] be out of the way, so I can have you all to myself?"
+    mc.name "I want to be alone with you. When will your [so_title] be out of the way so I can have you all to myself?"
     if the_person.kids > 0:
-        the_person.char "He's normally stays late at work on Fridays. I can make sure the house is empty and we can get down to business the moment you're in the door."
+        the_person.char "He normally stays late at work on Fridays. I can make sure the house is empty and we can get down to business the moment you're in the door."
     else:
         the_person.char "He's normally stuck late at work on Fridays. Just come on over and we can get down to business."
 
@@ -113,7 +113,7 @@ label fuck_date_label(the_person):
     mc.name "I'm here. Are you ready?"
     the_person.char "Come on in, the door is unlocked. I'm in the bedroom"
     $ mc.location.show_background()
-    "You go inside. All of the lights are off, except for one roomthat has it's door cracked open. When you swing it open you see [the_person.title] waiting."
+    "You go inside. The only light in the house comes from a room with its door ajar. When you swing it open you see [the_person.title] waiting."
     $ the_person.add_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!") # Bonus to sluttiness since you're in an affair and this is blatently a date to get fucked on.
     #Figure out her outfit for this
     if the_person.get_opinion_score("not wearing anything") > the_person.get_opinion_score("lingerie"):
@@ -158,7 +158,7 @@ label fuck_date_label(the_person):
             $ girl_came = True
 
         else:
-            the_person.char "Whew, good job. Get some water and let's go for another so we can get back to it!"
+            the_person.char "Whew, good job. Get some water and let's go for another!"
             "You take some time to catch your breath, drink some water, and wait for your refractory period to pass."
             "You hold [the_person.title] in bed while she caresses you and touches herself, keeping herself ready for you."
 
@@ -175,12 +175,12 @@ label fuck_date_label(the_person):
 
                 $ the_person.change_love(-1)
                 $ the_person.change_slut_temp(-1)
-                the_person.char "Well I guess we're done then... Maybe next time we can get me off as well."
+                the_person.char "Well I guess we're done then... Maybe next time you can get me off as well."
 
             $ done = True
             "You get dressed, triple check you haven't forgotten anything, and leave. [the_person.title] kisses you goodbye at the door."
         else:
-            "After a short rest you've recovered some of you're energy and [the_person.possessive_title]'s eager to get back to work."
+            "After a short rest you've recovered some of your energy and [the_person.possessive_title]'s eager to get back to work."
             $ mc.change_energy(energy_gain_amount)
             if energy_gain_amount >= 10:
                 $ energy_gain_amount += -10 #Gain less and less energy back each time until eventually you're exhausted and gain nothing back.
@@ -205,13 +205,13 @@ label fuck_date_label(the_person):
                                 $ hiding_under_bed = True
                                 if random_num < 50:
                                     "Without many options you drop to the ground and shimmy yourself under her bed, trying to make sure you can't be seen from the bedroom door."
-                                    "Above you [the_person.title] lies down on her bed waits. You hear her [so_title] open the front door, then walk through the house towards you."
+                                    "Above you [the_person.title] lies down on her bed and waits. You hear her [so_title] open the front door, then walk through the house toward you."
 
 
                                 else:
                                     "Without many options you rush to her closet. You force your way past coats and dresses, pressing yourself to the very back."
                                     "You pull the flimsy closet doors closed behind you, peering nervously through the crack left between them."
-                                    "[the_person.title] lies down on her bed and waits. You both listen as her [so_title] opens the front door, then walk through the house towards you."
+                                    "[the_person.title] lies down on her bed and waits. You both listen as her [so_title] opens the front door, then walk through the house toward you."
                                     $ hiding_under_bed = False
 
                                 "The door to the bedroom opens."
@@ -226,18 +226,18 @@ label fuck_date_label(the_person):
                                     else:
                                         "You watch her [so_title] slide onto the bed beside her and run a hand from her shoulder down her arm."
                                     the_person.SO_name "I'm so lucky you were going to wait for me like this. Now we have all night to spend with each other."
-                                    the_person.char "Yes... Of course! Of course, I knew you would be late but I wanted to suprise you when you got home!"
+                                    the_person.char "Yes... Of course! Of course, I knew you would be late but I wanted to surprise you when you got home!"
 
                                     if hiding_under_bed:
-                                        "You hear [the_person.title]'s [so_title] kissing her above you. Soon enough you feel them shift and the bed begins to rise and sink rhythmically."
+                                        "You hear [the_person.title]'s [so_title] kissing her above you. Soon enough you feel them shift and the bed begins to rhythmically rise and sink ."
                                     else:
                                         "You see [the_person.title]'s [so_title] kiss her and climb on top of her. Soon enough he has his pants off and is between her legs."
 
                                     the_person.SO_name "Oh my god, you're so wet... Fuck, this is amazing!"
                                     the_person.char "Yeah... All for you sweetheart! You get me so turned on!"
-                                    "You hear him grunt for a minute or two, then almost as soon as he's started he finishes. With a satisfied moan he rolls off of [the_person.title]."
+                                    "You hear him grunt for a minute or two, then, almost as soon as he's started, he finishes. With a satisfied moan he rolls off of [the_person.title]."
                                     the_person.SO_name "Mmmm, that was great..."
-                                    the_person.char "Yep. So Great."
+                                    the_person.char "Yep. So great."
                                     the_person.SO_name "Could you get the lights? I think you've wiped me out."
 
                                 else:
@@ -259,13 +259,13 @@ label fuck_date_label(the_person):
                             "Run for it!":
                                 $ done = True
                                 mc.name "Fuck!"
-                                "You don't waste any time, throwing your clothes on as quickly as possible. By the time you hear the front door open you're already rusing for the back yard."
+                                "You don't waste any time, throwing your clothes on as quickly as possible. By the time you hear the front door open you're already rushing for the back yard."
                                 $ random_num = renpy.random.randint(0,100)
                                 if random_num < 20:
                                     # You get caught (but she's the one who has to deal with it).
-                                    "[the_person.title] rushes to the door to intercept her [so_title]. She's trying to stall, but he doesn't stop. You're almost free and clear, when you here him yell."
+                                    "[the_person.title] rushes to the door to intercept her [so_title]. She's trying to stall, but he doesn't stop. You're almost free and clear, when you hear him yell."
                                     the_person.SO_name "Hey! Who are you?"
-                                    "You don't stop. closing the door and sprinting away as quickly as your legs will carry you."
+                                    "You don't stop. You slam the door and sprint away as quickly as your legs will carry you."
                                     $ morning_so_breakup_crisis = Action("Morning SO breakup", so_morning_breakup_requirement, "so_morning_breakup_label", args = the_person, requirement_args = the_person)
                                     $ mc.business.mandatory_morning_crises_list.append(morning_so_breakup_crisis)
                                 else:
@@ -305,13 +305,13 @@ label fuck_date_label(the_person):
                                 "You don't waste any time, ramming your cock home. [the_person.title] gasps as you bottom out inside her warm cunt, then start to pump back and forth."
                                 "You hear [the_person.title]'s [so_title] come inside and close the door."
                                 the_person.SO_name "I'm home! Good news, the client pushed the project back so I'll be out late less often!"
-                                the_person.char "Oh god... I odn't know if we should do this... Oh god."
+                                the_person.char "Oh god... I don't know if we should do this... Oh god."
                                 "You place a hand on her shoulder and push her into the bed. She rolls her hips up against you, her body enjoying itself despite her moral dilemma."
                                 mc.name "Shh, it's going to be okay. Just do what you know is right."
                                 "She moans into the bed. You can hear her [so_title] approaching the bedroom and speed up."
                                 "The bedroom door opens and [the_person.title] glances up at it."
                                 the_person.SO_name "Are you in here sweetheart... Oh my..."
-                                the_person.char "I'm so sorry, you weren't suppose to see me like this! Oh my god I'm so sorry!"
+                                the_person.char "I'm so sorry, you weren't supposed to see me like this! Oh my god I'm so sorry!"
                                 "Her [so_title] freezes in the door, eyes wide, transfixed by what he's seeing. [the_person.title] lifts herself up onto her arms."
                                 the_person.char "I'm sorry, but he just makes me feel so good! His cock drives me mad and it's all I can think about!"
                                 "You hold onto her hips and fuck her from behind. Her [so_title] just stares."
@@ -349,7 +349,7 @@ label fuck_date_label(the_person):
                                 the_person.char "Yeah? You don't say... Uh huh..."
                                 "She leans over and runs her hand over your chest while she's talking."
                                 the_person.char "Hmm? Sorry, I'm still listening. I'm just a little tired..."
-                                the_person.char "You're probably right, I should get to bed. We'll talk again soon then. Love you, talk to you soon."
+                                the_person.char "You're probably right, I should get to bed. We'll talk again soon. Love you."
                                 "She makes a kissing noise into her phone and hangs up."
                                 mc.name "Do you think he knows?"
                                 the_person.char "He doesn't have a clue. Now, where were we?"
@@ -361,13 +361,13 @@ label fuck_date_label(the_person):
                                 "You shuffle across [the_person.title]'s bed while she is talking and wrap your arms around her torso. She places a hand on your forearm and caresses it."
                                 the_person.char "Yeah? You don't say... Uh huh... Mhmm."
                                 if the_person.has_large_tits():
-                                    "You cup her tits and squeeze them together, then slide your hands down her chest and stomach towards her waist."
+                                    "You cup her tits and squeeze them together, then slide your hands down her chest and stomach toward her waist."
                                 else:
-                                    "You run your hands over her tits, stomach, and then down towards her waist."
+                                    "You run your hands over her tits, stomach, and then down toward her waist."
                                 the_person.char "Ah... Oh, it's nothing sweetheart. I'm just lying down in bed and it feels nice to be off my feet."
                                 "You kneel on the bed behind [the_person.possessive_title] and move your hands lower. You stroke her inner thighs and she opens her legs for you."
                                 "Your hand finally slides over her pussy, gently brushing her clit, and she moves the phone away from her face to moan softly."
-                                the_person.char "Hmm? Yes, I'm still here. Just yawning, I think it's time for bed."
+                                the_person.char "Hmm? Yes, I'm still here. Just yawning. I think it's time for bed."
                                 "You slide a finger into her pussy and she holds her breath for a second."
                                 the_person.char "Goodnight, I love you. Talk to you soon!"
                                 $ the_person.change_obedience(1)
@@ -387,13 +387,13 @@ label fuck_date_label(the_person):
                                 "You brush her cheek with the back of your hand. She pivots her phone away from her face and leans forward, opening her mouth and kissing the tip of your cock."
                                 "She looks up at you from her sitting position while her tongue works around the tip in circles."
                                 the_person.char "Mhmm? Mmmm. Hmmm. Uhmmmm."
-                                "She mumbles responses to her [so_title] as she slides deeper on your cock. You can hear his voice on the other side of the phone, tinny and far away."
+                                "She mumbles responses to her [so_title] as she takes your cock deeper into her mouth. You can hear his voice on the other side of the phone, tinny and far away."
                                 "With a soft, wet smack she slides back off and takes a breath."
-                                the_person.char "Of course everything is fine. I'm just having something to eat before bed, that might be what you're hearing."
+                                the_person.char "Of course everything is fine. I'm just having something to eat before bed. That might be what you're hearing."
                                 "She licks the bottom of your dick and winks at you."
                                 the_person.char "Mhmm, it's delicious. I can't wait to get into bed though, it's been a long day."
                                 the_person.char "I love you too, love you sweetheart."
-                                "She slides you back into her mouth and holds her phone up to show to you as she ends the call."
+                                "She slides you back into her mouth and holds her phone up to show you as she ends the call."
                                 call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True) from _call_fuck_person_39
                                 $ the_report = _return
 
@@ -404,7 +404,7 @@ label fuck_date_label(the_person):
                                 "With a little bit of pressure on her shoulders you guide [the_person.possessive_title] down onto her back."
                                 $ the_person.draw_person(position = "missionary")
                                 if the_person.outfit.vagina_available():
-                                    "She spreads her legs as climb on top of her, still talking to her [so_title] on her cellphone."
+                                    "She spreads her legs as you climb on top of her, still talking to her [so_title] on her phone."
 
                                 else:
                                     # You undress her so you can get to the point you can fuck her
@@ -419,7 +419,7 @@ label fuck_date_label(the_person):
                                         $ the_person.draw_animated_removal(the_item)
                                         ""
 
-                                    "Once her cute little pussy is available she spreads her legs for you."
+                                    "Once her cute little pussy is available, she spreads her legs for you."
 
                                 $ wanted_condom = False
                                 if the_person.effective_sluttiness() < the_person.get_no_condom_threshold():
@@ -439,16 +439,16 @@ label fuck_date_label(the_person):
 
                                     "Fuck her bareback.":
                                         if wanted_condom:
-                                            "You hold a finger up to your lips, reminding her to be quiet, and slide into her anyways."
+                                            "You hold a finger up to your lips, reminding her to be quiet, and slide into her anyway."
                                             $ the_person.change_obedience(2 + the_person.get_opinion_score("bareback sex"))
                                             "Her eyes go wide as your hard dick slides into her raw pussy. She glares up at you, but has to snap her attention back to her [so_title]."
                                         else:
                                             "She closes her eyes and bites her lip as your hard dick slides into her raw pussy. She's barely able to keep her voice together while talking to her [so_title]."
 
                                 the_person.char "Mmmhm? Oh sweetheart, it sounds like you're having a long hard day"
-                                "She holds the phone to her chest and arches turns her head to the side as you start to pump into her. You hear the tinny voice of her [so_title] through the cellphone speaker."
+                                "She holds the phone to her chest and turns her head to the side as you start to pump into her. You hear the tinny voice of her [so_title] through the cellphone speaker."
                                 "She moans softly, then lifts the phone back to her face."
-                                the_person.char "Everything's more than fine here. I'm just, really tired. I think I'm going to have to go to bed..."
+                                the_person.char "Everything's more than fine here. I'm just really tired. I think I'm going to have to go to bed..."
                                 the_person.char "... Okay... I love you too! Bye!"
                                 "She finally hangs up and practically throws the phone away from her."
                                 the_person.char "Oh fuck, you're crazy [the_person.mc_title]! What if we get caught?"
@@ -511,10 +511,10 @@ label so_morning_breakup(the_person): #Used as a mandatory event after a girls S
     the_person.char "Hi [the_person.mc_title]. I have some news."
     "She sounds tired but happy."
     $ so_title = SO_relationship_to_title(the_person.relationship)
-    the_person.char "My [so_title] found out what was going on between us... He won't be getting between us any more."
+    the_person.char "My [so_title] found out what was going on between us... He won't be getting between us anymore."
     call transform_affair(the_person) from _call_transform_affair_2
     mc.name "That's good news then. I love you [the_person.title]."
-    the_person.char "I love you too, I hope we can see each other soon!"
+    the_person.char "I love you, too. I hope we can see each other soon!"
     mc.name "Me too, I'll be in touch."
     the_person.char "Talk to you soon."
 
@@ -531,11 +531,11 @@ label caught_affair_cheating_label(the_other_girl, the_girlfriend):
     $ the_girlfriend.draw_person(emotion = "angry")
     the_girlfriend.char "Hey, what the hell was that earlier?"
     mc.name "What was what?"
-    the_girlfriend.char "I saw you with some other woman. Is there something going on between you two, is it serious?"
+    the_girlfriend.char "I saw you with some other woman. Is there something going on between you two? Is it serious?"
     mc.name "That? We were just having some fun. Come on, you of all people have to understand that."
     $ the_girlfriend.change_love(-10)
     if the_girlfriend.love < 60:
-        the_girlfriend.char "I thought me and you were a little more serious than that. Son of a bitch, I cared about you..."
+        the_girlfriend.char "I thought we were a little more serious than that. Son of a bitch, I cared about you..."
         $ the_girlfriend.change_happiness(-10)
         $ the_girlfriend.draw_person(emotion = "sad")
         mc.name "It's not important, okay? Just let it go."

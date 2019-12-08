@@ -107,20 +107,20 @@ label alexia_intro_phase_one_label(the_person):
     the_person.char "Yeah, it's me! I didn't know you were still in town, I thought you might have moved away."
     mc.name "I was just passing through, but yeah I'm still around. How about you?"
     if time_of_day == 1:
-        the_person.char "Me too, I was just heading to work actually."
+        the_person.char "Me too. I was just heading to work actually."
 
     elif time_of_day == 2:
-        the_person.char "Me too, I'm actually just on my lunch break and wanted to take a walk."
+        the_person.char "Me too. I'm on my lunch break and wanted to take a walk."
 
     else: #time_of_day == 3:
-        the_person.char "Me too, I was just heading home from work actually."
+        the_person.char "Me too. I was just heading home from work actually."
 
     mc.name "Well I guess I got lucky running into you! Where are you working? Making use of that biology degree?"
     "[the_person.title] sighs and shrugs."
     the_person.char "Not really, but that's a long story. I've got a part time job at a coffee shop right now."
-    mc.name "That's still an important job; lots of people like coffee and someone's got to serve it."
+    mc.name "That's still an important job! Lots of people like coffee and someone's got to serve it."
     "She laughs and touches your arm."
-    the_person.char "Do you? Like coffee I mean. I've got to run but I'd love to catch up with you. If you come by at the end of my shift I'll buy you a drink."
+    the_person.char "Do you? Like coffee, I mean. I've got to run, but I'd love to catch up with you. If you come by at the end of my shift I'll buy you a drink."
     menu:
         "I'd love to.":
             mc.name "That sounds like a great idea. I'll make sure to come by as soon as I can."
@@ -155,16 +155,16 @@ label alexia_intro_phase_two_label(the_person):
     "You find the coffee shop [the_person.title] works at. It's a small corner unit, with a patio outside full of patrons."
     #TODO: Add a waitress outfit for her
     $ the_person.draw_person()
-    "You step inside you see [the_person.possessive_title] behind the front counter. She smiles when she sees you and waves you over."
-    the_person.char "Hey, I'm glad you were able to make it! I'm just finishing up my shift, grab a seat and I'll be over in a minute."
+    "You step inside and see [the_person.possessive_title] behind the front counter. She smiles when she sees you and waves you over."
+    the_person.char "Hey, I'm glad you were able to make it! I'm just finishing up my shift. Grab a seat and I'll be over in a minute."
     $ renpy.scene("Active")
     "She heads into the back room of the shop. You sit down at a small table for two by a window and wait."
-    "A couple of minutes later [the_person.title] comes over with a paper cup in either hand. She puts one on the table and sits down opposite you."
+    "A couple of minutes later [the_person.title] comes over with a paper cup in each hand. She puts one on the table and sits down opposite you."
     $ the_person.draw_person(position = "sitting")
     the_person.char "I think I remembered how you like your coffee. Do you remember all the afternoons we spent together, just hanging out and having coffee together?"
-    mc.name "Of course, they're some of my best memories. I just wish we had stayed in touch, what happened to you?"
-    "She looks out the window and swirles her coffee cup with one hand."
-    the_person.char "Something about that summer was just confusing. I didn't know what I wanted to do, but biology wasn't it any more."
+    mc.name "Of course, they're some of my best memories. I just wish we had stayed in touch. What happened to you?"
+    "She looks out the window and swirls her coffee cup with one hand."
+    the_person.char "Something about that summer was just confusing. I didn't know what I wanted to do, but biology wasn't it anymore."
     the_person.char "So I didn't come back for my last year. I did some traveling, a lot of thinking, and now I'm back here."
     "You sip at your coffee and listen to [the_person.possessive_title] talk."
     the_person.char "I'm sorry we never talked again. You must have thought I fell off the face of the Earth."
@@ -181,9 +181,9 @@ label alexia_intro_phase_two_label(the_person):
             $ the_person.change_happiness(-5)
             $ the_person.change_obedience(3)
             "She reaches across the table for your hand and holds it in hers."
-            the_person.char "I promise I will never hurt you like that again. We've got a second chance, to get to know each other as friends again."
+            the_person.char "I promise I will never hurt you like that again. We've got a second chance to get to know each other as friends again."
 
-    the_person.char "But enough about me, what have you been doing? Are you done your degree?"
+    the_person.char "But enough about me, what have you been doing? Are you done with your degree?"
     menu:
         "Brag.":
             mc.name "More than that. You're looking at the proud owner of [mc.business.name], an independent pharmaceutical company."
@@ -199,10 +199,10 @@ label alexia_intro_phase_two_label(the_person):
     mc.name "I am! After I graduated I bought this little lab on the edge of town. We make small batch, limited run pharmaceuticals."
     the_person.char "That's amazing! Tell me more."
     "She leans forward in her chair and listens to you talk about your business. When you've both finished your coffee she checks the time."
-    the_person.char "Your work sounds fascinating. I'm don't think I could ever do the science that it sounds like you do, but if you ever need someone to sell coffee for you give me a call!"
+    the_person.char "Your work sounds fascinating. I'm don't think I could ever do the science that it sounds like you do, but if you ever need someone to sell coffee for you, give me a call!"
     $ the_person.draw_person()
     "[the_person.title] laughs and stands up."
-    the_person.char "It's time for me to head home though, my ride should be here soon. Oh, do you want to come out and meet him?"
+    the_person.char "It's time for me to head home. My ride should be here soon. Oh, do you want to come out and meet him?"
     "You stand up and walk out with [the_person.possessive_title]."
     mc.name "Uh, sure. Who is he?"
     "When you get outside [the_person.title] looks around for a moment, then waves to a car as it pulls over."
@@ -214,9 +214,9 @@ label alexia_intro_phase_two_label(the_person):
     menu:
         "Be polite.":
             "You take his hand and shake it."
-            mc.name "It's nice to meet you too. I hope we'll have time to talk more in the future."
+            mc.name "It's nice to meet you, too. I hope we'll have time to talk more in the future."
             $ the_person.change_happiness(3)
-            the_person.char "That would be great, the three of us should meet up and have dinner or see a movie or something."
+            the_person.char "That would be great, the three of us should meet up and have dinner, or see a movie, or something."
 
         "Be rude.":
             "You don't shake his hand."
@@ -225,7 +225,7 @@ label alexia_intro_phase_two_label(the_person):
             $ the_person.change_obedience(1)
             the_person.char "Sorry sweety, we got talking about [the_person.mc_title]'s work and it never came up."
             "She glares at you for a moment, but [the_person.SO_name] doesn't seem to notice."
-            the_person.SO_name "Well we'll have to fix that. If you two are friends we should have dinner together, so you can catch up."
+            the_person.SO_name "Well, we'll have to fix that. If you two are friends we should have dinner together, so you can catch up."
 
     $ renpy.scene("Active")
     "[the_person.title] gets into the passenger side of her boyfriend's car. She says goodbye from inside and they drive off."
@@ -246,7 +246,7 @@ label alexia_hire_label(the_person):
     #Hire her onto your marketing team.
     mc.name "[the_person.title], do you like your job at that coffee shop?"
     the_person.char "Do I like it? Not really, but it pays the bills. Why?"
-    mc.name "[mc.business.name] is expanding and I need competent people. You're pretty good at selling coffee, I think you'd be perfect for my marketing team."
+    mc.name "[mc.business.name] is expanding and I need competent people. You're pretty good at selling coffee - I think you'd be perfect for my marketing team."
     the_person.char "You're being serious? Oh man, I don't know what to say [the_person.mc_title]."
     mc.name "How about \"I'll do it\"? I promise I pay better than your coffee place does."
     $ the_person.change_happiness(5)
@@ -284,11 +284,11 @@ label alexia_hire_label(the_person):
 
 label alexia_ad_suggest_label(the_person):
     $ the_person.draw_person()
-    the_person.char "Knock knock. Hey [the_person.mc_title], do you have a second?"
+    the_person.char "Knock, knock. Hey [the_person.mc_title], do you have a second?"
     "[the_person.title] is at your office door."
     mc.name "For you, always. What's up?"
     the_person.char "So I was getting some boxes ready for shipping and I had a thought."
-    the_person.char "I know this might be silly, but back at the coffee shop when we had to-go orders we would add a little flier."
+    the_person.char "I know this might be silly, but back at the coffee shop when we had takeout orders we would add a little flier."
     "You nod and listen, noticing now that she has a business card sized piece of paper."
     the_person.char "I put together this mockup, super rough, to show you. I think it would really help boost sales."
     "She hands over her example business card. It has [mc.business.name] written in bold across the top and [the_person.title] posing with a vial of serum."
@@ -304,19 +304,19 @@ label alexia_ad_suggest_label(the_person):
             mc.name "You're all the eye candy we need. We can take a few high quality pictures of you and we're good to go."
             $ the_person.change_slut_temp(2)
             $ the_person.change_love(1)
-            "[the_person.title] blushes waves her hand at you dismissively."
+            "[the_person.title] blushes and waves her hand at you dismissively."
             the_person.char "Oh come on, you know we could find someone better for it. But I guess if I did it we would save some money."
-            the_person.char "If it's just a few quick shots I suppose I wouldn't mind."
+            the_person.char "If it's just a few quick shots, I suppose I wouldn't mind."
 
         "We would save money if you were the model.":
             mc.name "You look perfect for the role in this mockup already. We can take a few high quality pictures and these would be ready for production."
             $ the_person.change_obedience(2)
             $ the_person.change_happiness(1)
             "[the_person.title] seems relieved."
-            the_person.char "Right, of course that's what you mean. I guess if it's just a few quick shots I wouldn't mind."
+            the_person.char "Right, of course that's what you mean. I guess if it's just a few quick shots, I wouldn't mind."
 
     mc.name "Good to hear. What will you need to get this going?"
-    the_person.char "We should probably get a proper camera instead of just my phone, and we'll need to pay to have the cards printed professionally."
+    the_person.char "We should probably get a proper camera instead of my phone, and we'll need to pay to have the cards printed professionally."
     menu:
         "Pay for equipment. -$500" if mc.business.funds >= 500:
             mc.name "That sounds reasonable. Buy whatever you think is reasonable and I will cover the expense."
@@ -340,8 +340,8 @@ label alexia_ad_suggest_label(the_person):
     return
 
 label alexia_ad_suggest_reintro_label(the_person):
-    mc.name "[the_person.title], I want you to order in whatever camera equipment you think is best for your ad photoshoot."
-    the_person.char "Okay. I'll get right on that and order it A.S.A.P!"
+    mc.name "[the_person.title], I want you to order whatever camera equipment you think is best for your ad photoshoot."
+    the_person.char "Okay. I'll get right on that and order it ASAP!"
     mc.name "Send me any receipts and I'll cover the cost."
     $ mc.business.funds += -500
     $ camera_arrive_action = Action("Camera Arrive", camera_arrive_requirement, "alexia_ad_camera_label", args = the_person, requirement_args = day + renpy.random.randint(3,7))
@@ -362,10 +362,10 @@ label alexia_ad_camera_label(the_person):
 label alexia_photography_intro_label(the_person):
     # You shoot your business cards. Results in a minor (%1) boost in sales values and gives you an opportunity to tell Alexia to pose for you.
     mc.name "Are you ready for our photoshoot?"
-    the_person.char "As ready as I'll ever be I suppose. I found a good spot in the storage room, plenty of light and a blank wall."
+    the_person.char "As ready as I'll ever be, I suppose. I found a good spot in the storage room. It has plenty of light and a blank wall."
     mc.name "Excellent. Let's go."
     # TODO: Change location? Just change background art?
-    "You and [the_person.possessive_title] go to the stoarge room. Once you get there she hands you the new camera."
+    "You and [the_person.possessive_title] go to the storage room. Once you get there she hands you the new camera."
 
     the_person.char "Here you go [the_person.mc_title]. How do you want to do this?"
     mc.name "Let's start with some basic shots of you. Just act natural and look into the camera."
@@ -376,7 +376,7 @@ label alexia_photography_intro_label(the_person):
     $ the_person.draw_person(position = "stand5")
     mc.name "Perfect. Now try turning around."
     $ the_person.draw_person(position = "back_peek")
-    "You snap pictures as she changes pose."
+    "You snap pictures as she poses."
     menu:
         "Focus on her ass.":
             mc.name "Bend forward just a little bit for me. Let's show off your butt."
@@ -396,11 +396,11 @@ label alexia_photography_intro_label(the_person):
     "For an hour you try different poses and camera settings until you're satisfied with the results."
     the_person.char "I think that's everything I need to get this business card designed. I'll order them and have them ready for the next shipment out."
     $ mc.business.add_sales_multiplier("Business Cards", 1.01)
-    mc.name "Good work [the_person.title], I've been very impressed."
+    mc.name "Good work [the_person.title]. I've been very impressed."
     the_person.char "Thanks, this was fun! If you think this advertising thing is working out we could try putting ads in magazines and stuff."
     mc.name "I think that's another good idea, as long as you want to do the modeling for it."
     $ the_person.change_obedience(1)
-    the_person.char "Yeah, I can do that! I don't know why but I thought it was really exciting to be in front of that camera."
+    the_person.char "Yeah, I can do that! I don't know why, but I thought it was really exciting to be in front of that camera."
     mc.name "I'll let you get back to work then. See you around [the_person.title]."
     if mc.business.company_model is not None:
         $ mc.business.company_model.special_role.remove(company_model_role) #If we somehow ended up with her here, fire her.

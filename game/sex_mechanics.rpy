@@ -179,10 +179,11 @@ label fuck_person(the_person, private= True, start_position = None, start_object
 
         elif round_choice == "Leave":
             $ finished = True # Unless something stops us the encounter is over and we can end
-            if renpy.random.randint(0,the_person.arousal) + 50 < the_person.obedience: #She's disobedient and will take control of the encounter. disobed disobd
+            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience: #She's disobedient and will take control of the encounter. disobed disobd
                 $ the_person.call_dialogue("sex_take_control")
                 $ the_person.change_obedience(-3)
                 $ girl_in_charge = True
+                $ finished = False
                 $ position_choice = None #She picks the position now, because she has her own list of possibilities
 
             elif (the_person.arousal > the_person.max_arousal - 30) and (report_log.get("girl orgasms", 0) == 0) and report_log.get("beg finish", 0) == 0: #Within 30 of orgasming and she hasn't cum yet
@@ -417,7 +418,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
     return
 
-label watcher_check(the_person, the_position, the_object): # Check to see if anyone is around to comment on the characters having sex.
+label watcher_check(the_person, the_position, the_object, the_report): # Check to see if anyone is around to comment on the characters having sex.
     $ other_people = [person for person in mc.location.people if person is not the_person] #Build a list with all the _other_ people in the room other than the one we're fucking.
     python: #Checks to see if anyone watching is in a realtionship, and if they are sets up an event where they confront you later about you actively cheating in front of the,
         for a_person in other_people:

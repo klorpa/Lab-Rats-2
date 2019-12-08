@@ -7,7 +7,8 @@ init -2:
             else:
                 return None
 
-        def get_random_from_weighted_list(list): #Passed a list of parameters which are ["Thing", weighted value]
+        def get_random_from_weighted_list(list, return_everything = False): #Passed a list of parameters which are ["Thing", weighted value, anything_else,...]
+            #If return_everything is True, returns the entire tuple instead of just an action
             if len(list) == 0:
                 return None
 
@@ -19,7 +20,10 @@ init -2:
             running_total = 0
             for item in list:
                 if random_value <= (item[1]+running_total):
-                    return item[0]
+                    if return_everything:
+                        return item
+                    else:
+                        return item[0]
                 else:
                     running_total += item[1]
 

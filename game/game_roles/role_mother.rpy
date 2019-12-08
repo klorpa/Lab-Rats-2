@@ -155,7 +155,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
         #     mc.name "Now that I'm the man of the house, I want to make some changes around the house."
         #     the_person.char "What sorts of changes?"
         #     call mom_make_house_changes(the_person)
-        # 
+        #
         # "I want to make some changes around here.\nRequires: 120 Obedience (disabled)" if the_person.obedience < 120:
         #     pass
 
@@ -211,15 +211,38 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
 
     return
-#
+
 # label mom_make_house_changes(the_person):
 #     # A list of house rules to put into place.
 #     # TODO: This entire event
+#
 #     menu:
-#         "I want breakfast in my room every morning.":
+#         "I want breakfast in my room every morning.": #Bonus energy recovery. #TODO: Figure out how this works with other random events.
 #             pass
 #
-#         "I want to be in charge of Lily's discipline.":
+#         "You are going to be naked when you deliver my breakfast.": #Once you're having breakfast delivered
+#             pass
+#
+#         "You are going to service me when you deliver my breakfast.":
+#             pass
+#
+#         "I want you to start wearing more comfortable clothes around the house.": #Sets minimum sluttiness for Mom's outfits
+#             pass
+#
+#         "You are only allowed to wear your underwear when you're at home.":
+#             pass
+#
+#         "You can't wear anything that would keep your tits and pussy from me.":
+#             pass
+#
+#         "I want to be in charge of Lily's discipline.": #Only after she's done somethign "bad", let's you punish her somehow, or just unlocks other things in this menu?
+#             # The whole Lily section might be better broken out into her role. with this as the enabling action. Definitely one of the paths to breaking them both and having your incest harem.
+#             pass
+#
+#         "Lily is only allowed to be in her underwear while at home.":
+#             pass
+#
+#         "Lily can't wear anything that would keep her tits or pussy from me.":
 #             pass
 #
 #         "Never mind.":

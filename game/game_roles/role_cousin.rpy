@@ -169,16 +169,16 @@ label cousin_house_phase_two_label(the_person):
     $ the_person.draw_person(position = "sitting")
     mc.name "Uh... Hey."
     the_person.char "Hey."
-    "She glances up from the TV for the breifest moment then goes back to ignoring you."
+    "She glances up from the TV for the briefest moment, then goes back to ignoring you."
     mc.name "What's up? Why are you over here?"
     the_person.char "Your mom said I could come over whenever I wanted. My mom won't stop bothering me and our crappy apartment is tiny."
-    "[the_person.possessive_title] shrugs and turns her full attention to her TV show."
+    "[the_person.possessive_title] shrugs and turns her full attention back to her TV show."
     $ cousin_at_house_phase_three_action = Action("Cousin changes schedule", cousin_house_phase_three_requirement, "cousin_house_phase_three_label", args = cousin, requirement_args = day+renpy.random.randint(2,5))
     $ mc.business.mandatory_crises_list.append(cousin_at_house_phase_three_action) #In a couple of days change her schedule so she starts stealing from Lily.
     return
 
 label cousin_house_phase_three_label(the_person):
-    $ the_person.schedule[2] = lily_bedroom #Set her to be in Lily's room AND for an event to trigger when you walk in on her.
+    $ the_person.schedule[3] = lily_bedroom #Set her to be in Lily's room AND for an event to trigger when you walk in on her.
     $ cousin_blackmail_intro_action = Action("Cousin caught stealing", cousin_blackmail_intro_requirement, "cousin_blackmail_intro_label")
     $ the_person.on_room_enter_event_list.append(cousin_blackmail_intro_action)
     return
@@ -186,7 +186,7 @@ label cousin_house_phase_three_label(the_person):
 label cousin_blackmail_intro_label(the_person):
     #You find your cousin in Lily's room, looking for cash. Event triggers as soon as you come in. Begins blackmailing storyline.
     $ the_person.draw_person(position = "walking_away")
-    "[the_person.possessive_title] is standing in front of [lily.possessive_title]'s bedstand. She turns suddenly when you open the door."
+    "[the_person.possessive_title] is standing in front of [lily.possessive_title]'s nightstand. She turns suddenly when you open the door."
     $ the_person.draw_person()
     the_person.char "Uh... Hey."
     mc.name "What are you doing in here?"
@@ -264,10 +264,10 @@ label cousin_blackmail_list(the_person):
                     "[the_person.title] reaches into her shirt and pulls out a roll of cash."
                 else:
                     "[the_person.title] pulls out a roll of cash."
-                    "She leafs out a bunch of $100 bills and hand them over to you. You take the money and slip it into your wallet."
+                    "She leafs out a bunch of $100 bills and hands them over to you. You take the money and slip it into your wallet."
 
             else:
-                mc.name "If you're taking cash from my sister I want half."
+                mc.name "If you're taking cash from my sister, I want half."
                 $ the_person.change_obedience(1)
                 if not the_person.outfit.tits_visible():
                     "[the_person.title] reaches into her shirt and pulls out a small wad of bills."
@@ -284,9 +284,9 @@ label cousin_blackmail_list(the_person):
 
         "Test this serum.":
             #Always succeeds. She takes a dose of serum for you.
-            mc.name "I've got stuff from work that needs testing. If you test it I'll stay quiet."
+            mc.name "I've got stuff from work that needs testing. If you test it, I'll stay quiet."
             the_person.char "Fine."
-            "She rolls her eyes and waits for you give her a vial of serum."
+            "She rolls her eyes and waits for you to give her a vial of serum."
             call give_serum(the_person) from _call_give_serum_12
             if _return:
                 "You hand over the vial. [the_person.possessive_title] drinks it down without any comment or complaint."
@@ -298,7 +298,7 @@ label cousin_blackmail_list(the_person):
             else:
                 mc.name "Actually, I don't have anything with me right now."
                 "[the_person.title] rolls her eyes."
-                the_person.char "Whatever, what else do I need to do to keep you quiet?"
+                the_person.char "Whatever. What else do I need to do to keep you quiet?"
                 call cousin_blackmail_list(the_person) from _call_cousin_blackmail_list_2
 
         "Strip for me.":
@@ -330,12 +330,12 @@ label cousin_blackmail_list(the_person):
                         the_person.char "So, I'm not wearing any panties right now. That means I can't take this off."
                         mc.name "Come on, that's not what the deal is."
                         the_person.char "Sad you don't get to see my tight, wet pussy [the_person.mc_title]?"
-                        the_person.char "Deal with it, go cry to mommy if it matters that much to you."
+                        the_person.char "Deal with it. Go cry to mommy if it matters that much to you."
 
                     if the_person.outfit.wearing_panties() and the_person.outfit.wearing_bra():
-                        "Once [the_person.possessive_title] has stripped down to her underwear she turns around to let you look at her ass."
+                        "Once [the_person.possessive_title] has stripped down to her underwear, she turns around to let you look at her ass."
                     else:
-                        "Once [the_person.possessive_title] has stripped down as far as she's willing she turns around to let you look at her ass."
+                        "Once [the_person.possessive_title] has stripped down as far as she's willing, she turns around to let you look at her ass."
                     $ the_person.draw_person(position = "back_peek")
                     the_person.char "Finished yet? I bet you're about to cream your fucking pants looking at this."
                     "You take a second to enjoy the view."
@@ -365,14 +365,14 @@ label cousin_blackmail_list(the_person):
                         the_person.char "So, I'm not wearing any panties right now. That means I can't take this off."
                         mc.name "Come on, that's not what the deal is."
                         the_person.char "Sad you don't get to see my tight, wet pussy [the_person.mc_title]?"
-                        the_person.char "Deal with it, go cry to mommy if it matters that much to you."
+                        the_person.char "Deal with it. Go cry to mommy if it matters that much to you."
 
-                    "Once [the_person.possessive_title] has stripped down she turns around to let you get a look at her ass."
+                    "Once [the_person.possessive_title] has stripped down, she turns around to let you get a look at her ass."
                     $ the_person.draw_person(position  = "back_peek")
                     the_person.char "Look all you want... I bet you're creaming your pants thinking about touching me."
                     "She wiggles her butt in your direction. Her tits swing back and forth with the same movement."
-                    the_person.char "Well keep dreaming. I'm not that fucking desparate."
-                    "Once you've gotten your fill [the_person.title] gets dressed again."
+                    the_person.char "Well keep dreaming. I'm not that fucking desperate."
+                    "Once you've gotten your fill, [the_person.title] gets dressed again."
                     $ the_person.outfit = the_person.planned_outfit.get_copy()
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
@@ -430,7 +430,7 @@ label cousin_blackmail_list(the_person):
             mc.name "I want you to kiss me."
             "She sneers."
             the_person.char "Ugh. Disgusting."
-            "She leans forward and gives you the brief kiss on the cheek."
+            "She leans forward and gives you a brief kiss on the cheek."
             the_person.char "There, are we done now?"
             mc.name "You know we aren't. Come here."
             $ the_person.add_situational_obedience("blackmail", 30, "This will keep him quiet.")
@@ -463,7 +463,7 @@ label cousin_blackmail_list(the_person):
                 call fuck_person(the_person) from _call_fuck_person_25
                 $ the_report = _return
                 if the_report.get("girl orgasms", 0) > 0:
-                    "[the_person.possessive_title] closes her eyes tries to catch her breath."
+                    "[the_person.possessive_title] closes her eyes and tries to catch her breath."
                     the_person.char "Fuck... God fucking damn it..."
                     mc.name "Something wrong?"
                     the_person.char "God damn it, you shouldn't be able to do that to me. Fuck."
@@ -471,7 +471,7 @@ label cousin_blackmail_list(the_person):
                 else:
                     the_person.char "Are we done here? I feel like I need a shower after that."
                     mc.name "Cheer up, you'll be enjoying it soon enough."
-                    the_person.char "God I hope not. Even if I was you'll never get the satisfaction of knowing about it."
+                    the_person.char "God I hope not. Even if I was, you'll never get the satisfaction of knowing about it."
 
                 $ the_person.clear_situational_obedience("blackmail")
                 $ the_person.review_outfit()
@@ -480,7 +480,7 @@ label cousin_blackmail_list(the_person):
             else:
                 the_person.char "Really? You want to touch me?"
                 "She bites her lip and runs her hands over her hips."
-                the_person.char "Grab my tits? Fuck my tight pussy? Make me cum with your with your huge cock?"
+                the_person.char "Grab my tits? Fuck my tight pussy? Make me cum with your huge cock?"
                 the_person.char "Ha! Dream on you fucking perv. I'm a stripper not a whore."
                 call cousin_blackmail_list(the_person) from _call_cousin_blackmail_list_5
 
@@ -495,7 +495,7 @@ label aunt_cousin_hint_label(the_aunt, the_cousin):
     #Your aunt calls at night to ask if you know where Gabrielle is. Hints that she's up to something late at night.
     "You get a call on your phone. It's [the_aunt.possessive_title]."
     mc.name "Hey [the_aunt.title], is everything alright?"
-    the_aunt.char "Hi [the_aunt.mc_title], everything is okay. Do you have a moment?"
+    the_aunt.char "Hi [the_aunt.mc_title]. Do you have a moment?"
     mc.name "Sure, what's up?"
     the_aunt.char "It's about [the_cousin.title]. For the last few nights she's been staying out late and she won't tell me where she is."
     the_aunt.char "I'm worried that she's getting up to trouble. Do you have any clue what she's doing?"
@@ -509,8 +509,8 @@ label aunt_cousin_hint_label(the_aunt, the_cousin):
 
         "No clue.":
             mc.name "Nope, no idea. Sorry."
-            the_aunt.char "That's okay, she's always been very private so I'm not surprised."
-            the_aunt.char "Well if you hear anything just let me know, okay? I'm sure I'm overreacting, but it would help me sleep if I knew she was okay."
+            the_aunt.char "That's okay, she's always been very private, so I'm not surprised."
+            the_aunt.char "Well, if you hear anything, just let me know, okay? I'm sure I'm overreacting, but it would help me sleep if I knew she was okay."
             mc.name "Okay [the_aunt.title], if I hear anything I'll let you know."
 
 
@@ -533,7 +533,7 @@ label cousin_blackmail_ask_label(the_person):
 
     $ told = False
     if not talked_before:
-        mc.name "Your mom told me you've been staying out late but you won't tell her why. I'm want to know what you're up to."
+        mc.name "Your mom told me you've been staying out late, but you won't tell her why. I'm want to know what you're up to."
     else:
         mc.name "So [the_person.title], are you ready to tell me what you've been staying out late for?"
 
@@ -543,13 +543,13 @@ label cousin_blackmail_ask_label(the_person):
         else:
             the_person.char "Are you still thinking about that? Ugh..."
         mc.name "You know you can trust me. What have you been doing?"
-        "She hesitates, torn between her love of you and her desire for privacy. She finally breaks down."
+        "She hesitates, torn between her love for you and her desire for privacy. She finally breaks down."
         the_person.char "I have a new job."
         the_person.char "At a strip club."
         mc.name "What?"
         the_person.char "I got a job at a strip club. I didn't tell my mom because she would flip out."
         the_person.char "I didn't tell you because you're my cousin, and I didn't want you to think I was a freak."
-        the_person.char "Can you please just not tell her? I make a lot of money, I could give you a cut to stay quiet."
+        the_person.char "Can you please just not tell her? I make a lot of money. I could give you a cut to stay quiet."
         mc.name "I would really hate to let your mom down though..."
         "She sighs and nods her head."
         the_person.char "Yeah, yeah, I know what else you want. I'll let you touch me sometimes, if you promise to keep your mouth shut."
@@ -564,7 +564,7 @@ label cousin_blackmail_ask_label(the_person):
             the_person.char "Ugh, of course she's been asking everyone. I'm not telling her for a reason."
         else:
             the_person.char "Ugh, are you still thinking about that. I haven't told my mom for a reason, you know."
-        mc.name "Well I want to know. What have you been doing?"
+        mc.name "Well, I want to know. What have you been doing?"
         "She hesitates, fighting against her own obedience to you, then breaks down."
         the_person.char "I have a new job."
         the_person.char "At a strip club."
@@ -573,7 +573,7 @@ label cousin_blackmail_ask_label(the_person):
         the_person.char "She would freak out, and I make a lot of money doing it. Just don't tell her."
         mc.name "Why not? What do I get out of it?"
         "She sighs dramatically."
-        the_person.char "Yeah, yeah, I see where this is going. I'll give you a cut."
+        the_person.char "Yeah, yeah. I see where this is going. I'll give you a cut."
         mc.name "And?"
         the_person.char "And... I'll let you touch me sometimes, if you promise to stay quiet."
         mc.name "I think that might be enough."
@@ -588,7 +588,7 @@ label cousin_blackmail_ask_label(the_person):
             mc.name "But you {i}are{/i} doing something?"
             the_person.char "Wouldn't you like to know. Come one, what do you really want?"
         else:
-            the_person.char "Why would I tell you anything? If you're so curious you should figure it out yourself."
+            the_person.char "Why would I tell you anything? If you're so curious, you should figure it out yourself."
             the_person.char "Come on, tell me what you really want so I can get this over with."
 
         "[the_person.possessive_title] doesn't seem like she's about to crack."
@@ -602,14 +602,14 @@ label cousin_search_room_label(the_cousin, the_aunt):
     if the_aunt in aunt_apartment.people or the_aunt in aunt_bedroom.people:
         #Your aunt is around and asks you to stop.
         "You start with the most obvious places, digging through the papers on her desk and checking her closet."
-        "While you're searching the bedroom door is opened."
+        "While you're searching, the bedroom door opens."
         $ the_aunt.draw_person()
         if the_aunt.love < 10:
             the_aunt.char "[the_aunt.mc_title], what the hell are you doing?"
             mc.name "Uh... I'm looking for information about your daughter."
             $ the_person.draw_person(emotion = "angry")
             $ the_person.change_love(-3)
-            the_aunt.char "And you think you can just come in here and dig through her stuff? Get out, I'll be telling your mother about this!"
+            the_aunt.char "And you think you can just come in here and dig through her stuff? Get out! I'll be telling your mother about this!"
             "She glares at you and ushers you out of the apartment and out of the building."
             $ mom.change_happiness(-5)
             $ mom.change_love(-1)
@@ -626,12 +626,12 @@ label cousin_search_room_label(the_cousin, the_aunt):
                 $ the_aunt.change_love(-1)
                 "You're forced to abandon your search. [the_aunt.possessive_title] escorts you to the living room."
                 $ mc.change_location(aunt_apartment)
-                "If she was more obedient she might let you continue the search, or you could wait until she isn't in the apartment at all."
+                "If she was more obedient she might let you continue the search, or you could wait until she isn't in the apartment."
                 return
 
             else:
                 "She sighs and nods."
-                the_aunt.char "You're right. If [the_cousin.title] asks I don't know anything about this, okay?"
+                the_aunt.char "You're right. If [the_cousin.title] asks, I don't know anything about this, okay?"
                 mc.name "I won't tell a soul."
                 $ renpy.scene("Active")
                 "[the_aunt.possessive_title] leaves you alone in her daughter's room to continue your search."
@@ -659,7 +659,7 @@ label cousin_blackmail_level_2_confront_label(the_person):
     mc.name "So I was at [club_name] and I saw something really interesting."
     "Her eyes go wide and lock with yours."
     the_person.char "Uh... What were you doing there? That's a weird place for you to be."
-    mc.name "I was enjoying the talent. Imagine my suprise when I see you walk out."
+    mc.name "I was enjoying the talent. Imagine my surprise when I see you walk out."
     $ the_person.change_happiness(-5)
     the_person.char "... Fuck."
     mc.name "So this was what you were hiding, huh? I'm sure your mom is going to be thrilled when she hears about this."
@@ -667,7 +667,7 @@ label cousin_blackmail_level_2_confront_label(the_person):
     mc.name "Why not? What do I get out of it?"
     "She holds her forehead for a moment and sighs."
     $ the_person.change_love(-5)
-    the_person.char "Yeah yeah, I see where this is going. Listen, I make really good money doing this."
+    the_person.char "Yeah, yeah. I see where this is going. Listen, I make really good money doing this."
     the_person.char "I'll give you a cut if you stay quiet."
     mc.name "And?"
     the_person.char "And? What \"and\"? could you want?"
@@ -709,11 +709,11 @@ label cousin_boobjob_ask_label(the_person):
         "You gesture to her already sizeable tits."
         mc.name "Those udders aren't enough? Maybe it's more of a personality thing."
         the_person.char "Oh, thank you for the input. I'll let all my customers know my cousin thinks my tits are already big enough."
-        mc.name "Whatever, fine. THat doesn't explain why I should be paying for it though."
+        mc.name "Whatever, fine. That doesn't explain why I should be paying for it though."
     else:
         mc.name "That doesn't explain why I should be paying for it though."
-    the_person.char "Because I don't have all the money I need right now, and if I get this done I can earn it back quicker."
-    the_person.char "If you spot me the cash now I can pay you back as soon as I earn it."
+    the_person.char "Because I don't have all the money I need right now, and if I get this done, I can earn it back quicker."
+    the_person.char "If you spot me the cash now, I can pay you back as soon as I earn it."
     mc.name "How much would you need?"
     the_person.char "I've got some money, but I'd need another five grand from you."
     the_person.char "Please [the_person.mc_title], it's a rock solid investment."
@@ -727,7 +727,7 @@ label cousin_boobjob_ask_label(the_person):
             mc.name "Fine. Send me over the bill and I'll pay it."
             the_person.char "Really? Just like that?"
             if the_person.love < 10:
-                mc.name "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
+                mc.name "Just like that. Your tits are the only interesting thing about you, so you might as well have the best money can buy."
                 the_person.char "Ugh. You're the worst."
 
             else:
@@ -742,18 +742,18 @@ label cousin_boobjob_ask_label(the_person):
             pass
 
         "Offer breast enhancing serum instead." if has_boob_enhancement_serum:
-            mc.name "Why go thorugh all that trouble when I have a serum that could do this for you right now."
+            mc.name "Why go through all that trouble when I have a serum that could do this for you right now."
             the_person.char "Wait, you do?"
-            mc.name "Of course I do, it's what my business does. I have a dose right here, if you'd like to try it out."
+            mc.name "Of course I do. It's what my business does. I have a dose right here, if you'd like to try it out."
             the_person.char "And this stuff really works? I always thought you were running a scam."
-            mc.name "Yes it really works. Do you want it or not."
-            "She eyes you up cautiously, then nods."
+            mc.name "Yes, it really works. Do you want it or not."
+            "She eyes you cautiously, then nods."
             the_person.char "Fine, give it here."
             call give_serum(the_person) from _call_give_serum_15
             if _return == False:
                 mc.name "Actually, I don't think this particular serum would be good for you."
                 $ the_person.change_love(-1)
-                the_person.char "I knew you were running a scam. If you didn't want to pay you could have just said so instead of lying."
+                the_person.char "I knew you were running a scam. If you didn't want to pay, you could have just said so instead of lying."
                 call talk_person(the_person) from _call_talk_person_2
 
                 $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
@@ -774,10 +774,10 @@ label cousin_boobjob_ask_label(the_person):
             pass #Shows as a disabled when you could get the research, until then does not show up at all (unless you somehow have something with the trait, from a random event for example)
 
         "Refuse to pay.":
-            mc.name "Five thousand dollars? That's ridiculous, I can't pay that just to get you a set of bigger tits."
+            mc.name "Five thousand dollars? That's ridiculous. I can't pay that just to get you a set of bigger tits."
             the_person.char "Come on, please? What can I do to convince you?"
             if mc.business.funds < 5000:
-                mc.name "Nothing, because I don't have that kind of money just sitting around either."
+                mc.name "Nothing, because I don't have that kind of money."
                 $ the_person.change_happiness(-5)
                 the_person.char "Really? Ugh, you're useless."
                 call talk_person(the_person) from _call_talk_person_4
@@ -788,7 +788,7 @@ label cousin_boobjob_ask_label(the_person):
                 mc.name "What can you do? I've got the money, I just don't see a reason to give it to you."
                 the_person.char "You don't see a reason to get me some big, juicy tits?"
                 "She leans close to you, standing on the tips of her toes to whisper sensually into your ear."
-                the_person.char "Maybe I can show you why... Would that be enough? If your slutty stripper cousin helped get you off, would that be enough to convince you?"
+                the_person.char "Maybe I can show you why... Would that be enough? If your slutty, stripper cousin helped get you off, would that be enough to convince you?"
                 menu:
                     "Pay for it and fuck her. -$5000":
                         "You wrap a hand around her waist and slap her ass."
@@ -800,7 +800,7 @@ label cousin_boobjob_ask_label(the_person):
                         $ mc.business.fund += -5000
 
                     "Refuse to pay.":
-                        mc.name "I don't need to pay you if I want to use you, you should know that. Sorry, but you'll have to find a way to buy your own tits."
+                        mc.name "I don't need to pay you if I want to use you. Sorry, but you'll have to find a way to buy your own tits."
                         "She backs up and sulks."
                         the_person.char "Ugh. Fine. Whatever."
                         call talk_person(the_person) from _call_talk_person_5
@@ -824,7 +824,7 @@ label cousin_talk_boobjob_again_label(the_person):
     if the_person.has_large_tits():
         the_person.char "Yeah. Why, have you come around? Do you want to get your cousin some big..."
         "She leans forward, accentuating her already sizeable breasts."
-        the_person.char "Juicy tits? You know if you come down to the club you'd be able to see them, right?"
+        the_person.char "Juicy tits? You know if you come down to the club, you'd be able to see them, right?"
     else:
         the_person.char "Yeah, obviously."
 
@@ -836,10 +836,10 @@ label cousin_talk_boobjob_again_label(the_person):
 
     menu:
         "Pay for it. -$5000" if mc.business.funds >= 5000:
-            mc.name "Fine. Send me over the bill and I'll pay it."
+            mc.name "Fine. Send me the bill and I'll pay it."
             the_person.char "Really? Just like that?"
             if the_person.love < 10:
-                mc.name "Just like that. Your tits are the only interesting you've got, so you might as well have the best money can buy."
+                mc.name "Just like that. Your tits are the only interesting thing about you, so you might as well have the best money can buy."
                 the_person.char "Ugh. You're the worst."
 
             else:
@@ -863,12 +863,12 @@ label cousin_talk_boobjob_again_label(the_person):
             pass
 
         "Offer breast enhancing serum instead." if has_boob_enhancement_serum:
-            mc.name "Why go thorugh all that trouble when I have a serum that could do this for you right now."
+            mc.name "Why go through all that trouble when I have a serum that could do this for you right now."
             the_person.char "Wait, you do?"
-            mc.name "Of course I do, it's what my business does. I have a dose right here, if you'd like to try it out."
+            mc.name "Of course I do. It's what my business does. I have a dose right here, if you'd like to try it out."
             the_person.char "And this stuff really works? I always thought you were running a scam."
-            mc.name "Yes it really works. Do you want it or not."
-            "She eyes you up cautiously, then nods."
+            mc.name "Yes, it really works. Do you want it or not."
+            "She eyes you cautiously, then nods."
             the_person.char "Fine, give it here."
             call give_serum(the_person) from _call_give_serum_16
             if _return == False:
@@ -899,7 +899,7 @@ label cousin_talk_boobjob_again_label(the_person):
             mc.name "Well, you can keep on wanting them, because I'm still not paying."
             the_person.char "Wait, did you seriously bring that up just to say no again."
             $ the_person.change_love(-3)
-            the_person.char "Your levels of pettiness never cease to amaze me."
+            the_person.char "Your pettiness never ceases to amaze me."
 
     return
 
@@ -917,21 +917,21 @@ label cousin_new_boobs_brag_label(the_person):
     if the_person.love < 10:
         "[the_person.possessive_title] seems unusually happy to see you. She puts her arms behind her back and sways her shoulders."
     else:
-        "She puts her arms behind her back and sways her shoulders, emphasising her chest."
+        "She puts her arms behind her back and sways her shoulders, emphasizing her chest."
 
     the_person.char "I got my new tits! Come on, what do you think?"
     menu:
         "They look good.":
-            mc.name "They look good, and they better after what I paid."
+            mc.name "They look good. They better after what I paid!"
             $ the_person.change_love(1)
             $ the_person.change_obedience(3)
 
         "You look like a bimbo.":
             mc.name "They make you look like a bimbo. Big tits, no brain."
             if the_person.personality is bimbo_personality:
-                the_person.char "Thank you! I really like them too!"
+                the_person.char "Thank you! I really like them, too!"
             else:
-                the_person.char "Whatever. Who even asked you anyways."
+                the_person.char "Whatever. Who even asked you anyway?"
                 mc.name "You did."
                 the_person.char "Shut up."
             $ the_person.change_slut_temp(5)
@@ -939,12 +939,12 @@ label cousin_new_boobs_brag_label(the_person):
 
     mc.name "So, when can I expect to be paid back for your new sweater puppies?"
     the_person.char "As soon as I actually have a chance to make some money with them, okay?"
-    the_person.char "You don't have to worry, I'm going to have to pay otherwise you'll tell my Mom everything. Right?"
+    the_person.char "You don't have to worry. I'm going to have to pay or you'll tell my Mom everything, right?"
     mc.name "You've got the idea."
 
     if the_person.outfit.tits_visible(): #They're already out, she can't exactly charge you to see them.
         "She looks down at her chest and shakes her tits a little, obviously for her own enjoyment and not yours."
-        "After a moment watching them jiggle she turns her head back towards you."
+        "After a moment watching them jiggle she looks at you."
         the_person.char "Did you need anything else?"
 
     else:
@@ -973,10 +973,10 @@ label cousin_new_boobs_brag_label(the_person):
                 if the_person.sluttiness > 50:
                     the_person.char "There you go. Go on, give them a feel. They feel almost exactly like the real thing."
                     "You hold [the_person.title]'s new, larger breasts in your hands. They feel a little firmer than natural tits, but they're pleasant nonetheless."
-                    "After you've had a chance to fondle them she reaches for her top."
+                    "After you've had a chance to fondle them, she reaches for her top."
                 else:
                     the_person.char "There you go. Good, right? These girls are going to bring in so much more at the club."
-                    "She looks down at her own chest and gives it a shake, setting her tits jiggling. When they settle down she reaches for her top again."
+                    "She looks down at her own chest and gives it a shake, setting her tits jiggling. When they settle down, she reaches for her top again."
 
                 $ the_person.outfit = old_outfit
                 $ the_person.draw_person()
@@ -999,9 +999,9 @@ label cousin_tits_payback_label(the_person, amount_remaining):
         $ cousin_tits_payback_action = Action("cousin tits payback", cousin_tits_payback_requirement, "cousin_tits_payback_label", args = [the_person, amount_remaining-1000], requirement_args = day + 7)
         $ mc.business.mandatory_crises_list.append(cousin_tits_payback_action) #An event where she sends you some cash in a week, which if it has not finished then re-adds itself with the new amount
     else:
-        "[the_person.title] has transfered the last of the $5000 you loaned her for her surgery. You get a text shortly afterwards."
+        "[the_person.title] has transferred the last of the $5000 you loaned her for her boob job. You get a text shortly afterwards."
         the_person.char "There, I'm finally done with your tits payment plan."
-        mc.name "For now. Maybe you'll want them even bigger some day."
+        mc.name "For now. Maybe you'll want them even bigger someday."
         the_person.char "You wish, perv."
     return
 
@@ -1022,7 +1022,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         $ the_person.change_love(-5)
         $ the_person.change_obedience(-5)
         the_person.char "What the fuck, your serum thing made my tits smaller, not bigger!"
-        the_person.char "I'm going to need to go see an actual doctor now, these things aren't going to make me any money!"
+        the_person.char "I'm going to need to see an actual doctor now, these things aren't going to make me any money!"
         the_person.char "Come talk to me, I need cash for my boob job."
         #YOu actually made her tits smaller
 
@@ -1038,8 +1038,8 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         "You get a text from [the_person.title]."
         $ the_person.change_obedience(3)
         $ the_person.change_love(1)
-        the_person.char "I can't believe it, but your freaky serum stuff actually worked, my tits are way bigger now!"
-        "There's a pause, then you get a picture attached."
+        the_person.char "I can't believe it, but your freaky serum stuff actually worked! My tits are way bigger now!"
+        "There's a pause, then she sends you a picture."
         $ old_outfit = the_person.outfit.get_copy()
         #She'll show you her tits.
         while not the_person.outfit.tits_visible():
@@ -1065,7 +1065,7 @@ label stripclub_dance():
 
 
 
-    "You take a seat near to the edge of the stage and wait for the next performer."
+    "You take a seat near the edge of the stage and wait for the next performer."
 
     $ the_person = get_random_from_list(list(set(stripclub_strippers) & set(mc.location.people))) #Create a list of strippers who are present, then pick a random person.
     if the_person is None:
@@ -1073,7 +1073,7 @@ label stripclub_dance():
     $ the_person.outfit = stripclub_wardrobe.pick_random_outfit()
     $ performer_title = the_person.title
     $ the_person.draw_person()
-    "A new song starts playing over the strip club speakers and a girl steps out onto the stage."
+    "A new song starts playing over the speakers and a girl steps out onto the stage."
     if performer_title is not None:
         if cousin_role in the_person.special_role:
             if the_person.event_triggers_dict.get("blackmail_level",-1) < 2 and not the_person.event_triggers_dict.get("seen_cousin_stripping",False):
@@ -1083,7 +1083,7 @@ label stripclub_dance():
                     cousin_role.actions.append(blackmail_2_confront_action)
                     the_person.event_triggers_dict["seen_cousin_stripping"] = True
 
-                "It takes you a moment to recognise your cousin, [the_person.title], as she struts out onto the stage."
+                "It takes you a moment to recognize your cousin, [the_person.title], as she struts out onto the stage."
                 if not the_person.event_triggers_dict.get("found_stripping_clue", False):
                     "[the_person.possessive_title]'s late nights and secret keeping suddenly make a lot more sense."
 
@@ -1091,29 +1091,29 @@ label stripclub_dance():
 
 
             else:
-                "You recognise your cousin almost as soon as she steps out onto the stage."
+                "You recognize your cousin almost as soon as she steps onto the stage."
 
         elif sister_role in the_person.special_role:
-            "You recognise your little sister almost as soon as she steps out onto the stage."
+            "You recognize your little sister almost as soon as she steps onto the stage."
 
         elif aunt_role in the_person.special_role:
-            "You recognise your aunt as she steps into the stage spotlights."
+            "You recognize your aunt as she steps into the stage spotlights."
 
         elif mother_role in the_person.special_role:
-            "You recognise your own mother up on the stage as soon as she comes into the light."
+            "You recognize your mother as soon as she steps into the stage spotlight."
 
         elif employee_role in the_person.special_role:
-            "You recognise [performer_title] as one of your employees."
+            "You recognize [performer_title] as one of your employees."
 
         else:
-            "You recognise her as [performer_title]."
+            "You recognize her as [performer_title]."
 
         $ performer_title = the_person.possessive_title #Change to their possessive title, because that sounds better in the following dialogue
 
     else:
         $ performer_title = the_person.create_formatted_title("The stripper")
-    "She poses for a moment and the crowd cheers around you. Then she starts to strut down the walkway."
-    "She stops at the end of the stage peninsula, surrounded on three sides by eagerly watching men."
+    "She poses for a moment, and the crowd cheers around you. Then she starts to strut down the walkway."
+    "She stops at the end of the stage, surrounded on three sides by eagerly watching men."
     "[performer_title] starts to dance to the music, swinging her hips and turning slowly to show herself off to all members of the crowd."
     call stripshow_strip(the_person) from _call_stripshow_strip
     $ the_person.draw_person(position = "back_peek")
@@ -1121,20 +1121,20 @@ label stripclub_dance():
     call stripshow_strip(the_person) from _call_stripshow_strip_1
     if the_person.has_large_tits():
         if the_person.outfit.tits_available():
-            "As the music builds [performer_title]'s dance becomes more energetic. Her big tits bounce and jiggle in rhythm with her movements."
+            "As the music builds, [performer_title]'s dance becomes more energetic. Her big tits bounce and jiggle in rhythm with her movements."
         else:
-            "As the music builds [performer_title]'s dance becomes more energetic. Her big tits bounce and jiggle, looking almost desperate to escape."
+            "As the music builds, [performer_title]'s dance becomes more energetic. Her big tits bounce and jiggle, looking almost desperate to escape."
     else:
-        "As the music builds [performer_title]'s dance becomes more energetic. She runs her own hands over her tight body, accentuating her curves."
+        "As the music builds, [performer_title]'s dance becomes more energetic. She runs her hands over her tight body, accentuating her curves."
     call stripshow_strip(the_person) from _call_stripshow_strip_2
     $ the_person.draw_person(position = get_random_from_list(pose_list))
-    "Her music hits its crescendo and her danacing does the same. [performer_title] holds onto the pole in the middle of the stage and spins herself around it."
+    "Her music hits its crescendo and her dancing does the same. [performer_title] holds onto the pole in the middle of the stage and spins herself around it."
     call stripshow_strip(the_person) from _call_stripshow_strip_3
     $ the_person.draw_person(position = "doggy")
     if the_person.outfit.vagina_visible():
-        "As the song comes to an end the dancer lowers herself to all fours, showing off her ass and pussy to the crowd."
+        "As the song comes to an end, the dancer lowers herself to all fours, showing off her ass and pussy to the crowd."
     else:
-        "As the song comes to an end the dancer lowers herself to all fours. She spreads her legs and works her hips, jiggling her ass for the crowds amusement."
+        "As the song comes to an end, the dancer lowers herself to all fours. She spreads her legs and works her hips, jiggling her ass for the crowd�s amusement."
 
     $ the_person.draw_person()
     "She stands up and waves to her audience."
@@ -1159,7 +1159,7 @@ label stripshow_strip(the_person):
                 $ the_person.draw_animated_removal(random_item)
                 "She smiles at you and starts to peel off her [random_item.name]."
             else:
-                "She smiles wiggles her hips for you."
+                "She smiles and wiggles her hips for you."
 
         "Throw some cash. -$20 (disabled)" if mc.business.funds < 20:
             pass
@@ -1168,7 +1168,7 @@ label stripshow_strip(the_person):
             "You lean back in your seat and enjoy the dance."
             if renpy.random.randint(0,100) < 30:
                 #Someone else throws cash onto the stage.
-                "On the other side of the stage someone waves a bill at the dancer."
+                "On the other side of the stage, someone waves a bill at the dancer."
                 $ random_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_lower = True,  exclude_feet = True, do_not_remove = True) #Try and get a bra/top first if you can
                 if random_item is None:
                     $ random_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_lower = False,  exclude_feet = True, do_not_remove = True) #When that fails get her bottom/panties.

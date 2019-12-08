@@ -85,9 +85,11 @@ init -1:
         def slutty_caffeine_trait_on_apply(the_person, add_to_log):
             the_person.change_max_energy(20, add_to_log)
             the_person.change_energy(20, add_to_log)
+            the_person.change_slut_temp(15)
 
         def slutty_caffeine_trait_on_remove(the_person, add_to_log):
             the_person.change_max_energy(-20, add_to_log)
+            the_person.change_slut_temp(-15)
 
         ## love_potion_functions ##
         def love_potion_on_apply(the_person, add_to_log):

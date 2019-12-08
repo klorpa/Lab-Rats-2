@@ -443,7 +443,6 @@ label small_talk_person(the_person): #Tier 0. Useful for discovering a character
             "You don't feel like you've learned much about her, but least she seems to have enjoyed talking."
 
     $ the_person.apply_serum_study()
-    call advance_time from _call_advance_time_21
     return
 
 label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO: just have it raise love and not sluttiness.
