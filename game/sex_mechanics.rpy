@@ -124,6 +124,7 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                     $ object_choice = _return
                 else:
                     call pick_object(the_person, position_choice, forced_object = start_object) from _call_pick_object_1
+                    $ object_choice = _return
 
                 if position_choice and object_choice:
                     call check_position_willingness(the_person, position_choice) from _call_check_position_willingness
@@ -272,8 +273,8 @@ label girl_choose_position(the_person):
         for position in list_of_girl_positions:
             if mc.location.has_object_with_trait(position.requires_location):
                 if position.her_position_willingness_check(the_person):
-                    tuple_list.append(position)
-        picked_position = get_random_from_list(tuple_list)
+                    position_option_list.append(position)
+        picked_position = get_random_from_list(position_option_list)
     return picked_position
 
 label pick_object(the_person, the_position, forced_object = None):

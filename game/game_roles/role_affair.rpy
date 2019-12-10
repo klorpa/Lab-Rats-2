@@ -164,7 +164,7 @@ label fuck_date_label(the_person):
 
 
 
-        if mc.current_energy < 40 and energy_gain_amount <= 20: #Forced to end the fuck date, so we set done to True.
+        if mc.energy < 40 and energy_gain_amount <= 20: #Forced to end the fuck date, so we set done to True.
             "The spirit is willing, but the flesh is spent. Try as she might [the_person.title] can't coax your erection back to life."
             if girl_came:
                 the_person.char "Well, I guess that's all I'm going to be drawing out of you for tonight. That was fun."

@@ -125,10 +125,13 @@ label sister_walk_in_label(the_person):
                 the_person.char "Ugh, shut up. Whatever, the moment's kind of ruined, what do you need?"
 
     else:
-        while not the_person.outfit.vagina_available():
-            $ the_person.outfit.remove_random_lower(top_layer_first = True)
-        while not the_person.outfit.vagina_available():
-            $ the_person.outfit.remove_random_any(top_layer_first = True)
+        $ item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+        while not the_person.outfit.vagina_available() and item is not None:
+            $ the_person.outfit.remove_clothing(item)
+            $ item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True) #Remove all of her lower items first, which are most likely blocking her pussy
+            if item is None and not the_person.outfit.vagina_available(): #If we still don't have access we move onto her top, which may be a dress and blocking things.
+                $ item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
         $ the_person.draw_person(position = "missionary")
         $ the_person.change_arousal(40, add_to_log = False)
         "You open the door to [the_person.title]'s room and find her sitting up in bed with her laptop beside her, legs splayed open and fingers deep in her own pussy."

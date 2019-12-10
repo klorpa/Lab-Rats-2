@@ -1606,6 +1606,7 @@ init -2 python:
             self.skin = skin
             self.eyes = eyes #A list of [description, color value], where colour value is a standard RGBA list.
             #TODO: Tattoos eventually
+            #TODO: a "mandatory" or "default" set of accessories that characters will always wear. Do as a third "personal_effects" outfit that they always merge in if possible?
 
             self.serum_effects = [] #A list of all of the serums we are under the effect of.
 
@@ -3467,8 +3468,36 @@ init -2 python:
             self.the_action = the_action
             self.turns_valid = turns_valid
 
+        def __hash__(self):
+            return hash((self.the_action.__hash__(), self.turns_valid))
+
+        def __cmp__(self,other):
+            if type(self) is type(other):
+                if self.__hash__() == other.__hash__():
+                    return 0
+
+            if self.__hash__() > other.__hash__():
+                return 1
+            else:
+                return -1
+
         def __getattr__(self, attr): # If we try and access an attribute not in this class return the matching attribute from the action. This is likely going to be a funciton like "check_is_active" or "call_action"
-            return getattr(self.the_action, attr)
+            if vars(self.the_action).has_key(attr):
+                return self.the_action.__dict__[attr]
+            else:
+                raise AttributeError
+            #
+            # if attr.startswith('__') and attr.endswith('__'):
+            #     return super(DictionaryLike, self).__getattr__(attr)
+            # return self.the_action.__getattr__(attr)
+            # # if self.the_action.__dict__.has_key(attr):
+            # #     return self.the_action.__dict__[attr]
+
+        def __getstate__(self):
+            return vars(self)
+
+        def __setstate__(self, state):
+            vars(self).update(state)
 
     def sort_display_list(the_item): #Function to use when sorting lists of actions (and potentially people or strings)
         extra_args = None
@@ -4939,15 +4968,15 @@ init -2 python:
             elif mc.recently_orgasmed and self.requires_hard:
                 disable = True
                 willingness_string += "\nRecently orgasmed"
-            elif not (mc.energy >= self.guy_energy and the_person.energy >= self.girl_energy):
+            elif mc.energy < self.guy_energy and the_person.energy < self.girl_energy:
                 disable = True
                 willingness_string += "\nYou're both too tired"
                 #return self.name + "\n{size=22}"+ willingness_string + "\nYou're both too tired{/size}" +energy_string + arousal_string + " (disabled)"
-            elif not mc.energy >= self.guy_energy:
+            elif mc.energy < self.guy_energy:
                 disable = True
                 willingness_string += "\nYou're too tired"
                 #return self.name + "\n{size=22}"+ willingness_string + "\nYou're too tired{/size}" +energy_string + arousal_string + " (disabled)"
-            elif not the_person.energy >= self.girl_energy:
+            elif the_person.energy < self.girl_energy:
                 disable = True
                 willingness_string += "\nShe's too tired"
                 #return self.name + "\n{size=22}"+ willingness_string + "\nShe's too tired{/size}" +energy_string + arousal_string + " (disabled)"
@@ -5361,12 +5390,6 @@ screen main_ui(): #The UI that shows most of the important information to the sc
             else:
                 textbutton "Character Sheet" action Show("mc_character_sheet") style "textbutton_style" text_style "textbutton_text_style" xsize 220 tooltip "Check your stats, skills, and goals."
 
-            # Removed as of v0.19.0, replaced by generic "wait here" button in general purpose menuself.
-            # if time_of_day == 4: #TODO: check what time is night time
-            #     textbutton "Go to Sleep" action [Function(mc.change_location,bedroom), Call("advance_time",from_current=True)] style "textbutton_style" text_style "textbutton_text_style" xsize 220 sensitive mc.can_skip_time tooltip "Go home and go to sleep." #NOTE: may cause problems if we add more things into the sleep section of the game.
-            # else:
-            #     textbutton "Wait Here" action Call("advance_time",from_current=True) style "textbutton_style" text_style "textbutton_text_style" xsize 220 sensitive mc.can_skip_time tooltip "Spend some time doing nothing in particular."
-
             textbutton "Arousal: [mc.arousal]/[mc.max_arousal] {image=gui/extra_images/arousal_token.png}":
                 ysize 28
                 text_style "menu_text_style"
@@ -5448,7 +5471,7 @@ screen phone_hud_ui():
             null height 5
 
             for log_item in mc.log_items:
-                if log_item is not None: #Minor hack to try and prevent any crashes. In theory log items should always exist.
+                if log_item is not None and log_item[0] is not None and log_item[1] is not None: #Minor hack to try and prevent any crashes. In theory log items should always exist.
                     $ fade_time = 5
                     $ time_diff = time.time() - log_item[2]
                     if time_diff > fade_time:
@@ -6200,8 +6223,8 @@ screen mc_character_sheet():
                     text "Unspent Points: " + str(mc.free_sex_points) style "menu_text_style" xalign 0.5
                     hbox:
                         xalign 0.5
-                        text "Stamina: " + str(mc.energy) + "/200" style "menu_text_style" xalign 0.5 yalign 0.5
-                        textbutton "+1" style "textbutton_style" text_style "textbutton_text_style" xalign 0.5 action Function(mc.improve_sex_skill, "stam") sensitive mc.free_sex_points > 0 and mc.energy<200 yanchor 0.5 yalign 0.5
+                        text "Stamina: " + str(mc.max_energy) + "/200" style "menu_text_style" xalign 0.5 yalign 0.5
+                        textbutton "+1" style "textbutton_style" text_style "textbutton_text_style" xalign 0.5 action Function(mc.improve_sex_skill, "stam") sensitive mc.free_sex_points > 0 and mc.max_energy<200 yanchor 0.5 yalign 0.5
                     hbox:
                         xalign 0.5
                         text "Foreplay: " + str(mc.sex_skills["Foreplay"]) + "/" + str(mc.max_sex_skills) style "menu_text_style" xalign 0.5 yalign 0.5
@@ -7917,7 +7940,7 @@ screen housing_map_manager():
     modal True
     zorder 101
     add "Paper_Background.png"
-    # $ num_of_places = __builtin__.len(mc.known_home_locations) Should be irrelevant, removed 16/5/19
+
     $ places_so_far = 0
     $ x_offset_per_place = 0.1
     for place in mc.known_home_locations:
@@ -8159,7 +8182,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.23.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.23.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8652,8 +8675,6 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
             python: #Scan through all the people and...
                 for a_person in new_location.people:
                     for possible_room_event in a_person.on_room_enter_event_list:
-                        if isinstance(possible_room_event, Limited_Time_Action):
-                            possible_room_event
                         if possible_room_event.is_action_enabled(a_person): #See what events the are enabled...
                             enabled_room_events.append([a_person, possible_room_event]) #Then keep track of the person so we know who to remove it from if it triggers.
 

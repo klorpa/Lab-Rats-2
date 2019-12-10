@@ -2050,10 +2050,10 @@ label cat_fight_crisis_label():
         return #Just in case something goes wrong getting a relationship we'll exit gracefully.
     if renpy.random.randint(0,1) == 1: #Randomize the order so that repeated events with the same people alternate who is person_one and two.
         $ person_one = the_relationship.person_a
-        $ person_two = the_relationship.perosn_b
+        $ person_two = the_relationship.person_b
     else:
         $ person_one = the_relationship.person_b
-        $ person_two = the_relationship.perosn_a
+        $ person_two = the_relationship.person_a
 
 
     person_one.char "Excuse me, [person_one.mc_title]?"
@@ -2981,7 +2981,7 @@ label horny_at_work_crisis_label():
             $ the_person.draw_person()
             "She comes over and stands next to your desk. You wheel your chair back and rub your crotch, emphasising the obvious bulge."
             mc.name "I think we need to have a talk about the way you act when you're in the office. As you can see, it's a little distracting for the male staff: Me."
-            if the_person.sluttiness < (30 - the_person.get_opinion_score("public sex")*10): #TODO: Change effective_sluttiness so this is always built into it.
+            if the_person.effective_sluttiness() < (30 - the_person.get_opinion_score("public sex")*10):
                 $ the_person.discover_opinion("public sex")
                 "She looks away and gasps."
                 the_person.char "Oh my god, [the_person.mc_title]! I can't believe you're doing this right here!"
@@ -3521,7 +3521,7 @@ label mom_lingerie_surprise_label():
     "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
     the_person.char "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
     menu:
-        "Ask for her help.(tootlip) Ask your mother to help satisfy your phsyical desires.":
+        "Ask for her help. (tootlip)Ask your mother to help satisfy your phsyical desires.":
             mc.name "That would be amazing Mom, I could really use your help."
             $ the_person.change_slut_temp(2)
             "[the_person.possessive_title] smiles and bounces slightly on your bed."
@@ -4005,7 +4005,7 @@ label mom_morning_surprise_label():
         $ removed_something = False
         $ the_index = 0
         while not the_person.outfit.vagina_available() and the_index < __builtin__.len(bottom_list):
-            $ the_person.outfit.remove(bottom_list[index])
+            $ the_person.outfit.remove_clothing(bottom_list[index])
             $ removed_something = True
             $ the_index += 1
         "You're woken up by your bed shifting under you and a sudden weight around your waist."
