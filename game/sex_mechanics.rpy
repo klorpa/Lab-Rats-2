@@ -237,8 +237,8 @@ label fuck_person(the_person, private= True, start_position = None, start_object
     $ mc.recently_orgasmed = False
 
     if affair_ask_after and private and ask_girlfriend_requirement(the_person) is True and not the_person.relationship == "Single":
-        if the_person.love >= 60 and the_person.sluttiness >= 30 - (the_person.get_opinion_score("cheating on men") * 5) and report_log.get("Climaxes",0) >= 1: #If she loves you enoguh, is moderately slutty, and you made her cum
-            call affaire_check(the_person, report_log) from _call_affaire_check
+        if the_person.love >= 60 and the_person.sluttiness >= 30 - (the_person.get_opinion_score("cheating on men") * 5) and report_log.get("girl orgasms",0) >= 1: #If she loves you enoguh, is moderately slutty, and you made her cum
+            call affair_check(the_person, report_log) from _call_affair_check
 
 
     python: #Log all of the different classes of sex, but only once per class.
@@ -419,6 +419,8 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
     return
 
+
+# TODO: Replace Private being a boolean with being a bool OR a list, when a list it is the people we should consider being in the scene. When it is true it is everyone, when false no one.
 label watcher_check(the_person, the_position, the_object, the_report): # Check to see if anyone is around to comment on the characters having sex.
     $ other_people = [person for person in mc.location.people if person is not the_person] #Build a list with all the _other_ people in the room other than the one we're fucking.
     python: #Checks to see if anyone watching is in a realtionship, and if they are sets up an event where they confront you later about you actively cheating in front of the,

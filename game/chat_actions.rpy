@@ -1226,7 +1226,10 @@ label serum_give_label(the_person):
             if rand_chance < ask_serum_chance:
                 #Success
                 if mc.business.get_employee_title(the_person) == "None":
-                    the_person.char "I'd be happy to help, as long as you promise it's not dangerous of course. I've always wanted to be a proper scientist!"
+                    if the_person.personality is nora_personality:
+                        the_person.char "I'd be happy to help. I've seen your work, I have complete confidence you've tested this design thoroughly."
+                    else:
+                        the_person.char "I'd be happy to help, as long as you promise it's not dangerous of course. I've always wanted to be a proper scientist!"
                 else:
                     the_person.char "I'll admit I'm curious what it would do to me. Okay, as long as it's already passed the safety test requirements, of course."
                 mc.name "It's completely safe, we just need to test what the results from it will be. Thank you."

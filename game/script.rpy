@@ -1305,6 +1305,7 @@ init -2 python:
             self.max_stats = 8
             self.max_work_skills = 8
             self.max_sex_skills = 8
+            self.max_energy_cap = 200
 
             #The current goals set for the player to achieve. On completion they gain 1 point towards that class of skills
             self.stat_goal = None
@@ -2453,14 +2454,15 @@ init -2 python:
 
                 mc.log_event(log_string, "float_text_grey")
 
-        def review_outfit(self):
+        def review_outfit(self, dialogue = True):
             if self.should_wear_uniform():
                 self.wear_uniform()#Reset uniform
 #                self.call_uniform_review() #TODO: actually impliment this call, but only when her outfit significantly differs from the real uniform.
 
             elif self.outfit.slut_requirement > self.sluttiness:
                 self.outfit = self.planned_outfit.get_copy()
-                self.call_dialogue("clothing_review")
+                if dialogue:
+                    self.call_dialogue("clothing_review")
 
         def judge_outfit(self,outfit,temp_sluttiness_boost = 0): #Judge an outfit and determine if it's too slutty or not. Can be used to judge other people's outfits to determine if she thinks they look like a slut.
             # temp_sluttiness can be used in situations (mainly crises) where an outfit is allowed to be temporarily more slutty than a girl is comfortable wearing all the time.
@@ -2587,7 +2589,7 @@ init -2 python:
             mc.listener_system.fire_event("sex_cum_mouth", the_person = self)
             if self.outfit.can_add_accessory(mouth_cum):
                 the_cumshot = mouth_cum.get_copy()
-                the_cumshot.layer = 0 #TODO: make sure this doesn't break things by being on layer 0
+                the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
 
             self.change_slut_temp(5*self.get_opinion_score("drinking cum"))
@@ -2599,7 +2601,11 @@ init -2 python:
 
         def cum_in_vagina(self):
             mc.listener_system.fire_event("sex_cum_vagina", the_person = self)
-            #TODO: Add in vaginal cumshot clothing item once we have rendering support for it
+            if self.outfit.can_add_accessory(creampie_cum):
+                the_cumshot = creampie_cum.get_copy()
+                the_cumshot.layer = 0
+                self.outfit.add_accessory(the_cumshot)
+
             self.change_slut_temp(5*self.get_opinion_score("creampies"))
             self.change_happiness(5*self.get_opinion_score("creampies"))
             self.discover_opinion("creampies")
@@ -2608,7 +2614,11 @@ init -2 python:
 
         def cum_in_ass(self):
             mc.listener_system.fire_event("sex_cum_ass", the_person = self)
-            #TODO: Add anal cumshot clothing item once we have rendering support for it
+            #TODO: Add an anal specific cumshot once we have renders for it.
+            if self.outfit.can_add_accessory(creampie_cum):
+                the_cumshot = creampie_cum.get_copy()
+                the_cumshot.layer = 0
+                self.outfit.add_accessory(the_cumshot)
             self.change_slut_temp(5*self.get_opinion_score("creampies"))
             self.change_happiness(5*self.get_opinion_score("creampies"))
             self.discover_opinion("creampies")
@@ -2616,7 +2626,6 @@ init -2 python:
             self.sex_record["Anal Creampies"] += 1
 
         def cum_on_face(self):
-            #TODO: Add this once we get a render for it
             if self.outfit.can_add_accessory(face_cum):
                 the_cumshot = face_cum.get_copy()
                 the_cumshot.layer = 0
@@ -3002,6 +3011,11 @@ init -2 python:
 
             elif relationship != "Single":
                 kids += renpy.random.randint(0,3) #And married/engaged people have more kids still
+
+            if age <= 22:
+                kids += -1 #Young people have less time to have kids in general, so modify their number down a bit.
+                if kids < 0:
+                    kids = 0
 
         if SO_name is None and relationship != "Single":
             SO_name = get_random_male_name()
@@ -3486,12 +3500,6 @@ init -2 python:
                 return self.the_action.__dict__[attr]
             else:
                 raise AttributeError
-            #
-            # if attr.startswith('__') and attr.endswith('__'):
-            #     return super(DictionaryLike, self).__getattr__(attr)
-            # return self.the_action.__getattr__(attr)
-            # # if self.the_action.__dict__.has_key(attr):
-            # #     return self.the_action.__dict__[attr]
 
         def __getstate__(self):
             return vars(self)
@@ -3724,7 +3732,7 @@ init -2 python:
         #Layer 4: Over everything
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False, body_dependant = True,
-        opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None):
+        opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0):
             self.name = name
             self.proper_name = proper_name #The true name used in the file system
             self.hide_below = hide_below #If true, it hides the clothing beneath so you can't tell what's on.
@@ -3770,6 +3778,9 @@ init -2 python:
                 self.colour_pattern = [1,1,1,1]
             else:
                 self.colour_pattern = colour_pattern #If there is a pattern assigned this is the colour used for the masked section.
+
+            self.ordering_variable = ordering_variable #Used for things like hair and pubes when we need to know what can be trimmed into what without any time taken.
+            #TODO: Assign ordering variables to all hair based on length (short, medium, long) and then have haircuts and stuff be possible.
 
         def __cmp__(self,other):
             if type(self) is type(other):
@@ -6223,8 +6234,8 @@ screen mc_character_sheet():
                     text "Unspent Points: " + str(mc.free_sex_points) style "menu_text_style" xalign 0.5
                     hbox:
                         xalign 0.5
-                        text "Stamina: " + str(mc.max_energy) + "/200" style "menu_text_style" xalign 0.5 yalign 0.5
-                        textbutton "+1" style "textbutton_style" text_style "textbutton_text_style" xalign 0.5 action Function(mc.improve_sex_skill, "stam") sensitive mc.free_sex_points > 0 and mc.max_energy<200 yanchor 0.5 yalign 0.5
+                        text "Stamina: " + str(mc.max_energy) + "/" +str(mc.max_energy_cap) style "menu_text_style" xalign 0.5 yalign 0.5
+                        textbutton "+1" style "textbutton_style" text_style "textbutton_text_style" xalign 0.5 action Function(mc.improve_sex_skill, "stam") sensitive mc.free_sex_points > 0 and mc.max_energy<mc.max_energy_cap yanchor 0.5 yalign 0.5
                     hbox:
                         xalign 0.5
                         text "Foreplay: " + str(mc.sex_skills["Foreplay"]) + "/" + str(mc.max_sex_skills) style "menu_text_style" xalign 0.5 yalign 0.5
@@ -8182,7 +8193,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.23.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.24.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8965,11 +8976,7 @@ label interview_action_description:
         "Yes, I'll pay the cost. -$[interview_cost]":
             $ mc.business.funds += -interview_cost
             $ renpy.scene("Active")
-            hide screen main_ui #NOTE: We have to hide all of these screens because we are using a fake (aka. non-screen) background for this. We're doing that so we can use the normal draw_person call for them.
-            hide screen phone_hud_ui
-            hide screen business_ui
-            hide screen goal_hud_ui
-            python:
+            python: #Build our list of candidates with our proper recruitment requirements
                 candidates = []
 
                 for x in range(0,count+1): #NOTE: count is given +1 because the screen tries to pre-calculate the result of button presses. This leads to index out-of-bounds, unless we pad it with an extra character (who will not be reached).
@@ -8986,23 +8993,11 @@ label interview_action_description:
                     reveal_sex = True
                 if recruitment_knowledge_four_policy.is_owned():
                     reveal_count += 1
-
-
                 for a_candidate in candidates:
                     for x in __builtin__.range(0,reveal_count): #Reveal all of their opinions based on our policies.
                         a_candidate.discover_opinion(a_candidate.get_random_opinion(include_known = False, include_sexy = reveal_sex),add_to_log = False) #Get a random opinion and reveal it.
+            call hire_select_process(candidates) from _call_hire_select_process
 
-                show_candidate(candidates[0]) #Show the first candidate, updates are taken care of by actions within the screen.
-
-            show bg paper_menu_background #Show a paper background for this scene.
-            call screen interview_ui(candidates,count)
-            $ renpy.scene()
-            show screen phone_hud_ui
-            show screen business_ui
-            show screen goal_hud_ui
-            show screen main_ui
-            $ renpy.scene("Active")
-            $ mc.location.show_background()
 
             if not _return == "None":
                 $ new_person = _return
@@ -9017,6 +9012,25 @@ label interview_action_description:
         "Nevermind.":
             pass
     return
+
+label hire_select_process(candidates):
+    hide screen main_ui #NOTE: We have to hide all of these screens because we are using a fake (aka. non-screen) background for this. We're doing that so we can use the normal draw_person call for them.
+    hide screen phone_hud_ui
+    hide screen business_ui
+    hide screen goal_hud_ui
+    $ show_candidate(candidates[0]) #Show the first candidate, updates are taken care of by actions within the screen.
+    show bg paper_menu_background #Show a paper background for this scene.
+    $ count = __builtin__.len(candidates)-1
+    call screen interview_ui(candidates,count)
+    $ renpy.scene()
+    show screen phone_hud_ui
+    show screen business_ui
+    show screen goal_hud_ui
+    show screen main_ui
+    $ renpy.scene("Active")
+    $ mc.location.show_background()
+
+    return _return
 
 
 label hire_someone(new_person, add_to_location = False): # Breaks out some of the functionality of hiring someone into an independent lable.
@@ -9489,7 +9503,7 @@ label advance_time:
             people.run_move(place)
 
             if people.title is not None: #We don't assign events to people we haven't met.
-                if renpy.random.randint(0,100) < 7: #Only assign one to 12% of people, to cut down on the number of people we're checking.
+                if renpy.random.randint(0,100) < 12: #Only assign one to 12% of people, to cut down on the number of people we're checking.
                     possible_crisis_list = []
                     for crisis in limited_time_event_pool:
                         if crisis[0].is_action_enabled(people): #Get the first element of the weighted tuple, the action.

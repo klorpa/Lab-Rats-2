@@ -178,7 +178,7 @@ label cousin_house_phase_two_label(the_person):
     return
 
 label cousin_house_phase_three_label(the_person):
-    $ the_person.schedule[3] = lily_bedroom #Set her to be in Lily's room AND for an event to trigger when you walk in on her.
+    $ the_person.schedule[2] = lily_bedroom #Set her to be in Lily's room AND for an event to trigger when you walk in on her.
     $ cousin_blackmail_intro_action = Action("Cousin caught stealing", cousin_blackmail_intro_requirement, "cousin_blackmail_intro_label")
     $ the_person.on_room_enter_event_list.append(cousin_blackmail_intro_action)
     return
@@ -227,6 +227,7 @@ label cousin_blackmail_intro_label(the_person):
             the_person.char "Okay. I better not find out you told someone."
             mc.name "Your secret's safe with me."
 
+    $ the_person.schedule[2] = hall
     $ the_person.event_triggers_dict["blackmail_level"] = 1
 
     $ blackmail_2_event = Action("Blackmail hint", blackmail_hint_requirement, "aunt_cousin_hint_label", args = [aunt, the_person], requirement_args = [the_person, day + renpy.random.randint(2,4)])

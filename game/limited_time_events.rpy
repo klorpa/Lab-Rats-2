@@ -53,16 +53,33 @@ init -1 python:
             return False
         return True
 
+    def mom_breeding_requirement(the_person):
+        if the_person is not mom:
+            return False
+        if the_person not in mom_bedroom.people:
+            return False
+        if mom_bedroom.get_person_count() > 1:
+            return False
+        if the_person.effective_sluttiness() < (90 - (10*the_person.get_opinion_score("creampies"))):
+            return False
+        if the_person.love < (75 - (10*the_person.get_opinion_score("creampies"))):
+            return False
+        renpy.notify("Event exists!")
+        return True
+
     ask_new_title_action = Action("Ask new title", ask_new_title_requirement, "ask_new_title_label", event_duration = 5)
 
     sister_walk_in = Action("Sister walk in", sister_walk_in_requirement, "sister_walk_in_label", event_duration = 5)
     nude_walk_in = Action("Nude walk in", nude_walk_in_requirement, "nude_walk_in_label", event_duration = 5)
     mom_house_work_nude = Action("Mom nude house work", mom_house_work_nude_requirement, "mom_house_work_nude_label", event_duration = 5)
+    breeding_mom = Action("Mom breeding", mom_breeding_requirement, "breeding_mom_label", event_duration = 5)
 
     limited_time_event_pool.append([ask_new_title_action,15,"on_talk"])
     limited_time_event_pool.append([sister_walk_in,4,"on_enter"])
     limited_time_event_pool.append([nude_walk_in,4,"on_enter"])
     limited_time_event_pool.append([mom_house_work_nude,4,"on_enter"])
+    limited_time_event_pool.append([breeding_mom,4,"on_enter"])
+
 
 label ask_new_title_label(the_person):
     if renpy.random.randint(0,100) < 50:
@@ -286,7 +303,7 @@ label nude_walk_in_label(the_person):
         "You open the door to [the_person.possessive_title]'s room and find her sitting on her bed, wearing nothing but her underwear."
         if the_person.effective_sluttiness() < (40 - (the_person.get_opinion_score("not wearing anything")*10)):
             the_person.char "Oh! One second, I'm not dressed!"
-            $ the_person.scene("Active")
+            $ renpy.scene("Active")
             "She hurries to the door and closes it in your face, locking it quickly. You can hear her quickly getting dressed on the other side."
             $ the_person.outfit = the_person.planned_outfit.get_copy()
             $ the_person.draw_person()
@@ -357,4 +374,63 @@ label mom_house_work_nude_label(the_person):
 
     $ the_person.discover_opinion("not wearing anything")
     $renpy.scene("Active")
+    return
+
+label breeding_mom_label(the_person):
+    $ the_person.outfit = Outfit("Nude")
+    $ the_person.draw_person(position = "sitting")
+    "You walk into [the_person.title]'s room and find her sitting on the edge of her bed, completely naked."
+    the_person.char "[the_person.mc_title], close the door, please. I have something I need to ask you."
+    "You close the door to [the_person.possessive_title]'s bedroom and walk over to her bed."
+    "She pats the bed beside her and you sit down."
+    the_person.char "I've been thinking a lot about this. You're all grown up and [lily.title] isn't far behind."
+    the_person.char "Soon you'll both be leaving home, but I don't think I'm done being a mother yet."
+    "She takes your hands in hers and looks passionately into your eyes."
+    the_person.char "I want you to give me a child. I want you to breed me."
+
+    if the_person.has_large_tits():
+        "Her face is flush and her breathing rapid, heaving her breasts up and down."
+    else:
+        "Her face is flush and her breathing rapid."
+
+    menu:
+        "Fuck her and try to breed her.":
+            "You nod, and the mere the confirmation makes her shiver. She lies down on the bed and holds out her hands for you."
+            $ the_person.draw_person(position = "missionary")
+            "You strip down and climb on top of her. The tip of your hard cock runs along the enterance of her cunt and finds it dripping wet."
+            the_person.char "Go in raw [the_person.mc_title], enjoy my pussy and give me your cum!"
+            "She wraps her arms around your torso and pulls you tight against her. She gives you a breathy moan when you slide your cock home."
+            the_person.char "Ah... Fuck me and give me your baby! I'll take such good care of it, just like I did for you and [lily.title]!"
+            $ starting_creampies = the_person.sex_record.get("Vaginal Creampies",0)
+            call fuck_person(the_person, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, position_locked = True) from _call_fuck_person_19
+            $ the_report = _return
+            if the_person.sex_record.get("Vaginal Creampies", 0) > starting_creampies: #We've creampied her at least once this encounter.
+                "You roll off of [the_person.possessive_title] and onto the bed beside her, feeling thoroughly spent."
+                "She brings her knees up against her chest and tilts her hips up, holding all of your cum deep inside of her."
+                mc.name "Do you think that did it?"
+                the_person.char "I don't know. It's the right time of the month."
+                "You lie together in silence. [the_person.possessive_title] rocks herself side to side. You imagine your cum sloshing around her womb."
+                "Eventually she puts her legs down and the two of you sit up in bed."
+                #TODO: Add an action where you can try and breed her some more.
+
+            else:
+                "You roll off of [the_person.possessive_title] and onto the bed beside her."
+                $ the_person.change_happiness(-20)
+                the_person.char "I'm sorry... I'm sorry I'm not good enough to make you cum. I'm not good enough to earn your child..."
+                "She sounds as if she is almost on the verge of tears."
+                "You wrap your arms around her and hold her close."
+                mc.name "Shh... You were fantastic. It's me, I'm just not feeling it today. Maybe we can try some other day."
+                the_person.char "I don't know, this might have all been a mistake. Let's just... be quiet for a while, okay?"
+                "You hold [the_person.possessive_title] until she's feeling better, then sit up in bed with her."
+
+        "Say no.":
+            $ the_person.draw_person(position = "sitting", emotion = "sad")
+            "You shake your head. [the_person.title] looks immediately crestfallen."
+            the_person.char "But why..."
+            mc.name "[the_person.title], I love you but I can't give you what you want."
+            "She nods and turns her head."
+            $ the_person.change_slut_temp(-2)
+            $ the_person.change_love(-2)
+            the_person.char "Of course... I was just being silly. I should know better."
+
     return

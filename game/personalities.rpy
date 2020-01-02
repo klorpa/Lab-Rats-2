@@ -228,7 +228,7 @@
 
         mom_personality = Personality("mom", default_prefix = "reserved",
         common_likes = ["pants", "conservative outfits", "work uniforms", "HR work", "makeup"],
-        common_sexy_likes = ["taking control", "being submissive", "bareback sex"],
+        common_sexy_likes = ["taking control", "being submissive", "bareback sex", "creampies"],
         common_dislikes = ["production work", "sports"],
         common_sexy_dislikes = ["anal sex", "drinking cum", "sex standing up"],
         titles_function = mom_titles, possessive_titles_function = mom_possessive_titles, player_titles_function = mom_player_titles)

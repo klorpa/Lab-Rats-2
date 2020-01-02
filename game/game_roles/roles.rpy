@@ -141,8 +141,9 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         ask_get_boobjob_action = Action("Ask her to get a boob job. -$7000", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
 
+        girlfriend_ask_trim_pubes_action = Action("Ask her to trim her pubes.", girlfriend_ask_trim_pubes_requirement, "girlfriend_ask_trim_pubes_label", menu_tooltip = "Ask her to do a little personal landscaping. Tell her to wax it off, grow it out, or shape it into anything in between.")
 
-        girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action]) #Your girlfriend, and she's not in a relationship with anyone else
+        girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action]) #Your girlfriend, and she's not in a relationship with anyone else
         #Getting married is some kind of victory for the game?
 
 
@@ -154,7 +155,7 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         plan_fuck_date_action = Action("Plan a fuck date at her place.", fuck_date_requirement, "plan_fuck_date_label", menu_tooltip = "Pick a night to go over there and spend nothing but \"quality time\" with each other.")
         ask_leave_SO_action = Action("Ask her to leave her significant other for you.", ask_leave_SO_requirement, "ask_leave_SO_label", menu_tooltip = "This affair has been secret long enough! Ask her to leave her significant other and make your relationship official.")
-        affair_role = Role("Paramour", [plan_fuck_date_action, ask_leave_SO_action]) #A woman who is in a relationship but also wants to fuck you because of love (rather than pure sluttiness, where she thinks that's normal)
+        affair_role = Role("Paramour", [plan_fuck_date_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action, ask_leave_SO_action]) #A woman who is in a relationship but also wants to fuck you because of love (rather than pure sluttiness, where she thinks that's normal)
 
 
         ###################

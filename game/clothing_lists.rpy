@@ -50,14 +50,24 @@ init -1:
     python:
 
         ##NAKED BODIES##
-        white_skin = Clothing("white skin", 1, True, True, "white", True, False, 0) #ADDED
+        white_skin = Clothing("white skin", 1, True, True, "white", True, False, 0)
 
-        tan_skin = Clothing("tan skin", 1, True, True, "tan", True, False, 0) #ADDED
+        tan_skin = Clothing("tan skin", 1, True, True, "tan", True, False, 0)
 
-        black_skin = Clothing("black skin", 1, True, True, "black", True, False, 0) #ADDED
+        black_skin = Clothing("black skin", 1, True, True, "black", True, False, 0)
 
         ##HAIR STYLES##
+        #TODO: Implement ordering_variable for hair to decide on hair length for hair cuts.
         hair_styles =  []
+
+        bobbed_hair = Clothing("Bobbed Hair", 1, True, True, "Bobbed_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.3)
+        hair_styles.append(bobbed_hair)
+
+        bowl_hair = Clothing("Bowl Hair", 1, True, True, "Coco_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
+        hair_styles.append(bowl_hair)
+
+        curly_bun = Clothing("Curly Bun Hair", 1, True, True, "Curly_Bun", False, False, 0, whiteness_adjustment = 0.1, contrast_adjustment = 1.15)
+        hair_styles.append(curly_bun)
 
         short_hair = Clothing("Short Hair", 1, True, True, "Short_Hair",False, False, 0,  whiteness_adjustment = 0.1, contrast_adjustment = 1.2)
         hair_styles.append(short_hair)
@@ -83,41 +93,30 @@ init -1:
         long_hair = Clothing("Long Hair", 1, True, True, "Long_Hair", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.8)
         hair_styles.append(long_hair)
 
-        bobbed_hair = Clothing("Bobbed Hair", 1, True, True, "Bobbed_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.3)
-        hair_styles.append(bobbed_hair)
-
-        bowl_hair = Clothing("Bowl Hair", 1, True, True, "Coco_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
-        hair_styles.append(bowl_hair)
-
         braided_bun = Clothing("Braided Hair", 1, True, True, "Braided_Bun", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
         hair_styles.append(braided_bun)
-
-        curly_bun = Clothing("Curly Bun Hair", 1, True, True, "Curly_Bun", False, False, 0, whiteness_adjustment = 0.1, contrast_adjustment = 1.15)
-        hair_styles.append(curly_bun)
 
         windswept_hair = Clothing("Messy Short Hair", 1, True, True, "Wind_Swept_Hair", False, False, 0, whiteness_adjustment = 0.15, contrast_adjustment = 1.25)
         hair_styles.append(windswept_hair)
 
         ##PUBES STYLES##
+        # NOTE: The oredering variable here is the relative size/length of pubes. Styles with lower numbers are "smaller" than larger, requiring an arbitrary amount of time to grow into larger styles
         pube_styles = []
 
-        shaved_pubes = Clothing("Shaved Pubic Hair", 1, True, True, None, False, False, 0) #Default pubes used when she is clean shaven. Every girl before v0.23.
+        shaved_pubes = Clothing("Shaved Pubic Hair", 1, True, True, None, False, False, 0, ordering_variable = 0) #Default pubes used when she is clean shaven. Every girl before v0.23.
         pube_styles.append(shaved_pubes)
 
-        trimmed_pubes = Clothing("Trimmed Pubic Hair", 1, True, True, "Trimmed_Pubes", False, False, 0)
-        pube_styles.append(trimmed_pubes)
-
-        landing_strip_pubes = Clothing("Landing Strip Pubic Hair", 1, True, True, "Landing_Strip_Pubes", False, False, 0)
+        landing_strip_pubes = Clothing("Landing Strip Pubic Hair", 1, True, True, "Landing_Strip_Pubes", False, False, 0, ordering_variable = 2)
         pube_styles.append(landing_strip_pubes)
 
-        diamond_pubes = Clothing("Diamond Trimmed Pubes", 1, True, True, "Diamond_Pubes", False, False, 0)
+        diamond_pubes = Clothing("Diamond Trimmed Pubes", 1, True, True, "Diamond_Pubes", False, False, 0, ordering_variable = 3)
         pube_styles.append(diamond_pubes)
 
-        default_pubes = Clothing("Pubic Hair", 1, True, True, "Default_Pubes", False, False, 0)
+        trimmed_pubes = Clothing("Trimmed Pubic Hair", 1, True, True, "Trimmed_Pubes", False, False, 0, ordering_variable = 5)
+        pube_styles.append(trimmed_pubes)
+
+        default_pubes = Clothing("Pubic Hair", 1, True, True, "Default_Pubes", False, False, 0, ordering_variable = 10)
         pube_styles.append(default_pubes)
-
-
-
 
 
         bow_hair = Clothing("Bow Hair", 1, True, True, "Bow_Hair", False, False, 0) #NO IMAGES
@@ -199,6 +198,12 @@ init -1:
         teddy = Clothing("Teddy", 1, True, True, "Teddy", True, True, 4, whiteness_adjustment = 0.0, contrast_adjustment = 1.0)
         bra_list.append(teddy)
 
+        cincher = Clothing("Cincher", 1, False, False, "Cincher", True, False, 5, supported_patterns = {"Two Toned":"Pattern_1"})
+        bra_list.append(cincher)
+
+        heart_pasties = Clothing("Heart Pasties", 1, True, True, "Heart_Pasties", True, True, 8)
+        bra_list.append(heart_pasties)
+
 
         ##Pants
         pants_list = []
@@ -275,8 +280,8 @@ init -1:
         evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4)
         dress_list.append(evening_dress)
 
-        leotard_bottom = Clothing("Leotard", 2, True, True, "Leotard", False, False, 0, is_extension = True)
-        leotard = Clothing("Leotard", 2, False, False, "Leotard", True, False, 5, has_extension = leotard_bottom)
+        leotard_bottom = Clothing("Leotard", 1, True, True, "Leotard", False, True, 0, is_extension = True)
+        leotard = Clothing("Leotard", 2, True, True, "Leotard", True, False, 5, has_extension = leotard_bottom, tucked = True) #TODO: Test this
         dress_list.append(leotard)
 
         nightgown_dress_bottom = Clothing("Nightgown", 2, False, False, "Nightgown", False, True, 0, is_extension = True)
@@ -525,6 +530,8 @@ init -1:
         tits_cum = Clothing("Tit Cum", 1, False, False, "Tits_Covered", True, False, 10, whiteness_adjustment = 0.2)
 
         stomach_cum = Clothing("Stomach Cum", 1, False, False, "Stomach_Covered", False, False, 10, whiteness_adjustment = 0.2)
+
+        creampie_cum = Clothing("Creampie", 1, False, False, "Creampie", False, False, 10)
 
         mouth_cum = Facial_Accessory("Mouth Cum", 1, False, False, "Mouth_Dribble", False, False, 10, whiteness_adjustment = 0.2)
 

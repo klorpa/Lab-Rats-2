@@ -212,42 +212,52 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
     return
 
-# label mom_make_house_changes(the_person):
-#     # A list of house rules to put into place.
-#     # TODO: This entire event
-#
-#     menu:
-#         "I want breakfast in my room every morning.": #Bonus energy recovery. #TODO: Figure out how this works with other random events.
-#             pass
-#
-#         "You are going to be naked when you deliver my breakfast.": #Once you're having breakfast delivered
-#             pass
-#
-#         "You are going to service me when you deliver my breakfast.":
-#             pass
-#
-#         "I want you to start wearing more comfortable clothes around the house.": #Sets minimum sluttiness for Mom's outfits
-#             pass
-#
-#         "You are only allowed to wear your underwear when you're at home.":
-#             pass
-#
-#         "You can't wear anything that would keep your tits and pussy from me.":
-#             pass
-#
-#         "I want to be in charge of Lily's discipline.": #Only after she's done somethign "bad", let's you punish her somehow, or just unlocks other things in this menu?
-#             # The whole Lily section might be better broken out into her role. with this as the enabling action. Definitely one of the paths to breaking them both and having your incest harem.
-#             pass
-#
-#         "Lily is only allowed to be in her underwear while at home.":
-#             pass
-#
-#         "Lily can't wear anything that would keep her tits or pussy from me.":
-#             pass
-#
-#         "Never mind.":
-#             call mom_high_sluttiness_weekly_pay(the_person) #Go back and pick something else.
-#     return
+label mom_make_house_changes(the_person):
+    # A list of house rules to put into place.
+    # TODO: This entire event. Make each one a linked action so that requirements work properly.
+
+    #TODO: Just display a bunch of action options os that the requirements are propertly formatted for all of these.
+
+    # menu:
+    #     "I want breakfast delivered to me every morning." if mc.business.event_triggers_dict.get("mom_home_breakfast", false): #Bonus energy recovery. #TODO: Figure out how this works with other random events.
+    #
+    #
+    #     "I want breakfast delivered to me every morning. (disabled)" if not mc.business.event_triggers_dict.get("mom_home_breakfast", false):
+    #         pass
+    #
+    #     "I want my breakfast delivered to me naked." if mc.business.event_triggers_dict.get("mom_home_breakfast", true) and the_person.obedience >= 140 and
+    #
+    #     "You are going to be naked when you deliver my breakfast.": #Once you're having breakfast delivered
+    #         pass
+    #
+    #     "You are going to service me when you deliver my breakfast.":
+    #         pass
+    #
+    #     "I want you to start wearing more comfortable clothes around the house.": #Sets minimum sluttiness for Mom's outfits
+    #         pass
+    #
+    #     "You are only allowed to wear your underwear when you're at home.":
+    #         pass
+    #
+    #     "You can't wear anything that would keep your tits and pussy from me.":
+    #         pass
+    #
+    #     # TODO: The disipline options are only available after Lily's started her insta-pic account and is posting stuff and you turn her in. If Mom is too slutty she says she doesn't care.
+    #     # TODO: Add other "bad" things you can use as leverage against Lily.
+    #     "I want to be in charge of Lily's discipline.": #Only after she's done somethign "bad", let's you punish her somehow, or just unlocks other things in this menu?
+    #         # The whole Lily section might be better broken out into her role. with this as the enabling action. Definitely one of the paths to breaking them both and having your incest harem.
+    #         pass
+    #
+    #     "Lily is only allowed to be in her underwear while at home.":
+    #         pass
+    #
+    #     "Lily can't wear anything that would keep her tits or pussy from me.":
+    #         pass
+    #
+    #     "Never mind.":
+    #         call mom_high_sluttiness_weekly_pay(the_person) #Go back and pick something else.
+
+    return
 
 label mom_offer_make_dinner_label(the_person):
     #TODO you offer to make dinner. It takes up time, but you can slip serum to your mom and sister.
@@ -280,4 +290,51 @@ label mom_offer_make_dinner_label(the_person):
 
     "You bring the food out and have a nice family dinner together."
     call advance_time from _call_advance_time_10
+    return
+
+label mom_serve_breakfast_request(the_person):
+    #TODO: You ask her to make you breakfast every morning as your helping-with-the-bills request
+    mc.name "I want breakfast brought to me every morning. I'm usually so busy with work I don't have any time to do it myself."
+    the_person.char "Okay [the_person.mc_title], if you're able to help out every week with the bills I can do that."
+    the_person.char "I'll have to get up early to get it made before work, but I'll do it for you. Maybe [lily.title] can help me."
+    # TODO: She wants some extra money from you every week she keeps doing this.
+    # TODO: Hook this up to actually do something.
+
+
+    #TODO: If she's slutty enough to move onto the nude_serve level she has a chance of showing up in her underwear.
+    return
+
+label mom_nude_serve_breakfast_request(the_person):
+    mc.name "When you bring me breakfast in the morning I want you to bring it to me naked."
+    if the_person.effective_slut() < 60: #She has some reservations about it
+        the_person.char "What! [the_person.mc_title], I couldn't..."
+        mc.name "Come on [the_person.title], it's nice to start my day off with a little eye candy. I've seen you naked before."
+        the_person.char "When you were younger, sure, but you're so much older now."
+        mc.name "Well you wanted to know what I wanted in exchange for my help. There it is."
+        "She thinks about it for a long time, then nods."
+        the_person.char "Fine, if you're going to be paying for it I'll go along with it. I want you to know I think it's silly though."
+    else: #She's already really slutty and that's not a big deal
+        the_person.char "Okay, if that's what you'd like [the_person.mc_title]."
+    # TODO: Hook this up
+    return
+
+label mom_breakfast_with_service_request(the_person):
+    mc.name "When you bring me breakfast I want you to give me some entertainment as well."
+    the_person.char "I'm already naked when I come in, what more do you want [the_person.mc_title]?"
+    mc.name "I wake up with morning wood a lot, I want you to use your tits and mouth to take care of that for me."
+    if the_person.effective_slut() < 80:
+        the_person.char "Oh my god, do you really mean..."
+        if the_person.sex_record.get("Blowjobs",0) > 0 or the_person.sex_record.get("Tit Fucks") > 0:
+            mc.name "Sure, why not? We've done it before."
+            the_person.char "Maybe, but... Do you really want to be doing that every morning?"
+            mc.name "Just something quick to blow off some steam. Come on, I love you Mom, don't you love me?"
+        else:
+            mc.name "Sure, why not? I love you and I want to feel close to you every day. Don't you love me Mom?"
+        "You watch as her heart melts. She nods and hugs you."
+        the_person.char "Of course I love you [the_person.mc_title]. Okay, I'll do this for you as long as you're helping out with the bills."
+    else:
+        the_person.char "Of course, I should have thought about that [the_person.mc_title]."
+        the_person.char "As long as you're helping with the bills I'll make sure your morning wood is always taken care of."
+
+    # TODO: Hook this up.
     return

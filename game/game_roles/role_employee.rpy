@@ -262,6 +262,7 @@ label employee_performance_review(the_person):
                             the_person.char "Wait, I really need this job... What if I... let you use me. Just so you'll keep me around."
                             menu:
                                 "Fuck her.":
+                                    #TODO: Add a "only if I fuck you raw" version so I can use the line "You can leave the room unemployed or pregnant, the choice is yours."
                                     $ the_person.add_situational_slut("seduction_approach", -5, "I'm just a toy to him.")
                                     $ the_person.add_situational_obedience("seduction_approach", 25, "I'll do what I need to keep my job!")
                                     mc.name "Alright, you've got me interested. Let's see what you can do."

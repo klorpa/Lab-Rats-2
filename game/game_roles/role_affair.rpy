@@ -182,6 +182,7 @@ label fuck_date_label(the_person):
         else:
             "After a short rest you've recovered some of your energy and [the_person.possessive_title]'s eager to get back to work."
             $ mc.change_energy(energy_gain_amount)
+            $ the_person.change_energy(energy_gain_amount) #She gains some back too
             if energy_gain_amount >= 10:
                 $ energy_gain_amount += -10 #Gain less and less energy back each time until eventually you're exhausted and gain nothing back.
             menu:
@@ -495,7 +496,6 @@ label blackmail_person(the_person):
     # Threaten the girl and claim you are going to reveal your relationship. Lowers love, but can be used to convert her into a "Slave" role.
     # TODO: Slave role, basically a girlfriend but with low love.
     return
-
 
 
 label transform_affair(the_person):

@@ -25,7 +25,7 @@ label fire_model_label(the_person):
     $ the_person.change_happiness(-5)
     the_person.char "Oh... Okay."
     $ mc.business.current_model = None
-    $ the_person.special_role.remove(company_model_role)
+    $ the_person.special_role.remove(company_model_role) #TODO: Investigate a crash where Alxia sometimes has this action but not the role itself??
     return
 
 label model_photography_list_label(the_person):
