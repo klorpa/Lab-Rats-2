@@ -167,7 +167,8 @@ label sister_walk_in_label(the_person):
                     "She grabs a pillow and throws it at you."
                     the_person.char "Get out! Get out!"
                     "You retreat from the room before [mom.title] hears what's happening and comes to investigate."
-                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                    $ the_person.apply_outfit(the_person.planned_outfit)
+                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
 
                 else:
                     the_person.char "Hmm?"
@@ -193,7 +194,7 @@ label sister_walk_in_label(the_person):
                     "You stand behind her, one hand grasping a breast and the other gently pumping a finger in and out of her."
                     call fuck_person(the_person, start_position = standing_finger, private = True) from _call_fuck_person_2
                     $ the_record = _return
-                    if the_record.get("girl_orgasms", 0) > 0:
+                    if the_record.get("girl orgasms", 0) > 0:
                         "[the_person.possessive_title] falls back on her bed and sighs happily."
                         $ the_person.change_love(2)
                         $ the_person.change_obedience(1)
@@ -202,7 +203,7 @@ label sister_walk_in_label(the_person):
                         "You step out of the room to give her some time to recover."
                         $ mc.change_location(hall)
 
-                    elif the_record.get("guy_orgasms", 0) > 0:
+                    elif the_record.get("guy orgasms", 0) > 0:
                         the_person.char "So... Is that it?"
                         mc.name "What do you mean?"
                         $ the_person.change_love(-2)
@@ -231,7 +232,8 @@ label sister_walk_in_label(the_person):
                     "She grabs a pillow and throws it at you."
                     the_person.char "Get out! Get out!"
                     "You retreat from the room before [mom.title] hears what's happening and comes to investigate."
-                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                    $ the_person.apply_outfit(the_person.planned_outfit)
+                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changd v0.24.1
 
                 else: #Otherwise she lets you stay long enough for you to tell her to keep going.
                     the_person.char "Oh my god, [the_person.mc_title]! What are you doing, I'm..."
@@ -263,7 +265,8 @@ label sister_walk_in_label(the_person):
                 $ renpy.scene("Active")
                 "You take a quick step back and, as quietly as you can manage, close her door."
                 $ mc.change_location(hall)
-                $ the_person.outfit = the_person.planned_outfit.get_copy()
+                $ the_person.apply_outfit(the_person.planned_outfit)
+                #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
 
 
 
@@ -273,7 +276,8 @@ label sister_walk_in_label(the_person):
 
 label nude_walk_in_label(the_person):
     if renpy.random.randint(0,100) < 50:
-        $ the_person.outfit = Outfit("Nude")
+        $ the_person.apply_outfit(Outfit("Nude"))
+        #$ the_person.outfit = Outfit("Nude") changed v0.24.1
         $ the_person.draw_person()
         "You open the door to [the_person.possessive_title]'s room and see her standing in front of her mirror, completely nude."
         if the_person.effective_sluttiness() < (60 - (the_person.get_opinion_score("not wearing anything")*10)):
@@ -285,7 +289,8 @@ label nude_walk_in_label(the_person):
             the_person.char "Just... Just a minute, I was getting changed!"
             $ renpy.scene("Active")
             "[the_person.title] shoos you out of the room. You can hear her getting dressed on the other side."
-            $ the_person.outfit = the_person.planned_outfit.get_copy()
+            $ the_person.apply_outfit(the_person.planned_outfit)
+            #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
             $ the_person.draw_person()
             "Soon enough she opens the door and invites you in."
             $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
@@ -298,14 +303,16 @@ label nude_walk_in_label(the_person):
 
     else:
         # She's in her underwear
-        $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True)
+        $ the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True))
+        #$ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True) changed v0.24.1
         $ the_person.draw_person()
         "You open the door to [the_person.possessive_title]'s room and find her sitting on her bed, wearing nothing but her underwear."
         if the_person.effective_sluttiness() < (40 - (the_person.get_opinion_score("not wearing anything")*10)):
             the_person.char "Oh! One second, I'm not dressed!"
             $ renpy.scene("Active")
             "She hurries to the door and closes it in your face, locking it quickly. You can hear her quickly getting dressed on the other side."
-            $ the_person.outfit = the_person.planned_outfit.get_copy()
+            #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
+            $ the_person.apply_outfit(the_person.planned_outfit)
             $ the_person.draw_person()
             "When she opens the door she's fully dressed and invites you in."
             $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
@@ -323,7 +330,8 @@ label mom_house_work_nude_label(the_person):
     $ effective_slut = the_person.effective_sluttiness() + (the_person.get_opinion_score("not wearing anything")*10)
     if effective_slut < 20: #TODO: This method of adding clothing with specific colours is dumb. (I suppose we could do the apron as being an overwear and then add it to underwear, but we should still have a system for it).
         # She's in her underwear but self concious about it
-        $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True)
+        $ the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True))
+        #$ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True) changed v0.24.1
         $ coloured_apron = apron.get_copy()
         $ coloured_apron.colour = [0.74,0.33,0.32,1.0]
         $ coloured_apron.pattern = "Pattern_1"
@@ -336,7 +344,8 @@ label mom_house_work_nude_label(the_person):
         "She turns her attention back to prepping dinner."
 
     elif the_person.effective_sluttiness() < 40:
-        $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True)
+        $ the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True))
+        # $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True) #changed v0.24.1
         $ coloured_apron = apron.get_copy()
         $ coloured_apron.colour = [0.74,0.33,0.32,1.0]
         $ coloured_apron.pattern = "Pattern_1"
@@ -348,7 +357,8 @@ label mom_house_work_nude_label(the_person):
         "She turns back to her work and hums happily."
 
     elif the_person.effective_sluttiness() < 60:
-        $ the_person.outfit = Outfit("Nude")
+        $ the_person.apply_outfit(Outfit("Nude"))
+        #$ the_person.outfit = Outfit("Nude") changed v0.24.1
         $ coloured_apron = apron.get_copy()
         $ coloured_apron.colour = [0.74,0.33,0.32,1.0]
         $ coloured_apron.pattern = "Pattern_1"
@@ -361,7 +371,8 @@ label mom_house_work_nude_label(the_person):
         "She turns her attention back to prepping dinner."
 
     else:
-        $ the_person.outfit = Outfit("Nude")
+        $ the_person.apply_outfit(Outfit("Nude"))
+        #$ the_person.outfit = Outfit("Nude") changed v0.24.1
         $ coloured_apron = apron.get_copy()
         $ coloured_apron.colour = [0.74,0.33,0.32,1.0]
         $ coloured_apron.pattern = "Pattern_1"
@@ -377,7 +388,8 @@ label mom_house_work_nude_label(the_person):
     return
 
 label breeding_mom_label(the_person):
-    $ the_person.outfit = Outfit("Nude")
+    $ the_person.apply_outfit(Outfit("Nude"))
+    # $ the_person.outfit = Outfit("Nude") changed v0.24.1
     $ the_person.draw_person(position = "sitting")
     "You walk into [the_person.title]'s room and find her sitting on the edge of her bed, completely naked."
     the_person.char "[the_person.mc_title], close the door, please. I have something I need to ask you."

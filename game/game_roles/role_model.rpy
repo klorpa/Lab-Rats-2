@@ -68,7 +68,8 @@ label model_photography_list_label(the_person):
 
                 $ renpy.scene("Active")
                 "[the_person.possessive_title] leaves to get changed and is back in a moment."
-                $ the_person.outfit = _return #A copy is already what is returned, so we don't have to copy it here.
+                $ the_person.apply_outfit(_return)
+                #$ the_person.outfit = _return #A copy is already what is returned, so we don't have to copy it here. changed v0.24.1
                 $ the_person.draw_person()
 
             else:

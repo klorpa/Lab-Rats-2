@@ -109,13 +109,13 @@ init -1:
         landing_strip_pubes = Clothing("Landing Strip Pubic Hair", 1, True, True, "Landing_Strip_Pubes", False, False, 0, ordering_variable = 2)
         pube_styles.append(landing_strip_pubes)
 
-        diamond_pubes = Clothing("Diamond Trimmed Pubes", 1, True, True, "Diamond_Pubes", False, False, 0, ordering_variable = 3)
+        diamond_pubes = Clothing("Diamond Shaped Pubic Hair", 1, True, True, "Diamond_Pubes", False, False, 0, ordering_variable = 3)
         pube_styles.append(diamond_pubes)
 
-        trimmed_pubes = Clothing("Trimmed Pubic Hair", 1, True, True, "Trimmed_Pubes", False, False, 0, ordering_variable = 5)
+        trimmed_pubes = Clothing("Neatly Trimmed Pubic Hair", 1, True, True, "Trimmed_Pubes", False, False, 0, ordering_variable = 5)
         pube_styles.append(trimmed_pubes)
 
-        default_pubes = Clothing("Pubic Hair", 1, True, True, "Default_Pubes", False, False, 0, ordering_variable = 10)
+        default_pubes = Clothing("Untrimmed Pubic Hair", 1, True, True, "Default_Pubes", False, False, 0, ordering_variable = 10)
         pube_styles.append(default_pubes)
 
 
@@ -167,6 +167,9 @@ init -1:
         strappy_panties = Clothing("Strappy Panties", 1, True, True, "Strappy_Panties", False, True, 3, tucked = True)
         panties_list.append(strappy_panties)
 
+        crotchless_panties = Clothing("Crotchless Panties", 1, False, False, "Crotchless_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.15, contrast_adjustment = 1.1)
+        panties_list.append(crotchless_panties)
+
 
         ##Bras
         bra_list = []
@@ -192,6 +195,9 @@ init -1:
         strappy_bra = Clothing("Strappy Bra", 1, True, True, "Strappy_Bra", True, True, 3)
         bra_list.append(strappy_bra)
 
+        quarter_cup_bustier = Clothing("Quarter Cup Bustier", 1, False, False, "Quarter_Cup_Bra", True, True, 8, whiteness_adjustment = 0.3, contrast_adjustment = 0.9, supported_patterns = {"Two Toned":"Pattern_1"})
+        bra_list.append(quarter_cup_bustier)
+
         corset = Clothing("Corset", 1, True, True, "Corset", True, True, 5, whiteness_adjustment = 0.0, contrast_adjustment = 1.4, supported_patterns = {"Two Toned":"Pattern_1"})
         bra_list.append(corset)
 
@@ -201,7 +207,7 @@ init -1:
         cincher = Clothing("Cincher", 1, False, False, "Cincher", True, False, 5, supported_patterns = {"Two Toned":"Pattern_1"})
         bra_list.append(cincher)
 
-        heart_pasties = Clothing("Heart Pasties", 1, True, True, "Heart_Pasties", True, True, 8)
+        heart_pasties = Clothing("Heart Pasties", 1, False, False, "Heart_Pasties", True, True, 8)
         bra_list.append(heart_pasties)
 
 
@@ -233,7 +239,13 @@ init -1:
         ##Skirts
         skirts_list = []
 
-        pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.1)
+        skirt = Clothing("Skirt", 2, True, False, "Skirt", False, False, 1)
+        skirts_list.append(skirt)
+
+        long_skirt = Clothing("Long Skirt", 2, True, True, "Long_Skirt", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2)
+        skirts_list.append(long_skirt)
+
+        pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.2)
         skirts_list.append(pencil_skirt)
 
         belted_skirt = Clothing("Belted Skirt", 2, True, False, "Belted_Skirt", False, False, 1, contrast_adjustment = 1.15, supported_patterns = {"Belt":"Pattern_1"})
@@ -242,14 +254,13 @@ init -1:
         lace_skirt = Clothing("Lace Skirt", 2, True, False, "Lace_Skirt", False, False, 1, whiteness_adjustment = 0.15)
         skirts_list.append(lace_skirt)
 
-        mini_skirt = Clothing("Mini Skirt", 2, False, False, "Mini_Skirt", False, False, 5, whiteness_adjustment = 0.2)
+        mini_skirt = Clothing("Mini Skirt", 2, True, False, "Mini_Skirt", False, False, 5, whiteness_adjustment = 0.4)
         skirts_list.append(mini_skirt)
 
-        skirt = Clothing("Skirt", 2, True, False, "Skirt", False, False, 1)
-        skirts_list.append(skirt)
+        micro_skirt = Clothing("Micro Skirt", 2, False, False, "Micro_Skirt", False, False, 8, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"})
+        skirts_list.append(micro_skirt)
 
-        long_skirt = Clothing("Long Skirt", 2, True, True, "Long_Skirt", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2)
-        skirts_list.append(long_skirt)
+
 
 
         ##Dresses
@@ -488,6 +499,9 @@ init -1:
         bead_bracelet = Clothing("Bead Bracelet", 2, False, False, "Bead_Bracelet", False, False, 0)
         bracelet_list.append(bead_bracelet)
 
+        forearm_gloves = Clothing("Forearm Gloves", 2, False, False, "Forearm_Gloves", False, False, 2, supported_patterns = {"Two Tone":"Pattern_1"})
+        bracelet_list.append(forearm_gloves)
+
 
         rings_list = []
 
@@ -520,6 +534,15 @@ init -1:
 
         wide_choker = Clothing("Wide Choker", 2, False, False, "Wide_Choker", False, False, 3)
         neckwear_list.append(wide_choker)
+
+        breed_collar = Clothing("Breed Me Collar", 3, False, False, "Collar_Breed", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"})
+        neckwear_list.append(breed_collar)
+
+        cum_slut_collar = Clothing("Cum Slut Collar", 3, False, False, "Collar_Cum_Slut", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"})
+        neckwear_list.append(cum_slut_collar)
+
+        fuck_doll_collar = Clothing("Fuck Doll Collar", 3, False, False, "Collar_Fuck_Doll", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"})
+        neckwear_list.append(fuck_doll_collar)
 
 
 

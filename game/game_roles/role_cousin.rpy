@@ -343,7 +343,8 @@ label cousin_blackmail_list(the_person):
                     mc.name "Alright, that'll do."
                     the_person.char "Finally..."
                     "[the_person.possessive_title] gets dressed again."
-                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                    $ the_person.apply_outfit(the_person.planned_outfit)
+                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -374,7 +375,8 @@ label cousin_blackmail_list(the_person):
                     "She wiggles her butt in your direction. Her tits swing back and forth with the same movement."
                     the_person.char "Well keep dreaming. I'm not that fucking desperate."
                     "Once you've gotten your fill, [the_person.title] gets dressed again."
-                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                    $ the_person.apply_outfit(the_person.planned_outfit)
+                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -408,7 +410,8 @@ label cousin_blackmail_list(the_person):
                     "She gives you an overly dramatic pout."
                     mc.name "Fine, that'll do."
                     the_person.char "Fucking finally..."
-                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                    $ the_person.apply_outfit(planned_outfit)
+                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -979,7 +982,8 @@ label cousin_new_boobs_brag_label(the_person):
                     the_person.char "There you go. Good, right? These girls are going to bring in so much more at the club."
                     "She looks down at her own chest and gives it a shake, setting her tits jiggling. When they settle down, she reaches for her top again."
 
-                $ the_person.outfit = old_outfit
+                $ the_person.apply_outfit(old_outfit, ignore_base = True)
+                # the_person.outfit = old_outfit changed v0.24.1
                 $ the_person.draw_person()
 
             "Not right now.":
@@ -1071,7 +1075,9 @@ label stripclub_dance():
     $ the_person = get_random_from_list(list(set(stripclub_strippers) & set(mc.location.people))) #Create a list of strippers who are present, then pick a random person.
     if the_person is None:
         $ the_person = get_random_from_list(stripclub_strippers) #If there is nobody around make sure to grab them and bring them here so we don't crash.
-    $ the_person.outfit = stripclub_wardrobe.pick_random_outfit()
+
+    $ the_person.apply_outfit(stripclub_wardrobe.pick_random_outfit())
+    #$ the_person.outfit = stripclub_wardrobe.pick_random_outfit() changed v0.24.1 #TODO: Add more stripper outfits.
     $ performer_title = the_person.title
     $ the_person.draw_person()
     "A new song starts playing over the speakers and a girl steps out onto the stage."

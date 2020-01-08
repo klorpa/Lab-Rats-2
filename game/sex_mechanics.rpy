@@ -63,8 +63,15 @@ label fuck_person(the_person, private= True, start_position = None, start_object
             if position_choice is None:
                 call girl_choose_position(the_person) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
                 $ position_choice = _return #Can be none, if no option was available for her to take.
+                if position_choice is not None:
+                    # We need to make sure we're using an appopriate object
+                    call girl_choose_object(the_person, position_choice) from _call_girl_choose_object
+                    $ object_choice = _return
             if position_choice is None: #There's no position we can take
                 "[the_person.title] can't think of anything more to do with you."
+                $ round_choice = "Girl Leave"
+            if object_choice is None:
+                "[the_person.title] looks around, but can't see anywhere to have fun with you."
                 $ round_choice = "Girl Leave"
             elif report_log.get("guy orgasms", 0) > 0 and report_log.get("girl orgasms", 0) > 0: #Both parties have been satisfied
                 the_person.char "Whew, that felt amazing. It's good to know it was as good for you as it was for me."
@@ -276,6 +283,22 @@ label girl_choose_position(the_person):
                     position_option_list.append(position)
         picked_position = get_random_from_list(position_option_list)
     return picked_position
+
+label girl_choose_object(the_person, the_position):
+    $ possible_object_list = []
+    if the_position is None:
+        $ the_person.clear_situational_slut("sex_object")
+        $ the_person.clear_situational_obedience("sex_object")
+        return None
+    python:
+        for an_object in mc.location.objects_with_trait(position.requires_location):
+            possible_object_list.append(an_object)
+
+    $ picked_object = get_random_from_list(possible_object_list)
+    $ the_person.add_situational_slut("sex_object", picked_object.sluttiness_modifier, the_position.verbing + " on a " + picked_object.name)
+    $ the_person.add_situational_obedience("sex_object",picked_object.obedience_modifier, the_position.verbing + " on a " + picked_object.name)
+    return picked_object
+
 
 label pick_object(the_person, the_position, forced_object = None):
     if the_position is None:

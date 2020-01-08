@@ -11,6 +11,7 @@ init:
             transition_default = "transition_default_handjob",
             strip_description = "strip_handjob", strip_ask_description = "strip_ask_handjob",
             orgasm_description = "orgasm_handjob",
+            verb = "stroke", verbing = "stroking",
             opinion_tags = ["giving handjobs"], record_class = "Handjobs")
 
         list_of_girl_positions.append(handjob)

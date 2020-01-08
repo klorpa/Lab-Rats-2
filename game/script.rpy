@@ -1497,7 +1497,7 @@ init -2 python:
             face_style = "Face_1",
             special_role = None,
             title = None, possessive_title = None, mc_title = None,
-            relationship = None, SO_name = None, kids = None):
+            relationship = None, SO_name = None, kids = None, base_outfit = None):
 
             ## Personality stuff, name, ect. Non-physical stuff.
             self.name = name
@@ -1701,10 +1701,16 @@ init -2 python:
 
             ## Clothing things.
             self.wardrobe = copy.copy(wardrobe) #Note: we overwrote default copy behaviour for wardrobes so they do not have any interference issues with eachother.
+            if base_outfit is None:
+                self.base_outfit = Outfit(name + "'s Base Outfit")
+            else:
+                self.base_outfit = base_outfit
+
 
             self.planned_outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #planned_outfit is the outfit the girl plans to wear today while not at work. She will change back into it after work or if she gets stripped. Cop0y it in case the outfit is changed during the day.
             self.planned_uniform = None #The uniform the person was planning on wearing for today, so they can return to it if they need to while at work.
-            self.outfit = self.planned_outfit.get_copy() #Keep a seperate copy of hte outfit as the one that is being worn.
+            self.apply_outfit(self.planned_outfit)
+            # self.outfit = self.planned_outfit.get_copy() #Keep a seperate copy of hte outfit as the one that is being worn. changed v0.24.1
 
 
             ## Conversation things##
@@ -1784,10 +1790,6 @@ init -2 python:
             return the_daughter
 
 
-
-
-
-
         def run_turn(self):
             self.change_energy(20, add_to_log = False)
             self.bleed_slut() #if our sluttiness is over our core slut, bleed some off and, if we have suggest, turn it into core slut.
@@ -1825,7 +1827,8 @@ init -2 python:
 
             if time_of_day == 0: #It's a new day, get a new outfit out to wear!
                 self.planned_outfit = self.wardrobe.decide_on_outfit(self.sluttiness)
-                self.outfit = self.planned_outfit.get_copy()
+                self.apply_outfit(self.planned_outfit)
+                #self.outfit = self.planned_outfit.get_copy() changed v0.24.1
                 self.planned_uniform = None
 
             destination = self.schedule[time_of_day] #None destination means they have free time
@@ -1842,13 +1845,15 @@ init -2 python:
                             self.change_slut_temp(self.get_opinion_score("skimpy uniforms"), add_to_log = False)
 
                 elif destination == self.home:
-                    self.outfit = self.planned_outfit.get_copy() #We're at home, so we can get back into our casual outfit.
+                    self.apply_outfit(self.planned_outfit)
+                    #self.outfit = self.planned_outfit.get_copy() #We're at home, so we can get back into our casual outfit. changed v0.24.1
 
                 #NOTE: There is no else here because all of the desitnations should be set. If it's just a location they travel there and that's the end of it.
 
             else:
                 #She finds somewhere to burn some time
-                self.outfit = self.planned_outfit.get_copy() #Get changed back into our proper outfit if we aren't in it already.
+                self.apply_outfit(self.planned_outfit)
+                #self.outfit = self.planned_outfit.get_copy() #Get changed back into our proper outfit if we aren't in it already. changed v0.24.1
                 available_locations = [] #Check to see where is public (or where you are white listed) and move to one of those locations randomly
                 for potential_location in list_of_places:
                     if potential_location.public:
@@ -2167,13 +2172,22 @@ init -2 python:
         def set_outfit(self,new_outfit):
             if new_outfit is not None:
                 self.planned_outfit = new_outfit.get_copy() #Get a copy to return to when we are done.
-                self.outfit = new_outfit.get_copy() #We're handed a properly formatted copy already, use it to wear right away.
+                self.apply_outfit(new_outfit) # #We're handed a properly formatted copy already, use it to wear right away.
+                # self.outfit = new_outfit.get_copy()
 
         def set_uniform(self,uniform, wear_now):
             if uniform is not None:
                 self.planned_uniform = uniform.get_copy()
                 if wear_now:
-                    self.outfit = uniform.get_copy()
+                    self.apply_outfit(uniform)
+                    #self.outfit = uniform.get_copy() # Changed v0.24.1
+
+        def apply_outfit(self, the_outfit, ignore_base = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
+            if ignore_base:
+                self.outfit = the_outfit.get_copy()
+            else:
+                self.outfit = the_outfit.get_copy().merge_outfit(self.base_outfit)
+
 
         def give_serum(self,the_serum_design, add_to_log = True): ##Make sure you are passing a copy of the serum, not a reference.
             self.serum_effects.append(the_serum_design)
@@ -2460,7 +2474,8 @@ init -2 python:
 #                self.call_uniform_review() #TODO: actually impliment this call, but only when her outfit significantly differs from the real uniform.
 
             elif self.outfit.slut_requirement > self.sluttiness:
-                self.outfit = self.planned_outfit.get_copy()
+                self.apply_outfit(self.planned_outfit)
+                #self.outfit = self.planned_outfit.get_copy() changed v0.24.1
                 if dialogue:
                     self.call_dialogue("clothing_review")
 
@@ -2487,7 +2502,8 @@ init -2 python:
                 self.set_uniform(mc.business.get_uniform_wardrobe(mc.business.get_employee_title(self)).decide_on_uniform(self),False) #If we don't have a uniform planned for today get one.
 
             if self.planned_uniform is not None: #If our planned uniform is STILL None it means we are unable to construct a valid uniform. Only assign it as our outfit if we have managed to construct a uniform.
-                self.outfit = self.planned_uniform.get_copy() #Set our current outfit to a copy of our planned uniform.
+                self.apply_outfit(self.planned_uniform)
+                #self.outfit = self.planned_uniform.get_copy() #Set our current outfit to a copy of our planned uniform. changed v0.24.1
 
         def get_job_happiness_score(self):
             happy_points = self.happiness - 100 #Happiness over 100 gives a bonus to staying, happiness less than 100 gives a penalty
@@ -2878,7 +2894,7 @@ init -2 python:
         hair_colour = None, hair_style = None, pubes_colour = None, pubes_style = None, skin = None, eyes = None, job = None,
         personality = None, custom_font = None, name_color = None, dial_color = None, starting_wardrobe = None, stat_array = None, skill_array = None, sex_array = None,
         start_sluttiness = None, start_obedience = None, start_happiness = None, start_love = None, start_home = None,
-        title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None):
+        title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None, base_outfit = None):
 
         if personality is None:
             personality = get_random_personality()
@@ -2992,11 +3008,27 @@ init -2 python:
         if recruitment_slut_improvement_policy.is_owned():
             start_sluttiness += 20
 
-        if starting_wardrobe is None:
-            starting_wardrobe = default_wardrobe.get_random_selection(25)
-
         if relationship is None:
             relationship = get_random_from_weighted_list([["Single",100-age],["Girlfriend",50],["Fiancée",120-age*2],["Married",20+age*4]]) #Age plays a major factor.
+
+        if starting_wardrobe is None:
+            starting_wardrobe = Wardrobe(name +"'s Wardrobe")
+            starting_wardrobe = starting_wardrobe.merge_wardrobes(default_wardrobe.get_random_selection(25))
+
+        if base_outfit is None:
+            base_outfit = Outfit(name + "'s base accessories")
+            if relationship == "Fiancée" or relationship == "Married":
+                base_outfit.add_accessory(diamond_ring.get_copy())
+
+            if renpy.random.randint(0,100) < age:
+                #They need/want glasses.
+                the_glasses = None
+                if renpy.random.randint(0,100) < 50:
+                    the_glasses = modern_glasses.get_copy()
+                else:
+                    the_glasses = big_glasses.get_copy()
+                the_glasses.colour = get_random_glasses_frame_colour()
+                base_outfit.add_accessory(the_glasses)
 
         if kids is None:
             kids = 0
@@ -3025,7 +3057,7 @@ init -2 python:
             font = my_custom_font, name_color = name_color , dialogue_color = dial_color,
             face_style = face_style,
             title = title, possessive_title = possessive_title, mc_title = mc_title,
-            relationship = relationship, kids = kids, SO_name = SO_name)
+            relationship = relationship, kids = kids, SO_name = SO_name, base_outfit = base_outfit)
 
     def height_to_string(the_height): #Height is a value between 0.9 and 1.0 which corisponds to 5' 0" and 5' 10"
         rounded_height = __builtin__.round(the_height,2) #Round height to 2 decimal points.
@@ -4076,6 +4108,19 @@ init -2 python:
              #Next, modify things that are tucked into eachother.
             return items_to_draw
 
+        def merge_outfit(self, other_outfit):
+            # Takes other_outfit
+            for an_item in other_outfit.upper_body:
+                self.add_upper(an_item.get_copy())
+            for an_item in other_outfit.lower_body:
+                self.add_lower(an_item.get_copy())
+            for an_item in other_outfit.feet:
+                self.add_feet(an_item.get_copy())
+            for an_item in other_outfit.accessories:
+                self.add_accessory(an_item.get_copy())
+            self.update_slut_requirement()
+            return self
+
         def can_add_dress(self, new_clothing):
             return self.can_add_upper(new_clothing)
 
@@ -4262,6 +4307,8 @@ init -2 python:
                     return None
             else:
                 to_remove = get_random_from_list(self.get_upper_unanchored())
+                if to_remove and to_remove.is_extension:
+                    return None
 
             if to_remove and not do_not_remove:
                 self.remove_clothing(to_remove)
@@ -4279,6 +4326,8 @@ init -2 python:
                     return None
             else:
                 to_remove = get_random_from_list(self.get_lower_unanchored())
+                if to_remove and to_remove.is_extension:
+                    return None
 
             if to_remove and not do_not_remove:
                 self.remove_clothing(to_remove)
@@ -4296,6 +4345,8 @@ init -2 python:
                     return None
             else:
                 to_remove = get_random_from_list(self.get_foot_unanchored())
+                if to_remove and to_remove.is_extension:
+                    return None
 
             if to_remove and not do_not_remove:
                 self.remove_clothing(to_remove)
@@ -4534,7 +4585,6 @@ init -2 python:
                 self.underwear_sets = []
             if overwear_sets is None:
                 self.overwear_sets = []
-
         def __copy__(self):
             #TODO: see if adding a .copy() here has A) Fixed any potential bugs and B) not had a major performance impact.
             outfit_copy_list = []
@@ -4549,9 +4599,10 @@ init -2 python:
             for overwear in self.overwear_sets:
                 over_copy_list.append(overwear.get_copy())
 
-            return Wardrobe(self.name,outfit_copy_list,under_copy_list,over_copy_list)
 
-        def merge_wardrobes(self, other_wardrobe): #Returns a copy of this wardrobe merged with the other one.
+            return Wardrobe(self.name, outfit_copy_list, under_copy_list, over_copy_list)
+
+        def merge_wardrobes(self, other_wardrobe): #Returns a copy of this wardrobe merged with the other one, with this taking priority for base outfits.
             base_wardrobe = self.__copy__() #This already redefines it's copy meth, so we should be fine.
             for outfit in other_wardrobe.outfits:
                 base_wardrobe.add_outfit(outfit.get_copy())
@@ -4601,7 +4652,7 @@ init -2 python:
             elif old_outfit in self.overwear_sets:
                 self.overwear_sets.remove(old_outfit)
 
-        def pick_random_outfit(self):
+        def pick_random_outfit(self): #TODO: We might be able to pass a reference instead of a copy here now that apply_outfit always takes a copy.
             return get_random_from_list(self.outfits).get_copy() # Get a copy of _any_ full outfit in this character's wardrobe.
 
         def get_random_appropriate_underwear(self, sluttiness_limit, sluttiness_min = 0, guarantee_output = False): #Get an underwear outfit that is considered appropriate (based on underwear sluttiness, not full outfit sluttiness)
@@ -8193,7 +8244,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.24.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.24.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8596,7 +8647,7 @@ label outfit_master_manager(): #WIP new outfit manager that centralizes exportin
 
         call screen outfit_creator(_return, outfit_type = outfit_type)
 
-    $ new_outfit = _return #This is the oufit the player has created.
+    $ new_outfit = _return #This is the outfit the player has created.
     if not new_outfit == "Not_New":
         $ new_outfit_name = renpy.input("Please name this outfit.", default = new_outfit.name)
         while new_outfit_name == "":

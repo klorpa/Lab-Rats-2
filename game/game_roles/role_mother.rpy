@@ -159,6 +159,9 @@ label mom_high_sluttiness_weekly_pay(the_person):
         # "I want to make some changes around here.\nRequires: 120 Obedience (disabled)" if the_person.obedience < 120:
         #     pass
 
+
+        #TODO: "I want to breed Lily" option, once you've got Mom at high sluttiness, obedience, and Love. She gives you the go-ahead to knock up your sister.
+
         "Have her suck you off. -$300" if mc.business.funds >= 300 and the_person.sluttiness >= 30:
             mc.name "Alright, I'll pay you to give me a blowjob."
             if the_person.sex_record.get("Blowjobs",0) > 0 or the_person.sluttiness >= 60:
@@ -306,7 +309,7 @@ label mom_serve_breakfast_request(the_person):
 
 label mom_nude_serve_breakfast_request(the_person):
     mc.name "When you bring me breakfast in the morning I want you to bring it to me naked."
-    if the_person.effective_slut() < 60: #She has some reservations about it
+    if the_person.effective_sluttiness() < 60: #She has some reservations about it
         the_person.char "What! [the_person.mc_title], I couldn't..."
         mc.name "Come on [the_person.title], it's nice to start my day off with a little eye candy. I've seen you naked before."
         the_person.char "When you were younger, sure, but you're so much older now."
@@ -322,7 +325,7 @@ label mom_breakfast_with_service_request(the_person):
     mc.name "When you bring me breakfast I want you to give me some entertainment as well."
     the_person.char "I'm already naked when I come in, what more do you want [the_person.mc_title]?"
     mc.name "I wake up with morning wood a lot, I want you to use your tits and mouth to take care of that for me."
-    if the_person.effective_slut() < 80:
+    if the_person.effective_sluttiness() < 80:
         the_person.char "Oh my god, do you really mean..."
         if the_person.sex_record.get("Blowjobs",0) > 0 or the_person.sex_record.get("Tit Fucks") > 0:
             mc.name "Sure, why not? We've done it before."

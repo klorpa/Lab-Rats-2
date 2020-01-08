@@ -118,13 +118,17 @@ label fuck_date_label(the_person):
     #Figure out her outfit for this
     if the_person.get_opinion_score("not wearing anything") > the_person.get_opinion_score("lingerie"):
         #She's wearing nothing at all. nothing at all. nothing at all...
-        $ the_person.outfit = Outfit("Nude")
+        $ the_person.apply_outfit(Outfit("Nude"))
+        #$ the_person.outfit = Outfit("Nude") changed v0.24.1
     elif the_person.get_opinion_score("lingerie") >= 0:
         #She's just wearing lingerie for the evening.
-        $ the_person.outfit = lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True) #She picks an outfit with a minimum of half and max of slut+20 for her lingerie.
+        $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True))
+        #changed v0.24.1
+        #$ the_person.outfit = lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True) #She picks an outfit with a minimum of half and max of slut+20 for her lingerie.
     else:
         #She picks a slutty outfit, but nothing truely "special".
-        $ the_person.outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0)
+        $ the_person.apply_outfit(the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0))
+        #$ the_person.outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0) changed v0.24.1
 
     if the_person.obedience > 130 or the_person.get_opinion_score("being submissive") > 0 or the_person.get_opinion_score("giving blowjobs") > 0:
         #She's on her knees and ready to suck you off as soon as you come in.
@@ -149,7 +153,7 @@ label fuck_date_label(the_person):
     $ so_called = False
     $ energy_gain_amount = 50 #Drops each round, representing your flagging endurance.
     while done == False:
-        if the_report.get("girl_orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
+        if the_report.get("girl orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
             $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
             $ the_person.change_slut_temp(1)
             the_person.char "Oh god... That was amazing. You're so much better at that than my [so_title]."

@@ -336,7 +336,8 @@ label sister_instathot_label(the_person):
     the_person.char "I keep my stuff here so Mom doesn't find it. Okay, let's put this on!"
     $ the_person.draw_person(emotion = "happy")
     "[the_person.title] gets dressed in her new outfit and turns to you, smiling."
-    $ the_person.outfit = insta_ouftit
+    $ the_person.apply_outfit(insta_ouftit)
+    #$ the_person.outfit = insta_ouftit changed v0.24.1
     $ the_person.draw_person(emotion = "happy")
     the_person.char "Well, do you think they'll like it?"
     menu:
@@ -392,7 +393,8 @@ label sister_instathot_label(the_person):
                     "..."
                     $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
                 "Once she's stripped down she puts on the outfit you've suggested."
-                $ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want.
+                $ the_person.apply_outfit(the_suggested_outfit)
+                #$ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want. changed v0.24.1
                 $ the_person.draw_person()
                 $ the_person.change_love(1)
                 $ the_person.change_obedience(2)

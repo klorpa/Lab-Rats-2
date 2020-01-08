@@ -346,7 +346,7 @@ init 1300 python:
         return True
 
     recruitment_obedience_improvement_policy = Policy(name = "High Obedience Recruits",
-        desc = "A highly regimented business appeals to some people. By improving your corporate image and stressing company stability new recruits will have a starting obedince 10 points higher than normal.",
+        desc = "A highly regimented business appeals to some people. By improving your corporate image and stressing company stability new recruits will have a starting obedience 10 points higher than normal.",
         cost = 600,
         requirement = recruitment_obedience_improvement_requirement)
 

@@ -451,7 +451,8 @@ label aunt_intro_moving_apartment_label(the_person):
                 mc.name "The pizza guy's here."
                 aunt.char "Oh! I didn't think he would be here so soon! Just, uh... just come in and get it, it's in my purse."
                 "You open the door to the bathroom. [aunt.possessive_title]'s shower has a clear glass door that doesn't hide anything. She turns away as you come in."
-                $ aunt.outfit = default_wardrobe.get_outfit_with_name("Nude 1")
+                $ aunt.apply_outfit(Outfit("Nude"))
+                #$ aunt.outfit = default_wardrobe.get_outfit_with_name("Nude 1") changed v0.24.1
                 $ aunt.draw_person(position = "back_peek")
                 $ aunt.change_slut_temp(2)
                 aunt.char "It's right over there. Just grab it and go."
@@ -751,7 +752,8 @@ label aunt_share_drinks_label(the_person):
                                 $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                             "Once she's stripped out of her clothing, [the_person.possessive_title] puts on the outfit you've made for her."
-                            $ the_person.outfit = created_outfit.get_copy()
+                            $ the_person.apply_outfit(created_outfit)
+                            #$ the_person.outfit = created_outfit.get_copy() changed v0.24.1
                             $ the_person.draw_person()
 
                             if created_outfit.slut_requirement <= the_person.sluttiness-20:
@@ -784,7 +786,8 @@ label aunt_share_drinks_label(the_person):
                                         $ the_person.draw_animated_removal(strip_choice)
                                         "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
                                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                                    $ the_person.outfit = the_person.planned_outfit.get_copy()
+                                    $ the_person.apply_outfit(the_person.planned_outfit)
+                                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                                     $ the_person.draw_person()
                             the_person.char "This was really fun [the_person.mc_title], but I think that extra glass of wine is starting to get to me."
                             "She yawns dramatically and lies down on her bed."
@@ -847,7 +850,8 @@ label aunt_share_drinks_label(the_person):
 
                     the_person.char "Okay, first one."
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-30, guarantee_output = True)
-                    $ the_person.outfit = lingerie.get_copy()
+                    $ the_person.apply_outfit(lingerie)
+                    #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     "She slips on her new set of underwear."
                     the_person.char "Okay, what do you think? Keep or toss?"
@@ -871,7 +875,8 @@ label aunt_share_drinks_label(the_person):
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-25, guarantee_output = True)
-                    $ the_person.outfit = lingerie.get_copy()
+                    $ the_person.apply_outfit(lingerie)
+                    #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     "She slips on the next set of lingerie."
                     the_person.char "What about this one? Keep or toss?"
@@ -895,7 +900,8 @@ label aunt_share_drinks_label(the_person):
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-20, guarantee_output = True)
-                    $ the_person.outfit = lingerie.get_copy()
+                    $ the_person.apply_outfit(lingerie)
+                    #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     "She slips on the last set of underwear she has to show you."
                     $ the_person.draw_person(position="back_peek")

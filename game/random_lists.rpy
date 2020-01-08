@@ -115,6 +115,7 @@ init -2:
         list_of_names.append("Danny")
         list_of_names.append("Kanya")
         list_of_names.append("Kay")
+        list_of_names.append("Soni")
 
 
         def get_random_name():
@@ -198,6 +199,7 @@ init -2:
         list_of_last_names.append("Chailai")
         list_of_last_names.append("Hara")
         list_of_last_names.append("Newman")
+        list_of_last_names.append("Mead")
 
 
         def get_random_last_name():
@@ -376,6 +378,19 @@ init -2:
                 if the_tits == a_tit_tuple[0]:
                     return list_of_tits.index(a_tit_tuple) #Ranges from 0 (AA) to 9 (FF).
 
+
+        list_of_clothing_colours = []
+        list_of_clothing_colours.append([0.15,0.15,0.15,1]) #Black
+        list_of_clothing_colours.append([1.0,1.0,1.0,1]) #White
+        list_of_clothing_colours.append([0.7,0.4,0.4,1]) #Light Pink
+        list_of_clothing_colours.append([0.4,0.7,0.4,1]) #Light blue
+        list_of_clothing_colours.append([0.4,0.4,0.7,1]) #Light green
+        list_of_clothing_colours.append([0.31,0.23,0.33,1]) #Purple
+        list_of_clothing_colours.append([0.9,0.5,0.1,1]) #Orange
+        def get_random_glasses_frame_colour():
+            # Picks one of several mostly-neutral colours that should go well with most items
+            return get_random_from_list(list_of_clothing_colours)
+
         list_of_jobs = []
         list_of_jobs.append("scientist")
         list_of_jobs.append("secretary")
@@ -549,7 +564,7 @@ init -2:
                     list_of_titles.append("Little Tits")
 
                 if the_person.sex_record.get("Vaginal Creampies", 0) >= 20:
-                    list_of_possessive_titles.append("Breeding Material")
+                    list_of_titles.append("Breeding Material")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
                 if the_person.sex_record.get("Cum Facials", 0) > 0 or the_person.sex_record.get("Cum in Mouth", 0) > 0 or the_person.sex_record.get("Cum Covered", 0) > 0:
@@ -731,10 +746,17 @@ init 1 python:
         nora_wardrobe = wardrobe_from_xml("Nora_Wardrobe")
 
         global nora
+        nora_base = Outfit("Nora's accessories")
+        nora_glasses = modern_glasses.get_copy()
+        nora_glasses.colour = [0.45,0.53,0.6,1.0]
+        nora_earrings = gold_earings.get_copy()
+        nora_earrings.colour = [1.0,1.0,0.93,1.0]
+        nora_base.add_accessory(nora_glasses)
+        nora_base.add_accessory(nora_earrings)
         nora = create_random_person(name = "Nora", age = 47, body_type = "standard_body", face_style = "Face_4", tits = "D", height = 0.98, hair_colour="black", hair_style = bowl_hair, skin = "white", \
             eyes = "grey", personality = nora_personality, name_color = "#dddddd", dial_color = "#dddddd", starting_wardrobe = nora_wardrobe, \
             stat_array = [1,5,4], skill_array = [1,1,5,3,1], sex_array = [3,2,4,1], start_sluttiness = 4, start_obedience = 2, start_happiness = 0, start_love = 3, \
-            title = "Nora", possessive_title = "Your old boss", mc_title = mc.name, relationship = "Single", kids = 0)
+            title = "Nora", possessive_title = "Your old boss", mc_title = mc.name, relationship = "Single", kids = 0, base_outfit = nora_base)
 
         nora.generate_home()
         nora.special_role.append(nora_role)
@@ -747,10 +769,14 @@ init 1 python:
         alexia_wardrobe = wardrobe_from_xml("Alexia_Wardrobe")
 
         global alexia
+        alexia_base = Outfit("Alexia's accessories")
+        alexia_glasses = big_glasses.get_copy()
+        big_glasses.colour = [0.1,0.1,0.1,1.0]
+        alexia_base.add_accessory(alexia_glasses)
         alexia = create_random_person(name = "Alexia", age = 21, body_type = "thin_body", face_style = "Face_2", tits = "C", height = 0.92, hair_colour = "blond", hair_style = short_hair, skin="white",\
             eyes = "brown", personality = alexia_personality, name_color = "#ffff6e", dial_color = "#ffff6e", starting_wardrobe = alexia_wardrobe, \
             stat_array = [4,3,3], skill_array = [1,3,2,1,1], sex_array = [2,2,1,0], start_sluttiness = 3, start_obedience = 0, start_happiness = 102, start_love = 3, \
-            title = "Alexia", possessive_title = "Your old classmate",mc_title = mc.name, relationship = "Girlfriend", SO_name = get_random_male_name(), kids = 0)
+            title = "Alexia", possessive_title = "Your old classmate",mc_title = mc.name, relationship = "Girlfriend", SO_name = get_random_male_name(), kids = 0, base_outfit = alexia_base)
         alexia.generate_home()
 
         alexia_intro_phase_zero_action = Action("Alexia Set Schedule", alexia_intro_phase_zero_requirement, "alexia_phase_zero_label", requirement_args = renpy.random.randint(14, 21))
@@ -793,10 +819,12 @@ init 1 python:
         mom_wardrobe = wardrobe_from_xml("Mom_Wardrobe")
 
         global mom
+        mom_base = Outfit("Jennifer's accessories")
+        mom_base.add_accessory(diamond_ring.get_copy())
         mom = create_random_person(name = "Jennifer", last_name = mc.last_name, age = 42, body_type = "standard_body", face_style = "Face_1", tits = "DD", height = 0.94, hair_colour = "black", hair_style = long_hair, skin="white", \
             eyes = "brown", personality = mom_personality, name_color = "#8fff66", dial_color = "#8fff66", starting_wardrobe = mom_wardrobe, start_home = mom_bedroom, \
             stat_array = [3,2,4], skill_array = [5,2,0,0,2], sex_array = [2,1,3,0], start_sluttiness = 7, start_obedience = 12, start_happiness = 108, start_love = 25, \
-            title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2)
+            title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2, base_outfit = mom_base)
 
         mom.special_role.append(mother_role)
         mom.schedule[3] = kitchen

@@ -91,7 +91,7 @@ label outro_tit_fuck(the_girl, the_location, the_object, the_round):
     the_girl.char "Ah... Wow..."
     return
 
-label transition_default_tit_fuck(the_girl, the_clothing, the_location, the_object, the_round):
+label transition_default_tit_fuck(the_girl, the_location, the_object, the_round):
     "You grab a hold of sizeable tits and give them a gentle squeeze, bringing a little moan from her lips."
     mc.name "I want to feel my cock between these lovely tits."
     "She smiles and nods, dropping to her knees in front of you. She gathers her tits up in her hands and presses them to the side of your shaft."
