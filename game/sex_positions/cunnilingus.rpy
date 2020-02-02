@@ -1,7 +1,7 @@
 init:
     python:
         cunnilingus = Position(name = "Cunnilingus", slut_requirement = 40, slut_cap = 60, requires_hard = False, requires_large_tits = False,
-            position_tag = "sitting", requires_location = "Sit", requires_clothing = "Vagina", skill_tag = "Oral",
+            position_tag = "missionary", requires_location = "Sit", requires_clothing = "Vagina", skill_tag = "Oral",
             girl_arousal = 15, girl_energy = 3,
             guy_arousal = 3, guy_energy = 15,
             connections = [],

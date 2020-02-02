@@ -12,7 +12,8 @@ init:
             strip_description = "strip_standing_finger", strip_ask_description = "strip_ask_standing_finger",
             orgasm_description = "orgasm_standing_finger",
             verb = "finger",
-            opinion_tags = ["being fingered"])
+            opinion_tags = ["being fingered"],
+            default_animation = blowjob_bob)
         #list_of_positions.append(standing_finger) #Only reachable by massaging her first.
 
 init 1:

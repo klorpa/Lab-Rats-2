@@ -331,9 +331,13 @@ label got_boobjob(the_person):
     # Event called a few days after someone has been asked to get a boob job. Results in larger brests. Duh.
     if rank_tits(the_person.tits) <= 2: #Ie. B cup or smaller.
         $ the_person.tits = "D" #Small tits all get upgraded to "large" D cup tits as a minimum, so they can be titfucked after.
+        if the_person.personal_region_modifiers.get("breasts", 1) < 0.6:
+            $ the_person.personal_region_modifiers["breasts"] = 0.3 #This is "normal" for C cups, so a little firmer than natural breasts but not by much.
     else: #Otherwise they get bigger by two steps.
         $ the_person.tits = get_larger_tits(the_person.tits) #Upgrade them twice, because we want boob jobs to be immediately noticeable.
         $ the_person.tits = get_larger_tits(the_person.tits)
+        #Note that we DON'T change their breast region weight, to simulate natural vs. fake tits.
+
     $ the_person.event_triggers_dict["getting boobjob"] = False #Reset the flag so you can ask her to get _another_ boobjob.
     return
 

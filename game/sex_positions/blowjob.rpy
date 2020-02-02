@@ -12,7 +12,8 @@
             strip_description = "strip_blowjob", strip_ask_description = "strip_ask_blowjob",
             orgasm_description = "orgasm_blowjob",
             verb = "throat",
-            opinion_tags = ["giving blowjobs"], record_class = "Blowjobs")
+            opinion_tags = ["giving blowjobs"], record_class = "Blowjobs",
+            default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob})
 
         list_of_positions.append(blowjob)
 
@@ -160,10 +161,12 @@ label scene_blowjob_2(the_girl, the_location, the_object, the_round):
             else:
                 the_girl.char "Just relax and enjoy, I'll take care of you as best I can."
                 if the_girl.sex_skills["Oral"] < 2:
-                    "[the_girl.title] keeps on licking your cock. You enjoy the feeling for awhile, but you're glad when she finally opens her mouth and starts to blow you again."
+                    "[the_girl.title] keeps on licking your cock. You enjoy the feeling for a while, but you're glad when she finally opens her mouth and starts to blow you again."
                 else:
                     "[the_girl.title] keeps on licking your cock. Her tongue hits all the right places and sends shivers up your spine."
                     "You're almost disapointed when she opens her mouth wide and starts to blow you again."
+            $ blowjob.current_modifier = "blowjob"
+            $ blowjob.redraw_scene(the_girl)
 
 
 

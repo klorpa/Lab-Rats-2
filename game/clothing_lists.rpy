@@ -561,6 +561,15 @@ init -1:
         face_cum = Facial_Accessory("Face Cum", 1, False, False, "Face_Covered", False, False, 10, whiteness_adjustment = 0.2)
 
 
+
+        ##Region Weight "Clothing" items##
+        #These clothing items are used to map animations to specific parts of the body.
+        breast_region = Clothing("Breast region", 1, False, False, "Breast_Region_Weight", True, False, 0)
+
+        butt_region = Clothing("Butt region", 1, False, False, "Butt_Region_Weight", False, False, 0)
+
+
+
         ##Creating outfits from XML##
         def proper_name_to_clothing_copy(proper_name):
             for potential_match in panties_list + bra_list + pants_list + skirts_list + dress_list + shirts_list + socks_list + shoes_list + earings_list + bracelet_list + rings_list + neckwear_list:

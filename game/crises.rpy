@@ -2613,7 +2613,7 @@ label daughter_work_crisis_label():
 
                     "Tell her you aren't hiring.":
                         if the_person.love < 10:
-                            mc.name "If I want to fuck you I wouldn't need to hire your daughter to do it. Give it up, you look desparate"
+                            mc.name "If I want to fuck you I wouldn't need to hire your daughter to do it. Give it up, you look desperate"
                             $ the_person.change_obedience(3)
                             "She steps back and looks away."
                             the_person.char "Uh, right. Sorry for taking up your time."
@@ -2629,7 +2629,7 @@ label daughter_work_crisis_label():
                 the_person.char "There's nothing I could do? Nothing at all?"
                 "She moves to run a hand down your shirt, but you shove the resume back into her hand."
                 if the_person.love < 10:
-                    mc.name "If I want to fuck you I wouldn't need to hire your daughter to do it. Give it up, you look desparate"
+                    mc.name "If I want to fuck you I wouldn't need to hire your daughter to do it. Give it up, you look desperate"
                     $ the_person.change_obedience(3)
                     "She steps back and looks away."
                     the_person.char "Uh, right. Sorry for taking up your time."
@@ -3922,7 +3922,6 @@ label mom_lingerie_surprise_label():
     "You are woken up in the middle of the night by the sound of your bedroom door closing."
     "You sit up and turn on the lamp beside your bed."
     $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
-    #$ the_person.outfit = lingerie_wardrobe.pick_random_outfit() changed v0.24.1
     $ the_person.draw_person(position = "stand4")
     the_person.char "I'm sorry to wake you up [the_person.mc_title], but I wanted to ask you something."
     "[the_person.possessive_title] is standing by the door, wearing some very revealing lingerie. She walks over to your bed and sits down beside you."
@@ -3998,7 +3997,6 @@ label mom_selfie_label():
         if ran_num == 0:
             if mc.business.is_weekend():
                 $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
-                # $ the_person.outfit = lingerie_wardrobe.pick_random_outfit() chyanged v0.24.1
                 $ the_person.draw_person(position = "missionary", emotion = "happy")
                 "Her first message is a selfie of herself lying down on your bed in lingerie."
                 the_person.char "I can't wait until you come home and make love to me. I wish I could spend every minute of every day worshiping your cock like a good mother should."
@@ -4019,7 +4017,10 @@ label mom_selfie_label():
 
         elif ran_num == 2:
             #Blowjob pose, she tells you to face fuck her, as is her duty
-            pass
+            $ the_person.draw_person(position = blowjob, emotion = "happy", special_modifier = "blowjob")
+            "You get a selfie from [the_person.possessive_title]. She's on her knees, mouth open wide."
+            the_person.char "My mouth is yours to use however you want [the_person.mc_title]."
+            the_person.char "It's my duty to take care of you, so grab and use it whenever you want."
 
     elif lowest_stat >= 80:
         #Both are high. Sends you slutty selfies and talks about how she wants to fuck you. Sends them from work, etc.
@@ -4147,7 +4148,7 @@ label mom_selfie_label():
                 the_person.char "Oh well, I can still wear it when I'm doing chores around the house. Hope your day is going better, love you!"
             else:
                 the_person.char "I've looked everywhere, but I just can't find my favourite bra!"
-                $ the_person.draw_person(emotion = "default")
+                $ the_person.draw_person(emotion = "default", the_animation = blowjob_bob, animation_effect_strength = 0.8)
                 "[the_person.possessive_title] sends you a short video of herself walking around your home. Her bare tits bounce with each step."
                 the_person.char "You don't happen to know where it is, do you? I'm wandering around looking for it and it's getting chilly!"
 
@@ -4178,7 +4179,7 @@ label mom_selfie_label():
                 "[the_person.possessive_title] sends you a selfie she took from her office at work."
         elif ran_num == 4:
             the_person.char "All your hard work has inspired me [the_person.mc_title], I'm going out for a walk to stay in shape!"
-            $ the_person.draw_person(emotion = "happy")
+            $ the_person.draw_person(emotion = "happy", the_animation = blowjob_bob, animation_effect_strength = 0.8)
             "[the_person.possessive_title] sends you a short video she took of herself outside. She's keeping up a brisk walk and seems slightly out of breath."
             if not the_person.outfit.wearing_bra() and the_person.has_large_tits():
                 "She doesn't seem to realise it but it's very obvious [the_person.possessive_title] isn't wearing a bra under her shirt. Her sizeable breasts heave up and down with each step."
@@ -4198,7 +4199,6 @@ label mom_selfie_label():
 
     "It's so sweet of her to think of you."
     $ the_person.apply_outfit(the_person.planned_outfit)
-    # $ the_person.outfit = the_person.planned_outfit.get_copy() #Make sure to reset their outfits so they're dressed properly. changed v0.24.1
     $renpy.scene("Active")
     return
 
@@ -4419,7 +4419,7 @@ label mom_morning_surprise_label():
         $ removed_something = False
         $ the_index = 0
         while not the_person.outfit.vagina_available() and the_index < __builtin__.len(bottom_list):
-            $ the_person.outfit.remove_clothing(bottom_list[index])
+            $ the_person.outfit.remove_clothing(bottom_list[the_index])
             $ removed_something = True
             $ the_index += 1
         "You're woken up by your bed shifting under you and a sudden weight around your waist."
@@ -5126,82 +5126,244 @@ label girl_shower_enter(the_person, suprised):
 
 
     return
-#
-# init 1 python: #TODO: Finish this for v0.25
-#     def cousin_tease_crisis_requirement():
-#         if cousin.effective_sluttiness() >= 30 and cousin.obedience < 120 and cousin.love < 10 and cousin not in mc.location.people:
-#             return True
-#         return False
-#     cousin_tease_crisis = Action("Cousin text tease", cousin_tease_crisis_requirement, "cousin_tease_crisis_label")
-#     crisis_list.append([cousin_tease_crisis, 3])
-#
-# label cousin_tease_crisis_label():
-#     $ the_person = cousin
-#     #TODO: This event. She texts you and asks you to beg for some nudes because she's horny.
-#     "You get a text from [the_person.title]."
-#     if the_person.effective_sluttiness() < 50: #She'll want money
-#         the_person.char "Hey [the_person.mc_title], I need some cash. Do you have a hundred bucks?"
-#         menu:
-#             "Send [the_person.title] some money.\n-$100" if mc.business.funds >= 100:
-#                 $ mc.business.funds += -100
-#                 "You pull up your banking app and send [the_person.possessive_title] some money, then text back."
-#                 mc.name "There you go, sent."
-#                 the_person.char "Just like that? Well, thanks I guess."
-#                 mc.name "It's just money, I'd rather you were happy."
-#                 $ the_person.change_obedience(-4)
-#                 $ the_person.change_happiness(5)
-#                 $ the_person.change_love(1)
-#                 "You wait for a response, but she never sends one."
-#
-#
-#             "Send [the_person.title] some money.\n-$100 (disabled)" if mc.business.funds < 100:
-#                 pass
-#
-#             "Ask why she needs it.":
-#                 mc.name "What do you need it for?"
-#                 the_person.char "Why do you care? Come on, I need some cash quick."
-#                 the_person.char "Come on you horny perv, I'll give you a picture of my tits if you send me the cash."
-#                 $ the_person.draw_person()
-#                 if the_person.outfit.tits_visible():
-#                     "She sends you a picture, but her tits are already out and on display."
-#                     the_person.char "Fuck, delete that. That wasn't one wasn't for you..."
-#                     mc.name "No, I think I've gotten everything I want already."
-#                     $ the_person.change_slut_temp(1)
-#                     $ the_person.change_obedience(1)
-#                     "She types, then deletes several messages, but never sends anything else to you."
-#                 else:
-#                     "She sends you a picture from her phone, obviously trying to tease you a little."
-#                     menu:
-#                         "Send [the_person.title] some money.\n-$100" if mc.business.funds >= 100:
-#                             $ mc.business.funds += -100
-#                             #TODO: Topless shot
-#
-#                         "Send [the_person.title] some money.\n-$100 (disabled)" if mc.business.funds < 100:
-#                             pass
-#
-#                         "":
-#                             $ the_person.event_triggers_dict["last_blackmailed"] = day
-#
-#
-#                         "Tell her no.":
-#                             mc.name "You think I'd want to pay to see your tits? You should be paying me."
-#                             $ the_person.change_love(-1)
-#                             the_person.char "Whatever, I can make the cash somewhere else."
-#                             "You don't recieve any more messages from her."
-#
-#
-#
-#             "Tell her no.":
-#                 mc.name "For you? Of course not."
-#                 $ the_person.change_obedience(1)
-#                 the_person.char "Oh my god, you're the worst. Whatever."
-#
-#     else:
-#         the_person.char "Hey,"
-#
-#     # She may ask for you to beg (lowers her obedience), ask for cash (lowers money, duh). You can blackmail her if you haven't recently and get what you want, or just refuse and she may get honry and send it anyways.
-#     $ renpy.scene("Active")
-#     return
+
+init 1 python:
+    def cousin_tease_crisis_requirement():
+        if cousin.effective_sluttiness() >= 30 and cousin.obedience < 120 and cousin.love < 10 and cousin not in mc.location.people:
+            return True
+        return False
+    cousin_tease_crisis = Action("Cousin text tease", cousin_tease_crisis_requirement, "cousin_tease_crisis_label")
+    crisis_list.append([cousin_tease_crisis, 3])
+
+label cousin_tease_crisis_label():
+    $ the_person = cousin
+    if the_person.effective_sluttiness() < 50: #She'll want money
+        "You get a curt text from [the_person.title]."
+        the_person.char "I need some cash. Do you have a hundred bucks?"
+        menu:
+            "Send [the_person.title] some money.\n-$100" if mc.business.funds >= 100:
+                $ mc.business.funds += -100
+                "You pull up your banking app and send [the_person.possessive_title] some money, then text back."
+                mc.name "There you go, sent."
+                the_person.char "Just like that? Well, thanks I guess."
+                mc.name "It's just money, I'd rather you were happy."
+                $ the_person.change_obedience(-4)
+                $ the_person.change_happiness(5)
+                $ the_person.change_love(1)
+                the_person.char "Sure thing, nerd."
+
+
+            "Send [the_person.title] some money.\n-$100 (disabled)" if mc.business.funds < 100:
+                pass
+
+            "Ask why she needs it.":
+                mc.name "What do you need it for?"
+                the_person.char "Why do you care? Come on, I need some cash quick."
+                the_person.char "Come on you horny perv, I'll give you a picture of my tits if you send me the cash."
+                $ the_person.draw_person()
+                if the_person.outfit.tits_visible():
+                    "She sends you a picture, but her tits are already out and on display."
+                    the_person.char "Fuck, delete that. That wasn't one wasn't for you..."
+                    mc.name "No, I think I've gotten everything I want already."
+                    $ the_person.change_slut_temp(1)
+                    $ the_person.change_obedience(1)
+                    "She types, then deletes several messages, but never sends anything else to you."
+                else:
+                    "She sends you a picture from her phone, obviously trying to tease you a little."
+                    menu:
+                        "Send [the_person.title] some money.\n-$100" if mc.business.funds >= 100:
+                            $ mc.business.funds += -100
+                            "You send her the money from your phone."
+                            mc.name "Alright, there's your cash. Whip those girls out for me."
+                            the_person.char "Ugh, I didn't think you'd actually do it."
+                            $ the_person.outfit.strip_to_tits()
+                            $ the_person.draw_person(position = "back_peek")
+                            "She sends you a picture, with her back turned to the camera."
+                            the_person.char "There."
+                            mc.name "What the fuck is that, I want to see those tits."
+                            the_person.char "I've already got my cash, so whatever nerd."
+                            mc.name "You know I can reverse it within ten minutes, right?"
+                            the_person.char "Fuck. Fine!"
+                            $ the_person.draw_person()
+                            the_person.char "There. Now go jerk off in the bathroom or whatever it is you want to do with that."
+                            $ the_person.change_obedience(-2)
+                            $ the_person.change_slut_temp(3)
+
+                            menu:
+                                "Reverse the payment anyways.":
+                                    $ mc.business.funds += 100
+                                    "You don't respond to her, but you do open up your banking app again."
+                                    "You flag the recent transfer as \"accidental\" and in a few minutes the money is back in your account."
+                                    "It doesn't take long before you get a string of angry texts from [the_person.possessive_title]."
+                                    $ the_person.change_love(-5)
+                                    $ the_person.change_obedience(-3)
+                                    the_person.char "What the FUCK!"
+                                    the_person.char "Give me my money! We had a deal!"
+                                    mc.name "Sorry, but I've already got my pics. Later nerd."
+                                    "You have to block her for a few minutes as more angry texts stream in."
+
+                                "Let her keep the money.":
+                                    "You think about reversing the charges anyways, but decide it's not the best idea if you want to keep this sort of relationship going."
+
+
+                        "Send [the_person.title] some money.\n-$100 (disabled)" if mc.business.funds < 100:
+                            pass
+
+                        "Blackmail her for some nudes." if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 >= day:
+                            $ the_person.event_triggers_dict["last_blackmailed"] = day
+                            if the_person.event_triggers_dict.get("blackmail_level",1) == 1:
+                                mc.name "How about this, you send them over and I don't say anything to your mom about you stealing from my sister."
+
+                            else: #Level 2
+                                mc.name "How about this, you send them over and I don't say anything to your mom about your after hours job."
+
+                            the_person.char "Oh my god, you little rat. You wouldn't."
+                            mc.name "You know I would. Come on, whip those girls out and take some shots for me."
+                            $ the_person.outfit.strip_to_tits()
+                            $ the_person.draw_person()
+                            "There's a pause, then [the_person.title] sends you some shots of herself topless."
+                            the_person.char "There. Satisfied?"
+                            if the_person.event_triggers_dict.get("blackmail_level",1) == 2:
+                                menu:
+                                    "Not yet.":
+                                        mc.name "Not yet, I want to see those tits shaking. Send me a video."
+                                        mc.name "Just imagine I slid a twenty down your g-string and you're giving me a private dance. You're good at those, right?"
+                                        "There's another pause, then [the_person.title] sends you a video."
+                                        $ the_person.draw_person(position = "kneeling1", emotion = "angry", the_animation = blowjob_bob, animation_effect_strength = 0.8)
+                                        "She's kneeling on her bed. She sighs dramatically, then starts to bounce her body, jiggling her tits up and down."
+                                        "You watch it through, but feel like she could put some more effort into it."
+                                        mc.name "Come on, that was a little pathetic. Smile for me and really give it your all this time."
+                                        the_person.char "You want another video? You're being ridiculous."
+                                        mc.name "You know the deal. Get to work."
+                                        "There's yet another pause, then another video."
+                                        $ the_person.draw_person(position = "kneeling1", emotion = "happy", the_animation = blowjob_bob, animation_effect_strength = 1.0)
+                                        if the_person.has_large_tits():
+                                            "This time [the_person.title] has a nice, fake smile for you. She bounces herself a little more vigerously and really gets her big tits moving."
+                                        else:
+                                            "This time [the_person.title] has a nice, fake smile for you."
+                                            "She bounces herself a little more vigerously, but there's not much chest for her to shake to shake."
+                                        the_person.char "Are you satisfied now, you little perv?"
+                                        mc.name "For now. See you around."
+
+                                    "For now.":
+                                        mc.name "For now, but we'll see how I'm feeling next time I see you."
+                                        the_person.char "Ugh. Please don't remind me."
+
+                            $ the_person.change_obedience(3)
+                            $ the_person.change_slut_temp(2)
+
+                        "Blackmail her for some nudes.\nBlackmailed too recently. (disabled)" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 >= day:
+                            pass
+
+
+                        "Tell her no.":
+                            mc.name "You think I'd want to pay to see your tits? You should be paying me."
+                            $ the_person.change_love(-1)
+                            the_person.char "Whatever, I can make the cash somewhere else."
+                            "You don't recieve any more messages from her."
+
+
+
+            "Tell her no.":
+                mc.name "For you? Of course not."
+                $ the_person.change_obedience(1)
+                the_person.char "Oh my god, you're the worst. Whatever."
+
+    else:
+        "Out of the blue, [the_person.possessive_title] sends you a text."
+        the_person.char "Are you at work right now?"
+        if mc.is_at_work():
+            mc.name "Yeah, why do you care?"
+        else:
+            mc.name "No. Why do you care?"
+
+        "She sends you a picture."
+        $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.effective_sluttiness()/2, the_person.effective_sluttiness()*2, True))
+        $ the_person.draw_person(position = "kneeling1")
+        "She's in her bedroom, kneeling on her bed in nothing but some lingerie."
+        the_person.char "I got a new outfit. Do you like it?"
+        menu:
+            "I love it.":
+                mc.name "Absolutely. Your tits look amazing in it."
+                $ the_person.change_love(1)
+                $ the_person.change_obedience(-2)
+                the_person.char "You're such a pervert looking at me like that."
+
+            "No.":
+                mc.name "On you, not really."
+                $ the_person.change_love(-1)
+                $ the_person.change_obedience(1)
+                the_person.char "You lying little shit. I know you love seeing me like this. You're such a pervert."
+        the_person.char "I bet you're about to blow your load just looking at me, right?"
+        if the_person.has_large_tits():
+            the_person.char "Do you want me to take this off and show you my big, soft tits?"
+        else:
+            the_person.char "Do you want me to take this off and play with my tits for you?"
+        menu:
+            "Yes.":
+                mc.name "Of course I do. Send me some pics."
+                $ the_person.change_obedience(-1)
+                the_person.char "I knew you would. I want you to beg me for them."
+                mc.name "What?"
+                the_person.char "I want you to beg to see my tits. Come on, you want them, right?"
+                menu:
+                    "Beg to see her tits.":
+                        "You think about it for a moment, then give in."
+                        mc.name "Fine, I'm begging you to show me your tits."
+                        the_person.char "A little more, please."
+                        if the_person.has_large_tits():
+                            mc.name "All I want in life is to get a look at those huge tits. I need it so badly."
+                        else:
+                            mc.name "All I want in life is to get a look at your tits. I need it so badly."
+                        the_person.char "Close..."
+                        mc.name "I'm so turned on, just thinking about your tits. Please [the_person.title], I'm begging you!"
+                        $ the_person.change_obedience(-2)
+                        $ the_person.change_happiness(5)
+                        "You wait eagerly for her response."
+                        the_person.char "Oh my god, I can't believe you're this easy to screw with."
+                        mc.name "Whatever, just send me some pics."
+                        the_person.char "You really thought I was going to send those? Ha!"
+                        the_person.char "Talk to you later, nerd."
+
+                    "Refuse.":
+                        mc.name "Why would I beg just to see those udders? If I wanted to see some attention starved bimbo's tits I can go online."
+                        $ the_person.change_slut_temp(1)
+                        the_person.char "Whatever nerd. You probably already blew your load in your pants."
+                        "You ignore her and she doesn't message you again."
+
+            "No.":
+                mc.name "Not right now. I've got other stuff to do."
+                the_person.char "Really? You've got to be kidding me."
+                the_person.char "You don't want to see me spread over this bed, naked and waiting for you?"
+                the_person.char "My poor little pussy just dripping wet, waiting for a big hard cock?"
+                the_person.char "Just beg for it and it's yours. My tight little cunt is all yours."
+                menu:
+                    "Beg to see her naked.":
+                        "You think about it for a moment, then give in."
+                        mc.name "Fine, I'm begging you [the_person.title], let me see you naked."
+                        the_person.char "I'm not sure I'm convinced. A little more please."
+                        mc.name "All I want in life right now is to see you stripped out."
+                        the_person.char "Close..."
+                        mc.name "I'm so turned on just thinking about you. Please, I'm begging you!"
+                        $ the_person.change_obedience(-4)
+                        $ the_person.change_happiness(8)
+                        "You wait eagerly for her response."
+                        the_person.char "Oh my god, I'm taking a picture of this chat. I can't believe how desperate you get."
+                        mc.name "What? I don't care, just send me some pics."
+                        the_person.char "You really thought I was going to send anything? Hahahaha!"
+                        the_person.char "Talk to you later, nerd."
+
+
+                    "Refuse.":
+                        mc.name "Jesus, you're looking a little desperate there [the_person.title]. I can find attention starved bimbos all over the internet if I wanted one."
+                        $ the_person.change_slut_temp(2)
+                        the_person.char "You pathetic little nerd, I bet you've just already blown your load. You should be paying me for this."
+                        "You ignore her and she doesn't message you again."
+
+
+    $ the_person.apply_outfit() #Return to her planned outfit.
+    $ renpy.scene("Active")
+    return
 
 init 1 python:
     def so_relationship_improve_requirement():
@@ -5319,4 +5481,160 @@ label so_relationship_worsen_label():
 
     $ the_person.relationship = "Single"
     $ the_person.SO_name = None
+    return
+
+init 1 python:
+    def affair_dick_pic_requirement():
+        if time_of_day == 3 or time_of_day == 4:
+            for place in list_of_places:
+                for a_person in place.people:
+                    if affair_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                        return True
+        return False
+
+    affair_dick_pic_crisis = Action("Affair dic pic", affair_dick_pic_requirement, "affair_dick_pick_label")
+    crisis_list.append([affair_dick_pic_crisis, 5])
+
+
+label affair_dick_pick_label():
+    $ possible_people = []
+    python:
+        for place in list_of_places:
+            for a_person in place.people:
+                if affair_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                    possible_people.append(a_person)
+    $ the_person = get_random_from_list(possible_people)
+    if the_person is None:
+        return
+
+    "You get a text from [the_person.title]."
+    the_person.char "I'm so horny right now. I'm touching myself and thinking about you, [the_person.mc_title]."
+    "She sends you a picture, which you immediately open up."
+    $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
+    $ the_person.draw_person(position = "missionary")
+    "[the_person.possessive_title] is lying face up in her bed, one hand cradling a breast while the other fingers her wet pussy."
+    menu:
+        "Send her a dick pic back.":
+            if mc.location.get_person_count() > 0:
+                "You find a quiet spot and whip out your dick for a quick glamour shot."
+            else:
+                "You whip out your dick for a quick glamour shot."
+            "[the_person.title]'s picture was enough to get you ready, but you give yourself a few strokes to make sure you're at full size."
+            "You take a shot of your rock hard cock and send it off to [the_person.title] in return."
+            "After a short wait you get a response."
+            the_person.char "That's what I want! I wish I could feel that hard thing down my throat right now."
+            the_person.char "God, I'm such a dirty fucking slut for your cock!"
+            $ the_person.change_slut_temp(2)
+            $ the_person.change_obedience(1)
+            mc.name "Good, then be a good slut and cum your brains out for me."
+            "After another short pause she messages you again."
+            the_person.char "I just came so hard. You're so bad for me [the_person.mc_title]. Hope to see you soon."
+
+
+
+        "Tell her you're busy.":
+            "As much as you enjoy the picture, you've got important work to do. You text her back."
+            mc.name "I've got work to get done [the_person.title]. Stop bothing me just because you're a bitch in heat."
+            if the_person.get_opinion_score("being_submissive") > 0:
+                $ the_person.change_slut_temp(2)
+                $ the_person.change_obedience(2)
+                "There's a long pause, then she texts back."
+                the_person.char "That is what I am. Your horny bitch, desperate for your cock!"
+                the_person.char "Fuck, I just came so hard!"
+
+            else:
+                $ the_person.change_slut_temp(1)
+                $ the_person.change_obedience(2)
+                $ the_person.change_love(-1)
+                "There's a long pause, then she texts you back."
+                the_person.char "Just don't make me wait too long, I need to feel your cock again!"
+    $ the_person.apply_outfit(the_person.planned_outfit)
+    $ renpy.scene("Active")
+    return
+
+init 1 python:
+    def girlfriend_nudes_requirement():
+        if time_of_day == 3 or time_of_day == 4:
+            for place in list_of_places:
+                for a_person in place.people:
+                    if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                        return True
+        return False
+
+    girlfriend_nudes_crisis = Action("Girlfriend nudes", girlfriend_nudes_requirement, "girlfriend_nudes_label")
+    crisis_list.append([girlfriend_nudes_crisis, 5])
+
+label girlfriend_nudes_label():
+    $ possible_people = []
+    python:
+        for place in list_of_places:
+            for a_person in place.people:
+                if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                    possible_people.append(a_person)
+    $ the_person = get_random_from_list(possible_people)
+    if the_person is None:
+        return
+
+    if the_person.effective_sluttiness() < 20:
+        "You get a text from [the_person.possessive_title]."
+        the_person.char "Hey [the_person.mc_title]. I was just thinking about you and wanted to say hi."
+        the_person.char "Hope we can spend some time together soon."
+        mc.name "Me too, we'll talk when I have some time."
+
+    elif the_person.effective_sluttiness() < 40:
+        "You get a text from [the_person.possessive_title], followed shortly after by a video."
+        the_person.char "Hey [the_person.mc_title]. I was playing around a little and hope this brightens your day."
+        $ the_person.draw_person(position = "doggy", the_animation = missionary_bob)
+        "You open up the video and see [the_person.title] on her bed, ass towards the camera. She's working her hips and shaking her ass for you."
+        if the_person.age >= 35:
+            the_person.char "You kids call this twerking, right? I think it's pretty hot."
+            the_person.char "I could use more practice. Come by some time and maybe you can give me some advice."
+        else:
+            the_person.char "I wish I could twerk this ass for you in person. Swing by some time, okay?"
+
+    elif the_person.effecitve_sluttiness() < 60:
+        $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
+        "You get a text from [the_person.possessive_title], followed shortly by a video."
+        the_person.char "Here's a little gift for you, hope you like it!"
+        "You open the video."
+        $ the_person.draw_person(position = "stand5", the_animation = blowjob_bob, animation_effect_strength = 0.8)
+        "It's [the_person.title] in her room in front of a mirror. She smiles and waves at you, then bounces her tits up and down."
+        $ tit_strip_list = the_person.outfit.get_tit_strip_list(visible_enough = True)
+        if tit_strip_list: #She has something to strip to show off her tits more
+            "She dances for a moment, then starts to strip down even more."
+            python:
+                for the_item in tit_strip_list:
+                    the_person.draw_animated_removal(the_item, position = "stand5", the_animation = blowjob_bob, animation_effect_strength = 0.8)
+                    if the_person.outfit.tits_visible():
+                        renpy.say("", "She pulls her " + the_item.name + " off and lets her tits fall free.")
+                        renpy.say("", "She at the camera and shakes them for you.")
+                    else:
+                        renpy.say("","")
+            if the_person.has_large_breasts():
+                "Tits out, she dances a little more for you, then blows a kiss and waves goodbye. Her breasts dangle directly in front of the camera as she turns it off."
+            else:
+                "Tits out, she dances a little more for you, then blows a kiss and waves goodbye."
+
+        else:
+            "She dances for a moment, then blows you a kiss and waves goodbye."
+        $ the_person.apply_outfit(the_person.planned_outfit)
+    else:
+        $ the_person.apply_outfit(Outfit("Nude"))
+        "You get a text from [the_person.possessive_title], followed shortly by a video."
+        the_person.char "Thinking of you, wish you were here!"
+        "You open up the video."
+        $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.5)
+        "[the_person.title] is lying naked in bed, one hand already between her legs."
+        "She smiles at the camera and starts to finger herself, slowly at first but quickly picking up speed."
+        "After a moment she reaches out of frame for a bringing a shiny chrome vibrator."
+        "She maintains eye contact with the camera as she licks it, then sucks on it a little bit, before sliding it between her legs."
+        $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.75)
+        "[the_person.possessive_title] arches her back as the vibrator touches her clit."
+        "Before long her thighs are quivering. You watch as [the_person.title] drives herself to orgasm with her vibrator."
+        "Her legs clamp down on her own hand as she cums. After a moment she relaxes, leaving the vibrator running on the bed."
+        "She looks into the camera again and sighs happily, then reaches forward and ends the video."
+        $ the_person.apply_outfit(the_person.planned_outfit)
+    #TODO: A blojob/deepthroat training video, or an anal stretching video she sends you to show she's "getting ready."
+
+    $ renpy.scene("Active")
     return

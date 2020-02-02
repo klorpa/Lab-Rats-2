@@ -491,9 +491,9 @@ screen choice(items):
 define config.narrator_menu = True
 
 
-# style choice_vbox is vbox
-# style choice_button is button
-# style choice_button_text is button_text
+style choice_vbox is vbox
+style choice_button is button
+style choice_button_text is button_text
 
 style choice_vbox:
     xalign 0.5
@@ -1084,6 +1084,12 @@ screen preferences():
                     textbutton _("Unseen Text") action Preference("skip", "toggle")
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
+
+                vbox:
+                    style_prefix "radio"
+                    label "Animation"
+                    textbutton "Enable" action SetField(persistent, "vren_animation", True)
+                    textbutton "Disable" action SetField(persistent, "vren_animation", False)
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.

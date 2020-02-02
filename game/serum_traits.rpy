@@ -121,11 +121,17 @@ init -1:
         ## breast_enhancement_functions ##
         def breast_enhancement_on_turn(the_person, add_to_log):
             if renpy.random.randint(0,100) < 25:
-                the_person.tits = get_larger_tits(the_person.tits)
+                new_tits = get_larger_tits(the_person.tits)
+                if new_tits != the_person.tits: #Double check we don't already have them to avoid increasing breast weight infinitely
+                    the_person.tits = new_tits
+                    the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts recieve a boost in region weight because they're natural.
 
         def breast_reduction_on_turn(the_person, add_to_log):
             if renpy.random.randint(0,100) < 25:
-                the_person.tits = get_smaller_tits(the_person.tits)
+                new_tits = get_larger_tits(the_person.tits)
+                if new_tits != the_person.tits:
+                    the_person.tits = new_tits
+                    the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts recieve a boost in region weight because they're natural.
 
         ## focus_enhancement_functions ##
         def focus_enhancement_on_apply(the_person, add_to_log):

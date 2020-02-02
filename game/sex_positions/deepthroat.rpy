@@ -12,13 +12,15 @@
             strip_description = "strip_deepthroat", strip_ask_description = "strip_ask_deepthroat",
             orgasm_description = "orgasm_deepthroat",
             verb = "throat fuck",
-            opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs")
+            opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs",
+            default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob})
 
         list_of_positions.append(deepthroat)
 
 init 1:
     python:
         deepthroat.link_positions(blowjob,"transition_deepthroat_blowjob")
+        deepthroat.link_positions(skull_fuck, "transition_deepthroat_skull_fuck")
 
 label intro_deepthroat(the_girl, the_location, the_object, the_round):
     "You unzip your pants and pull your underwear down, letting your hard cock spring free."
@@ -418,6 +420,22 @@ label transition_deepthroat_blowjob(the_girl, the_location, the_object, the_roun
     "[the_girl.possessive_title] slides your cock out of her mouth and strokes it with one hand while she talks to you."
     the_girl.char "Mmm, glad you liked it. I think I'm going to have a sore throat in the morning after all that."
     "She smiles and kisses the tip of your dick, then slides it back into her mouth and starts to suck on it some more, paying more attention to the shaft now."
+    return
+
+label transition_deepthroat_skull_fuck(the_girl, the_location, the_object, the_round):
+    "You place two strong hands on either side of [the_girl.title]'s head."
+    mc.name "I want to take control for a bit. Ready?"
+    $ deepthroat.current_modifier = None
+    $ deepthroat.redraw_scene(the_girl)
+    "She pops off your cock and looks up at you."
+    if the_girl.obedience >= 130 or the_girl.get_opinion_score("being submissive") > 0:
+        the_girl.char "My body is yours [the_girl.mc_title], take me however you want me!"
+    else:
+        the_girl.char "I think so, let's see what you can do, big boy."
+    "She opens her mouth wide for you. You rest the tip of your cock on her lower lip, then ram it forward."
+    "Her eyes go wide you immediately bottom out, rubbing against the back of her throat and making her gag."
+    mc.name "I believe in you [the_girl.title]. You can take it."
+    "You have no intention of stopping either way as you skull fuck [the_girl.possessive_title]'s tight throat."
     return
 
 label transition_default_deepthroat(the_girl, the_location, the_object, the_round):

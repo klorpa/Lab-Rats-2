@@ -67,7 +67,7 @@ label downtown_time_description():
 label discover_stripclub_label():
     "After some time you find yourself standing in front of a bright neon sign sitting above an otherwise nondescript door."
     $ club_name = strip_club.formalName
-    "{color=#2929e7}GIRLS GIRLS GIRLS{/color}\n{color=#e72929}[club_name]{/color}"
+    "{color=#29e729}GIRLS GIRLS GIRLS{/color}\n{color=#e72929}[club_name]{/color}"
     $ strip_club.visible = True
     menu:
         "Go inside.":

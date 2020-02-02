@@ -11,7 +11,8 @@
             transition_default = "transition_default_against_wall",
             strip_description = "strip_against_wall", strip_ask_description = "strip_ask_against_wall",
             orgasm_description = "orgasm_against_wall",
-            opinion_tags = ["sex standing up"], record_class = "Vaginal Sex")
+            opinion_tags = ["sex standing up"], record_class = "Vaginal Sex",
+            default_animation = blowjob_bob)
 
 
         list_of_positions.append(against_wall)

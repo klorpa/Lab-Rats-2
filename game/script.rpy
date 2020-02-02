@@ -3,6 +3,9 @@
 #Each position has a "position_tag". When you start having sex with someone the draw_person code will check it's dictionaryto see if it has a position_tag entry. If yes, it uses that set.
 #Otherwise, it uses the default standing images. Right now, this should have changed absolutely nothing about the way the game works.
 
+init -2:
+    default persistent.vren_animation = True
+
 init -2 python:
 
     import os
@@ -13,7 +16,7 @@ init -2 python:
     import time
     import zipfile
     from collections import defaultdict
-#    import shader
+    import shader
 
     config.predict_screen_statements = True
     config.predict_statements = 0
@@ -48,6 +51,10 @@ init -2 python:
     config.images_directory = None
 
     preferences.gl_tearing = True ## Prevents juttery animation with text while using advanced shaders to display images
+
+    _preferences.show_empty_window = False #Prevents Ren'py from incorrectly showing the text window in complex menu sitations (which was a new bug/behaviour in Ren'py v7.2)
+
+
 
 
 
@@ -330,6 +337,17 @@ init -2 python:
             return "husband"
         else:
             return "ERROR - relationship incorrectly defined"
+
+    def can_use_animation(): #Checks key properties to determine if we can or cannot use animation (mainly rendering type and config option
+        if renpy.display.draw.info["renderer"] == "sw": #Software rendering does not support the screen capture technique we use, so we can only use static images for it. (also it runs painfully slow, so it needs everything it can get).
+            return False
+
+        if not persistent.vren_animation:
+            return False
+
+        return True
+
+
 
     class Business(renpy.store.object):
         # main jobs to start with:
@@ -1586,7 +1604,7 @@ init -2 python:
             self.age = age
             self.body_type = body_type
             self.tits = tits
-            self.height = height #This is the scale factor for height, with the talest girl being 1.0 and the shortest being 0.8
+            self.height = height * 0.7 #This is the scale factor for height, with the talest girl being 1.0 and the shortest being 0.8
             self.body_images = body_images #instance of Clothing class, which uses full body shots.
             self.face_style = face_style
             self.expression_images = expression_images #instance of the Expression class, which stores facial expressions for different skin colours
@@ -1657,6 +1675,10 @@ init -2 python:
             # self.employed_since = 0 #Default this to 0, it will almost always be overwritten but in case it sneaks through this makes sure that nothing breaks.
 
             self.idle_pose = get_random_from_list(["stand2","stand3","stand4","stand5"]) #Get a random idle pose that you will use while people are talking to you.
+            self.idle_animation = idle_wiggle_animation #If we support animation we use this to jiggle their tits and ass just a little to give the screen some movement.
+            #self.idle_animation.innate_animation_strength += 0.05 * rank_tits(self.tits) # Larger tits swing more #TODO: Implement region specific weighting.
+
+            self.personal_region_modifiers = {"breasts":0.1+0.1 * rank_tits(self.tits)} #A dict that stores information about modifiers that should be used for specific regions of animations. Default is 1.
 
             ##Personality Stats##
             #Things like sugestability, that change over the course of the game when the player interacts with the girl
@@ -1761,7 +1783,7 @@ init -2 python:
                 eyes = None
 
             if renpy.random.randint(0,100) < 60: #Have heights that roughly match (but o
-                height = self.height * (renpy.random.randint(95,105)/100.0)
+                height = (self.height/0.7) * (renpy.random.randint(95,105)/100.0)
                 if height > 1.0:
                     height = 1.0
                 elif height < 0.9:
@@ -1828,7 +1850,6 @@ init -2 python:
             if time_of_day == 0: #It's a new day, get a new outfit out to wear!
                 self.planned_outfit = self.wardrobe.decide_on_outfit(self.sluttiness)
                 self.apply_outfit(self.planned_outfit)
-                #self.outfit = self.planned_outfit.get_copy() changed v0.24.1
                 self.planned_uniform = None
 
             destination = self.schedule[time_of_day] #None destination means they have free time
@@ -1944,7 +1965,7 @@ init -2 python:
             elif day%7 == 6 or day%7 == 7: #If the new day is a weekend day
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
 
-        def build_person_displayable(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None): #Encapsulates what is done when drawing a person and produces a single displayable.
+        def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Encapsulates what is done when drawing a person and produces a single displayable.
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
 
@@ -1952,6 +1973,7 @@ init -2 python:
 
             if emotion is None:
                 emotion = self.get_emotion()
+
 
             displayable_list.append(self.body_images.generate_item_displayable(self.body_type,self.tits,position,lighting)) #Add the body displayable
             displayable_list.append(self.expression_images.generate_emotion_displayable(position,emotion, special_modifier = special_modifier, eye_colour = self.eyes[1], lighting = lighting)) #Get the face displayable
@@ -1962,24 +1984,103 @@ init -2 python:
             x_size = __builtin__.int(the_size[0])
             y_size = __builtin__.int(the_size[1])
 
+            #backplate_factor = 1 #We shrink the hair backplate by a little and because it rests behind the body this will cover gaps around the neck.
+            hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplage
+            #x_offset_factor = (x_size - (x_size*backplate_factor))/2 #Calculate the offset needed to keep our image centered on the middle of hte image, otherwise it scales to the top left.
+            #y_offset_factor = (y_size - (y_size*backplate_factor))/2
+            #y_offset_factor = 0
+            #hair_backplate_position = (x_offset_factor,0)
+            displayable_list.insert(0, ((0,0),hair_backplate)) #The hair plate is what we want to actually be displayed first, but we need to know the XY sizes of the body first
+
             displayable_list.extend(self.outfit.generate_draw_list(self,position,emotion,special_modifier, lighting = lighting)) #Get the displayables for everything we wear. Note that extnsions do not return anything because they have nothing to show.
             displayable_list.append(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting)) #Get hair
 
             #NOTE: default return for the_size is floats, even though it is in exact pixels. Use int here otherwise positional modifiers like xanchor and yalign do not work (no displayable is shown at all!)
             composite_list = [(x_size,y_size)] #Now we build a list of our parameters, done like this so they are arbitrarily long
+            if background_fill: #If we have a background add it now.
+                composite_list.append((0,0))
+                composite_list.append(Solid(background_fill))
+
+
             for display in displayable_list:
-                composite_list.append((0,0)) #Center all displaybles on the top left corner, because of how they are rendered they will all line up.
-                composite_list.append(display) #Append the actual displayable
+                if isinstance(display, __builtin__.tuple):
+                    composite_list.extend(display)
+                else:
+                    composite_list.append((0,0)) #Center all displaybles on the top left corner, because of how they are rendered they will all line up.
+                    composite_list.append(display) #Append the actual displayable
+
+            if background_fill and not no_frame: #no_frame allows us to add the frame after for animated displayables, to avoid warping the frame itself.
+                composite_list.append((0,0))
+                composite_list.append(Frame("/gui/Character_Window_Frame.png", 12, 12))
 
             final_image = Composite(*composite_list) # Create a composite image using all of the displayables
-            #final_image = Flatten(final_image)
 
             return final_image
 
+        def build_person_animation(self, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0):
+            if background_fill is None:
+                background_fill = "#0026a5"
+
+            if the_animation is None:
+                the_animation = wiggle_animation #Placeholder in case this gets called without any proper animation argument
+
+            the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
+            the_size = the_displayable.render(10,10,0,0).get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size ofthings inside it.
+            x_size = __builtin__.int(the_size[0])
+            y_size = __builtin__.int(the_size[1])
+
+            the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height)
+            the_surface = renpy.display.draw.screenshot(the_surftree, False)
+            surface_file = io.BytesIO()
+
+            renpy.display.module.save_png(the_surface, surface_file, 0)
+            static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
+            the_image_name = self.name + " | " + str(time.time())
 
 
-        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None): #Draw the person, standing as default if they aren't standing in any other position.
+            composite_components = []
+            region_weight_items_dict = the_animation.get_weight_items()
+            for region_weight_name in region_weight_items_dict: #Goes through each region ie. "breasts", "butt", and others to come, and applies the animation strength, the personal region strength, and animation region strength
+                the_weight_item = region_weight_items_dict[region_weight_name]
+                composite_components.append((0,0))
+                region_weight_modifier = animation_effect_strength * self.personal_region_modifiers.get(region_weight_name, 1) * the_animation.innate_animation_strength * the_animation.region_specific_weights.get(region_weight_name, 1)
+                if region_weight_modifier > 1:
+                    region_weight_modifier = 1
+                #renpy.notify(str(animation_effect_strength) + " | " + str(self.personal_region_modifiers.get(region_weight_name, 1)) + " | " + str(the_animation.innate_animation_strength) + " | " + str(the_animation.region_specific_weights.get(region_weight_name, 1)))
+
+                region_brightness_matrix = im.matrix.brightness(-1 + region_weight_modifier)
+                region_mask = renpy.displayable(the_weight_item.generate_item_image_name(self.body_type, self.tits, position))
+                region_mask = im.MatrixColor(region_mask, region_brightness_matrix)
+                composite_components.append(region_mask)
+
+
+            the_mask_composite = im.Composite((renpy.config.screen_width, renpy.config.screen_height), *composite_components)
+
+
+
+            mask_image = im.Blur(the_mask_composite, 2)
+            mask_image_name = self.name + "_tex | " + str(time.time())
+
+            animation_uniforms = the_animation.uniforms #Copy the default uniforms for the animation
+            animation_uniforms["animation_strength"] = animation_effect_strength
+            raw_animated_displayable = ShaderDisplayable(shader.MODE_2D, static_image, the_image_name, shader.VS_2D, the_animation.shader,{"tex1":mask_image}, animation_uniforms, None, None, mask_name = mask_image_name)
+            cropped_animated_displayable = Crop((0,0,x_size,y_size), raw_animated_displayable)
+            framed_animated_displayable = Composite((x_size,y_size),(0,0),cropped_animated_displayable,(0,0),Frame("/gui/Character_Window_Frame.png", 12, 12))
+
+            return framed_animated_displayable#The shaderdisplayable
+
+
+        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0): #Draw the person, standing as default if they aren't standing in any other position.
             renpy.scene("Active")
+            if position is None:
+                position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
+
+            if the_animation is None:
+                the_animation = self.idle_animation
+
+            if not can_use_animation():
+                the_animation = None
+
             if show_person_info:
                 renpy.show_screen("person_info_ui",self)
 
@@ -1987,81 +2088,100 @@ init -2 python:
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
-            final_image = self.build_person_displayable(position, emotion, special_modifier, show_person_info, lighting)
+            if the_animation:
+                final_image = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
+            else:
+                final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
 
-            # NOTE: FUTURE FEATURE, HIGHLY EXPERIMENTAL
-            # animation_surface = renpy.load_surface(final_image)
-            #
-            # Forgive me, this is a really hack-y part of the game needed to get ShaderDisplayable working properly.
-            # It expects an image, and I was unable to find any way to make it easily accept a surface or any other type of displayable.
-            # So we take the surface and save it as a .png then hand the name of the .png to ShaderDisplayable.
-            # name = "animation/CHARACTER_1_IMAGE.png"
-            # file_path = os.path.abspath(os.path.join(config.basedir, "game"))
-            # file_name = os.path.join(file_path,name)
-            # pygame.image.save(animation_surface, file_name)
-            #
-            # #BUG: Character image does not refresh when draw_person() is called and it already had an image. Likely the displayable is being cached and it does not notice that it should be loading a new image now.
-            # animated_image = ShaderDisplayable(shader.MODE_2D, name, shader.VS_2D,PS_WALK_2D, textures={"tex1":"animation/proof_of_concept_shader.png"}, uniforms={})
-            # renpy.show(self.name,at_list=[character_right, scale_person(self.height)],layer="Active",what=animated_image,tag=self.name) #Show the image, make sure to scale it ot the height of our person.
-            # NOTE: END OF FUTURE FEATURE.
-
-            renpy.show(self.name,at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name)
+            renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
 
 
-        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, lighting = None): #A special version of draw_person, removes the_clothing and animates it floating away. Otherwise draws as normal.
-            #Note: this function includes a call to remove_clothing, it is not needed seperately.
+
+        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
+            #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
             renpy.scene("Active")
-            renpy.show_screen("person_info_ui",self)
-            if position is None:
-                position = self.idle_pose
 
-            bottom_displayable = [] #Displayables under the piece of clothing being removed.
-            top_displayable = []
-
-            if emotion is None:
-                emotion = self.get_emotion()
+            if not can_use_animation():
+                the_animation = None
 
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
-            bottom_displayable.append(self.expression_images.generate_emotion_displayable(position,emotion, special_modifier = special_modifier, eye_colour = self.eyes[1], lighting = lighting)) #Get the face displayable, also always under clothing.
-            bottom_displayable.append(self.body_images.generate_item_displayable(self.body_type,self.tits,position, lighting = lighting))  #Body is always under clothing
-            bottom_displayable.append(self.pubes_style.generate_item_displayable(self.body_type,self.tits, position, lighting = lighting)) #Pubes are also always under clothing and can't be removed.
+            if the_animation:
+                bottom_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength = 1.0)
+            else:
+                bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
 
-            size_render = renpy.render(bottom_displayable[1], 10, 10, 0, 0) #We need a render object to check the actual size of the body displayable so we can build our composite accordingly.
-            the_size = size_render.get_size()
-            x_size = __builtin__.int(the_size[0])
-            y_size = __builtin__.int(the_size[1])
+            self.outfit.remove_clothing(the_clothing)
 
-            bottom_clothing, split_clothing, top_clothing = self.outfit.generate_split_draw_list(the_clothing, self, position, emotion, special_modifier, lighting = lighting) #Gets a split list of all of our clothing items.
-            #We should remember that middle item can be None.
-            for item in bottom_clothing:
-                bottom_displayable.append(item)
 
-            for item in top_clothing:
-                top_displayable.append(item)
 
-            top_displayable.append(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting)) #Hair is always on top
+            if the_animation:
+                top_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
+            else:
+                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
 
-            #Now we build our two composites, one for the bottom image and one for the top.
-            composite_bottom_params = [(x_size,y_size)]
-            for display in bottom_displayable:
-                composite_bottom_params.append((0,0))
-                composite_bottom_params.append(display)
+            renpy.show(self.name+"_new", at_list=[character_right, scale_person(self.height)], layer = "Active", what = top_displayable, tag = self.name+"_new")
+            renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height), clothing_fade], layer = "Active", what = bottom_displayable, tag = self.name+"_old")
 
-            composite_top_params = [(x_size,y_size)]
-            for display in top_displayable:
-                composite_top_params.append((0,0))
-                composite_top_params.append(display)
 
-            final_bottom = Composite(*composite_bottom_params)
-            final_top = Composite(*composite_top_params)
+            return
 
-            renpy.show("Bottom Composite", at_list= [character_right, scale_person(self.height)],layer="Active",what=final_bottom,tag=self.name+"Bottom")
-            if split_clothing: #Only show this if we actually had something returned to us.
-                renpy.show("Removed Item", at_list= [character_right, scale_person(self.height), clothing_fade],layer="Active",what=split_clothing,tag=self.name+"Middle")
-                self.outfit.remove_clothing(the_clothing)
-            renpy.show("Top Composite", at_list= [character_right, scale_person(self.height)],layer="Active",what=final_top,tag=self.name+"Top")
+
+        # def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, lighting = None): #A special version of draw_person, removes the_clothing and animates it floating away. Otherwise draws as normal.
+        #     #Note: this function includes a call to remove_clothing, it is not needed seperately.
+        #     renpy.scene("Active")
+        #     renpy.show_screen("person_info_ui",self)
+        #     if position is None:
+        #         position = self.idle_pose
+        #
+        #     bottom_displayable = [] #Displayables under the piece of clothing being removed.
+        #     top_displayable = []
+        #
+        #     if emotion is None:
+        #         emotion = self.get_emotion()
+        #
+        #     if lighting is None:
+        #         lighting = mc.location.get_lighting_conditions()
+        #
+        #     bottom_displayable.append(self.expression_images.generate_emotion_displayable(position,emotion, special_modifier = special_modifier, eye_colour = self.eyes[1], lighting = lighting)) #Get the face displayable, also always under clothing.
+        #     bottom_displayable.append(self.body_images.generate_item_displayable(self.body_type,self.tits,position, lighting = lighting))  #Body is always under clothing
+        #     bottom_displayable.append(self.pubes_style.generate_item_displayable(self.body_type,self.tits, position, lighting = lighting)) #Pubes are also always under clothing and can't be removed.
+        #
+        #     size_render = renpy.render(bottom_displayable[1], 10, 10, 0, 0) #We need a render object to check the actual size of the body displayable so we can build our composite accordingly.
+        #     the_size = size_render.get_size()
+        #     x_size = __builtin__.int(the_size[0])
+        #     y_size = __builtin__.int(the_size[1])
+        #
+        #     bottom_clothing, split_clothing, top_clothing = self.outfit.generate_split_draw_list(the_clothing, self, position, emotion, special_modifier, lighting = lighting) #Gets a split list of all of our clothing items.
+        #     #We should remember that middle item can be None.
+        #     for item in bottom_clothing:
+        #         bottom_displayable.append(item)
+        #
+        #     for item in top_clothing:
+        #         top_displayable.append(item)
+        #
+        #     top_displayable.append(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting)) #Hair is always on top
+        #
+        #     #Now we build our two composites, one for the bottom image and one for the top.
+        #     composite_bottom_params = [(x_size,y_size)]
+        #     for display in bottom_displayable:
+        #         composite_bottom_params.append((0,0))
+        #         composite_bottom_params.append(display)
+        #
+        #     composite_top_params = [(x_size,y_size)]
+        #     for display in top_displayable:
+        #         composite_top_params.append((0,0))
+        #         composite_top_params.append(display)
+        #
+        #     final_bottom = Composite(*composite_bottom_params)
+        #     final_top = Composite(*composite_top_params)
+        #
+        #     renpy.show("Bottom Composite", at_list= [character_right, scale_person(self.height)],layer="Active",what=final_bottom,tag=self.name+"Bottom")
+        #     if split_clothing: #Only show this if we actually had something returned to us.
+        #         renpy.show("Removed Item", at_list= [character_right, scale_person(self.height), clothing_fade],layer="Active",what=split_clothing,tag=self.name+"Middle")
+        #         self.outfit.remove_clothing(the_clothing)
+        #     renpy.show("Top Composite", at_list= [character_right, scale_person(self.height)],layer="Active",what=final_top,tag=self.name+"Top")
 
 
         def get_emotion(self): # Get the emotion state of a character, used when the persons sprite is drawn and no fixed emotion is required.
@@ -2182,7 +2302,11 @@ init -2 python:
                     self.apply_outfit(uniform)
                     #self.outfit = uniform.get_copy() # Changed v0.24.1
 
-        def apply_outfit(self, the_outfit, ignore_base = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
+        def apply_outfit(self, the_outfit = None, ignore_base = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
+            if the_outfit is None:
+                the_outfit = self.planned_outfit
+                if the_outfit is None:
+                    return #We don't have a planned outfit, so trying to return to it makes no sense.
             if ignore_base:
                 self.outfit = the_outfit.get_copy()
             else:
@@ -3833,6 +3957,19 @@ init -2 python:
         def get_layer(self,body_type,tit_size):
             return self.layer
 
+        def generate_item_image_name(self, body_type, tit_size, position):
+            if not self.body_dependant:
+                body_type = "standard_body"
+            image_set = self.position_sets.get(position)
+            if image_set is None:
+                image_set = self.position_sets.get("stand3")
+
+            if self.draws_breasts:
+                image_name = image_set.get_image_name(body_type, tit_size)
+            else:
+                image_name = image_set.get_image_name(body_type, "AA")
+
+            return image_name
 
         def generate_item_displayable(self, body_type, tit_size, position, lighting = None):
             if not self.is_extension: #We don't draw extension items, because the image is taken care of in the main object.
@@ -3843,8 +3980,8 @@ init -2 python:
                     body_type = "standard_body"
 
                 image_set = self.position_sets.get(position) # The image set we are using should corrispond to the set named "positon".
-                if image_set == None: # If no image set is found with that name in the dict, use the default standing one instead. Standing should always exist.
-                    image_set = self.position_sets.get("stand3") #Position names are always lowercase.
+                if image_set is None:
+                    image_set = self.position_sets.get("stand3")
 
                 if self.draws_breasts:
                     the_image = image_set.get_image(body_type, tit_size)
@@ -3885,6 +4022,11 @@ init -2 python:
                     colour_pattern_matrix = im.matrix.tint(self.colour_pattern[0], self.colour_pattern[1], self.colour_pattern[2]) * im.matrix.tint(*lighting)
                     pattern_alpha_matrix = im.matrix.opacity(self.colour_pattern[3] * self.colour[3]) #The opacity of the pattern is relative to the opacity of the entire piece of clothing.
                     shader_pattern_image = im.MatrixColor(greyscale_image, pattern_alpha_matrix * colour_pattern_matrix)
+
+                    mask_red_alpha_invert = im.MatrixColor(mask_image, [0,0,0,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1]) #Inverts the pattern colour so the shader applies properly.
+                    #shader_image = im.AlphaMask(base,
+                    #im.composite(
+                    # shader_red_invert = im.Alpha
 
                     final_image = AlphaBlend(mask_image, shader_image, shader_pattern_image, alpha=False)
 
@@ -3985,6 +4127,14 @@ init -2 python:
             return Image("character_images/" + self.images[index_string])
             #return Image(self.images[index_string]) #We have made an index string, use it to get the full filepath for the image used in this position.
 
+        def get_image_name(self, face, emotion, special_modifier = None):
+            index_string = face + "_" + emotion
+            if not special_modifier is None:
+                if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
+                    index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
+
+            return "character_images/" + self.images[index_string]
+
     class Clothing_Images(renpy.store.object): # Stores a set of images for a single piece of cloting in a single position. The position is stored when it is put into the clothing object dict.
         def __init__(self,clothing_name,position_name,is_top, body_dependant = True):
 
@@ -4013,6 +4163,43 @@ init -2 python:
             index_string = body_type + "_" + breast_size
             return Image("character_images/" + self.images[index_string])
             #return Image(self.images[index_string])
+
+        def get_image_name(self, body_type, breast_size = "AA" ): #Generates a proper Image object from the file path strings we have stored previously. Prevents object bloat by storing large objects repeatedly for everyone.
+            index_string = body_type + "_" + breast_size
+            return "character_images/" + self.images[index_string]
+            #return Image(self.images[index_string])
+
+    class VrenAnimation(renpy.store.object):
+        def __init__(self, name, shader, tex_1_regions, innate_animation_strength = 1.0, region_specific_weights = None):
+            self.name = name #Plain text name of this animation.
+            self.shader = shader #Reference to the shader being used, ex. shader.PS_WALK_2D
+            self.tex_1_regions = tex_1_regions #A list containing strings referencing all of the regions this animation should affect (ie. ["breasts", "butt"])
+            #self.other_texture_groups = other_texture_groups #A list of lists, each one containing regions that should be combined to form a texture for a region. TODO: Implement
+            self.innate_animation_strength = innate_animation_strength # A foat that should range from 0 to 1, with 0 being no effect and 1 being full effect.
+            if region_specific_weights is None:
+                self.region_specific_weights = {} # A dict that stores the name of a region, ex. "butt" or "breasts", and a weight for that region (on top of the innate strength)
+            else:
+                self.region_specific_weights = region_specific_weights
+
+            self.uniforms = {"innate_strength":self.innate_animation_strength}
+
+        def get_copy(self):
+            return copy.copy(self)
+
+
+        def get_weight_items(self):
+            return_dict = {}
+            for region in self.tex_1_regions:
+                if region == "breasts":
+                    return_dict["breasts"] = breast_region
+
+                elif region == "butt":
+                    return_dict["butt"] = butt_region
+            return return_dict
+
+        def update_innate_strength(self, new_strength):
+            self.innate_animation_strength = new_strength
+            self.uniforms["inntate_strength"] = new_strength
 
 
     class Outfit(renpy.store.object): #A bunch of clothing added together, without slot conflicts.
@@ -4561,6 +4748,45 @@ init -2 python:
         def get_slut_requirement(self): #A getter function for slut_requriement to be used for functional programming stuff.
             return self.slut_requirement
 
+        def get_tit_strip_list(self, visible_enough = True): #Generates a list of clothing that, when removed from this outfit, result in tits being visible. Useful for animated clothing removal.
+            test_outfit = self.get_copy()
+            items_to_strip = []
+            if visible_enough:
+                while not test_outfit.tits_visible():
+                    the_item = self.remove_random_upper(top_layer_first = True)
+                    if not the_item:
+                        break
+                    else:
+                        items_to_strip.append(the_item)
+            else:
+                while not (test_outfit.tits_visible() and test_outfit.tits_available()):
+                    the_item = self.remove_random_upper(top_layer_first = True)
+                    if not the_item:
+                        break
+                    else:
+                        items_to_strip.append(the_item)
+            return items_to_strip
+
+        def strip_to_tits(self, visible_enough = True): #Removes all clothing from this item until breasts are visible.
+            if visible_enough:
+                while not test_outfit.tits_visible():
+                    the_item = self.remove_random_upper(top_layer_first = True)
+                    if not the_item:
+                        break
+            else:
+                while not (test_outfit.tits_visible() and test_outfit.tits_available()):
+                    the_item = self.remove_random_upper(top_layer_first = True)
+                    if not the_item:
+                        break
+            return
+
+        #TODO: Add some pussy equivalent functions, I'll get to them when I need them for a crisis.
+        #TODO: Update existing crises to make use of these centralised functions instead of handeling stripping as a special case each time.
+
+
+
+
+
     def get_visible_list(list):
         temp_list = sorted(list, key=lambda clothing: clothing.layer) #Get a sorted list
         return_list = []
@@ -4884,6 +5110,10 @@ init -2 python:
         the_grass = Object("grass",["Lay","Kneel"], sluttiness_modifier = -5, obedience_modifier = -10)
         return the_grass
 
+    def make_stage():
+        the_stage = Object("stripclub stage",["Lay","Sit"], sluttiness_modifier = 5, obedience_modifier = -5)
+        return the_stage
+
 
 
     class Position(renpy.store.object):
@@ -4893,7 +5123,8 @@ init -2 python:
             intro,scenes,outro,transition_default,
             strip_description, strip_ask_description,
             orgasm_description,
-            verb = "fuck", verbing = None, opinion_tags = None, record_class = None):
+            verb = "fuck", verbing = None, opinion_tags = None, record_class = None,
+            default_animation = None, modifier_animations = None):
 
 
             self.name = name
@@ -4930,6 +5161,16 @@ init -2 python:
             self.record_class = record_class #A key to Person.sex_record[] that is updated once (and only once!) per sexual encounter if this position is picked.
 
             self.current_modifier = None #We will update this if the posisiion has a special modifier that shoudl be applied, like blowjob.
+
+            if default_animation is None:
+                self.default_animation = idle_wiggle_animation
+            else:
+                self.default_animation = default_animation #If not None this is used to animate the character if nothing else is specifically handed over.
+
+            if modifier_animations is None: #If an animation exists for a special modifier it is used instead of the default one.
+                self.modifier_animations = {}
+            else:
+                self.modifier_animations = modifier_animations
 
         def link_positions(self,other,transition_label): #This is a one way link!
             self.connections.append(other)
@@ -4976,8 +5217,26 @@ init -2 python:
             else:
                 return True ##If you don't have one of the requirements listed above just let it happen.
 
+        def calculate_arousal_modified_speed(self, the_person):
+            male_energy_fraction = (1.0*self.guy_energy) / (self.guy_energy+self.girl_energy)  # Animation strength is divided based on who is spending more energy (ie. girls giving blowjobs speed up as they get horny, not you).
+            male_animation_effect = male_energy_fraction * (mc.arousal/mc.max_arousal)  # Being closer to max arousal increases the speed of the animation.
+
+            female_energy_fraction = (1.0*self.girl_energy) / (self.guy_energy+self.girl_energy)
+            female_animation_effect = female_energy_fraction * (the_person.arousal/the_person.max_arousal)
+
+            the_animation_speed = 0.5 + (0.5 * (male_animation_effect + female_animation_effect)) #Scales the animation strength from 50% to 100%, increasing as each party gets more aroused.
+
+            return the_animation_speed
+
         def redraw_scene(self, the_person, emotion = None): #redraws the scene, call this when something is modified.
-            the_person.draw_person(self.position_tag, emotion = emotion, special_modifier = self.current_modifier)
+            the_animation_speed = self.calculate_arousal_modified_speed(the_person)
+
+            if self.current_modifier in self.modifier_animations:
+                position_animation = self.modifier_animations[self.current_modifier]
+            else:
+                position_animation = self.default_animation
+
+            the_person.draw_person(self.position_tag, emotion = emotion, special_modifier = self.current_modifier, the_animation = position_animation, animation_effect_strength = the_animation_speed)
 
         def her_position_willingness_check(self, the_person): #Checks if the given girl would/can pick this position. A mirror of the main character's options.
             possible = True
@@ -5212,13 +5471,19 @@ transform scale_person(scale_factor = 1):
     zoom scale_factor
 
 transform character_right():
-    yalign 1.0
-    yanchor 1.0
+    yalign 0.5
+    yanchor 0.5
     xalign 1.0
     xanchor 1.0
 
+transform character_test_right():
+    yalign 0.5
+    yanchor 0.5
+    xalign 0.9
+    xanchor 1.0
+
 transform clothing_fade():
-    linear 0.5 alpha 0.0
+    linear 1.0 alpha 0.0
 
 transform breathe_animation():
     subpixel True
@@ -6495,7 +6760,7 @@ screen interview_ui(the_candidates,count):
 init -2 python: # Some functions used only within screens for modifying variables
     def show_candidate(the_candidate):
         renpy.scene("Active")
-        the_candidate.draw_person(show_person_info = False)
+        the_candidate.draw_person(show_person_info = False, background_fill = "444444")
 
 
 screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_names = []): #You can now pass extra inventories, as well as names for all of the inventories you are passing. Returns nothing, but is used to view inventories.
@@ -8244,7 +8509,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.24.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.25.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8702,7 +8967,7 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
         if picked_option == "Back":
             $ renpy.jump("game_loop")
         else:
-            $ picked_option.draw_person()
+            $ picked_option.draw_person() #the_animation = sudden_bounce_animation) TODO: Experiment more with this once we are predicting images a little bit.
             $ enabled_talk_events = []
             python:
                 for possible_talk_event in picked_option.on_talk_event_list:
@@ -9832,6 +10097,12 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         cousin_bedroom.add_object(make_floor())
         cousin_bedroom.add_object(make_window())
         cousin_bedroom.add_object(make_bed())
+
+        strip_club.add_object(make_wall())
+        strip_club.add_object(make_floor())
+        strip_club.add_object(make_table())
+        strip_club.add_object(make_chair())
+        strip_club.add_object(make_stage())
 
         for place in list_of_places:
             if place.public:

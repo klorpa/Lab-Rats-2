@@ -11,7 +11,8 @@
             transition_default = "transition_default_doggy",
             strip_description = "strip_doggy", strip_ask_description = "strip_ask_doggy",
             orgasm_description = "orgasm_doggy",
-            opinion_tags = ["doggy style sex","vaginal sex"], record_class = "Vaginal Sex")
+            opinion_tags = ["doggy style sex","vaginal sex"], record_class = "Vaginal Sex",
+            default_animation = blowjob_bob)
 
         list_of_positions.append(doggy)
 
