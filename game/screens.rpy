@@ -1085,11 +1085,12 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
-                vbox:
-                    style_prefix "radio"
-                    label "Animation"
-                    textbutton "Enable" action SetField(persistent, "vren_animation", True)
-                    textbutton "Disable" action SetField(persistent, "vren_animation", False)
+                if not renpy.mobile: #Animations are always disabled on mobile.
+                    vbox:
+                        style_prefix "radio"
+                        label "Animation"
+                        textbutton "Enable" action SetField(persistent, "vren_animation", True)
+                        textbutton "Disable" action SetField(persistent, "vren_animation", False)
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.

@@ -6,23 +6,36 @@
 #from gl cimport *
 
 init -1 python:
-    import pygame_sdl2.image as pygame_save
-    from openGL import GL as gl2
-    import shader.gpu as gpu
-    from renpy.display.render import blit_lock
+    if not renpy.mobile:
+        import pygame_sdl2.image as pygame_save
+        import shader.gpu as gpu
+        from renpy.display.render import blit_lock
 
     import io
 
-    wiggle_animation = VrenAnimation("Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], region_specific_weights = {"butt":0.2})
-    idle_wiggle_animation = VrenAnimation("Idle Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"butt":0.2})
+    if renpy.mobile:
+        wiggle_animation = VrenAnimation("Boob Butt Wiggle", None, ["breasts","butt"], region_specific_weights = {"butt":0.2})
+        idle_wiggle_animation = VrenAnimation("Idle Boob Butt Wiggle", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"butt":0.2})
 
-    #sudden_bounce_animation = VrenAnimation("Sudden Wiggle", shader.PS_START_BOUNCE_2D, ["breasts", "butt"], region_specific_weights = {"butt":0.3})
+        #sudden_bounce_animation = VrenAnimation("Sudden Wiggle", shader.PS_START_BOUNCE_2D, ["breasts", "butt"], region_specific_weights = {"butt":0.3})
 
-    #Blowjob bob moves the top of the screen "closer" to the camera while keeping the bottom (like a girls knees) appearing fixed in one place.
-    blowjob_bob = VrenAnimation("Blowjob Bob", shader.PS_BLOWJOB_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
+        #Blowjob bob moves the top of the screen "closer" to the camera while keeping the bottom (like a girls knees) appearing fixed in one place.
+        blowjob_bob = VrenAnimation("Blowjob Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
 
-    #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
-    missionary_bob = VrenAnimation("Missionary Style Bob", shader.PS_DOGGY_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
+        #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
+        missionary_bob = VrenAnimation("Missionary Style Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
+
+    else:
+        wiggle_animation = VrenAnimation("Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], region_specific_weights = {"butt":0.2})
+        idle_wiggle_animation = VrenAnimation("Idle Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"butt":0.2})
+
+        #sudden_bounce_animation = VrenAnimation("Sudden Wiggle", shader.PS_START_BOUNCE_2D, ["breasts", "butt"], region_specific_weights = {"butt":0.3})
+
+        #Blowjob bob moves the top of the screen "closer" to the camera while keeping the bottom (like a girls knees) appearing fixed in one place.
+        blowjob_bob = VrenAnimation("Blowjob Bob", shader.PS_BLOWJOB_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
+
+        #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
+        missionary_bob = VrenAnimation("Missionary Style Bob", shader.PS_DOGGY_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
 
 
 

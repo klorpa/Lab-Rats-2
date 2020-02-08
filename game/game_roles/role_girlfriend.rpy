@@ -309,7 +309,6 @@ label girlfriend_got_boobjob_label(the_person):
 
 label girlfriend_boob_brag_label(the_person): #TODO: Decide if we need a little alt-dialogue for the affair side of things.
     the_person.char "Hey [the_person.mc_title], what do you think?"
-
     if the_person.get_opinion_score("showing her tits") < 0:
         "She puts her arms behind her, revealing her newly enlarged chest."
         the_person.char "These feel so... excessive. It feels like everyone is staring at them all the time now."
@@ -365,7 +364,7 @@ label girlfriend_ask_trim_pubes_label(the_person):
         "You describe the style you want to her as she listens intently.."
         if pube_choice.ordering_variable > the_person.pubes_style.ordering_variable:
             the_person.char "Okay, I'll have to let it grow out a bit but as soon as I can I'll trim them just the way you want [the_person.mc_title]."
-            $ time_needed = renpy.random.get_random(3,8) #It will take some time for them to grow out.
+            $ time_needed = renpy.random.randint(3,8) #It will take some time for them to grow out.
 
         else:
             the_person.char "Okay, I'll trim them for you as soon as I can [the_person.mc_title]."

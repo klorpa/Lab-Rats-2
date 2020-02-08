@@ -16,13 +16,15 @@ init -2 python:
     import time
     import zipfile
     from collections import defaultdict
-    import shader
+
+    if not renpy.mobile:
+        import shader
 
     config.predict_screen_statements = True
     config.predict_statements = 0
     config.predict_screens = True
 
-    config.image_cache_size = 8
+    config.image_cache_size = 2
     config.layers.insert(1,"Active") ## The "Active" layer is used to display the girls images when you talk to them. The next two lines signal it is to be hidden when you bring up the menu and when you change contexts (like calling a screen)
     config.menu_clear_layers.append("Active")
     config.context_clear_layers.append("Active")
@@ -32,7 +34,7 @@ init -2 python:
 
 
     config.rollback_enabled = True #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
-    config.rollback_length = 128
+    config.rollback_length = 64
 
 
     if persistent.colour_palette is None:
@@ -339,6 +341,9 @@ init -2 python:
             return "ERROR - relationship incorrectly defined"
 
     def can_use_animation(): #Checks key properties to determine if we can or cannot use animation (mainly rendering type and config option
+        if renpy.mobile: #Unfortunately no animation support for mobile devices.
+            return False
+
         if renpy.display.draw.info["renderer"] == "sw": #Software rendering does not support the screen capture technique we use, so we can only use static images for it. (also it runs painfully slow, so it needs everything it can get).
             return False
 
@@ -1604,7 +1609,7 @@ init -2 python:
             self.age = age
             self.body_type = body_type
             self.tits = tits
-            self.height = height * 0.7 #This is the scale factor for height, with the talest girl being 1.0 and the shortest being 0.8
+            self.height = height * 0.8 #This is the scale factor for height, with the talest girl being 1.0 and the shortest being 0.8
             self.body_images = body_images #instance of Clothing class, which uses full body shots.
             self.face_style = face_style
             self.expression_images = expression_images #instance of the Expression class, which stores facial expressions for different skin colours
@@ -1647,7 +1652,6 @@ init -2 python:
 
             self.event_triggers_dict = {} #A dict used to store extra parameters used by events, like how many days has it been since a performance review.
             self.event_triggers_dict["employed_since"] = 0
-            #self.event_triggers_dict["wants_titlechange"] = False
 
             ##Mental stats##
             #Mental stats are generally fixed and cannot be changed permanently. Ranges from 1 to 5 at start, can go up or down (min 0)
@@ -1732,7 +1736,6 @@ init -2 python:
             self.planned_outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #planned_outfit is the outfit the girl plans to wear today while not at work. She will change back into it after work or if she gets stripped. Cop0y it in case the outfit is changed during the day.
             self.planned_uniform = None #The uniform the person was planning on wearing for today, so they can return to it if they need to while at work.
             self.apply_outfit(self.planned_outfit)
-            # self.outfit = self.planned_outfit.get_copy() #Keep a seperate copy of hte outfit as the one that is being worn. changed v0.24.1
 
 
             ## Conversation things##
@@ -1782,8 +1785,8 @@ init -2 python:
             else:
                 eyes = None
 
-            if renpy.random.randint(0,100) < 60: #Have heights that roughly match (but o
-                height = (self.height/0.7) * (renpy.random.randint(95,105)/100.0)
+            if renpy.random.randint(0,100) < 60: #Have heights that roughly match (but not exactly, and readjusted for the the general scaling factor.)
+                height = (self.height/0.8) * (renpy.random.randint(95,105)/100.0)
                 if height > 1.0:
                     height = 1.0
                 elif height < 0.9:
@@ -1867,14 +1870,12 @@ init -2 python:
 
                 elif destination == self.home:
                     self.apply_outfit(self.planned_outfit)
-                    #self.outfit = self.planned_outfit.get_copy() #We're at home, so we can get back into our casual outfit. changed v0.24.1
 
                 #NOTE: There is no else here because all of the desitnations should be set. If it's just a location they travel there and that's the end of it.
 
             else:
                 #She finds somewhere to burn some time
                 self.apply_outfit(self.planned_outfit)
-                #self.outfit = self.planned_outfit.get_copy() #Get changed back into our proper outfit if we aren't in it already. changed v0.24.1
                 available_locations = [] #Check to see where is public (or where you are white listed) and move to one of those locations randomly
                 for potential_location in list_of_places:
                     if potential_location.public:
@@ -1932,12 +1933,6 @@ init -2 python:
 
             self.change_energy(60, add_to_log = False)
 
-            # if renpy.random.randint(0,100) < 8 and self.title: #There's an 8% chance they want a title change on any given day, if they are already introduced. TODO: Tweak this or make it dependent on other stuff.
-            #     self.event_triggers_dict["wants_titlechange"] = True
-            # else:
-            #     self.event_triggers_dict["wants_titlechange"] = False
-            #     #TODO: Change this
-
             #Now we will normalize happiness towards 100 over time. Every 5 points of happiness above or below 100 results in a -+1 per time chunk, rounded towards 0.
             hap_diff = self.happiness - 100
             hap_diff = __builtin__.int(hap_diff/5.0) #python defaults to truncation towards 0, so this gives us the number we should be changing our happinss by
@@ -1984,12 +1979,8 @@ init -2 python:
             x_size = __builtin__.int(the_size[0])
             y_size = __builtin__.int(the_size[1])
 
-            #backplate_factor = 1 #We shrink the hair backplate by a little and because it rests behind the body this will cover gaps around the neck.
             hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplage
-            #x_offset_factor = (x_size - (x_size*backplate_factor))/2 #Calculate the offset needed to keep our image centered on the middle of hte image, otherwise it scales to the top left.
-            #y_offset_factor = (y_size - (y_size*backplate_factor))/2
-            #y_offset_factor = 0
-            #hair_backplate_position = (x_offset_factor,0)
+
             displayable_list.insert(0, ((0,0),hair_backplate)) #The hair plate is what we want to actually be displayed first, but we need to know the XY sizes of the body first
 
             displayable_list.extend(self.outfit.generate_draw_list(self,position,emotion,special_modifier, lighting = lighting)) #Get the displayables for everything we wear. Note that extnsions do not return anything because they have nothing to show.
@@ -2035,6 +2026,8 @@ init -2 python:
 
             renpy.display.module.save_png(the_surface, surface_file, 0)
             static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
+            surface_file.close()
+
             the_image_name = self.name + " | " + str(time.time())
 
 
@@ -2300,7 +2293,6 @@ init -2 python:
                 self.planned_uniform = uniform.get_copy()
                 if wear_now:
                     self.apply_outfit(uniform)
-                    #self.outfit = uniform.get_copy() # Changed v0.24.1
 
         def apply_outfit(self, the_outfit = None, ignore_base = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
             if the_outfit is None:
@@ -2599,7 +2591,6 @@ init -2 python:
 
             elif self.outfit.slut_requirement > self.sluttiness:
                 self.apply_outfit(self.planned_outfit)
-                #self.outfit = self.planned_outfit.get_copy() changed v0.24.1
                 if dialogue:
                     self.call_dialogue("clothing_review")
 
@@ -2627,7 +2618,6 @@ init -2 python:
 
             if self.planned_uniform is not None: #If our planned uniform is STILL None it means we are unable to construct a valid uniform. Only assign it as our outfit if we have managed to construct a uniform.
                 self.apply_outfit(self.planned_uniform)
-                #self.outfit = self.planned_uniform.get_copy() #Set our current outfit to a copy of our planned uniform. changed v0.24.1
 
         def get_job_happiness_score(self):
             happy_points = self.happiness - 100 #Happiness over 100 gives a bonus to staying, happiness less than 100 gives a penalty
@@ -5562,19 +5552,19 @@ screen character_create_screen():
     default work_skill_max = 4
     default sex_skill_max = 4
 
-    imagebutton auto "/gui/Text_Entry_Bar_%s.png" action [SetScreenVariable("name_select",1),  SetVariable("name","")] pos (320,800) xanchor 0.5 yanchor 0.5
-    imagebutton auto "/gui/Text_Entry_Bar_%s.png" action [SetScreenVariable("name_select",3),SetVariable("l_name","")]  pos (320,880) xanchor 0.5 yanchor 0.5
-    imagebutton auto "/gui/Text_Entry_Bar_%s.png" action [SetScreenVariable("name_select",2),SetVariable("b_name","")]  pos (320,960) xanchor 0.5 yanchor 0.5
+    imagebutton auto "/gui/Text_Entry_Bar_%s.png" action [SetScreenVariable("name_select",1), SetVariable("name","")] pos (320,800) xanchor 0.5 yanchor 0.5 alternate SetScreenVariable("name_select",0)
+    imagebutton auto "/gui/Text_Entry_Bar_%s.png" action [SetScreenVariable("name_select",3), SetVariable("l_name","")] pos (320,880) xanchor 0.5 yanchor 0.5 alternate SetScreenVariable("name_select",0)
+    imagebutton auto "/gui/Text_Entry_Bar_%s.png" action [SetScreenVariable("name_select",2), SetVariable("b_name","")] pos (320,960) xanchor 0.5 yanchor 0.5 alternate SetScreenVariable("name_select",0)
     imagebutton auto "/gui/button/choice_%s_background.png" action Return([[cha,int,foc],[h_skill,m_skill,r_skill,p_skill,s_skill],[F_skill,O_skill,V_skill,A_skill]]) pos (1560,900) xanchor 0.5 yanchor 0.5 sensitive character_points == 0
 
 
     if name_select == 1: #Name
         input default name pos(320,800) changed name_func xanchor 0.5 yanchor 0.5 style "menu_text_style" length 25
     else:
-        text name  pos(320,800) xanchor 0.5 yanchor 0.5 style "menu_text_style"
+        text name pos(320,800) xanchor 0.5 yanchor 0.5 style "menu_text_style"
 
     if name_select == 3: #Last Name
-        input default l_name  pos(320,880) changed l_name_func xanchor 0.5 yanchor 0.5 style "menu_text_style" length 25
+        input default l_name pos(320,880) changed l_name_func xanchor 0.5 yanchor 0.5 style "menu_text_style" length 25
     else:
         text l_name pos(320,880) xanchor 0.5 yanchor 0.5 style "menu_text_style"
 
@@ -5582,8 +5572,6 @@ screen character_create_screen():
         input default b_name pos(320,960) changed b_name_func xanchor 0.5 yanchor 0.5 style "menu_text_style" length 25
     else:
         text b_name pos(320,960) xanchor 0.5 yanchor 0.5 style "menu_text_style"
-
-
 
 
     if character_points > 0:
@@ -8509,7 +8497,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.25.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.25.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -9044,18 +9032,11 @@ label change_location(the_place):
     return
 
 label talk_person(the_person):
-    $the_person.draw_person()
+    $ the_person.draw_person()
     if the_person.title is None:
         call person_introduction(the_person) from _call_person_introduction #If their title is none we assume it is because we have never met them before. We have a special introduction scene for new people.
         #Once that's done we continue to talk to the person.
 
-
-    # elif the_person.event_triggers_dict.get("wants_titlechange",False):
-    #     if renpy.random.randint(0,1) == 0: #50% of the time she wants a new title, otherwise she wants to give you a new title.
-    #         call person_new_title(the_person) from _call_person_new_title
-    #     else:
-    #         call person_new_mc_title(the_person) from _call_person_new_mc_title
-    #     $ the_person.event_triggers_dict["wants_titlechange"] = False
 
 
     $ change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
@@ -9313,7 +9294,7 @@ label interview_action_description:
                     for x in __builtin__.range(0,reveal_count): #Reveal all of their opinions based on our policies.
                         a_candidate.discover_opinion(a_candidate.get_random_opinion(include_known = False, include_sexy = reveal_sex),add_to_log = False) #Get a random opinion and reveal it.
             call hire_select_process(candidates) from _call_hire_select_process
-
+            $ candidates = [] #Prevent it from using up extra memory
 
             if not _return == "None":
                 $ new_person = _return
@@ -9819,7 +9800,7 @@ label advance_time:
             people.run_move(place)
 
             if people.title is not None: #We don't assign events to people we haven't met.
-                if renpy.random.randint(0,100) < 12: #Only assign one to 12% of people, to cut down on the number of people we're checking.
+                if renpy.random.randint(0,100) < 10: #Only assign one to 10% of people, to cut down on the number of people we're checking.
                     possible_crisis_list = []
                     for crisis in limited_time_event_pool:
                         if crisis[0].is_action_enabled(people): #Get the first element of the weighted tuple, the action.

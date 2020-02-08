@@ -48,6 +48,9 @@
 # Lily new underwear
 # Mom selfies
 # Daughter introduction
+# Girlfriend texts
+# Affair texts
+# Cousin texts
 
 
 ### RELATIONSHIP CRISES ###
@@ -61,7 +64,6 @@
 #todo: Help Lily study, punish/reward her answers (maybe work a little quiz mini-game into it too?)
 #todo: friends help friends be sluts
 #todo: write something "special" on her performance review. "great cock sucker.", "very tight pussy"
-#todo, cousin sends you a text asking you to beg for nudes.
 
 
 ### SPECIAL CRISES ###

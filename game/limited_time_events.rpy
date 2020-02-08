@@ -67,14 +67,14 @@ init -1 python:
         renpy.notify("Event exists!")
         return True
 
-    ask_new_title_action = Action("Ask new title", ask_new_title_requirement, "ask_new_title_label", event_duration = 5)
+    ask_new_title_action = Action("Ask new title", ask_new_title_requirement, "ask_new_title_label", event_duration = 2)
 
     sister_walk_in = Action("Sister walk in", sister_walk_in_requirement, "sister_walk_in_label", event_duration = 5)
     nude_walk_in = Action("Nude walk in", nude_walk_in_requirement, "nude_walk_in_label", event_duration = 5)
     mom_house_work_nude = Action("Mom nude house work", mom_house_work_nude_requirement, "mom_house_work_nude_label", event_duration = 5)
     breeding_mom = Action("Mom breeding", mom_breeding_requirement, "breeding_mom_label", event_duration = 5)
 
-    limited_time_event_pool.append([ask_new_title_action,15,"on_talk"])
+    limited_time_event_pool.append([ask_new_title_action,9,"on_talk"])
     limited_time_event_pool.append([sister_walk_in,4,"on_enter"])
     limited_time_event_pool.append([nude_walk_in,4,"on_enter"])
     limited_time_event_pool.append([mom_house_work_nude,4,"on_enter"])

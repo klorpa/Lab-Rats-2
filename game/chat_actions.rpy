@@ -800,7 +800,7 @@ label movie_date_label(the_person):
     "Tickets in hand, you rejoin [the_person.title] and set off to find your theater."
     the_person.char "Did you want to get us some popcorn or anything like that?"
     menu:
-        "Stop at the concession stand. $-20" if mc.business.funds >= 20:
+        "Stop at the concession stand. -$20" if mc.business.funds >= 20:
             mc.name "Sure, you run ahead and I'll go get us some snacks."
             $ renpy.scene("Active")
             $ mc.business.funds += -20
@@ -818,7 +818,7 @@ label movie_date_label(the_person):
             "Snacks in hand you return to [the_person.title]. She takes a sip from her drink as you settle into your seat beside her."
 
 
-        "Stop at the concession stand. $-20 (disabled)" if mc.business.funds < 20:
+        "Stop at the concession stand. -$20 (disabled)" if mc.business.funds < 20:
             pass
 
         "Just go to the movie.":
@@ -1007,7 +1007,7 @@ label dinner_date_label(the_person):
             the_person.char "It sounds cozy. Let's go, I'm starving!"
 
         "A moderately priced restaurant. -$100" if mc.business.funds >= 100:
-            $ mc.business.funds += -10
+            $ mc.business.funds += -100
             $ the_person.change_love(5)
             $ the_person.change_happiness(5)
             the_person.char "It sounds nice. Come on, I'm starving and could use a drink."

@@ -436,6 +436,8 @@ label transition_deepthroat_skull_fuck(the_girl, the_location, the_object, the_r
     "Her eyes go wide you immediately bottom out, rubbing against the back of her throat and making her gag."
     mc.name "I believe in you [the_girl.title]. You can take it."
     "You have no intention of stopping either way as you skull fuck [the_girl.possessive_title]'s tight throat."
+    $ deepthroat.current_modifier = "blowjob"
+    $ deepthroat.redraw_scene(the_girl)
     return
 
 label transition_default_deepthroat(the_girl, the_location, the_object, the_round):

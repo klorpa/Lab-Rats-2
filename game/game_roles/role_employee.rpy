@@ -61,6 +61,14 @@ label insult_recent_work(the_person):
         mc.name "I'm not sure what's going on with you lately, but I'm going to need you to try a little harder. It's only me and you here and you're really letting me down."
     else:
         mc.name "Honestly [the_person.title], I've been disappointed with your work lately and I really need you to try a little harder. You're letting the whole team down."
+    if the_person.obedience >= 120:
+        "She seems shocked for a second, then nods."
+        the_person.char "I'm sorry. I'll try harder."
+    else:
+        the_person.char "What? I... I've been doing my best."
+        mc.name "Well I'll need your best to be a little better if you want to justify what I'm paying you."
+        $ the_person.draw_person(position = "sitting", emotion = "sad")
+        "She scowls, but nods and doesn't object any more."
     $ the_person.change_obedience(mc.charisma)
     $ the_person.change_happiness(-5)
     $ the_person.change_love(-2)
@@ -306,6 +314,7 @@ label employee_performance_review(the_person):
                     $ the_person.add_situational_obedience("seduction_approach", 15+opinion_modifier, "I'm being punished")
                     the_person.char "I... if you think this is what I need, sir."
                     call fuck_person(the_person,private = True) from _call_fuck_person_13
+                    $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
                     if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!

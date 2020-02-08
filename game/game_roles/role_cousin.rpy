@@ -1134,14 +1134,14 @@ label stripclub_dance():
     else:
         "As the music builds, [performer_title]'s dance becomes more energetic. She runs her hands over her tight body, accentuating her curves."
     call stripshow_strip(the_person) from _call_stripshow_strip_2
-    $ the_person.draw_person(position = get_random_from_list(pose_list))
+    $ the_person.draw_person(position = get_random_from_list(pose_list), the_animation = blowjob_bob, animation_effect_strength = 0.7)
     "Her music hits its crescendo and her dancing does the same. [performer_title] holds onto the pole in the middle of the stage and spins herself around it."
     call stripshow_strip(the_person) from _call_stripshow_strip_3
-    $ the_person.draw_person(position = "doggy")
+    $ the_person.draw_person(position = "doggy", the_animation = blowjob_bob, animation_effect_strength = 0.8)
     if the_person.outfit.vagina_visible():
         "As the song comes to an end, the dancer lowers herself to all fours, showing off her ass and pussy to the crowd."
     else:
-        "As the song comes to an end, the dancer lowers herself to all fours. She spreads her legs and works her hips, jiggling her ass for the crowd�s amusement."
+        "As the song comes to an end, the dancer lowers herself to all fours. She spreads her legs and works her hips, jiggling her ass for the crowd's amusement."
 
     $ the_person.draw_person()
     "She stands up and waves to her audience."

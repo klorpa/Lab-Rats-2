@@ -53,7 +53,7 @@ label scene_skull_fuck_2(the_girl, the_location, the_object, the_round):
     "She gags and gurgles as you bottom your cock out with each stroke, but manages to keep her arms down at her sides."
     mc.name "Look up at me [the_girl.title]."
     "She struggles to turn her eyes up to meet yours. When she manages it you hold yourself deep and grind your hips against her face."
-    mc.name "You such a perfect cock socket, you know that? Fuck, this feels good."
+    mc.name "You're such a perfect cock socket, you know that? Fuck, this feels good."
     "You grab onto her hair at the roots and piston her head back and forth. Each thrust comes with a fresh gurgle from her ravaged throat."
     return
 
@@ -185,4 +185,14 @@ label strip_ask_skull_fuck(the_girl, the_clothing, the_location, the_object, the
             "She opens her mouth wide and you slam your dick back down her throat."
     $ skull_fuck.current_modifier = "blowjob"
     $ skull_fuck.redraw_scene(the_girl)
+    return
+
+label orgasm_skull_fuck(the_girl, the_location, the_object, the_round):
+    "You're happily fucking [the_girl.possessive_title]'s warm, wet throat when you notice her closer her eyes."
+    "Her thighs quiver and her hands drop instinctively to her crotch. She begins to rub her pussy furiously, driving herself to orgasm."
+    mc.name "Cum for me you dirty slut!"
+    "Watching [the_girl.title]'s body writhe as she climaxes from your cock encourages you to go faster."
+    "You clamp down on her head and slam yourself in and out of her throat."
+    "[the_girl.possessive_title] is so lost in her orgasm that her body seems to have forgotten to gag at all, letting you get yourself balls deep with each trust."
+    "Soon the moment has passed and she begins to recover her wits. She opens her eyes and looks up at you, still half drunk with pleasure."
     return

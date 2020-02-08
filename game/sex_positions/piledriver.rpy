@@ -96,10 +96,10 @@ label scene_piledriver_1(the_girl, the_location, the_object, the_round):
                     the_girl.char "And you look good on top of me... Fucking my poor little pussy raw."
                     mc.name "I know you can handle it, you're a well trained little slut who knows how to take a dick."
                     "[the_girl.possessive_title] moans loudly, enjoying the combination of your dirty talk and getting fucked."
-                    if the_girl.get_opinion_score("creampies") > 0 or the_girl.get_opinion_score("bareback sex"):
+                    if the_girl.get_opinion_score("creampies") > 0 or the_girl.get_opinion_score("bareback sex") > 0:
                         the_girl.char "Oh... I want to watch you cum [the_girl.mc_title]. I want to watch you unload deep inside of me. I want to feel your hot dripping out of me..."
 
-                    elif the_girl.get_opinion_score("cum facials") > 0 or the_girl.get_opinion_score("being covered in cum"):
+                    elif the_girl.get_opinion_score("cum facials") > 0 or the_girl.get_opinion_score("being covered in cum") > 0:
                         the_girl.char "Oh... I want to watch you cum [the_girl.mc_title]. I want to watch you pull that cock out and fire your load right over my face. Paint me with it like the cum slut I am..."
                     else:
                         the_girl.char "Ah... I wonder how long until you cum. I can feel your cock tensing up already..."

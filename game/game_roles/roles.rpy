@@ -449,7 +449,7 @@ label prostitute_label(the_person):
     $ mc.business.funds += -200
     $ the_person.change_obedience(1)
 
-    $ add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
+    $ the_person.add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
     call fuck_person(private = True) from _call_fuck_person_23
     $ the_report = _return
 
