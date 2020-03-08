@@ -305,10 +305,10 @@ label cousin_blackmail_list(the_person):
         "Strip for me.":
             #Requires min sluttiness. She'll strip down her outfit until a certain point for you.
             mc.name "I want to see you strip for me."
-            if the_person.sluttiness >= 15:
+            if the_person.effective_sluttiness() >= 15:
                 "[the_person.possessive_title] doesn't say anything for a second."
                 the_person.char "Fine. Sit down and pay attention. I'm only doing this once."
-                if the_person.sluttiness <= 20:
+                if the_person.effective_sluttiness("underwear_nudity") <= 20:
                     #She only wants to show you her underwear.
                     if the_person.outfit.wearing_bra(): #If she's wearing a bra strip down to it.
                         while the_person.outfit.bra_covered():
@@ -331,6 +331,7 @@ label cousin_blackmail_list(the_person):
                         the_person.char "So, I'm not wearing any panties right now. That means I can't take this off."
                         mc.name "Come on, that's not what the deal is."
                         the_person.char "Sad you don't get to see my tight, wet pussy [the_person.mc_title]?"
+                        "She laughs and shakes her head."
                         the_person.char "Deal with it. Go cry to mommy if it matters that much to you."
 
                     if the_person.outfit.wearing_panties() and the_person.outfit.wearing_bra():
@@ -338,31 +339,42 @@ label cousin_blackmail_list(the_person):
                     else:
                         "Once [the_person.possessive_title] has stripped down as far as she's willing, she turns around to let you look at her ass."
                     $ the_person.draw_person(position = "back_peek")
+                    $ the_person.update_outfit_taboos()
                     the_person.char "Finished yet? I bet you're about to cream your fucking pants looking at this."
                     "You take a second to enjoy the view."
                     mc.name "Alright, that'll do."
                     the_person.char "Finally..."
                     "[the_person.possessive_title] gets dressed again."
+                    $ the_person.update_outfit_taboos()
                     $ the_person.apply_outfit(the_person.planned_outfit)
                     #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
-                elif the_person.sluttiness <= 40:
+                elif the_person.effective_sluttiness("bare_tits") <= 40:
                     #She'll show you her tits.
                     while not the_person.outfit.tits_visible():
                         $ the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
                         $ the_person.draw_animated_removal(the_item) #Strip down to her underwear.
                         if the_person.outfit.tits_visible():
-                            "[the_person.possessive_title] takes off her [the_item.name] slowly, teasing you as she frees her tits."
+                            if the_person.has_taboo("bare_tits"):
+                                the_person.char "God, I can't believe you're going to see my tits. You're a fucking dick of a cousin, you know that?"
+                                mc.name "Whatever. Pull those girls out so I can have a look."
+                                the_person.char "I don't know why my Mom likes you... Fine."
+                                $ the_person.break_taboo("bare_tits")
+
+                            "[the_person.possessive_title] takes off her [the_item.display_name] slowly, teasing you as she frees her tits."
                         else:
-                            "[the_person.possessive_title] takes off her [the_item.name]."
+                            "[the_person.possessive_title] takes off her [the_item.display_name]."
+
+
+
 
                     if the_person.outfit.wearing_panties():
                         while the_person.outfit.panties_covered():
                             $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                             $ the_person.draw_animated_removal(the_item)
-                            "[the_person.possessive_title] takes off her [the_item.name]."
+                            "[the_person.possessive_title] takes off her [the_item.display_name]."
                     else: #TODO: make sure she's actually wearing a dress or skirt or something
                         the_person.char "So, I'm not wearing any panties right now. That means I can't take this off."
                         mc.name "Come on, that's not what the deal is."
@@ -375,6 +387,7 @@ label cousin_blackmail_list(the_person):
                     "She wiggles her butt in your direction. Her tits swing back and forth with the same movement."
                     the_person.char "Well keep dreaming. I'm not that fucking desperate."
                     "Once you've gotten your fill, [the_person.title] gets dressed again."
+                    $ the_person.update_outfit_taboos()
                     $ the_person.apply_outfit(the_person.planned_outfit)
                     #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
@@ -386,6 +399,11 @@ label cousin_blackmail_list(the_person):
                         $ the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
                         $ the_person.draw_animated_removal(the_item) #Strip down to her underwear.
                         if the_person.outfit.tits_visible():
+                            if the_person.has_taboo("bare_tits"):
+                                the_person.char "God, I can't believe you're going to see my tits. You're a fucking dick of a cousin, you know that?"
+                                mc.name "Whatever. Pull those girls out so I can have a look."
+                                the_person.char "I don't know why my Mom likes you... Fine."
+                                $ the_person.break_taboo("bare_tits")
                             "[the_person.possessive_title] takes off her [the_item.name] slowly, teasing you as she frees her tits."
                         else:
                             "[the_person.possessive_title] takes off her [the_item.name]."
@@ -394,6 +412,11 @@ label cousin_blackmail_list(the_person):
                         $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                         $ the_person.draw_animated_removal(the_item)
                         if the_person.outfit.vagina_visible():
+                            if the_person.has_taboo("bare_pussy"):
+                                "[the_person.title] pauses and takes a deep breath."
+                                mc.name "What's the hold up?"
+                                the_person.char "Nothing! I though you would have chickened out by now, but whatever."
+                                $ the_person.break_taboo("bare_pussy")
                             "[the_person.possessive_title] peels off her [the_item.name], slowly revealing her cute little pussy."
                         else:
                             "[the_person.possessive_title] takes off her [the_item.name]."
@@ -410,8 +433,8 @@ label cousin_blackmail_list(the_person):
                     "She gives you an overly dramatic pout."
                     mc.name "Fine, that'll do."
                     the_person.char "Fucking finally..."
-                    $ the_person.apply_outfit(planned_outfit)
-                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
+                    $ the_person.update_outfit_taboos()
+                    $ the_person.apply_outfit(the_person.planned_outfit)
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -458,7 +481,7 @@ label cousin_blackmail_list(the_person):
         "Fuck me." if the_person.event_triggers_dict.get("blackmail_level", -1) >= 2:
             #Requires min sluttiness and more blackmail (Or high sluttiness). Generic fuck_person call with a large obedience boost so she'll do things you tell her to do.
             mc.name "I want your body. All of it."
-            if the_person.sluttiness >= 30:
+            if the_person.effective_sluttiness("vaginal_sex") >= 20:
                 the_person.char "Ugh, really?"
                 "She sighs and rolls her eyes dramatically."
                 the_person.char "Fine. Just make it quick, and I swear to god you better never tell anyone about this."
@@ -974,10 +997,16 @@ label cousin_new_boobs_brag_label(the_person):
                         the_person.draw_animated_removal(the_item)
                         renpy.say("","") #Hold the game until the player interacts
 
-                if the_person.sluttiness > 50:
+                if the_person.has_taboo("bare_tits"):
+                    mc.name "I can't believe I had to pay for you to get bigger tits before I even got to see them."
+                    $ the_person.break_taboo("bare_tits")
+                    the_person.char "You should have come to the club, you could have seen them there."
+
+                if the_person.effective_sluttiness("touching_body") > 50:
                     the_person.char "There you go. Go on, give them a feel. They feel almost exactly like the real thing."
                     "You hold [the_person.title]'s new, larger breasts in your hands. They feel a little firmer than natural tits, but they're pleasant nonetheless."
                     "After you've had a chance to fondle them, she reaches for her top."
+                    $ the_person.break_taboo("touching_body")
                 else:
                     the_person.char "There you go. Good, right? These girls are going to bring in so much more at the club."
                     "She looks down at her own chest and gives it a shake, setting her tits jiggling. When they settle down, she reaches for her top again."
@@ -1051,6 +1080,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
             $ the_person.outfit.remove_random_upper(top_layer_first = True)
 
         $ the_person.draw_person(emotion = "happy")
+        $ the_person.break_taboo("bare_tits")
         "It's a selfie of her in the bathroom, tits on display for you."
         the_person.char "You've saved me a ton of cash, so I thought you might enjoy that."
         $ renpy.scene("Active")
@@ -1137,7 +1167,7 @@ label stripclub_dance():
     $ the_person.draw_person(position = get_random_from_list(pose_list), the_animation = blowjob_bob, animation_effect_strength = 0.7)
     "Her music hits its crescendo and her dancing does the same. [performer_title] holds onto the pole in the middle of the stage and spins herself around it."
     call stripshow_strip(the_person) from _call_stripshow_strip_3
-    $ the_person.draw_person(position = "doggy", the_animation = blowjob_bob, animation_effect_strength = 0.8)
+    $ the_person.draw_person(position = "doggy", the_animation = ass_bob, animation_effect_strength = 0.8)
     if the_person.outfit.vagina_visible():
         "As the song comes to an end, the dancer lowers herself to all fours, showing off her ass and pussy to the crowd."
     else:
@@ -1164,7 +1194,7 @@ label stripshow_strip(the_person):
 
             if random_item:
                 $ the_person.draw_animated_removal(random_item)
-                "She smiles at you and starts to peel off her [random_item.name]."
+                "She smiles at you and starts to peel off her [random_item.display_name]."
             else:
                 "She smiles and wiggles her hips for you."
 
@@ -1181,7 +1211,7 @@ label stripshow_strip(the_person):
                     $ random_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_lower = False,  exclude_feet = True, do_not_remove = True) #When that fails get her bottom/panties.
 
                 if random_item:
-                    "She takes the money and starts to slowly strip off her [random_item.name]."
+                    "She takes the money and starts to slowly strip off her [random_item.display_name]."
                     $ the_person.draw_animated_removal(random_item)
                 else:
                     "She takes the money and holds onto it while she continues to move her body to the music."

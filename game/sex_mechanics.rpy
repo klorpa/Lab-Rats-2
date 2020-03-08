@@ -1,4 +1,4 @@
-label fuck_person(the_person, private= True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True):
+label fuck_person(the_person, private= True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False):
     # When called fuck_person starts a sex scene with someone. Sets up the encounter, mainly with situational modifiers.
     show screen person_info_ui(the_person)
     if report_log is None:
@@ -62,7 +62,7 @@ label fuck_person(the_person, private= True, start_position = None, start_object
         if girl_in_charge:
             # The girls decisions set round_choice here.
             if position_choice is None:
-                call girl_choose_position(the_person) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
+                call girl_choose_position(the_person, ignore_taboo = ignore_taboo) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
                 $ position_choice = _return #Can be none, if no option was available for her to take.
                 if position_choice is not None:
                     # We need to make sure we're using an appopriate object
@@ -123,7 +123,7 @@ label fuck_person(the_person, private= True, start_position = None, start_object
         if round_choice == "Change" or round_choice == "Continue":
             if round_choice == "Change": # If we are changing we first select and transition/intro the position, then run a round of sex. If we are continuing we ignroe all of that
                 if start_position is None: #The first time we get here,
-                    call pick_position(the_person) from _call_pick_position
+                    call pick_position(the_person, ignore_taboo = ignore_taboo) from _call_pick_position
                     $ position_choice = _return
                 else:
                     $ position_choice = start_position
@@ -136,7 +136,7 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                     $ object_choice = _return
 
                 if position_choice and object_choice:
-                    call check_position_willingness(the_person, position_choice) from _call_check_position_willingness
+                    call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness
                     if not _return: #If she wasn't willing for whatever reason (too slutty a position, not willing to wear a condom) we clear our settings and try again.
                         $ position_choice = None
                         $ object_choice = None
@@ -148,11 +148,19 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                         pass
                     elif first_round:
                         $ the_person.draw_person() #Draw her standing until we pick a new position
-                        $ position_choice.call_intro(the_person, mc.location, object_choice)
+                        if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                            $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                            $ the_person.break_taboo(position_choice.associated_taboo)
+                        else:
+                            $ position_choice.call_intro(the_person, mc.location, object_choice)
                     else:
                         $ the_person.change_arousal(-5) #Changing position lowers your arousal slightly
                         $ mc.change_arousal(-5)
-                        $ position_choice.call_transition(None, the_person, mc.location, object_choice)
+                        if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                            $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                            $ the_person.break_taboo(position_choice.associated_taboo)
+                        else:
+                            $ position_choice.call_transition(None, the_person, mc.location, object_choice)
 
             $ start_position = None #Clear start positions/objects so they aren't noticed next round.
             $ start_object = None
@@ -175,10 +183,14 @@ label fuck_person(the_person, private= True, start_position = None, start_object
 
 
         elif isinstance(round_choice, Position): #The only non-strings on the list are positions we are changing to
-            call check_position_willingness(the_person, round_choice) from _call_check_position_willingness_1
+            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness_1
             if _return:
                 $ round_choice.redraw_scene(the_person)
-                $ position_choice.call_transition(round_choice, the_person, mc.location, object_choice)
+                if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                    $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                    $ the_person.break_taboo(position_choice.associated_taboo)
+                else:
+                    $ position_choice.call_transition(round_choice, the_person, mc.location, object_choice)
                 $ position_choice = round_choice
 
             else: #If she wasn't willing we keep going with what we were doing, so just loop around.
@@ -257,13 +269,13 @@ label fuck_person(the_person, private= True, start_position = None, start_object
     # We return the report_log so that events can use the results of the encounter to figure out what to do.
     return report_log
 
-label pick_position(the_person, allow_none = True):
+label pick_position(the_person, allow_none = True, ignore_taboo = False):
     $ position_option_list = []
     python:
         for position in list_of_positions: #No choice is given, so pick a position
             if mc.location.has_object_with_trait(position.requires_location) and (the_person.has_large_tits() or not position.requires_large_tits): #There is a valid object and if it requires large tits she has them.
                 #Note: clothing checks are done in the build_position_willingness_string() check, where it markes them as obstructed and (disabled).
-                position_option_list.append([position.build_position_willingness_string(the_person), position])
+                position_option_list.append([position.build_position_willingness_string(the_person, ignore_taboo = ignore_taboo), position])
         if allow_none:
             position_option_list.append(["Nothing", "Nothing"])
 
@@ -274,12 +286,12 @@ label pick_position(the_person, allow_none = True):
 
     return picked_position #Can be None, which just means "never mind"
 
-label girl_choose_position(the_person):
+label girl_choose_position(the_person, ignore_taboo = False):
     $ position_option_list = []
     python:
         for position in list_of_girl_positions:
             if mc.location.has_object_with_trait(position.requires_location):
-                if position.her_position_willingness_check(the_person):
+                if position.her_position_willingness_check(the_person, ignore_taboo):
                     position_option_list.append(position)
         picked_position = get_random_from_list(position_option_list)
     return picked_position
@@ -326,28 +338,38 @@ label pick_object(the_person, the_position, forced_object = None):
     $ the_person.add_situational_obedience("sex_object",picked_object.obedience_modifier, the_position.verbing + " on a " + picked_object.name)
     return picked_object
 
-label check_position_willingness(the_person, the_position): #Returns if hte person is willing to do this position or not, and charges the appropriate happiness hit if they needed obedience to be willing.
+label check_position_willingness(the_person, the_position, ignore_taboo = False): #Returns if the person is willing to do this position or not, and charges the appropriate happiness hit if they needed obedience to be willing.
     $ willing = True
-    if the_person.effective_sluttiness() >= the_position.slut_requirement:
-        $ the_person.call_dialogue("sex_accept")
+    $ the_taboo = the_position.associated_taboo
+    if ignore_taboo:
+        $ the_taboo = None
 
-    elif the_person.effective_sluttiness() + (the_person.obedience-100) >= the_position.slut_requirement:
+    if the_person.effective_sluttiness(the_taboo) >= the_position.slut_requirement:
+        if the_person.has_taboo(the_taboo):
+            pass #If there is a taboo being broken we have special taboo break dialogue called from the position.
+        else:
+            $ the_person.call_dialogue("sex_accept")
+
+    elif the_person.effective_sluttiness(the_taboo) + (the_person.obedience-100) >= the_position.slut_requirement:
         # She's willing to be commanded to do it. Reduce her happiness by the difference (increase arousal if she likes being submissive)
-        $ happiness_drop = the_person.effective_sluttiness() - the_position.slut_requirement #Our initial conditions mean this is a negative number
+        $ happiness_drop = the_person.effective_sluttiness(the_position.associated_taboo) - the_position.slut_requirement #Our initial conditions mean this is a negative number
         $ the_person.change_arousal(the_person.get_opinion_score("being submissive")*2)
         $ the_person.discover_opinion("being submissive")
         $ the_person.change_happiness(happiness_drop)
-        $ the_person.call_dialogue("sex_obedience_accept")
+        if the_person.has_taboo(the_taboo):
+            pass #If there is a taboo being broken we have special taboo break dialogue called from the position.
+        else:
+            $ the_person.call_dialogue("sex_obedience_accept")
         $ willing = True
 
-    elif the_person.effective_sluttiness() > the_position.slut_requirement/2:
+    elif the_person.effective_sluttiness(the_taboo) > the_position.slut_requirement/2:
         # She's not willing to do it, but gives you a soft reject.
         $ the_person.call_dialogue("sex_angry_reject")
         $ willing = False
 
     else:
         # You're nowhere close to the required sluttiness, lose some love for even trying.
-        $ love_loss = the_person.effective_sluttiness() - the_position.slut_requirement #A negative number
+        $ love_loss = the_person.effective_sluttiness(the_taboo) - the_position.slut_requirement #A negative number
         $ love_loss = round(love_loss/5)
         $ the_person.change_love(love_loss)
         $ the_person.call_dialogue("sex_gentle_reject")
@@ -415,7 +437,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
     if the_person.arousal >= the_person.max_arousal:
         $ the_position.call_orgasm(the_person, mc.location, the_object)
         $ mc.listener_system.fire_event("girl_climax", the_person = the_person, the_position = the_position, the_object = the_object)
-        if the_person.effective_sluttiness() < the_position.slut_requirement: #She was ordered to do this. Bonus sluttiness if she had to be ordered to do this position("I must actually be a slut deep down...")
+        if the_person.effective_sluttiness(the_position.associated_taboo) < the_position.slut_requirement: #She was ordered to do this. Bonus sluttiness if she had to be ordered to do this position("I must actually be a slut deep down...")
             $ the_person.change_slut_temp(8 + the_person.get_opinion_score("being submissive"))
             $ the_person.change_happiness(8 + the_person.get_opinion_score("being submissive"))
         else:
@@ -428,7 +450,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
     if mc.arousal >= mc.max_arousal:
         $ the_position.call_outro(the_person, mc.location, the_object)
-        if the_person.effective_sluttiness() < the_position.slut_requirement: # bonus obedience if she if she had to be ordered to do this position ("I guess I really am just doing this for him...")
+        if the_person.effective_sluttiness(the_position.associated_taboo) < the_position.slut_requirement: # bonus obedience if she if she had to be ordered to do this position ("I guess I really am just doing this for him...")
             $ the_person.change_obedience(5 + the_person.get_opinion_score("being submissive"))
         else:
             $ the_person.change_obedience(3)
@@ -486,7 +508,7 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
 label condom_ask(the_person):
     $ condom_threshold = the_person.get_no_condom_threshold()
 
-    if the_person.effective_sluttiness() < condom_threshold:
+    if the_person.effective_sluttiness("condomless_sex") < condom_threshold:
         # they demand you put on a condom.
         #TODO: Make this dialogue personality based
         if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies"):
@@ -504,7 +526,7 @@ label condom_ask(the_person):
                 mc.name "If it's that important to you let's just do something else."
                 return False
 
-    elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness() < condom_threshold + 20:
+    elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness("condomless_sex") < condom_threshold + 20 or the_person.has_taboo("condomless_sex"):
         # They suggest you put on a condom.
         if the_person.get_opinion_score("creampies") > 0:
             $ the_person.discover_opinion("creampies")
@@ -519,13 +541,20 @@ label condom_ask(the_person):
 
             "Fuck her raw.":
                 mc.name "No way. I want to feel you wrapped around me."
-                the_person.char "Just make sure to pull out if you're going to cum, okay?"
+                if the_person.has_taboo("condomless_sex"):
+                    $ the_person.call_dialogue("condomless_sex_taboo_break")
+                else:
+                    if the_person.has_taboo("creampie"):
+                        the_person.char "Just make sure to pull out if you're going to cum, okay?"
+                    else:
+                        the_person.char "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
+
 
     else:
         # They ask you _not_ to put on a condom.
         if the_person.get_opinion_score("creampies") > 0:
             $ the_person.discover_opinion("creampies")
-            the_person.char "Don't put on a condom, I want to feel you when you cum inside me."
+            the_person.char "Don't put on a condom. I want to feel you when you cum inside me."
         else:
             the_person.char "You don't need a condom, I want to feel every single thing you do to me."
         menu:
@@ -538,6 +567,9 @@ label condom_ask(the_person):
             "Fuck her raw.":
                 mc.name "No arguments here."
 
+    if not mc.condom:
+        $ the_person.break_taboo("condomless_sex")
+
 
     return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
 
@@ -546,7 +578,7 @@ label strip_menu(the_person, the_verbing = "fucking"): #TODO: Add an arousal cos
         second_tuple_list = []
         for clothing in the_person.outfit.get_unanchored():
             if not clothing.is_extension: #Extension clothing is placeholder for multi-slot items like dresses.
-                second_tuple_list.append(["Take off " + clothing.name + ".",clothing])
+                second_tuple_list.append(["Take off " + clothing.display_name + ".",clothing])
         second_tuple_list.append(["Go back to " + the_verbing + " her.","Finish"])
 
         strip_choice = renpy.display_menu(second_tuple_list,True,"Choice")
@@ -559,25 +591,40 @@ label strip_menu(the_person, the_verbing = "fucking"): #TODO: Add an arousal cos
         $ ass_revealed = False
         if (the_person.outfit.bra_covered() and the_person.outfit.panties_covered()) and not (test_outfit.bra_covered() and test_outfit.panties_covered()):
             $ underwear_revealed = True
-        if not the_person.outfit.tits_available() and test_outfit.tits_available():
+        if not the_person.outfit.tits_visible() and test_outfit.tits_visible():
             $ boobs_revealed = True
-        if not the_person.outfit.vagina_available() and test_outfit.vagina_available():
+        if not the_person.outfit.vagina_visible() and test_outfit.vagina_visible():
             $ ass_revealed = True
 
 
-        if the_person.judge_outfit(test_outfit):
+        if the_person.judge_outfit(test_outfit, use_taboos = True):
+            if ass_revealed and the_person.has_taboo("bare_pussy"):
+                $ the_person.call_dialogue("bare_pussy_taboo_break", the_clothing =  strip_choice)
+            elif boobs_revealed and the_person.has_taboo("bare_tits"):
+                $ the_person.call_dialogue("bare_tits_taboo_break", the_clothing = strip_choice)
+            elif underwear_revealed and the_person.has_taboo("underwear_nudity"):
+                $ the_person.call_dialogue("underwear_nudity_taboo_break", the_clothing = strip_choice)
+
             $ the_person.draw_animated_removal(strip_choice)
-            $ renpy.say("", "You pull her " + strip_choice.name + " off, dropping it to the ground.")
+            $ renpy.say("", "You pull her " + strip_choice.display_name + " off, dropping it to the ground.")
             $ arousal_change = 0
             if underwear_revealed or boobs_revealed or ass_revealed:
                 $ arousal_change += the_person.get_opinion_score("not wearing anything") * 2
                 $ the_person.discover_opinion("not wearing anything")
+                if underwear_revealed:
+                    $ the_person.break_taboo("underwear_nudity")
             if boobs_revealed:
                 $ arousal_change += the_person.get_opinion_score("showing her tits") * 3
                 $ the_person.discover_opinion("showing her tits")
+                $ the_person.break_taboo("bare_tits")
+                if the_person.has_large_tits() and the_person.outfit.tits_available():
+                    "Her big tits drop free, begging to be felt up."
+
             if ass_revealed:
                 $ arousal_change += the_person.get_opinion_score("showing her ass") * 3
                 $ the_person.discover_opinion("showing her ass")
+                $ the_person.break_taboo("bare_pussy")
+
 
             if arousal_change > 0:
                 the_person.char "Oh my god..."

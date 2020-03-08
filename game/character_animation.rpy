@@ -25,6 +25,10 @@ init -1 python:
         #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
         missionary_bob = VrenAnimation("Missionary Style Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
 
+        #Ass_bob moves the center of the screen while keeping the top and bottom still.
+        ass_bob = VrenAnimation("Ass Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":0.7,"butt":0.35})
+        tit_bob = VrenAnimation("Tit Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
+
     else:
         wiggle_animation = VrenAnimation("Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], region_specific_weights = {"butt":0.2})
         idle_wiggle_animation = VrenAnimation("Idle Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"butt":0.2})
@@ -36,6 +40,10 @@ init -1 python:
 
         #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
         missionary_bob = VrenAnimation("Missionary Style Bob", shader.PS_DOGGY_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
+
+        #Ass_bob moves the center of the screen while keeping the top and bottom still.
+        ass_bob = VrenAnimation("Ass Bob", shader.PS_ASSBOUNCE_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":0.7,"butt":0.35})
+        tit_bob = VrenAnimation("Tit Bob", shader.PS_ASSBOUNCE_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
 
 
 

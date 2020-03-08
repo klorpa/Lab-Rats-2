@@ -122,9 +122,9 @@ label ask_be_girlfriend_label(the_person):
                 the_person.char "I would never dream of leaving him."
 
 
-            if the_person.sex_record.get("Vaginal Sex", 0) > 0:
+            if not the_person.has_taboo("vaginal_sex"):
                 mc.name "You didn't care about him when we were fucking."
-                if the_person.sluttiness > 50:
+                if the_person.effective_sluttiness() > 50:
                     the_person.char "That didn't mean anything, we were just having fun. This is so much more serious than that."
                 else:
                     the_person.char "I don't know what I was thinking, that was a mistake."

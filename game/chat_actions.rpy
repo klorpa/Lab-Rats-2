@@ -1122,17 +1122,20 @@ label wardrobe_change_label(the_person):
                         pass
 
 
-                $ slut_require = new_outfit.slut_requirement
+                $ is_under = False
+                $ is_over = False
                 if outfit_type == "under":
-                    $ slut_require = new_outfit.get_underwear_slut_score()
+                    $ is_under = True
                 elif outfit_type == "over":
-                    $ slut_require = new_outfit.get_overwear_slut_score()
+                    $ is_over = True
 
-                if slut_require > the_person.sluttiness:
-                    $ the_person.call_dialogue("clothing_reject")
-                else:
+                if the_person.judge_outfit(new_outfit, as_underwear = is_under, as_overwear = is_over):
                     $ the_person.add_outfit(new_outfit,outfit_type)
                     $ the_person.call_dialogue("clothing_accept")
+
+                else:
+                    $ the_person.call_dialogue("clothing_reject")
+
 
             else:
                 mc.name "On second thought, nevermind."
@@ -1152,6 +1155,8 @@ label wardrobe_change_label(the_person):
                 $ the_person.set_outfit(_return)
 
             $ the_person.draw_person()
+            if the_person.update_outfit_taboos():
+                "[the_person.title] seems nervous wearing her new outfit in front of you, but quickly warms up to it."
             the_person.char "Is this better?"
     return
 

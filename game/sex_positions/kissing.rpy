@@ -11,15 +11,17 @@
             transition_default = "transition_default_kissing",
             strip_description = "strip_kissing", strip_ask_description = "strip_ask_kissing",
             orgasm_description = "orgasm_kissing",
+            taboo_break_description = "taboo_break_kissing",
             verb = "kiss",
-            opinion_tags = ["kissing"])
+            opinion_tags = ["kissing"],
+            associated_taboo = "kissing")
         list_of_positions.append(kissing)
 
 init 1:
     python:
         kissing.link_positions(blowjob,"transition_kissing_blowjob")
 
-label intro_kissing(the_girl, the_location, the_object, the_round):
+label intro_kissing(the_girl, the_location, the_object):
     $ kissing.current_modifier = None
     $ kissing.redraw_scene(the_girl)
     "You put your arm around [the_girl.title]'s waist and pull her close. Her eyes close as you lean in and press your lips against hers."
@@ -28,7 +30,17 @@ label intro_kissing(the_girl, the_location, the_object, the_round):
     "After a brief moment her arms wrap your torso in return. She pulls you close and presses against you."
     return
 
-label scene_kissing_1(the_girl, the_location, the_object, the_round):
+label taboo_break_kissing(the_girl, the_location, the_object):
+    "You put your arm around [the_girl.title]'s waist and pull her close. She looks directly into your eyes."
+    $ the_girl.call_dialogue(kissing.associated_taboo+"_taboo_break")
+    if the_girl.effective_sluttiness(kissing.associated_taboo) > kissing.slut_cap and the_girl.sex_skills["Foreplay"] > 2:
+        "You lean in and press your lips against hers. She returns the kiss immediately, opening her mouth and letting your tongue in to find hers."
+    else:
+        "You lean in and press your lips against hers. After a moment of hesitation you feel her press back, returning the kiss."
+        "She breaks the kiss after a moment, takes a breath, then leans in herself and kisses you back."
+    return
+
+label scene_kissing_1(the_girl, the_location, the_object):
     #"You lock smoochers, gently kissing her."
     if the_girl.sex_skills["Foreplay"] > 2: #Experienced at kissing.
         #CHOICE CONCEPT: Hold her head,neck // Grab and squeeze her ass.
@@ -122,7 +134,7 @@ label scene_kissing_1(the_girl, the_location, the_object, the_round):
     return
 
 
-label scene_kissing_2(the_girl, the_location, the_object, the_round):
+label scene_kissing_2(the_girl, the_location, the_object):
     #"You boop snoots, tenderly staring into her eyes. She holds you close, kissing you on the neck."
     #"Your snoots boop furiously, the sound echoing around the room."
     #INTRO CONCEPT: Standard kissing, leading into kissing/fondling.
@@ -188,7 +200,7 @@ label scene_kissing_2(the_girl, the_location, the_object, the_round):
 
     return
 
-label outro_kissing(the_girl, the_location, the_object, the_round):
+label outro_kissing(the_girl, the_location, the_object):
     #"You part, snoots seperating slowly as you sare into her eyes. She whispers gently into your ear."
     #"Girl" "Oh god, my snoot. You booped me crazy."
     $ kissing.current_modifier = "kissing"
@@ -206,7 +218,7 @@ label outro_kissing(the_girl, the_location, the_object, the_round):
     "It takes a moment for you to recover from your orgasm. Once you're able to you step back and smooth out your shirt, the crotch of your pants uncomfortably wet now."
     return
 
-label transition_kissing_blowjob(the_girl, the_location, the_object, the_round):
+label transition_kissing_blowjob(the_girl, the_location, the_object):
     #"You part smoochers, and she leans close to you."
     #"You" "I've got something else for you to boop."
     #"You wait, and soon she's on her knees, booping your second snoot."
@@ -228,14 +240,14 @@ label transition_kissing_blowjob(the_girl, the_location, the_object, the_round):
     "[the_girl.title] leans in close and kisses the tip of your dick gently, swirling her tongue around the tip."
     return
 
-label transition_default_kissing(the_girl, the_location, the_object, the_round):
+label transition_default_kissing(the_girl, the_location, the_object):
     $ kissing.current_modifier = "kissing"
     $ kissing.redraw_scene(the_girl)
     "You take [the_girl.title] in your arms and hold her close. She leans against you as you kiss her, breasts pressed up against your chest."
     "It's not long before the two of you are making out, arms clasped tightly around each other."
     return
 
-label strip_kissing(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_kissing(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] breaks the kiss."
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = kissing.position_tag)
@@ -244,7 +256,7 @@ label strip_kissing(the_girl, the_clothing, the_location, the_object, the_round)
     $ kissing.redraw_scene(the_girl)
     return
 
-label strip_ask_kissing(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_kissing(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] breaks the kiss."
     $ kissing.current_modifier = None
     $ kissing.redraw_scene(the_girl)
@@ -267,7 +279,7 @@ label strip_ask_kissing(the_girl, the_clothing, the_location, the_object, the_ro
     $ kissing.redraw_scene(the_girl)
     return
 
-label orgasm_kissing(the_girl, the_location, the_object, the_round):
+label orgasm_kissing(the_girl, the_location, the_object):
     "[the_girl.title] suddenly pulls you tight against her. You feel her body shiver against yours."
     "It takes you a second before you realise she's cumming. You return the passion of her kiss and grind your body against hers."
     $ the_girl.call_dialogue("climax_responses_foreplay")

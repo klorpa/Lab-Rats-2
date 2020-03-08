@@ -11,9 +11,11 @@
             transition_default = "transition_default_deepthroat",
             strip_description = "strip_deepthroat", strip_ask_description = "strip_ask_deepthroat",
             orgasm_description = "orgasm_deepthroat",
+            taboo_break_description = "taboo_break_deepthroat",
             verb = "throat fuck",
             opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs",
-            default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob})
+            default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob},
+            associated_taboo = "sucking_cock")
 
         list_of_positions.append(deepthroat)
 
@@ -22,7 +24,7 @@ init 1:
         deepthroat.link_positions(blowjob,"transition_deepthroat_blowjob")
         deepthroat.link_positions(skull_fuck, "transition_deepthroat_skull_fuck")
 
-label intro_deepthroat(the_girl, the_location, the_object, the_round):
+label intro_deepthroat(the_girl, the_location, the_object):
     "You unzip your pants and pull your underwear down, letting your hard cock spring free."
     mc.name "[the_girl.title], mind getting on your knees and taking this nice and deep for me?"
     if the_girl.effective_sluttiness() > 60:
@@ -44,7 +46,38 @@ label intro_deepthroat(the_girl, the_location, the_object, the_round):
         "She pauses there for a moment, then starts to bob her head up and down slowly."
     return
 
-label scene_deepthroat_1(the_girl, the_location, the_object, the_round):
+label taboo_break_deepthroat(the_girl, the_location, the_object):
+    $ the_girl.call_dialogue(deepthroat.associated_taboo+"_taboo_break") #All of the convincing happens in the dialogue here.
+    if the_girl.effective_sluttiness(deepthroat.associated_taboo) > deepthroat.slut_cap:
+        "[the_girl.possessive_title] kneels down in front of you, eyes locked on your hard cock."
+        $ deepthroat.current_modifier = "blowjob"
+        $ deepthroat.redraw_scene(the_girl)
+        "She leans in, turning her head to the side to run her tongue down the bottom of your shaft."
+        "She licks your balls briefly, then works back up to the tip and slides it past her lips."
+        "You sigh happily as you feel [the_girl.title]'s warm mouth envelop your cock."
+        "She wastes no time picking up speed, happily bobbing her head up and down over your sensitive tip."
+
+    else:
+        "[the_girl.possessive_title] hesitantly gets onto her knees, eyes locked on your hard cock."
+        "She gently holds onto your shaft with one hand and brings the tip closer to her lips."
+        "She looks up at you just before the moment of truth, locking eyes as she opens her lips and slides the tip of your cock past them."
+        $ deepthroat.current_modifier = "blowjob"
+        $ deepthroat.redraw_scene(the_girl)
+
+        "You sigh happily as you feel [the_girl.title]'s warm mouth envelop your cock."
+        "She moves slowly at first, gently working her head up and down over your sensitive tip."
+
+    mc.name "Don't be shy, you can take it a little deeper than that."
+    if the_girl.effective_sluttiness(deepthroat.associated_taboo) > deepthroat.slut_cap or the_girl.sex_skills["Oral"] >= 2:
+        "[the_girl.possessive_title] takes your advice. She moves past the tip and tries to put your shaft down her throat."
+        mc.name "That's it. You're a natural."
+
+    else:
+        "[the_girl.possessive_title] tries to move deeper, but gags and has to pull back."
+        mc.name "Don't worry, you'll get it eventually."
+    return
+
+label scene_deepthroat_1(the_girl, the_location, the_object):
     $ deepthroat.current_modifier = "blowjob"
     $ deepthroat.redraw_scene(the_girl)
     if the_girl.sex_skills["Oral"] < 3: #Inexperienced
@@ -114,7 +147,7 @@ label scene_deepthroat_1(the_girl, the_location, the_object, the_round):
         "She gags a little as she bottoms out on your cock. Her mouth feels amazingly warm wrapped around your air-chilled shaft."
     return
 
-label scene_deepthroat_2(the_girl, the_location, the_object, the_round):
+label scene_deepthroat_2(the_girl, the_location, the_object):
     $ deepthroat.current_modifier = "blowjob"
     $ deepthroat.redraw_scene(the_girl)
     "You place a firm hand on the back of [the_girl.title]'s head, guiding her up and down your shaft."
@@ -226,7 +259,7 @@ label scene_deepthroat_2(the_girl, the_location, the_object, the_round):
 
     return
 
-label scene_deepthroat_3(the_girl, the_location, the_object, the_round):
+label scene_deepthroat_3(the_girl, the_location, the_object):
     if the_girl.sex_skills["Oral"] < 4:
         "[the_girl.title] is struggling to take the full length of your dick down her throat. She pulls off and pants for air."
         the_girl.char "Ah... let me see if I can fit this all down..."
@@ -344,7 +377,7 @@ label scene_deepthroat_3(the_girl, the_location, the_object, the_round):
             "She slips you back into her mouth and starts to throat you again."
     return
 
-label outro_deepthroat(the_girl, the_location, the_object, the_round):
+label outro_deepthroat(the_girl, the_location, the_object):
     $ deepthroat.current_modifier = "blowjob"
     $ deepthroat.redraw_scene(the_girl)
     "The warm, tight feeling of [the_girl.title]'s throat wrapped around your shaft pulls you closer and closer to orgasm. You feel yourself pass the point of no return and let out a soft moan."
@@ -414,7 +447,7 @@ label outro_deepthroat(the_girl, the_location, the_object, the_round):
                 $ the_girl.call_dialogue("cum_face")
     return
 
-label transition_deepthroat_blowjob(the_girl, the_location, the_object, the_round):
+label transition_deepthroat_blowjob(the_girl, the_location, the_object):
     "You move your hand from the back of [the_girl.title]'s head and sigh contentedly."
     mc.name "Fuck that felt nice."
     "[the_girl.possessive_title] slides your cock out of her mouth and strokes it with one hand while she talks to you."
@@ -422,7 +455,7 @@ label transition_deepthroat_blowjob(the_girl, the_location, the_object, the_roun
     "She smiles and kisses the tip of your dick, then slides it back into her mouth and starts to suck on it some more, paying more attention to the shaft now."
     return
 
-label transition_deepthroat_skull_fuck(the_girl, the_location, the_object, the_round):
+label transition_deepthroat_skull_fuck(the_girl, the_location, the_object):
     "You place two strong hands on either side of [the_girl.title]'s head."
     mc.name "I want to take control for a bit. Ready?"
     $ deepthroat.current_modifier = None
@@ -440,19 +473,19 @@ label transition_deepthroat_skull_fuck(the_girl, the_location, the_object, the_r
     $ deepthroat.redraw_scene(the_girl)
     return
 
-label transition_default_deepthroat(the_girl, the_location, the_object, the_round):
+label transition_default_deepthroat(the_girl, the_location, the_object):
     "[the_girl.title] gets ready in front of you, on her knees with her mouth open. You place a hand on the back of her head and pull her towards you, slidding your cock down her throat."
     "After giving her a second to get use to your size you start to guide her back and forth, keeping yourself buried nice and deep in her mouth."
     return
 
-label strip_deepthroat(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_deepthroat(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] pops off your cock and looks up at you."
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = deepthroat.position_tag)
     "[the_girl.possessive_title] stands and strips off her [the_clothing.name]. She drops it to the ground, then gets back on her knees and slides your cock inside her mouth."
     return
 
-label strip_ask_deepthroat(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_deepthroat(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] pops off your cock and looks up at you from her knees."
     the_girl.char "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
     menu:
@@ -473,7 +506,7 @@ label strip_ask_deepthroat(the_girl, the_clothing, the_location, the_object, the
     return
 
 
-label orgasm_deepthroat(the_girl, the_location, the_object, the_round):
+label orgasm_deepthroat(the_girl, the_location, the_object):
     $ deepthroat.current_modifier = "blowjob"
     $ deepthroat.redraw_scene(the_girl)
     "[the_girl.title] pulls back on your cock, almost letting it fall out of her mouth. She closes her eyes and quivers slightly."

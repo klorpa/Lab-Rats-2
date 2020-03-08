@@ -11,8 +11,10 @@ init:
             transition_default = "transition_default_handjob",
             strip_description = "strip_handjob", strip_ask_description = "strip_ask_handjob",
             orgasm_description = "orgasm_handjob",
+            taboo_break_description = "taboo_break_handjob",
             verb = "stroke", verbing = "stroking",
-            opinion_tags = ["giving handjobs"], record_class = "Handjobs")
+            opinion_tags = ["giving handjobs"], record_class = "Handjobs",
+            associated_taboo = "touching_penis")
 
         list_of_girl_positions.append(handjob)
 
@@ -20,18 +22,37 @@ init:
    #python:
        #Here is where you would put connections if they existed.
 
-label intro_handjob(the_girl, the_location, the_object, the_round):
+label intro_handjob(the_girl, the_location, the_object):
     "[the_girl.title] places her hand on your chest and strokes it gently."
     "She looks into your eyes as her hand runs down your torso, running gently over your abs, down to your waist."
     the_girl.char "Mmm, what do we have here?"
     "Her hand runs tight against your body, into your pants and down to your bulge."
     "A shiver of pleasure shoots up your spine as she strokes it gently over your underwear, caressing your package."
-    the_person.char "Do you want to give me a hand with this? These buttons can be so tricky..."
+    the_girl.char "Do you want to give me a hand with this? These buttons can be so tricky..."
     "You undo your pants for her and she pull them down, followed quicky by your underwear."
     "Your hard cock springs free into her waiting hand, and she starts to stroke it slowly while holding you close."
     return
 
-label scene_handjob_1(the_girl, the_location, the_object, the_round):
+label taboo_break_handjob(the_girl, the_location, the_object):
+    "[the_girl.title] places a hand on your chest and strokes it tenderly."
+    "She looks into your eyes as her hand moves lower, running over your abs, down to your waist."
+    if the_girl.effective_sluttiness(handjob.associated_taboo) > handjob.slut_cap:
+        "Her fingers slide into your pubic hair, then to the side of your cock and between your legs."
+        "She strokes your inner thigh on one side, purposefully avoiding your cock with each movement."
+    else:
+        "You feel her fingers brush your pubic hair, then pull back and rest on your stomach."
+
+    $ the_girl.call_dialogue(handjob.associated_taboo+"_taboo_break")
+
+    if the_girl.sex_skills["Foreplay"] >= 3:
+        "She runs a finger along the bottom of your shaft, ending at the sensitive spot under your tip."
+        "Then she wraps her full hand around it and slides it back down to the base."
+        "[the_person.possessive_title] begins to stroke you off with long, deliberate motions."
+    else:
+        "She wraps her fingers around the base of your shaft and squeezes it lightly, then begins to slide her hand up and down your length."
+    return
+
+label scene_handjob_1(the_girl, the_location, the_object):
     if not mc.recently_orgasmed:
         "[the_girl.possessive_title]'s hand is warm and soft as it slides up and down your dick."
         if mc.arousal > 40:
@@ -44,20 +65,20 @@ label scene_handjob_1(the_girl, the_location, the_object, the_round):
         the_girl.char "Mmm, even soft you're so big..."
     return
 
-label scene_handjob_2(the_girl, the_location, the_object, the_round):
+label scene_handjob_2(the_girl, the_location, the_object):
     "[the_girl.title] moves her hand down and cups your balls, massaging them gently."
     the_person.char "I want you to get all of your cum out of here for me..."
     "She holds your body against her and slides her hand back to your shaft."
     return
 
-label scene_handjob_3(the_girl, the_location, the_object, the_round):
+label scene_handjob_3(the_girl, the_location, the_object):
     "[the_girl.possessive_title] gives you a few fast strokes, then lets go."
     the_girl.char "One second..."
     "She brings her hand up to her mouth and sticks her tongue out, running it from her palm to the tips of her fingers."
     "She reaches back down and wraps her slippery hand around your cock again. She starts to gently stroke it."
     return
 
-label outro_handjob(the_girl, the_location, the_object, the_round):
+label outro_handjob(the_girl, the_location, the_object):
     # describe wanting to cum
     "[the_girl.title]'s touch pulls you closer and closer to your climax. She smiles at you and speeds up."
     the_girl.char "Are you close? I want you to cum for me."
@@ -110,19 +131,19 @@ label outro_handjob(the_girl, the_location, the_object, the_round):
 
     return
 
-label transition_default_handjob(the_girl, the_clothing, the_location, the_object, the_round):
+label transition_default_handjob(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] has you stand and faces you, grabbing your cock while she stares into your eyes."
     "She starts to stroke it, slowly sliding her hand up and down your hard shaft."
     return
 
-label strip_handjob(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_handjob(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] starts to strip off her [the_clothing.name] while stroking you off."
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = handjob.position_tag)
     "She pulls it off and drops it to the ground."
     return
 
-label strip_ask_handjob(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_handjob(the_girl, the_clothing, the_location, the_object):
     the_person.char "[the_person.mc_title], would you like me to take off my [the_clothing.name]?"
     "She keeps stroking your cock while you respond."
     menu:
@@ -137,7 +158,7 @@ label strip_ask_handjob(the_girl, the_clothing, the_location, the_object, the_ro
             "She nods and keeps jerking you off."
     return
 
-label orgasm_handjob(the_girl, the_location, the_object, the_round):
+label orgasm_handjob(the_girl, the_location, the_object):
     "[the_girl.possessive_title]'s breathing picks up and her grip on your cock gets firmer."
     "She holds you tight, her breath warm on your ear and whispers."
     the_person.char "Oh god, I think I'm going to cum... Thinking about this big cock, so close to me..."

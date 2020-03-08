@@ -122,7 +122,7 @@ label employee_pay_cash_bonus(the_person):
             $ the_person.change_obedience(change_amount)
             $ mc.business.funds -= months_wages
             "[the_person.title] takes the bills, momentarily stunned by the amount."
-            if the_person.sluttiness > 40 and the_person.happiness > 100:
+            if the_person.effective_sluttiness() > 40 and the_person.happiness > 100:
                 the_person.char "Wow... this is amazing sir. I'm sure there's something I can do to pay you back, right?"
                 "She steps close to you and runs a finger down your chest."
                 $ the_person.add_situational_slut("situation", 10, "He's given me such a generous bonus, I should repay the favour!")
@@ -190,7 +190,7 @@ label employee_performance_review(the_person):
                     the_person.char "That sounds amazing! Thank you sir, I promise I won't let you down!"
                     mc.name "Good to hear it."
 
-                "Reward her sexually." if the_person.sluttiness >= 40: #At high sluttiness you can make her cum to make her even happier with her job.
+                "Reward her sexually." if the_person.effective_sluttiness() >= 40: #At high sluttiness you can make her cum to make her even happier with her job.
                     mc.name "You do a lot of work for the company, and I know how stressful your job can be at times."
                     "You get up from your desk and move around to the other side. You step behind [the_person.title] and place your hands on her shoulders, rubbing them gently."
                     mc.name "I'd like to do something for you to help you relax. How does that sound for a bonus?"
@@ -250,7 +250,7 @@ label employee_performance_review(the_person):
                     mc.name "I'll be honest with you [the_person.title], your performance here at [mc.business.name] leaves a lot to be desired."
                     mc.name "I've been running the numbers and I think we'd be better off without you. Unless you can convince me otherwise I'm going to have to let you go."
                     if the_person.get_job_happiness_score() > -10:
-                        if the_person.sluttiness < 20:
+                        if the_person.effective_sluttiness() < 20:
                             the_person.char "No sir, I really need this job. What if I took a pay cut? Would that be enough?"
                             menu:
                                 "Cut her pay. (-$[cut_amount]/day)":
@@ -283,7 +283,7 @@ label employee_performance_review(the_person):
                                     $ the_person.change_slut_temp(4)
                                     $ the_person.change_happiness(-5)
                                     mc.name "Okay [the_person.title], I'll keep you around for a little while longer, but you're going to need to shape up unless you want this to be a regular occurrence."
-                                    if the_person.sluttiness < 50:
+                                    if the_person.effective_sluttiness() < 50:
                                         the_person.char "I'll do my best sir, I promise."
                                     else:
                                         the_person.char "Would that really be such a bad thing?"
@@ -305,7 +305,7 @@ label employee_performance_review(the_person):
                         return #Don't use the normal "show her out" ending stuff. The scene ends here.
 
 
-                "Punish her sexually." if the_person.sluttiness >= 40 and the_person.obedience >= 120: #Orgasm denial and/or make her service you.
+                "Punish her sexually." if the_person.effective_sluttiness() >= 40 and the_person.obedience >= 120: #Orgasm denial and/or make her service you.
                     "You sigh dramatically and stand up from your desk. You walk over to the other side and sit on the corner nearest [the_person.title]."
                     mc.name "Your performance has really let me down, but I think what you need a little motivation."
                     mc.name "I want to have some fun with you, but you're not allowed to climax, is that understood?"

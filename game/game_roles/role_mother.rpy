@@ -23,7 +23,7 @@ label mom_weekly_pay_label(the_person):
     $ the_person.draw_person(position = "sitting")
     "[the_person.title] is sitting at the kitchen table, a collection of bills laid out in front of her."
 
-    if the_person.sluttiness < 20:
+    if the_person.effective_sluttiness() < 20:
         the_person.char "This new morgage on the house is really stressing our finances. It would really help if you could chip in."
         call mom_low_sluttiness_weekly_pay(the_person) from _call_mom_low_sluttiness_weekly_pay #The menu is separated out to make looping easier.
     else:
@@ -65,14 +65,18 @@ label mom_low_sluttiness_weekly_pay(the_person):
             menu:
                 "Ask for a kiss.":
                     mc.name "I'd like a kiss for it though."
-                    the_person.char "A kiss?"
-                    mc.name "For being such a good son."
-                    the_person.char "Oh, well that's easy then."
-                    "She stands up and leans in to give you a kiss on the cheek."
-                    mc.name "On the lips, [the_person.mc_title]. Please?"
-                    the_person.char "You've always been so affectionate. Not like other boys at all, you know. Fine."
+                    if the_person.has_taboo("kissing"):
+                        the_person.char "A kiss?"
+                        mc.name "For being such a good son."
+                        the_person.char "Oh, well that's easy then."
+                        "She stands up and leans in to give you a kiss on the cheek."
+                        mc.name "On the lips, [the_person.mc_title]. Please?"
+                        the_person.char "You've always been so affectionate. Not like other boys at all, you know. Fine."
+
+
                     "She leans forward and pecks you on the lips."
                     $ the_person.change_slut_temp(2)
+                    $ the_person.break_taboo("kissing")
                     the_person.char "There, have I earned my reward?"
                     "You hold out the cash for her and she takes it."
                     the_person.char "Thank you so much, every little bit helps."
@@ -81,10 +85,11 @@ label mom_low_sluttiness_weekly_pay(the_person):
                     mc.name "What are the magic words?"
                     the_person.char "Abracadabra?"
                     mc.name "No, the words we say when we want help?"
-                    the_person.char "Oooh, I see what you're getting at. I've drilled it into you and I'm getting a taste of my own medicine."
-                    the_person.char "May I please have some help with the bills?"
+                    the_person.char "Oooh, I see what you're getting at. I've drilled it into you and now I'm getting a taste of my own medicine."
+                    "She smiles and rolls her eyes playfully."
+                    the_person.char "May I {i}please{/i} have some help with the bills?"
                     mc.name "I'm not sure if you mean it..."
-                    the_person.char "Pretty please?"
+                    the_person.char "Pretty please, [the_person.mc_title]?"
                     $ the_person.change_obedience(2)
                     "You hold out the cash and she takes it."
                     mc.name "And..."
@@ -92,7 +97,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
             $ the_person.change_happiness(5)
             $ the_person.change_love(3)
             $ the_person.draw_person(position = "sitting", emotion = "happy")
-            "She gives you a hug and turns her attention back to the bills."
+            "She gives you a hug and turns her attention back to organising the bills."
 
         "Help out.\n{size=22}-$100{/size} (disabled)" if mc.business.funds < 100:
             pass
@@ -162,9 +167,9 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
         #TODO: "I want to breed Lily" option, once you've got Mom at high sluttiness, obedience, and Love. She gives you the go-ahead to knock up your sister.
 
-        "Have her suck you off. -$300" if mc.business.funds >= 300 and the_person.sluttiness >= 30:
+        "Have her suck you off. -$300" if mc.business.funds >= 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
             mc.name "Alright, I'll pay you to give me a blowjob."
-            if the_person.sex_record.get("Blowjobs",0) > 0 or the_person.sluttiness >= 60:
+            if the_person.has_taboo("sucking_cock") or the_person.effective_sluttiness("sucking_cock") >= 60:
                 the_person.char "If that's what you need."
                 "You pull out your wallet and count out her cash while [the_person.possessive_title] gets onto her knees in front of you."
                 $ the_person.draw_person(position = "blowjob")
@@ -184,6 +189,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
                 "She sighs and kneels down in front of you. You unzip your pants and pull your cock out for your mother."
                 mc.name "Don't worry, it won't bite."
                 the_person.char "This isn't my exactly my first blowjob sweety, I'm not worried."
+                $ the_person.break_taboo("sucking_cock")
 
             "With that she opens her mouth and slides the tip of your hard cock inside. Her tongue swirls around the tip, sending a jolt of pleasure up your spine."
             call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True, position_locked = True) from _call_fuck_person_33
@@ -197,7 +203,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
             $ the_person.review_outfit()
             $ the_person.change_obedience(4)
 
-        "Have her suck you off. -$300 (disabled)" if mc.business.funds < 300 and the_person.sluttiness >= 30:
+        "Have her suck you off. -$300 (disabled)" if mc.business.funds < 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
             pass
 
         "Nothing this week.":
@@ -212,6 +218,11 @@ label mom_high_sluttiness_weekly_pay(the_person):
         #TODO: have Lily start a cam show to make cash, then bring your Mom into it.
 
 
+
+    return
+
+label mom_post_sex_confront(the_person):
+    #TODO: She talks to you after the first time you seduce her somehow and talks about how "it was wrong... we can't do that!"
 
     return
 

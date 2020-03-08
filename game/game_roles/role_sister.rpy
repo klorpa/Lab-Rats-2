@@ -248,7 +248,7 @@ label strip_explanation(the_person):
 label sister_strip_label(the_person):
     #A short intro so that we can reuse the pay_strip_scene with other characters if we want.
     mc.name "So [the_person.title], are you interested in earning a hundred dollars?"
-    if the_person.sluttiness < 50:
+    if the_person.effective_sluttiness("underwear_nudity") < 50:
         the_person.char "Oh, do you want me to... show off for you?"
     else:
         the_person.char "You want me to strip down for you?"
@@ -336,7 +336,7 @@ label sister_instathot_label(the_person):
     the_person.char "I keep my stuff here so Mom doesn't find it. Okay, let's put this on!"
     $ the_person.draw_person(emotion = "happy")
     "[the_person.title] gets dressed in her new outfit and turns to you, smiling."
-    $ the_person.apply_outfit(insta_ouftit)
+    $ the_person.apply_outfit(insta_ouftit, update_taboo = True)
     #$ the_person.outfit = insta_ouftit changed v0.24.1
     $ the_person.draw_person(emotion = "happy")
     the_person.char "Well, do you think they'll like it?"
@@ -348,7 +348,7 @@ label sister_instathot_label(the_person):
 
         "I don't think so.":
             mc.name "I'm not so sure. They might be looking for something... More."
-            if the_person.sluttiness >= 30:
+            if the_person.effective_sluttiness() >= 30:
                 the_person.char "Yeah, I think so too. Too bad Insta-pic is run by a bunch of prudes. I wish there was somewhere I could show more..."
             else:
                 $ the_person.change_happiness(-2)
@@ -393,7 +393,7 @@ label sister_instathot_label(the_person):
                     "..."
                     $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
                 "Once she's stripped down she puts on the outfit you've suggested."
-                $ the_person.apply_outfit(the_suggested_outfit)
+                $ the_person.apply_outfit(the_suggested_outfit, update_taboo = True)
                 #$ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want. changed v0.24.1
                 $ the_person.draw_person()
                 $ the_person.change_love(1)

@@ -11,8 +11,10 @@ init:
             transition_default = "transition_default_standing_grope",
             strip_description = "strip_standing_grope", strip_ask_description = "strip_ask_standing_grope",
             orgasm_description = "orgasm_standing_grope",
+            taboo_break_description = "taboo_break_standing_massage",
             verb = "grope", verbing = "groping",
-            opinion_tags = None)
+            opinion_tags = None,
+            associated_taboo = "touching_body")
 
         list_of_positions.append(standing_grope)
 
@@ -20,7 +22,7 @@ init 1:
     python:
         standing_grope.link_positions(standing_finger,"transition_standing_grope_standing_fingering")
 
-label intro_standing_grope(the_girl, the_location, the_object, the_round):
+label intro_standing_grope(the_girl, the_location, the_object):
 
     "You stand behind [the_girl.title] and put your arms around her, pulling her close against you."
     "You reach one hand down, running across her stomach and towards her waist and the other up towards her tits."
@@ -31,7 +33,20 @@ label intro_standing_grope(the_girl, the_location, the_object, the_round):
         "She sighs and leans into you as your hand slides between her legs, brushing her thighs and petting her pussy."
     return
 
-label scene_standing_grope_1(the_girl, the_location, the_object, the_round):
+label taboo_break_standing_massage(the_girl, the_location, the_object):
+    "You put your hands on [the_girl.title]'s arms, rubbing them gently."
+    the_girl.char "Oh..."
+    "Next, you slide your hands down her body, over the curves of her torso onto her hips."
+    "You take a small step forward and slide your hands behind [the_girl.possessive_title] and onto her ass."
+    $ the_girl.call_dialogue(standing_grope.associated_taboo+"_taboo_break")
+    if the_girl.has_large_tits():
+        "You step behind [the_girl.title], putting one arm across her torso and cupping one of her juicy tits."
+    else:
+        "You step behind [the_girl.title], putting one arm across her torso and cupping one of her tits."
+    "Your other hand slides lower, over her hips again and down to her inner thigh. She sighs happily and leans against you."
+    return
+
+label scene_standing_grope_1(the_girl, the_location, the_object):
     if the_girl.has_large_tits():
         if the_girl.outfit.tits_available():
             "You squeeze and massage [the_girl.possessive_title]'s bare tits. They're soft, warm, and heavy in your hand."
@@ -48,7 +63,7 @@ label scene_standing_grope_1(the_girl, the_location, the_object, the_round):
     return
 
 
-label scene_standing_grope_2(the_girl, the_location, the_object, the_round):
+label scene_standing_grope_2(the_girl, the_location, the_object):
     if the_girl.outfit.vagina_available():
         "[the_girl.title] spreads her legs for you, giving you space between them to slide your hand down."
         "She moans softly when you run a finger over her warm, wet, slit."
@@ -59,7 +74,7 @@ label scene_standing_grope_2(the_girl, the_location, the_object, the_round):
         the_girl.char "Mmm..."
     return
 
-label scene_standing_grope_3(the_girl, the_location, the_object, the_round):
+label scene_standing_grope_3(the_girl, the_location, the_object):
     if the_girl.outfit.vagina_available():
         "[the_girl.title] presses her hips back against you, grinding her bare ass rubbing against your crotch."
         the_girl.char "Mmm, I can feel your erection. That's so fucking hot..."
@@ -67,7 +82,7 @@ label scene_standing_grope_3(the_girl, the_location, the_object, the_round):
         "[the_girl.title] presses her hips back against you, grinding her ass against your crotch."
     return
 
-label outro_standing_grope(the_girl, the_location, the_object, the_round):
+label outro_standing_grope(the_girl, the_location, the_object):
     if the_girl.arousal >= 100:
         "Hearing [the_girl.title] cum in your arms pushes you over the edge. You feel your cock spasm in your underwear as a wave of pleasure washes over you."
         "It takes both of you a moment to recover from your orgasms."
@@ -80,13 +95,13 @@ label outro_standing_grope(the_girl, the_location, the_object, the_round):
         the_girl.char "Mmm, good to hear."
     return
 
-# label transition_standing_grope_blowjob(the_girl, the_location, the_object, the_round):
+# label transition_standing_grope_blowjob(the_girl, the_location, the_object):
 #
 #     return
 
 #TODO: Add a "finger" position that is reachable from here.
 
-label transition_standing_grope_standing_fingering(the_girl, the_location, the_object, the_round):
+label transition_standing_grope_standing_fingering(the_girl, the_location, the_object):
     if the_girl.outfit.vagina_available():
         "You pet [the_girl.title]'s pussy, then slide two fingers inside of it. She gasps as they slip inside."
     else:
@@ -99,18 +114,18 @@ label transition_standing_grope_standing_fingering(the_girl, the_location, the_o
     the_girl.char "Oh [the_girl.mc_title]... Ah..."
     return
 
-label transition_default_standing_grope(the_girl, the_location, the_object, the_round):
+label transition_default_standing_grope(the_girl, the_location, the_object):
     "You gather [the_girl.title] up in your arms, cradling her from behind. You reach one hand down between her legs, and the other up to cup her breasts."
     "She leans her weight against you in response."
     return
 
-label strip_standing_grope(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_standing_grope(the_girl, the_clothing, the_location, the_object):
     the_girl.char "Your hands feel amazing... Oh my god..."
     $ the_girl.draw_animated_removal(the_clothing, position = standing_grope.position_tag)
     "She strips off her [the_clothing.name] while you're feeling her up."
     return
 
-label strip_ask_standing_grope(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_standing_grope(the_girl, the_clothing, the_location, the_object):
     the_girl.char "I want to feel you touch me everywhere... Can I talk off my [the_clothing.name] for you?"
     menu:
         "Let her strip.":
@@ -127,7 +142,7 @@ label strip_ask_standing_grope(the_girl, the_clothing, the_location, the_object,
     $ standing_grope.redraw_scene(the_girl)
     return
 
-label orgasm_standing_grope(the_girl, the_location, the_object, the_round):
+label orgasm_standing_grope(the_girl, the_location, the_object):
     "You feel [the_girl.possessive_title] tense up in your arms as you explore her body."
     $ the_girl.call_dialogue("climax_responses_foreplay")
     "She quivers with pleasure for a few seconds before her whole body relaxes."

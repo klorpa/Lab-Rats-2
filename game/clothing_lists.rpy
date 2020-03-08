@@ -128,136 +128,136 @@ init -1:
         ##Panties
         panties_list = []
 
-        plain_panties = Clothing("Plain Panties", 1, True, True, "Plain_Panties", False, True, 0, tucked = True)
+        plain_panties = Clothing("Plain Panties", 1, True, True, "Plain_Panties", False, True, 0, tucked = True, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "panties")
         panties_list.append(plain_panties)
 
-        cotton_panties = Clothing("Cotton Panties", 1, True, True, "Cotton_Panties", False, True, 0, tucked = True)
+        cotton_panties = Clothing("Cotton Panties", 1, True, True, "Cotton_Panties", False, True, 0, tucked = True, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "panties")
         panties_list.append(cotton_panties)
 
-        panties = Clothing("Panties", 1, True, True, "Panties", False, True, 0, tucked = True, whiteness_adjustment = 0.2, contrast_adjustment = 1.4)
+        panties = Clothing("Panties", 1, True, True, "Panties", False, True, 0, tucked = True, whiteness_adjustment = 0.2, contrast_adjustment = 1.4, supported_patterns = {"Two Toned":"Pattern_1","Text":"Pattern_2"}, display_name = "panties")
         panties_list.append(panties)
 
-        boy_shorts = Clothing("Boy Panties", 1, True, True, "Boy_Shorts", False, True, 0, tucked = True)
+        boy_shorts = Clothing("Boy Panties", 1, True, True, "Boy_Shorts", False, True, 0, tucked = True, display_name = "panties")
         panties_list.append(boy_shorts)
 
-        cute_panties = Clothing("Cute Panties", 1, True, True, "Cute_Panties", False, True, 0, tucked = True)
+        cute_panties = Clothing("Cute Panties", 1, True, True, "Cute_Panties", False, True, 0, tucked = True, display_name = "panties")
         panties_list.append(cute_panties)
 
-        lace_panties = Clothing("Lace Panties", 1, True, True, "Lace_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"})
+        lace_panties = Clothing("Lace Panties", 1, True, True, "Lace_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"},  display_name = "panties")
         panties_list.append(lace_panties)
 
-        cute_lace_panties = Clothing("Cute Lace Panties", 1, True, True, "Cute_Lace_Panties", False, True, 2, tucked = True)
+        cute_lace_panties = Clothing("Cute Lace Panties", 1, True, True, "Cute_Lace_Panties", False, True, 2, tucked = True, display_name = "panties")
         panties_list.append(cute_lace_panties)
 
-        tiny_lace_panties = Clothing("Tiny Lace Panties", 1, True, True, "Tiny_Lace_Panties", False, True, 3, tucked = True)
+        tiny_lace_panties = Clothing("Tiny Lace Panties", 1, True, True, "Tiny_Lace_Panties", False, True, 3, tucked = True, display_name = "panties")
         panties_list.append(tiny_lace_panties)
 
-        thin_panties = Clothing("Thin Panties", 1, True, True, "Thin_Panties", False, True, 1, tucked = True, whiteness_adjustment = -0.1, contrast_adjustment = 1.3, supported_patterns = {"Two Toned":"Pattern_1"})
+        thin_panties = Clothing("Thin Panties", 1, True, True, "Thin_Panties", False, True, 1, tucked = True, whiteness_adjustment = -0.1, contrast_adjustment = 1.3, supported_patterns = {"Two Toned":"Pattern_1"},  display_name = "panties")
         panties_list.append(thin_panties)
 
-        thong = Clothing("Thong", 1, True, True, "Thong", False, True, 3, tucked = True, supported_patterns = {"Two Toned":"Pattern_1"})
+        thong = Clothing("Thong", 1, True, True, "Thong", False, True, 3, tucked = True, supported_patterns = {"Two Toned":"Pattern_1"},  display_name = "thong")
         panties_list.append(thong)
 
-        tiny_g_string = Clothing("G String", 1, True, True, "Tiny_G_String", False, True, 4, tucked = True)
+        tiny_g_string = Clothing("G String", 1, True, True, "Tiny_G_String", False, True, 4, tucked = True,  display_name = "g-string")
         panties_list.append(tiny_g_string)
 
-        string_panties = Clothing("String Panties", 1, True, True, "String_Panties", False, True, 4, tucked = True)
+        string_panties = Clothing("String Panties", 1, True, True, "String_Panties", False, True, 4, tucked = True, display_name = "g-string")
         panties_list.append(string_panties)
 
-        strappy_panties = Clothing("Strappy Panties", 1, True, True, "Strappy_Panties", False, True, 3, tucked = True)
+        strappy_panties = Clothing("Strappy Panties", 1, True, True, "Strappy_Panties", False, True, 3, tucked = True, display_name = "panties")
         panties_list.append(strappy_panties)
 
-        crotchless_panties = Clothing("Crotchless Panties", 1, False, False, "Crotchless_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.15, contrast_adjustment = 1.1)
+        crotchless_panties = Clothing("Crotchless Panties", 1, False, False, "Crotchless_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.15, contrast_adjustment = 1.1, display_name = "panties")
         panties_list.append(crotchless_panties)
 
 
         ##Bras
         bra_list = []
 
-        bra = Clothing("Bra", 1, True, True, "Bra", True, True, 0, supported_patterns = {"Lacey":"Pattern_1"})
+        bra = Clothing("Bra", 1, True, True, "Bra", True, True, 0, supported_patterns = {"Lacey":"Pattern_1"}, display_name = "bra")
         bra_list.append(bra)
 
-        bralette = Clothing("Bralette", 1, True, True, "Bralette", True, True, 0)
+        bralette = Clothing("Bralette", 1, True, True, "Bralette", True, True, 0, display_name = "bra")
         bra_list.append(bralette)
 
-        sports_bra = Clothing("Sports Bra", 1, True, True, "Sports_Bra", True, True, 0, whiteness_adjustment = 0.35, contrast_adjustment = 1.3, supported_patterns = {"Two Toned":"Pattern_1"})
+        sports_bra = Clothing("Sports Bra", 1, True, True, "Sports_Bra", True, True, 0, whiteness_adjustment = 0.35, contrast_adjustment = 1.3, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "bra")
         bra_list.append(sports_bra)
 
-        strapless_bra = Clothing("Strapless Bra", 1, True, True, "Strapless_Bra", True, True, 1, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"})
+        strapless_bra = Clothing("Strapless Bra", 1, True, True, "Strapless_Bra", True, True, 1, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "bra")
         bra_list.append(strapless_bra)
 
-        lace_bra = Clothing("Lace Bra", 1, True, True, "Lace_Bra", True, True, 2, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"})
+        lace_bra = Clothing("Lace Bra", 1, True, True, "Lace_Bra", True, True, 2, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "bra")
         bra_list.append(lace_bra)
 
-        thin_bra = Clothing("Thin Bra", 1, True, True, "Thin_Bra", True, True, 2, whiteness_adjustment = 0.0, contrast_adjustment = 1.3)
+        thin_bra = Clothing("Thin Bra", 1, True, True, "Thin_Bra", True, True, 2, whiteness_adjustment = 0.0, contrast_adjustment = 1.3, display_name = "bra")
         bra_list.append(thin_bra)
 
-        strappy_bra = Clothing("Strappy Bra", 1, True, True, "Strappy_Bra", True, True, 3)
+        strappy_bra = Clothing("Strappy Bra", 1, True, True, "Strappy_Bra", True, True, 3, display_name = "bra")
         bra_list.append(strappy_bra)
 
-        quarter_cup_bustier = Clothing("Quarter Cup Bustier", 1, False, False, "Quarter_Cup_Bra", True, True, 8, whiteness_adjustment = 0.3, contrast_adjustment = 0.9, supported_patterns = {"Two Toned":"Pattern_1"})
+        quarter_cup_bustier = Clothing("Quarter Cup Bustier", 1, False, False, "Quarter_Cup_Bra", True, True, 8, whiteness_adjustment = 0.3, contrast_adjustment = 0.9, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "bustier")
         bra_list.append(quarter_cup_bustier)
 
-        corset = Clothing("Corset", 1, True, True, "Corset", True, True, 5, whiteness_adjustment = 0.0, contrast_adjustment = 1.4, supported_patterns = {"Two Toned":"Pattern_1"})
+        corset = Clothing("Corset", 1, True, True, "Corset", True, True, 5, whiteness_adjustment = 0.0, contrast_adjustment = 1.4, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "corset")
         bra_list.append(corset)
 
-        teddy = Clothing("Teddy", 1, True, True, "Teddy", True, True, 4, whiteness_adjustment = 0.0, contrast_adjustment = 1.0)
+        teddy = Clothing("Teddy", 1, True, True, "Teddy", True, True, 4, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = "teddy")
         bra_list.append(teddy)
 
-        cincher = Clothing("Cincher", 1, False, False, "Cincher", True, False, 5, supported_patterns = {"Two Toned":"Pattern_1"})
+        cincher = Clothing("Cincher", 1, False, False, "Cincher", True, False, 5, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "corset")
         bra_list.append(cincher)
 
-        heart_pasties = Clothing("Heart Pasties", 1, False, False, "Heart_Pasties", True, True, 8)
+        heart_pasties = Clothing("Heart Pasties", 1, False, False, "Heart_Pasties", True, True, 8, display_name = "pasties")
         bra_list.append(heart_pasties)
 
 
         ##Pants
         pants_list = []
 
-        leggings = Clothing("Leggings", 2, True, True, "Leggings", False, False, 1, whiteness_adjustment = 0.2, contrast_adjustment = 1.8, supported_patterns = {"Cougar Print":"Pattern_1"})
+        leggings = Clothing("Leggings", 2, True, True, "Leggings", False, False, 1, whiteness_adjustment = 0.2, contrast_adjustment = 1.8, supported_patterns = {"Cougar Print":"Pattern_1"}, display_name = "leggings")
         pants_list.append(leggings)
 
-        capris = Clothing("Capris", 2, True, True, "Capris", False, False, 1, whiteness_adjustment = 0.3, contrast_adjustment = 1.1)
+        capris = Clothing("Capris", 2, True, True, "Capris", False, False, 1, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, display_name = "pants")
         pants_list.append(capris)
 
-        booty_shorts = Clothing("Booty Shorts", 2, True, True, "Booty_Shorts", False, False, 6, whiteness_adjustment = 0.25, contrast_adjustment = 1.1)
+        booty_shorts = Clothing("Booty Shorts", 2, True, True, "Booty_Shorts", False, False, 6, whiteness_adjustment = 0.25, contrast_adjustment = 1.1, supported_patterns = {"Text":"Pattern_1"}, display_name = "shorts")
         pants_list.append(booty_shorts)
 
-        jean_hotpants = Clothing("Jean Hotpants", 2, True, True, "Jean_Hotpants", False, False, 4, whiteness_adjustment = 0.1)
+        jean_hotpants = Clothing("Jean Hotpants", 2, True, True, "Jean_Hotpants", False, False, 4, whiteness_adjustment = 0.1, display_name = "shorts")
         pants_list.append(jean_hotpants)
 
-        daisy_dukes = Clothing("Daisy Dukes", 2, True, True, "Daisy_Dukes", False, False, 6)
+        daisy_dukes = Clothing("Daisy Dukes", 2, True, True, "Daisy_Dukes", False, False, 6, display_name = "shorts")
         pants_list.append(daisy_dukes)
 
-        jeans = Clothing("Jeans", 2, True, True, "Jeans", False, False, 0)
+        jeans = Clothing("Jeans", 2, True, True, "Jeans", False, False, 0, display_name = "jeans")
         pants_list.append(jeans)
 
-        suitpants = Clothing("Suit Pants", 2, True, True, "Suit_Pants", False, False, 0)
+        suitpants = Clothing("Suit Pants", 2, True, True, "Suit_Pants", False, False, 0, display_name = "pants")
         pants_list.append(suitpants)
 
 
         ##Skirts
         skirts_list = []
 
-        skirt = Clothing("Skirt", 2, True, False, "Skirt", False, False, 1)
+        skirt = Clothing("Skirt", 2, True, False, "Skirt", False, False, 1, display_name = "skirt")
         skirts_list.append(skirt)
 
-        long_skirt = Clothing("Long Skirt", 2, True, True, "Long_Skirt", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2)
+        long_skirt = Clothing("Long Skirt", 2, True, True, "Long_Skirt", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, display_name = "skirt")
         skirts_list.append(long_skirt)
 
-        pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.2)
+        pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.2, display_name = "skirt")
         skirts_list.append(pencil_skirt)
 
-        belted_skirt = Clothing("Belted Skirt", 2, True, False, "Belted_Skirt", False, False, 1, contrast_adjustment = 1.15, supported_patterns = {"Belt":"Pattern_1"})
+        belted_skirt = Clothing("Belted Skirt", 2, True, False, "Belted_Skirt", False, False, 1, contrast_adjustment = 1.15, supported_patterns = {"Belt":"Pattern_1"}, display_name = "skirt")
         skirts_list.append(belted_skirt)
 
-        lace_skirt = Clothing("Lace Skirt", 2, True, False, "Lace_Skirt", False, False, 1, whiteness_adjustment = 0.15)
+        lace_skirt = Clothing("Lace Skirt", 2, True, False, "Lace_Skirt", False, False, 1, whiteness_adjustment = 0.15, display_name = "skirt")
         skirts_list.append(lace_skirt)
 
-        mini_skirt = Clothing("Mini Skirt", 2, True, False, "Mini_Skirt", False, False, 5, whiteness_adjustment = 0.4)
+        mini_skirt = Clothing("Mini Skirt", 2, True, False, "Mini_Skirt", False, False, 5, whiteness_adjustment = 0.4, display_name = "skirt")
         skirts_list.append(mini_skirt)
 
-        micro_skirt = Clothing("Micro Skirt", 2, False, False, "Micro_Skirt", False, False, 8, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"})
+        micro_skirt = Clothing("Micro Skirt", 2, False, False, "Micro_Skirt", False, False, 8, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "skirt")
         skirts_list.append(micro_skirt)
 
 
@@ -268,144 +268,144 @@ init -1:
         dress_list = []
 
         sweater_dress_bottom = Clothing("sweater dress", 2, True, False, "Sweater_Dress", False, False, 0, is_extension = True)
-        sweater_dress = Clothing("sweater dress", 2, True, True, "Sweater_Dress", True, False, 0, has_extension = sweater_dress_bottom, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, supported_patterns = {"Two Toned":"Pattern_1", "Hearts":"Pattern_2"})
+        sweater_dress = Clothing("sweater dress", 2, True, True, "Sweater_Dress", True, False, 0, has_extension = sweater_dress_bottom, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, supported_patterns = {"Two Toned":"Pattern_1", "Hearts":"Pattern_2"}, display_name = "dress")
         dress_list.append(sweater_dress)
 
         two_part_dress_bottom = Clothing("two part dress", 2, True, False, "Two_Piece_Dress", False, False, 0, is_extension = True)
-        two_part_dress = Clothing("two part dress", 2, True, True, "Two_Piece_Dress", True, False, 6, has_extension = two_part_dress_bottom)
+        two_part_dress = Clothing("two part dress", 2, True, True, "Two_Piece_Dress", True, False, 6, has_extension = two_part_dress_bottom, display_name = "dress")
         dress_list.append(two_part_dress)
 
         thin_dress_bottom = Clothing("thin dress", 2, False, False, "Thin_Dress", False, False, 0, is_extension = True)
-        thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.3, contrast_adjustment = 1.15)
+        thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.3, contrast_adjustment = 1.15, display_name = "dress")
         dress_list.append(thin_dress)
 
         summer_dress_bottom = Clothing("summer dress", 2, False, False, "Summer_Dress", False, False, 0, is_extension = True)
-        summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1)
+        summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress")
         dress_list.append(summer_dress)
 
         virgin_killer_bottom = Clothing("virgin killer", 2, True, True, "Virgin_Killer", False, False, 0, is_extension = True)
-        virgin_killer = Clothing("Virgin Killer", 2, True, True, "Virgin_Killer", True, False, 5, has_extension = virgin_killer_bottom)
+        virgin_killer = Clothing("Virgin Killer", 2, True, True, "Virgin_Killer", True, False, 5, has_extension = virgin_killer_bottom, display_name = "dress")
         dress_list.append(virgin_killer)
 
         evening_dress_bottom = Clothing("evening dress", 2, False, False, "Evening_Dress", False, False, 0, is_extension = True)
-        evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4)
+        evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4, display_name = "dress")
         dress_list.append(evening_dress)
 
         leotard_bottom = Clothing("Leotard", 1, True, True, "Leotard", False, True, 0, is_extension = True)
-        leotard = Clothing("Leotard", 2, True, True, "Leotard", True, False, 5, has_extension = leotard_bottom, tucked = True) #TODO: Test this
+        leotard = Clothing("Leotard", 2, True, True, "Leotard", True, False, 5, has_extension = leotard_bottom, tucked = True, display_name = "leotard")
         dress_list.append(leotard)
 
         nightgown_dress_bottom = Clothing("Nightgown", 2, False, False, "Nightgown", False, True, 0, is_extension = True)
-        nightgown_dress = Clothing("Nightgown", 2, False, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1)
+        nightgown_dress = Clothing("Nightgown", 2, False, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "nightgown")
         dress_list.append(nightgown_dress)
 
         bath_robe_bottom = Clothing("Bathrobe", 2, False, False, "Bath_Robe", False, False, 0, is_extension = True)
-        bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, supported_patterns = {"Flowers":"Pattern_1"})
+        bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "robe")
         dress_list.append(bath_robe)
 
         lacy_one_piece_underwear_bottom = Clothing("lacy one piece", 1, True, True, "Lacy_One_Piece_Underwear", False, True, 0, is_extension = True)
-        lacy_one_piece_underwear = Clothing("lacy one piece", 1, True, True, "Lacy_One_Piece_Underwear", True, True, 4, tucked = True, has_extension = lacy_one_piece_underwear_bottom, whiteness_adjustment = 0.2)
+        lacy_one_piece_underwear = Clothing("lacy one piece", 1, True, True, "Lacy_One_Piece_Underwear", True, True, 4, tucked = True, has_extension = lacy_one_piece_underwear_bottom, whiteness_adjustment = 0.2, display_name = "underwear")
         dress_list.append(lacy_one_piece_underwear)
 
         lingerie_one_piece_bottom = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", False, True, 0, is_extension = True)
-        lingerie_one_piece = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", True, True, 8, tucked = True, has_extension = lingerie_one_piece_bottom, supported_patterns = {"Flowers":"Pattern_1"})
+        lingerie_one_piece = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", True, True, 8, tucked = True, has_extension = lingerie_one_piece_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "underwear")
         dress_list.append(lingerie_one_piece)
 
         bodysuit_underwear_bottom = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", False, True, 0, is_extension = True)
-        bodysuit_underwear = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", True, True, 6, tucked = True, has_extension = bodysuit_underwear_bottom, whiteness_adjustment = 0.2)
+        bodysuit_underwear = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", True, True, 6, tucked = True, has_extension = bodysuit_underwear_bottom, whiteness_adjustment = 0.2, display_name = "bodysuit")
         dress_list.append(bodysuit_underwear)
 
         towel_bottom = Clothing("Towel", 1, True, True, "Towel", False, False, 0, is_extension = True)
-        towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom)
+        towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom, display_name = "towel")
         # dress_list.append(towel) #TEMPORARY FOR TESTING
 
         apron_bottom = Clothing("Apron", 3, False, False, "Apron", False, False, 0, is_extension = True)
-        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1)
+        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1, display_name = "apron")
         dress_list.append(apron)
 
         ##Shirts
         shirts_list = []
 
-        tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.35, supported_patterns = {"Striped":"Pattern_2"})
+        tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.35, supported_patterns = {"Striped":"Pattern_2","Text":"Pattern_3"}, display_name = "shirt")
         shirts_list.append(tshirt)
 
-        lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.18)
+        lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.18, display_name = "sweater")
         shirts_list.append(lace_sweater)
 
-        long_sweater = Clothing("Long Sweater", 2, True, True, "Long_Sweater", True, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Striped":"Pattern_1"})
+        long_sweater = Clothing("Long Sweater", 2, True, True, "Long_Sweater", True, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Striped":"Pattern_1"}, display_name = "sweater")
         shirts_list.append(long_sweater)
 
-        sleeveless_top = Clothing ("Sleeveless Top", 2, True, True, "Sleveless_Top", True, False, 0, tucked = True)
+        sleeveless_top = Clothing ("Sleeveless Top", 2, True, True, "Sleveless_Top", True, False, 0, tucked = True, display_name = "shirt")
         shirts_list.append(sleeveless_top)
 
-        long_tshirt = Clothing("Long Tshirt", 2, True, True, "Long_Tshirt", True, False, 0, whiteness_adjustment = 0.25, supported_patterns = {"Two Toned":"Pattern_1"})
+        long_tshirt = Clothing("Long Tshirt", 2, True, True, "Long_Tshirt", True, False, 0, whiteness_adjustment = 0.25, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "shirt")
         shirts_list.append(long_tshirt)
 
-        sweater = Clothing("Sweater", 2, True, True, "Sweater", True, False, 1, whiteness_adjustment = 0.1)
+        sweater = Clothing("Sweater", 2, True, True, "Sweater", True, False, 1, whiteness_adjustment = 0.1, display_name = "sweater")
         shirts_list.append(sweater)
 
-        belted_top = Clothing("Belted Top", 2, True, True, "Belted_Top", True, False, 5, contrast_adjustment = 1.1)
+        belted_top = Clothing("Belted Top", 2, True, True, "Belted_Top", True, False, 5, contrast_adjustment = 1.1, display_name = "vest")
         shirts_list.append(belted_top)
 
-        lace_crop_top = Clothing("Lace Crop Top", 2, True, True, "Lace_Crop_Top", True, False, 2, whiteness_adjustment = 0.1, contrast_adjustment = 1.1)
+        lace_crop_top = Clothing("Lace Crop Top", 2, True, True, "Lace_Crop_Top", True, False, 2, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "top")
         shirts_list.append(lace_crop_top)
 
-        tanktop = Clothing("Tanktop", 2, True, True, "Tanktop", True, False, 3)
+        tanktop = Clothing("Tanktop", 2, True, True, "Tanktop", True, False, 3, display_name = "top")
         shirts_list.append(tanktop)
 
-        camisole = Clothing("Camisole", 2, True, True, "Camisole", True, False, 1, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"})
+        camisole = Clothing("Camisole", 2, True, True, "Camisole", True, False, 1, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "camisole")
         shirts_list.append(camisole)
 
-        long_sleeve_blouse = Clothing("Buttoned Blouse", 2, True, True, "Long_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.2)
+        long_sleeve_blouse = Clothing("Buttoned Blouse", 2, True, True, "Long_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.2, display_name = "blouse")
         shirts_list.append(long_sleeve_blouse)
 
-        short_sleeve_blouse = Clothing("Short Sleeve Blouse", 2, True, True, "Short_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.3)
+        short_sleeve_blouse = Clothing("Short Sleeve Blouse", 2, True, True, "Short_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.3, display_name = "blouse")
         shirts_list.append(short_sleeve_blouse)
 
-        wrapped_blouse = Clothing("Wrapped Blouse", 2, True, True, "Wrapped_Blouse", True, False, 0, whiteness_adjustment = 0.25, contrast_adjustment = 1.05)
+        wrapped_blouse = Clothing("Wrapped Blouse", 2, True, True, "Wrapped_Blouse", True, False, 0, whiteness_adjustment = 0.25, contrast_adjustment = 1.05, display_name = "blouse")
         shirts_list.append(wrapped_blouse)
 
-        tube_top = Clothing("Tube Top", 2, True, True, "Tube_Top", True, False, 4, supported_patterns = {"Cougar Print":"Pattern_1"})
+        tube_top = Clothing("Tube Top", 2, True, True, "Tube_Top", True, False, 4, supported_patterns = {"Cougar Print":"Pattern_1","Text":"Pattern_2"}, display_name = "top")
         shirts_list.append(tube_top)
 
-        tie_sweater = Clothing("Tied Sweater", 2, True, True, "Tie_Sweater", True, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, supported_patterns = {"Two Toned":"Pattern_1"})
+        tie_sweater = Clothing("Tied Sweater", 2, True, True, "Tie_Sweater", True, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "sweater")
         shirts_list.append(tie_sweater)
 
-        dress_shirt = Clothing("Dress Shirt", 2, True, True, "Dress_Shirt", True, False, 0, tucked = True, opacity_adjustment = 1.12)
+        dress_shirt = Clothing("Dress Shirt", 2, True, True, "Dress_Shirt", True, False, 0, tucked = True, opacity_adjustment = 1.12, display_name = "shirt")
         shirts_list.append(dress_shirt)
 
-        lab_coat = Clothing("Lab Coat", 3, True, True, "Lab_Coat", True, False, 0, opacity_adjustment = 1.08)
+        lab_coat = Clothing("Lab Coat", 3, True, True, "Lab_Coat", True, False, 0, opacity_adjustment = 1.08, display_name = "coat")
         shirts_list.append(lab_coat)
 
-        suit_jacket = Clothing("Suit Jacket", 3, True, True, "Suit_Jacket", True, False, 0)
+        suit_jacket = Clothing("Suit Jacket", 3, True, True, "Suit_Jacket", True, False, 0, display_name = "jacket")
         shirts_list.append(suit_jacket)
 
-        vest = Clothing("Vest", 3, False, True, "Vest", True, False, 0)
+        vest = Clothing("Vest", 3, False, True, "Vest", True, False, 0, display_name = "vest")
         shirts_list.append(vest)
 
-        business_vest = Clothing("Business Vest", 3, True, True, "Tight_Vest", True, False, 2, whiteness_adjustment = 0.15, opacity_adjustment = 1.3)
+        business_vest = Clothing("Business Vest", 3, True, True, "Tight_Vest", True, False, 2, whiteness_adjustment = 0.15, opacity_adjustment = 1.3, display_name = "vest")
         shirts_list.append(business_vest)
 
 
         ##Socks##
         socks_list = []
 
-        short_socks = Clothing("Short Socks", 1, True, True, "Short_Socks", False, False, 0)
+        short_socks = Clothing("Short Socks", 1, True, True, "Short_Socks", False, False, 0, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "socks")
         socks_list.append(short_socks)
 
-        medium_socks = Clothing("Medium Socks", 1, True, True, "Long_Socks", False, False, 0)
+        medium_socks = Clothing("Medium Socks", 1, True, True, "Long_Socks", False, False, 0, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "socks")
         socks_list.append(medium_socks)
 
-        high_socks = Clothing("High Socks", 1, True, True, "High_Socks", False, False, 0, contrast_adjustment = 1.2)
+        high_socks = Clothing("High Socks", 1, True, True, "High_Socks", False, False, 0, contrast_adjustment = 1.2, supported_patterns = {"Two Toned":"Pattern_1", "Gradient":"Pattern_2"}, display_name = "socks")
         socks_list.append(high_socks)
 
-        thigh_highs = Clothing("Thigh Highs", 1, True, True, "Thigh_Highs", False, False, 5, whiteness_adjustment = 0.1)
+        thigh_highs = Clothing("Thigh Highs", 1, True, True, "Thigh_Highs", False, False, 5, whiteness_adjustment = 0.1, display_name = "stockings")
         socks_list.append(thigh_highs)
 
-        fishnets = Clothing("Fishnets", 1, True, True, "Fishnets", False, False, 10, whiteness_adjustment = 0.2)
+        fishnets = Clothing("Fishnets", 1, True, True, "Fishnets", False, False, 10, whiteness_adjustment = 0.2, display_name = "fishnets")
         socks_list.append(fishnets)
 
-        garter_with_fishnets = Clothing("Garter and Fishnets", 1, True, True, "Garter_and_Fishnets", False, False, 12, whiteness_adjustment = 0.2, contrast_adjustment = 1.0, supported_patterns = {"Two Toned":"Pattern_1"})
+        garter_with_fishnets = Clothing("Garter and Fishnets", 1, True, True, "Garter_and_Fishnets", False, False, 12, whiteness_adjustment = 0.2, contrast_adjustment = 1.0, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "fishnets")
         socks_list.append(garter_with_fishnets)
 
 
@@ -413,59 +413,59 @@ init -1:
 
         shoes_list = []
 
-        sandles = Clothing("Sandals", 2, True, True, "Sandles", False, False, 0)
+        sandles = Clothing("Sandals", 2, True, True, "Sandles", False, False, 0, display_name = "sandals")
         shoes_list.append(sandles)
 
-        shoes = Clothing("Shoes", 2, True, True, "Shoes", False, False, 0)
+        shoes = Clothing("Shoes", 2, True, True, "Shoes", False, False, 0, display_name = "shoes")
         shoes_list.append(shoes)
 
-        slips = Clothing("Slips", 2, True, True, "Slips", False, False, 0)
+        slips = Clothing("Slips", 2, True, True, "Slips", False, False, 0, display_name = "slips")
         shoes_list.append(slips)
 
-        sneakers = Clothing("Sneakers", 2, True, True, "Sneakers", False, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Laces":"Pattern_1"})
+        sneakers = Clothing("Sneakers", 2, True, True, "Sneakers", False, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Laces":"Pattern_1"}, display_name = "shoes")
         shoes_list.append(sneakers)
 
-        sandle_heels = Clothing("Sandal Heels", 2, True, True, "Sandal_Heels", False, False, 1)
+        sandle_heels = Clothing("Sandal Heels", 2, True, True, "Sandal_Heels", False, False, 1, display_name = "heels")
         shoes_list.append(sandle_heels)
 
-        pumps = Clothing("Pumps", 2, True, True, "Pumps", False, False, 1, supported_patterns = {"Two Toned":"Pattern_1"})
+        pumps = Clothing("Pumps", 2, True, True, "Pumps", False, False, 1, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "pumps")
         shoes_list.append(pumps)
 
-        heels = Clothing("Heels", 2, True, True, "Heels", False, False, 1, whiteness_adjustment = 0.2)
+        heels = Clothing("Heels", 2, True, True, "Heels", False, False, 1, whiteness_adjustment = 0.2, display_name = "heels")
         shoes_list.append(heels)
 
-        high_heels = Clothing("High Heels", 2, True, True, "High_Heels", False, False, 3)
+        high_heels = Clothing("High Heels", 2, True, True, "High_Heels", False, False, 3, display_name = "heels")
         shoes_list.append(high_heels)
 
-        boot_heels = Clothing("Boot Heels", 2, True, True, "Boot_Heels", False, False, 1, whiteness_adjustment = 0.1, contrast_adjustment = 1.1)
+        boot_heels = Clothing("Boot Heels", 2, True, True, "Boot_Heels", False, False, 1, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "boots")
         shoes_list.append(boot_heels)
 
-        tall_boots = Clothing("Tall Boots", 2, True, True, "High_Boots", False, False, 0)
+        tall_boots = Clothing("Tall Boots", 2, True, True, "High_Boots", False, False, 0, display_name = "boots")
         shoes_list.append(tall_boots)
 
-        thigh_high_boots = Clothing("Thigh High Boots", 2, True, True, "Thigh_Boots", False, False, 3)
+        thigh_high_boots = Clothing("Thigh High Boots", 2, True, True, "Thigh_Boots", False, False, 3, display_name = "boots")
         shoes_list.append(thigh_high_boots)
 
 
         ##Accessories##
         earings_list = [] #Note: now more properly known as facial accessories
 
-        chandelier_earings = Clothing("Chandelier Earrings", 2, False, False, "Chandelier_Earings", False, False, 0, body_dependant = False) #TODO: Modify this to handle earings which don't vary based on facial type (Should they?)
+        chandelier_earings = Clothing("Chandelier Earrings", 2, False, False, "Chandelier_Earings", False, False, 0, body_dependant = False, display_name = "earings") #TODO: Modify this to handle earings which don't vary based on facial type (Should they?)
         earings_list.append(chandelier_earings)
 
-        gold_earings = Clothing("Gold Earings", 2 , False, False, "Gold_Earings", False, False, 0, body_dependant = False)
+        gold_earings = Clothing("Gold Earings", 2 , False, False, "Gold_Earings", False, False, 0, body_dependant = False, display_name = "earings")
         earings_list.append(gold_earings)
 
-        modern_glasses = Facial_Accessory("Modern Glasses", 2, False, False, "Modern_Glasses", False, False, 0)
+        modern_glasses = Facial_Accessory("Modern Glasses", 2, False, False, "Modern_Glasses", False, False, 0, display_name = "earings")
         earings_list.append(modern_glasses)
 
-        big_glasses = Facial_Accessory("Big Glasses", 2, False, False, "Big_Glasses", False, False, 0)
+        big_glasses = Facial_Accessory("Big Glasses", 2, False, False, "Big_Glasses", False, False, 0, display_name = "glasses")
         earings_list.append(big_glasses)
 
-        sunglasses = Facial_Accessory("Sunglasses", 2, False, False, "Sunglasses", False, False, 0)
+        sunglasses = Facial_Accessory("Sunglasses", 2, False, False, "Sunglasses", False, False, 0, display_name = "sunglasses")
         earings_list.append(sunglasses)
 
-        head_towel = Clothing("Head Towel", 2, False, False, "Head_Towel", False, False, 0, body_dependant = False)
+        head_towel = Clothing("Head Towel", 2, False, False, "Head_Towel", False, False, 0, body_dependant = False, display_name = "head towel")
         # earings_list.append(head_towel) #TEMPORARY FOR TESTING
 
 
@@ -487,61 +487,61 @@ init -1:
 
         bracelet_list = []
 
-        copper_bracelet = Clothing("Copper Bracelet", 2, False, False, "Copper_Bracelet", False, False, 0)
+        copper_bracelet = Clothing("Copper Bracelet", 2, False, False, "Copper_Bracelet", False, False, 0, display_name = "bracelet")
         bracelet_list.append(copper_bracelet)
 
-        gold_bracelet = Clothing("Gold Bracelet", 2, False, False, "Gold_Bracelet", False, False, 0)
+        gold_bracelet = Clothing("Gold Bracelet", 2, False, False, "Gold_Bracelet", False, False, 0, display_name = "bracelet")
         bracelet_list.append(gold_bracelet)
 
-        spiked_bracelet = Clothing("Spiked Bracelet", 2, False, False, "Spiked_Bracelet", False, False, 2)
+        spiked_bracelet = Clothing("Spiked Bracelet", 2, False, False, "Spiked_Bracelet", False, False, 2, display_name = "bracelet")
         bracelet_list.append(spiked_bracelet)
 
-        bead_bracelet = Clothing("Bead Bracelet", 2, False, False, "Bead_Bracelet", False, False, 0)
+        bead_bracelet = Clothing("Bead Bracelet", 2, False, False, "Bead_Bracelet", False, False, 0, display_name = "bracelet")
         bracelet_list.append(bead_bracelet)
 
-        forearm_gloves = Clothing("Forearm Gloves", 2, False, False, "Forearm_Gloves", False, False, 2, supported_patterns = {"Two Tone":"Pattern_1"})
+        forearm_gloves = Clothing("Forearm Gloves", 2, False, False, "Forearm_Gloves", False, False, 2, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "gloves")
         bracelet_list.append(forearm_gloves)
 
 
         rings_list = []
 
-        diamond_ring = Clothing("Diamond Ring", 2, False, False, "Diamond_Ring", False, False, 0)
+        diamond_ring = Clothing("Diamond Ring", 2, False, False, "Diamond_Ring", False, False, 0, display_name = "ring")
         rings_list.append(diamond_ring)
 
-        garnet_ring = Clothing("Garnet Ring", 2, False, False, "Garnet_Ring", False, False, 0)
+        garnet_ring = Clothing("Garnet Ring", 2, False, False, "Garnet_Ring", False, False, 0, display_name = "ring")
         rings_list.append(garnet_ring)
 
-        copper_ring_set = Clothing("Copper Ring Set", 2, False, False, "Copper_Ring_Set", False, False, 0)
+        copper_ring_set = Clothing("Copper Ring Set", 2, False, False, "Copper_Ring_Set", False, False, 0, display_name = "rings")
         rings_list.append(copper_ring_set)
 
 
         neckwear_list = []
 
-        wool_scarf = Clothing("Wool Scarf", 3, False, False, "Wool_Scarf", False, False, 0)
+        wool_scarf = Clothing("Wool Scarf", 3, False, False, "Wool_Scarf", False, False, 0, display_name = "scarf")
         neckwear_list.append(wool_scarf)
 
-        necklace_set = Clothing("Necklace Set", 3, False, False, "Necklace_Set", True, False, 0)
+        necklace_set = Clothing("Necklace Set", 3, False, False, "Necklace_Set", True, False, 0, display_name = "necklaces")
         neckwear_list.append(necklace_set)
 
-        gold_chain_necklace = Clothing("Gold Chain Necklace", 3, False, False, "Gold_Chain_Necklace", False, False, 0)
+        gold_chain_necklace = Clothing("Gold Chain Necklace", 3, False, False, "Gold_Chain_Necklace", False, False, 0, display_name = "necklace")
         neckwear_list.append(gold_chain_necklace)
 
-        spiked_choker = Clothing("Spiked Choker", 3, False, False, "Spiked_Choker", False, False, 3)
+        spiked_choker = Clothing("Spiked Choker", 3, False, False, "Spiked_Choker", False, False, 3, display_name = "choker")
         neckwear_list.append(spiked_choker)
 
-        lace_choker = Clothing("Lace Choker", 2, False, False, "Lace_Choker", False, False, 3, whiteness_adjustment = 0.1)
+        lace_choker = Clothing("Lace Choker", 2, False, False, "Lace_Choker", False, False, 3, whiteness_adjustment = 0.1, display_name = "choker")
         neckwear_list.append(lace_choker)
 
-        wide_choker = Clothing("Wide Choker", 2, False, False, "Wide_Choker", False, False, 3)
+        wide_choker = Clothing("Wide Choker", 2, False, False, "Wide_Choker", False, False, 3, display_name = "choker")
         neckwear_list.append(wide_choker)
 
-        breed_collar = Clothing("Breed Me Collar", 3, False, False, "Collar_Breed", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"})
+        breed_collar = Clothing("Breed Me Collar", 3, False, False, "Collar_Breed", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "collar")
         neckwear_list.append(breed_collar)
 
-        cum_slut_collar = Clothing("Cum Slut Collar", 3, False, False, "Collar_Cum_Slut", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"})
+        cum_slut_collar = Clothing("Cum Slut Collar", 3, False, False, "Collar_Cum_Slut", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "collar")
         neckwear_list.append(cum_slut_collar)
 
-        fuck_doll_collar = Clothing("Fuck Doll Collar", 3, False, False, "Collar_Fuck_Doll", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"})
+        fuck_doll_collar = Clothing("Fuck Doll Collar", 3, False, False, "Collar_Fuck_Doll", False, False, 8, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "collar")
         neckwear_list.append(fuck_doll_collar)
 
 

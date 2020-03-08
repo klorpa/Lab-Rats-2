@@ -116,6 +116,8 @@ init -2:
         list_of_names.append("Kanya")
         list_of_names.append("Kay")
         list_of_names.append("Soni")
+        list_of_names.append("Alana")
+        list_of_names.append("Lira")
 
 
         def get_random_name():
@@ -200,7 +202,8 @@ init -2:
         list_of_last_names.append("Hara")
         list_of_last_names.append("Newman")
         list_of_last_names.append("Mead")
-
+        list_of_last_names.append("Ersson")
+        list_of_last_names.append("Sill")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)

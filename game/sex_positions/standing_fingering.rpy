@@ -11,17 +11,19 @@ init:
             transition_default = "transition_default_standing_finger",
             strip_description = "strip_standing_finger", strip_ask_description = "strip_ask_standing_finger",
             orgasm_description = "orgasm_standing_finger",
+            taboo_break_description = "taboo_break_standing_finger",
             verb = "finger",
             opinion_tags = ["being fingered"],
-            default_animation = blowjob_bob)
+            default_animation = blowjob_bob,
+            associated_taboo = "touching_vagina")
         #list_of_positions.append(standing_finger) #Only reachable by massaging her first.
 
 init 1:
     python:
         standing_finger.link_positions(standing_grope,"transition_standing_fingering_standing_grope")
 
-label intro_standing_finger(the_girl, the_location, the_object, the_round):
-    "You stand behind [the_girl.title] and put yoru arms around her, pulling her close against you."
+label intro_standing_finger(the_girl, the_location, the_object):
+    "You stand behind [the_girl.title] and put your arms around her, pulling her close against you."
     if the_girl.outfit.vagina_available():
         "You don't waste any time pushing your hand between her legs, teasing her cute, exposed pussy with your fingers."
         "She moans quietly as you slide two fingers inside of her wet hole."
@@ -35,7 +37,36 @@ label intro_standing_finger(the_girl, the_location, the_object, the_round):
             "She moans quietly as you slide two fingers inside of her wet hole."
     return
 
-label scene_standing_finger_1(the_girl, the_location, the_object, the_round):
+label taboo_break_standing_finger(the_girl, the_location, the_object):
+    "You kiss [the_girl.title]'s neck from behind, distracting her from your hand sliding along her inner thigh and towards her crotch."
+    if the_girl.effective_sluttiness(standing_finger.associated_taboo) > standing_finger.slut_cap:
+        if the_girl.outfit.vagina_available():
+            "She gasps as you brush her sensitive pussy. She spreads her legs for you, giving you easy access."
+        else:
+            $ the_item = the_girl.outfit.get_lower_top_layer()
+            if the_item:
+                "You slide your hand under her [the_item.name] and make her gasp as you brush her sensitive pussy."
+                "She spreads her legs and leans back against you, giving you easy access."
+            else:
+                "She gasps as you brush her sensitive pussy. She spreads her legs for you, giving you easy access."
+        $ the_girl.call_dialogue(standing_finger.associated_taboo+"_taboo_break")
+        "You move your hand over her clit and feel her shiver in response to your touch."
+
+    else:
+        if the_girl.outfit.vagina_available():
+            "She starts as you brush her sensitive pussy. She grabs your wrist and stops you from moving any further."
+        else:
+            $ the_item = the_girl.outfit.get_lower_top_layer()
+            if the_item:
+                "She starts as you slide your hand under her [the_item.name]. She grabs your wrist and stops you from moving any further."
+            else:
+                "She starts as you brush her sensitive pussy. She grabs your wrist and stops you from moving any further."
+        $ the_girl.call_dialogue(standing_finger.associated_taboo+"_taboo_break")
+        "She lets go of your hand, and you slide it down to your prize. She moans softly as you touch her, and shivers when you first touch her clit."
+    "After teasing her for a moment you press two fingers between her slit, sliding them into the wet passage beyond her pussy lips."
+    return
+
+label scene_standing_finger_1(the_girl, the_location, the_object):
     if the_girl.has_large_tits():
         if the_girl.outfit.tits_available():
             "You reach your free hand up to [the_girl.title]'s bare tits and cup one, massaging it while you finger her."
@@ -52,7 +83,7 @@ label scene_standing_finger_1(the_girl, the_location, the_object, the_round):
     return
 
 
-label scene_standing_finger_2(the_girl, the_location, the_object, the_round):
+label scene_standing_finger_2(the_girl, the_location, the_object):
     "You slide your fingers in and out of her pussy, stroking the inside of that soft tunnel."
     "Each movement draws moans of pleasure from [the_girl.possessive_title], who presses herself against you."
     if the_girl.arousal > 50:
@@ -72,7 +103,7 @@ label scene_standing_finger_2(the_girl, the_location, the_object, the_round):
                 "You look over her shoulder and watch as your fingers move under her [the_item.name], timed to her soft moans of pleasure."
     return
 
-label outro_standing_finger(the_girl, the_location, the_object, the_round):
+label outro_standing_finger(the_girl, the_location, the_object):
     if the_girl.arousal >= 100:
         "Feeling [the_girl.title] cum around your fingers pushes you over the edge. You feel your cock spasm in your underwear as a wave of pleasure washes over you."
         "It takes both of you a moment to recover from your orgasms."
@@ -87,7 +118,7 @@ label outro_standing_finger(the_girl, the_location, the_object, the_round):
     return
 
 
-label transition_standing_fingering_standing_grope(the_girl, the_location, the_object, the_round):
+label transition_standing_fingering_standing_grope(the_girl, the_location, the_object):
     "You give her a few wet pussy a few more strokes, then pull your fingers out and drag them along her stomach."
     if the_girl.sluttiness >= 60:
         "She moans and takes hold of your hand, bringing it up to her mouth. She slides your fingers, fresh from her cunt, into her mouth."
@@ -96,18 +127,18 @@ label transition_standing_fingering_standing_grope(the_girl, the_location, the_o
         "She moans and works her hips back against you, grinding your ereciton against her ass."
     return
 
-label transition_default_standing_finger(the_girl, the_location, the_object, the_round):
+label transition_default_standing_finger(the_girl, the_location, the_object):
     "You gather [the_girl.title] up in your arms, cradling her from behind. You reach a hand between her legs, sliding it down to her pussy."
     "You don't waste any time sliding two fingers into her warm, wet pussy."
     return
 
-label strip_standing_finger(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_standing_finger(the_girl, the_clothing, the_location, the_object):
     the_girl.char "Your hands feel amazing... Oh my god..."
     $ the_girl.draw_animated_removal(the_clothing, position = standing_finger.position_tag)
     "She strips off her [the_clothing.name] while you're fingering her, moaning the whole time."
     return
 
-label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object):
     the_girl.char "Everything feels so tight, I want to take it all off... Do you mind?"
     "[the_girl.possessive_title] grabs onto her [the_clothing.name], waiting for you to tell her what to do."
     menu:
@@ -125,7 +156,7 @@ label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object
     $ standing_finger.redraw_scene(the_girl)
     return
 
-label orgasm_standing_finger(the_girl, the_location, the_object, the_round):
+label orgasm_standing_finger(the_girl, the_location, the_object):
     the_girl.char "Oh god... Right there! Right there! Ahhhhh!"
     "Her whole body tenses up and she leans back into you. A shiver runs through her body as she climaxes."
     $ the_girl.call_dialogue("climax_responses_foreplay")

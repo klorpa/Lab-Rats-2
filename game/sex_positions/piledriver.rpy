@@ -11,15 +11,17 @@
             transition_default = "transition_default_piledriver",
             strip_description = "strip_piledriver", strip_ask_description = "strip_ask_piledriver",
             orgasm_description = "orgasm_piledriver",
+            taboo_break_description = "taboo_break_piledriver",
             opinion_tags = ["missionary style sex","vaginal sex","being submissive"], record_class = "Vaginal Sex",
-            default_animation = missionary_bob)
+            default_animation = missionary_bob,
+            associated_taboo = "vaginal_sex")
         list_of_positions.append(piledriver)
 
 init 1:
     python:
         piledriver.link_positions(missionary,"transition_piledriver_missionary")
 
-label intro_piledriver(the_girl, the_location, the_object, the_round):
+label intro_piledriver(the_girl, the_location, the_object):
     mc.name "[the_girl.title], I want you to lie down for me."
     "[the_girl.possessive_title] nods, glancing briefly at the bulge in your pants. She gets onto the [the_object.name] and waits for you."
     the_girl.char "How's this?"
@@ -29,7 +31,30 @@ label intro_piledriver(the_girl, the_location, the_object, the_round):
     $the_girl.call_dialogue("sex_responses_vaginal")
     return
 
-label scene_piledriver_1(the_girl, the_location, the_object, the_round):
+label taboo_break_piledriver(the_girl, the_location, the_object):
+    "You take [the_girl.title]'s hands in yours and guide her down onto the [the_object.name]. She follows your lead, lying down for you."
+    "You place your hands on her knees and spread her legs, kneeling down between them."
+    "You sit your hard cock on her stomach, teasingly close to her warm pussy. [the_girl.possessive_title] reaches down and gently pets your shaft."
+    $ the_girl.call_dialogue(piledriver.associated_taboo+"_taboo_break")
+    "You grab onto [the_girl.title]'s ankles and lift them up, bringing her knees up to your shoulders."
+    if the_girl.effective_sluttiness(piledriver.associated_taboo) > piledriver.slut_cap:
+        the_girl.char "Ooh, I like it!"
+        "She reaches down between her legs and holds onto your cock, lining it up with her pussy for you."
+        "She rubs your tip against her clit a few times before moving it down, just barely spreading her slit open for you."
+
+
+    else:
+        the_girl.char "Ah! What are you doing?"
+        mc.name "Trust me, this will feel great."
+        "You reach down between your legs and hold onto your cock, lining it up with [the_girl.possessive_title]'s pussy."
+        "She gasps as your tip flicks over her clit and into place, just barely spreading open her slit."
+
+    "You hold onto [the_girl.title]'s legs and push forward. After a moment of resistance you slide smoothly into her slippery, warm cunt."
+    the_girl.char "Ohhhh....."
+    "You hold yourself deep inside of her for a few seconds, then pull back and begin slowly thrust in and out."
+    return
+
+label scene_piledriver_1(the_girl, the_location, the_object):
     #CHOICE CONCEPT: Talk dirty to her // Fuck her in silence
     "You hold onto [the_girl.title]'s ankles and lean into her, using the position to push yourself nice and deep inside of her."
     if the_girl.sex_skills["Vaginal"] < 3:
@@ -126,7 +151,7 @@ label scene_piledriver_1(the_girl, the_location, the_object, the_round):
     #     "She bites her lip and moans softly. You do your best to drive your cock all the way to it's base, fitting every last inch into [the_girl.title]'s cunt."
     return
 
-label scene_piledriver_2(the_girl, the_location, the_object, the_round):
+label scene_piledriver_2(the_girl, the_location, the_object):
     #CHOICE CONCEPT: Fondle a tit // Hold her ankles
     "You settle into a steady rhythm pumping in and out of [the_girl.title]'s pussy. Having her legs bent over lets you get deeper than you normally can."
     #TODO: Minor line depending on her vaginal skill.
@@ -185,7 +210,7 @@ label scene_piledriver_2(the_girl, the_location, the_object, the_round):
     #     "You fuck her a little faster and listen to her moan while you consider your dilemma."
     return
 
-label outro_piledriver(the_girl, the_location, the_object, the_round):
+label outro_piledriver(the_girl, the_location, the_object):
     "[the_girl.title]'s pussy is warm, tight and wet as you pump in and out of it, pulling you closer and closer to climaxing with each thrust."
     "You reach your limit and feel your orgasm approaching quickly."
     mc.name "Fuck me, I'm going to cum!"
@@ -237,18 +262,18 @@ label outro_piledriver(the_girl, the_location, the_object, the_round):
             "You sit back and let [the_girl.possessive_title]'s legs down. You enjoy the sight of her covered in your semen when she looks at you."
     return
 
-label transition_piledriver_missionary(the_girl, the_location, the_object, the_round):
+label transition_piledriver_missionary(the_girl, the_location, the_object):
     "You slide back and let [the_girl.title] lower her legs. You go back to fucking her missionary style."
     the_girl.char "Fuck, you really stretched me out like that..."
     return
 
-label transition_default_piledriver(the_girl, the_location, the_object, the_round):
+label transition_default_piledriver(the_girl, the_location, the_object):
     "You put [the_girl.title] on her back, then lift her legs up and bend her over at the waist. You kneel over her, lining your hard cock up with her tight pussy."
     mc.name "Ready?"
     "[the_girl.possessive_title] nods, and you slip yourself deep, deep inside of her."
     return
 
-label strip_piledriver(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_piledriver(the_girl, the_clothing, the_location, the_object):
     the_girl.char "Wait, wait a second."
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = piledriver.position_tag)
@@ -257,7 +282,7 @@ label strip_piledriver(the_girl, the_clothing, the_location, the_object, the_rou
     "You throw her legs over your shoulders and slide yourself as deep into her cunt as you can get it."
     return
 
-label strip_ask_piledriver(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_piledriver(the_girl, the_clothing, the_location, the_object):
     the_girl.char "[the_girl.mc_title], I'd like to ah... take off my... my [the_clothing.name], would you mind?"
     "[the_girl.title] pants as you fuck her hard."
     menu:
@@ -281,7 +306,7 @@ label strip_ask_piledriver(the_girl, the_clothing, the_location, the_object, the
                 "She grinds her hips back into you and moans ecstatically."
     return
 
-label orgasm_piledriver(the_girl, the_location, the_obejct, the_round):
+label orgasm_piledriver(the_girl, the_location, the_obejct):
     "[the_girl.title] takes a sharp breath in and you feel her legs try and clench together."
     $ the_girl.call_dialogue("climax_responses_vaginal")
     "You keep fucking [the_girl.possessive_title] through her climax, enjoying her sopping wet cunt while she twitches and moans underneath you."

@@ -11,9 +11,11 @@
             transition_default = "transition_default_blowjob",
             strip_description = "strip_blowjob", strip_ask_description = "strip_ask_blowjob",
             orgasm_description = "orgasm_blowjob",
+            taboo_break_description = "taboo_break_blowjob",
             verb = "throat",
             opinion_tags = ["giving blowjobs"], record_class = "Blowjobs",
-            default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob})
+            default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob},
+            associated_taboo = "sucking_cock")
 
         list_of_positions.append(blowjob)
 
@@ -21,7 +23,7 @@ init 1:
     python:
         blowjob.link_positions(deepthroat,"transition_blowjob_deepthroat")
 
-label intro_blowjob(the_girl, the_location, the_object, the_round):
+label intro_blowjob(the_girl, the_location, the_object):
     "You unzip your pants and pull your underwear down far enough to let your hard cock out."
     mc.name "How about your take care of this for me?"
     if the_girl.effective_sluttiness() > 35:
@@ -32,11 +34,34 @@ label intro_blowjob(the_girl, the_location, the_object, the_round):
     $ blowjob.redraw_scene(the_girl)
     return
 
-label scene_blowjob_1(the_girl, the_location, the_object, the_round):
+label taboo_break_blowjob(the_girl, the_location, the_object):
+    $ the_girl.call_dialogue(blowjob.associated_taboo+"_taboo_break") #Personality dialogue includes all associated "convince me" dialogue
+    if the_girl.effective_sluttiness(blowjob.associated_taboo) > blowjob.slut_cap:
+        #She's eager to try this
+        "[the_girl.possessive_title] kneels down in front of you, eyes locked on your hard cock."
+        $ blowjob.current_modifier = "blowjob"
+        $ blowjob.redraw_scene(the_girl)
+        "She leans in, turning her head to the side to run her tongue down the bottom of your shaft."
+        "She licks your balls briefly, then works back up to the tip and slides it past her lips."
+        "You sigh happily as you feel [the_girl.title]'s warm mouth envelop your cock."
+        "She wastes no time picking up speed, happily bobbing her head up and down over your sensitive tip."
+
+    else:
+        "[the_girl.possessive_title] hesitantly gets onto her knees, eyes locked on your hard cock."
+        "She gently holds onto your shaft with one hand and brings the tip closer to her lips."
+        "She looks up at you just before the moment of truth, locking eyes as she opens her lips and slides the tip of your cock past them."
+        $ blowjob.current_modifier = "blowjob"
+        $ blowjob.redraw_scene(the_girl)
+
+        "You sigh happily as you feel [the_girl.title]'s warm mouth envelop your cock."
+        "She moves slowly at first, gently working her head up and down over your sensitive tip."
+    return
+
+label scene_blowjob_1(the_girl, the_location, the_object):
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     if the_girl.sex_skills["Oral"] < 2: #Inexperienced.
-        "You rest your hand on [the_girl.title]'s head as she bobs her head back and forth. She struggles to take your very deep, so she focuses on licking and sucking your tip."
+        "You rest your hand on [the_girl.title]'s head as she bobs her head back and forth. She struggles to take your very deep, and focuses on licking and sucking your tip instead."
         menu:
             "Encourage her to go deeper.":
                 mc.name "Come on, you'll never get better if you don't try and take it deeper."
@@ -142,7 +167,7 @@ label scene_blowjob_1(the_girl, the_location, the_object, the_round):
 
     return
 
-label scene_blowjob_2(the_girl, the_location, the_object, the_round):
+label scene_blowjob_2(the_girl, the_location, the_object):
     $ blowjob.current_modifier = None
     $ blowjob.redraw_scene(the_girl)
 
@@ -218,7 +243,7 @@ label scene_blowjob_2(the_girl, the_location, the_object, the_round):
 
     return
 
-label outro_blowjob(the_girl, the_location, the_object, the_round):
+label outro_blowjob(the_girl, the_location, the_object):
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     "Little by little the soft, warm mouth of [the_girl.title] brings you closer to orgasm. One last pass across her velvet tongue is enough to push you past the point of no return."
@@ -268,7 +293,7 @@ label outro_blowjob(the_girl, the_location, the_object, the_round):
             $ the_girl.call_dialogue("cum_mouth")
     return
 
-label transition_blowjob_deepthroat(the_girl, the_location, the_object, the_round):
+label transition_blowjob_deepthroat(the_girl, the_location, the_object):
     mc.name "Fuck that feels great [the_girl.title]. Think you can take it any deeper?"
     $ blowjob.current_modifier = None
     $ blowjob.redraw_scene(the_girl)
@@ -279,14 +304,14 @@ label transition_blowjob_deepthroat(the_girl, the_location, the_object, the_roun
     "Once she's caught her breath she opens her mouth wide and slides you back down her throat. She doesn't stop until her nose taps your stomach and she has your entire cock in her mouth."
     return
 
-label transition_default_blowjob(the_girl, the_location, the_object, the_round):
+label transition_default_blowjob(the_girl, the_location, the_object):
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     "[the_girl.possessive_title] gets onto her knees in front of you and takes your hard cock in her hands. She strokes it tentativly a few times, then leans in and slides the tip into her mouth."
     mc.name "That's it, that's a good girl."
     return
 
-label strip_blowjob(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_blowjob(the_girl, the_clothing, the_location, the_object):
     $ blowjob.current_modifier = None
     $ blowjob.redraw_scene(the_girl)
 
@@ -298,7 +323,7 @@ label strip_blowjob(the_girl, the_clothing, the_location, the_object, the_round)
     $ blowjob.redraw_scene(the_girl)
     return
 
-label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object):
     $ blowjob.current_modifier = None
     $ blowjob.redraw_scene(the_girl)
 
@@ -326,7 +351,7 @@ label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object, the_ro
                 "She slides you back into her mouth and presses you all the way to the back, rubbing your tip against the back of her throat for a second before she goes back to blowing you."
     return
 
-label orgasm_blowjob(the_girl, the_location, the_object, the_round):
+label orgasm_blowjob(the_girl, the_location, the_object):
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     "[the_girl.title] pauses suddenly. You hear her whimper softly - the noise party muffled by your cock."

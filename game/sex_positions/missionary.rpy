@@ -11,22 +11,39 @@
             transition_default = "transition_default_missionary",
             strip_description = "strip_missionary", strip_ask_description = "strip_ask_missionary",
             orgasm_description = "orgasm_missionary",
+            taboo_break_description = "taboo_break_missionary",
             opinion_tags = ["missionary style sex","vaginal sex"], record_class = "Vaginal Sex",
-            default_animation = missionary_bob)
+            default_animation = missionary_bob,
+            associated_taboo = "vaginal_sex")
         list_of_positions.append(missionary)
 
 init 1:
     python:
         missionary.link_positions(piledriver,"transition_missionary_piledriver")
 
-label intro_missionary(the_girl, the_location, the_object, the_round):
+label intro_missionary(the_girl, the_location, the_object):
     "You run your hands along [the_girl.title]'s hips, feeling the shape of her body."
     mc.name "I want you to lie down for me."
     "She nods and lies down on the [the_object.name], waiting while you climb on top of her."
     "[the_girl.possessive_title] wraps her arms around you and holds you close as you line your cock up with her pussy. She sighs happily into your ear as you slide into her."
     return
 
-label scene_missionary_1(the_girl, the_location, the_object, the_round):
+label taboo_break_missionary(the_girl, the_location, the_object):
+    "You take [the_girl.title]'s hands in yours and guide her down onto the [the_object.name]. She follows your lead, lying down for you."
+    "You place your hands on her knees and spread her legs, kneeling down between them."
+    "You sit your hard cock on her stomach, teasingly close to her warm pussy. [the_girl.possessive_title] reaches down and gently pets your shaft."
+    $ the_girl.call_dialogue(missionary.associated_taboo+"_taboo_break")
+    if the_girl.effective_sluttiness(missionary.associated_taboo) > missionary.slut_cap:
+        "She takes your cock and moves it down, sliding the tip into her pussy for you."
+
+    else:
+        "You grab your cock and move it down. [the_girl.title] gasps as your tip flicks over her clit and spreads her pussy lips open."
+    "You lie down on top of her and thrust forward. After a moment of resistance you slide easily into her slippery, warm tunnel."
+    the_girl.char "Ah..."
+    "You hold yourself deep inside of her for a few seconds, then pull back and begin slowly thrust in and out."
+    return
+
+label scene_missionary_1(the_girl, the_location, the_object):
     # CHOICE CONCEPT: Kiss her neck // Talk dirty to her
     # Intro concept. Short difference depending on if she's wet or not.
     if the_girl.arousal > 50:
@@ -75,7 +92,7 @@ label scene_missionary_1(the_girl, the_location, the_object, the_round):
     #     "Her pussy is starting to get nice and wet as you fuck it. You kiss her and keep going."
     return
 
-label scene_missionary_2(the_girl, the_location, the_object, the_round):
+label scene_missionary_2(the_girl, the_location, the_object):
     # CHOICE CONCEPT: Pin her down // Kiss her
     if the_girl.sex_skills["Vaginal"] < 3 and the_girl.arousal < 50:
         # INTRO: She's inexperienced and needs some help.
@@ -186,7 +203,7 @@ label scene_missionary_2(the_girl, the_location, the_object, the_round):
                     the_girl.char "Don't stop..."
     return
 
-label outro_missionary(the_girl, the_location, the_object, the_round):
+label outro_missionary(the_girl, the_location, the_object):
     "You get to hear every little gasp and moan from [the_girl.title] as you're pressed up against her. Combined with the feeling of fucking her pussy it's not long before you're pushed past the point of no return."
     mc.name "I'm going to cum!"
     if not mc.condom:
@@ -229,25 +246,25 @@ label outro_missionary(the_girl, the_location, the_object, the_round):
             "You sit back and sigh contentedly, enjoying the sight of [the_girl.possessive_title]'s body covered in your semen."
     return
 
-label transition_missionary_piledriver(the_girl, the_location, the_object, the_round):
+label transition_missionary_piledriver(the_girl, the_location, the_object):
     "[the_girl.title]'s pussy feels so warm and inviting, you can't help but want to get deeper inside of her. You pause for a moment and reach down for her legs."
     the_girl.char "Hey, what's... Whoa!"
     "You pull her legs up and bend them over her shoulders. You hold onto her ankles as you start to fuck her again, pushing your hard cock nice and deep."
     return
 
-label transition_default_missionary(the_girl, the_location, the_object, the_round):
+label transition_default_missionary(the_girl, the_location, the_object):
     "You put [the_girl.title] on her back and lie down on top of her, lining your hard cock up with her tight cunt."
     "After running the tip of your penis along her slit a few times you press forward, sliding inside of her. She gasps softly and closes her eyes."
     return
 
-label strip_missionary(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_missionary(the_girl, the_clothing, the_location, the_object):
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = missionary.position_tag)
     "[the_girl.possessive_title] struggles out of her [the_clothing.name] and throws it to the side. Then she gets herself lined up in front of you again."
     "She sighs happily when you slip back inside of her."
     return
 
-label strip_ask_missionary(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_missionary(the_girl, the_clothing, the_location, the_object):
     the_girl.char "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
     "[the_girl.title] pants as you fuck her."
     menu:
@@ -270,7 +287,7 @@ label strip_ask_missionary(the_girl, the_clothing, the_location, the_object, the
                 "She grinds her hips against you and moans ecstatically."
     return
 
-label orgasm_missionary(the_girl, the_location, the_object, the_round):
+label orgasm_missionary(the_girl, the_location, the_object):
     "[the_girl.title] turns her head and pants loudly. Suddenly she bucks her hips up against yours and gasps."
     $ the_girl.call_dialogue("climax_responses_vaginal")
     "Her pussy is dripping wet as you fuck through her climax. She paws at the [the_object.name], trying to find something to hold onto."

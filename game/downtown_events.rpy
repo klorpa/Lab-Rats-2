@@ -124,7 +124,7 @@ label lady_of_the_night_label():
             "The streets are quiet this time of night. You pull your wallet out and hand over the cash."
             "She takes it with a smile and tucks it away, then wraps herself around your arm."
             $ the_person.add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
-            call fuck_person(the_person, private = True) from _call_fuck_person_26
+            call fuck_person(the_person, private = True, ignore_taboo = True) from _call_fuck_person_26
             $ the_report = _return
             $ the_person.clear_situational_obedience("prostitute")
 

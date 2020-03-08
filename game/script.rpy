@@ -734,7 +734,10 @@ init -2 python:
                 self.supply_count += -proportional_production
 
                 self.serum_production_array[production_line][2] += proportional_production
-                serum_count = self.serum_production_array[production_line][2]//the_serum.production_cost #Calculates the number of batches we have made (previously for individual serums, now for entire batches)
+                serum_prod_cost = the_serum.production_cost
+                if serum_prod_cost <= 0:
+                    serum_prod_cost = 1
+                serum_count = self.serum_production_array[production_line][2]//serum_prod_cost #Calculates the number of batches we have made (previously for individual serums, now for entire batches)
                 if serum_count > 0:
                     self.add_counted_message("Produced " + self.serum_production_array[production_line][0].name,serum_count*self.batch_size) #Give a note to the player on the end of day screen for how many we made.
                     self.serum_production_array[production_line][2] -= serum_count * self.serum_production_array[production_line][0].production_cost
@@ -1725,6 +1728,8 @@ init -2 python:
             self.sex_record["Vaginal Creampies"] = 0
             self.sex_record["Anal Creampies"] = 0
 
+            self.broken_taboos = [] #Taboos apply a penalty to the _first_ time you are trying to push some boundry (first time touching her pussy, first time seeing her tits, etc.), and trigger special dialogue when broken.
+
             ## Clothing things.
             self.wardrobe = copy.copy(wardrobe) #Note: we overwrote default copy behaviour for wardrobes so they do not have any interference issues with eachother.
             if base_outfit is None:
@@ -2016,9 +2021,10 @@ init -2 python:
                 the_animation = wiggle_animation #Placeholder in case this gets called without any proper animation argument
 
             the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
-            the_size = the_displayable.render(10,10,0,0).get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size ofthings inside it.
+            the_size = the_displayable.render(10,10,0,0).get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size of things inside it.
             x_size = __builtin__.int(the_size[0])
             y_size = __builtin__.int(the_size[1])
+            #y_size = 1440
 
             the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height)
             the_surface = renpy.display.draw.screenshot(the_surftree, False)
@@ -2027,6 +2033,18 @@ init -2 python:
             renpy.display.module.save_png(the_surface, surface_file, 0)
             static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
             surface_file.close()
+            physical_x, physical_y = renpy.get_physical_size()
+
+            if physical_x/(16.0/9.0) > physical_y: #Account for the screen resolution difference from 16x9
+                y_scale = 1080.0/physical_y
+                x_scale = y_scale
+            else:
+                x_scale = 1920.0/physical_x
+                y_scale = x_scale
+            #y_scale = #Renpy auto-includes black bars above and below the game if it is taller/shorter than standard res, so the scaling factor for y cannot be trusted.
+
+            scaled_image = im.FactorScale(static_image, x_scale, y_scale)
+
 
             the_image_name = self.name + " | " + str(time.time())
 
@@ -2049,14 +2067,14 @@ init -2 python:
 
             the_mask_composite = im.Composite((renpy.config.screen_width, renpy.config.screen_height), *composite_components)
 
-
-
             mask_image = im.Blur(the_mask_composite, 2)
             mask_image_name = self.name + "_tex | " + str(time.time())
 
             animation_uniforms = the_animation.uniforms #Copy the default uniforms for the animation
             animation_uniforms["animation_strength"] = animation_effect_strength
-            raw_animated_displayable = ShaderDisplayable(shader.MODE_2D, static_image, the_image_name, shader.VS_2D, the_animation.shader,{"tex1":mask_image}, animation_uniforms, None, None, mask_name = mask_image_name)
+
+            raw_animated_displayable = ShaderDisplayable(shader.MODE_2D, scaled_image, the_image_name, shader.VS_2D, the_animation.shader,{"tex1":mask_image}, animation_uniforms, None, None, mask_name = mask_image_name)
+
             cropped_animated_displayable = Crop((0,0,x_size,y_size), raw_animated_displayable)
             framed_animated_displayable = Composite((x_size,y_size),(0,0),cropped_animated_displayable,(0,0),Frame("/gui/Character_Window_Frame.png", 12, 12))
 
@@ -2119,63 +2137,6 @@ init -2 python:
 
 
             return
-
-
-        # def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, lighting = None): #A special version of draw_person, removes the_clothing and animates it floating away. Otherwise draws as normal.
-        #     #Note: this function includes a call to remove_clothing, it is not needed seperately.
-        #     renpy.scene("Active")
-        #     renpy.show_screen("person_info_ui",self)
-        #     if position is None:
-        #         position = self.idle_pose
-        #
-        #     bottom_displayable = [] #Displayables under the piece of clothing being removed.
-        #     top_displayable = []
-        #
-        #     if emotion is None:
-        #         emotion = self.get_emotion()
-        #
-        #     if lighting is None:
-        #         lighting = mc.location.get_lighting_conditions()
-        #
-        #     bottom_displayable.append(self.expression_images.generate_emotion_displayable(position,emotion, special_modifier = special_modifier, eye_colour = self.eyes[1], lighting = lighting)) #Get the face displayable, also always under clothing.
-        #     bottom_displayable.append(self.body_images.generate_item_displayable(self.body_type,self.tits,position, lighting = lighting))  #Body is always under clothing
-        #     bottom_displayable.append(self.pubes_style.generate_item_displayable(self.body_type,self.tits, position, lighting = lighting)) #Pubes are also always under clothing and can't be removed.
-        #
-        #     size_render = renpy.render(bottom_displayable[1], 10, 10, 0, 0) #We need a render object to check the actual size of the body displayable so we can build our composite accordingly.
-        #     the_size = size_render.get_size()
-        #     x_size = __builtin__.int(the_size[0])
-        #     y_size = __builtin__.int(the_size[1])
-        #
-        #     bottom_clothing, split_clothing, top_clothing = self.outfit.generate_split_draw_list(the_clothing, self, position, emotion, special_modifier, lighting = lighting) #Gets a split list of all of our clothing items.
-        #     #We should remember that middle item can be None.
-        #     for item in bottom_clothing:
-        #         bottom_displayable.append(item)
-        #
-        #     for item in top_clothing:
-        #         top_displayable.append(item)
-        #
-        #     top_displayable.append(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting)) #Hair is always on top
-        #
-        #     #Now we build our two composites, one for the bottom image and one for the top.
-        #     composite_bottom_params = [(x_size,y_size)]
-        #     for display in bottom_displayable:
-        #         composite_bottom_params.append((0,0))
-        #         composite_bottom_params.append(display)
-        #
-        #     composite_top_params = [(x_size,y_size)]
-        #     for display in top_displayable:
-        #         composite_top_params.append((0,0))
-        #         composite_top_params.append(display)
-        #
-        #     final_bottom = Composite(*composite_bottom_params)
-        #     final_top = Composite(*composite_top_params)
-        #
-        #     renpy.show("Bottom Composite", at_list= [character_right, scale_person(self.height)],layer="Active",what=final_bottom,tag=self.name+"Bottom")
-        #     if split_clothing: #Only show this if we actually had something returned to us.
-        #         renpy.show("Removed Item", at_list= [character_right, scale_person(self.height), clothing_fade],layer="Active",what=split_clothing,tag=self.name+"Middle")
-        #         self.outfit.remove_clothing(the_clothing)
-        #     renpy.show("Top Composite", at_list= [character_right, scale_person(self.height)],layer="Active",what=final_top,tag=self.name+"Top")
-
 
         def get_emotion(self): # Get the emotion state of a character, used when the persons sprite is drawn and no fixed emotion is required.
             if self.arousal>= self.max_arousal:
@@ -2274,6 +2235,30 @@ init -2 python:
 
             return updated
 
+        def has_taboo(self, the_taboos):
+            if the_taboos is None:
+                return False
+
+            if isinstance(the_taboos, basestring):
+                the_taboo = [the_taboos]
+
+            for a_taboo in the_taboos: #We also handle lists, if we wnat to check if someone has _any_ of several taboos at once
+                if the_taboos not in self.broken_taboos:
+                    return True
+            return False
+
+        def break_taboo(self, the_taboo, add_to_log = True):
+            if the_taboo not in self.broken_taboos:
+                self.broken_taboos.append(the_taboo)
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                if add_to_log:
+                    mc.log_event("Taboo broken with " + display_name + "!", "float_text_red")
+                return True
+            return False
+
+
         def add_outfit(self,the_outfit, outfit_type = "full"):
             if outfit_type == "under":
                 self.wardrobe.add_underwear_set(the_outfit)
@@ -2286,7 +2271,6 @@ init -2 python:
             if new_outfit is not None:
                 self.planned_outfit = new_outfit.get_copy() #Get a copy to return to when we are done.
                 self.apply_outfit(new_outfit) # #We're handed a properly formatted copy already, use it to wear right away.
-                # self.outfit = new_outfit.get_copy()
 
         def set_uniform(self,uniform, wear_now):
             if uniform is not None:
@@ -2294,7 +2278,7 @@ init -2 python:
                 if wear_now:
                     self.apply_outfit(uniform)
 
-        def apply_outfit(self, the_outfit = None, ignore_base = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
+        def apply_outfit(self, the_outfit = None, ignore_base = False, update_taboo = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
             if the_outfit is None:
                 the_outfit = self.planned_outfit
                 if the_outfit is None:
@@ -2303,6 +2287,22 @@ init -2 python:
                 self.outfit = the_outfit.get_copy()
             else:
                 self.outfit = the_outfit.get_copy().merge_outfit(self.base_outfit)
+
+            if update_taboo: #If True, we assume this outfit is being put on or shown to the MC. It can break taboos about showing underwear, tits, pussy.
+                self.update_outfit_taboos()
+
+        def update_outfit_taboos(self):
+            return_value = False
+            if self.outfit.tits_visible():
+                self.break_taboo("bare_tits")
+                return_value = True
+            if self.outfit.vagina_visible():
+                self.break_taboo("bare_pussy")
+                return_value = True
+            if (self.outfit.wearing_panties() and not self.outfit.panties_covered()) or (self.outfit.wearing_bra() and not self.outfit.bra_covered()):
+                self.break_taboo("underwear_nudity")
+                return_value = True
+            return return_value
 
 
         def give_serum(self,the_serum_design, add_to_log = True): ##Make sure you are passing a copy of the serum, not a reference.
@@ -2594,10 +2594,29 @@ init -2 python:
                 if dialogue:
                     self.call_dialogue("clothing_review")
 
-        def judge_outfit(self,outfit,temp_sluttiness_boost = 0): #Judge an outfit and determine if it's too slutty or not. Can be used to judge other people's outfits to determine if she thinks they look like a slut.
+        def judge_outfit(self,outfit, temp_sluttiness_boost = 0, use_taboos = True, as_underwear = False, as_overwear = False): #Judge an outfit and determine if it's too slutty or not. Can be used to judge other people's outfits to determine if she thinks they look like a slut.
             # temp_sluttiness can be used in situations (mainly crises) where an outfit is allowed to be temporarily more slutty than a girl is comfortable wearing all the time.
             #Returns true if the outfit is wearable, false otherwise
-            if outfit.slut_requirement > (the_person.effective_sluttiness() + temp_sluttiness_boost): #Arousal is important for judging potential changes to her outfit while being stripped down during sex.
+            if as_underwear or as_overwear:
+                use_taboos = False
+
+            if use_taboos and not (outfit.bra_covered() and outfit.panties_covered()) and "underwear_nudity" not in self.broken_taboos:
+                taboo_modifier = "underwear_nudity"
+            elif use_taboos and outfit.tits_visible() and "bare_tits" not in self.broken_taboos:
+                taboo_modifier = "bare_tits"
+            elif use_taboos and outfit.vagina_visible() and "bare_pussy" not in self.broken_taboos:
+                taboo_modifier = "bare_pussy"
+            else:
+                taboo_modifier = None
+
+            slut_require = outfit.slut_requirement
+            if as_underwear:
+                slut_require = outfit.get_underwear_slut_score()
+            elif as_overwear:
+                slut_require = outfit.get_overwear_slut_score()
+
+
+            if slut_require > (self.effective_sluttiness(taboo_modifier) + temp_sluttiness_boost): #Arousal is important for judging potential changes to her outfit while being stripped down during sex.
                 return False
             else:
                 return True
@@ -2617,7 +2636,7 @@ init -2 python:
                 self.set_uniform(mc.business.get_uniform_wardrobe(mc.business.get_employee_title(self)).decide_on_uniform(self),False) #If we don't have a uniform planned for today get one.
 
             if self.planned_uniform is not None: #If our planned uniform is STILL None it means we are unable to construct a valid uniform. Only assign it as our outfit if we have managed to construct a uniform.
-                self.apply_outfit(self.planned_uniform)
+                self.apply_outfit(self.planned_uniform, update_taboo = True) #We apply clothing taboos to uniforms because the character is assumed to have seen them in them.
 
         def get_job_happiness_score(self):
             happy_points = self.happiness - 100 #Happiness over 100 gives a bonus to staying, happiness less than 100 gives a penalty
@@ -2629,7 +2648,7 @@ init -2 python:
             return happy_points
 
         def get_no_condom_threshold(self, situational_modifier = 0):
-            no_condom_threshold = 70 + (self.get_opinion_score("bareback sex") * -10) + situational_modifier
+            no_condom_threshold = 60 + (self.get_opinion_score("bareback sex") * -10) + situational_modifier
             if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
                 no_condom_threshold += 10
 
@@ -2712,8 +2731,17 @@ init -2 python:
             else:
                 return False
 
-        def effective_sluttiness(self): #Used in sex scenes where the girl will be more aroused, making it easier for her to be seduced.
-            return __builtin__.int(self.sluttiness + (self.arousal/4))
+        def effective_sluttiness(self, taboos = None): #Used in sex scenes where the girl will be more aroused, making it easier for her to be seduced.
+            if taboos is None:
+                taboos = []
+            elif not isinstance(taboos, list): #Handles handing over a single item without pre-wrapping it for "iteration".
+                taboos = [taboos]
+            return_amount = __builtin__.int(self.sluttiness + (self.arousal/4))
+            for taboo in taboos:
+                if taboo not in self.broken_taboos: #If any of the taboo handed over are not already broken this person has a -15 effective sluttiness.
+                    return_amount += -10
+                    break #Only appies once, so break once the mallus is applied.
+            return return_amount
 
         def cum_in_mouth(self): #Add the appropriate stuff to their current outfit, and peform any personal checks if rquired.
             mc.listener_system.fire_event("sex_cum_mouth", the_person = self)
@@ -2910,7 +2938,10 @@ init -2 python:
             "clothing_accept", "clothing_reject", "clothing_review",
             "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse", "flirt_response", "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
-            "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction"]
+            "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction",
+            "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
+            "condomless_sex_taboo_break", "underwear_nudity_taboo_break", "bare_tits_taboo_break", "bare_pussy_taboo_break",
+            "facial_cum_taboo_break", "mouth_cum_taboo_break", "body_cum_taboo_break", "creampie_taboo_break", "anal_creampie_taboo_break"]
 
             self.response_dict = {}
             for ending in self.response_label_ending:
@@ -3878,9 +3909,14 @@ init -2 python:
         #Layer 4: Over everything
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False, body_dependant = True,
-        opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0):
+        opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0, display_name = None):
             self.name = name
             self.proper_name = proper_name #The true name used in the file system
+            if display_name is None:
+                self.display_name = self.name
+            else:
+                self.display_name = display_name #The name that shoudl be used any time the item is talked about in a more general sense (ie. "she takes off her panties" instead of "she takes of her cute lace panties")
+
             self.hide_below = hide_below #If true, it hides the clothing beneath so you can't tell what's on.
             self.anchor_below = anchor_below #If true, you must take this off before you can take off anything of a lower layer.
             self.layer = layer #A list of the slots above that this should take up or otherwise prevent ffrom being filled. Slots are a list of the slot and the layer.
@@ -3927,6 +3963,8 @@ init -2 python:
 
             self.ordering_variable = ordering_variable #Used for things like hair and pubes when we need to know what can be trimmed into what without any time taken.
             #TODO: Assign ordering variables to all hair based on length (short, medium, long) and then have haircuts and stuff be possible.
+
+
 
         def __cmp__(self,other):
             if type(self) is type(other):
@@ -4029,9 +4067,13 @@ init -2 python:
 
     class Facial_Accessory(Clothing): #This class inherits from Clothing and is used for special accessories that require extra information
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False,
-            opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0):
+            opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = None):
 
             self.name = name
+            if display_name is None:
+                self.display_name = name
+            else:
+                self.display_name = display_name
             self.proper_name = proper_name
             self.hide_below = hide_below #If true, it hides the clothing beneath so you can't tell what's on.
             self.anchor_below = anchor_below #If true, you must take this off before you can take off anything of a lower layer.f
@@ -5113,8 +5155,10 @@ init -2 python:
             intro,scenes,outro,transition_default,
             strip_description, strip_ask_description,
             orgasm_description,
+            taboo_break_description,
             verb = "fuck", verbing = None, opinion_tags = None, record_class = None,
-            default_animation = None, modifier_animations = None):
+            default_animation = None, modifier_animations = None,
+            associated_taboo = None):
 
 
             self.name = name
@@ -5136,6 +5180,7 @@ init -2 python:
             self.opinion_tags = opinion_tags #The opinion that will be checked each round.
             self.connections = connections
             self.intro = intro
+            self.taboo_break_description = taboo_break_description #Called instead of the intro/transition when you break a taboo with someone. Should include call to personality taboo specific dialogue.
             self.scenes = scenes
             self.outro = outro
             self.transition_default = transition_default #TODO: add transitions that go between related positions but with different objects. Things like standing sex into fucking her against a window.
@@ -5162,6 +5207,11 @@ init -2 python:
             else:
                 self.modifier_animations = modifier_animations
 
+            self.associated_taboo = associated_taboo #What taboo tag, if any, is associated with this position. Until broken a taboo makes a position harder to select, but the taboo is broken once it is done once.
+            # Current sex related taboo are:
+            # kissing, touching_body, touching_penis, touching_vagina, sucking_cock, licking_pussy, vaginal_sex, anal_sex
+            # And as a special case for vaginal sex: condomless_sex
+
         def link_positions(self,other,transition_label): #This is a one way link!
             self.connections.append(other)
             self.transitions.append([other,transition_label])
@@ -5171,14 +5221,17 @@ init -2 python:
             other.link_positions(self,transition_label_2)
 
         def call_intro(self, the_person, the_location, the_object):
-            renpy.call(self.intro,the_person, the_location, the_object, 0)
+            renpy.call(self.intro,the_person, the_location, the_object)
+
+        def call_taboo_break(self, the_person, the_location, the_object):
+            renpy.call(self.taboo_break_description, the_person, the_location, the_object)
 
         def call_scene(self, the_person, the_location, the_object):
             random_scene = renpy.random.randint(0,len(self.scenes)-1)
-            renpy.call(self.scenes[random_scene],the_person, the_location, the_object, 0)
+            renpy.call(self.scenes[random_scene],the_person, the_location, the_object)
 
         def call_outro(self, the_person, the_location, the_object):
-            renpy.call(self.outro,the_person, the_location, the_object, 0)
+            renpy.call(self.outro,the_person, the_location, the_object)
 
         def call_transition(self, the_position, the_person, the_location, the_object):
             if the_position is None:
@@ -5188,16 +5241,16 @@ init -2 python:
                 for position_tuple in self.transitions:
                     if position_tuple[0] == the_position: ##Does the position match the one we are looking for?
                         transition_scene = position_tuple[1] ##If so, set it's label as the one we are going to change to.
-            renpy.call(transition_scene, the_person, the_location, the_object, 0)
+            renpy.call(transition_scene, the_person, the_location, the_object)
 
         def call_strip(self, the_clothing, the_person, the_location, the_object):
-            renpy.call(self.strip_description, the_clothing, the_person, the_location, the_object, 0)
+            renpy.call(self.strip_description, the_clothing, the_person, the_location, the_object)
 
         def call_strip_ask(self, the_clothing, the_person, the_location, the_object):
-            renpy.call(self.strip_ask_description, the_clothing, the_person, the_location, the_object, 0)
+            renpy.call(self.strip_ask_description, the_clothing, the_person, the_location, the_object)
 
         def call_orgasm(self, the_person, the_location, the_object):
-            renpy.call(self.orgasm_description, the_person, the_location, the_object, 0)
+            renpy.call(self.orgasm_description, the_person, the_location, the_object)
 
         def check_clothing(self, the_person):
             if self.requires_clothing == "Vagina":
@@ -5228,9 +5281,24 @@ init -2 python:
 
             the_person.draw_person(self.position_tag, emotion = emotion, special_modifier = self.current_modifier, the_animation = position_animation, animation_effect_strength = the_animation_speed)
 
-        def her_position_willingness_check(self, the_person): #Checks if the given girl would/can pick this position. A mirror of the main character's options.
+        def her_position_willingness_check(self, the_person, ignore_taboo = False): #Checks if the given girl would/can pick this position. A mirror of the main character's options.
             possible = True
-            if self.slut_requirement > the_person.effective_sluttiness():
+
+            position_taboo = self.associated_taboo
+            if ignore_taboo:
+                position_taboo = None
+
+            final_slut_requirement = self.slut_requirement
+            final_slut_cap = self.slut_cap
+            if self.skill_tag == "Anal" and the_person.has_family_taboo():
+                final_slut_requirement += -10 #It's easier to convince a family member to have anal sex, since it's not "real" incest or something.
+                final_slut_cap += -10
+            elif self.skill_tag == "Vaginal" and the_person.has_family_tboo():
+                final_slut_requirement += 10 #It's harder to convince a family member to have vaginal sex
+                final_slut_cap += 10
+
+
+            if final_slut_requirement > the_person.effective_sluttiness(position_taboo):
                 possible = False # Too slutty for her.
             elif not self.check_clothing(the_person):
                 possible = False # Clothing is in the way.
@@ -5243,7 +5311,7 @@ init -2 python:
 
             return possible
 
-        def build_position_willingness_string(self, the_person): #Generates a string for this position that includes a tooltip and coloured willingness for the person given.
+        def build_position_willingness_string(self, the_person, ignore_taboo = False): #Generates a string for this position that includes a tooltip and coloured willingness for the person given.
             willingness_string = ""
             tooltip_string = ""
 
@@ -5255,22 +5323,43 @@ init -2 python:
 
             disable = False
 
-            if the_person.effective_sluttiness() > self.slut_cap:
-                if the_person.arousal > self.slut_cap:
+            position_taboo = self.associated_taboo
+            if ignore_taboo:
+                position_taboo = None
+
+            taboo_break_string = ""
+            if the_person.has_taboo(position_taboo):
+                taboo_break_string = " {image=gui/extra_images/taboo_break_token.png} "
+
+            final_slut_requirement = self.slut_requirement
+            final_slut_cap = self.slut_cap
+            if self.skill_tag == "Anal" and the_person.has_family_taboo():
+                final_slut_requirement += -10 #It's easier to convince a family member to have anal sex, since it's not "real" incest or something.
+                final_slut_cap += -10
+            elif self.skill_tag == "Vaginal" and the_person.has_family_taboo():
+                final_slut_requirement += 10 #It's harder to convince a family member to have vaginal sex
+                final_slut_cap += 10
+
+            if the_person.effective_sluttiness(position_taboo) > final_slut_cap:
+                if the_person.arousal > final_slut_cap:
                     willingness_string = "{color=#6b6b6b}Boring{/color}" #No sluttiness gain AND half arousal gain
                     tooltip_string = " (tooltip)This position is too boring to interest her when she is this horny. No sluttiness increase and her arousal gain is halved."
                 else:
                     willingness_string = "{color=#3C3CFF}Comfortable{/color}" #No sluttiness
                     tooltip_string = " (tooltip)This position is too tame for her tastes. No sluttiness increase, but it may still be a good way to get warmed up and ready for other positions."
-            elif the_person.effective_sluttiness() >= self.slut_requirement:
+            elif the_person.effective_sluttiness(position_taboo) >= final_slut_requirement:
                 willingness_string = "{color=#3DFF3D}Exciting{/color}" #Normal sluttiness gain
                 tooltip_string = " (tooltip)This position pushes the boundry of what she is comfortable with. Increases temporary sluttiness, which may become permanent over time or with serum application."
-            elif the_person.effective_sluttiness() + the_person.obedience-100 >= self.slut_requirement:
+            elif the_person.effective_sluttiness(position_taboo) + the_person.obedience-100 >= final_slut_requirement:
                 willingness_string = "{color=#FFFF3D}Likely Willing if Commanded{/color}"
                 tooltip_string = " (tooltip)This position is beyond what she would normally consider. She is obedient enough to do it if she is commanded, at the cost of some happiness."
             else:
                 willingness_string = "{color=#FF3D3D}Likely Too Slutty{/color}"
                 tooltip_string = " (tooltip)This position is so far beyond what she considers appropriate that she would never dream of it."
+
+            if the_person.has_taboo(position_taboo):
+                tooltip_string +="\nSuccessfully selecting this position will break a taboo, making it easier to convince " + the_person.title + " to do it and similar acts in the future."
+
 
             if not self.check_clothing(the_person):
                 disable = True
@@ -5294,9 +5383,9 @@ init -2 python:
             #else:
 
             if disable:
-                return self.name + "\n{size=22}"+ willingness_string + "{/size}" + " (disabled)" #Don't show the arousal and energy string if it's disabled to prevent overrun
+                return taboo_break_string + self.name + taboo_break_string + "\n{size=22}"+ willingness_string + "{/size}" + " (disabled)" #Don't show the arousal and energy string if it's disabled to prevent overrun
             else:
-                return self.name + "\n{size=22}" + willingness_string + energy_string + arousal_string + "{/size}" + tooltip_string
+                return taboo_break_string + self.name + taboo_break_string  + "\n{size=22}" + willingness_string + energy_string + arousal_string + "{/size}" + tooltip_string
 
     ##Initialization of requirement functions go down here. Can also be moved to init -1 eventually##
 
@@ -5457,8 +5546,8 @@ init -1:
         day_names = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"] #Arrays that hold the names of the days of the week and times of day. Arrays start at 0.
         time_names = ["Early Morning","Morning","Afternoon","Evening","Night"]
 
-transform scale_person(scale_factor = 1):
-    zoom scale_factor
+transform scale_person(height_factor = 1):
+    zoom height_factor
 
 transform character_right():
     yalign 0.5
@@ -8497,7 +8586,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.25.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.26.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -8975,6 +9064,27 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
                     "You approach [picked_option.title] and chat for a little bit."
                     $ picked_option.call_dialogue("greetings")
 
+                if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-concious enough to coment on it.
+                    if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy") and picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
+                        "[picked_option.title] doesn't say anything about it, but seems unconfortable being naked in front of you."
+                        "As you talk she seems to become more comfortable with her own nudity, even if she isn't thrilled by it."
+
+                    if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy"):
+                        "[picked_option.title] doesn't say anything about it, but angles her body to try and conceal her bare pussy from you."
+                        "As you talk she seems to become more comfortable, even if she isn't thrilled about it."
+
+                    elif picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
+                        "[picked_option.title] doesn't say anything about it, but brings her arms up to try and conceal her tits."
+                        if picked_option.has_large_tits():
+                            "Her large chest isn't easy to hide, and she quickly realises it's hopeless."
+                        else:
+                            "As you talk she seems to become more comfortable, and eventaully lets her arms drop again."
+
+                    elif ((picked_option.outfit.wearing_panties() and not picked_option.outfit.panties_covered()) or (picked_option.outfit.wearing_bra() and not picked_option.outfit.bra_covered())) and picked_option.has_taboo("underwear_nudity"):
+                        "[picked_option.title] doesn't say anything about it, but she tries to cover up her underwear with her hands."
+                        "As you talk she seems to become more comfortable, and eventually she lets her arms drop to her sides."
+
+                    $ picked_option.update_outfit_taboos()
                 call talk_person(picked_option) from _call_talk_person
 
     elif isinstance(picked_option, Action):
@@ -9540,7 +9650,7 @@ label set_uniform_description:
         "Add a complete outfit." if not limited_to_top:
             $ uniform_mode = "full"
 
-        "Add a complete outfit.\n{size=22}Requires: Casual Uniform Policy{/size} (disabled)" if limited_to_top:
+        "Add a complete outfit.\n{size=22}Requires: Reduced Coverage Corporate Uniforms{/size} (disabled)" if limited_to_top:
             pass
 
         "Add an overwear set.":
@@ -9549,7 +9659,7 @@ label set_uniform_description:
         "Add an underwear set." if not limited_to_top:
             $ uniform_mode = "under"
 
-        "Add an underwear set.\n{size=22}Rquires: Casual Uniform Policy{/size} (disabled)" if limited_to_top:
+        "Add an underwear set.\n{size=22}Rquires: Reduced Coverage Corporate Uniforms{/size} (disabled)" if limited_to_top:
             pass
 
         "Remove a uniform or set.":
@@ -9839,16 +9949,16 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         list_of_places = [] #By having this in an init block it may be set to null each time the game is reloaded, because the initialization stuff below is only called once.
 
         ##Actions##
-        hr_work_action = Action("Spend time orgainizing your business.\n{image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
-            menu_tooltip = "Raises business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
-        research_work_action = Action("Spend time researching in the lab.\n{image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
-            menu_tooltip = "Contributes research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
-        supplies_work_action = Action("Spend time ordering supplies.\n{image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
+        hr_work_action = Action("Organize your business.\n{image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
+            menu_tooltip = "Raise business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
+        research_work_action = Action("Research in the lab.\n{image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
+            menu_tooltip = "Contribute research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
+        supplies_work_action = Action("Ordering Supplies.\n{image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
             menu_tooltip = "Purchase serum supply at the cost of $1 per unit of supplies. When producing serum every production point requires one unit of serum.\n+3*Focus + 2*Skill + 1*Charisma + 10 Serum Supply.")
-        market_work_action = Action("Spend time shipping doses of serum marked for sale. {image=gui/heart/Time_Advance.png}",market_work_action_requirement,"market_work_action_description",
-            menu_tooltip = "Sells serum that has been marked for sale. Mark serum manually from the office or set an autosell threshold in production.\n3*Charisma + 2*Skill + 1*Focus + 5 Serum Doses Sold.")
-        production_work_action = Action("Spend time producing serum in the lab.\n{image=gui/heart/Time_Advance.png}",production_work_action_requirement,"production_work_action_description",
-            menu_tooltip = "Produces serum from raw materials. Each production point of serum requires one unit if supply, which can be purchased from your office.\n+3*Focus + 2*Skill + 1*Intelligence + 10 Production Points.")
+        market_work_action = Action("Sell Prepared Serums.\n{image=gui/heart/Time_Advance.png}",market_work_action_requirement,"market_work_action_description",
+            menu_tooltip = "Sell serums that have been marked for sale. Mark serum manually from your office or set an autosell threshold in production.\n3*Charisma + 2*Skill + 1*Focus + 5 Serum Doses Sold.")
+        production_work_action = Action("Produce serum.\n{image=gui/heart/Time_Advance.png}",production_work_action_requirement,"production_work_action_description",
+            menu_tooltip = "Produce serum from raw materials. Each production point of serum requires one unit if supply, which can be purchased from your office.\n+3*Focus + 2*Skill + 1*Intelligence + 10 Production Points.")
 
         interview_action = Action("Hire someone new.\n{image=gui/heart/Time_Advance.png}", interview_action_requirement,"interview_action_description",
             menu_tooltip = "Look through the resumes of several candidates. More information about a candidate can be revealed by purchasing new business policies.")
@@ -9860,12 +9970,12 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
             menu_tooltip = "Decide what serum designs are being produced. Production is divided between multiple factory lines, and auto sell thresholds can be set to automatically flag serum for sale.")
         pick_supply_goal_action = Action("Set the amount of supply you would like to maintain.", pick_supply_goal_action_requirement,"pick_supply_goal_action_description",
             menu_tooltip = "Set a maximum amount of serum you and your staff will attempt to purchase.")
-        policy_purhase_action = Action("Purchase new business policies.", policy_purchase_requirement,"policy_purchase_description",
+        policy_purhase_action = Action("Purchase business policies.", policy_purchase_requirement,"policy_purchase_description",
             menu_tooltip = "New business policies changes the way your company runs and expands your control over it. Once purchased business policies are always active.")
         set_head_researcher_action = Action("Select a Head Researcher.", head_researcher_select_requirement, "head_researcher_select_description",
             menu_tooltip = "Pick a member of your R&D staff to be your head researcher. A head resercher with a high intelligence score will increase the amount of research produced by the entire division.")
 
-        trade_serum_action = Action("Access the serum production stockpile.", trade_serum_action_requirement, "trade_serum_action_description",
+        trade_serum_action = Action("Access production stockpile.", trade_serum_action_requirement, "trade_serum_action_description",
             menu_tooltip = "Move serum to and from your personal inventory. You can only use serum you are carrying with you.")
         sell_serum_action = Action("Mark serum to be sold.", sell_serum_action_requirement, "sell_serum_action_description",
             menu_tooltip = "Decide what serum should be available for sale. It can then be sold from the marketing division. Setting an autosell threshold in the production department can do this automatically.")

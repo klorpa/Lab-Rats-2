@@ -193,7 +193,7 @@ label pay_strip_scene(the_person):
 
     # strip_willingness is a measure of how into the whole strip process the girl is. The less dressed she get the more embarassed she'll get,
     # the more slutty the more she'll tease you, take clothing off willingly, etc.
-    $ strip_willingness = the_person.sluttiness + (5*the_person.get_opinion_score("not wearing anything")) - the_person.outfit.slut_requirement
+    $ strip_willingness = the_person.effective_sluttiness("underwear_nudity") + (5*the_person.get_opinion_score("not wearing anything")) - the_person.outfit.slut_requirement
     #If there are other things that influence how willing a person is to strip they go here!
 
     $ keep_stripping = True #When set to false the loop ends and the strip show stops.
@@ -288,7 +288,7 @@ label pay_strip_scene(the_person):
                 if not item.is_extension:
                     test_outfit = the_person.outfit.get_copy()
                     test_outfit.remove_clothing(item)
-                    new_willingness = the_person.sluttiness + (5*the_person.get_opinion_score("not wearing anything")) - test_outfit.slut_requirement
+                    new_willingness = the_person.effective_sluttiness("underwear_nudity") + (5*the_person.get_opinion_score("not wearing anything")) - test_outfit.slut_requirement
                     if new_willingness + (the_person.obedience-100) >= 0:
                         #They're willing to strip it off.
                         price = 0 # Default value
@@ -413,7 +413,7 @@ label pay_strip_scene(the_person):
             $ test_outfit.remove_clothing(strip_choice[0])
             $ the_clothing = strip_choice[0]
             # $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
-            $ strip_willingness = the_person.sluttiness + (5*the_person.get_opinion_score("not wearing anything")) - test_outfit.slut_requirement
+            $ strip_willingness = the_person.effective_sluttiness("underwear_nudity") + (5*the_person.get_opinion_score("not wearing anything")) - test_outfit.slut_requirement
             if strip_choice[1] > 0:
                 if strip_willingness < 0:
                     "You pull some cash from your wallet and offer it to [the_person.title]. She takes it and looks at it for a long second."
@@ -440,6 +440,10 @@ label pay_strip_scene(the_person):
                 $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
                 "[the_person.title] strips off her [the_clothing.name] for free, leaving it on the ground at her feet."
 
+            if the_person.update_outfit_taboos():
+                the_person.char "Don't... Look so closely at me like that."
+                mc.name "Why not? It's what I'm paying for, isn't it?"
+                the_person.char "I guess..."
     return
 
 
@@ -450,7 +454,7 @@ label prostitute_label(the_person):
     $ the_person.change_obedience(1)
 
     $ the_person.add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
-    call fuck_person(private = True) from _call_fuck_person_23
+    call fuck_person(private = True, ignore_taboo = True) from _call_fuck_person_23 #She's a prostitute, she doesn't care about normal taboos
     $ the_report = _return
 
     $ the_person.clear_situational_obedience("prostitute")

@@ -357,7 +357,6 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                     xanchor 0.5
                                     yanchor 0.0
                                     style "textbutton_style"
-                                    text_size 18
                                     text_style "textbutton_text_style"
                                     text_align (0.5,0.5)
                                     hovered hovered_list

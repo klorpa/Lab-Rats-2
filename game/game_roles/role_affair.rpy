@@ -117,18 +117,13 @@ label fuck_date_label(the_person):
     $ the_person.add_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!") # Bonus to sluttiness since you're in an affair and this is blatently a date to get fucked on.
     #Figure out her outfit for this
     if the_person.get_opinion_score("not wearing anything") > the_person.get_opinion_score("lingerie"):
-        #She's wearing nothing at all. nothing at all. nothing at all...
-        $ the_person.apply_outfit(Outfit("Nude"))
-        #$ the_person.outfit = Outfit("Nude") changed v0.24.1
+        $ the_person.apply_outfit(Outfit("Nude"), update_taboo = True) #She's wearing nothing at all. nothing at all. nothing at all...
+
     elif the_person.get_opinion_score("lingerie") >= 0:
-        #She's just wearing lingerie for the evening.
-        $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True))
-        #changed v0.24.1
-        #$ the_person.outfit = lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True) #She picks an outfit with a minimum of half and max of slut+20 for her lingerie.
+        $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True), update_taboo = True) #She's just wearing lingerie for the evening.
+
     else:
-        #She picks a slutty outfit, but nothing truely "special".
-        $ the_person.apply_outfit(the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0))
-        #$ the_person.outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0) changed v0.24.1
+        $ the_person.apply_outfit(the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0), update_taboo = True) #She picks a slutty outfit, but nothing truely "special".
 
     if the_person.obedience > 130 or the_person.get_opinion_score("being submissive") > 0 or the_person.get_opinion_score("giving blowjobs") > 0:
         #She's on her knees and ready to suck you off as soon as you come in.
@@ -276,7 +271,7 @@ label fuck_date_label(the_person):
                                 else:
                                     "[the_person.title] rushes to the door to intercept her [so_title]. You hear her stalling for you as you open the side door and break into the night."
 
-                            "Fuck her anyways!" if the_person.love + the_person.effective_sluttiness() >= leave_SO_love_calculation + 60:
+                            "Fuck her anyways!" if the_person.love + the_person.effective_sluttiness("vaginal_sex") >= leave_SO_love_calculation(the_person) + 60:
                                 # You assert dominance and fuck her as he comes in. He breaks down as you claim her as your own.
 
                                 mc.name "Well, I think I'm still going to bend you over and fuck you. He was going to find out eventually, right?"
@@ -304,9 +299,12 @@ label fuck_date_label(the_person):
                                     "Fuck her bareback.":
                                         "You give her ass a smack and line your cock up with her wet pussy."
 
-                                if the_person.effective_sluttiness() < the_person.get_no_condom_threshold() and not mc.condom:
+                                if the_person.effective_sluttiness("condomless_sex") < the_person.get_no_condom_threshold() and not mc.condom:
                                     the_person.char "Wait, you need a condom!"
                                     mc.name "No time!"
+
+                                if not mc.condom:
+                                    $ the_person.break_taboo("condomless_sex")
                                 "You don't waste any time, ramming your cock home. [the_person.title] gasps as you bottom out inside her warm cunt, then start to pump back and forth."
                                 "You hear [the_person.title]'s [so_title] come inside and close the door."
                                 the_person.SO_name "I'm home! Good news, the client pushed the project back so I'll be out late less often!"
@@ -385,12 +383,22 @@ label fuck_date_label(the_person):
                                 call fuck_person(the_person, private = True) from _call_fuck_person_38
                                 $ the_report = _return
 
-                            "Make her suck your cock." if the_person.effective_sluttiness() >= 60:
+                            "Make her suck your cock." if the_person.effective_sluttiness("sucking_cock") >= 50:
                                 #Basically an extended intro
                                 "You shuffle across the bed and stand up in front of [the_person.title]. She looks at you quizzically before noticing your hard cock at face level."
-                                the_person.char "Yeah? You don't say.... Uh huh?"
-                                "You brush her cheek with the back of your hand. She pivots her phone away from her face and leans forward, opening her mouth and kissing the tip of your cock."
-                                "She looks up at you from her sitting position while her tongue works around the tip in circles."
+                                if the_person.has_taboo("sucking_cock"):
+                                    the_person.char "Yeah? I... One second."
+                                    "She looks up at you and shakes her head, pointing to her phone."
+                                    "You take a small step forward, pressing the tip of your cock to her cheek."
+                                    "[the_person.possessive_title] glares at you. You shrug and flex your dick in her face."
+                                    "[the_person.title] rolls her eyes and holds up a finger, moving the phone back to her face."
+                                    the_person.char "I'm back. Go ahead, tell me all about it."
+                                    $ the_person.break_taboo("sucking_cock")
+                                    "Then she moves it away again and leans forward, kissing the tip of your cock before sliding it past her lips."
+                                else:
+                                    the_person.char "Yeah? You don't say.... Uh huh?"
+                                    "You brush her cheek with the back of your hand. She pivots her phone away from her face and leans forward, opening her mouth and kissing the tip of your cock."
+                                    "She looks up at you from her sitting position while her tongue works around the tip in circles."
                                 the_person.char "Mhmm? Mmmm. Hmmm. Uhmmmm."
                                 "She mumbles responses to her [so_title] as she takes your cock deeper into her mouth. You can hear his voice on the other side of the phone, tinny and far away."
                                 "With a soft, wet smack she slides back off and takes a breath."
@@ -402,7 +410,7 @@ label fuck_date_label(the_person):
                                 call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True) from _call_fuck_person_39
                                 $ the_report = _return
 
-                            "Fuck her while she's talking." if the_person.effective_sluttiness() >= 80:
+                            "Fuck her while she's talking." if the_person.effective_sluttiness("vaginal_sex") >= 80:
                                 #This is basically an extended intro
                                 "You shuffle behind [the_person.title] and wrap your arms around her, grabbing a tit with one hand while the other slides down to her waist and caresses her pussy."
                                 the_person.char "Yeah? You don't say... Uh huh?"
@@ -425,9 +433,10 @@ label fuck_date_label(the_person):
                                         ""
 
                                     "Once her cute little pussy is available, she spreads her legs for you."
+                                    $ the_person.update_outfit_taboos()
 
                                 $ wanted_condom = False
-                                if the_person.effective_sluttiness() < the_person.get_no_condom_threshold():
+                                if the_person.effective_sluttiness("condomless_sex") < the_person.get_no_condom_threshold():
                                     $ wanted_condom = True
                                     "She pauses and points towards your cock and mouthes \"C-O-N-D-O-M\""
                                 else:
@@ -449,7 +458,9 @@ label fuck_date_label(the_person):
                                             "Her eyes go wide as your hard dick slides into her raw pussy. She glares up at you, but has to snap her attention back to her [so_title]."
                                         else:
                                             "She closes her eyes and bites her lip as your hard dick slides into her raw pussy. She's barely able to keep her voice together while talking to her [so_title]."
+                                        $ the_person.break_taboo("condomless_sex")
 
+                                $ the_person.break_taboo("vaginal_sex")
                                 the_person.char "Mmmhm? Oh sweetheart, it sounds like you're having a long hard day"
                                 "She holds the phone to her chest and turns her head to the side as you start to pump into her. You hear the tinny voice of her [so_title] through the cellphone speaker."
                                 "She moans softly, then lifts the phone back to her face."

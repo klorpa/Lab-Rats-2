@@ -11,8 +11,10 @@
             transition_default = "transition_default_against_wall",
             strip_description = "strip_against_wall", strip_ask_description = "strip_ask_against_wall",
             orgasm_description = "orgasm_against_wall",
+            taboo_break_description = "taboo_break_against_wall",
             opinion_tags = ["sex standing up"], record_class = "Vaginal Sex",
-            default_animation = blowjob_bob)
+            default_animation = blowjob_bob,
+            associated_taboo = "vaginal_sex")
 
 
         list_of_positions.append(against_wall)
@@ -21,8 +23,8 @@
 #    python:
 #        ##Here is where you would put connections if they existed.
 
-label intro_against_wall(the_girl, the_location, the_object, the_round):
-    "You put your arms around [the_girl.title] and spin her around, pointing her towards the [the_object.name]."
+label intro_against_wall(the_girl, the_location, the_object):
+    "You put your arms around [the_girl.title] and spin her around, putting her face towards you and her back against the [the_object.name]."
     if the_girl.effective_sluttiness() > 80:
         "[the_girl.possessive_title] plants her back against [the_object.name] and watches you as you unzip your pants. She bites her lip and sighs under her breath when your cock springs out."
         the_girl.char "Mmm, what are you going to do to me?"
@@ -31,7 +33,21 @@ label intro_against_wall(the_girl, the_location, the_object, the_round):
     "You get your hard cock out and rub it against [the_girl.title]'s stomach a couple of times, then line up with her pussy. She gasps softly as you slide yourself inside of her."
     return
 
-label scene_against_wall_1(the_girl, the_location, the_object, the_round):
+label taboo_break_against_wall(the_girl, the_location, the_object):
+    "You put your arms around [the_girl.title] and spin her around, putting her face towards you and her back against the [the_object.name]."
+    if the_girl.effective_sluttiness(against_wall.associated_taboo) > against_wall.slut_cap:
+        "She reaches down and rubs your hard cock against her, teasing the tip against the slit of her pussy."
+    else:
+        "You step even closer, letting your hard cock rub against her stomach, a bare few inches above her pussy."
+    $ the_girl.call_dialogue(against_wall.associated_taboo+"_taboo_break")
+    "You hold your shaft and line it up with [the_girl.possessive_title]'s warm cunt. She shivers in anticipation when your tip taps her clit."
+    "You put one hand around her waist and pull her towards you as you push yourself forward."
+    "After a moment of resistance your cock plunges into her warm, wet pussy."
+    the_girl.char "Ah!"
+    "You hold deep inside and let her adjust to your size for a few seconds, then start to glide in and out of her."
+    return
+
+label scene_against_wall_1(the_girl, the_location, the_object):
     #CHOICE CONCEPT: Fondle her tits // Kiss her
     if the_girl.arousal > 50:
         "[the_girl.title]'s cunt is nice and wet. You're able to speed up and fuck her a little faster."
@@ -103,7 +119,7 @@ label scene_against_wall_1(the_girl, the_location, the_object, the_round):
                     "After a few attempts you give up on making out and focus your attention on pounding her wet pussy."
     return
 
-label scene_against_wall_2(the_girl, the_location, the_object, the_round):
+label scene_against_wall_2(the_girl, the_location, the_object):
     #CHOICE CONCEPT: Fuck her harder // Talk dirty to her
     if the_girl.arousal > 50:
         "You hold [the_girl.title]'s hands while you slide your cock in and out of her pussy. She's wet and obviously turned on."
@@ -165,7 +181,7 @@ label scene_against_wall_2(the_girl, the_location, the_object, the_round):
 
     return
 
-label scene_against_wall_3(the_girl, the_location, the_object, the_round):
+label scene_against_wall_3(the_girl, the_location, the_object):
     # CHOICE CONCEPT: Grab her ass // Let her take control
 
     "[the_girl.title] thrusts her hips forward to meet yours with each thrust. She closes her eyes and puts her head back against [the_object.name]."
@@ -214,7 +230,7 @@ label scene_against_wall_3(the_girl, the_location, the_object, the_round):
                 "[the_girl.possessive_title] clearly knows what she's doing. She uses the [the_object.name] behind her to push against you, and each stroke of her warm pussy pulls you closer and closer to climax."
     return
 
-label outro_against_wall(the_girl, the_location, the_object, the_round):
+label outro_against_wall(the_girl, the_location, the_object):
     "[the_girl.title]'s tight cunt draws you closer to your orgasm with each thrust. You speed up as you pass the point of no return, pushing her up against the [the_object.name] and laying into her."
     $the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Fuck, I'm going to cum!"
@@ -264,18 +280,18 @@ label outro_against_wall(the_girl, the_location, the_object, the_round):
             "You sigh contentedly and relax for a moment, enjoying the sight of [the_girl.title] covered in your semen."
     return
 
-label transition_default_against_wall(the_girl, the_location, the_object, the_round):
+label transition_default_against_wall(the_girl, the_location, the_object):
     "You press [the_girl.possessive_title] against the [the_object.name]. She plants her back against it and opens her legs, letting you step between them."
     "You run the tip of your cock along her slit a few times, then slide yourself inside of her tight cunt."
     return
 
-label strip_against_wall(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_against_wall(the_girl, the_clothing, the_location, the_object):
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = against_wall.position_tag)
     "[the_girl.possessive_title] struggles out of her [the_clothing.name] and drops it beside her."
     return
 
-label strip_ask_against_wall(the_girl, the_clothing, the_location, the_object, the_round):
+label strip_ask_against_wall(the_girl, the_clothing, the_location, the_object):
     the_girl.char "Sir, I'd like to take off my [the_clothing.name], would you mind?"
     menu:
         "Let her strip.":
@@ -293,7 +309,7 @@ label strip_ask_against_wall(the_girl, the_clothing, the_location, the_object, t
                 "You fuck her a little faster and she moans loudly."
     return
 
-label orgasm_against_wall(the_girl, the_location, the_object, the_round):
+label orgasm_against_wall(the_girl, the_location, the_object):
     "[the_girl.possessive_title] closes her eyes and gasps suddenly. Her hands wrap around you and claw at pull hard against your back."
     $ the_girl.call_dialogue("climax_responses_vaginal")
     "You push her up against the [the_object.name] and keep fucking her through her orgasm."

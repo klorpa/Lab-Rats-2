@@ -752,7 +752,7 @@ label aunt_share_drinks_label(the_person):
                                 $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                             "Once she's stripped out of her clothing, [the_person.possessive_title] puts on the outfit you've made for her."
-                            $ the_person.apply_outfit(created_outfit)
+                            $ the_person.apply_outfit(created_outfit, update_taboo = True)
                             #$ the_person.outfit = created_outfit.get_copy() changed v0.24.1
                             $ the_person.draw_person()
 
@@ -850,7 +850,7 @@ label aunt_share_drinks_label(the_person):
 
                     the_person.char "Okay, first one."
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-30, guarantee_output = True)
-                    $ the_person.apply_outfit(lingerie)
+                    $ the_person.apply_outfit(lingerie, update_taboo = True)
                     #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     "She slips on her new set of underwear."
@@ -875,7 +875,7 @@ label aunt_share_drinks_label(the_person):
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-25, guarantee_output = True)
-                    $ the_person.apply_outfit(lingerie)
+                    $ the_person.apply_outfit(lingerie, update_taboo = True)
                     #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     "She slips on the next set of lingerie."
@@ -900,7 +900,7 @@ label aunt_share_drinks_label(the_person):
                         $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-20, guarantee_output = True)
-                    $ the_person.apply_outfit(lingerie)
+                    $ the_person.apply_outfit(lingerie, update_taboo = True)
                     #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     "She slips on the last set of underwear she has to show you."
