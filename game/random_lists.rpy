@@ -118,7 +118,8 @@ init -2:
         list_of_names.append("Soni")
         list_of_names.append("Alana")
         list_of_names.append("Lira")
-
+        list_of_names.append("Lilith")
+        list_of_names.append("Raislyn")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -204,6 +205,7 @@ init -2:
         list_of_last_names.append("Mead")
         list_of_last_names.append("Ersson")
         list_of_last_names.append("Sill")
+        list_of_last_names.append("Mahjor")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -734,6 +736,17 @@ init 1 python:
         person_paige = create_random_person(name = "Paige", last_name = "Sallow", body_type = "thin_body", height = 0.98, skin = "white", tits="A", hair_colour="brown", hair_style = messy_ponytail, starting_wardrobe = paige_wardrobe,
             personality = reserved_personality, stat_array = [1,4,3], skill_array = [5,1,2,3,2], sex_array = [2,1,4,2])
         list_of_unique_characters.append(person_paige)
+
+        kendra_wardrobe = wardrobe_from_xml("Kendra_Wardrobe")
+        # Kendra's family owns one of the largest pharmaceutical companies in the country. All of the Rivera children went to the finest prep schools.
+        # Unlike her siblings, Kendra didn't inherit her parent's good looks or their general attitudes. She also disagreed with her families' viewpoint that being rich makes you better than everyone else.
+        # This point of view put her at odds with everyone in her social class so she mostly hung out with the outcasts of her school.
+        # By the time Kendra turned 16, she had grown into a stunningly beautiful woman and enjoyed the newfound attention she was receiving from boys. She was a free spirit, who just wanted to enjoy life.
+        # When she graduated High School, she decided that college was not for her and pursued a career as glamor model. Kendra's parents were not pleased and cut her off financially but Kendra didn't care.
+        # She was ready to be free and live her life.
+        person_kendra = create_random_person(name = "Kentra", last_name = "Rivera", body_type = "curvy_body", height = 0.94, skin = "tan", hair_colour = "chestnut", hair_style = shaved_side_hair, starting_wardrobe = kendra_wardrobe,
+            personality = relaxed_personality, stat_array = [4,3,1], skill_array = [5,3,1,2,2], sex_array = [2,2,4,1], face_style = "Face_4")
+        list_of_unique_characters.append(person_kendra)
 
         ### STEPHANIE ###
         stephanie_wardrobe = wardrobe_from_xml("Stephanie_Wardrobe")

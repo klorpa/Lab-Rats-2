@@ -155,7 +155,7 @@ label outro_skull_fuck(the_girl, the_location, the_object):
 
     return
 
-label transition_skull_fuck_deepthroat_blowjob(the_girl, the_location, the_object):
+label transition_skull_fuck_deepthroat(the_girl, the_location, the_object):
     "You give [the_girl.possessive_title]'s mouth a few more fast, powerful thrusts. She gags, spit dripping down her chin, as you bottom out each time."
     $ skull_fuck.special_modifier = None
     $ skull_fuck.redraw_scene(the_girl)

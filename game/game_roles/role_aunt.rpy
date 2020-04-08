@@ -737,6 +737,7 @@ label aunt_share_drinks_label(the_person):
                                 the_person.char "You don't think I'd need a bra? I don't want my girls bouncing around all the time. Or do I?"
                             else:
                                 the_person.char "Oh, that looks so cute!"
+                            $ the_person.update_outfit_taboos()
 
                             the_person.char "If I try it on will you tell me what you think?"
                             mc.name "Go for it. I want to see what it looks like on you."

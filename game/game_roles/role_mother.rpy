@@ -69,14 +69,25 @@ label mom_low_sluttiness_weekly_pay(the_person):
                         the_person.char "A kiss?"
                         mc.name "For being such a good son."
                         the_person.char "Oh, well that's easy then."
-                        "She stands up and leans in to give you a kiss on the cheek."
+                        "[the_person.possessive_title] stands up and leans in to give you a kiss on the cheek."
                         mc.name "On the lips, [the_person.mc_title]. Please?"
                         the_person.char "You've always been so affectionate. Not like other boys at all, you know. Fine."
+                        $ kissing.call_taboo_break(the_person, None, None) #We can reuse the kissing taboo break scene for improved dialogue and description.
+                        "After a moment she pulls back and looks away from you, blushing."
+                        $ the_person.break_taboo("kissing")
+                    else:
+                        the_person.char "Okay, come here."
+                        if the_person.effective_sluttinss("kissing") > 15:
+                            "You lean down to kiss her as she's sitting. [the_person.possessive_title] puts a hand on the back of your head and pulls you against her as your lips meet."
+                            "Her mouth opens slightly, letting your tongues meet as she makes out with you."
+                            $ the_person.change_arousal(5 + mc.sex_skills["Foreplay"])
+                            "It might be your imagination, but you think you might even hear her moan."
+                            "When you finally break the kiss she fixes her hair and smiles proudly at you."
+                        else:
+                            "You lean down to kiss her. She lets you press your lips against hers, and even returns the gentle kiss after a moment of hesitation."
+                            "When you finally break the kiss she looks away from you, blushing with embarrassment."
 
-
-                    "She leans forward and pecks you on the lips."
                     $ the_person.change_slut_temp(2)
-                    $ the_person.break_taboo("kissing")
                     the_person.char "There, have I earned my reward?"
                     "You hold out the cash for her and she takes it."
                     the_person.char "Thank you so much, every little bit helps."

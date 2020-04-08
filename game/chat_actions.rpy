@@ -1,10 +1,4 @@
 init -2 python:
-    def change_titles_requirement(the_person):
-        if the_person.obedience < 110:
-            return "Requires: 110 Obedience"
-        else:
-            return True
-
     def small_talk_requirement(the_person):
         if mc.energy < 15:
             return "Requires: 15 Energy"
@@ -81,18 +75,12 @@ init -2 python:
         else:
             return True
 
-
     def evening_date_trigger(day_of_week): #Used for a mandatory crisis that triggers on the next Friday in time chunk 3.
         if time_of_day == 3 and day%7 == day_of_week: #Day of week is a nubmer from 0 to 6, where 0 is Monday.
             return True
         return False
 
-    def wardrobe_change_requirment(the_person):
-        if the_person.obedience < 120:
-            return "Requires: Obedience 120"
-        else:
-            return True
-
+    # TODO: Decide if this is even needed with the new serum/sex change
     def serum_give_requirement(the_person):
         #the_person parameter passed to match other actions and for future proofing.
         if mc.inventory.get_any_serum_count() <= 0:
@@ -106,6 +94,63 @@ init -2 python:
         else:
             return True
 
+    def grope_requirement(the_person):
+        if the_person.sluttiness < 5:
+            return False #Don't show the option at all at minimal sluttiness.
+        elif mc.energy < 10:
+            return "Not enough {image=gui/extra_images/energy_token.png}"
+        else:
+            return True
+
+    def command_requirement(the_person):
+        if the_person.obedience < 100:
+            return "Requires: 100 Obedience"
+        elif mc.energy < 10:
+            return "Not enough {image=gui/extra_images/energy_token.png}"
+        else:
+            return True
+
+    def change_titles_requirement(the_person):
+        if the_person.obedience < 105:
+            return "Requires: 105 Obedience"
+        else:
+            return True
+
+    def serum_demand_requirement(the_person):
+        if employee_role in the_person.special_role:
+            #It's easier to convince her if she works for you
+            if the_person.obedience < 115:
+                return "Requires: 110 Obedience"
+            elif mc.inventory.get_any_serum_count() <= 0:
+                return "Requires: Serum in inventory"
+            else:
+                return True
+
+        else:
+            if the_person.obedience < 120:
+                return "Requires: 120 Obedience"
+            elif mc.inventory.get_any_serum_count() <= 0:
+                return "Requires: Serum in inventory"
+            else:
+                return True
+
+    def wardrobe_change_requirment(the_person):
+        if the_person.obedience < 120:
+            return "Requires: 120 Obedience"
+        else:
+            return True
+
+    def demand_touch_requirement(the_person):
+        if the_person.obedience < 125: #TODO: Note: This isn't based on sluttiness directly, but we should have some dialogue reference to it.
+            return "Requires: 125 Obedience"
+        else:
+            return True
+
+    def demand_strip_requirement(the_person):
+        if not (demand_strip_tits_requirement(the_person) or demand_strip_underwear_requirement(the_person) or demand_strip_naked_requirement(the_person)):
+            return False
+        else:
+            return True
 
 label person_introduction(the_person, girl_introduction = True):
     if girl_introduction:
@@ -121,30 +166,6 @@ label person_introduction(the_person, girl_introduction = True):
     $ title_choice = renpy.display_menu(title_tuple,True,"Choice")
     mc.name "[title_choice], it's a pleasure to meet you."
     $ the_person.set_mc_title(title_choice)
-    return
-
-label change_titles_person(the_person):
-    menu:
-        "Change what you call her. (tooltip)Change the title you have for her. This may just be her name, an honourific such as \"Miss.\", or a complete nickname such as \"Cocksleeve\". Different combinations of stats, roles, and personalities unlock different titles.":
-            call new_title_menu(the_person) from _call_new_title_menu
-            $ title_choice = _return
-            if not (title_choice == "Back" or the_person.title == the_person.create_formatted_title(title_choice)):
-                "You tell [the_person.name] [the_person.last_name] that you are going to call her [title_choice] instead of [the_person.title]."
-                $ the_person.set_title(title_choice)
-
-        "Change what she calls you. (tooltip)Change the title she has for you. This may just be your name, an honourific such as \"Mr.\", or a complete nickname such as \"Master\". Different combinations of stats, roles, and personalities unlock different titles.":
-            call new_mc_title_menu(the_person) from _call_new_mc_title_menu
-            $ title_choice = _return
-            if not (title_choice == "Back" or the_person.mc_title == title_choice):
-                "You tell [the_person.title] to stop calling you [the_person.mc_title] and to refer to you as [title_choice] instead."
-                $ the_person.set_mc_title(title_choice)
-
-        "Change how you refer to her. (tooltip)Change your possessive title for this girl. A possessive title takes the form \"your employee\", \"your sister\", etc. It can also just be their name repeated. Different combinations of stats, roles, and personalities unlock different titles.":
-            call new_possessive_title_menu(the_person) from _call_new_possessive_title_menu
-            $ title_choice = _return
-            if not (title_choice == "Back" or the_person.possessive_title ==  the_person.create_formatted_title(the_person.possessive_title)):
-                "You decide to start refering [the_person.name] [the_person.last_name] as [title_choice] instead of [the_person.possessive_title] when you're talking about her."
-                $ the_person.set_possessive_title(title_choice)
     return
 
 label new_title_menu(the_person):
@@ -486,7 +507,192 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
     #TODO: change this to be more appropriate for a love changing action (and maybe move the current stuff somewhere else?)
     #TODO: Vary the flirting intro and response based on sluttiness.
     $ mc.change_energy(-15)
-    mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
+
+    #TODO: varients of seduction attempts and responses, ramping up to entering the sex system immediately.
+
+    # Idea:
+    # -> This is love based, so most of it should hinge around location/privacy.
+    #  |-> We can justify a higher Love requirement to enter the sex system immediately because there are date options for that
+    #  |-> It is also suppose to be used in tandem with Obedience or Sluttiness to get somewhere, by itself (ie. Vanilla romance) is slow and boring.
+
+
+    #Plan:
+    # Have a few tiers of responses. Low love (0 to 15), mid love (16 to 35), high love (36>)
+    # Low love: General appearance based compliments.
+
+    #Ideas:
+    # If in a poor location (not in private, not at home, etc.) she should mention that as a way of "seeing where things go", unless she is very slutty.
+    # If slutty but in a poor location she might flash you her tits (TODO: Add a way of "flashing" tits through clothing items by hiding an area mask).
+
+    if the_person.love <= 10:
+        #Low Love
+        mc.name "[the_person.title], you're looking really good today. That outfit looks good on you."
+        #$ the_person.call_dialogue("flirt_response_low") #TODO: Write personality specific flirt responses.
+        if the_person.outfit == the_person.planned_uniform:
+            if the_person.judge_outfit(the_person.outfit):
+                #She's in uniform and likes how it looks.
+                the_person.char "Thanks [the_person.mc_title]. I like these uniforms too. Did you design them yourself?"
+                mc.name "I did."
+                the_person.char "Amazing! I think you have a good eye for fashion."
+                mc.name "It's easy when I have such good models for it all."
+                "[the_person.possessive_title] smiles and laughs self-consciously."
+            else:
+                #She's in uniform, but she thinks it's a little too slutty.
+                if the_person.outfit.vagina_visible():
+                    # Her pussy is on display.
+                    the_person.char "Thanks, but I really wish this uniform covered, well, anything."
+                    the_person.char "I know it's company policy, but it's a little... breezy."
+                    mc.name "It would be a shame to cover up such a beautiful body though."
+                    "[the_person.possessive_title] blushes and looks away."
+
+                elif the_person.outfit.tits_visible():
+                    # Her tits are out
+                    if the_person.has_large_tits():
+                        the_person.char "Thanks, but I really wish my uniform included a bra."
+                        the_person.char "I know most men don't think about it, but I could use some support for my... Well, you know."
+                    else:
+                        the_person.char "Thanks, but I really wish my uniform included an actual top."
+                        the_person.char "When the AC is running my nipples could probably cut glass!"
+                    mc.name "It might be a little uncomfortable, but you look incredible in it."
+                    the_person.char "I better, I certainly wouldn't be wearing this if it wasn't required!"
+
+                elif the_person.outfit.underwear_visible():
+                    # Her underwear is visible.
+                    the_person.char "Thanks, I just wish this uniform kept me a little more covered. It feels like I'm barely wearing anything."
+                    mc.name "I know it's a little unconventional, but you look fantastic in it. It's a perfect fit for you."
+                    "[the_person.possessive_title] smiles and blushes."
+                    the_person.char "That's good. I guess it's company policy for a reason."
+                else:
+                    # It's just generally slutty.
+                    the_person.char "Thanks. It's not the kind of thing I would normally wear, but I guess it's company policy for a reason."
+                    mc.name "Well you wear it like a natural. I can't think of anyone it would look better on."
+                    "[the_person.possessive_title] smiles and blushes."
+
+        else:
+            #She's in her own outfit.
+            the_person.char "Thank you, I thought it looked cute too."
+            "[the_person.possessive_title] turns to give you a side on look of her and smiles at you."
+
+
+
+    elif the_person.love <= 35: #11 to 35
+        # Mid Love
+        mc.name "You're looking hot today [the_person.title]. That outfit really shows off your sexy body."
+        #$ the_person.call_dialogue("flirt_response_mid")
+        if the_person.outfit == the_person.planned_uniform:
+            if the_person.judge_outfit(the_person.outfit):
+                the_person.char "No suprise there, since you're the one who designed this uniform."
+                if the_person.outfit.tits_visible():
+                    the_person.char "I'm sure my tits aren't out by accident. Not that I mind..."
+                    "She winks and wiggles her shoulders, jiggling her breasts for you."
+                else:
+                    $ the_person.draw_person(position = "back_peek")
+                    the_person.char "Not that I mind..."
+                    "She gives you a full spin, letting you look at her from every angle."
+                    $ the_person.draw_person()
+                mc.name "I might have picked it out, but you're the one making it look so good."
+                "[the_person.possessive_title] smiles, blushing a little from the compliment."
+
+            else:
+                the_person.char "I think it shows off a little too much!"
+                if the_person.outfit.vagina_visible():
+                    the_person.char "Look at me, you can practically see everything!"
+                    the_person.char "No offence, but this uniform makes me look like a whore."
+                elif the_person.outfit.tits_visible():
+                    the_person.char "My boobs are just hanging out, for goodness sakes!"
+                    the_person.char "No offence, but your uniform makes me look like a slut."
+                else:
+                    the_person.char "No offence, but this uniform feels a little inappropriate."
+                mc.name "I understand, but it's important for the business."
+                the_person.char "Rules are rules, I suppose. I am glad you think I look good in it though."
+                "[the_person.possessive_title] gives you an uncomfortable smile."
+
+        else:
+            if the_person.effective_sluttiness() < 20 and mc.location.get_person_count() > 1:
+                "[the_person.possessive_title] smiles, then glances around nervously."
+                the_person.char "[the_person.mc_title], you're so bad! What if someone heard you?"
+                mc.name "They'd probably agree. You're a sexy looking lady."
+                "[the_person.possessive_title] blushes."
+                the_person.char "Well I'm glad you like it. And I'm glad you like me."
+
+            else:
+                the_person.char "Well thank you. I thought it looked pretty cute when I picked it out."
+                the_person.char "Do you want a better look?"
+                mc.name "Of course I do."
+                $ the_person.draw_person(position = "back_peek")
+                the_person.char "Do you think my butt looks good in it?"
+                "She wiggles her hips for you, just a little."
+                mc.name "I think it looks great, I wish I could see some more of it."
+                $ the_person.draw_person()
+                the_person.char "I'm sure you do. Maybe if you take me to dinner first."
+
+    else:
+        # High Love
+        mc.name "[the_person.title], your outfit is driving me crazy. What are my chances of getting you out of it?"
+        #$ the_person.call_dialogue("flirt_response_high")
+        if mc.location.get_person_count() > 1 and the_person.effective_sluttiness() < (25 - (5*the_person.get_opinion_score("public_sex"))):
+            # There are other people here, if she's not slutty she asks if you want to find somewhere quiet
+            the_person.char "Not very high, unless we can find someplace quiet."
+            menu:
+                "Find someplace quiet.":
+                    mc.name "Alright, let's find somewhere quiet then."
+                    the_person.char "I wait, I don't know if we should..."
+                    mc.name "Relax, it's just going to be a little bit of fun."
+                    "You take [the_person.possessive_title]'s hand and lead her away. After a moment of hesitation she follows you happily."
+                    "After searching for a couple of minutes you find a quiet space with just the two of you."
+                    the_person.char "Well... What did you want me all alone for?"
+                    "She steps close to you and puts her arms around your waist. She brings her face close to yours."
+                    "You close the final gap and kiss her. She returns the kiss immediately, leaning her body against yours."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_20
+                    return #If you fuck her, you don't get the flirt bonus.
+
+                "Just flirt.":
+                    mc.name "I'm a patient man, I can wait until we have some privacy. It's probably for the best: you might get a little loud."
+                    "[the_person.possessive_title] blushes and places her hand on your shoulder, massaging your muscles."
+                    the_person.char "Confident, huh? Maybe if you take me out to dinner you'll get your chance at some privacy."
+
+        else:
+            # She wants to kiss you, leading to other things.
+            if the_person.effective_sluttiness() < (25 - (5*the_person.get_opinion_score("public_sex"))) and mc.location.get_person_count() == 1:
+                #She's shy about the whole thing.
+                "She looks around nervously."
+                the_person.char "[the_person.mc_title], I... I mean, it's just us here."
+                mc.name "So you're saying my chances are good?"
+                "She takes a step closer to you and puts her arms around your waist, bringing her face close to yours."
+                the_person.char "They could certainly be worse. Let's just try kissing and see where things go."
+
+            else:
+                #She's into turning you on.
+                if the_person.has_large_tits():
+                    $ the_person.draw_person(the_animation = blowjob_bob)
+                    "[the_person.possessive_title] smiles mischeviously at you and bounces her tits up and down."
+                    the_person.char "Interested in getting a closer look at these girls?"
+                else:
+                    "[the_person.possessive_title] glances around and smiles mischeviously at you."
+                    the_person.char "Well there's nobody around. So I think your chances are pretty good."
+                the_person.char "There's nobody around, so maybe we can... fool around a little?"
+                $ the_person.draw_person()
+                "She steps closer and puts her hands around your waist, bringing her face close to yours."
+
+            menu:
+                "Kiss her.":
+                    "You close the final gap and kiss her. She returns the kiss immediately, leaning her body against yours."
+                    call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_21
+                    return #If you fuck her, you don't get the flirt bonus.
+
+                "Just flirt.":
+                    mc.name "I wish we could, but I'll need to take a rain check."
+                    "[the_person.title] pouts and steps back, disappointed."
+                    mc.name "Don't worry, we'll get there soon enough. I just want to wait for the right time."
+                    #TODO: There should be boyfriend/family specific varients here like "Right, what was I even thinking? I don't know what came over me."
+                    the_person.char "Right. Sure."
+                    "She tries to hide it, but you can tell she's a little disappointed."
+
+
+
+
+
+    # mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
     $ mc.listener_system.fire_event("player_flirt", the_person = the_person)
     $ change_amount = mc.charisma + 1 + the_person.get_opinion_score("flirting") #We still cap out at 20, but we get there a little faster or slower depending on if they like flirting
     if change_amount + the_person.sluttiness > 20:
@@ -498,8 +704,9 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
     $ the_person.change_slut_temp(change_amount)
     $ the_person.change_love(3, max_modified_to = 25)
     $ the_person.discover_opinion("flirting")
-    $ the_person.call_dialogue("flirt_response")
     $ the_person.apply_serum_study()
+    # $ the_person.call_dialogue("flirt_response")
+
     return
 
 
@@ -543,7 +750,7 @@ label lunch_date_plan_label(the_person):
     elif not (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0): #IF she likes cheating she doesn't even mention she's in a relationship
         mc.name "[the_person.title], I was going to get some lunch, would you like to join me? Maybe just grab a coffee and hang out for a while?"
         $ so_title = SO_relationship_to_title(the_person.relationship)
-        the_person.char "That sounds nice, [the_person.title]."
+        the_person.char "That sounds nice, [the_person.mc_title]."
         "She pauses and seems to consider something for a moment."
         the_person.char "Just so we're on the same page, this is just as friends, right? I have a [so_title], I don't want to get anything confused here."
         mc.name "Of course! I just want to hang out and talk, that's all."
@@ -1095,71 +1302,6 @@ label dinner_date_label(the_person):
     $ renpy.scene("Active")
     return "Advance Time"
 
-
-label wardrobe_change_label(the_person):
-    menu:
-        "Add an outfit.":
-            mc.name "[the_person.title], I've got something I'd like you to wear for me."
-            $ renpy.scene("Active")
-            call screen outfit_select_manager()
-            $ the_person.draw_person()
-            if not _return == "No Return":
-                $ new_outfit = _return
-                menu:
-                    "Save as a full outfit.":
-                        $ outfit_type = "full"
-
-                    "Save as an underwear set." if new_outfit.is_suitable_underwear_set():
-                        $ outfit_type = "under"
-
-                    "Save as an underwear set. (disabled)" if not new_outfit.is_suitable_underwear_set():
-                        pass
-
-                    "Save as an overwear set." if new_outfit.is_suitable_overwear_set():
-                        $ outfit_type = "over"
-
-                    "Save as an overwear set. (disabled)" if not new_outfit.is_suitable_overwear_set():
-                        pass
-
-
-                $ is_under = False
-                $ is_over = False
-                if outfit_type == "under":
-                    $ is_under = True
-                elif outfit_type == "over":
-                    $ is_over = True
-
-                if the_person.judge_outfit(new_outfit, as_underwear = is_under, as_overwear = is_over):
-                    $ the_person.add_outfit(new_outfit,outfit_type)
-                    $ the_person.call_dialogue("clothing_accept")
-
-                else:
-                    $ the_person.call_dialogue("clothing_reject")
-
-
-            else:
-                mc.name "On second thought, nevermind."
-
-        "Delete an outfit.":
-            mc.name "[the_person.title], lets have a talk about what you've been wearing."
-            $ renpy.scene("Active")
-            call screen outfit_delete_manager(the_person.wardrobe)
-            $ the_person.draw_person()
-            #TODO: Figure out what happens when someone doesn't have anything in their wardrobe.
-
-        "Wear an outfit right now.":
-            mc.name "[the_person.title], I want you to get changed for me."
-            $ renpy.scene("Active")
-            call screen girl_outfit_select_manager(the_person.wardrobe)
-            if _return != "None":
-                $ the_person.set_outfit(_return)
-
-            $ the_person.draw_person()
-            if the_person.update_outfit_taboos():
-                "[the_person.title] seems nervous wearing her new outfit in front of you, but quickly warms up to it."
-            the_person.char "Is this better?"
-    return
-
 label serum_give_label(the_person):
     $ sneak_serum_chance = 70 + (mc.int*5) - (the_person.focus*5)  #% chance that you will successfully give serum to someone sneaklily. Less focused people are easier to fool.
     $ ask_serum_chance = 10*mc.charisma + 5*the_person.int #The more charismatic you are and the more intellectually curious they are the better the chance of success
@@ -1221,7 +1363,7 @@ label serum_give_label(the_person):
                     $renpy.scene("Active")
                     return
 
-        "Ask her to take it.\n{size=22}Success Chance: [ask_serum_chance]%%{/size}" if not mandatory_unpaid_serum_testing_policy.is_owned() or mc.business.get_employee_title(the_person) == "None":
+        "Ask her to take it.\n{size=22}Success Chance: [ask_serum_chance]%%{/size}" if not mandatory_unpaid_serum_testing_policy.is_active() or mc.business.get_employee_title(the_person) == "None":
             if mc.business.get_employee_title(the_person) == "None":
                 mc.name "[the_person.title], I've got a project going on at work that could really use a test subject. Would you be interested in helping me out?"
 
@@ -1246,7 +1388,7 @@ label serum_give_label(the_person):
                 the_person.char "I'm... I don't think I would be comfortable with that. Is that okay?"
                 mc.name "Of course it is, that's why I'm asking in the first place."
 
-        "Ask her to take it.\n{size=22}Success Chance: Required by Policy{/size}" if mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None":
+        "Ask her to take it.\n{size=22}Success Chance: Required by Policy{/size}" if mandatory_unpaid_serum_testing_policy.is_active() and not mc.business.get_employee_title(the_person) == "None":
             #Auto success
             mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this."
             call give_serum(the_person) from _call_give_serum_3
@@ -1268,18 +1410,109 @@ label serum_give_label(the_person):
                 $ the_person.change_love(-2)
                 the_person.char "You expect me to just drink random shit you hand to me? I'm sorry, but that's just ridiculous."
 
-        "Pay her to take it.\n{size=22}Costs: $[pay_serum_cost]{/size}" if mandatory_paid_serum_testing_policy.is_owned() and not mandatory_unpaid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None": #This becomes redundent when they take it for free.
+        "Pay her to take it.\n{size=22}Costs: $[pay_serum_cost]{/size}" if mandatory_paid_serum_testing_policy.is_active() and not mandatory_unpaid_serum_testing_policy.is_active() and not mc.business.get_employee_title(the_person) == "None": #This becomes redundent when they take it for free.
             #Pay cost and proceed
             $ mc.business.funds += -pay_serum_cost
             mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this, a bonus will be added onto your paycheck."
             call give_serum(the_person) from _call_give_serum_5
 
 
-        "Pay her to take it.\n{size=22}Requires: Mandatory Paid Serum Testing{/size} (disabled)" if not mandatory_unpaid_serum_testing_policy.is_owned() and not mandatory_paid_serum_testing_policy.is_owned() and not mc.business.get_employee_title(the_person) == "None":
+        "Pay her to take it.\n{size=22}Requires: Mandatory Paid Serum Testing{/size} (disabled)" if not mandatory_unpaid_serum_testing_policy.is_active() and not mandatory_paid_serum_testing_policy.is_active() and not mc.business.get_employee_title(the_person) == "None":
             pass
 
         "Do nothing.":
             pass
+    return
+
+label grope_person(the_person):
+    # Note: the descirptions of the actual stages are stored in grope_descriptions.rpy to keep things organised.
+    $ mc.change_energy(-10)
+    #TODO: Have arousal be more permanent than it is right now. ie. more events should impact it.
+    call grope_shoulder(the_person) from _call_grope_shoulder
+    if _return:
+        call grope_waist(the_person) from _call_grope_waist
+        if _return:
+            call grope_ass(the_person) from _call_grope_ass
+            if _return:
+                call grope_tits(the_person) from _call_grope_tits
+                if _return:
+                    $ should_be_private = True
+                    if mc.location.get_person_count() > 1: #We aren't alone and should ask if we want to find somewhere private
+                        $ extra_people_count = mc.location.get_person_count() - 1
+                        $ the_person.discover_opinion("public_sex")
+                        if the_person.effective_sluttiness("touching_body") < 40 or the_person.get_opinion_score("public sex") < 0:
+                            # She's nervous about it and asks to go somewhere private.
+                            the_person.char "Wait, wait..."
+                            "[the_person.possessive_title] glances around at the people nearby."
+                            the_person.char "I don't want other people to watch. Let's find someplace we can be alone."
+                            menu:
+                                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                                    mc.name "Alright, come with me."
+                                    "You take [the_person.title] by her wrist and lead her away."
+                                    #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
+                                    "After a couple of minutes searching you find a quiet space with just the two of you."
+                                    "You don't waste any time getting back to what you were doing, fondling [the_person.possessive_title]'s tits and ass."
+
+                                "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
+                                    $ should_be_private = False
+
+                        else:
+                            # She doesn't care, but you can find someplace private.
+                            "[the_person.possessive_title] either doesn't notice or doesn't care, but there are other people around."
+                            menu:
+                                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                                    mc.name "Come with me, I don't want to be interupted."
+                                    "You take [the_person.title] by the wrist and lead her away. She follows eagerly."
+                                    "After searching for a couple of minutes you find a quiet space with just the two of you."
+                                    #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
+                                    "After a couple of minutes searching you find a quiet space with just the two of you."
+                                    "You don't waste any time getting back to what you were doing, fondling [the_person.possessive_title]'s tits and ass."
+
+                                "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
+                                    $ should_be_private = False
+
+
+                    call fuck_person(the_person, private = should_be_private, start_position = standing_grope, start_object = None, skip_intro = True) from _call_fuck_person_43 # Enter the sex system, starting from this point.
+    return
+
+label command_person(the_person):
+    # TODO: Add a couple of commands for a person, ramping up to entering the sex system on demand.
+    # Ideas:
+    # Roll all of the "wardrobe" and "call me BLANK" stuff into this, as the early options.
+    # "Show me your tits."
+    # "Get naked for me." - Both only usually possible in private.
+    # Eventaully move into the sex system properly.
+
+    #TODO: All of the "talk about what you call me" stuff should be girlfriend/affair specific (or at least be Love gated), but you can _command_ people to do it.
+
+    mc.name "[the_person.title], I want you to do something for me."
+    the_person.char "Yes [the_person.mc_title]?"
+
+    $ change_titles_action = Action("Change how we refer to each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Manage how you refer to [the_person.title] and tell her how she should refer to you. Different combinations of stats, roles, and personalities unlock different titles.", priority = -5)
+
+    $ wardrobe_change_action = Action("Change your wardrobe.", requirement = wardrobe_change_requirment, effect = "wardrobe_change_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Add and remove outfits from [the_person.title]'s wardrobe, or ask her to put on a specific outfit.", priority = -5)
+
+    $ serum_demand_action = Action("Drink a dose of serum for me.", requirement = serum_demand_requirement, effect = "serum_demand_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Demand [the_person.title] drinks a dose of serum right now. Easier to command employees to test serum.", priority = -5)
+
+    $ strip_demand_action = Action("Strip for me.", requirement = demand_strip_requirement, effect = "demand_strip_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Command her to strip off some of her clothing.", priority = -5)
+
+    $ touch_demand_action = Action("Let me touch you.\n-10  {image=gui/extra_images/energy_token.png}", requirement = demand_touch_requirement, effect = "demand_touch_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Demand [the_person.title] stays still and lets you touch her. Going too far may damage your relationship.", priority = -5)
+
+    #TODO: Add more commands
+    #TODO: Add a way to add role specific commands.
+
+    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"])
+    #call screen main_choice_display([["Command her to...", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"]])
+    #$ player_choice = _return
+    if player_choice == "Return":
+        pass
+    else:
+        $ player_choice.call_action()
     return
 
 label seduce_label(the_person):

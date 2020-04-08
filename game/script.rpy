@@ -34,7 +34,7 @@ init -2 python:
 
 
     config.rollback_enabled = True #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
-    config.rollback_length = 64
+    config.rollback_length = 32
 
 
     if persistent.colour_palette is None:
@@ -424,6 +424,7 @@ init -2 python:
             self.sale_inventory = SerumInventory([])
 
             self.policy_list = [] #This is a list of Policy objects.
+            self.active_policy_list = [] #This is a list of currently active policies (vs just owned ones)
 
             self.message_list = [] #This list of strings is shown at the end of each day on the business update screen. Cleared each day.
             self.counted_message_list = {} #This is a dict holding the count of each message stored in it. Used when you want to have a message that is counted and the total shown at the end of the day.
@@ -496,11 +497,18 @@ init -2 python:
                         self.sale_progress(person.charisma, person.focus, person.market_skill) #Otherwise their standard outfit provides no bonuses.
                     person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("marketing work"), add_to_log = False)
 
+            for policy in self.active_policy_list:
+                policy.on_turn()
+
+
         def run_day(self): #Run at the end of the day.
             #Pay everyone for the day
             if mc.business.is_work_day():
                 cost = self.calculate_salary_cost()
                 self.funds += -cost
+
+                for policy in self.active_policy_list:
+                    policy.on_day()
             return
 
         def is_open_for_business(self): #Checks to see if employees are currently working
@@ -535,6 +543,44 @@ init -2 python:
                 return self.h_uniform.merge_wardrobes(self.all_uniform)
             else:
                 return None
+
+        def get_uniform_limits(self): #Returns three values: the max sluttiness of a full outfit, max sluttiness of an underwear set, and if only overwear sets are allowed or notself.
+            slut_limit = 0
+            underwear_limit = 0
+            limited_to_top = True
+            if maximal_arousal_uniform_policy.is_active():
+                slut_limit = 999 #ie. no limit at all.
+                underwear_limit = 999
+                limited_to_top = False
+            elif corporate_enforced_nudity_policy.is_active():
+                slut_limit = 80
+                underwear_limit = 999
+                limited_to_top = False
+            elif minimal_coverage_uniform_policy.is_active():
+                slut_limit = 60
+                underwear_limit = 15
+                limited_to_top = False
+            elif reduced_coverage_uniform_policy.is_active():
+                slut_limit = 40
+                underwear_limit = 10
+                limited_to_top = False
+            elif casual_uniform_policy.is_active():
+                slut_limit = 25
+                underwear_limit = 0
+                limited_to_top = True
+            elif relaxed_uniform_policy.is_active():
+                slut_limit = 15
+                underwear_limit = 0
+                limited_to_top = True
+            elif strict_uniform_policy.is_active():
+                slut_limit = 5
+                underwear_limit = 0
+                limited_to_top = True
+            else:
+                slut_limit = 0
+                underwear_limit = 0
+                limited_to_top = True
+            return slut_limit, underwear_limit, limited_to_top
 
         def clear_messages(self): #clear all messages for the day.
             self.message_list = []
@@ -654,7 +700,7 @@ init -2 python:
         def sale_progress(self,cha,focus,skill, slut_modifier = 0):
 
             serum_value_multiplier = 1.00 #For use with value boosting policies. Multipliers are multiplicative.
-            if male_focused_marketing_policy.is_owned(): #Increase value by the character's outfit sluttiness if you own that policy.
+            if male_focused_marketing_policy.is_active(): #Increase value by the character's outfit sluttiness if you own that policy.
                 sluttiness_multiplier = (slut_modifier/100.0) + 1
                 serum_value_multiplier = serum_value_multiplier * (sluttiness_multiplier)
 
@@ -2005,6 +2051,7 @@ init -2 python:
                     composite_list.append((0,0)) #Center all displaybles on the top left corner, because of how they are rendered they will all line up.
                     composite_list.append(display) #Append the actual displayable
 
+
             if background_fill and not no_frame: #no_frame allows us to add the frame after for animated displayables, to avoid warping the frame itself.
                 composite_list.append((0,0))
                 composite_list.append(Frame("/gui/Character_Window_Frame.png", 12, 12))
@@ -2024,7 +2071,6 @@ init -2 python:
             the_size = the_displayable.render(10,10,0,0).get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size of things inside it.
             x_size = __builtin__.int(the_size[0])
             y_size = __builtin__.int(the_size[1])
-            #y_size = 1440
 
             the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height)
             the_surface = renpy.display.draw.screenshot(the_surftree, False)
@@ -2112,14 +2158,20 @@ init -2 python:
             #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
             renpy.scene("Active")
 
+            if position is None:
+                position = self.idle_pose
+
             if not can_use_animation():
                 the_animation = None
+
+            elif the_animation is None:
+                the_animation = self.idle_animation
 
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
             if the_animation:
-                bottom_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength = 1.0)
+                bottom_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
             else:
                 bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
 
@@ -2636,7 +2688,7 @@ init -2 python:
                 self.set_uniform(mc.business.get_uniform_wardrobe(mc.business.get_employee_title(self)).decide_on_uniform(self),False) #If we don't have a uniform planned for today get one.
 
             if self.planned_uniform is not None: #If our planned uniform is STILL None it means we are unable to construct a valid uniform. Only assign it as our outfit if we have managed to construct a uniform.
-                self.apply_outfit(self.planned_uniform, update_taboo = True) #We apply clothing taboos to uniforms because the character is assumed to have seen them in them.
+                self.apply_outfit(self.planned_uniform) #We apply clothing taboos to uniforms because the character is assumed to have seen them in them.
 
         def get_job_happiness_score(self):
             happy_points = self.happiness - 100 #Happiness over 100 gives a bonus to staying, happiness less than 100 gives a penalty
@@ -2737,6 +2789,7 @@ init -2 python:
             elif not isinstance(taboos, list): #Handles handing over a single item without pre-wrapping it for "iteration".
                 taboos = [taboos]
             return_amount = __builtin__.int(self.sluttiness + (self.arousal/4))
+
             for taboo in taboos:
                 if taboo not in self.broken_taboos: #If any of the taboo handed over are not already broken this person has a -15 effective sluttiness.
                     return_amount += -10
@@ -2937,7 +2990,8 @@ init -2 python:
             "climax_responses_foreplay", "climax_responses_oral", "climax_responses_vaginal", "climax_responses_anal",
             "clothing_accept", "clothing_reject", "clothing_review",
             "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
-            "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse", "flirt_response", "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
+            "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
+            "flirt_response", "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
             "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction",
             "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
             "condomless_sex_taboo_break", "underwear_nudity_taboo_break", "bare_tits_taboo_break", "bare_pussy_taboo_break",
@@ -3118,10 +3172,10 @@ init -2 python:
         skill_cap = 5
         stat_cap = 5
 
-        if recruitment_skill_improvement_policy.is_owned():
+        if recruitment_skill_improvement_policy.is_active():
             skill_cap += 2
 
-        if recruitment_stat_improvement_policy.is_owned():
+        if recruitment_stat_improvement_policy.is_active():
             stat_cap += 2
 
         if skill_array is None:
@@ -3144,13 +3198,13 @@ init -2 python:
         if start_obedience is None:
             start_obedience = renpy.random.randint(-10,10)
 
-        if recruitment_obedience_improvement_policy.is_owned():
+        if recruitment_obedience_improvement_policy.is_active():
             start_obedience += 10
 
         if start_sluttiness is None:
             start_sluttiness = renpy.random.randint(0,10)
 
-        if recruitment_slut_improvement_policy.is_owned():
+        if recruitment_slut_improvement_policy.is_active():
             start_sluttiness += 20
 
         if relationship is None:
@@ -3808,13 +3862,37 @@ init -2 python:
 
 
     class Policy(renpy.store.object): # An upgrade that can be purchased by the character for their business.
-        def __init__(self,name,desc,requirement,cost, on_buy_function = None, on_buy_arguments = None):
+        def __init__(self,name,desc,requirement,cost, toggleable = False, on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_day_function = None, dependant_policies = None):
             self.name = name #A short name for the policy.
             self.desc = desc #A text description of the policy.
             self.requirement = requirement #a function that is run to see if the PC can purchase this policy.
             self.cost = cost #Cost in dollars.
+
+            self.toggleable = toggleable #If True this policy can be toggled on and off. Otherwise, it is set "active" when bought and can never be deactivated.
+
+
+            if extra_arguments is None:
+                self.extra_arguments = {}
+            else:
+                self.extra_arguments = extra_arguments #A dictionary of extra values that can be used by the various on_buy, on_apply, etc. functions
+
             self.on_buy_function = on_buy_function #A function to be called when purchased
-            self.on_buy_arguments = on_buy_arguments #A dictionary of values to be given to the function.
+            self.on_apply_function = on_apply_function
+            self.on_remove_function = on_remove_function
+            self.on_turn_function = on_turn_function
+            self.on_day_function = on_day_function
+
+            if dependant_policies is None:
+                self.dependant_policies = []
+            elif isinstance(dependant_policies, Policy):
+                self.dependant_policies = [dependant_policies] #If we hand a single item wrap it in a list for iteration purposes
+            else:
+                self.dependant_policies = dependant_policies # Otherwise we have a list already.
+
+            self.depender_policies = [] #These policies depend _on_ us, and are declared when other policies are defined. If they are on, we cannot toggle off.
+            for policy in self.dependant_policies:
+                policy.depender_policies.append(self) #Esentially builds a two way linked list of policies while allowing us to only define the requirements from the base up. Also conveniently stops dependency cycles from forming.
+
 
         def __cmp__(self,other): #
             if type(other) is Policy:
@@ -3835,16 +3913,67 @@ init -2 python:
         def __hash__(self):
             return hash((self.name,self.desc,self.cost))
 
-        def buy_policy(self):
-            mc.business.funds -= self.cost
-            if self.on_buy_function is not None:
-                self.on_buy_function(**self.on_buy_arguments)
-
         def is_owned(self):
             if self in mc.business.policy_list:
                 return True
             else:
                 return False
+
+        def is_active(self):
+            if self in mc.business.active_policy_list:
+                return True
+            else:
+                return False
+
+        def is_toggleable(self):
+            return_toggle = True
+            if self.is_owned and self.toggleable: #If a policy is suppose to be toggleable:
+                if self in mc.business.active_policy_list: # We are currently active, so we are only disable-able if all of the dependers are off.
+                    for policy in self.depender_policies:
+                        if policy.is_active(): #If any of the policies that rely on this are active we cannot toggle off.
+                            return_toggle = False
+
+                else: # We are owned but not active. We can only be toggled if every policy in our dependant list is active
+                    for policy in self.dependant_policies:
+                        if not policy.is_active():
+                            return_toggle = False
+
+            else:
+                return_toggle = False
+
+            return return_toggle
+
+        def buy_policy(self):
+            mc.business.policy_list.append(self)
+            mc.business.funds -= self.cost
+            if self.on_buy_function is not None:
+                self.on_buy_function(**self.extra_arguments)
+
+        def apply_policy(self):
+            mc.business.active_policy_list.append(self)
+            if self.on_apply_function is not None:
+                self.on_apply_function(**self.extra_arguments)
+            return
+
+        def remove_policy(self):
+            if self in mc.business.active_policy_list:
+                mc.business.active_policy_list.remove(self)
+                if self.on_remove_function is not None:
+                    self.on_remove_function(**self.extra_arguments)
+            return
+
+        def on_turn(self):
+            if self.on_turn_function is not None:
+                self.on_turn_function(**self.extra_arguments)
+            return
+
+        def on_day(self):
+            if self.on_day_function is not None:
+                self.on_day_function(**self.extra_arguments)
+            return
+
+
+
 
     class Object(renpy.store.object): #Contains a list of traits for the object which decides how it can be used.
         def __init__(self,name,traits,sluttiness_modifier = 0, obedience_modifier = 0):
@@ -3909,7 +4038,8 @@ init -2 python:
         #Layer 4: Over everything
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False, body_dependant = True,
-        opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0, display_name = None):
+        opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0, display_name = None,
+        half_off_regions = None, half_off_ignore_regions = None):
             self.name = name
             self.proper_name = proper_name #The true name used in the file system
             if display_name is None:
@@ -3964,7 +4094,20 @@ init -2 python:
             self.ordering_variable = ordering_variable #Used for things like hair and pubes when we need to know what can be trimmed into what without any time taken.
             #TODO: Assign ordering variables to all hair based on length (short, medium, long) and then have haircuts and stuff be possible.
 
+            self.half_off = False
+            if half_off_regions is None: #A list of body region "clothing items". When self.half_off is True these regions are hidden.
+                self.half_off_regions = []
+            elif isinstance(half_off_regions, list):
+                self.half_off_regions = half_off_regions
+            else:
+                self.half_off_regions = [half_off_regions]
 
+            if half_off_ignore_regions is None: #A list of region "clothing items" that are added _back_ onto an item when half off. These use no blur, so can preserve sharp edges where, for example, arms interact with a torso.
+                self.half_off_ignore_regions = []
+            elif isinstance(half_off_ignore_regions, list):
+                self.half_off_ignore_regions = half_off_ignore_regions
+            else:
+                self.half_off_ignore_regions = [half_off_ignore_regions]
 
         def __cmp__(self,other):
             if type(self) is type(other):
@@ -4020,10 +4163,13 @@ init -2 python:
                 converted_mask_image = None
                 inverted_mask_image = None
                 if self.pattern is not None:
-                    if self.draws_breasts:
-                        mask_image = self.pattern_sets.get(position+"_"+self.pattern).get_image(body_type, tit_size)
+                    pattern_set = self.pattern_sets.get(position+"_"+self.pattern)
+                    if pattern_set is None:
+                        mask_image = None
+                    elif self.draws_breasts:
+                        mask_image = pattern_set.get_image(body_type, tit_size)
                     else:
-                        mask_image = self.pattern_sets.get(position+"_"+self.pattern).get_image(body_type, "AA")
+                        mask_image = pattern_set.get_image(body_type, "AA")
 
                     if mask_image is None:
                         self.pattern = None
@@ -4057,12 +4203,54 @@ init -2 python:
                     # shader_red_invert = im.Alpha
 
                     final_image = AlphaBlend(mask_image, shader_image, shader_pattern_image, alpha=False)
+                else:
+                    final_image = shader_image
+
+                if self.half_off:
+                    #NOTE: This actually produces some really good looking effects for water/stuff. We should add these kinds of effects as a general thing, probably on the pattern level.
+                    #NOTE: Particularly for water/stains, this could work really well (and can use skin-tight region marking, ie. not clothing item dependant).
+
+                    composite_list = None
+                    x_size = 0
+                    y_size = 0
+                    for region_to_hide in self.half_off_regions:
+                        region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
+                        if composite_list is None:
+                            x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size()
+                            composite_list = [(x_size,y_size)]
+
+                        composite_list.append((0,0))
+                        composite_list.append(region_mask)
+
+                    composite = im.Composite(*composite_list)
+                    blurred_composite = im.Blur(composite, 12)
+                    transparency_control_image = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,7,0])
+
+                    if self.half_off_ignore_regions:
+                        add_composite_list = None
+                        for region_to_add in self.half_off_ignore_regions:
+                            region_mask = Image(region_to_add.generate_item_image_name(body_type, tit_size, position))
+                            if add_composite_list is None:
+                                add_composite_list = [(x_size,y_size)] #We can reuse the size from our first pass building the mask.
+                            add_composite_list.append((0,0))
+                            add_composite_list.append(region_mask)
+                        add_composite = im.Composite(*add_composite_list)
+                        transparency_control_image = AlphaBlend(add_composite, transparency_control_image, Solid("#00000000"), True)
+
+                    final_image = AlphaBlend(transparency_control_image, final_image, Solid("#00000000"), True)
 
 
-                if self.pattern: #If we have been able to generate a pattern we present the composited single displayable item.
-                    return final_image
-                else: #Otherwise it was either a no-pattern piece of clothing OR we failed to produce the correct pattern.
-                    return shader_image
+
+
+                    #We want to alphablend so we only show the area not covered by the breast region (which we may also want to blur to make it wider)
+                    # tit_window_image = renpy.displayable(breast_region.generate_item_image_name(body_type, tit_size, position)) #We may have to invert this.
+                    # blurred_tit_window = im.Blur(tit_window_image, 18) #Blur it to widen the area affected (we want a window, not a shaded region)
+                    #
+                    # #blurred_tit_window =  im.MatrixColor(blurred_tit_window, im.matrix.brightness(1))
+                    # blur_alpha_contrast = im.MatrixColor(blurred_tit_window, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,8,0])
+                    # final_image = AlphaBlend(blur_alpha_contrast, final_image, Solid("#00000000"), True)
+
+                return final_image
 
 
     class Facial_Accessory(Clothing): #This class inherits from Clothing and is used for special accessories that require extra information
@@ -4167,7 +4355,7 @@ init -2 python:
 
             return "character_images/" + self.images[index_string]
 
-    class Clothing_Images(renpy.store.object): # Stores a set of images for a single piece of cloting in a single position. The position is stored when it is put into the clothing object dict.
+    class Clothing_Images(renpy.store.object): # Stores a set of images for a single piece of clothing in a single position. The position is stored when it is put into the clothing object dict.
         def __init__(self,clothing_name,position_name,is_top, body_dependant = True):
 
             self.images = {}
@@ -4664,6 +4852,12 @@ init -2 python:
                     visible = False
             return visible
 
+        def underwear_visible(self):
+            if (self.wearing_bra and not self.bra_covered()) or (self.wearing_panties() and not self.panties_covered()):
+                return True
+            else:
+                return False
+
         def wearing_bra(self):
             if self.get_upper_ordered():
                 if self.get_upper_ordered()[0].underwear:
@@ -4749,6 +4943,7 @@ init -2 python:
 
             if self.tits_available(): # You can reach your tits easily for a titfuck.
                 new_score += 20
+
             if self.tits_visible(): # Everyone can see your tits clearly.
                 new_score += 20
             else:
@@ -4785,14 +4980,14 @@ init -2 python:
             items_to_strip = []
             if visible_enough:
                 while not test_outfit.tits_visible():
-                    the_item = self.remove_random_upper(top_layer_first = True)
+                    the_item = test_outfit.remove_random_upper(top_layer_first = True)
                     if not the_item:
                         break
                     else:
                         items_to_strip.append(the_item)
             else:
                 while not (test_outfit.tits_visible() and test_outfit.tits_available()):
-                    the_item = self.remove_random_upper(top_layer_first = True)
+                    the_item = test_outfit.remove_random_upper(top_layer_first = True)
                     if not the_item:
                         break
                     else:
@@ -5006,19 +5201,40 @@ init -2 python:
                 return self.build_appropriate_outfit(sluttiness_limit, sluttiness_min)
 
         def decide_on_uniform(self, the_person): # Creates a uniform out of the clothing items from this wardrobe. Unlike a picked outfit sluttiness has no factor here. A girls personal underwear sets will be used for constructed uniforms.
-            if len(self.outfits) > 0:
+            valid_full_outfits = [] #We begin by building lists of all the uniform pieces that might be valid given our current uniform rules. This allows for the rules to update without requring any changes to the uniform wardrobe directly.
+            valid_underwear_sets = []
+            valid_overwear_sets = []
+
+            slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits()
+
+            if not limited_to_top:
+                for full_outfit in self.outfits:
+                    if full_outfit.slut_requirement <= slut_limit:
+                        valid_full_outfits.append(full_outfit)
+
+            if not limited_to_top:
+                for an_underwear_set in self.underwear_sets:
+                    if an_underwear_set.get_underwear_slut_score() <= underwear_limit:
+                        valid_underwear_sets.append(an_underwear_set)
+
+            for an_overwear_set in self.overwear_sets:
+                if an_overwear_set.get_overwear_slut_score() <= slut_limit:
+                    valid_overwear_sets.append(an_overwear_set)
+
+
+            if len(valid_full_outfits) > 0:
                 #We have some full body outfits we mgiht use. 50/50 to use that or a constructed outfit.
                 outfit_choice = renpy.random.randint(0,100)
                 chance_to_use_full = 50 #Like normal outfits a uniform hasa 50/50 chance of being a full outfit or aa assembled outfit if both are possible.
 
-                if outfit_choice < chance_to_use_full and len(self.underwear_sets + self.overwear_sets) > 0: #If we roll an assmelbed outfit and we have some parts to make it out of do that.
+                if outfit_choice < chance_to_use_full and len(valid_underwear_sets +valid_overwear_sets) > 0: #If we roll an assmelbed outfit and we have some parts to make it out of do that.
                     pass
 
                 else: #Otherwise use one of the full outfits.
-                    return get_random_from_list(self.outfits).get_copy()
+                    return get_random_from_list(valid_full_outfits).get_copy()
 
             else:
-                if len(self.underwear_sets + self.overwear_sets) == 0:
+                if len(valid_underwear_sets + valid_overwear_sets) == 0:
                     #We have nothing else to make a uniform out of. Return None and let the pick uniform function handle that.
                     return None
 
@@ -5027,10 +5243,10 @@ init -2 python:
                     #We have something to make an outfit out of. Go with that.
 
             #If we get to here we are assembling an outfit out of underwear or overwear.
-            uniform_over = get_random_from_list(self.overwear_sets)
+            uniform_over = get_random_from_list(valid_overwear_sets)
             if uniform_over:
                 #We got a top, now get a bottom.
-                uniform_under = get_random_from_list(self.underwear_sets)
+                uniform_under = get_random_from_list(valid_underwear_sets)
                 if not uniform_under:
                     #We need to get a bottom from her personal wardrobe. We also want to make sure it's something she would personally wear.
                     slut_limit_remaining = the_person.sluttiness - uniform_over.get_overwear_slut_score()
@@ -5047,7 +5263,7 @@ init -2 python:
 
             else:
                 #There are no tops, so we're going to try and get a bottom and use one of the persons tops.
-                uniform_under = get_random_from_list(self.underwear_sets) # We know we will always get something here, otherwise we would have returned None a while ago.
+                uniform_under = get_random_from_list(valid_underwear_sets) # We know we will always get something here, otherwise we would have returned None a while ago.
                 slut_limit_remaining = the_person.sluttiness - uniform_under.get_underwear_slut_score()
                 if slut_limit_remaining < 0:
                     slut_limit_remaining = 0 #If the outfit is so slutty we're not comfortable in it we'll try and wear the most conservative underwear we can.
@@ -5293,7 +5509,7 @@ init -2 python:
             if self.skill_tag == "Anal" and the_person.has_family_taboo():
                 final_slut_requirement += -10 #It's easier to convince a family member to have anal sex, since it's not "real" incest or something.
                 final_slut_cap += -10
-            elif self.skill_tag == "Vaginal" and the_person.has_family_tboo():
+            elif self.skill_tag == "Vaginal" and the_person.has_family_taboo():
                 final_slut_requirement += 10 #It's harder to convince a family member to have vaginal sex
                 final_slut_cap += 10
 
@@ -5475,7 +5691,7 @@ init -2 python:
     def pick_company_model_requirement():
         if mc.business.company_model is not None:
             return False
-        elif not public_advertising_license_policy.is_owned():
+        elif not public_advertising_license_policy.is_active():
             return False
         elif mc.business.get_employee_count == 0:
             return "Nobody to pick."
@@ -5483,10 +5699,13 @@ init -2 python:
             return True
 
     def set_uniform_requirement():
-        return strict_uniform_policy.is_owned()
+        return strict_uniform_policy.is_active()
 
     def set_serum_requirement():
-        return daily_serum_dosage_policy.is_owned()
+        if daily_serum_dosage_policy.is_owned() and not daily_serum_dosage_policy.is_active():
+            return "Policy not active."
+        else:
+            return daily_serum_dosage_policy.is_active()
 
     def review_designs_action_requirement():
         return True
@@ -6728,7 +6947,7 @@ screen interview_ui(the_candidates,count):
                     text "    Research: [the_candidate.research_skill]" style "menu_text_style" size 16
                     text "    Production: [the_candidate.production_skill]" style "menu_text_style" size 16
                     text "    Supply: [the_candidate.supply_skill]" style "menu_text_style" size 16
-                    if recruitment_knowledge_four_policy.is_owned():
+                    if recruitment_knowledge_four_policy.is_active():
                         text "Sex Skills" style "menu_text_style" size 20
                         text "    Foreplay: " + str(the_candidate.sex_skills["Foreplay"]) style "menu_text_style" size 16
                         text "    Oral: " + str(the_candidate.sex_skills["Oral"]) style "menu_text_style" size 16
@@ -7149,11 +7368,11 @@ screen trait_tooltip(the_trait,given_xalign=0.9,given_yalign=0.1):
             text the_trait.build_negative_slug() style "menu_text_style" size 14 color "#ff0000" xalign 0.5 xanchor 0.5
             text the_trait.desc style "menu_text_style" xalign 0.5 xanchor 0.5
 
-screen trait_list_tooltip(the_traits):
+screen trait_list_tooltip(the_traits, y_height = 0.1):
     hbox:
         spacing 50
         xalign 0.5
-        yalign 0.1
+        yalign y_height
         xanchor 0.0
         for trait in the_traits:
             frame: #TODO: Functionally identical to trait Figure out how to put this into a separate screen or displayable.
@@ -8394,7 +8613,253 @@ screen housing_map_manager():
 init -2 python:
     def purchase_policy(the_policy):
         the_policy.buy_policy()
-        mc.business.policy_list.append(the_policy)
+        if not the_policy.toggleable or the_policy.is_toggleable(): #Note: is_toggleable() checks to see if a toggleable policy has pre-reqs met to toggle, while toggleable flags a policy to turn on when bought then stay on.
+            the_policy.apply_policy()
+
+    def toggle_policy(the_policy):
+        if the_policy in mc.business.active_policy_list:
+            the_policy.remove_policy()
+        else:
+            the_policy.apply_policy()
+
+
+init -2 screen policy_selection_screen_v2():
+    add "Paper_Background.png"
+    modal True
+    zorder 100
+    $ tooltip = GetTooltip()
+    $ catagories = [["Uniform Policies",uniform_policies_list], ["Recruitment Policies",recruitment_policies_list], ["Serum Policies",serum_policies_list], ["Organisation Policies",organisation_policies_list]]
+    default selected_catagory = catagories[0] #Default to the first in our catagories list
+    default selected_policy = None #If not None this will have it's info displayed on the right section of the bottom pane
+    #TODO: Side bar showing current and max Complience, once the Complience system is added.
+
+    vbox:
+        xalign 0.5
+        xanchor 0.5
+        yanchor 0.0
+        yalign 0.05
+        spacing 20
+        frame: #Top frame holding the policy catagories that we have.
+            xsize 1320
+            ysize 140
+            background "#aaaaaa"
+            text "Funds: $[mc.business.funds]":
+                xalign 1.0
+                xanchor 1.0
+                yanchor 0.0
+                style "textbutton_text_style"
+                size 18
+            vbox:
+                text "Policy Catagories" style "menu_text_style" size 26 yalign 0.5 yanchor 0.5 xalign 0.5 xanchor 0.5
+                xalign 0.5
+                xanchor 0.5
+                hbox:
+                    spacing 25
+                    xalign 0.5
+                    xanchor 0.5
+                    for catagory in catagories:
+                        textbutton catagory[0]:
+                            xsize 300
+                            ysize 80
+                            action SetScreenVariable("selected_catagory", catagory)
+                            sensitive selected_catagory != catagory
+                            style "textbutton_style"
+                            text_style "textbutton_text_style"
+                            background "#000080"
+                            hover_background "#1a45a1"
+                            insensitive_background "#222222"
+
+        frame:
+            xsize 1320
+            ysize 650
+            background "#aaaaaa"
+            xpadding 20
+            ypadding 20
+            hbox: #Container for the policy select and policy info screens.
+                xanchor 0.5
+                xalign 0.5
+                yanchor 0.5
+                yalign 0.5
+                xsize 1300
+                ysize 600
+                spacing 20
+                xfill True
+                frame: #Container for policy select
+                    xsize 500
+                    background "#888888"
+                    viewport:
+                        mousewheel True
+                        scrollbars "vertical"
+                        vbox: # Contains list for policy select
+                            spacing 0
+                            for policy in selected_catagory[1]:
+                                $ policy_name = policy.name + " - "
+                                if policy.is_active(): #Display owned and active policies
+                                    $ policy_name += "Active"
+                                elif policy.is_owned():
+                                    $ policy_name += "Disabled"
+                                else:
+                                    if policy.cost <= mc.business.funds:
+                                        $ policy_name += "{color=20a020}$" + str(policy.cost) + "{/color}"
+                                    else:
+                                        $ policy_name += "{color=902020}$" + str(policy.cost) + "{/color}"
+
+                                    if not (policy.requirement() and (policy.cost <= mc.business.funds)):
+                                        $ policy_name = "{color=999999}" + policy_name + "{/color}"
+                                textbutton policy_name:
+                                    xalign 0.5
+                                    xanchor 0.5
+                                    #xsize 500
+                                    xfill True
+                                    action SetScreenVariable("selected_policy", policy)
+                                    style "textbutton_style"
+                                    text_style "textbutton_text_style"
+                                    text_size 16
+                                    if policy.is_owned():
+                                        background "#59853f"
+                                        hover_background "#a9d59f"
+                                        #insensitive_background "#305012"
+                                        insensitive_background "#222222"
+                                    else:
+                                        if policy.requirement() and (policy.cost <= mc.business.funds):
+                                            background "#000080"
+                                        else:
+                                            background "#000040"
+                                        hover_background "#1a45a1"
+                                        insensitive_background "#222222"
+                                    sensitive selected_policy != policy
+
+                frame: #Container for the seleected policy info.
+                    background "#888888"
+                    xsize 780
+                    xpadding 40
+                    ypadding 10
+                    if selected_policy is not None:
+                        viewport:
+                            mousewheel True
+                            scrollbars "vertical"
+                            xalign 0.5
+                            xanchor 0.5
+                            ysize 500
+
+                            vbox: # Contains title, description, and buy/toggle button for policy
+                                xalign 0.5
+                                xanchor 0.5
+                                xfill True
+
+                                text selected_policy.name:
+                                    xalign 0.5
+                                    xanchor 0.5
+                                    yanchor 0.0
+                                    text_align 0.5
+                                    size 32
+                                    style "textbutton_text_style"
+
+                                null height 30
+
+                                text selected_policy.desc:
+                                    xalign 0.5
+                                    xanchor 0.5
+                                    yanchor 0.0
+                                    text_align 0.5
+                                    size 16
+                                    style "textbutton_text_style"
+                                    justify True
+
+                        if selected_policy.is_owned():
+                            $ the_button_name = ""
+                            if selected_policy.toggleable:
+                                if selected_policy.is_active():
+                                    $ the_button_name = "Disable Policy"
+                                else:
+                                    $ the_button_name = "Enable Policy"
+
+                                if not selected_policy.is_toggleable():
+                                    if selected_policy.is_active():
+                                        $ the_button_name += "\n{size=12}{color=#800000}Cannot be disabled, needed for:\n"
+                                        $ blocking_policies = [a_policy for a_policy in selected_policy.depender_policies if a_policy.is_active()]
+                                        for requirement in blocking_policies:
+                                            $ the_button_name += requirement.name
+                                            if requirement is not blocking_policies[-1]:
+                                                $ the_button_name += "\n" #Format the list with a comma if not at the end of the list.
+                                        $ the_button_name += "{/color}{/size}"
+
+
+                                    else:
+                                        $ the_button_name += "\n{size=12}{color=#800000}Requires Active:\n"
+                                        $ blocking_policies = [a_policy for a_policy in selected_policy.dependant_policies if not a_policy.is_active()]
+                                        for requirement in blocking_policies:
+                                            $ the_button_name += requirement.name
+                                            if requirement is not blocking_policies[-1]:
+                                                $ the_botton_name += "\n" #Format the list with a comma if not at the end of the list.
+                                        $ the_button_name += "{/color}{/size}"
+                            else: #Note: Non-toggleable policies that are owned should _always_ be active.
+                                $ the_button_name = "Policy Active"
+
+                            textbutton the_button_name:
+                                xalign 0.5
+                                xanchor 0.5
+                                yalign 1.0
+                                yanchor 1.0
+                                xsize 300
+                                action Function(toggle_policy, selected_policy)
+                                style "textbutton_style"
+                                text_style "textbutton_text_style"
+                                background "#000080"
+                                hover_background "#1a45a1"
+                                insensitive_background "#222222"
+                                sensitive selected_policy.is_toggleable()
+                                text_xalign 0.5
+                                text_xanchor 0.5
+                        else: #We want to purchase it
+                            textbutton "Purchase: $[selected_policy.cost]":
+                                xalign 0.5
+                                xanchor 0.5
+                                yalign 1.0
+                                yanchor 1.0
+                                xsize 300
+                                action Function(purchase_policy, selected_policy)
+                                style "textbutton_style"
+                                text_style "textbutton_text_style"
+                                background "#000080"
+                                hover_background "#1a45a1"
+                                insensitive_background "#222222"
+                                sensitive selected_policy.requirement() and (selected_policy.cost <= mc.business.funds)
+                                text_xalign 0.5
+                                text_xanchor 0.5
+
+    frame:
+        background None
+        anchor [0.5,0.5]
+        align [0.5,0.88]
+        xysize [500,125]
+        imagebutton:
+            align [0.5,0.5]
+            auto "gui/button/choice_%s_background.png"
+            focus_mask "gui/button/choice_idle_background.png"
+            action Return()
+        textbutton "Return" align [0.5,0.5] text_style "return_button_style"
+
+    imagebutton:
+        auto "/tutorial_images/restart_tutorial_%s.png"
+        xsize 54
+        ysize 54
+        yanchor 1.0
+        xalign 0.0
+        yalign 1.0
+        action Function(mc.business.reset_tutorial,"policy_tutorial")
+
+    $ policy_tutorial_length = 4 #The number of  tutorial screens we have.
+    if mc.business.event_triggers_dict["policy_tutorial"] > 0 and mc.business.event_triggers_dict["policy_tutorial"] <= policy_tutorial_length: #We use negative numbers to symbolize the tutorial not being enabled
+        imagebutton:
+            auto
+            sensitive True
+            xsize 1920
+            ysize 1080
+            idle "/tutorial_images/policy_tutorial_"+__builtin__.str(mc.business.event_triggers_dict["policy_tutorial"])+".png"
+            hover "/tutorial_images/policy_tutorial_"+__builtin__.str(mc.business.event_triggers_dict["policy_tutorial"])+".png"
+            action Function(mc.business.advance_tutorial,"policy_tutorial")
+
 
 init -2 screen policy_selection_screen():
     add "Paper_Background.png"
@@ -8586,7 +9051,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.26.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.27.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -9149,8 +9614,7 @@ label talk_person(the_person):
 
 
 
-    $ change_titles_action = Action("Talk about what you call each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Manage how you refer to this girl and tell her how she should refer to you. Differnet combinations of stats, roles, and personalityes unlock different titles.", priority = -5)
+
     $ small_talk_action = Action("Make small talk.\n-15 {image=gui/extra_images/energy_token.png}", requirement = small_talk_requirement, effect = "small_talk_person", args=the_person, requirement_args=the_person,
         menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ compliment_action = Action("Compliment her.\n-15 {image=gui/extra_images/energy_token.png}", requirement = compliment_requirement, effect = "compliment_person", args=the_person, requirement_args=the_person,
@@ -9158,23 +9622,32 @@ label talk_person(the_person):
     $ flirt_action = Action("Flirt with her.\n-15 {image=gui/extra_images/energy_token.png}", requirement = flirt_requirement, effect = "flirt_person", args=the_person, requirement_args=the_person,
         menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ date_action = Action("Ask her on a date.", requirement = date_option_requirement, effect = "date_person", args=the_person, requirement_args=the_person,
-        menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. If you play your cards right you might end up back at her place.")
+        menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. Play your cards right and you might end up back at her place.")
     $ make_girlfriend_action = Action("Ask her to be your girlfriend.", requirement = ask_girlfriend_requirement, effect = "ask_be_girlfriend_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Ask her to start an official, steady relationship and be your girlfriend.", priority = 10)
-    $ chat_list = [change_titles_action, small_talk_action, compliment_action, flirt_action, date_action, make_girlfriend_action]
-
+    $ chat_list = [small_talk_action, compliment_action, flirt_action, date_action, make_girlfriend_action]
 
     #TODO: "Do something specific", change existing sections into actions, store in chat_actions.rpy
-    $ wardrobe_change_action = Action("Ask to change her wardrobe.", requirement = wardrobe_change_requirment, effect = "wardrobe_change_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Add and remove outfits from her wardrobe, or ask her to put on a specific outfit.", priority = -5)
-    $ serum_give_action = Action("Try to give her a dose of serum.", requirement = serum_give_requirement, effect = "serum_give_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Demand she take a dose, ask her politely, or just try and slip it into something she'll drink. Failure may result in her trusting you less or being immediately unhappy.")
-    $ seduce_action = Action("Try to seduce her.", requirement = seduce_requirement, effect = "seduce_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.", priority = 5)
-    $ specific_action_list = ["Say goodbye.", wardrobe_change_action, serum_give_action, seduce_action]
+    #TODO: Add in the other serum give methods ("sneak" and "ask") in other ways.
+    # |-> Idea: Sneak and Ask should both be event based and/or role based, there is no "generic" way to sneak a dose of serum to someone, and you need a reason to give them one (otherwise it's just a demand)
+    #   |-> Spend some time adding semi-generic events for stuff like this.
 
 
+    # $ serum_give_action = Action("Try to give her a dose of serum.", requirement = serum_give_requirement, effect = "serum_give_label", args = the_person, requirement_args = the_person,
+    #     menu_tooltip = "Demand she take a dose, ask her politely, or just try and slip it into something she'll drink. Failure may result in her trusting you less or being immediately unhappy.")
 
+    # The generic seduce has been replaced with a specific action for groping leading to sex, (soon) a command option leading to sex, and (soon) flirting leading to sex.
+    # $ seduce_action = Action("Try to seduce her.", requirement = seduce_requirement, effect = "seduce_label", args = the_person, requirement_args = the_person,
+    #     menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.", priority = 5)
+
+
+    $ grope_action = Action("Grope her.\n-10 {image=gui/extra_images/energy_token.png}", requirement = grope_requirement, effect = "grope_person", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Be \"friendly\" and see how far she is willing to let you take things. May make her more comfortable with physical contact, but at the cost of her opinion of you.")
+
+    $ command_action = Action("Give her a command.", requirement = command_requirement, effect = "command_person", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Leverage her obedience and command her to do something.")
+
+    $ specific_action_list = ["Say goodbye.", command_action, grope_action]
 
     python:
         special_role_actions = []
@@ -9370,11 +9843,11 @@ label production_work_action_description:
 
 label interview_action_description:
     $ count = 3 #Num of people to generate, by default is 3. Changed with some policies
-    if recruitment_batch_three_policy.is_owned():
+    if recruitment_batch_three_policy.is_active():
         $ count = 10
-    elif recruitment_batch_two_policy.is_owned():
+    elif recruitment_batch_two_policy.is_active():
         $ count = 6
-    elif recruitment_batch_one_policy.is_owned():
+    elif recruitment_batch_one_policy.is_active():
         $ count = 4
 
     $ interview_cost = 50
@@ -9391,14 +9864,14 @@ label interview_action_description:
 
                 reveal_count = 0
                 reveal_sex = False
-                if recruitment_knowledge_one_policy.is_owned():
+                if recruitment_knowledge_one_policy.is_active():
                     reveal_count += 2
-                if recruitment_knowledge_two_policy.is_owned():
+                if recruitment_knowledge_two_policy.is_active():
                     reveal_count += 2
-                if recruitment_knowledge_three_policy.is_owned():
+                if recruitment_knowledge_three_policy.is_active():
                     reveal_count += 1
                     reveal_sex = True
-                if recruitment_knowledge_four_policy.is_owned():
+                if recruitment_knowledge_four_policy.is_active():
                     reveal_count += 1
                 for a_candidate in candidates:
                     for x in __builtin__.range(0,reveal_count): #Reveal all of their opinions based on our policies.
@@ -9589,7 +10062,7 @@ label pick_supply_goal_action_description:
     return
 
 label policy_purchase_description:
-    call screen policy_selection_screen()
+    call screen policy_selection_screen_v2() #policy_selection_screen
     return
 
 label head_researcher_select_description:
@@ -9609,38 +10082,8 @@ label pick_company_model_description:
 
 label set_uniform_description:
     #First, establish the maximums the uniform can reach.
-    if maximal_arousal_uniform_policy.is_owned():
-        $slut_limit = 999 #ie. no limit at all.
-        $underwear_limit = 999
-        $limited_to_top = False
-    elif corporate_enforced_nudity_policy.is_owned():
-        $slut_limit = 80
-        $underwear_limit = 999
-        $limited_to_top = False
-    elif minimal_coverage_uniform_policy.is_owned():
-        $slut_limit = 60
-        $underwear_limit = 15
-        $limited_to_top = False
-    elif reduced_coverage_uniform_policy.is_owned():
-        $slut_limit = 40
-        $underwear_limit = 10
-        $limited_to_top = False
-    elif casual_uniform_policy.is_owned():
-        $slut_limit = 25
-        $underwear_limit = 0
-        $limited_to_top = True
-    elif relaxed_uniform_policy.is_owned():
-        $slut_limit = 15
-        $underwear_limit = 0
-        $limited_to_top = True
-    elif strict_uniform_policy.is_owned():
-        $slut_limit = 5
-        $underwear_limit = 0
-        $limited_to_top = True
-    else:
-        $slut_limit = 0
-        $underwear_limit = 0
-        $limited_to_top = True
+    $ slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits() #Function generates all uniform related limits to keep them consistent between events and active/deavtive policies.
+
 
     #Some quick holding variables to store the options picked.
     $ selected_div = None
@@ -9902,7 +10345,7 @@ label advance_time:
     else:
         $ time_of_day += 1 ##Otherwise, just run the end of day code.
 
-    if time_of_day == 1 and daily_serum_dosage_policy.is_owned(): #It is the start of the work day, give everyone their daily dose of serum
+    if time_of_day == 1 and daily_serum_dosage_policy.is_active(): #It is the start of the work day, give everyone their daily dose of serum
         $ mc.business.give_daily_serum()
 
     python:
@@ -9953,7 +10396,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
             menu_tooltip = "Raise business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
         research_work_action = Action("Research in the lab.\n{image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
             menu_tooltip = "Contribute research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
-        supplies_work_action = Action("Ordering Supplies.\n{image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
+        supplies_work_action = Action("Order Supplies.\n{image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",
             menu_tooltip = "Purchase serum supply at the cost of $1 per unit of supplies. When producing serum every production point requires one unit of serum.\n+3*Focus + 2*Skill + 1*Charisma + 10 Serum Supply.")
         market_work_action = Action("Sell Prepared Serums.\n{image=gui/heart/Time_Advance.png}",market_work_action_requirement,"market_work_action_description",
             menu_tooltip = "Sell serums that have been marked for sale. Mark serum manually from your office or set an autosell threshold in production.\n3*Charisma + 2*Skill + 1*Focus + 5 Serum Doses Sold.")
@@ -9970,7 +10413,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
             menu_tooltip = "Decide what serum designs are being produced. Production is divided between multiple factory lines, and auto sell thresholds can be set to automatically flag serum for sale.")
         pick_supply_goal_action = Action("Set the amount of supply you would like to maintain.", pick_supply_goal_action_requirement,"pick_supply_goal_action_description",
             menu_tooltip = "Set a maximum amount of serum you and your staff will attempt to purchase.")
-        policy_purhase_action = Action("Purchase business policies.", policy_purchase_requirement,"policy_purchase_description",
+        policy_purhase_action = Action("Manage business policies.", policy_purchase_requirement,"policy_purchase_description",
             menu_tooltip = "New business policies changes the way your company runs and expands your control over it. Once purchased business policies are always active.")
         set_head_researcher_action = Action("Select a Head Researcher.", head_researcher_select_requirement, "head_researcher_select_description",
             menu_tooltip = "Pick a member of your R&D staff to be your head researcher. A head resercher with a high intelligence score will increase the amount of research produced by the entire division.")

@@ -56,6 +56,27 @@ init -1:
 
         black_skin = Clothing("black skin", 1, True, True, "black", True, False, 0)
 
+
+        ##Region Weight "Clothing" items##
+        #These clothing items are used to map animations to specific parts of the body.
+
+        #Specific region weights
+        breast_region = Clothing("Breast region", 1, False, False, "Breast_Region_Weight", True, False, 0)
+        butt_region = Clothing("Butt region", 1, False, False, "Butt_Region_Weight", False, False, 0)
+
+        #General region weights
+        torso_region = Clothing("Torso region", 1, False, False, "Torso_Region_Weight", True, False, 0)
+        stomach_region = Clothing("Stomach region", 1, False, False, "Stomach_Region_Weight", False, False, 0)
+        pelvis_region = Clothing("Pelvis region", 1, False, False, "Pelvis_Region_Weight", False, False, 0)
+        upper_leg_region = Clothing("Upper leg region", 1, False, False, "Upper_Leg_Region_Weight", False, False, 0)
+        lower_leg_region = Clothing("Lower leg region", 1, False, False, "Lower_Leg_Region_Weight", False, False, 0)
+        foot_region = Clothing("Foot region", 1, False, False, "Foot_Region_Weight", False, False, 0)
+        upper_arm_region = Clothing("Upper arm region", 1, False, False, "Upper_Arm_Region_Weight", True, False, 0) #Counts as "draws breasts" because it is very often covered by them. All region masks might eventually take this approach.
+        lower_arm_region = Clothing("Lower arm region", 1, False, False, "Lower_Arm_Region_Weight", False, False, 0)
+        hand_region = Clothing("Hand region", 1, False, False, "Hand_Region_Weight", False, False, 0)
+
+
+
         ##HAIR STYLES##
         #TODO: Implement ordering_variable for hair to decide on hair length for hair cuts.
         hair_styles =  []
@@ -248,7 +269,8 @@ init -1:
         pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.2, display_name = "skirt")
         skirts_list.append(pencil_skirt)
 
-        belted_skirt = Clothing("Belted Skirt", 2, True, False, "Belted_Skirt", False, False, 1, contrast_adjustment = 1.15, supported_patterns = {"Belt":"Pattern_1"}, display_name = "skirt")
+        belted_skirt = Clothing("Belted Skirt", 2, True, False, "Belted_Skirt", False, False, 1, contrast_adjustment = 1.15, supported_patterns = {"Belt":"Pattern_1"}, display_name = "skirt",
+            half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region])
         skirts_list.append(belted_skirt)
 
         lace_skirt = Clothing("Lace Skirt", 2, True, False, "Lace_Skirt", False, False, 1, whiteness_adjustment = 0.15, display_name = "skirt")
@@ -326,7 +348,8 @@ init -1:
         ##Shirts
         shirts_list = []
 
-        tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.35, supported_patterns = {"Striped":"Pattern_2","Text":"Pattern_3"}, display_name = "shirt")
+        tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.35, supported_patterns = {"Striped":"Pattern_2","Text":"Pattern_3"}, display_name = "shirt",
+            half_off_regions = [breast_region, stomach_region, pelvis_region, upper_leg_region], half_off_ignore_regions = upper_arm_region)
         shirts_list.append(tshirt)
 
         lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.18, display_name = "sweater")
@@ -559,16 +582,6 @@ init -1:
         mouth_cum = Facial_Accessory("Mouth Cum", 1, False, False, "Mouth_Dribble", False, False, 10, whiteness_adjustment = 0.2)
 
         face_cum = Facial_Accessory("Face Cum", 1, False, False, "Face_Covered", False, False, 10, whiteness_adjustment = 0.2)
-
-
-
-        ##Region Weight "Clothing" items##
-        #These clothing items are used to map animations to specific parts of the body.
-        breast_region = Clothing("Breast region", 1, False, False, "Breast_Region_Weight", True, False, 0)
-
-        butt_region = Clothing("Butt region", 1, False, False, "Butt_Region_Weight", False, False, 0)
-
-
 
         ##Creating outfits from XML##
         def proper_name_to_clothing_copy(proper_name):

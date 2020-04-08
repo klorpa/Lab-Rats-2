@@ -39,7 +39,7 @@ init -2 python:
         return False
 
     def alexia_ad_suggest_requirement(the_person, the_day):
-        if public_advertising_license_policy.is_owned():
+        if public_advertising_license_policy.is_active():
             return False
         elif not day > the_day:
             return False
@@ -53,7 +53,7 @@ init -2 python:
             return True
 
     def alexia_ad_suggest_reintro_requirement(the_person):
-        if public_advertising_license_policy.is_owned():
+        if public_advertising_license_policy.is_active():
             return False
         elif the_person.event_triggers_dict.get("camera_purchased", False):
             return False
@@ -69,7 +69,7 @@ init -2 python:
             return True
 
     def alexia_photography_intro_requirement(the_person):
-        if public_advertising_license_policy.is_owned():
+        if public_advertising_license_policy.is_active():
             return False
         elif not mc.business.event_triggers_dict.get("has_expensive_camera",False):
             return False

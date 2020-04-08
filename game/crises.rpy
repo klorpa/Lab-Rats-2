@@ -47,7 +47,11 @@
 # Mom changing
 # Lily new underwear
 # Mom selfies
+
+
 # Daughter introduction
+
+
 # Girlfriend texts
 # Affair texts
 # Cousin texts
@@ -62,8 +66,9 @@
 #todo: girl who loves you sends you sexy selfies
 #todo: Lily invites you to a university party as her +1.
 #todo: Help Lily study, punish/reward her answers (maybe work a little quiz mini-game into it too?)
-#todo: friends help friends be sluts
 #todo: write something "special" on her performance review. "great cock sucker.", "very tight pussy"
+
+#todo: Mom invites her sister over for dinner. Some option to fool around with one or the other (We'll save both for a future update).
 
 
 ### SPECIAL CRISES ###
@@ -172,7 +177,7 @@ label broken_AC_crisis_label:
                     person.change_obedience(2)
             "The repair man shows up early and it turns out to be an easy fix. The lab is soon back up and running."
 
-        "Tell everyone to strip down and keep working." if casual_uniform_policy.is_owned():
+        "Tell everyone to strip down and keep working." if casual_uniform_policy.is_active():
             if len(mc.business.production_team) > 1: #We have more than one person, do a group strip scene.
                 mc.name "I know it's uncomfortable in here right now, but we're just going to have to make due."
                 mc.name "If anyone feels the need to take something off to get comfortable, I'm lifting the dress code until the air conditioning is fixed."
@@ -352,7 +357,7 @@ label broken_AC_crisis_label:
                         person.change_slut_temp(10, add_to_log = False)
                 $ mc.log_event("All Production Staff: +10 Sluttiness","float_text_pink")
 
-        "Tell everyone to strip down and keep working.\n{color=#ff0000}{size=22}Requires: [casual_uniform_policy.name]{/color} (disabled)" if not casual_uniform_policy.is_owned():
+        "Tell everyone to strip down and keep working.\n{color=#ff0000}{size=22}Requires: [casual_uniform_policy.name]{/color} (disabled)" if not casual_uniform_policy.is_active():
             pass
     $renpy.scene("Active")
     return
@@ -479,7 +484,7 @@ label no_uniform_punishment_label():
                     mc.name "I can't be making rules exceptions just for you. Go get changed and get back to work, we can talk about this later."
                     "[the_person.title] huffs and walks off."
 
-                "Tell her to work naked instead." if the_person.effective_sluttiness() > 40 and reduced_coverage_uniform_policy.is_owned():
+                "Tell her to work naked instead." if the_person.effective_sluttiness() > 40 and reduced_coverage_uniform_policy.is_active():
                     "You shake your head, disappointed."
                     mc.name "Well if you don't want to wear your uniform, I guess you're just going to be wearing nothing at all."
                     if the_person.effective_sluttiness(["bare_pussy","bare_tits"]) > 60 - (10 * the_person.get_opinion_score("not wearing anything")): #triggers easier if the person likes getting naked.
@@ -1093,7 +1098,7 @@ label trait_for_side_effect_label():
     "You look over the notes [the_person.possessive_title] has taken. The varient she has created includes an extra serum trait as well as a negative side effect."
     "It doesn't seem like there will be any way to detangle the effects."
     #TODO: Make sure these actually display the traits properly.
-    show screen trait_list_tooltip([the_trait, the_side_effect])
+    show screen trait_list_tooltip([the_trait, the_side_effect], y_height = 0.6)
     menu:
         "Add [the_trait.name] and [the_side_effect.name] to [the_design.name].":
             hide screen trait_list_tooltip
@@ -1165,7 +1170,7 @@ label water_spill_crisis_label():
                     $ slut_report = the_person.change_slut_temp(1)
                     "You help [the_person.possessive_title] with her tax questions while she stands topless beside your desk."
 
-                "Keep going..." if minimal_coverage_uniform_policy.is_owned():
+                "Keep going..." if minimal_coverage_uniform_policy.is_active():
                     mc.name "You might as well keep going. All this tax talk is boring and I'd appreciate somthing pleasant to look at while I help you."
                     if the_person.outfit.tits_visible() and the_person.outfit.vagina_visible():
                         mc.name "Not that there's much I can't see already..."
@@ -1203,7 +1208,7 @@ label water_spill_crisis_label():
                         "You help [the_person.possessive_title] with her tax questions while she stands next to your desk, still partially undressed."
 
 
-                "Keep going... \n{size=22}Requires: Minimal Coverage Corporate Uniforms{/size} (disabled)" if not minimal_coverage_uniform_policy.is_owned():
+                "Keep going... \n{size=22}Requires: Minimal Coverage Corporate Uniforms{/size} (disabled)" if not minimal_coverage_uniform_policy.is_active():
                     pass
 
             $ the_person.review_outfit()
@@ -3458,7 +3463,7 @@ label friends_help_friends_be_sluts_label():
                             mc.name "I do, now show them to us."
                             "She nods meekly and starts to strip down, starting with her [the_item.name]."
                             $ person_two.change_obedience(1)
-                        elif corporate_enforced_nudity_policy.is_owned() or maximal_arousal_uniform_policy.is_owned():
+                        elif corporate_enforced_nudity_policy.is_active() or maximal_arousal_uniform_policy.is_active():
                             "[person_two.title] hesitates for a second."
                             mc.name "Just consider this a temporary change to your uniform, [person_two.title]. I could have you walking around topless all day if I wanted to."
                             person_two.char "Fine, I guess I did agree to that..."
@@ -5196,7 +5201,7 @@ label girl_shower_enter(the_person, suprised):
 
             else:
                 the_person.char "What is this?"
-                "She wiggles her butt and strokes your tip agianst her cheeks."
+                "She wiggles her butt and strokes your tip against her cheeks."
                 the_person.char "Well we need to take care of this, don't we..."
                 "She turns around and faces you. It might be the hot water, but her face is flush."
                 $ the_person.change_slut_temp(2)

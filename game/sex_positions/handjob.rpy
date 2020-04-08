@@ -67,7 +67,7 @@ label scene_handjob_1(the_girl, the_location, the_object):
 
 label scene_handjob_2(the_girl, the_location, the_object):
     "[the_girl.title] moves her hand down and cups your balls, massaging them gently."
-    the_person.char "I want you to get all of your cum out of here for me..."
+    the_person.char "I want you to let all of your cum out of here for me..."
     "She holds your body against her and slides her hand back to your shaft."
     return
 

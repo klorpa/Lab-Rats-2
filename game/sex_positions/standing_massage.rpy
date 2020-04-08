@@ -11,7 +11,7 @@ init:
             transition_default = "transition_default_standing_grope",
             strip_description = "strip_standing_grope", strip_ask_description = "strip_ask_standing_grope",
             orgasm_description = "orgasm_standing_grope",
-            taboo_break_description = "taboo_break_standing_massage",
+            taboo_break_description = "taboo_break_standing_grope",
             verb = "grope", verbing = "groping",
             opinion_tags = None,
             associated_taboo = "touching_body")
@@ -28,12 +28,12 @@ label intro_standing_grope(the_girl, the_location, the_object):
     "You reach one hand down, running across her stomach and towards her waist and the other up towards her tits."
     if the_girl.has_large_tits():
         "She sighs and leans into you cup one of her tits and heft it up, massaging it gently."
-        " Your other hand slides between her legs, bruishing against her inner thighs and caressing her pussy."
+        "Your other hand slides between her legs, bruishing against her inner thighs and caressing her pussy."
     else:
         "She sighs and leans into you as your hand slides between her legs, brushing her thighs and petting her pussy."
     return
 
-label taboo_break_standing_massage(the_girl, the_location, the_object):
+label taboo_break_standing_grope(the_girl, the_location, the_object):
     "You put your hands on [the_girl.title]'s arms, rubbing them gently."
     the_girl.char "Oh..."
     "Next, you slide your hands down her body, over the curves of her torso onto her hips."

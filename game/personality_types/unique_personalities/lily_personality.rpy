@@ -624,7 +624,7 @@ label lily_anal_sex_taboo_break(the_person):
         else:
             mc.name "Yeah, why not? I've already fucked all of your other holes, what's special about this one?"
             the_person.char "It's not special, I just thought you'd want to fuck my pussy some more. Didn't you enjoy it last time."
-            mc.nmae "It was great, but I want to experiment a little more. Come on, don't you want to try something new?"
+            mc.name "It was great, but I want to experiment a little more. Come on, don't you want to try something new?"
 
     else:
         the_person.char "Wait, do you want to try anal?"
@@ -646,8 +646,6 @@ label lily_anal_sex_taboo_break(the_person):
     the_person.char "With toys a couple of times... Never with a guy."
     mc.name "You'll probably be really tight then. I'll go nice and slow to give you time to stretch out."
     the_person.char "Okay. Thank you [the_person.mc_title]."
-
-
     return
 
 label lily_condomless_sex_taboo_break(the_person):
@@ -700,22 +698,6 @@ label lily_bare_pussy_taboo_break(the_person, the_clothing):
         the_person.char "Fine. Just a little look won't be too bad, right?"
 
     "She stands passively and lets you pull down her [the_clothing.display_name]."
-
-    # the_person.char "Careful there [the_person.mc_title], mommy doesn't want you to be able to see her delicate parts."
-    # mc.name "Please [the_person.title], I want to know what it looks like."
-    # if the_person.has_taboo("touching_vagina"):
-    #     the_person.char "Just what it looks like?"
-    #     mc.name "I've always been curious. I saw it when I was younger but I didn't really understand what it was for."
-    #     the_person.char "I suppose you should be able to ask any questions you have to someone you trust..."
-    #     "She thinks for a moment, then nods."
-    #     the_person.char "Fine, you can take off my [the_clothing.display_name]. If you need me to explain anything you just ask, okay?"
-    #
-    # else:
-    #     mc.name "You've already let me touch it, so why can't I look at it?"
-    #     the_person.char "I suppose we have already crossed that line... Okay, you can take off my [the_cloting.display_name]."
-    #     the_person.char "If you have any questions about my... vagina, you just ask, alright?"
-    #
-    # mc.name "Okay [the_person.title], I will."
     return
 
 # label lily_facial_cum_taboo_break(the_person):

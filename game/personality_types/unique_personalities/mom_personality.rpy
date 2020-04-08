@@ -436,14 +436,13 @@ label mom_kissing_taboo_break(the_person):
     "You press a finger to her chin and turn her back to you."
     mc.name "I mean really kiss you, [the_person.title]."
     the_person.char "Oh, I see..."
-    the_person.char "I'm sorry if I've confused you, but we really can't do that..."
+    the_person.char "I'm sorry if I've been confusing, but we really can't do that..."
     mc.name "You're the most important woman in the world to me. Other people never need to know, I just really want to feel close to you."
     "Her eyes melt."
     the_person.char "Oh sweetheart! I want to be close to you too! You know you'll always be my special man, right?"
     the_person.char "Okay, we can kiss just a little bit if that's how you want to show your love. I understand how you feel."
     the_person.char "And uhm... Let's just not tell anyone else about this, okay? There's nothing wrong with it, but other people might get the wrong idea."
     mc.name "Of course [the_person.title]."
-
     return
 
 label mom_touching_body_taboo_break(the_person):
@@ -489,7 +488,7 @@ label mom_touching_penis_taboo_break(the_person):
         the_person.char "Of course I do. I love you more than I could ever tell you."
         mc.name "And I love you too. There's nothing wrong about a mother who wants to make sure her son is taken care of."
         "She looks at your hard cock and stares at it for a moment."
-        the_person.char "You don't think this is wrong? I'm your mother... I should be touching you like this."
+        the_person.char "You don't think this is wrong? I'm your mother... I shouldn't be touching you like this."
         mc.name "I don't think it's anyones business but our own how we show our love for each other."
         "She thinks for a long moment, eyes still locked on your dick."
         the_person.char "Okay, but only because I love you [the_person.mc_title]."
@@ -691,7 +690,7 @@ label mom_anal_sex_taboo_break(the_person):
             the_person.char "Of course not! You're my son, which means we absolutely should not be having sex."
             mc.name "That's why I want to try anal. I couldn't get you pregnant, so it's not really incest."
             mc.name "I love you so much [the_person.title], I want to try every way possible to be close to each other."
-            the_person.char "I guess it wouldn't really count. It's no different than me using my hand or my breasts, right?"
+            the_person.char "I guess it wouldn't really count. It's no different than me using my hand or my boobs, right?"
             mc.name "That's what I'm saying. Have you ever tried this before?"
 
 
@@ -765,7 +764,7 @@ label mom_underwear_nudity_taboo_break(the_person, the_clothing):
     the_person.char "Oh! Well, I guess it's natural for a man your age to be curious about a woman's body."
     the_person.char "We can take off my [the_clothing.display_name] so you can get a look."
     "She gives you a stern, motherly look."
-    the_person.char "No more than that though, okay? I don't think it's right for you to see your mother naked."
+    the_person.char "No more than that though, okay? I don't think it's right for you to see your own mother naked."
     mc.name "Okay [the_person.title]."
     return
 
@@ -792,7 +791,7 @@ label mom_bare_pussy_taboo_break(the_person, the_clothing):
 
     else:
         mc.name "You've already let me touch it, so why can't I look at it?"
-        the_person.char "I suppose we have already crossed that line... Okay, you can take off my [the_cloting.display_name]."
+        the_person.char "I suppose we have already crossed that line... Okay, you can take off my [the_clothing.display_name]."
         the_person.char "If you have any questions about my... vagina, you just ask, alright?"
 
     mc.name "Okay [the_person.title], I will."

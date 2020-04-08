@@ -41,6 +41,24 @@ init -2 python:
     def move_employee_requirement(the_person):
         return True
 
+    def employee_paid_serum_test_requirement(the_person):
+        if mandatory_unpaid_serum_testing_policy.is_active():
+            return False #Don't show anything if we have a higher level to show.
+        elif not mandatory_paid_serum_testing_policy.is_active():
+            return False #"Requires Policy: Mandatory Paid Serum Testing"
+        elif mc.business.funds < 100:
+            return "Requires: $100"
+        else:
+            return True
+
+    def employee_unpaid_serum_test_requirement(the_person):
+        if not mandatory_paid_serum_testing_policy.is_owned():
+            return False #Don't show anything until the lower level is purchased.
+        elif mandatory_paid_serum_testing_policy.is_owned() and not mandatory_unpaid_serum_testing_policy.is_active():
+            return False #"Requires Policy: Mandatory Unpaid Serum Testing"
+        else:
+            return True
+
 #### EMPLOYEE ACTION LABELS ####
 
 label employee_complement_work(the_person):
@@ -401,4 +419,17 @@ label move_employee_label(the_person):
             $ the_person.set_work([1,2,3],mc.business.h_div)
 
     the_person.char "I'll move over there right away!"
+    return
+
+label employee_paid_serum_test_label(the_person):
+    $ pay_serum_cost = 100
+    mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this, a bonus will be added onto your paycheck."
+    call give_serum(the_person) from _call_give_serum_18
+    if _return:
+        $ mc.business.funds += -pay_serum_cost
+    return
+
+label employee_unpaid_serum_test_label(the_person):
+    mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this."
+    call give_serum(the_person) from _call_give_serum_19
     return

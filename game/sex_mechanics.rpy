@@ -1,4 +1,4 @@
-label fuck_person(the_person, private= True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False):
+label fuck_person(the_person, private = True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False):
     # When called fuck_person starts a sex scene with someone. Sets up the encounter, mainly with situational modifiers.
     show screen person_info_ui(the_person)
     if report_log is None:
@@ -32,8 +32,11 @@ label fuck_person(the_person, private= True, start_position = None, start_object
             $ the_person.add_situational_slut("cheating", -20 + (the_person.get_opinion_score("cheating on men") * -20), "I could never cheat on my husband!")
 
     #Privacy modifiers
+    if mc.location.get_person_count() == 1 and not private:
+        $ private = True #If we're alone in the space we're always Private, even if we had left the possibility for people being around.
+
     if not private:
-        if the_person.sluttiness < 50:
+        if the_person.effective_sluttiness() < 50:
             $ the_person.add_situational_slut("public_sex", -10 + the_person.get_opinion_score("public sex") * 5, "There are people watching...")
         else:
             $ the_person.add_situational_slut("public_sex", the_person.get_opinion_score("public sex") * 5, "There are people watching!")
@@ -45,7 +48,7 @@ label fuck_person(the_person, private= True, start_position = None, start_object
         if girlfriend_role in the_person.special_role: #Girlfriend and affairs gain full Love
             $ the_person.add_situational_slut("love_modifier", the_person.love, "You're my special someone, I love you!")
         elif affair_role in the_person.special_role:
-            $ the_person.add_situational_slut("love_modifier", the_person.love, "We may keep it a secret, but I love you!")
+            $ the_person.add_situational_slut("love_modifier", the_person.love, "I have to keep it a secret, but I love you!")
         elif the_person.has_family_taboo(): #Family now only gains 1/4 (but this now helps offset the taboo penalty)
             if mother_role in the_person.special_role:
                 $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "Even if it's wrong, a mother should do everything she can for her son!")
@@ -55,6 +58,19 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                 $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "I love you, even though we're related!")
         else: #If you aren't in a relationship with them only half their Love applies.
             $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/2), "I really like you, let's see where this goes!")
+
+    if the_person.happiness <= 95:
+        $ happiness_effect = __builtin__.round((100 - the_person.happiness)/5.0)
+        if the_person.happiness <= 75:
+            $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so unhappy, I just don't want to do anything!")
+        else:
+            $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm just not in the mood right now.")
+    elif the_person.happiness >= 105:
+        $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
+        if the_person.happiness >= 125:
+            $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so happy, I'm up for anything!")
+        else:
+            $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "Today's a good day, let's see where this goes!")
 
     $ round_choice = "Change" # We start any encounter by letting them pick what position they want (unless something is forced or the girl is in charge)
     $ first_round = True
@@ -68,6 +84,11 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                     # We need to make sure we're using an appopriate object
                     call girl_choose_object(the_person, position_choice) from _call_girl_choose_object
                     $ object_choice = _return
+                    if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                        $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                        $ the_person.break_taboo(position_choice.associated_taboo)
+                    else:
+                        $ position_choice.call_transition(round_choice, the_person, mc.location, object_choice)
 
             if position_choice is None: #There's no position we can take
                 "[the_person.title] can't think of anything more to do with you."
@@ -82,8 +103,9 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                 the_person.char "Whew, that felt great. Thanks for the good time [the_person.mc_title]!"
                 $ round_choice = "Girl Leave"
             else:
-                "[the_person.possessive_title] is in control, and keeps on [position_choice.verbing] you."
+                "[the_person.possessive_title] is still in control and keeps [position_choice.verbing] you."
                 $ round_choice = "Continue"
+
         else:
             # Forced actions (when the guy is in charge) go here and set round_choice.
             pass
@@ -144,7 +166,7 @@ label fuck_person(the_person, private= True, start_position = None, start_object
 
                 if position_choice and object_choice:
                     $ position_choice.redraw_scene(the_person)
-                    if skip_intro:
+                    if skip_intro and first_round:
                         pass
                     elif first_round:
                         $ the_person.draw_person() #Draw her standing until we pick a new position
@@ -171,7 +193,10 @@ label fuck_person(the_person, private= True, start_position = None, start_object
                     "Your post orgasm cock softens, stopping you from [position_choice.verbing] [the_person.possessive_title] for now."
                     $ position_choice = None
                 elif position_choice.guy_energy > mc.energy:
-                    "You're too exhausted to continue [position_choice.verbing] [the_person.possessive_title]."
+                    if girl_in_charge:
+                        "You're too exhausted to let [the_person.possessive_title] keep [position_choice.verbing] you."
+                    else:
+                        "You're too exhausted to continue [position_choice.verbing] [the_person.possessive_title]."
                     $ position_choice = None
                 elif position_choice.girl_energy > the_person.energy:
                     #TODO: Add some differentiated dialgoue depending on the position.
@@ -201,14 +226,14 @@ label fuck_person(the_person, private= True, start_position = None, start_object
 
         elif round_choice == "Leave":
             $ finished = True # Unless something stops us the encounter is over and we can end
-            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience: #She's disobedient and will take control of the encounter. disobed disobd
+            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience and the_person.energy >= 30: #She's disobedient and will take control of the encounter. disobed disobd
                 $ the_person.call_dialogue("sex_take_control")
                 $ the_person.change_obedience(-3)
                 $ girl_in_charge = True
                 $ finished = False
                 $ position_choice = None #She picks the position now, because she has her own list of possibilities
 
-            elif (the_person.arousal > the_person.max_arousal - 30) and (report_log.get("girl orgasms", 0) == 0) and report_log.get("beg finish", 0) == 0: #Within 30 of orgasming and she hasn't cum yet
+            elif (the_person.arousal > the_person.max_arousal - 30) and (report_log.get("girl orgasms", 0) == 0) and report_log.get("beg finish", 0) == 0 and the_person.energy >= 30: #Within 30 of orgasming and she hasn't cum yet
                 # They're close to their orgasm and beg you to help them finish.
                 $ the_person.call_dialogue("sex_beg_finish")
                 menu:
@@ -661,6 +686,8 @@ label girl_strip_event(the_person, the_position, the_object):
             $ the_position.call_strip_ask(the_person, the_clothing, mc.location, the_object)
         else:
             $ the_position.call_strip(the_person, the_clothing, mc.location, the_object) #If a girl's outfit is less slutty than she is currently feeling (with arousal factored in) she will want to strip stuff off.
+
+    $ the_person.update_outfit_taboos()
     return
 
 label affair_check(the_person, report_log): #Report log is handed over so we can make reference to the specific scene if we want.

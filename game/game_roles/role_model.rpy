@@ -64,7 +64,7 @@ label model_photography_list_label(the_person):
 
             call screen outfit_select_manager(slut_limit = the_person.sluttiness, show_overwear = False, show_underwear = False)
             if not _return == "No Return":
-                if the_person.judge_outfit(_return.slut_requirement):
+                if the_person.judge_outfit(the_person.outfit, _return.slut_requirement):
                     the_person.char "Yeah, I think that would look good. I'll go put that on."
 
                 $ renpy.scene("Active")

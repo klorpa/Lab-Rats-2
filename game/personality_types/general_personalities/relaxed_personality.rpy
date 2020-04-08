@@ -323,7 +323,7 @@ label relaxed_seduction_accept_crowded(the_person):
         elif the_person.sluttiness < 50:
             the_person.char "Come on, let's go find someplace quiet where we won't be interupted."
         else:
-            the_person.char "No point waisting any time then, right? Let's get to it!"
+            the_person.char "No point wasting any time then, right? Let's get to it!"
     else:
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if the_person.sluttiness + (5*the_person.get_opinion_score("cheating on men")) > 50:

@@ -21,9 +21,13 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         employee_pay_cash_action = Action("Pay her a cash bonus.", employee_pay_cash_requirement, "employee_pay_cash_bonus",
             menu_tooltip = "A bonus in cold hard cash is good for obedience and happiness. The larger the reward the greater the effect.")
         employee_performance_review = Action("Start a performance review. {image=gui/heart/Time_Advance.png}", employee_performance_review_requirement , "employee_performance_review",
-            menu_tooltip = "Bring her to your office for a performance review. Get her opinion about her job, reward, punish, or fire her as you see fit. Can only be performed once every seven days.")
+            menu_tooltip = "Bring her to your office for a performance review. Get her opinion about her job, reward, punish, or fire her as you see fit. Can only be done once every seven days.")
+        employee_paid_serum_test = Action("Test serum (paid) -$100.", employee_paid_serum_test_requirement, "employee_paid_serum_test_label",
+            menu_tooltip = "Pay her to willingly take a dose of serum, per company policy.")
+        employee_unpaid_serum_test = Action("Test serum (unpaid).", employee_unpaid_serum_test_requirement, "employee_unpaid_serum_test_label",
+            menu_tooltip = "Give her a dose of serum to test on herself, per company policy.")
 
-        employee_role = Role("Employee", [employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action])
+        employee_role = Role("Employee", [employee_paid_serum_test, employee_unpaid_serum_test, employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action])
 
         #HEAD RESEARCHER ACTIONS#
         improved_serum_unlock = Action("Ask about advancing your research.", improved_serum_unlock_requirement, "improved_serum_unlock_label",
