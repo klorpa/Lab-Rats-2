@@ -224,7 +224,7 @@ init -3 python:
             return True
 
     def demand_strip_naked_requirement(the_person):
-        if the_person.outfit.tits_visible() and the_person.outfit.vagina_visible():
+        if the_person.outfit.tits_visible() and the_person.outfit.vagina_visible() and the_person.outfit.tits_available() and the_person.outfit.vagina_available():
             return False
         elif the_person.obedience < 160:
             return "Requires: 160 Obedience"
@@ -233,10 +233,6 @@ init -3 python:
 
 
 label demand_strip_label(the_person):
-    #TODO: Command her to "Get into your underwear", "Show me your tits", or "Get naked"
-    # the_person.effective_sluttiness("bare_tits")
-    # the_person.effective_sluttiness("underwear_nudity")
-    # the_person.effective_sluttiness(["bare_tits", "bare_pussy"])
     $ demand_strip_tits_action = Action("Get your tits out.", demand_strip_tits_requirement, "demand_strip_tits_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Have her strip down until you can see her tits.")
     $ demand_strip_underwear_action = Action("Strip to your underwear.", demand_strip_underwear_requirement, "demand_strip_underwear_label", args = the_person, requirement_args = the_person,

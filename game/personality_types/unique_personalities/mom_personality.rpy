@@ -201,7 +201,123 @@ label mom_flirt_response(the_person):
             "[the_person.title] smiles at you and spins around, giving you a full look at her body."
             the_person.char "Thank you for paying attention to someone like me."
         else:
-            the_person.char "I'm your mother [the_person.mc_title], you shouldn't be complementing me on things like that."
+            the_person.char "I'm your mother [the_person.mc_title], you shouldn't be complimenting me on things like that."
+    return
+
+label mom_flirt_response_low(the_person):
+    the_person.char "Aww, thank you [the_person.mc_title]. I'm really not wearing anything special though."
+    mc.name "Well you're looking good, that's all I know."
+    the_person.char "You're so sweet. Come here!"
+    "[the_person.possessive_title] opens her arms up and gives you a warm, motherly hug."
+
+    return
+
+label mom_flirt_response_mid(the_person):
+    if the_person.effective_sluttiness("underwear_nudity") < 20: #Not very slutty, so it must be high love.
+        the_person.char "Oh [the_person.mc_title], you shouldn't be saying things like that about me."
+        mc.name "Like what? That you're hot?"
+        the_person.char "Yes, that. I appreciate the thought, but I'm still your mother."
+        mc.name "That doesn't make me blind. I'm just telling you what I see [the_person.title], it's suppose to be a compliment."
+        "She sighs and smiles."
+        the_person.char "Well then thank you for the compliment. Come here."
+        "[the_person.possessive_title] gives you a quick, motherly hug."
+        the_person.char "You're always so good to me. I love you."
+        mc.name "I love you too [the_person.title]."
+    else:
+        the_person.char "Oh, well thank you [the_person.mc_title]! That's nice to hear!"
+        "She places a hand on her stomach and sighs."
+        the_person.char "I don't have the same body I did when I was young though. I've put on a few pounds since then."
+        mc.name "If you did you've put it in all the right places. Turn around for me."
+        "[the_person.possessive_title] raises an eyebrow and hesitates, then shrugs and turns around for you."
+        $ the_person.draw_person(position = "back_peek")
+        the_person.char "Like this?"
+        mc.name "Just like that. Look, have great hips and a fantastic ass. You should be showing them off more."
+        $ the_person.draw_person()
+        "[the_person.possessive_title] turns around and slaps you lightly on the shoulder, smiling and blushing."
+        the_person.char "[the_person.mc_title]! Stop it, you're making me blush!"
+    return
+
+label mom_flirt_response_high(the_person):
+    if mc.location.get_person_count() == 1: #If you are alone she'll flirt with you
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): # High sluttiness flirt
+            the_person.char "Oh [the_person.mc_title], you know you shouldn't be saying things like that to me."
+            the_person.char "You should be thinking about women your own age. Isn't there anyone else you think is pretty?"
+            mc.name "You're the most beautiful woman I know [the_person.title]. No matter how much I try I can't get you out of my head."
+            the_person.char "Aww... I suppose I can't be too angry at you then. Come here."
+            "She opens her arms up and pulls you into a hug. After a quick squeeze she steps back to arms length and smiles, looking into your eyes."
+            the_person.char "No matter what you're always going to be my amazing little boy."
+            menu:
+                "Kiss her.":
+                    if the_person.has_taboo("kissing"):
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        "You lean in and kiss [the_person.possessive_title]. She does her best to kiss you back, but it's clear she's still adjusting."
+                        $ the_person.break_taboo("kissing")
+                    else:
+                        "You lean in and kiss her. She seems startled for a second, then wraps her arms around you and returns the kiss."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_20
+
+                "Just flirt.":
+                    mc.name "And you'll always be my beautiful, loving mom."
+                    "[the_person.possessive_title] smiles warmly and hugs you again. This time you let your hands slide down her back and rest them on her ass."
+                    the_person.char "You shouldn't... Oh what's the harm. Go ahead, give it a squeeze."
+                    "You grab [the_person.possessive_title]'s ass and massage it gently. She sighs softly into your ear as you play with her."
+                    the_person.char "Okay... That's enough for now. I don't want you getting too excited."
+                    mc.name "Okay [the_person.title]."
+                    "You give her ass one last slap and leave it jiggling as you step back. She rolls her eyes."
+                    the_person.char "Oh... Some days I don't know what I'm going to do with you."
+
+        else: # Just high love flirt
+            the_person.char "[the_person.mc_title], I'm your mother. That's not funny."
+            mc.name "Oh come on [the_person.title], there's nobody else around. You don't have to be so uptight."
+            the_person.char "It's not right though, you shouldn't be... looking at me like this."
+            mc.name "You're an attractive woman and I'm a young man, it's just how my brain work. Just take it as a compliment."
+            "She sighs and rolls her eyes."
+            the_person.char "Okay, thank you. Just... Don't expect me to actually take anything off for you."
+
+    else: #She shushes you and rushes you off somewhere private.
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): #She's slutty, but you need to find somewhere private so people don't find out.
+            the_person.char "[the_person.mc_title], watch what you're saying! There are other people around."
+            mc.name "It's fine [the_person.title], nobody else is listening."
+            "She puts her hands on her hips and shakes her head severly."
+            the_person.char "Do we need to go somewhere private to talk about your behaviour?"
+            menu:
+                "Find someplace quiet.":
+                    mc.name "I think we should, we don't want to bother anyone else."
+                    "[the_person.possessive_title] leads you away. When you're alone she turns back to you."
+                    the_person.char "I don't mind you joking around like that, but if there are other people around you should be more... discrete."
+                    mc.name "I know [the_person.title], but you're so beautiful I just get carried away."
+                    "Her stern glare soften. She sighs and smilse."
+                    the_person.char "I can't be angry, you're just feeling the same way every young man does. Come here."
+                    "She pulls you into a hug and kisses you on the cheek. You put your hands around her and move them down her back."
+                    if the_person.has_taboo("kissing"):
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        "You lean in and kiss [the_person.possessive_title]. She does her best to kiss you back, but it's clear she's still adjusting."
+                        $ the_person.break_taboo("kissing")
+                    else:
+                        the_person.char "Hey... What are you doing? We shouldn't..."
+                        "You slide your hands onto her ass and rub it gently."
+                        mc.name "Come on, just for a few minutes. I'm so horny right now..."
+                        "You rub [the_person.possessive_title]'s butt while she thinks. Finally she sighs reluctantly and nods."
+                        the_person.char "Only because you really need it."
+                        "You lean forward and kiss her passionately. It takes her a few seconds to warm up, but soon she is kissing you back with just as much enthusiasm."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_21
+
+                "Just flirt.":
+                    mc.name "Relax, I'm just joking around. What I mean is you're looking stunning today."
+                    the_person.char "Thank you, that's a much more appropriate way of saying it."
+                    "Her eyes soften and she sighs."
+                    the_person.char "I'm sorry, I didn't mean to be so tough on you. If we're alone you can joke around like that, but when there are other people around..."
+                    the_person.char "I just don't want anyone to misunderstand our... relationship."
+                    mc.name "I understand [the_person.title]. I'll be more careful."
+
+        else: #She's not slutty, so she's embarassed about what you're doing.
+            "[the_person.possessive_title] gasps and covers her mouth."
+            the_person.char "Oh my god, [the_person.mc_title]!"
+            mc.name "Relax [the_person.tite], I'm just joking around."
+            "She shakes her head sternly."
+            the_person.char "Well I don't find it very funny when other people are around. It's embarrassing."
+            mc.name "I'm sorry, I'll wait until we're alone next time."
+            the_person.char "I'm not even sure if you should be making comments like that to me alone, but... It's fine."
     return
 
 label mom_cum_face(the_person):
@@ -232,7 +348,7 @@ label mom_cum_mouth(the_person):
 
 label mom_cum_vagina(the_person):
     if mc.condom:
-        if the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+        if the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Give me your cum sweetheart! I don't care if the condom works, I want to feel your seed in me!"
         else:
             the_person.char "Pump it out into that condom sweetheart, it's perfectly fine to cum in me as long as it's on!"
@@ -441,7 +557,7 @@ label mom_kissing_taboo_break(the_person):
     "Her eyes melt."
     the_person.char "Oh sweetheart! I want to be close to you too! You know you'll always be my special man, right?"
     the_person.char "Okay, we can kiss just a little bit if that's how you want to show your love. I understand how you feel."
-    the_person.char "And uhm... Let's just not tell anyone else about this, okay? There's nothing wrong with it, but other people might get the wrong idea."
+    the_person.char "And um... Let's just not tell anyone else about this, okay? There's nothing wrong with it, but other people might get the wrong idea."
     mc.name "Of course [the_person.title]."
     return
 
@@ -650,7 +766,7 @@ label mom_licking_pussy_taboo_break(the_person):
             mc.name "You've done the same for me, I just want to return the favour."
             the_person.char "Well, men who think like you are very rare. You're going to make some girl very happy one day."
         mc.name "For today, I just want to make you happy."
-        the_person.cha "Aww. You're too sweet. Okay then, you can do whatever you'd like."
+        the_person.char "Aww. You're too sweet. Okay then, you can do whatever you'd like."
     return
 
 label mom_vaginal_sex_taboo_break(the_person):

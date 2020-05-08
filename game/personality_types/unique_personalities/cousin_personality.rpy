@@ -53,6 +53,114 @@ init 1300:
             titles_function = cousin_titles, possessive_titles_function = cousin_possessive_titles, player_titles_function = cousin_player_titles)
 
 ### DIALOGUE ###
+label cousin_flirt_response_low(the_person):
+    #You've salvaged your relationship with her if your love is this high.
+    "[the_person.possessive_title] seems caught off guard by the compliment."
+    the_person.char "Uh, wow. Thanks, I guess. It's not like it's anything special."
+    mc.name "Well it turns out you can look cute without even trying."
+    "She laughs and rolls her eyes."
+    the_person.char "You're weird, you know that?"
+    return
+
+label cousin_flirt_response_mid(the_person):
+    if the_person.effective_sluttiness("underwear_nudity") < 20: #Not very slutty, so it must be high love.
+        the_person.char "Oh my god, can you stop perving on me for, like, two seconds?"
+        mc.name "What? Don't you want to know when you're looking good?"
+        "She sighs and rolls her eyes."
+        the_person.char "Whatever, it's fine I guess. Thanks."
+    else:
+        the_person.char "Oh yeah? You're really checking out your own cousin, huh?"
+        "She runs her hands down her hips, outlining the shape of her body."
+        the_person.char "That's so wrong, but you know that. I bet you're getting turned on, just from looking at me."
+        $ the_person.draw_person(position = "back_peek")
+        "[the_person.possessive_title] turns around and leans forward, sticking her butt towards you and wiggling it."
+        the_person.char "Is this what you wanted to see?"
+        mc.name "It's a good start."
+        $ the_person.draw_person()
+        "She turns back to you and smiles mischievously."
+        the_person.char "Keep being a good boy and maybe you'll get to see more."
+    return
+
+label cousin_flirt_response_high(the_person):
+    if mc.location.get_person_count() == 1: #If you are alone she'll flirt with you
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): # High sluttiness flirt
+            the_person.char "Oh I'm sorry, am I turning you on with my big, juicy tits?"
+            $ the_person.draw_person(the_animation = blowjob_bob)
+            "[the_person.possessive_title] grabs her boobs and bounces them up and down for you."
+            mc.name "I mean... Yeah."
+            "She smiles and squeezes down on her own breasts."
+            the_person.char "Good, I like having that kind of power over you."
+            menu:
+                "Kiss her.":
+                    mc.name "Yeah? How do you like this?"
+                    $ the_person.draw_person()
+                    if the_person.has_taboo("kissing"):
+                        "You put an arm around her waist and pull her close. She hesitates and leans away just before you kiss her."
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        $ the_person.break_taboo("kissing")
+                        "You kiss her, and after a moment of hesitation she kisses you back."
+                    else:
+                        "You put your arm around her waist and kiss her. She hesitates for a moment, then leans her body eagerly against yours."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_53
+
+                "Just flirt.":
+                    mc.name "Yeah? What are you planning to do with that power?"
+                    the_person.char "If I told you it would ruin the surprise. Don't worry, I promise I'm only going to use it for evil."
+                    "She winks and lets go of her tits. It takes a second before they stop jiggling completely."
+                    $ the_person.draw_person()
+
+        else: # Just high love flirt
+            "She laughs and rolls her eyes."
+            the_person.char "How likely am I to strip for my cousin? Pretty close to zero."
+            mc.name "So you're saying there's a chance?"
+            the_person.char "Oh my god, you're the worst. It's kind of fun knowing I have this effect on you."
+            "She sways her hips side to side, accentuating her curves."
+            the_person.char "But no, I don't think you have much of a chance."
+
+
+    else: #She shushes you and rushes you off somewhere private.
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): #She's slutty, but you need to find somewhere private so people don't find out.
+            the_person.char "Oh my god you little perv, there are people around! Keep it in your pants."
+            "She glances around nervously, checking to see if anyone was listening."
+            the_person.char "If you want to talk to me like that you'll have to wait until we're alone."
+            menu:
+                "Find someplace quiet.":
+                    mc.name "I don't feel like waiting. Come on, let's sneak away."
+                    the_person.char "Like, right now? Ugh, fine."
+                    "You lead [the_person.possessive_title] away and find a quiet spot where you can be alone."
+                    if the_person.has_taboo("kissing"):
+                        "You put your arm around her and pull her close, moving to kiss her."
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        $ the_person.break_taboo("kissing")
+                        "You kiss her, and after a moment of hesitation she kisses you back."
+                    else:
+                        "When you finally have some privacy you don't waste any time. You put an arm around [the_person.title] and pull her into a passionate kiss."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_54
+
+                "Just flirt.":
+                    mc.name "Come on, you're really going to make me wait?"
+                    $ the_person.draw_person(the_animation = blowjob_bob)
+                    "[the_person.possessive_title] smiles mischeviously and grabs her tits, jiggling them in front of your face."
+                    the_person.char "Yeah, I am. Be a patient boy and maybe you'll get to see these later."
+                    "She winks and lets go of her tits. It takes a second before they stop jiggling completely."
+                    $ the_person.draw_person()
+
+        else: #She's not slutty, so she's embarassed about what you're doing.
+            the_person.char "Oh my god, you little perv."
+            "She glances around nervously, checking to see if anyone was listening."
+            the_person.char "Can you try and keep it in your pants when there are other people around?"
+            mc.name "Relax, I'm just joking around."
+            the_person.char "Uh huh? So you're telling me you don't want to play with my big, juicy tits?"
+            $ the_person.draw_person(the_animation = blowjob_bob)
+            "She grabs her tits and jiggles them in front of your face."
+            mc.name "Well... I wouldn't say no."
+            the_person.char "Yeah, that's what I thought. So let's try not to get in trouble, okay?"
+            $ the_person.draw_person()
+            "She legs go of her boobs and lets them drop. It takes a second before they stop jiggling completley."
+            mc.name "Alright, I get it."
+
+    return
+
 ## Taboo break dialogue ##
 label cousin_kissing_taboo_break(the_person):
     the_person.char "Oh my god... Were you going to kiss me?"

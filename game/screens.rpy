@@ -249,7 +249,6 @@ init -2 python:
 
 screen main_choice_display(elements_list, draw_hearts_for_people = True, person_preview_args = None): #Elements_list is a list of lists, with each internal list recieving an individual column
     #The first element in a column should be the title, either text or a displayable. After that it should be a tuple of (displayable/text, return_value).
-
     #[["Title",["Item",Return] ]]
 
 
@@ -317,8 +316,9 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                 if person_preview_args is None:
                                     $ person_preview_args = {}
 
-                                $ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
-                                $ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="Active",what=person_displayable,tag=item.name))
+                                #$ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
+                                $ hovered_list.append(Function(renpy.invoke_in_thread, item.threaded_person_displayable, lighting = mc.location.get_lighting_conditions(), **person_preview_args))
+                                #$ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="Active",what=person_displayable,tag=item.name))
                                 $ unhovered_list.append(Function(renpy.scene, "Active"))
 
                             if isinstance(item,Action):

@@ -813,7 +813,7 @@ init 1 python:
         global lily
         lily = create_random_person(name = "Lily", last_name = mc.last_name, age = 19, body_type = "thin_body", face_style = "Face_6", tits = "B", height = 0.90, hair_colour="blond", hair_style = ponytail, skin="white", \
             eyes = "light blue", personality = lily_personality, name_color = "#FFB1F8", dial_color = "#FFB1F8", starting_wardrobe = lily_wardrobe, start_home = lily_bedroom, \
-            stat_array = [5,2,2], skill_array = [2,2,0,1,1], sex_array = [2,1,0,0], start_sluttiness = 8, start_obedience = -26, start_happiness = 122, start_love = 15, \
+            stat_array = [5,2,2], skill_array = [2,2,0,1,1], sex_array = [2,1,0,0], start_sluttiness = 8, start_obedience = -26, start_happiness = 122, start_love = 8, \
             title = "Lily", possessive_title = "Your sister", mc_title = mc.name, relationship = "Single", kids = 0)
 
         lily.special_role.append(sister_role)
@@ -839,7 +839,7 @@ init 1 python:
         mom_base.add_accessory(diamond_ring.get_copy())
         mom = create_random_person(name = "Jennifer", last_name = mc.last_name, age = 42, body_type = "standard_body", face_style = "Face_1", tits = "DD", height = 0.94, hair_colour = "black", hair_style = long_hair, skin="white", \
             eyes = "brown", personality = mom_personality, name_color = "#8fff66", dial_color = "#8fff66", starting_wardrobe = mom_wardrobe, start_home = mom_bedroom, \
-            stat_array = [3,2,4], skill_array = [5,2,0,0,2], sex_array = [2,1,3,0], start_sluttiness = 7, start_obedience = 12, start_happiness = 108, start_love = 25, \
+            stat_array = [3,2,4], skill_array = [5,2,0,0,2], sex_array = [2,1,3,0], start_sluttiness = 7, start_obedience = 12, start_happiness = 108, start_love = 8, \
             title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2, base_outfit = mom_base)
 
         mom.special_role.append(mother_role)

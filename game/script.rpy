@@ -4,7 +4,11 @@
 #Otherwise, it uses the default standing images. Right now, this should have changed absolutely nothing about the way the game works.
 
 init -2:
-    default persistent.vren_animation = True
+    if renpy.macintosh: #Macs have a bug related to high resolution monitors that breaks the animation system. Animation is possible on some monitors, but users must explicitly enable it from the menu.
+        default persistent.vren_animation = False
+
+    else:
+        default persistent.vren_animation = True
 
 init -2 python:
 
@@ -20,9 +24,12 @@ init -2 python:
     if not renpy.mobile:
         import shader
 
-    config.predict_screen_statements = True
-    config.predict_statements = 0
-    config.predict_screens = True
+    config.predict_screen_statements = False #True
+    config.predict_statements = 50
+    config.predict_screens = False #True
+
+    config.cache_surfaces = False
+    config_image_cache_size = 8
 
     config.image_cache_size = 2
     config.layers.insert(1,"Active") ## The "Active" layer is used to display the girls images when you talk to them. The next two lines signal it is to be hidden when you bring up the menu and when you change contexts (like calling a screen)
@@ -51,7 +58,6 @@ init -2 python:
     # THIS IS WHAT PREVENTS IT FROM INDEXING IMAGES
     # SEE 00images.rpy for where this is created
     config.images_directory = None
-
     preferences.gl_tearing = True ## Prevents juttery animation with text while using advanced shaders to display images
 
     _preferences.show_empty_window = False #Prevents Ren'py from incorrectly showing the text window in complex menu sitations (which was a new bug/behaviour in Ren'py v7.2)
@@ -2011,6 +2017,12 @@ init -2 python:
             elif day%7 == 6 or day%7 == 7: #If the new day is a weekend day
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
 
+        def threaded_person_displayable(self, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Starts a separate thread to show this displayable, removing delay.
+            renpy.scene("Active")
+            the_displayable = self.build_person_displayable(lighting = mc.location.get_lighting_conditions())
+            renpy.show(self.name, at_list=[character_right, scale_person(self.height)], layer="Active",what = the_displayable, tag = self.name)
+
+
         def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Encapsulates what is done when drawing a person and produces a single displayable.
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
@@ -2030,13 +2042,12 @@ init -2 python:
             x_size = __builtin__.int(the_size[0])
             y_size = __builtin__.int(the_size[1])
 
-            hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplage
+            hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplate
 
             displayable_list.insert(0, ((0,0),hair_backplate)) #The hair plate is what we want to actually be displayed first, but we need to know the XY sizes of the body first
 
             displayable_list.extend(self.outfit.generate_draw_list(self,position,emotion,special_modifier, lighting = lighting)) #Get the displayables for everything we wear. Note that extnsions do not return anything because they have nothing to show.
             displayable_list.append(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting)) #Get hair
-
             #NOTE: default return for the_size is floats, even though it is in exact pixels. Use int here otherwise positional modifiers like xanchor and yalign do not work (no displayable is shown at all!)
             composite_list = [(x_size,y_size)] #Now we build a list of our parameters, done like this so they are arbitrarily long
             if background_fill: #If we have a background add it now.
@@ -2057,8 +2068,26 @@ init -2 python:
                 composite_list.append(Frame("/gui/Character_Window_Frame.png", 12, 12))
 
             final_image = Composite(*composite_list) # Create a composite image using all of the displayables
-
             return final_image
+
+        # def test_thread(self):
+        #     the_render = the_displayable = self.build_person_displayable(no_frame = True).render(1920, 1080, 0 ,0)
+        #     the_surface = renpy.display.draw.screenshot(the_render, False)
+        #     renpy.invoke_in_thread(self.test_function, the_surface)
+        #
+        # def test_function(self, the_surface):
+        #     #Something in this function causes this thread never to exit. We need to find out what!
+        #     print("Hello World!")
+        #     # the_displayable = self.build_person_displayable(no_frame = True)
+        #     # print("Break 1")
+        #     # #the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height) #This seems to hang while this thread is in action.
+        #     # the_render = renpy.render(the_displayable, 1920, 1080,0,0)
+        #     print("Break 2")
+        #     # the_surface = renpy.display.draw.screenshot(the_render, False) #This is a relatively time expensive operation.
+        #     print("Break 3")
+        #     save_surface(the_surface,"_TEST004")
+        #     #renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform.
+        #     print("All Done!") #This style works. We have to generate the displayable inside of the main thread, because display.draw only functions
 
         def build_person_animation(self, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0):
             if background_fill is None:
@@ -2068,24 +2097,35 @@ init -2 python:
                 the_animation = wiggle_animation #Placeholder in case this gets called without any proper animation argument
 
             the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
-            the_size = the_displayable.render(10,10,0,0).get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size of things inside it.
+            the_render = the_displayable.render(10,10,0,0)
+            the_size = the_render.get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size of things inside it.
+
             x_size = __builtin__.int(the_size[0])
             y_size = __builtin__.int(the_size[1])
 
-            the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height)
-            the_surface = renpy.display.draw.screenshot(the_surftree, False)
-            surface_file = io.BytesIO()
 
-            renpy.display.module.save_png(the_surface, surface_file, 0)
+            # the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height) # Turns out this isn't needed, screenshot() operates just fine a pure displayable Render.
+            the_surface = renpy.display.draw.screenshot(the_render, False) #This is a relatively time expensive operation.
+            surface_file = io.BytesIO()
+            renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform.
             static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
             surface_file.close()
+
             physical_x, physical_y = renpy.get_physical_size()
+            physical_x = physical_x*1.0
+            physical_y = physical_y*1.0
+            config_x = config.screen_width * 1.0
+            config_y = config.screen_height * 1.0
 
             if physical_x/(16.0/9.0) > physical_y: #Account for the screen resolution difference from 16x9
-                y_scale = 1080.0/physical_y
+                #y_scale = 1080.0/physical_y
+                y_scale = 1*(config_y/physical_y) #This should adjust for high DPI displays that have a higher physical pixel density than their stated resolution
+
                 x_scale = y_scale
             else:
-                x_scale = 1920.0/physical_x
+                #x_scale = 1920.0/physical_x
+                x_scale = 1*(config_x/physical_x)
+
                 y_scale = x_scale
             #y_scale = #Renpy auto-includes black bars above and below the game if it is taller/shorter than standard res, so the scaling factor for y cannot be trusted.
 
@@ -2093,7 +2133,6 @@ init -2 python:
 
 
             the_image_name = self.name + " | " + str(time.time())
-
 
             composite_components = []
             region_weight_items_dict = the_animation.get_weight_items()
@@ -2111,6 +2150,7 @@ init -2 python:
                 composite_components.append(region_mask)
 
 
+
             the_mask_composite = im.Composite((renpy.config.screen_width, renpy.config.screen_height), *composite_components)
 
             mask_image = im.Blur(the_mask_composite, 2)
@@ -2123,12 +2163,14 @@ init -2 python:
 
             cropped_animated_displayable = Crop((0,0,x_size,y_size), raw_animated_displayable)
             framed_animated_displayable = Composite((x_size,y_size),(0,0),cropped_animated_displayable,(0,0),Frame("/gui/Character_Window_Frame.png", 12, 12))
-
             return framed_animated_displayable#The shaderdisplayable
 
 
         def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0): #Draw the person, standing as default if they aren't standing in any other position.
-            renpy.scene("Active")
+            # PROOTOTYPE! Soon character drawing will be multithreaded with everything except for the screen render for animation handled by the main thread.
+            # Alternatively I may be able to process the render myself in PyOpenGL and create a .png from that. This would allow the entire process to function without the main thread.
+            #renpy.invoke_in_thread(self.draw_person_in_thread, position, emotion, special_modifier, show_person_info, lighting, background_fill, the_animation, animation_effect_strength)
+
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
 
@@ -2138,10 +2180,6 @@ init -2 python:
             if not can_use_animation():
                 the_animation = None
 
-            if show_person_info:
-                renpy.show_screen("person_info_ui",self)
-
-
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
@@ -2150,9 +2188,37 @@ init -2 python:
             else:
                 final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
 
+            renpy.scene("Active")
+            if show_person_info:
+                renpy.show_screen("person_info_ui",self)
             renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
 
-
+        # PROTOTYPE! In an ideal world this would draw the character in another thread. Unfortunately only the main Renpy thread is capable of rendering/capturing displayable images, so having this work with animation will require extra effort.
+        # def draw_person_in_thread(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
+        #
+        #     if position is None:
+        #         position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
+        #
+        #     if the_animation is None:
+        #         the_animation = self.idle_animation
+        #
+        #     if not can_use_animation():
+        #         the_animation = None
+        #
+        #
+        #
+        #
+        #     if lighting is None:
+        #         lighting = mc.location.get_lighting_conditions()
+        #
+        #     if the_animation:
+        #         final_image = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
+        #     else:
+        #         final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
+        #     if show_person_info:
+        #         renpy.show_screen("person_info_ui",self)
+        #     renpy.scene("Active")
+        #     renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
 
         def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
             #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
@@ -2207,7 +2273,8 @@ init -2 python:
                 return "default"
 
         def call_dialogue(self, type, **extra_args): #Passes the paramater along to the persons personality and gets the correct dialogue for the event if it exists in the dict.
-            self.personality.get_dialogue(self, type, **extra_args)
+            return self.personality.get_dialogue(self, type, **extra_args)
+
 
         def get_opinion_score(self, topic): #Like get_opinion_topic, but only returns the score and not a tuple. Use this when determining a persons reaction to a relavent event.
             if topic in self.opinions:
@@ -2991,7 +3058,8 @@ init -2 python:
             "clothing_accept", "clothing_reject", "clothing_review",
             "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
-            "flirt_response", "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
+            "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high",
+            "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
             "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction",
             "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
             "condomless_sex_taboo_break", "underwear_nudity_taboo_break", "bare_tits_taboo_break", "bare_pussy_taboo_break",
@@ -3031,6 +3099,7 @@ init -2 python:
 
         def get_dialogue(self, the_person, type, **extra_args):
             renpy.call(self.response_dict[type], the_person, **extra_args)
+            return
 
         def generate_default_opinion(self):
             if renpy.random.randint(1,2) == 1:
@@ -3208,7 +3277,7 @@ init -2 python:
             start_sluttiness += 20
 
         if relationship is None:
-            relationship = get_random_from_weighted_list([["Single",100-age],["Girlfriend",50],["Fiancée",120-age*2],["Married",20+age*4]]) #Age plays a major factor.
+            relationship = get_random_from_weighted_list([["Single",120-age],["Girlfriend",50],["Fiancée",120-(age*2)],["Married",20+(age*4)]]) #Age plays a major factor.
 
         if starting_wardrobe is None:
             starting_wardrobe = Wardrobe(name +"'s Wardrobe")
@@ -3943,9 +4012,10 @@ init -2 python:
 
             return return_toggle
 
-        def buy_policy(self):
+        def buy_policy(self, ignore_cost = False):
             mc.business.policy_list.append(self)
-            mc.business.funds -= self.cost
+            if not ignore_cost:
+                mc.business.funds -= self.cost
             if self.on_buy_function is not None:
                 self.on_buy_function(**self.extra_arguments)
 
@@ -4039,7 +4109,7 @@ init -2 python:
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False, body_dependant = True,
         opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0, display_name = None,
-        half_off_regions = None, half_off_ignore_regions = None):
+        half_off_regions = None, half_off_ignore_regions = None, constrain_regions = None):
             self.name = name
             self.proper_name = proper_name #The true name used in the file system
             if display_name is None:
@@ -4109,6 +4179,13 @@ init -2 python:
             else:
                 self.half_off_ignore_regions = [half_off_ignore_regions]
 
+            if constrain_regions is None: #an area of the body that other clothing items are "constrained" to if this item is worn over top.
+                self.constrain_regions = []
+            elif isinstance(constrain_regions, list):
+                self.constrain_regions = constrain_regions
+            else:
+                self.constrain_regions = [constrain_regions]
+
         def __cmp__(self,other):
             if type(self) is type(other):
                 if self.name == other.name and self.hide_below == other.hide_below and self.layer == other.layer and self.is_extension == other.is_extension:
@@ -4142,7 +4219,7 @@ init -2 python:
 
             return image_name
 
-        def generate_item_displayable(self, body_type, tit_size, position, lighting = None):
+        def generate_item_displayable(self, body_type, tit_size, position, lighting = None, regions_constrained = None):
             if not self.is_extension: #We don't draw extension items, because the image is taken care of in the main object.
                 if lighting is None:
                     lighting = [1,1,1]
@@ -4158,6 +4235,9 @@ init -2 python:
                     the_image = image_set.get_image(body_type, tit_size)
                 else:
                     the_image = image_set.get_image(body_type, "AA")
+
+                if regions_constrained is None:
+                    regions_constrained = []
 
 
                 converted_mask_image = None
@@ -4206,6 +4286,34 @@ init -2 python:
                 else:
                     final_image = shader_image
 
+                if len(regions_constrained)>0:
+                    # We want to support clothing "constraining", or masking, lower images. This is done by region.
+                    # Each constraining region effectively subtracts itself + a blurred border around it, and then the body region is added back in so it appears through clothing.
+
+                    x_size = 0
+                    y_size = 0
+                    composite_list = None
+                    for region in regions_constrained:
+                        #Begin by building a total mask of all constrained regions
+                        region_mask = Image(region.generate_item_image_name(body_type, tit_size, position))
+
+                        if composite_list is None:
+                            x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size() #Only get the render size once, since all renders are the same size for a pose. Technically this could also be a lookup table if it was significantly impacting performacne
+                            composite_list = [(x_size,y_size)]
+                        composite_list.append((0,0))
+                        composite_list.append(region_mask)
+
+                    composite = im.Composite(*composite_list)
+                    blurred_composite = im.Blur(composite, 8) #Blur the combined region mask to make it wider than the original. This would start to incorrectly include the interior of the mask, but...
+                    constrained_region_mask = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,8,0]) #This is the area to be subracted from the image.
+                    full_body_mask = Image(all_regions.generate_item_image_name(body_type, tit_size, position)) #And this is the area to add back in so it is displayed only along the body in some regions
+                    composite_list.extend([(0,0),full_body_mask])
+                    #BUG: It only seems to be using the first region constrain.
+                    full_body_comp = im.Composite(*composite_list) # This ensures all constrained regions are part of the body mask, enabling support for items like skirts w/ clothing between body parts.
+                    constrained_mask = AlphaBlend(constrained_region_mask, Solid("#FFFFFFFF"), full_body_comp) #This builds the proper final image mask (ie all shown, except for the region around but not including the constrained region)
+                    final_image = AlphaBlend(constrained_mask, Solid("#00000000"), final_image)
+
+
                 if self.half_off:
                     #NOTE: This actually produces some really good looking effects for water/stuff. We should add these kinds of effects as a general thing, probably on the pattern level.
                     #NOTE: Particularly for water/stains, this could work really well (and can use skin-tight region marking, ie. not clothing item dependant).
@@ -4213,20 +4321,20 @@ init -2 python:
                     composite_list = None
                     x_size = 0
                     y_size = 0
-                    for region_to_hide in self.half_off_regions:
+                    for region_to_hide in self.half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
                         region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
                         if composite_list is None:
-                            x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size()
+                            x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size() #Only get the render size once, since all renders are the same size for a pose. Technically this could also be a lookup table if it was significantly impacting performacne
                             composite_list = [(x_size,y_size)]
 
                         composite_list.append((0,0))
                         composite_list.append(region_mask)
 
                     composite = im.Composite(*composite_list)
-                    blurred_composite = im.Blur(composite, 12)
-                    transparency_control_image = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,7,0])
+                    blurred_composite = im.Blur(composite, 12) #Blur the combined region mask to make it wider than the original. This would start to incorrectly include the interior of the mask, but...
+                    transparency_control_image = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,7,0]) #...We increase the contribution of alpha from the mask, so a small amount ends up being 100% (this still preserves some gradient at the edge as well)
 
-                    if self.half_off_ignore_regions:
+                    if self.half_off_ignore_regions: #Sometimes you want hard edges, or a section of a piece of clothing not to be moved. These regions are not blured/enlarged and are subtracted from the mask generated above.
                         add_composite_list = None
                         for region_to_add in self.half_off_ignore_regions:
                             region_mask = Image(region_to_add.generate_item_image_name(body_type, tit_size, position))
@@ -4235,20 +4343,11 @@ init -2 python:
                             add_composite_list.append((0,0))
                             add_composite_list.append(region_mask)
                         add_composite = im.Composite(*add_composite_list)
-                        transparency_control_image = AlphaBlend(add_composite, transparency_control_image, Solid("#00000000"), True)
+                        transparency_control_image = AlphaBlend(add_composite, transparency_control_image, Solid("#00000000"), True) #This alpha blend effectively subtracts the half_off_ignore mask from the half_off region mask
 
-                    final_image = AlphaBlend(transparency_control_image, final_image, Solid("#00000000"), True)
-
-
+                    final_image = AlphaBlend(transparency_control_image, final_image, Solid("#00000000"), True) #Use the final mask to hide parts of the clothing image as appopriate.
 
 
-                    #We want to alphablend so we only show the area not covered by the breast region (which we may also want to blur to make it wider)
-                    # tit_window_image = renpy.displayable(breast_region.generate_item_image_name(body_type, tit_size, position)) #We may have to invert this.
-                    # blurred_tit_window = im.Blur(tit_window_image, 18) #Blur it to widen the area affected (we want a window, not a shaded region)
-                    #
-                    # #blurred_tit_window =  im.MatrixColor(blurred_tit_window, im.matrix.brightness(1))
-                    # blur_alpha_contrast = im.MatrixColor(blurred_tit_window, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,8,0])
-                    # final_image = AlphaBlend(blur_alpha_contrast, final_image, Solid("#00000000"), True)
 
                 return final_image
 
@@ -4464,13 +4563,20 @@ init -2 python:
             all_items = self.generate_clothing_list(body_type, tit_size, position) #First generate a list of the clothing objects
             ordered_displayables = []
 
-            for item in all_items:
+            currently_constrained_regions = []
+            for item in reversed(all_items): #To properly constrain items we need to figure out how they look from the outside in, even though we eventually draw from the inside out
                 if type(item) is Facial_Accessory:
                     ordered_displayables.append(item.generate_item_displayable(position, face_style, emotion, special_modifiers, lighting = lighting))
                 else:
                     if not item.is_extension:
-                        ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting))
-            return ordered_displayables
+                        ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions))
+                        for region in item.constrain_regions:
+
+                            if item.half_off and region in item.half_off_regions:
+                                pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
+                            else:
+                                currently_constrained_regions.append(region)
+            return ordered_displayables[::-1] #We iterated over all_items backwards, so our return list needs to be inverted
 
         def generate_split_draw_list(self, split_on_clothing, the_person, position, emotion = "default", special_modifiers = None, lighting = None): #Mirrors generate draw list but returns only the clothing above and below the given item as two lists with the item in between (in a tuple)
             if the_person is None:
@@ -4490,11 +4596,17 @@ init -2 python:
             all_items = self.generate_clothing_list(body_type, tit_size, position)
 
             for item in all_items:
+                currently_constrained_regions = []
                 if type(item) is Facial_Accessory:
                     item_check = item.generate_item_displayable(position, face_style, emotion, special_modifiers, lighting = lighting)
                 else:
                     if not item.is_extension:
-                        item_check = item.generate_item_displayable(body_type, tit_size, position, lighting = lighting)
+                        item_check = item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions)
+                        for region in item.constrain_regions:
+                            if item.half_off and region in item.constrain_regions:
+                                pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
+                            else:
+                                currently_constrained_regions.append(region)
 
                 if not item.is_extension:
                     if item == split_on_clothing:
@@ -5693,7 +5805,7 @@ init -2 python:
             return False
         elif not public_advertising_license_policy.is_active():
             return False
-        elif mc.business.get_employee_count == 0:
+        elif mc.business.get_employee_count() == 0:
             return "Nobody to pick."
         else:
             return True
@@ -5931,7 +6043,7 @@ screen character_create_screen():
                     textbutton "<" action [SetScreenVariable("h_skill",h_skill-1), SetScreenVariable("character_points", character_points+1)] sensitive h_skill>0 style "textbutton_style" text_style "textbutton_text_style"
                     text str(h_skill)+"/[work_skill_max]" style "textbutton_text_style"
                     textbutton ">" action [SetScreenVariable("h_skill",h_skill+1), SetScreenVariable("character_points", character_points-1)] sensitive character_points>0 and h_skill<work_skill_max style "textbutton_style" text_style "textbutton_text_style"
-                text "     Your skill at human resources. Crutial for maintaining an efficent business." style "menu_text_style"
+                text "     Your skill at human resources. Crutial for maintaining an efficient business." style "menu_text_style"
                 null height 30
                 hbox:
                     text "Marketing: " style "menu_text_style"
@@ -5980,7 +6092,7 @@ screen character_create_screen():
                     textbutton "<" action [SetScreenVariable("O_skill",O_skill-1), SetScreenVariable("character_points", character_points+1)] sensitive O_skill>0 style "textbutton_style" text_style "textbutton_text_style"
                     text str(O_skill)+"/[sex_skill_max]" style "textbutton_text_style"
                     textbutton ">" action [SetScreenVariable("O_skill",O_skill+1), SetScreenVariable("character_points", character_points-1)] sensitive character_points>0 and O_skill<sex_skill_max style "textbutton_style" text_style "textbutton_text_style"
-                text "     Your skill at giving oral to women, as well as being a pleasant recipiant." style "menu_text_style"
+                text "     Your skill at giving oral to women, as well as being a pleasant recipient." style "menu_text_style"
                 null height 30
                 hbox:
                     text "Vaginal: " style "menu_text_style"
@@ -9043,7 +9155,7 @@ style float_text_blue is float_text:
 
 label start:
     scene bg paper_menu_background with fade
-    "Lab Rats 2 contains adult content. If you are not over 18 or your contries equivalent age you should not view this content."
+    "Lab Rats 2 contains adult content. If you are not over 18 or your country's equivalent age you should not view this content."
     menu:
         "I am over 18.":
             "Excellent, let's continue then."
@@ -9051,7 +9163,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.27.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.28.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -9268,12 +9380,16 @@ label faq_loop:
                     "Vren" "The first step to make a serum is to design it in your lab. The most basic serum design can be made without any additions, but most will be made by adding serum traits."
                     "Vren" "Serum traits modify the effects of a serum. The effects can be simple - increasing duration or Suggestion increase - or it may be much more complicated."
                     "Vren" "Each serum design has a limited number of trait slots. The number of slots can be increased by using more advanced serum production techniques."
-                    "Vren" "Once you have decided on the traits you wish to include in your serum you will have to spend time in the lab researching it. Place it in the research queue and spend a few hours working in the lab."
-                    "Vren" "More complicated serums will take more time to research. Once the serum is completely researched it can be produced by your production division. Move over their and slot it into the current production queue."
-                    "Vren" "Before you can produce the serum you will need raw supplies. One unit of supply is needed for every production point the serum requires. You can order supply from your main office."
-                    "Vren" "Once you have supplies you can spend time in your production lab. Doses of serum are made in batches - unlocking the ability to make larger batches will let you make more serum with the same amount of supply."
-                    "Vren" "You can either take this serum for your own personal use, or you can head to the main office and mark it for sale. Once a serum is marked for sale you can spend time in your marketing division to find a buyer."
-                    "Vren" "Your research and development lab can also spend time researching new traits for serum instead of producing new serum designs. You slot these into your research queue in the same way you do a new serum design."
+                    "Vren" "Once you have decided on the traits you wish to include in your serum you will have to spend time in the lab researching it."
+                    "Vren " "Place the design in the research queue and spend a few hours working in the lab."
+                    "Vren" "More complicated serums will take more time to research. Once the serum is completely researched it can be produced by your production division."
+                    "Vren" "Move to your production division and slot the new design into the current production queue."
+                    "Vren" "Before you can produce the serum you will need raw supplies."
+                    "Vren" "One unit of supply is needed for every production point the serum requires. You can order supply from your main office."
+                    "Vren" "Once you have supplies you can spend time in your production lab. Serum is made in batches - unlocking larger batches will let you make more serum with the same amount of supply."
+                    "Vren" "You can kepp this serum for personal use or you can head to the main office and mark it for sale."
+                    "Vren" "Once a serum is marked for sale you can spend time in your marketing division to find a buyer."
+                    "Vren" "Your research and development lab can also spend time researching new traits for serum instead of producing new serum designs."
 
                 "Hiring Staff.":
                     "Vren" "While you can do all the necessary tasks for your company yourself, that isn't how you're going to make it big. Hiring employees will let you spend you grow your business and pull in more and more money."
@@ -9519,7 +9635,8 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
                 #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
                 $ talk_action = get_random_from_list(enabled_talk_events)
                 $ talk_action.call_action(picked_option)
-                $ picked_option.on_talk_event_list.remove(talk_action)
+                if talk_action in picked_ption.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
+                    $ picked_option.on_talk_event_list.remove(talk_action)
 
 
             else:
@@ -9641,7 +9758,7 @@ label talk_person(the_person):
     #     menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.", priority = 5)
 
 
-    $ grope_action = Action("Grope her.\n-10 {image=gui/extra_images/energy_token.png}", requirement = grope_requirement, effect = "grope_person", args = the_person, requirement_args = the_person,
+    $ grope_action = Action("Grope her.\n-5 {image=gui/extra_images/energy_token.png}", requirement = grope_requirement, effect = "grope_person", args = the_person, requirement_args = the_person,
         menu_tooltip = "Be \"friendly\" and see how far she is willing to let you take things. May make her more comfortable with physical contact, but at the cost of her opinion of you.")
 
     $ command_action = Action("Give her a command.", requirement = command_requirement, effect = "command_person", args = the_person, requirement_args = the_person,
@@ -10342,6 +10459,8 @@ label advance_time:
                 if _return == "Advance Time":
                     $ mandatory_advance_time = True
 
+        $ renpy.free_memory()
+
     else:
         $ time_of_day += 1 ##Otherwise, just run the end of day code.
 
@@ -10369,7 +10488,7 @@ label advance_time:
                         elif the_crisis[2] == "on_enter":
                             people.on_room_enter_event_list.append(limited_time_event)
 
-    $ renpy.free_memory()
+
     $ mc.location.show_background()
     if mandatory_advance_time: #If a crisis has told us to advance time after it we do so.
         call advance_time from _call_advance_time_28

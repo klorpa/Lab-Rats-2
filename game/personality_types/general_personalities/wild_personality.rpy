@@ -375,6 +375,163 @@ label wild_flirt_response(the_person):
             the_person.char "You'll have to really impress me though, I have high standards."
     return
 
+label wild_flirt_response_low(the_person):
+    if the_person.outfit == the_person.planned_uniform:
+        if the_person.judge_outfit(the_person.outfit):
+            #She's in uniform and likes how it looks.
+            the_person.char "Thanks! I think I look pretty cute in it too."
+            the_person.char "It's nice to work somewhere where I can show off a little."
+            "She smiles and gives you a quick turn to either side, showing off her hips."
+        else:
+            #She's in uniform, but she thinks it's a little too slutty.
+            if the_person.outfit.vagina_visible():
+                # Her pussy is on display.
+                the_person.char "I'm sure you like it; I'm practically naked!"
+                mc.name "Well, you know that it's..."
+                the_person.char "I know, I know. It's company policy. I'm not complaining, exactly. It's kind of fun."
+                mc.name "Give it some time and you'll get use to it."
+                "She smiles and nods."
+                the_person.char "I'm sure I will."
+
+            elif the_person.outfit.tits_visible():
+                # Her tits are out
+                the_person.char "Thanks! I'm still getting use to being so... exposed in this uniform. At least I don't have to wear a bra!"
+                mc.name "You look incredible and you're comfortable. I call that a success."
+                "She laughs and shrugs."
+                the_person.char "Sure, I guess you could call it that."
+    #
+            elif the_person.outfit.underwear_visible():
+                # Her underwear is visible.
+                the_person.char "Thanks! I probably would have picked something that kept me a little more covered, but at our uniform is comfortable."
+                mc.name "It may be a little unconventional, but you look fantastic. You've got exactly the right kind of body for it."
+                the_person.char "Well that's good to know."
+                "She smiles and gives you a quick turn to either side, showing off her body."
+            else:
+                # It's just generally slutty.
+                the_person.char "Well thank you! Our uniforms are a little bold for my taste, but I'm glad I look good in it."
+                "She smiles and gives you a quick turn to either side, showing off her body for you."
+
+    else:
+        #She's in her own outfit.
+        the_person.char "Thanks! It's really cute, right?"
+        $ the_person.draw_person(position = "walking_away")
+        "She smiles and gives you a quick spin, showing off her outfit from every angle."
+        $ the_person.draw_person()
+    return
+
+label wild_flirt_response_mid(the_person):
+    if the_person.outfit == the_person.planned_uniform:
+        if the_person.judge_outfit(the_person.outfit):
+            if the_person.outfit.tits_visible():
+                the_person.char "Are you sure you don't mean my tits look good in this outfit?"
+                "She winks and wiggles her shoulders, setting her boobs jiggling for you."
+                mc.name "All of you looks good, tits included."
+                the_person.char "Good answer. I think these uniforms are pretty hot too. You've got some good fashion sense."
+            else:
+                the_person.char "Aw, thanks! I think your uniforms look pretty hot on me too. You've got some good fashion sense."
+            the_person.char "Maybe I'll invite you shopping one day and you can tell me what else you want to see me in."
+            mc.name "Sounds like a good time."
+
+        else:
+            # the_person.char "I think it shows off a little too much!"
+            the_person.char "Thanks, but I think these uniforms show off just a little too much of my fabulous body."
+            if the_person.outfit.vagina_visible():
+                the_person.char "I mean, look at me! I feel like you should be throwing twenties at me every time I walk away."
+            elif the_person.outfit.tits_visible():
+                the_person.char "I mean, look at me! I feel like you should be tucking a twenty into my underwear every time I want to talk to you."
+            else:
+                the_person.char "I mean, look at it! I feel like an underwear model every time I get dressed for work."
+            mc.name "I understand, but I promise it's important for the business."
+            "She sighs and nods."
+            the_person.char "Yeah, I know. At least you're having a good time. I don't mind that so much."
+
+    else:
+        if the_person.effective_sluttiness() < 20 and mc.location.get_person_count() > 1:
+            if the_person.outfit.tits_visible():
+                the_person.char "Are you sure you don't mean my tits look good in this outfit?"
+                "She winks and wiggles her shoulders, setting her boobs jiggling for you."
+                mc.name "All of you looks good, tits included."
+                the_person.char "Good answer. I knew you would like this look when I was picking it out this morning."
+            else:
+                the_person.char "Aw, thanks! I thought this was a pretty hot look when I was getting dressed this morning."
+
+            the_person.char "Maybe I'll invite you shopping one day, so you can tell me else you want to see me in."
+            mc.name "I can think of a few things already."
+            the_person.char "I'm sure you can."
+
+        else:
+            the_person.char "Thanks, I thought I looked pretty hot in it too."
+            the_person.char "You want a better look, right? Here, how does it make my ass look?"
+            $ the_person.draw_person(position = "back_peek")
+            the_person.char "Good, right?"
+            mc.name "Fantastic. I wish I could get an even better look at it."
+            "[the_person.possessive_title] smiles and turns back to face you."
+            $ the_person.draw_person()
+            the_person.char "I'm sure you do. Take me out for a drink and maybe we can work something out."
+    return
+
+label wild_flirt_response_high(the_person):
+    if mc.location.get_person_count() > 1 and the_person.effective_sluttiness() < (25 - (5*the_person.get_opinion_score("public_sex"))): # There are other people here, if she's not slutty she asks if you want to find somewhere quiet
+        the_person.char "Driving you crazy, huh? Well..."
+        "She glances around before smiling mischievously."
+        the_person.char "We'll have to do something about that, but not here."
+        menu:
+            "Find someplace quiet.":
+                mc.name "Then let's find somewhere that isn't here."
+                the_person.char "Eager, huh? Alright, let's go find somewhere."
+                "You and [the_person.possessive_title] leave and find a quiet spot where you won't be interupted."
+                the_person.char "So... Now what's your plan?"
+
+                if the_person.has_taboo("kissing"):
+                    "You step close to [the_person.title] and put your arm around her waist, pulling her close."
+                    $ the_person.call_dialogue("kissing_taboo_break")
+                    $ the_person.break_taboo("kissing")
+                    "You kiss her. She eagerly presses her body against yours in response."
+                else:
+                    "You step close to [the_person.title] and put your arm around her waist, pulling her close and kissing her."
+                    "She responds immediately and eagerly presses her body against yours."
+                call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_49
+
+            "Just flirt.":
+                mc.name "Not here, huh? How about back at your place then?"
+                the_person.char "Bold. I like it. Maybe if you buy me dinner you'll get your chance."
+
+    else:
+        if mc.location.get_person_count() == 1: #You're alone, so she just didn't meet the sluttiness threshold
+            "[the_person.possessive_title] bites her lower lip and glances around, confirming you're alone."
+            the_person.char "Well it's just the two of us here, so now's your chance to find out. What's your plan?"
+
+        else:  # You aren't alone but she's still into it.
+            the_person.char "Feeling bold today, huh? Well I think your chances are pretty good."
+            if the_person.has_large_tits(): #Bounces her tits for you
+                $ the_person.draw_person(the_animation = blowjob_bob)
+                "[the_person.title] grabs her tits and jiggles them for you."
+                the_person.char "Maybe I can get these girls out for you. Does that sound nice?"
+
+            else: #No big tits, so she can't bounce them (as much)
+                "[the_person.title] runs her hands over her hips sensually, obviously encouraging you to take things furthur."
+
+        menu:
+            "Kiss her.":
+
+                $ the_person.draw_person()
+                if the_person.has_taboo("kissing"):
+                    "You put your arm around [the_person.possessive_title] and lean in close."
+                    $ the_person.call_dialogue("kissing_taboo_break")
+                    $ the_person.break_taboo("kissing")
+                    "You kiss her. She returns the kiss and presses her body against you."
+                else:
+                    "You put your arm around [the_person.possessive_title] and pull her close, leaning in to kiss her."
+                    "She responds immediately, pressing her body against yours and kissing you back."
+                call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_50
+
+            "Just flirt.":
+                $ the_person.draw_person()
+                mc.name "Very tempting, but you're going to have to contain yourself for now."
+                "[the_person.title] pouts melodramatically."
+                the_person.char "You're so cruel. Maybe you can take me out to dinner to make up for it."
+    return
+
 label wild_cum_face(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:

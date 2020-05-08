@@ -66,17 +66,21 @@ init -1 python:
             return False
         if the_person.love < (75 - (10*the_person.get_opinion_score("creampies"))):
             return False
-        renpy.notify("Event exists!")
         return True
 
+
+    ### ON TALK EVENTS ###
     ask_new_title_action = Action("Ask new title", ask_new_title_requirement, "ask_new_title_label", event_duration = 2)
 
+    limited_time_event_pool.append([ask_new_title_action,9,"on_talk"])
+
+    ### ON ENTER EVENTS ###
     sister_walk_in = Action("Sister walk in", sister_walk_in_requirement, "sister_walk_in_label", event_duration = 5)
     nude_walk_in = Action("Nude walk in", nude_walk_in_requirement, "nude_walk_in_label", event_duration = 5)
     mom_house_work_nude = Action("Mom nude house work", mom_house_work_nude_requirement, "mom_house_work_nude_label", event_duration = 5)
     breeding_mom = Action("Mom breeding", mom_breeding_requirement, "breeding_mom_label", event_duration = 5)
 
-    limited_time_event_pool.append([ask_new_title_action,9,"on_talk"])
+
     limited_time_event_pool.append([sister_walk_in,4,"on_enter"])
     limited_time_event_pool.append([nude_walk_in,4,"on_enter"])
     limited_time_event_pool.append([mom_house_work_nude,4,"on_enter"])
@@ -89,7 +93,7 @@ label ask_new_title_label(the_person):
     else:
         call person_new_mc_title(the_person) from _call_person_new_mc_title
 
-    $ renpy.scene("Active")
+    call talk_person(the_person) from _call_talk_person_10
     return
 
 
@@ -314,7 +318,7 @@ label nude_walk_in_label(the_person):
             else:
                 "She turns to you and smiles, seemingly oblivious to her own nudity."
                 the_person.char "Come on in! Did you need something?"
-            $ the_person.update_outfit_taboos()
+
 
     else:
         # She's in her underwear
@@ -342,7 +346,6 @@ label nude_walk_in_label(the_person):
             else:
                 "She turns to you and smiles, waving a hand to invite you in."
                 the_person.char "Come on in, do you need something?"
-
     return
 
 
@@ -424,7 +427,7 @@ label breeding_mom_label(the_person):
     the_person.char "I want you to give me a child. I want you to breed me."
 
     if the_person.has_large_tits():
-        "Her face is flush and her breathing rapid, heaving her breasts up and down."
+        "Her face is flush and her breathing rapid. Her breasts heave up and down."
     else:
         "Her face is flush and her breathing rapid."
 
@@ -440,7 +443,7 @@ label breeding_mom_label(the_person):
             the_person.char "Ah... Fuck me and give me your baby! I'll take such good care of it, just like I did for you and [lily.title]!"
             $ starting_creampies = the_person.sex_record.get("Vaginal Creampies",0)
             call fuck_person(the_person, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, position_locked = True) from _call_fuck_person_19
-            $ the_report = _return
+            $ the_report = _return #TODO: The creampie check should now be possible with the report system instead of checking her total record.
             if the_person.sex_record.get("Vaginal Creampies", 0) > starting_creampies: #We've creampied her at least once this encounter.
                 "You roll off of [the_person.possessive_title] and onto the bed beside her, feeling thoroughly spent."
                 "She brings her knees up against her chest and tilts her hips up, holding all of your cum deep inside of her."

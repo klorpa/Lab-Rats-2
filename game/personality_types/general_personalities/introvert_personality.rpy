@@ -368,6 +368,160 @@ label introvert_flirt_response(the_person):
             the_person.char "Oh... I... ah... Thanks."
     return
 
+label introvert_flirt_response_low(the_person):
+    if the_person.outfit == the_person.planned_uniform:
+        if the_person.judge_outfit(the_person.outfit):
+            # #She's in uniform and likes how it looks.
+            "[the_person.possessive_title] blushes and looks away, suddenly shy."
+            the_person.char "Thanks, it's just the company uniform though. It's not like I picked it out or anything..."
+            mc.name "You're making the uniform look good, not the other way around."
+            "[the_person.title] looks back at you and smiles."
+            the_person.char "Thank you."
+        else:
+            #She's in uniform, but she thinks it's a little too slutty.
+            if the_person.outfit.vagina_visible():
+                the_person.char "Thanks... Do you think we could get uniforms that covered a little more?"
+                the_person.char "I'm not complaining! I'm just a little shy..."
+                mc.name "You don't have anything to be shy about. You have a beautiful body, and it would be a shame to cover it up."
+                "[the_person.possessive_title] nods and looks away shyly."
+
+            elif the_person.outfit.tits_visible():
+                # Her tits are out
+                "[the_person.possessive_title] blushes and tries to hide her breasts."
+                the_person.char "Thanks. I don't know if I'll ever get use to having my... boobs out."
+                if the_person.has_large_tits():
+                    the_person.char "I'm normally so worried about keeping them hidden, I don't like the attention."
+                mc.name "I know it's a little unusual, but you look great."
+                "She nods and gives you a faint smile."
+
+            elif the_person.outfit.underwear_visible():
+                # Her underwear is visible.
+                "[the_person.possessive_title] blushes."
+                the_person.char "Thanks. I feel strange walking around half naked in front of other people."
+                mc.name "I know the uniform is a little unconventional, but you look fantastic in it."
+                "She nods and gives you a faint smile."
+
+            else:
+                # It's just generally slutty.
+                "[the_person.possessive_title] blushes."
+                the_person.char "I would never normally wear something like this..."
+                mc.name "You don't need to worry, you look fantastic in your uniform."
+                "She nods and gives a faint smile."
+                the_person.char "Thanks."
+
+    else:
+        #She's in her own outfit.
+        "[the_person.possessive_title] blushes and smiles."
+        the_person.char "Thanks. I didn't think anyone even paid attention to what I wear."
+        mc.name "Well now you know that I do."
+    return
+
+label introvert_flirt_response_mid(the_person):
+    if the_person.outfit == the_person.planned_uniform:
+        if the_person.judge_outfit(the_person.outfit):
+            the_person.char "Oh... Thanks."
+            "[the_person.possessive_title] blushes and looks away."
+            the_person.char "Sorry. I'm just not use to someone paying this much attention to me."
+            mc.name "It's alright, you just need to be more confident. Come on, give me a spin"
+            "She hesitates for a moment, then smiles meekly and nods."
+            $ the_person.draw_person(position = "back_peek")
+            the_person.char "Like this?"
+            $ the_person.draw_person()
+            mc.name "That was perfect. We'll have to keep working on your confidence."
+            the_person.char "Okay, I'll try."
+        else:
+            "[the_person.possessive_title] blushes and tries to cover herself up with her hands."
+            if the_person.outfit.vagina_visible():
+                the_person.char "Sorry! I know these are our uniforms, but I feel so naked!"
+            elif the_person.outfit.tits_visible():
+                the_person.char "Sorry! I know these are our uniforms, but I feel so exposed with my boobs out!"
+            else:
+                the_person.char "Sorry! I know these are our uniforms, but I feel so exposed!"
+            mc.name "It's okay, it's a perfect chance for you to work on your confidence. Give it time and you'll get use to it."
+            "She seems unconvinced, but nods anyways."
+
+    else:
+        if the_person.effective_sluttiness() < 20:
+            the_person.char "Oh... Thanks."
+            "[the_person.possessive_title] blushes and looks away."
+            the_person.char "Sorry. I'm just not use to someone paying this much attention to me."
+            mc.name "It's alright, you just need to be more confident."
+            the_person.char "Maybe you're right..."
+            mc.name "Let's try right now. Give me a spin and show off a little."
+            "She hesitates for a moment, then smiles meekly and nods."
+            $ the_person.draw_person(position = "back_peek")
+            the_person.char "Okay. Like this?"
+            "[the_person.title] turns around, wiggles her butt for a second, then completes the spin and faces you again."
+            $ the_person.draw_person()
+            mc.name "That was great. We'll keep working on your confidence, okay?"
+            the_person.char "Okay."
+
+        else:
+            the_person.char "Oh, really? Well, thanks! People don't normally complimint me. Do you really think I look cute?"
+            $ the_person.draw_person(position = "back_peek")
+            "[the_person.possessive_title] turns around, letting you get a look at her full outfit."
+            $ the_person.draw_person()
+            mc.name "You're more than cute. You're stunning."
+            the_person.char "I... Thank you [the_person.mc_title]. That's really nice of you to say."
+    return
+
+label introvert_flirt_response_high(the_person):
+    if mc.location.get_person_count() > 1 and the_person.effective_sluttiness("kissing") < (25 - (5*the_person.get_opinion_score("public_sex"))): # There are other people here, if she's not slutty she asks if you want to find somewhere quiet
+        "[the_person.possessive_title] blushes and glances around nervously."
+        the_person.char "[the_person.mc_title], someone is going to hear you!"
+        menu:
+            "Find someplace quiet.":
+                mc.name "Alright, let's find somewhere nobody will hear us."
+                the_person.char "I don't know if we should..."
+                "You take her hand and lead her gently. After a moment of hesitation she follows behind you."
+                "After searching for a couple of minutes you find a quiet space for just the two of you. Her cheeks are red when you turn back to her."
+                the_person.char "So... What do you want to do now?"
+                if the_person.has_taboo("kissing"):
+                    "You step close and put your arms around her waist."
+                    $ the_person.call_dialogue("kissing_taboo_break")
+                    $ the_person.break_taboo("kissing")
+                else:
+                    "You step close and put your arms around her waist. She closes her eyes, sighs happily, and waits for you to kiss her."
+                "You lean forward and press your lips against hers. [the_person.possessive_title] responds, leaning her body against yours."
+                call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_57
+
+            "Just flirt.":
+                mc.name "So if it wasn't for the audience I'd have you naked by now? That's good to know."
+                "She slaps your shoulder playfully and smiles."
+                the_person.char "Oh my god, you're the worst! Obviously you would have to buy me dinner too."
+
+    else: # She wants to kiss you, leading to other things.
+        if mc.location.get_person_count() == 1:  #You're alone, so she was just shy
+            "[the_person.possessive_title] glances around."
+            the_person.char "Well it's just the two of us here... Maybe we could just... see where things go..."
+            "She steps close to you and nervously holds your hand."
+        else:  #She's slutty AND you're all alone.
+            "[the_person.possessive_title] doesn't say anything for a moment. Her eyes run up and down your body, taking you in."
+            the_person.char "Do you want to find out?"
+            if the_person.has_large_tits(): #Bounces her tits for you
+                $ the_person.draw_person(the_animation = blowjob_bob)
+                "She grabs her tits and jiggles them for you, beckoning you closer."
+        menu:
+            "Kiss her.":
+                $ the_person.draw_person()
+                if the_person.has_taboo("kissing"):
+                    "You step close and put your arms around her waist."
+                    $ the_person.call_dialogue("kissing_taboo_break")
+                    $ the_person.break_taboo("kissing")
+                    "You lean forward and press your lips against hers. [the_person.possessive_title] responds, leaning her body against yours."
+                else:
+                    "You wrap your hands around [the_person.title]'s waist and pull her close to kiss her. She returns the kiss immediately, pressing her body against yours."
+                call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_58
+
+            "Just flirt.":
+                $ the_person.draw_person()
+                mc.name "I do, but you'll have to wait until later."
+                the_person.char "Are you sure?"
+                "You nod and [the_person.title] sighs, obviously disappointed."
+                the_person.char "Okay, maybe later then."
+    return
+
+
 label introvert_cum_face(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:

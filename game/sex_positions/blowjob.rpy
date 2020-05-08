@@ -3,7 +3,7 @@
         blowjob = Position(name = "Blowjob", slut_requirement = 40, slut_cap = 60, requires_hard = True, requires_large_tits = False,
             position_tag = "blowjob", requires_location = "Kneel", requires_clothing = "None", skill_tag = "Oral",
             girl_arousal = 3, girl_energy = 15,
-            guy_arousal = 15, guy_energy = 5,
+            guy_arousal = 16, guy_energy = 5,
             connections = [],
             intro = "intro_blowjob",
             scenes = ["scene_blowjob_1","scene_blowjob_2"],
@@ -106,7 +106,7 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                         "[the_girl.title] slides you back into her mouth and sucks your dick with renewed vigor."
                     else:
                         "You relax for a little while while [the_girl.possessive_title] services your cock, stroking your shaft and sucking gently on your tip."
-                        "You're pleasantly suprised when she reaches her other hand up and starts to gently play with your balls. You run your fingers through her hair and sigh contentedly."
+                        "You're pleasantly surprised when she reaches her other hand up and starts to gently play with your balls. You run your fingers through her hair and sigh contentedly."
 
 
     else: #competent at blowjobs.

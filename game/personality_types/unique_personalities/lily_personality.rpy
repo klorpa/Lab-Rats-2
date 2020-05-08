@@ -186,6 +186,116 @@ label lily_flirt_response(the_person):
             the_person.char "But, uh... it's still nice to hear."
     return
 
+label lily_flirt_response_low(the_person):
+    the_person.char "Thanks! It's a cute look, right?"
+    $ the_person.draw_person(position = "walking_away")
+    "[the_person.possessive_title] gives you a quick spin, showing off her body at the same time as her outfit."
+    $ the_person.draw_person()
+    if mom.judge_outfit(the_person.outfit, 5, use_taboos = False): # Mom is sluttier or similar
+        the_person.char "[mom.title] helped me pick it out. You should come shopping with us some day!"
+
+    else: #It's sluttier than Mom would like
+        the_person.char "[mom.title] really didn't like it when I bought this, but I just couldn't say no."
+        the_person.char "Maybe you can come shopping with us one day and convince her to relax a little!"
+    mc.name "Maybe I will."
+    return
+
+label lily_flirt_response_mid(the_person):
+    if the_person.effective_sluttiness("underwear_nudity") < 20: #Not very slutty, so it must be high love.
+        "[the_person.possessive_title] gasps and blushes."
+        the_person.char "Oh my god, [the_person.mc_title]! Why do you have to say it like that?"
+        mc.name "Like what? I'm just telling you that you're looking hot. Isn't that a good thing to hear?"
+        the_person.char "Yeah, but not from my own brother! It's... weird, that's all."
+        the_person.char "I'm sorry, I shouldn't make such a big deal about it. Thank you."
+
+    else:
+        the_person.char "Aw, thanks! I thought I looked really cute in this too."
+        $ the_person.draw_person(position = "back_peek")
+        "[the_person.possessive_title] smiles and turns around, peeking over her shoulder to talk to you."
+        the_person.char "How do I look from behind? It's hard to get a good look in the mirror and [mom.title] is always judging what I'm wearing."
+        "You take a moment to check out [the_person.possessive_title]'s ass before responding."
+        mc.name "You look fantastic. I could watch you all day long."
+        $ the_person.draw_person()
+        "She turns back and sticks her tongue out at you."
+        the_person.char "Maybe if I get bored enough I'll put on a fashion show."
+    return
+
+label lily_flirt_response_high(the_person):
+    if mc.location.get_person_count() == 1: #If you are alone she'll flirt with you
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): # High sluttiness flirt
+            the_person.char "Oh my god, you're so bad [the_person.mc_title]! Do I... Do I really look that good?"
+            mc.name "Yeah you do! You look amazing."
+            "She blushes and smiles."
+            the_person.char "Thank you. I think you look good too."
+            menu:
+                "Kiss her.":
+                    "You step closer to [the_person.possessive_title] and put your hand around her waist. She looks into your eyes."
+                    if the_person.has_taboo("kissing"):
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        $ the_person.break_taboo("kissing")
+                        "You kiss her. She hesitates for a second before relaxing and leaning her body against yours."
+                    else:
+                        the_person.char "What are you doing..."
+                        "You respond by kissing her. She hesitates for a second, then relaxes and leans her body against you."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_45
+
+                "Just flirt.":
+                    mc.name "Thanks. Do you want to get me out of my clothes?"
+                    "She giggles and slaps your shoulder gently."
+                    the_person.char "Oh my god, stop!"
+                    mc.name "It's fine if you do, I totally get it."
+                    "You catch her eyes glancing down at your crotch, then she turns away and laughs you off."
+                    the_person.char "You're my brother, that would be weird."
+
+        else: # Just high love flirt
+            "[the_person.possessive_title] laughs and blushes."
+            the_person.char "[the_person.mc_title], I'm your sister! Don't be so weird."
+            mc.name "I'm just joking around. You're looking good, that's all."
+            the_person.char "Thanks! I don't really mind, but I think [mom.title] would freak out if she heard you talking like that."
+
+
+    else: #She shushes you and rushes you off somewhere private.
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): #She's slutty, but you need to find somewhere private so people don't find out.
+            "[the_person.possessive_title] blushes, then glances around nervously."
+            the_person.char "Shhh... What if someone heard you?"
+            mc.name "Relax, we're not doing anything wrong, are we?"
+            the_person.char "No but... They might not understand, you know?"
+
+            menu:
+                "Find someplace quiet.":
+                    mc.name "Fine, come with me then."
+                    "You take [the_person.title]'s hand and start to lead her away."
+                    the_person.char "Where are we going?"
+                    mc.name "We're going somewhere nobody will overhear us, so that you don't have to worry about that any more."
+                    "When you find a private spot you turn to [the_person.possessive_title] and pull her close to you."
+                    the_person.char "Ah! We... Nobody is going to find out, right?"
+                    mc.name "Nobody is going to find out."
+
+                    if the_person.has_taboo("kissing"):
+                        "You lean down to kiss her. She pulls her head back, surprised."
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        $ the_person.break_taboo("kissing")
+                    else:
+                        "You lean down and kiss her. She hesitates for a split second before returning the kiss, pressing her body against yours."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_46
+
+                "Just flirt.":
+                    mc.name "I'll save all the really dirty stuff for when we're alone then."
+                    the_person.char "Oh my god, you're so bad!"
+                    "She blushes and slaps you playfully on the shoulder."
+                    the_person.char "Isn't my big brother suppose to be taking care of me? You're just going to get us in trouble!"
+                    mc.name "Don't worry, I'll always be around to take care of you. We're just having a little fun."
+                    "[the_person.possessive_title] smiles and gives you a quick hug."
+
+        else: #She's not slutty, so she's embarassed about what you're doing.
+            "[the_person.possessive_title] blushes, then glances around nervously."
+            the_person.char "Oh my god, you can't just say stuff like that when there are people around!"
+            mc.name "So it's fine if I say things like that when we're alone?"
+            the_person.char "Well... I don't really mind, as long as we're just joking around. I just don't want [mom.title] to get upset with us."
+            mc.name "Don't worry, I promise she won't find out."
+            the_person.char "Okay, then it's fine. I actually kind of like hearing I look pretty."
+    return
+
 label lily_cum_face(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:
@@ -379,7 +489,7 @@ label lily_date_seduction(the_person):
 ## Taboo break dialogue ##
 label lily_kissing_taboo_break(the_person):
     the_person.char "Hey... What are you doing?"
-    mc.name "I going to kiss you [the_person.title]."
+    mc.name "I'm going to kiss you [the_person.title]."
     the_person.char "Ew. You're my brother, that's weird."
     mc.name "Why? We use to kiss when we were kids."
     the_person.char "Oh my god, I forgot about that. That was different, we were young and just practicing."

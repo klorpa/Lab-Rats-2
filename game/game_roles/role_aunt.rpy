@@ -198,7 +198,6 @@ label aunt_intro_phase_three_label():
     "[aunt.possessive_title] sits on the side of your bed, puts a hand on your leg, and squeezes it gently."
     aunt.char "I'm so lucky to have such a wonderful nephew, you know that? If only I had married a man like you instead of..."
     aunt.char "Well, never mind that. Thank you."
-    $ aunt.change_love(3)
     "She leans in, gives you a warm, familial hug, and then leaves you to get on with your day."
     $ renpy.scene("Active")
     $ aunt.event_triggers_dict["moving_apartment"] = 0 #If it's a number it's the number of times you've helped her move. If it doesn't exist or is negative the event isn't enabled

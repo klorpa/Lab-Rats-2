@@ -42,11 +42,13 @@ label ask_leave_SO_label(the_person): #
     the_person.char "Okay, I'll do it for you!"
     $ the_person.special_role.remove(affair_role)
     $ the_person.special_role.append(girlfriend_role)
+    $ the_person.relationship = "Single" #Technically they aren't "single", but the MC has special roles for their girlfriend.
+    $ the_person.SO_name = None #Clear the name of their ex so that it doesn't get used in
     $ the_person.change_love(10)
     $ the_person.change_obedience(5)
     $ the_person.draw_person(position = "happy")
     "You put your arms around her waist and she kisses you immediately. When you break the kiss she's grinning ear to ear."
-    $ ex_title = so_title[:4]
+    $ ex_title = so_title[:4] #Get's only the first 4 characters of any title for some hesitant-sounding speach.
     the_person.char "It feels so good to not have to hide anything anymore! I'll break the news to my [ex_title]... My ex-[so_title] later today."
     return
 
@@ -189,7 +191,7 @@ label fuck_date_label(the_person):
                     "Soon you're ready to go again and you wrap your arms around [the_person.title]."
                     mc.name "Come here you little slut."
                     $ random_num = renpy.random.randint(0,100)
-                    if random_num < 3 and not so_called:
+                    if random_num < 8 and not so_called:
                         #Her SO Comes home (unless he's called, in which case we know where he is.)
                         "She smiles and wraps her arms around you in return, pressing her body against yours."
                         the_person.char "Come and take me. I..."
@@ -333,7 +335,7 @@ label fuck_date_label(the_person):
                                 the_person.char "Oh my god, that was actually it. It's just me and you, nobody else in our way."
                                 "She holds onto you tightly and rests her head on your chest."
 
-                    elif random_num < 8 and not so_called:
+                    elif random_num < 20 and not so_called:
                         #Her SO calls home. Depending on Love/Sluttiness she might want to stop, or keep going while talking to him.
                         $ so_called = True
                         "She smiles and moves to kiss you, when a happy little jingle fills the room."
@@ -475,7 +477,7 @@ label fuck_date_label(the_person):
 
                         #TODO: At this point run a check on her arousal.
 
-                    # elif random_num < 12 and has_kid: #TODO: AND she has an adult kid who we have either met or can generate.
+                    # elif random_num < 30 and has_kid: #TODO: AND she has an adult kid who we have either met or can generate.
                     #     #TODO: This
                     #     #TODO: What happens if her daughter is around AND her husband comes home. Definitely write some "I'm fucking your whole family" stuff, even if it's going to be super rare.
                     #     pass

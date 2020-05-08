@@ -458,7 +458,7 @@ label prostitute_label(the_person):
     $ the_person.change_obedience(1)
 
     $ the_person.add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")
-    call fuck_person(private = True, ignore_taboo = True) from _call_fuck_person_23 #She's a prostitute, she doesn't care about normal taboos
+    call fuck_person(the_person, private = True, ignore_taboo = True) from _call_fuck_person_23 #She's a prostitute, she doesn't care about normal taboos
     $ the_report = _return
 
     $ the_person.clear_situational_obedience("prostitute")

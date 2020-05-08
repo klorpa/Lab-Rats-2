@@ -336,6 +336,167 @@ label bimbo_flirt_response(the_person):
             the_person.char "Oh you, stop it! You're going to make me blush!"
     return
 
+label bimbo_flirt_response_low(the_person):
+    if the_person.outfit == the_person.planned_uniform:
+        if the_person.judge_outfit(the_person.outfit):
+            #She's in uniform and likes how it looks.
+            the_person.char "Hehe, thanks! I love these outfits you make us wear, they're, like, so cute!"
+            the_person.char "Maybe you should pick out other things for me to wear. I bet you have some good ideas!"
+            mc.name "For you I certainly do. Maybe I'll talk to you later about it."
+            "She smiles happily."
+            the_person.char "Alright!"
+
+        else:
+            #She's in uniform, but she thinks it's a little too slutty.
+            if the_person.outfit.vagina_visible():
+                # Her pussy is on display.
+                the_person.char "Thanks! I keep worrying I'm going to get in trouble, but then I remember I'm allowed to be dressed like this!"
+                mc.name "Not just allowed: required."
+                the_person.char "Yeah! This is such a crazy place to work!"
+                "[the_person.possessive_title] bounces happily, unintentionally jiggling her tits."
+
+            elif the_person.outfit.tits_visible():
+                #Her tits are out
+                if the_person.has_large_tits():
+                    the_person.char "Hehe, thanks! I really like how it shows off my big tits!"
+                    "[the_person.possessive_title] bounces happily, jiggling her breasts."
+                    the_person.char "People are always telling me I need to hide them, but at work I don't have to worry about that!"
+                else:
+                    the_person.char "Hehe, thanks! I really like how I it shows off my boobs!"
+                    "[the_person.possessive_title] looks down at her own chests and pouts."
+                    the_person.char "I wish they were bigger though. Oh well!"
+
+            elif the_person.outfit.underwear_visible():
+                # Her underwear is visible.
+                the_person.char "Hehe, thank you! I know it's a little slutty, but I like how little these outfits you make us wear cover!"
+                mc.name "I certainly do too."
+                "She laughs and sticks her tongue out."
+                the_person.char "You're silly, you know that? But like, in a fun way."
+            else:
+                # It's just generally slutty.
+                the_person.char "Hehe, thank you! I don't think I'm brave enough to wear something like this outside, but at work it's okay! Right?"
+                mc.name "More than okay, it's required."
+                the_person.char "Oh yeah, right! I'm sorry, there are so many rules here, I'm always forgetting them!"
+                mc.name "Well don't worry, you're doing a great job so far."
+                "[the_person.possessive_title] smiles and bounces happily."
+                the_person.char "Yay!"
+
+    else:
+        #She's in her own outfit.
+        the_person.char "Aw, thanks! It took me sooooo long to decide what to wear today. I picked this because it made my ass look good. What do you think?"
+        $ the_person.draw_person(position = "back_peek")
+        "[the_person.possessive_title] spins around and leans forward a little, wiggling her butt at you."
+        mc.name "Oh yeah, I think it looks really good."
+        $ the_person.draw_person()
+        the_person.char "Yay!"
+    return
+
+label bimbo_flirt_response_mid(the_person):
+    if the_person.outfit == the_person.planned_uniform:
+        if the_person.judge_outfit(the_person.outfit):
+            if the_person.outfit.tits_visible():
+                the_person.char "Hehe, thanks! Do you like my boobs?"
+                "She puts her hands behind her back and thrusts her chest out at you, waiting for your response."
+                mc.name "They look fantastic."
+                "[the_person.possessive_title] smiles and giggles."
+                the_person.char "Yay! I like having my boobs out at work. It feels naughty, but I'm, like, allowed to do it!"
+            else:
+                the_person.char "Hehe, thanks! I think you're, like, pretty hot too!"
+                the_person.char "Oh my god! We should go partying together! That would be, like, so much fun!"
+                mc.name "That does sound like fun. Maybe we will."
+                "She nods and smiles happily."
+        else:
+            "[the_person.possessive_title] smiles and giggles."
+            the_person.char "Hehe, thanks! I think you're pretty hot too!"
+            the_person.char "Oh, we should totally go partying together! That would be, like, so much fun!"
+            mc.name "That does sound like fun. Maybe we will."
+            "She nods and smiles happily."
+            the_person.char "I can even wear something nice for you, instead of this silly uniform you make..."
+            "She stops suddenly and covers her mouth with her hand."
+            the_person.char "Oops. I'm sorry, I didn't mean that. I just kind of talk without thinking sometimes." #TODO: On with the spanking! And then, the oral sex!
+            mc.name "It's fine. You don't have to like your uniform as long as you're wearing it."
+            "[the_person.title] puts on a stern face and nods severely."
+            the_person.char "Of course, [the_person.mc_title]!"
+
+    else:
+        if the_person.effective_sluttiness() < 20 and mc.location.get_person_count() > 1:
+            the_person.char "Hehe, thanks! I uh..."
+            "[the_person.possessive_title] bites her lip and leans closer to you to whisper in your ear."
+            the_person.char "I think you're, like, pretty hot too."
+            "She pulls back and smiles playfully."
+
+        else:
+            the_person.char "Hehe, thank you! I think you're looking, like, pretty hot too."
+            the_person.char "Oh, we should totally go partying some time! I can wear something even cuter for you..."
+            $ the_person.draw_person(position = "back_peek")
+            the_person.char "Maybe something that shows off my butt a little more... Doesn't that sound fun?"
+            "[the_person.possessive_title] wiggles her hips, shaking her butt for your enjoyment."
+            mc.name "That does sound like fun. Maybe we should go out one day."
+            $ the_person.draw_person()
+            "She turns back to you and smiles."
+            the_person.char "Yay!"
+    return
+
+label bimbo_flirt_response_high(the_person):
+    if mc.location.get_person_count() > 1 and the_person.effective_sluttiness() < (25 - (5*the_person.get_opinion_score("public_sex"))):
+        "[the_person.possessive_title] giggles andand looks around nervously."
+        the_person.char "Oh my god, [the_person.mc_title]! That's so naughty!"
+        menu:
+            "Find someplace quiet.":
+                mc.name "Come with me and we can do some more naughty things."
+                "[the_person.title] giggles again and nods eagerly. You take her hand and lead her away."
+                "When you're finally alone you put your arm around her waist and pull her close."
+
+                if the_person.has_taboo("kissing"):
+                    $ the_person.call_dialogue("kissing_taboo_break")
+                    $ the_person.break_taboo("kissing")
+                else:
+                    pass
+                "You kiss her, and she responds by leaning her body against you eagerly."
+                call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_55
+
+            "Just flirt.":
+                mc.name "Wait until I get you alone and you'll see how naughty I can get."
+                the_person.char "Hehe, I'm excited to find out!"
+
+    else: # She wants to kiss you, leading to other things.
+        if mc.location.get_person_count() == 1:
+            the_person.char "Oh my god, [the_person.mc_title]! you're so naughty!"
+            "She giggles playfully and looks you up and down."
+            the_person.char "But maybe... We could fool around, if you really want to. I think you're pretty cute."
+
+        else:  #She's into turning you on.
+            if the_person.has_large_tits(): #Bounces her tits for you
+                "She giggles and grabs her own tits, jiggling them for you."
+                $ the_person.draw_person(the_animation = blowjob_bob)
+
+            else:
+                "She giggles and wiggles her hips for you."
+            the_person.char "Do you want to have some fun?"
+
+        menu:
+            "Kiss her.":
+                mc.name "Yeah, I do. Come here."
+                $ the_person.draw_person()
+                if the_person.has_taboo("kissing"):
+                    "You put your arm around [the_person.title]'s waist and pull her close. She giggles as she falls against your body."
+                    $ the_person.call_dialogue("kissing_taboo_break")
+                    $ the_person.break_taboo("kissing")
+                    "You kiss her, and she rubs her body against you eagerly."
+                else:
+                    "You put your arm around [the_person.title]'s waist and pull her close. She leans her body against you eagerly as you kiss her."
+                call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_56
+
+            "Just flirt.":
+                mc.name "I do, but it'll have to be some other time."
+                $ the_person.draw_person(emotion = "sad")
+                "She pouts and crosses her arms dramatically."
+                the_person.char "Aww, why? Can't you, like, just do something with me right now?"
+                mc.name "I'll make it up to you, I promise."
+                "[the_person.title] sighs and nods."
+                the_person.char "Okay..."
+    return
+
 label bimbo_cum_face(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:

@@ -109,7 +109,7 @@ label scene_missionary_2(the_girl, the_location, the_object):
 
             "Fuck her hard anyways.":
                 mc.name "Don't worry, just relax and it'll all come naturally to you."
-                "You speed up and fuck [the_girl.title]s tight little cunt. She lets out a suprised gasp."
+                "You speed up and fuck [the_girl.title]s tight little cunt. She lets out a surprised gasp."
                 if the_girl.get_opinion_score("being submissive") > 0:
                     "[the_girl.possessive_title] grabs at your back and moans right into your ear."
                     the_girl.char "Wait... I don't think I can... handle your big cock!"

@@ -77,7 +77,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
                         $ the_person.break_taboo("kissing")
                     else:
                         the_person.char "Okay, come here."
-                        if the_person.effective_sluttinss("kissing") > 15:
+                        if the_person.effective_sluttiness("kissing") > 15:
                             "You lean down to kiss her as she's sitting. [the_person.possessive_title] puts a hand on the back of your head and pulls you against her as your lips meet."
                             "Her mouth opens slightly, letting your tongues meet as she makes out with you."
                             $ the_person.change_arousal(5 + mc.sex_skills["Foreplay"])

@@ -47,6 +47,125 @@ label aunt_sex_beg_finish(the_person):
     "Wait, I really need this [the_person.mc_title]! You're making me feel like a real women, please don't stop! Please!"
     return
 
+label aunt_flirt_response_low(the_person):
+    the_person.char "Thank you [the_person.mc_title], that's very kind of you to say."
+    the_person.char "It's nice to know my sense of style isn't too dated."
+    mc.name "Not at all, I think it's fantastic."
+    "She smiles and laughs."
+    the_person.char "You better stop there or I'll drag you clothes shopping with me."
+    return
+
+label aunt_flirt_response_mid(the_person):
+    if the_person.effective_sluttiness("underwear_nudity") < 20: # Not very slutty, mostly just high love
+        the_person.char "[the_person.mc_title]! You shouldn't be saying that."
+        mc.name "Why not? You're hot and I'm just trying to give you a compliment."
+        the_person.char "Thank you, but I'm your aunt. It's not appropriate."
+        "She sighs and rolls her eyes."
+        the_person.char "I... guess it's still nice to hear though. It's been a while since anyone thought I was \"hot\"."
+        mc.name "Well I'm happy to tell you that you are very, very hot [the_person.title]."
+        "[the_person.possessive_title] smiles and shrugs."
+        the_person.char "Fine, I'm hot. Just... don't tell your mother you talk to me like this. She would think it's weird."
+    else:
+        the_person.char "Thank you! You know, it's been a long time since anyone thought I was \"hot\"."
+        the_person.char "I didn't think it would be my own nephew who thought so, but I'll take what I can get."
+        "[the_person.possessive_title] smiles and runs her hands down her hips. She hesitates for a moment, then turns around and pats her ass."
+        $ the_person.draw_person(position = "back_peek")
+        the_person.char "Do... Do you think my butt still looks good? I know I shouldn't ask you, but... I'm a little self-conicous and I trust you."
+        mc.name "Your ass looks fantastic [the_person.title]."
+        $ the_person.draw_person()
+        "She turns back and sighs with relief."
+        mc.name "You don't have anything to worry about. You've got the body of a woman half your age."
+        the_person.char "Sorry, I've been so silly. You don't want to hear me talking about myself like this."
+        mc.name "It's fine, I really don't mind."
+    return
+
+label aunt_flirt_response_high(the_person):
+    if mc.location.get_person_count() == 1: #If you are alone she'll flirt with you
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): # High sluttiness flirt
+            if the_person.has_taboo("underwear_nudity"):
+                the_person.char "Oh [the_person.mc_title], you're so bad! Do you really want to... see me naked?"
+
+            else:
+                the_person.char "Oh [the_person.mc_title], haven't you seen enough of me? Do you really need more?"
+            mc.name "You're so beautiful, I always want to see more."
+            "She sighs and smiles."
+            the_person.char "I can't believe I'm even thinking about it, it's so wrong..."
+            the_person.char "Maybe you need to convince me a little more."
+
+            menu:
+                "Kiss her.":
+                    mc.name "Alright, is this going to convince you?"
+                    "You put an arm around [the_person.possessive_title]'s waist and pull her close."
+
+                    if the_person.has_taboo("kissing"):
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        $ the_person.break_taboo("kissing")
+                        "You lean in and kiss her. She hesitates for a moment before gently pressing herself against your body."
+                    else:
+                        "You lean in and kiss her. She hesitates for a moment before responding, leaning her body against yours and kissing you back."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_59
+
+                "Just flirt.":
+                    mc.name "How about you just jiggle your tits for me, and that'll be all. I always want to see that."
+                    the_person.char "That's not so bad, right?"
+                    $ the_person.draw_person(the_animation = blowjob_bob)
+                    "[the_person.possessive_title] grabs her own tits and jiggles them up and down, alternating between her left and right boob."
+                    "She lets you watch for a few moments, then lets go and laughs self-conciously."
+                    the_person.char "You're such a bad influence on me, you know that?"
+                    $ the_person.draw_person()
+
+        else: # Just high love flirt, she's not slutty enough to be sedueced by her own nephew.
+            the_person.char "Oh [the_person.mc_title], stop! I want you to feel comfortable with me, but I'm still your aunt."
+            mc.name "Relax, we're just joking around. Unless you want to get naked for me?"
+            "She laughs and shakes her head in disbelief."
+            if the_person.has_taboo(["bare_tits","bare_pussy"]):
+                the_person.char "Obviously I could never do that. What would my sister think of me?"
+            else:
+                the_person.char "You've had your fun seeing me naked already. You'll have to be satisfied with that."
+
+    else: #She shushes you and rushes you off somewhere private.
+        if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): #She's slutty, but you need to find somewhere private so people don't find out.
+            the_person.char "[the_person.mc_title]!"
+            "[the_person.possessive_title] glances around nervously."
+            the_person.char "You can't say things like that when there are other people around! What if someone overheard?"
+            menu:
+                "Find someplace quiet.":
+                    mc.name "Then let's find somehwere nobody will. Come on."
+                    "You take her hand and start to lead her away. She takes a step to follow, then hesitates."
+                    the_person.char "Wait, I... I shouldn't."
+                    mc.name "Relax, we'll be alone and nobody will know."
+                    "After a pause she nods and follows after you. When you find a quiet spot you pull [the_person.possessive_title] close to you."
+                    if the_person.has_taboo("kissing"):
+                        $ the_person.call_dialogue("kissing_taboo_break")
+                        $ the_person.break_taboo("kissing")
+                        "You lean in and kiss her. She hesitates for a moment before gently pressing herself against your body."
+                    else:
+                        the_person.char "Oh! Now what?"
+                        "You kiss her. She holds back for a second, then returns the kiss eagerly."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_60
+
+                "Just flirt.":
+                    mc.name "It's fine, nobody is going to overhear anything."
+                    the_person.char "We should still be careful. If my sister found out we talked like this I wouldn't be able to see you any more."
+                    the_person.char "Which would also mean..."
+                    $ the_person.draw_person(the_animation = blowjob_bob)
+                    "She checks that nobody else is looking, then grabs her tits and jiggles them for you."
+                    the_person.char "You wouldn't get to see these any more either. You don't want that, do you?"
+                    mc.name "You make a very convincing point..."
+                    the_person.char "I'm glad you understand."
+                    $ the_person.draw_person()
+
+        else: #She's not slutty, so she's embarassed about what you're doing.
+            "[the_person.possessive_title] gasps softly and glances around, checking to see if anyone else was listening."
+            the_person.char "[the_person.mc_title], I'm your aunt! We can joke around when we're alone, but if other people overhear they might get the wrong idea!"
+            mc.name "It's fine, nobody heard anything."
+            the_person.char "This time, maybe. What if my sister found out about this? She would never let me see you again."
+            the_person.char "You don't want that, do you?"
+            mc.name "No, of course not."
+            the_person.char "Good. Just be a little more careful next time."
+            "She places a gentle hand on your shoulder and kisses you on the cheek."
+    return
+
 ## Taboo break dialogue ##
 label aunt_kissing_taboo_break(the_person):
     the_person.char "[the_person.mc_title], what are you doing? We shouldn't... We can't do whatever you're thinking about doing."
@@ -222,7 +341,7 @@ label aunt_vaginal_sex_taboo_break(the_person):
         the_person.char "Do you really mean that?"
         mc.name "I do, I mean it with all my heart. I love you."
         the_person.char "Oh [the_person.mc_title], I love you too!"
-        the_eprson.char "No turning back then, come on and fuck me!"
+        the_person.char "No turning back then, come on and fuck me!"
     else:
         the_person.char "This is... Oh [the_person.mc_title], I shouldn't feel like this!"
         mc.name "Why not? Don't you want it?"

@@ -65,6 +65,7 @@ init -1:
         butt_region = Clothing("Butt region", 1, False, False, "Butt_Region_Weight", False, False, 0)
 
         #General region weights
+        all_regions = Clothing("All regions", 1, False, False, "All_Regions_Weight", True, False, 0)
         torso_region = Clothing("Torso region", 1, False, False, "Torso_Region_Weight", True, False, 0)
         stomach_region = Clothing("Stomach region", 1, False, False, "Stomach_Region_Weight", False, False, 0)
         pelvis_region = Clothing("Pelvis region", 1, False, False, "Pelvis_Region_Weight", False, False, 0)
@@ -75,7 +76,7 @@ init -1:
         lower_arm_region = Clothing("Lower arm region", 1, False, False, "Lower_Arm_Region_Weight", False, False, 0)
         hand_region = Clothing("Hand region", 1, False, False, "Hand_Region_Weight", False, False, 0)
 
-
+        skirt_region = Clothing("Skirt region", 1, False, False, "Skirt_Region_Weight", False, False, 0) # A "Region" that includes everything between the characters legs from hips to about a little above knee level.
 
         ##HAIR STYLES##
         #TODO: Implement ordering_variable for hair to decide on hair length for hair cuts.
@@ -235,51 +236,65 @@ init -1:
         ##Pants
         pants_list = []
 
-        leggings = Clothing("Leggings", 2, True, True, "Leggings", False, False, 1, whiteness_adjustment = 0.2, contrast_adjustment = 1.8, supported_patterns = {"Cougar Print":"Pattern_1"}, display_name = "leggings")
+        leggings = Clothing("Leggings", 2, True, True, "Leggings", False, False, 1, whiteness_adjustment = 0.2, contrast_adjustment = 1.8, supported_patterns = {"Cougar Print":"Pattern_1"}, display_name = "leggings",
+            constrain_regions = [upper_leg_region, lower_leg_region, pelvis_region])
         pants_list.append(leggings)
 
-        capris = Clothing("Capris", 2, True, True, "Capris", False, False, 1, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, display_name = "pants")
+        capris = Clothing("Capris", 2, True, True, "Capris", False, False, 1, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, display_name = "pants",
+            constrain_regions = [upper_leg_region, lower_leg_region, pelvis_region])
         pants_list.append(capris)
 
-        booty_shorts = Clothing("Booty Shorts", 2, True, True, "Booty_Shorts", False, False, 6, whiteness_adjustment = 0.25, contrast_adjustment = 1.1, supported_patterns = {"Text":"Pattern_1"}, display_name = "shorts")
+        booty_shorts = Clothing("Booty Shorts", 2, True, True, "Booty_Shorts", False, False, 6, whiteness_adjustment = 0.25, contrast_adjustment = 1.1, supported_patterns = {"Text":"Pattern_1"}, display_name = "shorts",
+            constrain_regions = [pelvis_region])
         pants_list.append(booty_shorts)
 
-        jean_hotpants = Clothing("Jean Hotpants", 2, True, True, "Jean_Hotpants", False, False, 4, whiteness_adjustment = 0.1, display_name = "shorts")
+        jean_hotpants = Clothing("Jean Hotpants", 2, True, True, "Jean_Hotpants", False, False, 4, whiteness_adjustment = 0.1, display_name = "shorts",
+            constrain_regions = [upper_leg_region, pelvis_region])
         pants_list.append(jean_hotpants)
 
-        daisy_dukes = Clothing("Daisy Dukes", 2, True, True, "Daisy_Dukes", False, False, 6, display_name = "shorts")
+        daisy_dukes = Clothing("Daisy Dukes", 2, True, True, "Daisy_Dukes", False, False, 6, display_name = "shorts",
+            constrain_regions = [pelvis_region])
         pants_list.append(daisy_dukes)
 
-        jeans = Clothing("Jeans", 2, True, True, "Jeans", False, False, 0, display_name = "jeans")
+        jeans = Clothing("Jeans", 2, True, True, "Jeans", False, False, 0, display_name = "jeans",
+            constrain_regions = [upper_leg_region, lower_leg_region, pelvis_region])
         pants_list.append(jeans)
 
-        suitpants = Clothing("Suit Pants", 2, True, True, "Suit_Pants", False, False, 0, display_name = "pants")
+        suitpants = Clothing("Suit Pants", 2, True, True, "Suit_Pants", False, False, 0, display_name = "pants",
+            constrain_regions = [upper_leg_region, lower_leg_region, pelvis_region])
         pants_list.append(suitpants)
 
 
         ##Skirts
         skirts_list = []
 
-        skirt = Clothing("Skirt", 2, True, False, "Skirt", False, False, 1, display_name = "skirt")
+        skirt = Clothing("Skirt", 2, True, False, "Skirt", False, False, 1, display_name = "skirt",
+            constrain_regions = [skirt_region])
         skirts_list.append(skirt)
 
-        long_skirt = Clothing("Long Skirt", 2, True, True, "Long_Skirt", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, display_name = "skirt")
+        long_skirt = Clothing("Long Skirt", 2, True, True, "Long_Skirt", False, False, 0, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, display_name = "skirt",
+            constrain_regions = [skirt_region, lower_leg_region])
         skirts_list.append(long_skirt)
 
-        pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.2, display_name = "skirt")
+        pencil_skirt = Clothing("Pencil Skirt", 2, True, False, "Pencil_Skirt", False, False, 0, whiteness_adjustment = 0.2, display_name = "skirt",
+            constrain_regions = [skirt_region])
         skirts_list.append(pencil_skirt)
 
         belted_skirt = Clothing("Belted Skirt", 2, True, False, "Belted_Skirt", False, False, 1, contrast_adjustment = 1.15, supported_patterns = {"Belt":"Pattern_1"}, display_name = "skirt",
-            half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region])
+            half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region],
+            constrain_regions = [skirt_region])
         skirts_list.append(belted_skirt)
 
-        lace_skirt = Clothing("Lace Skirt", 2, True, False, "Lace_Skirt", False, False, 1, whiteness_adjustment = 0.15, display_name = "skirt")
+        lace_skirt = Clothing("Lace Skirt", 2, True, False, "Lace_Skirt", False, False, 1, whiteness_adjustment = 0.15, display_name = "skirt",
+            constrain_regions = [skirt_region])
         skirts_list.append(lace_skirt)
 
-        mini_skirt = Clothing("Mini Skirt", 2, True, False, "Mini_Skirt", False, False, 5, whiteness_adjustment = 0.4, display_name = "skirt")
+        mini_skirt = Clothing("Mini Skirt", 2, True, False, "Mini_Skirt", False, False, 5, whiteness_adjustment = 0.4, display_name = "skirt",
+            constrain_regions = [skirt_region])
         skirts_list.append(mini_skirt)
 
-        micro_skirt = Clothing("Micro Skirt", 2, False, False, "Micro_Skirt", False, False, 8, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "skirt")
+        micro_skirt = Clothing("Micro Skirt", 2, False, False, "Micro_Skirt", False, False, 8, whiteness_adjustment = 0.2, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "skirt",
+            constrain_regions = [skirt_region])
         skirts_list.append(micro_skirt)
 
 
@@ -290,39 +305,48 @@ init -1:
         dress_list = []
 
         sweater_dress_bottom = Clothing("sweater dress", 2, True, False, "Sweater_Dress", False, False, 0, is_extension = True)
-        sweater_dress = Clothing("sweater dress", 2, True, True, "Sweater_Dress", True, False, 0, has_extension = sweater_dress_bottom, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, supported_patterns = {"Two Toned":"Pattern_1", "Hearts":"Pattern_2"}, display_name = "dress")
+        sweater_dress = Clothing("sweater dress", 2, True, True, "Sweater_Dress", True, False, 0, has_extension = sweater_dress_bottom, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, supported_patterns = {"Two Toned":"Pattern_1", "Hearts":"Pattern_2"}, display_name = "dress",
+            constrain_regions = [torso_region, stomach_region, upper_arm_region, lower_arm_region, skirt_region])
         dress_list.append(sweater_dress)
 
         two_part_dress_bottom = Clothing("two part dress", 2, True, False, "Two_Piece_Dress", False, False, 0, is_extension = True)
-        two_part_dress = Clothing("two part dress", 2, True, True, "Two_Piece_Dress", True, False, 6, has_extension = two_part_dress_bottom, display_name = "dress")
+        two_part_dress = Clothing("two part dress", 2, True, True, "Two_Piece_Dress", True, False, 6, has_extension = two_part_dress_bottom, display_name = "dress",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(two_part_dress)
 
         thin_dress_bottom = Clothing("thin dress", 2, False, False, "Thin_Dress", False, False, 0, is_extension = True)
-        thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.3, contrast_adjustment = 1.15, display_name = "dress")
+        thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.3, contrast_adjustment = 1.15, display_name = "dress",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, skirt_region])
         dress_list.append(thin_dress)
 
         summer_dress_bottom = Clothing("summer dress", 2, False, False, "Summer_Dress", False, False, 0, is_extension = True)
-        summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress")
+        summer_dress = Clothing("summer dress", 2, False, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(summer_dress)
 
         virgin_killer_bottom = Clothing("virgin killer", 2, True, True, "Virgin_Killer", False, False, 0, is_extension = True)
-        virgin_killer = Clothing("Virgin Killer", 2, True, True, "Virgin_Killer", True, False, 5, has_extension = virgin_killer_bottom, display_name = "dress")
+        virgin_killer = Clothing("Virgin Killer", 2, True, True, "Virgin_Killer", True, False, 5, has_extension = virgin_killer_bottom, display_name = "dress",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(virgin_killer)
 
         evening_dress_bottom = Clothing("evening dress", 2, False, False, "Evening_Dress", False, False, 0, is_extension = True)
-        evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4, display_name = "dress")
+        evening_dress = Clothing("evening dress", 2, False, False, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4, display_name = "dress",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(evening_dress)
 
         leotard_bottom = Clothing("Leotard", 1, True, True, "Leotard", False, True, 0, is_extension = True)
-        leotard = Clothing("Leotard", 2, True, True, "Leotard", True, False, 5, has_extension = leotard_bottom, tucked = True, display_name = "leotard")
+        leotard = Clothing("Leotard", 2, True, True, "Leotard", True, False, 5, has_extension = leotard_bottom, tucked = True, display_name = "leotard",
+            constrain_regions = [torso_region, stomach_region, pelvis_region, upper_arm_region, lower_arm_region])
         dress_list.append(leotard)
 
         nightgown_dress_bottom = Clothing("Nightgown", 2, False, False, "Nightgown", False, True, 0, is_extension = True)
-        nightgown_dress = Clothing("Nightgown", 2, False, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "nightgown")
+        nightgown_dress = Clothing("Nightgown", 2, False, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "nightgown",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(nightgown_dress)
 
         bath_robe_bottom = Clothing("Bathrobe", 2, False, False, "Bath_Robe", False, False, 0, is_extension = True)
-        bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "robe")
+        bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "robe",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, skirt_region])
         dress_list.append(bath_robe)
 
         lacy_one_piece_underwear_bottom = Clothing("lacy one piece", 1, True, True, "Lacy_One_Piece_Underwear", False, True, 0, is_extension = True)
@@ -330,83 +354,107 @@ init -1:
         dress_list.append(lacy_one_piece_underwear)
 
         lingerie_one_piece_bottom = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", False, True, 0, is_extension = True)
-        lingerie_one_piece = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", True, True, 8, tucked = True, has_extension = lingerie_one_piece_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "underwear")
+        lingerie_one_piece = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", True, True, 8, tucked = True, has_extension = lingerie_one_piece_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "underwear",
+            constrain_regions = [torso_region, stomach_region, pelvis_region])
         dress_list.append(lingerie_one_piece)
 
         bodysuit_underwear_bottom = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", False, True, 0, is_extension = True)
-        bodysuit_underwear = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", True, True, 6, tucked = True, has_extension = bodysuit_underwear_bottom, whiteness_adjustment = 0.2, display_name = "bodysuit")
+        bodysuit_underwear = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", True, True, 6, tucked = True, has_extension = bodysuit_underwear_bottom, whiteness_adjustment = 0.2, display_name = "bodysuit",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, pelvis_region])
         dress_list.append(bodysuit_underwear)
 
         towel_bottom = Clothing("Towel", 1, True, True, "Towel", False, False, 0, is_extension = True)
-        towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom, display_name = "towel")
+        towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom, display_name = "towel",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         # dress_list.append(towel) #TEMPORARY FOR TESTING
 
         apron_bottom = Clothing("Apron", 3, False, False, "Apron", False, False, 0, is_extension = True)
-        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1, display_name = "apron")
+        apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1, display_name = "apron",
+            constrain_regions = [stomach_region])
         dress_list.append(apron)
 
         ##Shirts
         shirts_list = []
 
         tshirt = Clothing("Tshirt", 2, True, True, "Tshirt", True, False, 1, whiteness_adjustment = 0.35, supported_patterns = {"Striped":"Pattern_2","Text":"Pattern_3"}, display_name = "shirt",
-            half_off_regions = [breast_region, stomach_region, pelvis_region, upper_leg_region], half_off_ignore_regions = upper_arm_region)
+            half_off_regions = [breast_region, stomach_region, pelvis_region, upper_leg_region], half_off_ignore_regions = upper_arm_region,
+            constrain_regions = [torso_region, upper_arm_region, stomach_region])
         shirts_list.append(tshirt)
 
-        lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.18, display_name = "sweater")
+        lace_sweater = Clothing("Lace Sweater", 2, True, True, "Lace_Sweater", True, False, 2, opacity_adjustment = 1.08, whiteness_adjustment = 0.18, display_name = "sweater",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(lace_sweater)
 
-        long_sweater = Clothing("Long Sweater", 2, True, True, "Long_Sweater", True, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Striped":"Pattern_1"}, display_name = "sweater")
+        long_sweater = Clothing("Long Sweater", 2, True, True, "Long_Sweater", True, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Striped":"Pattern_1"}, display_name = "sweater",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(long_sweater)
 
-        sleeveless_top = Clothing ("Sleeveless Top", 2, True, True, "Sleveless_Top", True, False, 0, tucked = True, display_name = "shirt")
+        sleeveless_top = Clothing ("Sleeveless Top", 2, True, True, "Sleveless_Top", True, False, 0, tucked = True, display_name = "shirt",
+            constrain_regions = [torso_region, stomach_region])
         shirts_list.append(sleeveless_top)
 
-        long_tshirt = Clothing("Long Tshirt", 2, True, True, "Long_Tshirt", True, False, 0, whiteness_adjustment = 0.25, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "shirt")
+        long_tshirt = Clothing("Long Tshirt", 2, True, True, "Long_Tshirt", True, False, 0, whiteness_adjustment = 0.25, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "shirt",
+            constrain_regions = [torso_region, stomach_region])
         shirts_list.append(long_tshirt)
 
-        sweater = Clothing("Sweater", 2, True, True, "Sweater", True, False, 1, whiteness_adjustment = 0.1, display_name = "sweater")
+        sweater = Clothing("Sweater", 2, True, True, "Sweater", True, False, 1, whiteness_adjustment = 0.1, display_name = "sweater",
+            constrain_regions = [torso_region, upper_arm_region, stomach_region, upper_arm_region, lower_arm_region])
         shirts_list.append(sweater)
 
-        belted_top = Clothing("Belted Top", 2, True, True, "Belted_Top", True, False, 5, contrast_adjustment = 1.1, display_name = "vest")
+        belted_top = Clothing("Belted Top", 2, True, True, "Belted_Top", True, False, 5, contrast_adjustment = 1.1, display_name = "vest",
+            constrain_regions = [torso_region])
         shirts_list.append(belted_top)
 
-        lace_crop_top = Clothing("Lace Crop Top", 2, True, True, "Lace_Crop_Top", True, False, 2, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "top")
+        lace_crop_top = Clothing("Lace Crop Top", 2, True, True, "Lace_Crop_Top", True, False, 2, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "top",
+            constrain_regions = [torso_region, upper_arm_region])
         shirts_list.append(lace_crop_top)
 
-        tanktop = Clothing("Tanktop", 2, True, True, "Tanktop", True, False, 3, display_name = "top")
+        tanktop = Clothing("Tanktop", 2, True, True, "Tanktop", True, False, 3, display_name = "top",
+            constrain_regions = [torso_region, stomach_region])
         shirts_list.append(tanktop)
 
-        camisole = Clothing("Camisole", 2, True, True, "Camisole", True, False, 1, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "camisole")
+        camisole = Clothing("Camisole", 2, True, True, "Camisole", True, False, 1, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "camisole",
+            constrain_regions = [torso_region, stomach_region, skirt_region])
         shirts_list.append(camisole)
 
-        long_sleeve_blouse = Clothing("Buttoned Blouse", 2, True, True, "Long_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.2, display_name = "blouse")
+        long_sleeve_blouse = Clothing("Buttoned Blouse", 2, True, True, "Long_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.2, display_name = "blouse",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(long_sleeve_blouse)
 
-        short_sleeve_blouse = Clothing("Short Sleeve Blouse", 2, True, True, "Short_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.3, display_name = "blouse")
+        short_sleeve_blouse = Clothing("Short Sleeve Blouse", 2, True, True, "Short_Sleeve_Blouse", True, False, 0, whiteness_adjustment = 0.3, display_name = "blouse",
+            constrain_regions = [torso_region, upper_arm_region, stomach_region])
         shirts_list.append(short_sleeve_blouse)
 
-        wrapped_blouse = Clothing("Wrapped Blouse", 2, True, True, "Wrapped_Blouse", True, False, 0, whiteness_adjustment = 0.25, contrast_adjustment = 1.05, display_name = "blouse")
+        wrapped_blouse = Clothing("Wrapped Blouse", 2, True, True, "Wrapped_Blouse", True, False, 0, whiteness_adjustment = 0.25, contrast_adjustment = 1.05, display_name = "blouse",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(wrapped_blouse)
 
-        tube_top = Clothing("Tube Top", 2, True, True, "Tube_Top", True, False, 4, supported_patterns = {"Cougar Print":"Pattern_1","Text":"Pattern_2"}, display_name = "top")
+        tube_top = Clothing("Tube Top", 2, True, True, "Tube_Top", True, False, 4, supported_patterns = {"Cougar Print":"Pattern_1","Text":"Pattern_2"}, display_name = "top",
+            constrain_regions = [breast_region, stomach_region])
         shirts_list.append(tube_top)
 
-        tie_sweater = Clothing("Tied Sweater", 2, True, True, "Tie_Sweater", True, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "sweater")
+        tie_sweater = Clothing("Tied Sweater", 2, True, True, "Tie_Sweater", True, False, 0, whiteness_adjustment = 0.3, contrast_adjustment = 1.1, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "sweater",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(tie_sweater)
 
-        dress_shirt = Clothing("Dress Shirt", 2, True, True, "Dress_Shirt", True, False, 0, tucked = True, opacity_adjustment = 1.12, display_name = "shirt")
+        dress_shirt = Clothing("Dress Shirt", 2, True, True, "Dress_Shirt", True, False, 0, tucked = True, opacity_adjustment = 1.12, display_name = "shirt",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(dress_shirt)
 
-        lab_coat = Clothing("Lab Coat", 3, True, True, "Lab_Coat", True, False, 0, opacity_adjustment = 1.08, display_name = "coat")
+        lab_coat = Clothing("Lab Coat", 3, True, True, "Lab_Coat", True, False, 0, opacity_adjustment = 1.08, display_name = "coat",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, skirt_region])
         shirts_list.append(lab_coat)
 
-        suit_jacket = Clothing("Suit Jacket", 3, True, True, "Suit_Jacket", True, False, 0, display_name = "jacket")
+        suit_jacket = Clothing("Suit Jacket", 3, True, True, "Suit_Jacket", True, False, 0, display_name = "jacket",
+            constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region])
         shirts_list.append(suit_jacket)
 
-        vest = Clothing("Vest", 3, False, True, "Vest", True, False, 0, display_name = "vest")
+        vest = Clothing("Vest", 3, False, True, "Vest", True, False, 0, display_name = "vest",
+            constrain_regions = [torso_region, stomach_region])
         shirts_list.append(vest)
 
-        business_vest = Clothing("Business Vest", 3, True, True, "Tight_Vest", True, False, 2, whiteness_adjustment = 0.15, opacity_adjustment = 1.3, display_name = "vest")
+        business_vest = Clothing("Business Vest", 3, True, True, "Tight_Vest", True, False, 2, whiteness_adjustment = 0.15, opacity_adjustment = 1.3, display_name = "vest",
+            constrain_regions = [torso_region, stomach_region])
         shirts_list.append(business_vest)
 
 
@@ -436,37 +484,48 @@ init -1:
 
         shoes_list = []
 
-        sandles = Clothing("Sandals", 2, True, True, "Sandles", False, False, 0, display_name = "sandals")
+        sandles = Clothing("Sandals", 2, True, True, "Sandles", False, False, 0, display_name = "sandals",
+            constrain_regions = [foot_region])
         shoes_list.append(sandles)
 
-        shoes = Clothing("Shoes", 2, True, True, "Shoes", False, False, 0, display_name = "shoes")
+        shoes = Clothing("Shoes", 2, True, True, "Shoes", False, False, 0, display_name = "shoes",
+            constrain_regions = [foot_region])
         shoes_list.append(shoes)
 
-        slips = Clothing("Slips", 2, True, True, "Slips", False, False, 0, display_name = "slips")
+        slips = Clothing("Slips", 2, True, True, "Slips", False, False, 0, display_name = "slips",
+            constrain_regions = [foot_region])
         shoes_list.append(slips)
 
-        sneakers = Clothing("Sneakers", 2, True, True, "Sneakers", False, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Laces":"Pattern_1"}, display_name = "shoes")
+        sneakers = Clothing("Sneakers", 2, True, True, "Sneakers", False, False, 0, whiteness_adjustment = 0.2, supported_patterns = {"Laces":"Pattern_1"}, display_name = "shoes",
+            constrain_regions = [foot_region])
         shoes_list.append(sneakers)
 
-        sandle_heels = Clothing("Sandal Heels", 2, True, True, "Sandal_Heels", False, False, 1, display_name = "heels")
+        sandle_heels = Clothing("Sandal Heels", 2, True, True, "Sandal_Heels", False, False, 1, display_name = "heels",
+            constrain_regions = [foot_region])
         shoes_list.append(sandle_heels)
 
-        pumps = Clothing("Pumps", 2, True, True, "Pumps", False, False, 1, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "pumps")
+        pumps = Clothing("Pumps", 2, True, True, "Pumps", False, False, 1, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "pumps",
+            constrain_regions = [foot_region])
         shoes_list.append(pumps)
 
-        heels = Clothing("Heels", 2, True, True, "Heels", False, False, 1, whiteness_adjustment = 0.2, display_name = "heels")
+        heels = Clothing("Heels", 2, True, True, "Heels", False, False, 1, whiteness_adjustment = 0.2, display_name = "heels",
+            constrain_regions = [foot_region])
         shoes_list.append(heels)
 
-        high_heels = Clothing("High Heels", 2, True, True, "High_Heels", False, False, 3, display_name = "heels")
+        high_heels = Clothing("High Heels", 2, True, True, "High_Heels", False, False, 3, display_name = "heels",
+            constrain_regions = [foot_region])
         shoes_list.append(high_heels)
 
-        boot_heels = Clothing("Boot Heels", 2, True, True, "Boot_Heels", False, False, 1, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "boots")
+        boot_heels = Clothing("Boot Heels", 2, True, True, "Boot_Heels", False, False, 1, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "boots",
+            constrain_regions = [foot_region])
         shoes_list.append(boot_heels)
 
-        tall_boots = Clothing("Tall Boots", 2, True, True, "High_Boots", False, False, 0, display_name = "boots")
+        tall_boots = Clothing("Tall Boots", 2, True, True, "High_Boots", False, False, 0, display_name = "boots",
+            constrain_regions = [foot_region, lower_leg_region])
         shoes_list.append(tall_boots)
 
-        thigh_high_boots = Clothing("Thigh High Boots", 2, True, True, "Thigh_Boots", False, False, 3, display_name = "boots")
+        thigh_high_boots = Clothing("Thigh High Boots", 2, True, True, "Thigh_Boots", False, False, 3, display_name = "boots",
+            constrain_regions = [foot_region, lower_leg_region, upper_leg_region])
         shoes_list.append(thigh_high_boots)
 
 
