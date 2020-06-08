@@ -2581,7 +2581,9 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         return
 
     else: #There's nobody else in the lab, guess you've done all the hard work yourself!
-        "You finish work on your new serum design, dubbing it \"[the_serum.name]\". The lab is empty, so you celebrate by yourself."
+        "You finish work on your new serum design, dubbing it \"[the_serum.name]\"."
+        "The lab is empty, so you celebrate by yourself and place the prototype in the stockpile."
+        $ mc.business.inventory.change_serum(the_serum, 1)
         return
     return #We should always have returned by this point anyways, but just in case we'll catch it here.
 

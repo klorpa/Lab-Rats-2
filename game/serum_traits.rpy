@@ -170,13 +170,80 @@ init -1:
             the_person.change_slut_core(10, add_to_log, fire_event = True)
             the_person.change_slut_temp(10, add_to_log)
             the_person.change_obedience(10, add_to_log)
+
+            display_name = the_person.create_formatted_title("???")
+            if the_person.title:
+                display_name = the_person.title
             if the_person.int > 1:
                 the_person.int = 1
                 if (add_to_log):
-                    mc.log_event(the_person.title + ": Intelligence reduced to 1", "float_text_blue")
+                    mc.log_event(display_name + ": Intelligence reduced to 1", "float_text_blue")
             the_person.personality = bimbo_personality
-            mc.log_event("[the_person.char]: Personality changed. Now: Bimbo", "float_text_pink")
+            if add_to_log:
+                mc.log_event(display_name + ": Personality changed. Now: Bimbo", "float_text_pink")
 
+        ## Pregnancy related serum trait functions ##
+        def fertility_enhancement_on_apply(the_person, add_to_log):
+            the_person.fertility_percent += 20
+            display_name = the_person.create_formatted_title("???")
+            if the_person.title:
+                display_name = the_person.title
+            if add_to_log:
+                mc.log_event(the_person.title + ": +20 Fertility", "float_text_red")
+
+        def fertility_enhancement_on_remove(the_person, add_to_log):
+            the_person.fertility_percent += -20
+
+        def fertility_suppression_on_apply(the_person, add_to_log):
+            the_person.fertility_percent += -20
+            display_name = the_person.create_formatted_title("???")
+            if the_person.title:
+                display_name = the_person.title
+            if add_to_log:
+                mc.log_event(the_person.title + ": -20 Fertility", "float_text_red")
+
+        def fertility_suppression_on_remove(the_person, add_to_log):
+            the_person.fertility_percent += +20
+
+        def birth_control_suppression_on_apply(the_person, add_to_log):
+            the_person.bc_penalty += 40
+            display_name = the_person.create_formatted_title("???")
+            if the_person.title:
+                display_name = the_person.title
+            if add_to_log:
+                mc.log_event(display_name + ": Birth control effectiveness reduced by 40%", "float_text_grey")
+
+        def birth_control_suppression_on_remove(the_person, add_to_log):
+            the_person.bc_penalty += -40
+
+        def lactation_hormones_on_apply(the_person, add_to_log):
+            the_person.lactation_sources += 1
+            display_name = the_person.create_formatted_title("???")
+            if the_person.title:
+                display_name = the_person.title
+            if add_to_log:
+                if the_person.lactation_sources == 1:
+                    mc.log_event(display_name + ": Has begun lactating", "float_text_blue")
+                else:
+                    mc.log_event(display_name + ": Lactation increases", "float_text_blue")
+
+        def lactation_hormones_on_remove(the_person,add_to_log):
+            the_person.lactation_sources += -1
+
+        def massive_pregnancy_accelerator_on_turn(the_person, add_to_log):
+            the_person.event_triggers_dict["preg_tits_date"] = the_person.event_triggers_dict.get("preg_tits_date", day) - 1
+            the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) - 1
+            the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) - 1
+
+        def pregnancy_accelerator_on_day(the_person, add_to_log):
+            the_person.event_triggers_dict["preg_tits_date"] = the_person.event_triggers_dict.get("preg_tits_date", day) - 1
+            the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) - 1
+            the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) - 1
+
+        def pregnancy_decellerator_on_day(the_person, add_to_log):
+            the_person.event_triggers_dict["preg_tits_date"] = the_person.event_triggers_dict.get("preg_tits_date", day) + 1
+            the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) + 1
+            the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) + 1
 
         ## nora_serum_up_trait ##
         def nora_suggest_up_on_apply(the_person, add_to_log):
@@ -255,6 +322,35 @@ init -1:
             the_person.charisma = 5
             the_person.int = 5
             the_person.focus = 5
+
+        def nora_reward_hucow_trait_on_apply(the_person, add_to_log): #TODO Hook this up so it's possible to recieve this.
+            the_person.bc_penalty += 75
+            the_person.fertility_percent += 70
+            the_person.lactation_sources += 3
+
+            the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
+            the_person.tits = get_larger_tits(the_person.tits)
+            the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
+
+            display_name = the_person.create_formatted_title("???")
+            if the_person.title:
+                display_name = the_person.title
+
+
+            if add_to_log:
+                mc.log_event(display_name + ": Birth control effectiveness reduced by 75%", "float_text_grey")
+                mc.log_event(the_person.title + ": +70 Fertility", "float_text_red")
+                mc.log_event(display_name + ": Begins instantly lactating", "float_text_blue")
+                if the_person in mc.location.people: #If you're here applying this trait in person it causes her to exclaim.
+                    renpy.say(display_name,"Oh my god my tits feel... bigger!")
+
+        def nora_reward_hucow_trait_on_remove(the_person, add_to_log):
+            the_person.bc_penalty += -75
+            the_person.fertility_percent += -70
+            the_person.lactation_sources += -3
+            the_person.tits = get_smaller_tits(the_person.tits) #Her tits start to swell.
+            the_person.tits = get_smaller_tits(the_person.tits)
+            the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
 
 label instantiate_serum_traits(): #Creates all of the default LR2 serum trait objects.
@@ -352,7 +448,6 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 150,
             exclude_tags = "Suggest")
 
-
         sedatives_trait = SerumTrait(name = "Low Concentration Sedatives",
             desc = "A low dose of slow release sedatives makes the recipient more obedient, but have a negative effect on productivity.",
             positive_slug = "+$15 Value, +10 Obedience",
@@ -375,6 +470,17 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             on_apply = caffeine_trait_on_apply,
             on_remove = caffeine_trait_on_remove,
             research_needed = 150)
+
+        birth_control_suppression = SerumTrait(name = "Birth Control Suppression",
+            desc = "Designed to interfere with the most common forms of oral birth control, reducing their effectiveness.",
+            positive_slug = "+$10 Value, -40% BC Effectiveness",
+            negative_slug = "+50 Serum Research",
+            value_added = 10,
+            research_added = 50,
+            base_side_effect_chance = 30,
+            on_apply = birth_control_suppression_on_apply,
+            on_remove = birth_control_suppression_on_apply,
+            research_needed = 100)
 
 
         #################
@@ -503,7 +609,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         refined_caffeine_trait = SerumTrait(name = "Refined Stimulants",
             desc = "A more carefully refined stimulant produces the same boost to baseline energy levels as ordinary caffeine, but with none of the unpleasant side effects.",
             positive_slug = "+$20 Value, +20 Max Energy",
-            negative_slug = "50 Serum Research",
+            negative_slug = "+50 Serum Research",
             value_added = 20,
             research_added = 50,
             base_side_effect_chance = 25,
@@ -512,6 +618,32 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [caffeine_trait],
             tier = 1,
             research_needed = 300)
+
+        fertility_enhancement_trait = SerumTrait(name = "Fertility Enhancement",
+            desc = "Targets and enhances a womans natural reproductive cycle, increasing the chance that she may become pregnant. If taken. birth control will still prevent most pregnancies.",
+            positive_slug = "+$20 Value, +20% Fertility",
+            negative_slug = "+100 Serum Research",
+            value_added = 20,
+            research_added = 100,
+            base_side_effect_chance = 40,
+            on_apply = fertility_enhancement_on_apply,
+            on_remove = fertility_enhancement_on_remove,
+            requires = [birth_control_suppression, basic_med_app],
+            tier = 1,
+            research_needed = 250)
+
+        fertility_suppression_trait = SerumTrait(name = "Fertility Suppression",
+            desc = "Targets and dampens a womans natural reproductive cycle, decreasing the chance that she may become pregnant.",
+            positive_slug = "+$15 Value, -20% Fertility",
+            negative_slug = "+100 Serum Research",
+            value_added = 15,
+            research_added = 100,
+            base_side_effect_chance = 40,
+            on_apply = fertility_suppression_on_apply,
+            on_remove = fertility_suppression_on_remove,
+            requires = [birth_control_suppression, basic_med_app],
+            tier = 1,
+            research_needed = 250)
 
     #################
         # Tier 2 Traits #
@@ -636,8 +768,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         slutty_caffeine_trait = SerumTrait(name = "Libido Stimulants",
             desc = "Carefull engineering allows for the traditional side effects of stimulants to be redirected to the parasympathetic nervous system, causing an immediate spike in arousal as well as general levels.",
-            positive_slug = "+20 Max Energy, +10 Sluttiness, +$25 Value",
-            negative_slug = "150 Serum Research",
+            positive_slug = " +$25 Value, +20 Max Energy, +10 Sluttiness",
+            negative_slug = "+150 Serum Research",
             value_added = 25,
             research_added = 150,
             base_side_effect_chance = 60,
@@ -646,6 +778,43 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [refined_caffeine_trait, aphrodisiac],
             tier = 2,
             research_needed = 800)
+
+        pregnancy_accelerator_trait = SerumTrait(name = "Pregnancy Acceleration Hormones",
+            desc = "Encourages and supports the ongoing development of a fetus, increasing the effective speed at which a pregnancy develops.",
+            positive_slug = "+$25 Value, +1 Pregnancy Progress per Day",
+            negative_slug = "+250 Serum Research",
+            value_added = 25,
+            research_added = 250,
+            base_side_effect_chance = 60,
+            on_day = pregnancy_accelerator_on_day,
+            requires = [fertility_enhancement_trait],
+            tier = 2,
+            research_needed = 800)
+
+        pregnancy_decelerator_trait = SerumTrait(name = "Pregnancy Deceleration Hormones",
+            desc = "Slows the ongoing development of a fetus, increasing the total amount of time needed to bring a pregnancy to term. If properly applied a pregnancy could be maintained indefinitely.",
+            positive_slug = "+$20 Value, -1 Pregnancy Progress per Day",
+            negative_slug = "+250 Serum Research",
+            value_added = 20,
+            research_added = 250,
+            base_side_effect_chance = 60,
+            on_day = pregnancy_decellerator_on_day,
+            requires = [fertility_enhancement_trait],
+            tier = 2,
+            research_needed = 800)
+
+        lactation_hormones = SerumTrait(name = "Lacation Promotion Hormones",
+            desc = "Contains massive quantities of hormones normally found naturally in the body during late stage pregnancy. Triggers immediate breast lactation",
+            positive_slug = "+$25 Value, Encourages Lactation",
+            negative_slug = "+150 Serum Research",
+            value_added = 25,
+            research_added = 150,
+            base_side_effect_chance = 20,
+            on_apply = lactation_hormones_on_apply,
+            on_remove = lactation_hormones_on_remove,
+            requires = [fertility_enhancement_trait, breast_enhancement],
+            tier = 2,
+            research_needed = 600)
 
     #################
         # Tier 3 Traits #
@@ -694,6 +863,18 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 3,
             research_needed = 2000)
 
+        #TODO: Maybe this should also cost energy to fit thematically
+        massive_pregnancy_accelerator = SerumTrait(name = "Extreme Pregnancy Hormones",
+            desc = "Overloads the body with natural pregnancy hormones alongside nutrient supplements. Massively increases the pace at which a pregnancy will progress.",
+            positive_slug = "+$40 Value, +1 Pregnancy Progress per Turn",
+            negative_slug = "+300 Serum Research",
+            value_added = 40,
+            research_added = 300,
+            base_side_effect_chance = 80,
+            on_turn = massive_pregnancy_accelerator_on_turn,
+            requires = [pregnancy_accelerator_trait],
+            tier = 3,
+            research_needed = 1400)
 
     ### SPECIAL TRAITS ###
 
@@ -872,7 +1053,19 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             start_researched = False,
             research_needed = 4000)
 
-        # Tier 0
+        nora_reward_hucow_trait = SerumTrait(name = "Human Breeding Hormones",
+            desc = "A special serum trait developed by Nora after studying someone who was in the later stages of pregnancy. Massively decreases birth control effectiveness, increases fertility, and triggers breast swelling and lactation.",
+            positive_slug = "+$35 Value, +70% Fertility, -75% BC Effectiveness, Increased Breast Size, Massive Lactation",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 80,
+            on_apply = nora_reward_hucow_trait_on_apply,
+            on_remove = nora_reward_hucow_trait_on_remove,
+            tier = 2,
+            research_needed = 750)
+
+    # Tier 0
         list_of_traits.append(primitive_serum_prod)
         list_of_traits.append(high_capacity_design)
         list_of_traits.append(basic_med_app)
@@ -881,7 +1074,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(sedatives_trait)
         list_of_traits.append(caffeine_trait)
 
-        # Tier 1
+    # Tier 1
         list_of_traits.append(improved_serum_prod)
         list_of_traits.append(improved_duration_trait)
         list_of_traits.append(off_label_drugs)
@@ -892,6 +1085,9 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(clinical_testing)
         list_of_traits.append(mood_enhancer)
         list_of_traits.append(refined_caffeine_trait)
+        list_of_traits.append(birth_control_suppression)
+        list_of_traits.append(fertility_enhancement_trait)
+        list_of_traits.append(fertility_suppression_trait)
 
 
     # Tier 2
@@ -905,11 +1101,15 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(low_volatility_reagents)
         list_of_traits.append(happiness_tick)
         list_of_traits.append(slutty_caffeine_trait)
+        list_of_traits.append(pregnancy_accelerator_trait)
+        list_of_traits.append(pregnancy_decelerator_trait)
+        list_of_traits.append(lactation_hormones)
 
     # Tier 3
         list_of_traits.append(futuristic_serum_prod)
         list_of_traits.append(mind_control_agent)
         list_of_traits.append(permanent_bimbo)
+        list_of_traits.append(massive_pregnancy_accelerator)
 
     # Nora research traits
         list_of_nora_traits.append(nora_suggest_up)

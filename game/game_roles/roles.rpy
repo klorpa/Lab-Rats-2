@@ -170,6 +170,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
             menu_tooltip = "You know she's a prostitute, pay her to have sex with you.")
 
         prostitute_role = Role("Prostitute", [prostitute_action])
+
+
+
+        pregnant_role = Role("Pregnant", [], hidden = True)
     return
 
 

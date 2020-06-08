@@ -14,7 +14,8 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         $ the_person.add_situational_slut("taboo_sex", -20, "We're related, we shouldn't be doing this.")
 
     #Cheating modifiers
-    $ the_person.discover_opinion("cheating on men")
+    if the_person.relationship != "Single":
+        $ the_person.discover_opinion("cheating on men")
     if the_person.relationship == "Girlfriend":
         if the_person.get_opinion_score("cheating on men") > 0:
             $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 5, "I'm cheating on my boyfriend!")
@@ -532,8 +533,10 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
 
 label condom_ask(the_person):
     $ condom_threshold = the_person.get_no_condom_threshold()
+    if pregnant_role in the_person.special_role and the_person.event_triggers_dict.get("preg_knows", False):
+        the_person.char "We don't need to worry about using a condom any more. You can't get me {i}more{/i} pregnant."
 
-    if the_person.effective_sluttiness("condomless_sex") < condom_threshold:
+    elif the_person.effective_sluttiness("condomless_sex") < condom_threshold:
         # they demand you put on a condom.
         #TODO: Make this dialogue personality based
         if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies"):
@@ -553,7 +556,9 @@ label condom_ask(the_person):
 
     elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness("condomless_sex") < condom_threshold + 20 or the_person.has_taboo("condomless_sex"):
         # They suggest you put on a condom.
-        if the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            the_person.char "Do you think you should put on a condom? I'm on birth control, but it might be a good idea to be sure."
+        elif the_person.get_opinion_score("creampies") > 0:
             $ the_person.discover_opinion("creampies")
             the_person.char "I think you should put on a condom. If you do you won't have to pull out when you cum."
         else:
@@ -569,8 +574,10 @@ label condom_ask(the_person):
                 if the_person.has_taboo("condomless_sex"):
                     $ the_person.call_dialogue("condomless_sex_taboo_break")
                 else:
-                    if the_person.has_taboo("creampie"):
-                        the_person.char "Just make sure to pull out if you're going to cum, okay?"
+                    if the_person.on_birth_control:
+                        the_person.char "Okay. I'm on birth control, so it should be fine."
+                    # if the_person.has_taboo("creampie"):
+                    #     the_person.char "Just make sure to pull out if you're going to cum, okay?"
                     else:
                         the_person.char "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
 
@@ -578,8 +585,11 @@ label condom_ask(the_person):
     else:
         # They ask you _not_ to put on a condom.
         if the_person.get_opinion_score("creampies") > 0:
+            if the_person.on_birth_control:
+                the_person.char "Don't put on a condom. I'm on the pill and I want to feel you pump your load inside me."
+            else:
+                the_person.char "Please don't put on a condom. I want you to feel you as you fuck me and get me pregnant."
             $ the_person.discover_opinion("creampies")
-            the_person.char "Don't put on a condom. I want to feel you when you cum inside me."
         else:
             the_person.char "You don't need a condom, I want to feel every single thing you do to me."
         menu:

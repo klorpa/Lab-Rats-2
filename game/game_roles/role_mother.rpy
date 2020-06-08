@@ -28,7 +28,30 @@ label mom_weekly_pay_label(the_person):
         call mom_low_sluttiness_weekly_pay(the_person) from _call_mom_low_sluttiness_weekly_pay #The menu is separated out to make looping easier.
     else:
         if mc.business.event_triggers_dict.get("Mom_Payment_Level",0) >= 1: #We've been through this song and dance already.
-            the_person.char "The budget is still really tight [the_person.mc_title], so I was wondering if you wanted to buy any sort of favour from me?"
+            if the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
+                if the_person.on_birth_control:
+                    the_person.char "The budget is still really tight [the_person.mc_title], so I was wondering if you wanted to buy any sort of favour from me?"
+                    $ the_person.event_triggers_dict["Mom_forced_off_bc"] = False
+                else:
+                    the_person.char "The budget is still really tight [the_person.mc_title]. I was hoping you could help out, for a favour, of course."
+                    the_person.char "I haven't taken my birth control all week. If you're able to pay me I won't start again."
+                    menu:
+                        "Keep her off her birth control. -$150" if mc.business.funds >= 150:
+                            mc.name "I think we can keep this deal going."
+                            "You pull out the cash and hand it over. She places them alongside the bills."
+                            $ mc.business.funds += -150
+                            the_person.char "Thank you so much. Is there anything else I could do for a little more help?"
+
+                        "Keep her off her birth control. -$150 (disabled)" if mc.business.funds < 150:
+                            pass
+
+                        "Let her start taking her birth control.":
+                            mc.name "I'm sorry, the budget at work has been a little tight lately."
+                            the_person.char "I understand. Is there anything else I can do for then?"
+                            call manage_bc(the_person, start = True) from _call_manage_bc
+                            $ the_person.event_triggers_dict["Mom_forced_off_bc"] = False
+            else:
+                the_person.char "The budget is still really tight [the_person.mc_title], so I was wondering if you wanted to buy any sort of favour from me?"
 
         else:
             the_person.char "Our budget is really stretched thin right now, and it would be a huge relief if you could help out."
@@ -116,7 +139,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
 
 label mom_high_sluttiness_weekly_pay(the_person):
     menu:
-        "Have her strip for you. -$100" if mc.business.funds >= 100:
+        "Strip for mou. -$100" if mc.business.funds >= 100:
             if mc.business.event_triggers_dict.get("Mom_Strip",0) >= 1:
                 mc.name "I want you to show off yourself off to me, how does that sound?"
                 the_person.char "Fair is fair, but I'll need a little extra if you want to see anything... inappropriate."
@@ -132,10 +155,10 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
             call pay_strip_scene(the_person) from _call_pay_strip_scene_2
 
-        "Have her strip for you. -$100 (disabled)" if mc.business.funds <100:
+        "Strip for me. -$100 (disabled)" if mc.business.funds <100:
             pass
 
-        "Have her test some serum. -$100" if mc.business.funds >= 100:
+        "Test some serum. -$100" if mc.business.funds >= 100:
             if mc.business.event_triggers_dict.get("Mom_Serum_Test",0) >= 1:
                 mc.name "I've got some more serum I'd like you to test Mom."
                 call give_serum(the_person) from _call_give_serum_10
@@ -178,7 +201,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
         #TODO: "I want to breed Lily" option, once you've got Mom at high sluttiness, obedience, and Love. She gives you the go-ahead to knock up your sister.
 
-        "Have her suck you off. -$300" if mc.business.funds >= 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
+        "Suck me off. -$300" if mc.business.funds >= 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
             mc.name "Alright, I'll pay you to give me a blowjob."
             if the_person.has_taboo("sucking_cock") or the_person.effective_sluttiness("sucking_cock") >= 60:
                 the_person.char "If that's what you need."
@@ -214,8 +237,44 @@ label mom_high_sluttiness_weekly_pay(the_person):
             $ the_person.review_outfit()
             $ the_person.change_obedience(4)
 
-        "Have her suck you off. -$300 (disabled)" if mc.business.funds < 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
+        "Suck me off. -$300 (disabled)" if mc.business.funds < 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
             pass
+
+        "Stop your birth control. -$150" if mc.business.funds >= 150 and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0 and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
+            mc.name "I have something I'd like you to do. I want you to stop taking your birth control."
+            if the_person.on_birth_control:
+                if the_person.has_taboo("vaginal_sex"):
+                    the_person.char "[the_person.mc_title], why would you want that? I hope you aren't thinking about something inappropriate between us!"
+                else:
+                    the_person.char "[the_person.mc_title], why would you want that? It's already so wrong every time we're together!"
+                mc.name "I just think it would be a good way to remind you about what's important."
+                "She seems like she's about to say more, but she stops when you pull out your money."
+                the_person.char "How about... I stop for the week. If you don't want me to take it you'll have to pay me every week."
+                mc.name "Okay, let's test it out for this week and see how you do."
+                "You hand over the money to her and she tucks it away quickly."
+                $ mc.business.funds += -150
+                the_person.char "One moment."
+                "[the_person.possessive_title] leaves the room, but returns quickly. She hands you a small blister pack labeled with each day of the week."
+                the_person.char "Here are my pills for the week, so you know I'm not lying. I've already taken one for today, but starting tomorrow I won't have any."
+                mc.name "Thank you [the_person.title]."
+                $ the_person.event_triggers_dict["Mom_forced_off_bc"] = True
+                call manage_bc(the_person, start = False) from _call_manage_bc_1
+            else:
+                the_person.char "I'm sorry, I can't take your money for that [the_person.mc_title]."
+                mc.name "Sure you can [the_person.title], it's..."
+                "[the_person.possessive_title] shakes her head and interupts you."
+                the_person.char "No, I mean I can't take your money because I'm not taking any birth control right now."
+                if the_person.has_taboo("vaginal_sex"):
+                    the_person.char "It's been a while since I needed it, so I don't bother."
+                else:
+                    the_person.char "I know I should, but... I just haven't bothered talking to my doctor."
+                the_person.char "Is there something else you would like?"
+                call mom_high_sluttiness_weekly_pay(the_person) from _call_mom_high_sluttiness_weekly_pay_1
+
+
+        "Stop your birth control. -$150 (disabled)" if mc.business.funds < 150 and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0  and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
+            pass
+
 
         "Nothing this week.":
             mc.name "Sorry Mom, but I'm tight on cash right now as well. Maybe next week, okay?"

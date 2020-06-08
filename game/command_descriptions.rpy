@@ -348,16 +348,19 @@ label top_strip_description(the_person, strip_list):
 label underwear_strip_description(the_person):
     python:
         the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
+        last_item_display_name = "nothing"
         while the_person.outfit.bra_covered() and the_item is not None:
             the_person.draw_animated_removal(the_item)
+            last_item_display_name = the_item.display_name
             the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
 
         the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
         while the_person.outfit.panties_covered() and the_item is not None:
             the_person.draw_animated_removal(the_item)
+            last_item_display_name = the_item.display_name
             the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
 
-        renpy.say("",the_person.possessive_title + " strips off her " + the_item.display_name + ", leaving her wearing only her underwear.") #TODO: Generalize these kinds of strip functions.
+        renpy.say("",the_person.possessive_title + " strips off her " + last_item_display_name + ", leaving her wearing only her underwear.") #TODO: Generalize these kinds of strip functions.
 
     return
 

@@ -120,6 +120,7 @@ init -2:
         list_of_names.append("Lira")
         list_of_names.append("Lilith")
         list_of_names.append("Raislyn")
+        list_of_names.append("Gina")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -504,7 +505,7 @@ init -2:
         sexy_opinions_list.append("creampies") #Has gameplay effect
         sexy_opinions_list.append("cum facials") #Has gameplay effect
         sexy_opinions_list.append("being covered in cum") #Has gameplay effect
-        sexy_opinions_list.append("bareback sex") #Has gameplay effect
+        sexy_opinions_list.append("bareback sex") #Has gameplay effect.
         sexy_opinions_list.append("big dicks")
         sexy_opinions_list.append("cheating on men") #Has gameplay effect
         sexy_opinions_list.append("anal creampies") #Has gameplay effect
@@ -728,11 +729,11 @@ init 1 python:
         list_of_unique_characters.append(person_sylvia)
 
         paige_wardrobe = wardrobe_from_xml("Paige_Wardrobe")
-        #Well educated and raised in a very middle-class family.
-        #Paige is a cool-headed young woman who has confidence without exuberance or extraversion.
-        #her favourite activities are generally calm and solitary: reading, playing musical instruments, watching TV, etc.
-        #She doesn't make friends quickly, but she is pleasant and easy to get along with, and the bonds she does cultivate are likely to last for life.
-        #She has no passion for her work, but she is good at it and takes pride in that fact.
+        # Well educated and raised in a very middle-class family.
+        # Paige is a cool-headed young woman who has confidence without exuberance or extraversion.
+        # her favourite activities are generally calm and solitary: reading, playing musical instruments, watching TV, etc.
+        # She doesn't make friends quickly, but she is pleasant and easy to get along with, and the bonds she does cultivate are likely to last for life.
+        # She has no passion for her work, but she is good at it and takes pride in that fact.
         person_paige = create_random_person(name = "Paige", last_name = "Sallow", body_type = "thin_body", height = 0.98, skin = "white", tits="A", hair_colour="brown", hair_style = messy_ponytail, starting_wardrobe = paige_wardrobe,
             personality = reserved_personality, stat_array = [1,4,3], skill_array = [5,1,2,3,2], sex_array = [2,1,4,2])
         list_of_unique_characters.append(person_paige)
@@ -744,9 +745,17 @@ init 1 python:
         # By the time Kendra turned 16, she had grown into a stunningly beautiful woman and enjoyed the newfound attention she was receiving from boys. She was a free spirit, who just wanted to enjoy life.
         # When she graduated High School, she decided that college was not for her and pursued a career as glamor model. Kendra's parents were not pleased and cut her off financially but Kendra didn't care.
         # She was ready to be free and live her life.
-        person_kendra = create_random_person(name = "Kentra", last_name = "Rivera", body_type = "curvy_body", height = 0.94, skin = "tan", hair_colour = "chestnut", hair_style = shaved_side_hair, starting_wardrobe = kendra_wardrobe,
+        person_kendra = create_random_person(name = "Kendra", last_name = "Rivera", age = 18, body_type = "curvy_body", height = 0.94, skin = "tan", hair_colour = "chestnut", hair_style = shaved_side_hair, starting_wardrobe = kendra_wardrobe,
             personality = relaxed_personality, stat_array = [4,3,1], skill_array = [5,3,1,2,2], sex_array = [2,2,4,1], face_style = "Face_4")
         list_of_unique_characters.append(person_kendra)
+
+        svetlanna_wardrobe = wardrobe_from_xml("Svetlanna_Wardrobe")
+        # Svetlanna moved to the fictional city from a fictional Russian land at the age of 16. She was always fascinated with biochemistry and when her mother became ill, she dove even deeper into her studies.
+        # After graduating from public education, she immediately moved to higher studies. She was hell-bent to learn all she could to help her mother.
+        # Unfortunately, her mother died before Svetlanna could find a cure for her mysterious disease, which put her into a deep depression.
+        # After some time, she met a woman that rekindled her love for biotechnology and put her on the path of a wild woman, never tied down with any one man or woman.
+        person_svetlanna = create_random_person(name = "Svetlanna", last_name = "Ivanova", body_type= "thin_body", height = 1.00, skin = "white", tits="E", hair_colour = "blond", hair_style = long_hair, starting_wardrobe = svetlanna_wardrobe,
+            personality = wild_personality, stat_array = [3,1,4], skill_array = [1,3,5,2,2], sex_array = [2,1,2,4])
 
         ### STEPHANIE ###
         stephanie_wardrobe = wardrobe_from_xml("Stephanie_Wardrobe")

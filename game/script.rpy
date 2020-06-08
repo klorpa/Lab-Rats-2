@@ -5,10 +5,14 @@
 
 init -2:
     if renpy.macintosh: #Macs have a bug related to high resolution monitors that breaks the animation system. Animation is possible on some monitors, but users must explicitly enable it from the menu.
-        default persistent.vren_animation = False
+        default persistent.vren_animation = True
+        default persistent.vren_mac_scale = 2.0
 
     else:
         default persistent.vren_animation = True
+        default persistent.vren_mac_scale = 1.0
+
+    default persistent.pregnancy_pref = 0 # 0 = no content, 1 = predictable, 2 = realistic
 
 init -2 python:
 
@@ -1782,6 +1786,17 @@ init -2 python:
 
             self.broken_taboos = [] #Taboos apply a penalty to the _first_ time you are trying to push some boundry (first time touching her pussy, first time seeing her tits, etc.), and trigger special dialogue when broken.
 
+            bc_chance = 100 - (self.age + (self.get_opinion_score("bareback sex")*15))
+            if persistent.pregnancy_pref == 2 and renpy.random.randint(0,100) > bc_chance:
+                self.on_birth_control = False #If this character is on birth control or not. Note that this may be overridden by a game wide setting preventing pregnancy. (and on other settings may not be 100% effective)
+            else:
+                self.on_birth_control = True
+            self.bc_penalty = 0 #Lowers the chance of birht control preventing a pregnancy. (Default is 100% if predictable or 90% if realistic). #TODO: Add serum traits that affect this.
+            self.fertility_percent = 20.0 - ((self.age-18.0)/3.0) #The chance, per creampie, that a girl gets pregnant.
+            self.ideal_fertile_day = renpy.random.randint(0,30) #Influences a girls fertility chance. It is double on the exact day of the month, dropping down to half 15 days before/after. Only applies on realistic setting.
+
+            self.lactation_sources = 0 #How many things are causing this girl to lactate. Mainly serum traits, side effects, or pregnancy.
+
             ## Clothing things.
             self.wardrobe = copy.copy(wardrobe) #Note: we overwrote default copy behaviour for wardrobes so they do not have any interference issues with eachother.
             if base_outfit is None:
@@ -2119,15 +2134,16 @@ init -2 python:
 
             if physical_x/(16.0/9.0) > physical_y: #Account for the screen resolution difference from 16x9
                 #y_scale = 1080.0/physical_y
-                y_scale = 1*(config_y/physical_y) #This should adjust for high DPI displays that have a higher physical pixel density than their stated resolution
+                y_scale = 1*(config_y/(physical_y*persistent.vren_mac_scale)) #This should adjust for high DPI displays that have a higher physical pixel density than their stated resolution
 
                 x_scale = y_scale
             else:
                 #x_scale = 1920.0/physical_x
-                x_scale = 1*(config_x/physical_x)
+                x_scale = 1*(config_x/(physical_x*persistent.vren_mac_scale))
 
                 y_scale = x_scale
-            #y_scale = #Renpy auto-includes black bars above and below the game if it is taller/shorter than standard res, so the scaling factor for y cannot be trusted.
+
+
 
             scaled_image = im.FactorScale(static_image, x_scale, y_scale)
 
@@ -2465,9 +2481,10 @@ init -2 python:
 
 
         def remove_suggest_effect(self,amount):
-            self.change_suggest(- __builtin__.max(self.suggest_bag or [0])) #Subtract the max
-            self.suggest_bag.remove(amount)
-            self.change_suggest(__builtin__.max(self.suggest_bag or [0])) # Add the new max. If we were max, it is now lower, otherwie it cancels out.
+            if amount in self.suggest_bag: # Avoid removing the "amount" if we don't actually have it in the bag.
+                self.change_suggest(- __builtin__.max(self.suggest_bag or [0])) #Subtract the max
+                self.suggest_bag.remove(amount)
+                self.change_suggest(__builtin__.max(self.suggest_bag or [0])) # Add the new max. If we were max, it is now lower, otherwie it cancels out.
 
         def change_happiness(self,amount, add_to_log = True):
             self.happiness += amount
@@ -2767,9 +2784,17 @@ init -2 python:
             return happy_points
 
         def get_no_condom_threshold(self, situational_modifier = 0):
-            no_condom_threshold = 60 + (self.get_opinion_score("bareback sex") * -10) + situational_modifier
+            if pregnant_role in self.special_role and self.event_triggers_dict.get("preg_knows", False):
+                return 0 #You can't get more pregnant, so who cares?
+
+            no_condom_threshold = 50 + (self.get_opinion_score("bareback sex") * -10) + situational_modifier
             if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
                 no_condom_threshold += 10
+
+            if persistent.pregnancy_pref == 0:
+                no_condom_threshold += 10 #If pregnancy content is being ignored we return to the baseline of 60
+            elif the_person.on_birth_control: #If there is pregnancy content then a girl is less likely to want a condom when using BC, much more likely to want it when not using BC.
+                no_condom_threshold += 20
 
             return no_condom_threshold
 
@@ -2777,10 +2802,14 @@ init -2 python:
             if self.get_opinion_score("incest") > 0: #If she thinks incest is hot she doesn't have an incest taboo modifier. Maybe she should, but it should just be reduced? For now this is fine.
                 return False
 
-            elif any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
-                    return True
+            elif self.is_family():
+                return True
 
             return False
+
+        def is_family(self):
+            if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
+                return True
 
         def change_arousal(self,amount, add_to_log = True):
             self.arousal += __builtin__.round(amount) #Round it to an integer if it isn't one already.
@@ -2889,6 +2918,31 @@ init -2 python:
             self.discover_opinion("creampies")
 
             self.sex_record["Vaginal Creampies"] += 1
+
+            # Pregnancy Check #
+            if persistent.pregnancy_pref > 0 and pregnant_role not in self.special_role:
+                if persistent.pregnancy_pref == 1 and self.on_birth_control: #Establish how likely her birth contorl is to work (if needed, and if present)
+                    bc_percent = 100 - self.bc_penalty
+                elif persistent.pregnancy_pref == 2 and self.on_birth_control:
+                    bc_percent = 90 - self.bc_penalty
+                else:
+                    bc_percent = 0
+
+                preg_chance = renpy.random.randint(0,100)
+                bc_chance = renpy.random.randint(0,100)
+                if persistent.pregnancy_pref == 2: # On realistic pregnancy a girls chance to become pregnant fluctuates over the month.
+                    day_difference = abs((day % 30) - self.ideal_fertile_day) # Gets the distance between the current day and the ideal fertile day.
+                    if day_difference > 15:
+                        day_difference = 30 - day_difference #Wrap around to get correct distance between months.
+                    multiplier = 2 - (float(day_difference)/10.0) # The multiplier is 2 when the day difference is 0, 0.5 when the day difference is 15.
+                    modified_fertility = self.fertility_percent * multiplier
+                else:
+                    modified_fertility = self.fertility_percent
+
+                if preg_chance < modified_fertility and pregnant_role not in self.special_role: #There's a chance she's pregnant
+                    if bc_chance >= bc_percent : # Birth control failed to prevent the pregnancy
+                        become_pregnant(self) #Function in role_pregnant establishes all of the pregnancy related variables and events.
+
 
         def cum_in_ass(self):
             mc.listener_system.fire_event("sex_cum_ass", the_person = self)
@@ -3058,7 +3112,7 @@ init -2 python:
             "clothing_accept", "clothing_reject", "clothing_review",
             "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
-            "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high",
+            "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high", "flirt_response_girlfriend", "flirt_response_affair",
             "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
             "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction",
             "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
@@ -4219,7 +4273,7 @@ init -2 python:
 
             return image_name
 
-        def generate_item_displayable(self, body_type, tit_size, position, lighting = None, regions_constrained = None):
+        def generate_item_displayable(self, body_type, tit_size, position, lighting = None, regions_constrained = None, nipple_wetness = 0.0):
             if not self.is_extension: #We don't draw extension items, because the image is taken care of in the main object.
                 if lighting is None:
                     lighting = [1,1,1]
@@ -4313,15 +4367,23 @@ init -2 python:
                     constrained_mask = AlphaBlend(constrained_region_mask, Solid("#FFFFFFFF"), full_body_comp) #This builds the proper final image mask (ie all shown, except for the region around but not including the constrained region)
                     final_image = AlphaBlend(constrained_mask, Solid("#00000000"), final_image)
 
+                if nipple_wetness > 0: #TODO: Expand this system to a generic "Wetness" system
+                    region_mask = Image(wet_nipple_region.generate_item_image_name(body_type, tit_size, position)) #TODO: Add a much more specific "nipple region"
+                    # darkness_factor = nipple_wetness * 0.1 #Used to darken clothing where it is wet
+                    region_mask = im.MatrixColor(region_mask, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,-1*nipple_wetness,1])
+                    final_image = AlphaBlend(region_mask, Solid("#00000000"), final_image)
+
 
                 if self.half_off:
                     #NOTE: This actually produces some really good looking effects for water/stuff. We should add these kinds of effects as a general thing, probably on the pattern level.
                     #NOTE: Particularly for water/stains, this could work really well (and can use skin-tight region marking, ie. not clothing item dependant).
-
+                    # list_of_regions_to_hide = self.half_off_regions[:]
+                    # if nipple_wetness > 0 and breast_region not in list_of_regions_to_hide: #TODO: Add a proper nipple region.
+                    #     list_of_regions_to_hide.append(breast_region)
                     composite_list = None
                     x_size = 0
                     y_size = 0
-                    for region_to_hide in self.half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
+                    for region_to_hide in half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
                         region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
                         if composite_list is None:
                             x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size() #Only get the render size once, since all renders are the same size for a pose. Technically this could also be a lookup table if it was significantly impacting performacne
@@ -4459,7 +4521,7 @@ init -2 python:
 
             self.images = {}
             if body_dependant:
-                self.body_types = ["standard_body","thin_body","curvy_body"]
+                self.body_types = ["standard_body","thin_body","curvy_body","standard_preg_body"]
             else:
                 self.body_types = ["standard_body"]
 
@@ -4550,15 +4612,21 @@ init -2 python:
             return copy_outfit
 
         def generate_draw_list(self, the_person, position, emotion = "default", special_modifiers = None, lighting = None): #Generates a sorted list of displayables that when drawn display the outfit correctly.
+            nipple_wetness = 0.0 # Used to simulate a girl lactating through clothing. Ranges from 0 (none) to 1 (Maximum Effect)
             if the_person is None:
                 body_type = "standard_body"
                 tit_size = "D"
                 face_style = "Face_1"
 
+
             else:
                 body_type = the_person.body_type
                 tit_size = the_person.tits
                 face_style = the_person.face_style
+                if the_person.lactation_sources > 0:
+                    nipple_wetness = (0.1*(float(rank_tits(the_person.tits)+the_person.lactation_sources))) * (the_person.arousal/the_person.max_arousal)
+                    if nipple_wetness > 1.0:
+                        nipple_wetness = 1.0
 
             all_items = self.generate_clothing_list(body_type, tit_size, position) #First generate a list of the clothing objects
             ordered_displayables = []
@@ -4569,7 +4637,7 @@ init -2 python:
                     ordered_displayables.append(item.generate_item_displayable(position, face_style, emotion, special_modifiers, lighting = lighting))
                 else:
                     if not item.is_extension:
-                        ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions))
+                        ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions, nipple_wetness = nipple_wetness))
                         for region in item.constrain_regions:
 
                             if item.half_off and region in item.half_off_regions:
@@ -5150,6 +5218,7 @@ init -2 python:
                 self.underwear_sets = []
             if overwear_sets is None:
                 self.overwear_sets = []
+
         def __copy__(self):
             #TODO: see if adding a .copy() here has A) Fixed any potential bugs and B) not had a major performance impact.
             outfit_copy_list = []
@@ -5167,8 +5236,8 @@ init -2 python:
 
             return Wardrobe(self.name, outfit_copy_list, under_copy_list, over_copy_list)
 
-        def merge_wardrobes(self, other_wardrobe): #Returns a copy of this wardrobe merged with the other one, with this taking priority for base outfits.
-            base_wardrobe = self.__copy__() #This already redefines it's copy meth, so we should be fine.
+        def merge_wardrobes(self, other_wardrobe, keep_primary_name = False): #Returns a copy of this wardrobe merged with the other one, with this taking priority for base outfits.
+            base_wardrobe = self.__copy__() #This already redefines it's copy method, so we should be fine.
             for outfit in other_wardrobe.outfits:
                 base_wardrobe.add_outfit(outfit.get_copy())
 
@@ -5178,7 +5247,8 @@ init -2 python:
             for overwear in other_wardrobe.overwear_sets:
                 base_wardrobe.add_overwear_set(overwear.get_copy())
 
-            base_wardrobe.name = base_wardrobe.name + " + " + other_wardrobe.name
+            if not keep_primary_name:
+                base_wardrobe.name = base_wardrobe.name + " + " + other_wardrobe.name
             return base_wardrobe
 
         def get_random_selection(self, chance_to_pick): #Returns a wardrobe made of a random assortment of clothing from this one.
@@ -6693,18 +6763,12 @@ screen person_info_detailed(the_person):
                         text "Significant Other: [mc.name]" style "menu_text_style"
 
                     text "Kids: [the_person.kids]" style "menu_text_style"
-                    $ list_of_relationships = town_relationships.get_relationship_type_list(the_person, visible = True)
-                    if list_of_relationships:
-                        text "Other relationships:"  style "menu_text_style"
-                        viewport:
-                            xsize 325
-                            yfill True
-                            scrollbars "vertical"
-                            mousewheel True
-                            vbox:
-                                for relationship in list_of_relationships:
-                                    #TODO: Once we have more relationship stuff going on make this only show when the relationship is known.
-                                    text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style" size 14
+                    #TODO: Decide how much of this information we want to give to the player directly and how much we want to have delivered in game.
+                    if persistent.pregnancy_pref > 0:
+                        text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
+                        if persistent.pregnancy_pref == 2:
+                            text "Monthly Peak Day: " + str(the_person.ideal_fertile_day ) style "menu_text_style"
+                        text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style"
 
             frame:
                 background "#1a45a1aa"
@@ -6715,6 +6779,20 @@ screen person_info_detailed(the_person):
                     text "Charisma: [the_person.charisma]" style "menu_text_style"
                     text "Intelligence: [the_person.int]" style "menu_text_style"
                     text "Focus: [the_person.focus]" style "menu_text_style"
+
+                $ list_of_relationships = town_relationships.get_relationship_type_list(the_person, visible = True)
+                if list_of_relationships:
+                    vbox:
+                        text "Other relationships:"  style "menu_text_style"
+                        viewport:
+                            xsize 325
+                            yfill True
+                            scrollbars "vertical"
+                            mousewheel True
+                            vbox:
+                                for relationship in list_of_relationships:
+                                    #TODO: Once we have more relationship stuff going on make this only show when the relationship is known.
+                                    text "    " + relationship[0].name + " " + relationship[0].last_name + " - " + relationship[1] style "menu_text_style" size 14
             frame:
                 background "#1a45a1aa"
                 xsize 325
@@ -8676,16 +8754,18 @@ screen housing_map_manager():
     zorder 101
     add "Paper_Background.png"
 
-    $ places_so_far = 0
-    $ x_offset_per_place = 0.1
+    $ x_pos = 0
+    $ y_pos = 0
+    $ max_places_per_row = 5
+    $ x_offset_per_place = 0.145
+    $ y_offset_per_row = 0.07
     for place in mc.known_home_locations:
         if not place == mc.location and not place.hide_in_known_house_map:
             frame:
                 background None
                 xysize [171,150]
                 anchor [0.0,0.0]
-                align [0.1+(x_offset_per_place*places_so_far),0.5]
-                #align place.map_pos #TODO arange this properly
+                align [0.2+(x_offset_per_place*x_pos),0.4+(y_offset_per_row*y_pos)]
                 imagebutton:
                     anchor [0.5,0.5]
                     auto "gui/LR2_Hex_Button_%s.png"
@@ -8699,7 +8779,7 @@ screen housing_map_manager():
                 background None
                 xysize [171,150]
                 anchor [0.0,0.0]
-                align [0.1+(x_offset_per_place*places_so_far),0.5]
+                align [0.1+(x_offset_per_place*x_pos),0.5+(y_offset_per_row*y_pos)]
                 imagebutton:
                     anchor [0.5,0.5]
                     idle "gui/LR2_Hex_Button_Alt_idle.png"
@@ -8707,7 +8787,11 @@ screen housing_map_manager():
                     action Function(mc.change_location,place)
                     sensitive False
                 text place.formalName + "\n(" + str(len(place.people)) + ")" anchor [0.5,0.5] style "map_text_style"
-        $ places_so_far += 1
+        $ x_pos += 1
+        if x_pos >= max_places_per_row + 0.5:
+            $ x_pos += 0.5
+            $ x_pos += -max_places_per_row
+            $ y_pos += 1
 
     frame:
         background None
@@ -9163,13 +9247,24 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.28.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.29.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
             call faq_loop from _call_faq_loop
         "Get on with the game!":
             "You can access the FAQ from your bedroom at any time."
+
+    "Vren" "Lab Rats 2 contains content related to impregnation and pregnancy. These settings may be changed in the menu at any time."
+    menu:
+        "No pregnancy content.\n{size=16}Girls never become pregnant. Most pregnancy content hidden.{/size}":
+            $ persistent.pregnancy_pref = 0
+
+        "Predictable pregnancy content.\n{size=16}Birth control is 100%% effective. Girls always default to taking birth control.{/size}":
+            $ persistent.pregnancy_pref = 1
+
+        "Realistic pregnancy content.\n{size=16}Birth control is not 100%% effective. Girls may not be taking birth control.{/size}":
+            $ persistent.pregnancy_pref = 2
 
     $ renpy.block_rollback()
     call screen character_create_screen()
@@ -9582,9 +9677,41 @@ label outfit_master_manager(): #WIP new outfit manager that centralizes exportin
     call outfit_master_manager() from _call_outfit_master_manager #Loop around until the player decides they want to leave.
     return
 
+label wardrobe_import(): #TODO: Figure out where we want to put this. Might be interesting to embed this at the clothing store as a location option.
+    $ list_of_xml_files = []
+    # Build a list of all possible files inside of the imports file.
+    python:
+        file_path = os.path.abspath(os.path.join(config.basedir, "game"))
+        file_path = os.path.join(file_path,"wardrobes")
+        file_path = os.path.join(file_path,"imports")
+        for file_name in os.listdir(file_path):
+            if file_name[-4:] == ".xml":
+                list_of_xml_files.append((file_name, file_name))
+
+    if not list_of_xml_files:
+        "No files found. Place wardrobe XML files inside of games/wardrobes/imports to make them available for importing."
+        return
+
+    $ list_of_xml_files.append(("None","None")) #Provide a way to cancel
+    "Select a wardrobe file to import:"
+
+    $ chosen_filename = renpy.display_menu(list_of_xml_files) #Get the player to choose a list
+    if chosen_filename is "None":
+        return
+
+    $ the_wardrobe = wardrobe_from_xml(chosen_filename[:-4], in_import = True)
+    $ mc.designed_wardrobe = mc.designed_wardrobe.merge_wardrobes(the_wardrobe, keep_primary_name = True)
 
 
-label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS YOU TAKE
+    # Some file cleanup so they don't exist in memory for the rest of the game.
+    $ list_of_xml_files = []
+    $ the_wardrobe = None
+
+    "Wardrobe imported."
+    return
+
+
+label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS YOU TAKE
     # $ mc.can_skip_time = True
 
     # python:
@@ -9635,7 +9762,7 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
                 #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
                 $ talk_action = get_random_from_list(enabled_talk_events)
                 $ talk_action.call_action(picked_option)
-                if talk_action in picked_ption.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
+                if talk_action in picked_option.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
                     $ picked_option.on_talk_event_list.remove(talk_action)
 
 
@@ -9742,21 +9869,9 @@ label talk_person(the_person):
         menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. Play your cards right and you might end up back at her place.")
     $ make_girlfriend_action = Action("Ask her to be your girlfriend.", requirement = ask_girlfriend_requirement, effect = "ask_be_girlfriend_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Ask her to start an official, steady relationship and be your girlfriend.", priority = 10)
-    $ chat_list = [small_talk_action, compliment_action, flirt_action, date_action, make_girlfriend_action]
-
-    #TODO: "Do something specific", change existing sections into actions, store in chat_actions.rpy
-    #TODO: Add in the other serum give methods ("sneak" and "ask") in other ways.
-    # |-> Idea: Sneak and Ask should both be event based and/or role based, there is no "generic" way to sneak a dose of serum to someone, and you need a reason to give them one (otherwise it's just a demand)
-    #   |-> Spend some time adding semi-generic events for stuff like this.
-
-
-    # $ serum_give_action = Action("Try to give her a dose of serum.", requirement = serum_give_requirement, effect = "serum_give_label", args = the_person, requirement_args = the_person,
-    #     menu_tooltip = "Demand she take a dose, ask her politely, or just try and slip it into something she'll drink. Failure may result in her trusting you less or being immediately unhappy.")
-
-    # The generic seduce has been replaced with a specific action for groping leading to sex, (soon) a command option leading to sex, and (soon) flirting leading to sex.
-    # $ seduce_action = Action("Try to seduce her.", requirement = seduce_requirement, effect = "seduce_label", args = the_person, requirement_args = the_person,
-    #     menu_tooltip = "Try and seduce her right here and now. Love, sluttiness, obedience, and your own charisma all play a factor in how likely she is to be seduced.", priority = 5)
-
+    $ bc_talk_action = Action("Talk about her birth control.", requirement = bc_talk_requirement, effect = "bc_talk_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Talk to her about her use of birth control. Ask her to start or stop taking it, or just check what she's currently doing.")
+    $ chat_list = [small_talk_action, compliment_action, flirt_action, date_action, make_girlfriend_action, bc_talk_action]
 
     $ grope_action = Action("Grope her.\n-5 {image=gui/extra_images/energy_token.png}", requirement = grope_requirement, effect = "grope_person", args = the_person, requirement_args = the_person,
         menu_tooltip = "Be \"friendly\" and see how far she is willing to let you take things. May make her more comfortable with physical contact, but at the cost of her opinion of you.")
@@ -10559,6 +10674,11 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         strip_club_show_action = Action("Watch a show.", stripclub_show_requirement, "stripclub_dance",
             menu_tooltip = "Take a seat and wait for the next girl to come out on stage.")
 
+
+        import_wardrobe_action = Action("Import a wardrobe file.", faq_action_requirement, "wardrobe_import",
+            menu_tooltip = "Select and import a wardrobe file, adding all outfits to your current wardrobe.")
+
+
         test_action = Action("This is a test.", faq_action_requirement, "faq_action_description")
 
 
@@ -10594,7 +10714,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         gym = Room("gym","Gym",[],standard_mall_backgrounds[:],[],[],[],True,[7,1], lighting_conditions = standard_indoor_lighting)
         home_store = Room("home improvement store","Home Improvement Store",[],standard_mall_backgrounds[:],[],[],[],True,[8,1], lighting_conditions = standard_indoor_lighting)
         sex_store = Room("sex store","Sex Store",[],standard_mall_backgrounds[:],[],[],[],True,[9,2], lighting_conditions = standard_indoor_lighting)
-        clothing_store = Room("clothing store","Clothing Store",[],standard_mall_backgrounds[:],[],[],[],True,[8,3], lighting_conditions = standard_indoor_lighting)
+        clothing_store = Room("clothing store","Clothing Store",[],standard_mall_backgrounds[:],[],[],[import_wardrobe_action],True,[8,3], lighting_conditions = standard_indoor_lighting)
         office_store = Room("office supply store","Office Supply Store",[],standard_mall_backgrounds[:],[],[],[],True,[9,1], lighting_conditions = standard_indoor_lighting)
 
 

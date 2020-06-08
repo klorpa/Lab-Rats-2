@@ -1,4 +1,7 @@
 init -2 python:
+    def always_true_requirement():
+        return True
+
     def small_talk_requirement(the_person):
         if mc.energy < 15:
             return "Requires: 15 Energy"
@@ -119,7 +122,7 @@ init -2 python:
     def serum_demand_requirement(the_person):
         if employee_role in the_person.special_role:
             #It's easier to convince her if she works for you
-            if the_person.obedience < 115:
+            if the_person.obedience < 110:
                 return "Requires: 110 Obedience"
             elif mc.inventory.get_any_serum_count() <= 0:
                 return "Requires: Serum in inventory"
@@ -140,6 +143,14 @@ init -2 python:
         else:
             return True
 
+    def bc_talk_requirement(the_person):
+        if persistent.pregnancy_pref == 0:
+            return False
+        elif the_person.effective_sluttiness() < 15 and the_person.love < 15:
+            return False
+        else:
+            return True
+
     def demand_touch_requirement(the_person):
         if the_person.obedience < 125: #TODO: Note: This isn't based on sluttiness directly, but we should have some dialogue reference to it.
             return "Requires: 125 Obedience"
@@ -151,6 +162,17 @@ init -2 python:
             return False
         else:
             return True
+
+    def demand_bc_requirement(the_person):
+        if persistent.pregnancy_pref == 0: #Don't talk about pregnancy if we don't want any of it.
+            return False
+        elif the_person.obedience < 100:
+            return False
+        elif the_person.obedience < 115:
+            return "Requires: 115 Obedience"
+        else:
+            return True
+
 
 label person_introduction(the_person, girl_introduction = True):
     if girl_introduction:
@@ -526,7 +548,15 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
     # If in a poor location (not in private, not at home, etc.) she should mention that as a way of "seeing where things go", unless she is very slutty.
     # If slutty but in a poor location she might flash you her tits (TODO: Add a way of "flashing" tits through clothing items by hiding an area mask).
 
-    if the_person.love <= 20:
+    if girlfriend_role in the_person.special_role:
+        mc.name "You're so beautiful [the_person.title], I'm so lucky to have a woman like you in my life."
+        $ the_person.call_dialogue("flirt_response_girlfriend")
+
+    elif affair_role in the_person.special_role:
+        mc.name "You look so good today [the_person.title], you're making me want to do some very naughty things to you."
+        $ the_person.call_dialogue("flirt_response_affair")
+
+    elif the_person.love <= 20:
         #Low Love
         mc.name "[the_person.title], you're looking nice today. That outfit looks good on you."
         $ the_person.call_dialogue("flirt_response_low")
@@ -1336,7 +1366,7 @@ label grope_person(the_person):
                     $ should_be_private = True
                     if mc.location.get_person_count() > 1: #We aren't alone and should ask if we want to find somewhere private
                         $ extra_people_count = mc.location.get_person_count() - 1
-                        $ the_person.discover_opinion("public_sex")
+                        $ the_person.discover_opinion("public sex")
                         if the_person.effective_sluttiness("touching_body") < 40 or the_person.get_opinion_score("public sex") < 0:
                             # She's nervous about it and asks to go somewhere private.
                             the_person.char "Wait, wait..."
@@ -1400,10 +1430,13 @@ label command_person(the_person):
     $ touch_demand_action = Action("Let me touch you.\n-10  {image=gui/extra_images/energy_token.png}", requirement = demand_touch_requirement, effect = "demand_touch_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Demand [the_person.title] stays still and lets you touch her. Going too far may damage your relationship.", priority = -5)
 
+    $ bc_demand_action = Action("Talk about birth control.", requirement = demand_bc_requirement, effect = "bc_demand_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Discuss [the_person.title]'s use of birth control.", priority = -5)
+
     #TODO: Add more commands
     #TODO: Add a way to add role specific commands.
 
-    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"])
+    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, bc_demand_action, "Return"])
     #call screen main_choice_display([["Command her to...", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"]])
     #$ player_choice = _return
     if player_choice == "Return":
@@ -1497,8 +1530,6 @@ label seduce_label(the_person):
 
         call fuck_person(the_person,private = in_private) from _call_fuck_person
 
-        #TODO: This is where we put stuff for her being in a relationship but wants to start an affair with you.
-
         $ the_person.review_outfit()
 
         #Tidy up our situational modifiers, if any.
@@ -1511,4 +1542,232 @@ label seduce_label(the_person):
         $ the_person.clear_situational_obedience("seduction_approach")
 
     $ the_person.sexed_count += 1
+    return
+
+label bc_talk_label(the_person):
+    # Contains the Love and Sluttiness based approaches to asking someone to stop taking birth control.
+    mc.name "Can we talk about something?"
+    the_person.char "Mmhm, what's that?"
+    mc.name "I want to talk about your birth control."
+    if girlfriend_role in the_person.special_role or affair_role in the_person.special_role:
+        #She'll talk to you about it. High Love or moderate sluttiness are needed to convince her to stop taking BC. Easier to convince her to start.
+        # High influence from opinion of creampies.
+
+        $ needed_start = 30 + (15 * the_person.get_opinion_score("creampies"))
+        $ needed_stop = 45 - (15 * the_person.get_opinion_score("creampies"))
+        if affair_role in the_person.special_role:
+            $ needed_stop += -10*the_person.get_opinion_score("cheating on men") #They think it's hot to have another man's baby
+
+        if the_person.on_birth_control:
+            if the_person.get_opinion_score("creampies") > 0: #She's not happy about it
+                the_person.char "Oh, sure. I'm taking it right now, so if you get a little too excited and unload inside me..."
+                "She smiles and shrugs."
+                the_person.char "Well that wouldn't be the end of the world."
+            else:
+                the_person.char "Oh, sure. I'm taking it right now, so we shouldn't have any \"accidents\" to worry about."
+        else:
+            if the_person.get_opinion_score("creampies") > 0: #She's happy about not being on BC
+                the_person.char "I'm not taking any right now, so..."
+                "She smiles and shrugs."
+                the_person.char "If you cum in me you might get me knocked up. It's kind of hot to think about that..."
+            else:
+                the_person.char "Oh, well... I'm not taking any right now."
+        menu:
+            "Start taking birth control." if not the_person.on_birth_control:
+                mc.name "You should start taking some, I don't want you getting pregnant."
+                if the_person.love >= needed_start or the_person.effective_sluttiness() >= needed_start:
+                    "She thinks about it for a moment, then nods."
+                    if the_person.has_taboo("condomless_sex"):
+                        the_person.char "It would be nice to not have to worry about a condom breaking when he have sex."
+                        the_person.char "Okay, I'll talk to my doctor and start taking it as soon as possible."
+                    else:
+                        the_person.char "If we keep doing it raw that's a smart idea."
+                        the_person.char "I'll talk to my doctor and start taking it as soon as possible."
+                    the_person.char "I should be able to start tomorrow, we will still need to careful until then."
+                    call manage_bc(the_person, start = True) from _call_manage_bc_2
+
+                else:
+                    "She shakes her head."
+                    if the_person.get_opinion_score("creampies") > 0 and the_person.get_opinion_score("bareback sex") > 0:
+                        the_person.char "I don't care about that. I love the thrill of a hot load of cum inside my perfectly fertile pussy."
+                        the_person.char "There's nothing hotter than that. You're just going to have to accept that it's a risk."
+                        $ the_person.discover_opinion("creampies")
+                        $ the_person.discover_opinion("bareback sex")
+                    else:
+                        the_person.char "I'm sorry [the_person.mc_title], but I've tried it before and it plays hell with my hormones."
+                        the_person.char "We can just use a condom, or do something else to have fun together."
+
+            "Stop taking birth control." if the_person.on_birth_control:
+                mc.name "I want you to stop taking it."
+                if the_person.love >= needed_stop or the_person.effective_sluttiness() >= needed_stop:
+                    if the_person.get_opinion_score("creampies") > 0 and the_person.get_opinion_score("bareback sex") > 0:
+                        the_person.char "Yeah? I've wanted to stop too, I don't care if it's risky."
+                        the_person.char "There's nothing that's more of a turn on than having a hot load inside of my pussy. Ah..."
+                        "[the_person.possessive_title] sighs and seems lost in thought for a moment."
+                        the_person.char "Sorry, I'm getting distracted."
+                        $ the_person.discover_opinion("creampies")
+                        $ the_person.discover_opinion("bareback sex")
+                    else:
+                        the_person.char "Do you think that's a good idea? What if something happened?"
+                        mc.name "We can deal with that when it happens. If we don't want you to get pregnant we can always use a condom."
+                        "She thinks about it for a long moment, then nods and smiles."
+                        the_person.char "Okay, I won't take my birth control in the morning. We'll just be careful, it'll be fine..."
+
+                    call manage_bc(the_person, start = False) from _call_manage_bc_3
+
+                else:
+                    if the_person.get_opinion_score("bareback sex") > 0:
+                        the_person.char "I don't think that's a good idea. If I'm on my birth control you don't need to wear a condom when we fuck."
+                        the_person.char "I love feeling you raw inside me. I don't want to have to give that up."
+                        $ the_person.discover_opinion("bareback sex")
+                    else:
+                        the_person.char "I don't think that's a good idea. What if something happened? Are we ready for that change in our lives?"
+                        the_person.char "Maybe one day, but I'm not comfortable with it right now."
+
+            "That's all I wanted to know.":
+                mc.name "That's all, I just wanted to check on that."
+
+    elif the_person.effective_sluttiness() > 40:
+        $ needed_start = 40 + (15 * the_person.get_opinion_score("creampies"))
+        $ needed_stop = 75 - (15 * the_person.get_opinion_score("creampies"))
+
+        if the_person.on_birth_control:
+            if the_person.get_opinion_score("bareback sex") > 0:
+                the_person.char "Oh, is that all? Yeah, I'm on birth control right now because I hate how condoms feel."
+                $ the_person.discover_opinion("bareback sex")
+            else:
+                the_person.char "Oh, is that all? Yeah, I'm on birth control right now so I don't have to worry about getting pregnant."
+        else:
+            the_person.char "Oh, I guess that's probably an important thing for you to know about."
+            the_person.char "I'm not taking any birth control right now."
+        menu:
+            "Start taking birth control." if not the_person.on_birth_control:
+                mc.name "You should probably start taking it, before something happens and you get pregnant."
+                if the_person.love >= needed_start or the_person.effective_sluttiness() >= needed_start:
+                    the_person.char "That's probably a good idea. I'll talk talk to my doctor as soon as possible about it."
+                    call manage_bc(the_person, start = True) from _call_manage_bc_4
+                else:
+                    if the_person.get_opinion_score("creampies") > 0 and the_person.get_opinion_score("bareback sex") > 0:
+                        "She shrugs and shakes her head."
+                        $ the_person.discover_opinion("creampies")
+                        $ the_person.discover_opinion("bareback sex")
+                        the_person.char "I don't care about that. I love the feeling of a warm, risky creampie to ever give it up."
+                    else:
+                        the_person.char "Sorry, I've tried it before and it just messes with my hormones too badly."
+                        the_person.char "We'll just be careful and use a condom, or you can pull out. Okay?"
+
+            "Stop taking birth control." if the_person.on_birth_control:
+                mc.name "You should stop taking it. Wouldn't that be really hot?"
+                if the_person.love >= needed_start or the_person.effective_sluttiness() >= needed_stop:
+                    if the_person.get_opinion_score("creampies") > 0 and the_person.get_opinion_score("bareback sex") > 0:
+                        the_person.char "Do you think so? I've always wanted to, I don't think I can trust myself to tell a man to pull out."
+                        the_person.char "Even if I know that's the smart thing to do I would probably just beg for a hot load inside me..."
+                        "She closes her eyes and moans softly, obviously lost in a fantasy of her own making."
+                        "After a moment she shakes her head and focuses again."
+                        $ the_person.discover_opinion("creampies")
+                        $ the_person.discover_opinion("bareback sex")
+                        the_person.char "Sorry... I guess if you think it's a good idea I can give it a try. What's the worst that can happen..."
+                    else:
+                        the_person.char "Do you really think so? I mean, it sounds kind of hot but I would have to trust you to pull out, or have you wear a condom."
+                        mc.name "Then that's what I'll do. I just think it's so much sexier to know there's a little bit of risk."
+                        "[the_person.possessive_title] thinks about it for a long moment. Finally she shrugs and nods."
+                        the_person.char "Okay, we can give it a try. We'll just need to be very careful."
+                    call manage_bc(the_person, start = False) from _call_manage_bc_5
+                else:
+                    "[the_person.possessive_title] shakes her head."
+                    the_person.char "That would be crazy! There's no way I could gamble the rest of my life on some guy pulling out or me getting lucky."
+
+            "That's all I wanted to know.":
+                mc.name "That's all, I just wanted to check."
+    else:
+        if the_person.love > 30:
+            # She loves you enough to tell you her status
+            the_person.char "Well that's kind of private, but if it really matters to you I guess I can tell you."
+            if the_person.on_birth_control:
+                the_person.char "I'm not looking to get pregnant right now, so I'm taking birth control."
+            else:
+                the_person.char "I'm not taking any birth control right now."
+
+            "It's clear from her tone that [the_person.possessive_title] wouldn't be swayed by you telling her what to do."
+
+        elif the_person.effective_sluttiness() > 20:
+            the_person.char "Oh, I guess I can tell you if you're really curious."
+            if the_person.on_birth_control:
+                the_person.char "I'm taking birth control right now. I don't want to worry about getting pregnant by accident."
+            else:
+                the_person.char "I'm not taking birth control right now."
+
+            "It's clear from her tone that [the_person.possessive_title] wouldn't be swayed by you telling her what to do."
+
+        else:
+            the_person.char "That's a pretty personal question. Let's get to know each other a little more before we talk about that, okay?"
+    return
+
+label bc_demand_label(the_person):
+    # Contains the obedience based approach to asking someone to stop taking birth control.
+    # This event can have a moderately low Obedience requirement, with higher requirements to actually make changes.
+    mc.name "Tell me about your birth control."
+    if the_person.on_birth_control:
+        the_person.char "I'm taking birth control right now."
+    else:
+        the_person.char "I'm... not taking any right now."
+
+    menu:
+        "Start taking birth control." if not the_person.on_birth_control and the_person.obedience >= 130:
+            mc.name "I want you to start taking some. I don't want you getting pregnant."
+            "[the_person.possessive_title] nods."
+            the_person.char "Okay, I can do that. I'll talk to my doctor, I think I'll be able to start it tomorrow."
+            mc.name "Good."
+            call manage_bc(the_person, start = True) from _call_manage_bc_6
+
+        "Start taking birth control.\n{color=#FF0000}Requires: 130 Obedience{/color} (disabled)" if not the_person.on_birth_control and the_person.obedience < 130:
+            pass
+
+        "Stop taking birth control." if the_person.on_birth_control and the_person.obedience >= 160:
+            mc.name "I want you to stop taking it."
+            $ complains_threshold = 45 - (15 * the_person.get_opinion_score("creampies"))
+            if the_person.effective_sluttiness() >= complains_threshold:
+                # She's slutty enough that it's not even a concern.
+                "[the_person.possessive_title] nods obediently."
+                the_person.char "Okay, I'll stop right away."
+            elif the_person.is_family():
+                "[the_person.possessive_title] shuffles nervously before working up the nerve to speak back."
+                the_person.char "[the_person.mc_title], I can't do that. If you got me pregnant I... I don't know what I would do!"
+                mc.name "I didn't say I was going to get you pregnant. I just told you to stop taking your birth control."
+                mc.name "I'm sure you can avoid getting knocked up if you really put your mind to it. Now, do we have a problem?"
+                "[the_person.title] start to say something, then thinks better of it. She shakes her head."
+                the_person.char "No, there's no problem. I won't take any birth control in the morning."
+
+            else:
+                "[the_person.possessive_title] shuffles nervously before working up the nerve to speak back."
+                the_person.char "I... I don't know if that's a good idea. I don't now if I want to get pregnant."
+                mc.name "I didn't ask if you wanted to get pregnant. I told you to stop taking your birth control. Is there a problem with that?"
+                "She blushes and looks away under your glare."
+                the_person.char "No. I'll stop right away. Sorry."
+
+            call manage_bc(the_person, start = False) from _call_manage_bc_7
+
+        "Stop taking birth control.\n{color=#FF0000}Requires: 160 Obedience{/color} (disabled)" if  the_person.on_birth_control and the_person.obedience < 160:
+            pass
+
+        "That's all I wanted to know.":
+            the_person.char "Good. That's all I wanted to know."
+    return
+
+label manage_bc(the_person, start): # A little helper label to handle setting up the actions for a girl starting or stopping her BC the next morning.
+    if start:
+        $ event_label = "bc_start_event"
+    else:
+        $ event_label = "bc_stop_event"
+
+    $ bc_start_action = Action("Change birth control", always_true_requirement, event_label, args = the_person)
+    $ mc.business.mandatory_morning_crises_list.append(bc_start_action) # She starts or stops the next morning.
+    return
+
+label bc_start_event(the_person):
+    $ the_person.on_birth_control = True
+    return
+
+label bc_stop_event(the_person):
+    $ the_person.on_birth_control = False
     return

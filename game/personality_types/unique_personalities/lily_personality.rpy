@@ -330,8 +330,19 @@ label lily_cum_vagina(the_person):
         else:
             the_person.char "Oh fuck, good thing you've got a condom on. I mean, could you imagine if you had put all of that into your own sister?"
 
-    else:
-        if the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+    else: #TODO: No birth control varients.
+        if the_person.on_birth_control:
+            the_person.char "Oh god, I can't believe you just came inside me... What if my birth control doesn't work?"
+            if the_person.relationship != "Single":
+                $ so_title = SO_relationship_to_title(the_person.relationship)
+                "She takes a deep breath and tries to calm herself down."
+                the_person.char "I would have to tell everyone it was my [so_title]'s, but I would still know..."
+
+            else:
+                "She takes a deep breath and calms herself down."
+                the_person.char "It's probably fine... Right? Yeah, I'm sure it's fine. The pill is like a ninety nine percent effective, right?"
+
+        elif the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "I know I shouldn't, but I love having my own brother's cum inside me."
@@ -341,11 +352,15 @@ label lily_cum_vagina(the_person):
         else:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
-                the_person.char "Fuck, fuck! You can't cum in me, what if you got me pregnant? What would Mom say?"
+                the_person.char "Fuck, fuck! You can't cum in me, I'm not on the pill!"
+                the_person.char "What if you got me pregnant? What would [mom.title] say?"
+                "She groans unhappily."
                 the_person.char "What would my [so_title] say? I don't know if I could lie to him."
             else:
-                the_person.char "Oh god no, you can't cum inside me! What would I do if my own brother got me pregnant?"
-                the_person.char "I'd die of embarrassment if people found out!"
+                the_person.char "Oh god no, you can't cum inside me, I'm not on the pill!"
+                "She groans unhappily."
+                the_person.char "What would I do if my own brother got me pregnant?"
+                the_person.char "I'd die of embarrassment if anyone found out!"
     return
 
 label lily_cum_anal(the_person):
@@ -759,17 +774,22 @@ label lily_anal_sex_taboo_break(the_person):
     return
 
 label lily_condomless_sex_taboo_break(the_person):
-    the_person.char "I don't like condoms either, but we need to be careful. What would we tell Mom if you got me pregnant?"
+    the_person.char "I don't like condoms either, but we need to be careful. What would we tell [mom.title] if you got me pregnant?"
+    mc.name "Wait, are you on birth control?"
+    if the_person.on_birth_control:
+        the_person.char "I am, but what if it didn't work?"
+    else:
+        "She shakes her head meekly."
     if the_person.has_taboo("vaginal_sex"):
-        mc.name "We won't need to tell her anything. I'm not going to get you pregnant the very first time we have sex."
+        mc.name "We won't need to tell [mom.title] anything. I'm not going to get you pregnant the very first time we have sex."
         "[the_person.possessive_title] still seems uncertain."
         mc.name "Come on [the_person.title], don't you want our first time to be special? I promise I'll pull out."
         the_person.char "Since it's our first time... Okay, as long as you are really careful when you're going to cum."
 
     else:
-        mc.name "We won't need to tell her anything. I'm not going to get you pregnant the very first time we fuck raw."
+        mc.name "We won't need to tell [mom.title] anything. I'm not going to get you pregnant the very first time we fuck raw."
         "[the_person.possessive_title] still seems uncertain."
-        mc.name "Come on [the_person.title], don't you trust me? It will feel so much better without a condom."
+        mc.name "Come on [the_person.title], don't you trust me? It'll feel so much better without a condom."
         the_person.char "Okay, fine. But you need to be {i}really{/i} careful not to cum in me."
     mc.name "I promise I'll be careful. Ready?"
     "She gives you a nervous nod."

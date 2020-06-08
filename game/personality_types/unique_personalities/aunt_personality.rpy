@@ -389,14 +389,17 @@ label aunt_anal_sex_taboo_break(the_person):
     return
 
 label aunt_condomless_sex_taboo_break(the_person):
-    the_person.char "You need to wear a condom [the_person.mc_title]. What if you got a little too excited?"
-    the_person.char "I might be older than you, but you could still get me pregnant!"
+    the_person.char "You need to wear a condom [the_person.mc_title]. What if you get a little too excited?"
+    the_person.char "I might be older than you, but you could still get me pregnant."
     if the_person.has_taboo("vaginal_sex"):
         mc.name "Don't you want our first time to be special? I promise I'll pull out."
-
     else:
-        mc.name "Don't you trust me at this point? I promise I'll pull out."
-    the_person.char "Well... You'll need to be very careful. Okay?"
+        mc.name "Don't you trust me by now? I promise I'll pull out."
+
+    if the_person.on_birth_control:
+        the_person.char "Well... Okay, but only because I'm on birth control. You should still be careful and try and pull out."
+    else:
+        the_person.char "Well... Okay, but I'm not on any birth control right now so you'll need to be very careful."
     mc.name "I will be. Thank you [the_person.title]."
     return
 

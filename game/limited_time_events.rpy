@@ -58,6 +58,8 @@ init -1 python:
     def mom_breeding_requirement(the_person):
         if the_person is not mom:
             return False
+        if persistent.pregnancy_pref == 0:
+            return False 
         if the_person not in mom_bedroom.people:
             return False
         if mom_bedroom.get_person_count() > 1:

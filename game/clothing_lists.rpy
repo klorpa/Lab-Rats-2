@@ -77,6 +77,7 @@ init -1:
         hand_region = Clothing("Hand region", 1, False, False, "Hand_Region_Weight", False, False, 0)
 
         skirt_region = Clothing("Skirt region", 1, False, False, "Skirt_Region_Weight", False, False, 0) # A "Region" that includes everything between the characters legs from hips to about a little above knee level.
+        wet_nipple_region = Clothing("Wet nipple region", 1, False, False, "Wet_Nipple_Region", True, False, 0)
 
         ##HAIR STYLES##
         #TODO: Implement ordering_variable for hair to decide on hair length for hair cuts.
@@ -636,7 +637,7 @@ init -1:
 
         stomach_cum = Clothing("Stomach Cum", 1, False, False, "Stomach_Covered", False, False, 10, whiteness_adjustment = 0.2)
 
-        creampie_cum = Clothing("Creampie", 1, False, False, "Creampie", False, False, 10)
+        creampie_cum = Clothing("Creampie", 1, False, False, "Creampie", False, False, 10, whiteness_adjustment = 0.2)
 
         mouth_cum = Facial_Accessory("Mouth Cum", 1, False, False, "Mouth_Dribble", False, False, 10, whiteness_adjustment = 0.2)
 
@@ -667,12 +668,15 @@ init -1:
 
             return return_outfit
 
-        def wardrobe_from_xml(xml_filename):
+        def wardrobe_from_xml(xml_filename, in_import = False):
             # file_path = os.path.abspath(os.path.join(config.basedir, "game"))
             # file_path = os.path.join(file_path,"wardrobes")
             # file_name = os.path.join(file_path, xml_filename + ".xml")
             wardrobe_file = None
-            modified_filename = "wardrobes/" + xml_filename+".xml"
+            if in_import:
+                modified_filename = "wardrobes/imports/" + xml_filename + ".xml"
+            else:
+                modified_filename = "wardrobes/" + xml_filename+".xml"
             if renpy.loadable(modified_filename):
                 wardrobe_file = renpy.file(modified_filename)
 

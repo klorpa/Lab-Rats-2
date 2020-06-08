@@ -361,9 +361,20 @@ label nora_special_research(the_person):
         the_person.char "Well I suppose your out-of-the-box thinking is why I appreciate your scientific input, [the_person.mc_title]."
         the_person.char "I ran your report on myself, and much to my suprise I think there may be something here for us both to study."
         the_person.char "My own sexual drive seems to be linked quite heavily to the intelligence of the person I am talking to."
-        the_person.char "It may be possible to develop a serum that replicates this in another person, with the effect being more pronounced if  the larger the intelligence difference."
+        the_person.char "It may be possible to develop a serum that replicates this in another person, with the effect being more pronounced the larger the intelligence difference."
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_nora_trait)
+
+    elif pregnant_role in the_subject.special_role and the_subject.event_triggers_dict.get("preg_transform_day",day) < day and the_subject.core_sluttiness > 75 and nora_reward_hucow_trait not in list_of_traits:
+        the_person.char "First off, congratulations [the_person.mc_title]. You're the father."
+        the_person.char "Second, I have an interesting development and possible path forward."
+        the_person.char "My testing has revealed a number of major differences between the test subject's hormonal balance and what is expected."
+        the_person.char "I believe this is the bodies natural response to her noticeably intense desire for sexual satisfaction."
+        the_person.char "If most women have a biological clock ticking, this one has a church bell."
+        the_person.char "It may be possible to induce and amplify this hormonal response in others pre-impregnation."
+        the_person.char "I would expect the results to be increased fertility, breast swelling, and very likely immediate lactation."
+        the_person.char "Traditional birth control is also unlikely to affect this new hormonal balance, so it will be rendered ineffective."
+        $ list_of_traits.append(nora_reward_hucow_trait)
 
     elif the_subject.love > 85 and nora_reward_high_love_trait not in list_of_traits:
         the_person.char "This was certainly an interesting case, and I have a development for you."

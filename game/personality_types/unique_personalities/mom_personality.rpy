@@ -313,7 +313,7 @@ label mom_flirt_response_high(the_person):
         else: #She's not slutty, so she's embarassed about what you're doing.
             "[the_person.possessive_title] gasps and covers her mouth."
             the_person.char "Oh my god, [the_person.mc_title]!"
-            mc.name "Relax [the_person.tite], I'm just joking around."
+            mc.name "Relax [the_person.title], I'm just joking around."
             "She shakes her head sternly."
             the_person.char "Well I don't find it very funny when other people are around. It's embarrassing."
             mc.name "I'm sorry, I'll wait until we're alone next time."
@@ -351,12 +351,17 @@ label mom_cum_vagina(the_person):
         if the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Give me your cum sweetheart! I don't care if the condom works, I want to feel your seed in me!"
         else:
-            the_person.char "Pump it out into that condom sweetheart, it's perfectly fine to cum in me as long as it's on!"
-    elif the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+            the_person.char "Pump it out into that condom sweetheart, it's perfectly fine to cum inside as long as it's on."
+    else:
+        if the_person.on_birth_control:
+            the_person.char "That's it sweetheart, cum for mommy. I'm on the pill, so you don't have to worry about getting me pregnant."
+            the_person.char "Don't hold back okay? Let it all out inside of me."
+
+        elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Give mommy your cum, I want every last drop inside of me! Try and get mommy pregnant!"
 
-    else:
-        the_person.char "Oh sweety, you can't cum inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant."
+        else:
+            the_person.char "Oh sweety, you shouldn't inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant!"
 
     return
 
@@ -800,7 +805,7 @@ label mom_vaginal_sex_taboo_break(the_person):
 
 label mom_anal_sex_taboo_break(the_person):
     if the_person.love > 60:
-        the_person.char "Oh my god, you mean my butt! I... That's not where that goes, [the_person.title]!"
+        the_person.char "Oh my god, you mean my butt! I... That's not where that goes, [the_person.mc_title]!"
         if the_person.has_taboo("vaginal_sex"):
             mc.name "Should I slide it into your pussy then?"
             the_person.char "Of course not! You're my son, which means we absolutely should not be having sex."
@@ -857,10 +862,18 @@ label mom_anal_sex_taboo_break(the_person):
     return
 
 label mom_condomless_sex_taboo_break(the_person):
-    # mc.name "No way. I want to feel you wrapped around me."
-    the_person.char "No no no, we really can't do that! I may be old, but I could still get pregnant!"
-    mc.name "That would only happen if I came inside you. You trust me to pull out, don't you?"
-    the_person.char "I trust you, but accidents can happen. We should be safe."
+    # Lead in: mc.name "No way. I want to feel you wrapped around me."
+    the_person.char "No no no, we really can't do that! I may be old, but you could still get pregnant!"
+    mc.name "Are you taking birth control?"
+    if the_person.on_birth_control:
+        the_person.char "I am, but birth control isn't one hundred percent effective. Don't they teach you that in health class?"
+        mc.name "Then I'll pull out. Don't you trust me [the_person.title]?"
+
+    else:
+        the_person.char "No, I'm not. If you get a little too excited and don't pull out..."
+        mc.name "Don't you trust me [the_person.title]?"
+
+    the_person.char "I trust you, but accidents happen. We should be safe."
 
 
     if the_person.has_taboo("vaginal_sex"): #You're going raw your very first time.

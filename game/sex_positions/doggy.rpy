@@ -261,14 +261,9 @@ label outro_doggy(the_girl, the_location, the_object):
                 "You sigh contentedly and enjoy the post-orgasm feeling of relaxation."
             else:
                 "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps softly in time with each new shot of hot semen inside of her."
-                $ the_girl.call_dialogue("cum_vagina")
                 $ the_girl.cum_in_vagina()
                 $ doggy.redraw_scene(the_girl)
-                if the_girl.sluttiness > 80:
-                    the_girl.char "Oh wow, there's so much of it..."
-                else:
-                    the_girl.char "Oh fuck, what if I get pregnant? Ah..."
-
+                $ the_girl.call_dialogue("cum_vagina")
                 "You wait until your orgasm has passed completely, then pull out and sit back. Your cum starts to drip out of [the_girl.title]'s slit almost immediately."
 
         "Cum on her ass.":

@@ -552,6 +552,124 @@ label reserved_flirt_response_high(the_person):
                 the_person.char "Well maybe if you take me out for dinner we can talk about those ideas. I'm interested to hear about them."
     return
 
+label reserved_flirt_response_girlfriend(the_person):
+    # Lead in: mc.name "You're so beautiful [the_person.title], I'm so lucky to have a woman like you in my life."
+    if mc.location.get_person_count() > 1:
+        # There are other people around, so she'll only start making out with you if she's slutty.
+        if the_person.effective_sluttiness("kissing") < (25 - (5*the_person.get_opinion_score("public_sex"))):
+            # Not very slutty, so she wants to find somewhere private
+            "[the_person.title] smiles happily."
+            the_person.char "Oh, well thank you [the_person.mc_title]. You're so sweet."
+            "She leans in and gives you a quick peck on the cheek."
+            the_person.char "I wish we had a little more privacy. Oh well, maybe later."
+            menu:
+                "Find someplace quiet.":
+                    mc.name "Why wait until later? Come on."
+                    "You take [the_person.possessive_title]'s hand. She hesitates for a moment, then follows as you lead her away."
+                    "After a few minutes of searching you find a quiet spot. You put your arm around [the_person.title]'s waist and pull her close to you."
+                    mc.name "So, what did you want that privacy for again?"
+                    the_person.char "Oh, a few things. Let's start with this..."
+                    "She leans in and kisses you passionately while rubbing her body against you."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_66
+
+                "Just flirt.":
+                    mc.name "Aw, you're going to make me wait? That's so cruel."
+                    "You reach around and place a hand on [the_person.possessive_title]'s ass, rubbing it gently."
+                    "She sighs and bites her lip, then clears her thraot and glances around to see if anyone else noticed."
+                    the_person.char "I'll make sure to make it worth the wait, but let's take it easy while other people are around."
+                    "You give her butt one last squeeze, then slide your hand off."
+
+        else:
+            # the_person.char "Oh [the_person, mc_title], you're so sweet. Come on, kiss me!"
+            "She smiles and sighs happily."
+            the_person.char "Ahh, you're so sweet. Here..."
+            "[the_person.possessive_title] leans in and kisses you. Her lips lingering against yours for a few long seconds."
+            the_person.char "Was that nice? You're very nice to kiss."
+            menu:
+                "Make out.":
+                    "You respond by putting your arm around her waist and pulling her tight against you."
+                    "You kiss her, and she eagerly grinds her body against you."
+                    call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_67
+
+                "Just flirt.":
+                    mc.name "It was very nice. I've got some other nice things for you to kiss too, if you'd like."
+                    if the_person.effective_sluttiness("sucking_cock") >= 60 or the_person.get_opinion_score("giving blowjobs") > 0:
+                        "She bites her lip and runs her eyes up and down your body."
+                        the_person.char "Mmmm, stop it [the_person.mc_title]. You're going to get me all wet in public."
+                        "You reach around and place your hand on her ass, rubbing it gently."
+                        mc.name "Well we don't want that. I'll keep my thoughts to myself then."
+                        "You give her butt one last squeeze, then slide your hand away."
+
+                    else:
+                        "She laughs and glances around."
+                        the_person.char "Oh my god, [the_person.mc_title]! Save it for later though, I like what you're thinking..."
+    else:
+        # You're alone, so she's open to fooling around.
+        "She smiles happily."
+        the_person.char "Oh, well thank you [the_person.mc_title]. I'm lucky to have you too."
+        "[the_person.possessive_title] leans in and kisses you. Her lips linger against yours for a few seconds."
+        menu:
+            "Kiss her more.":
+                "You put your arm around her waist and pull her against you, returning her sensual kiss."
+                "She presses her body against you and hugs you back. Her hands run down your hips and grab at your ass as you make out."
+                call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_68
+
+            "Just flirt.":
+                "You reach around [the_person.title] and place a hand on her ass, rubbing it gently. She sighs and leans her body against you."
+                the_person.char "Mmm, that's nice... Maybe when we have some more time together we can take this furthur."
+                mc.name "That sounds like fun. I'm looking forward to it."
+                "You give her butt a light slap, then move your hand away."
+
+    return
+
+label reserved_flirt_response_affair(the_person):
+    # Lead in: mc.name "You look so good today [the_person.title], you're making me want to do some very naughty things to you."
+    $ so_title = SO_relationship_to_title(the_person.relationship) # "husband", "boyfriend", etc.
+    if mc.location.get_person_count() > 1: #There are other people around, she's nervous about people finding out what you're doing.
+        if (the_person.get_opinion_score("cheating on men") *15) + the_person.effective_sluttiness() > 50: #SHe's turned on by flirting in public or doesn't think anything is wrong with it
+            the_person.char "Oh [the_person.mc_title], stop. If you keep talking like that you're going to get me turned on."
+            mc.name "And what would be so bad about that?"
+            the_person.char "It would be so frustrating being in public and not being able to do anything to get my satisfaction."
+            menu:
+                "Find someplace quiet.":
+                    mc.name "Then let's go find someplace that isn't public. Come on, follow me."
+                    "[the_person.possessive_title] glances around, then follows behind you as you search for a quiet spot."
+                    "Soon enough you find a place where you and [the_person.title] can be alone."
+                    "Neither of you say anything as you put your hands around her and pull her into a tight embrace."
+                    "You kiss her, slowly and sensually. She moans and presses her body against you in return."
+                    call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_69
+
+                "Just flirt.":
+                    mc.name "Well that would just be cruel of me..."
+                    "You put your arm around [the_person.possessive_title] and rest your hand on her ass."
+                    mc.name "...If I got you all excited thinking about the next time I'm going to fuck you."
+                    "She leans her body against yours for a moment and sighs happily. You give her butt a final slap and let go of her."
+
+        else: #She's shy or nervous about being discovered
+            "[the_person.possessive_title] glances around, then glares at you sternly."
+            the_person.char "[the_person.mc_title], you can't talk like that when there are other people around."
+            the_person.char "You don't want my [so_title] to hear any rumours, do you? If he gets suspicious you might not get to see me so much..."
+            "She runs a hand discretely along your arm."
+            the_person.char "That would be such a shame, wouldn't it?"
+            mc.name "Alright, I'll be more careful."
+            the_person.char "Thank you. Just hold onto all those naughty thoughts and we can check them off one by one when we're alone."
+    else:
+        the_person.char "Oh is that so [the_person.mc_title]? Well, maybe you need to work out some of those naughty instincts..."
+        "She stands close to you and runs her hand teasingly along your chest."
+        menu:
+            "Feel her up.":
+                mc.name "That sounds like a good idea. Come here."
+                "You wrap your arms around [the_person.possessive_title]'s waist, resting your hands on her ass."
+                "Then you pull her tight against you, squeezing her tight butt. She sighs happily and starts to kiss your neck."
+                "You massage her ass for a moment, then spin her around and cup a tit with one hand. You move your other hand down to caress her inner thigh."
+                call fuck_person(the_person, private = True, start_position = standing_grope, skip_intro = True) from _call_fuck_person_70
+
+            "Just flirt.":
+                mc.name "I want to, but I'm going to have to wait until we have more time together for that."
+                "Her hand moves lower down, brushing over your crotch and sending a brief shiver up your spine."
+                the_person.char "I understand. When we have the chance we'll take our time and really enjoy each other."
+    return
+
 label reserved_cum_face(the_person):
     if the_person.obedience > 130:
         if the_person.sluttiness > 60:
@@ -586,7 +704,17 @@ label reserved_cum_vagina(the_person):
             the_person.char "I can feel your seed through the condom. Well done, there's a lot of it."
 
     else:
-        if the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            if the_person.relationship != "Single":
+                $ so_title = SO_relationship_to_title(the_person.relationship)
+                the_person.char "You've making such a mess of my pussy. I never let my [so_title] do this to me."
+                "She closes her eyes and sighs happily as you cum inside of her."
+                the_person.char "Oh [the_person.mc_title], look what you've done."
+            else:
+                the_person.char "Oh [the_person.mc_title]... I can feel your cum inside me. It's so warm."
+                "She closes her eyes and sighs happily as you cum."
+
+        elif the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Yes, give me your seed!"
@@ -972,19 +1100,23 @@ label reserved_anal_sex_taboo_break(the_person):
 label reserved_condomless_sex_taboo_break(the_person):
     if the_person.get_opinion_score("bareback sex") > 0:
         the_person.char "You want to have sex without any protection? I'll admit, that would really turn me on."
-        if the_person.get_opinion_score("creampies") > 0:
-            the_person.char "It would be very naughty if you came inside me though..."
+        if the_person.on_birth_control:
+            the_person.char "I am on birth control, so it should be perfectly safe. I do want to know what you feel like raw..."
+        elif the_person.get_opinion_score("creampies") > 0:
+            the_person.char "It would be very naughty if you came inside me though. I'm not on any birth control..."
             mc.name "Don't you think we're being naughty already?"
             "She bites her lip and nods."
             the_person.char "I think we are."
         elif the_person.get_opinion_score("creampies") < 0:
-            the_person.char "You will need to pull out though. I hate having dripping out of me all day."
+            the_person.char "You will need to pull out though. I hate having cum dripping out of me all day."
         else:
-            the_person.char "You will need to pull out though, understood? Good."
+            the_person.char "I'm not on birth control, so you will need to pull out. Understood? Good."
 
     elif the_person.love > 60:
         the_person.char "If you think you're ready for this commitment, I am to. I want to feel close to you."
-        if the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            the_person.char "I'm on birth control, so the chances of getting me pregnant are slim, but you should know they still exist."
+        elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "When you're going to finish you don't have to pull out unless you want to. Okay?"
             mc.name "Are you on the pill?"
             "She shakes her head."
@@ -1002,7 +1134,12 @@ label reserved_condomless_sex_taboo_break(the_person):
 
     else:
         the_person.char "You want to have sex without protection? That's very risky [the_person.mc_title]."
-        if the_person.has_taboo("vaginal_sex"):
+        if the_person.on_birth_control:
+            the_person.char "I'm on birth control, but nothing is one hundred percent effective."
+            mc.name "I'm willing to take that chance. Are you?"
+            "She thinks for a moment, then nods."
+            the_person.char "I believe I am."
+        elif the_person.has_taboo("vaginal_sex"):
             mc.name "I want our first time to be special though, don't you?"
             "She takes a second to think, then nods."
             the_person.char "I do. You need to be very careful where you finish, okay?"
