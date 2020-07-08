@@ -49,7 +49,7 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
             menu_tooltip = "Your head researcher needs willing, dedicated test subjects to advance your research any further.", priority = 10) #Talk to her to either select test subjects or get a refresher on what you need.
 
 
-        fire_head_researcher_action = Action("Remove her as head reseracher.", fire_head_researcher_requirement, "fire_head_researcher",
+        fire_head_researcher_action = Action("Remove her as head researcher.", fire_head_researcher_requirement, "fire_head_researcher",
             menu_tooltip = "Remove her as your head researcher so you can select another. Without a head researcher your R&D department will be less efficent.")
 
         head_researcher = Role("Head Researcher", [fire_head_researcher_action,improved_serum_unlock,advanced_serum_unlock_stage_1, visit_nora_intro, advanced_serum_unlock_stage_3,futuristic_serum_unlock_stage_1, futuristic_serum_unlock_stage_2])
@@ -124,6 +124,15 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         cousin_talk_boobjob_again_action = Action("Talk to her about getting a boobjob. -$5000", cousin_talk_boobjob_again_requirement, "cousin_talk_boobjob_again_label")
         #cousin_role.actions.append(cousin_talk_boobjob_again_action)
 
+        #STUDENT ACTIONS#
+        #student_study_meetup_action = Action("Tutor her. {image=gui/heart/Time_Advance.png}", student_study_meetup_requirement, "student_study_meetup")
+
+        student_reintro_action = Action("Ask about tutoring her.", student_reintro_requirement, "student_reintro")
+
+        student_study_propose_action = Action("Tutor her. {image=gui/heart/Time_Advance.png}", student_study_propose_requirement, "student_study_propose")
+
+        student_role = Role("Student", [student_reintro_action, student_study_propose_action])
+
 
 
         ####################
@@ -194,7 +203,7 @@ label pay_strip_scene(the_person):
     #Optional: Some way to ask the person to change into a different outfit.
     #Optional: Way to progress from strip tease to sex and/or mastribation.
 
-    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Hands down, ass up.","standing_doggy"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"]]
+    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"]] # ["Hands down, ass up.","standing_doggy"]
 
     $ picked_pose = the_person.idle_pose #She starts in her idle pose (which is a string)
     $ rand_strip_desc = renpy.random.randint(0,3) #Produce 4 different descriptions at each level to help keep this interesting.

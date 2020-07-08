@@ -6,7 +6,7 @@ init:
             guy_arousal = 15, guy_energy = 5,
             connections = [],
             intro = "intro_tit_fuck",
-            scenes = ["scene_tit_fuck_1","scene_tit_fuck_2", "scene_tit_fuck_3"],
+            scenes = ["scene_tit_fuck_1","scene_tit_fuck_2"],
             outro = "outro_tit_fuck",
             transition_default = "transition_default_tit_fuck",
             strip_description = "strip_tit_fuck", strip_ask_description = "strip_ask_tit_fuck",

@@ -492,7 +492,7 @@ label demand_strip_naked_label(the_person):
                     mc.name "No, we're going to stay right here."
                     "[the_person.possessive_title] doesn't argue. She just blushes and starts to strip down."
 
-                "Stay right here.\nRequires: 140 Obedience (disabled)" if the_person.obedience < 170:
+                "Stay right here.\nRequires: 170 Obedience (disabled)" if the_person.obedience < 170:
                     pass
         else:
             "[the_person.possessive_title] nods and starts to enthusiastically strip down."

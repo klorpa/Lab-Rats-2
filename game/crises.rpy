@@ -3991,7 +3991,7 @@ label mom_lingerie_surprise_label():
     "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
     the_person.char "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
     menu:
-        "Ask for her help. (tootlip)Ask your mother to help satisfy your phsyical desires.":
+        "Ask for her help. (tooltip)Ask your mother to help satisfy your phsyical desires.":
             mc.name "That would be amazing Mom, I could really use your help."
             $ the_person.change_slut_temp(2)
             "[the_person.possessive_title] smiles and bounces slightly on your bed."
@@ -4529,7 +4529,7 @@ label mom_morning_surprise_label():
                 $ the_person.change_happiness(5)
                 $ the_person.change_love(2)
                 "You lie back relax as [the_person.possessive_title] lowers herself down onto your hard cock."
-                call fuck_person(the_person, start_position = cowgirl, start_object = bedroom.get_object_with_name("bed"), skip_intro = True, girl_in_charge = True) from _call_fuck_person_15
+                call fuck_person(the_person, start_position = cowgirl, start_object = bedroom.get_object_with_name("bed"), skip_intro = True, girl_in_charge = True,position_locked=True,self_strip=False) from _call_fuck_person_15
                 $ the_report = _return
                 if the_report.get("girl orgasms", 0) > 0:
                     $ the_person.change_love(5)
@@ -5332,7 +5332,7 @@ label cousin_tease_crisis_label():
                         "Send [the_person.title] some money.\n-$100 (disabled)" if mc.business.funds < 100:
                             pass
 
-                        "Blackmail her for some nudes." if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 >= day:
+                        "Blackmail her for some nudes." if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 <= day:
                             $ the_person.event_triggers_dict["last_blackmailed"] = day
                             if the_person.event_triggers_dict.get("blackmail_level",1) == 1:
                                 mc.name "How about this, you send them over and I don't say anything to your mom about you stealing from my sister."
@@ -5377,7 +5377,7 @@ label cousin_tease_crisis_label():
                             $ the_person.change_obedience(3)
                             $ the_person.change_slut_temp(2)
 
-                        "Blackmail her for some nudes.\nBlackmailed too recently. (disabled)" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 >= day:
+                        "Blackmail her for some nudes.\nBlackmailed too recently. (disabled)" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 > day:
                             pass
 
 

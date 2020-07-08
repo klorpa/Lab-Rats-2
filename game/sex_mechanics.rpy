@@ -1,4 +1,4 @@
-label fuck_person(the_person, private = True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False):
+label fuck_person(the_person, private = True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, self_strip = True, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False):
     # When called fuck_person starts a sex scene with someone. Sets up the encounter, mainly with situational modifiers.
     show screen person_info_ui(the_person)
     if report_log is None:
@@ -75,36 +75,68 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
     $ round_choice = "Change" # We start any encounter by letting them pick what position they want (unless something is forced or the girl is in charge)
     $ first_round = True
+    $ initial_position = None
+    $ mc_softened = False
+    $ girl_considers_hard = False
+    $ girl_considers_vagina = False
+    $ girl_considers_tits = False
+    $ vagina_available = the_person.outfit.vagina_available()
+    $ tits_available = the_person.outfit.tits_available()
+
+        
     while not finished:
         if girl_in_charge:
             # The girls decisions set round_choice here.
-            if position_choice is None:
+            if start_position is None: #The first time we get here
+                $ pass
+            else:
+                $ position_choice = start_position
+            
+            if position_choice is None and (first_round or not position_locked):
                 call girl_choose_position(the_person, ignore_taboo = ignore_taboo) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
                 $ position_choice = _return #Can be none, if no option was available for her to take.
-                if position_choice is not None:
-                    # We need to make sure we're using an appopriate object
-                    call girl_choose_object(the_person, position_choice) from _call_girl_choose_object
+            if position_choice is not None:
+                if initial_position != position_choice:
+                   $ object_choice = None
+                # We need to make sure we're using an appopriate object
+                if object_choice is None:
+                    call girl_choose_object(the_person, position_choice,forced_object = start_object) from _call_girl_choose_object
                     $ object_choice = _return
-                    if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
-                        $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
-                        $ the_person.break_taboo(position_choice.associated_taboo)
-                    else:
-                        $ position_choice.call_transition(round_choice, the_person, mc.location, object_choice)
+                        
 
-            if position_choice is None: #There's no position we can take
+            if report_log.get("girl orgasms", 0) > 0 and the_person.love < 10 and the_person.obedience < 110: #She's cum and doesn't care about you finishing.
+                the_person.char "Whew, that felt great. Thanks for the good time [the_person.mc_title]!"
+                $ round_choice = "Girl Leave"
+            elif report_log.get("guy orgasms", 0) > 0 and report_log.get("girl orgasms", 0) > 0: #Both parties have been satisfied
+                the_person.char "Whew, that felt amazing. It's good to know it was as good for you as it was for me."
+                $ round_choice = "Girl Leave"
+            elif position_choice is None: #There's no position we can take
                 "[the_person.title] can't think of anything more to do with you."
                 $ round_choice = "Girl Leave"
             elif object_choice is None:
                 "[the_person.title] looks around, but can't see anywhere to have fun with you."
                 $ round_choice = "Girl Leave"
-            elif report_log.get("guy orgasms", 0) > 0 and report_log.get("girl orgasms", 0) > 0: #Both parties have been satisfied
-                the_person.char "Whew, that felt amazing. It's good to know it was as good for you as it was for me."
-                $ round_choice = "Girl Leave"
-            elif report_log.get("girl orgasms", 0) > 0 and the_person.love < 10 and the_person.obedience < 110: #She's cum and doesn't care about you finishing.
-                the_person.char "Whew, that felt great. Thanks for the good time [the_person.mc_title]!"
-                $ round_choice = "Girl Leave"
             else:
-                "[the_person.possessive_title] is still in control and keeps [position_choice.verbing] you."
+                if initial_position != position_choice:
+                    $ position_choice.redraw_scene(the_person)
+                    if first_round:
+                        if not skip_intro:
+                            $ the_person.draw_person() #Draw her standing until we pick a new position
+                            if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                                $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                                $ the_person.break_taboo(position_choice.associated_taboo)
+                            else:
+                                $ position_choice.call_intro(the_person, mc.location, object_choice)
+                    else:
+                        $ the_person.change_arousal(-5) #Changing position lowers your arousal slightly
+                        $ mc.change_arousal(-5)
+                        if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                            $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                            $ the_person.break_taboo(position_choice.associated_taboo)
+                        else:
+                            $ position_choice.call_transition(round_choice, the_person, mc.location, object_choice)
+                else:
+                    "[the_person.possessive_title] is in control, and keeps on [position_choice.verbing] you."
                 $ round_choice = "Continue"
 
         else:
@@ -167,15 +199,14 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
                 if position_choice and object_choice:
                     $ position_choice.redraw_scene(the_person)
-                    if skip_intro and first_round:
-                        pass
-                    elif first_round:
-                        $ the_person.draw_person() #Draw her standing until we pick a new position
-                        if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
-                            $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
-                            $ the_person.break_taboo(position_choice.associated_taboo)
-                        else:
-                            $ position_choice.call_intro(the_person, mc.location, object_choice)
+                    if first_round:
+                        if not skip_intro:
+                            $ the_person.draw_person() #Draw her standing until we pick a new position
+                            if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
+                                $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
+                                $ the_person.break_taboo(position_choice.associated_taboo)
+                            else:
+                                $ position_choice.call_intro(the_person, mc.location, object_choice)
                     else:
                         $ the_person.change_arousal(-5) #Changing position lowers your arousal slightly
                         $ mc.change_arousal(-5)
@@ -190,9 +221,20 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
             if position_choice and object_choice: #If we have both an object and a position we're good to go, otherwise we loop and they have a chance to choose again.
                 call sex_description(the_person, position_choice, object_choice, private = private, report_log = report_log) from _call_sex_description
                 $ first_round = False
+                $ initial_position = position_choice
+                if mc.recently_orgasmed and not mc_softened:
+                    $ mc_softened = True
+                    $ girl_considers_hard = False
+                if mc_softened and not mc.recently_orgasmed:
+                    $ mc_softened = False
+                    $ girl_considers_hard = True
                 if position_choice.requires_hard and mc.recently_orgasmed:
                     "Your post orgasm cock softens, stopping you from [position_choice.verbing] [the_person.possessive_title] for now."
                     $ position_choice = None
+                elif girl_in_charge and not position_choice.requires_hard and girl_considers_hard and not position_locked:
+                    "[the_person.possessive_title] considers your stiffened cock."
+                    $ girl_considers_hard = False
+                    $ position_choice = None                    
                 elif position_choice.guy_energy > mc.energy:
                     if girl_in_charge:
                         "You're too exhausted to let [the_person.possessive_title] keep [position_choice.verbing] you."
@@ -205,16 +247,34 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                     the_person.char "I'm exhausted [the_person.mc_title], I can't keep this up..."
                     $ position_choice = None
                 else: #Nothing major has happened that requires us to change positions, we can have girls take over, strip
-                    call girl_strip_event(the_person, position_choice, object_choice) from _call_girl_strip_event
+                    if self_strip:
+                        call girl_strip_event(the_person, position_choice, object_choice) from _call_girl_strip_event
+                        $ girl_considers_vagina = the_person.outfit.vagina_available() != vagina_available 
+                        $ vagina_available = the_person.outfit.vagina_available()
+                        $ girl_considers_tits = the_person.outfit.tits_available() != tits_available
+                        $ tits_available = the_person.outfit.tits_available()
+                        if girl_in_charge and position_choice != None and not position_locked:
+                            if girl_considers_vagina:
+                                "[the_person.possessive_title]'s fingers brush over her pussy."
+                                $ position_choice = None    
+                            elif girl_considers_tits:
+                                "[the_person.possessive_title]'s hand caresses her tits."
+                                $ position_choice = None
+                    if position_choice != None and not position_locked:
+                        if the_person.sluttiness > position_choice.slut_cap: #She's sluttier than this position, it's only good to warm her up.
+                            if the_person.arousal > position_choice.slut_cap: #Once her arousal is higher than the cap she's completely bored by it.
+                                "[the_person.title] wants to spice things up."
+                                if girl_in_charge:
+                                    $ position_choice = None
 
 
         elif isinstance(round_choice, Position): #The only non-strings on the list are positions we are changing to
             call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness_1
             if _return:
                 $ round_choice.redraw_scene(the_person)
-                if the_person.has_taboo(position_choice.associated_taboo) and not ignore_taboo:
-                    $ position_choice.call_taboo_break(the_person, mc.location, object_choice)
-                    $ the_person.break_taboo(position_choice.associated_taboo)
+                if the_person.has_taboo(round_choice.associated_taboo) and not ignore_taboo:
+                    $ round_choice.call_taboo_break(the_person, mc.location, object_choice)
+                    $ the_person.break_taboo(round_choice.associated_taboo)
                 else:
                     $ position_choice.call_transition(round_choice, the_person, mc.location, object_choice)
                 $ position_choice = round_choice
@@ -233,7 +293,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 $ girl_in_charge = True
                 $ finished = False
                 $ position_choice = None #She picks the position now, because she has her own list of possibilities
-
+                $ position_locked = False
             elif (the_person.arousal > the_person.max_arousal - 30) and (report_log.get("girl orgasms", 0) == 0) and report_log.get("beg finish", 0) == 0 and the_person.energy >= 30: #Within 30 of orgasming and she hasn't cum yet
                 # They're close to their orgasm and beg you to help them finish.
                 $ the_person.call_dialogue("sex_beg_finish")
@@ -322,17 +382,19 @@ label girl_choose_position(the_person, ignore_taboo = False):
         picked_position = get_random_from_list(position_option_list)
     return picked_position
 
-label girl_choose_object(the_person, the_position):
+label girl_choose_object(the_person, the_position, forced_object = None):
     $ possible_object_list = []
     if the_position is None:
         $ the_person.clear_situational_slut("sex_object")
         $ the_person.clear_situational_obedience("sex_object")
         return None
     python:
-        for an_object in mc.location.objects_with_trait(position.requires_location):
+        for an_object in mc.location.objects_with_trait(the_position.requires_location):
             possible_object_list.append(an_object)
-
-    $ picked_object = get_random_from_list(possible_object_list)
+    if forced_object:
+        $ picked_object = forced_object
+    else:
+        $ picked_object = get_random_from_list(possible_object_list)
     $ the_person.add_situational_slut("sex_object", picked_object.sluttiness_modifier, the_position.verbing + " on a " + picked_object.name)
     $ the_person.add_situational_obedience("sex_object",picked_object.obedience_modifier, the_position.verbing + " on a " + picked_object.name)
     return picked_object
@@ -357,7 +419,10 @@ label pick_object(the_person, the_position, forced_object = None):
                     object_option_list.append([object.get_formatted_name(),object]) #Displays a list of objects in the room related to that position and their appropriate bonuses/penalties
 
 
-            picked_object = renpy.display_menu(object_option_list,True,"Choice")
+            if (__builtin__.len(object_option_list) > 1):
+                picked_object = renpy.display_menu(object_option_list,True,"Choice")
+            elif (__builtin__.len(object_option_list) == 1):
+                picked_object = object_option_list[0][1]
 
 
     $ the_person.add_situational_slut("sex_object", picked_object.sluttiness_modifier, the_position.verbing + " on a " + picked_object.name)
@@ -390,7 +455,7 @@ label check_position_willingness(the_person, the_position, ignore_taboo = False)
 
     elif the_person.effective_sluttiness(the_taboo) > the_position.slut_requirement/2:
         # She's not willing to do it, but gives you a soft reject.
-        $ the_person.call_dialogue("sex_angry_reject")
+        $ the_person.call_dialogue("sex_gentle_reject")
         $ willing = False
 
     else:
@@ -398,7 +463,7 @@ label check_position_willingness(the_person, the_position, ignore_taboo = False)
         $ love_loss = the_person.effective_sluttiness(the_taboo) - the_position.slut_requirement #A negative number
         $ love_loss = round(love_loss/5)
         $ the_person.change_love(love_loss)
-        $ the_person.call_dialogue("sex_gentle_reject")
+        $ the_person.call_dialogue("sex_angry_reject")
         $ willing = False
 
     if willing and the_position.skill_tag == "Vaginal" and not mc.condom: #We might need a condom, which means she might say no. TODO: Add an option to pull _off_ a condom while having sex.

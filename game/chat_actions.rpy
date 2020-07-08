@@ -232,7 +232,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
                 #TODO: present the player with a list. TODO: Refactor the event above to be a generic way of presenting a list, w/ the dialogue separated.
                 call new_title_menu(the_person) from _call_new_title_menu_1
                 $ title_choice = _return
-                if not (title_choice == "Back" or title_choice == title_choice):
+                if not (title_choice == "Back" or the_person.create_formatted_title(title_choice) == the_person.title):
                     mc.name "I think [title_choice] would really suit you."
                     $ the_person.set_title(title_choice)
                     "[the_person.title] seems happy with her new title."
@@ -266,7 +266,7 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
                     the_person.char "Yeah, I think you're right."
                 "Change her title to [formatted_title_two].":
                     mc.name "[formatted_title_two] does have a nice ring to it. You should start using that."
-                    $ the_person.set_title(title_one)
+                    $ the_person.set_title(title_two)
                     the_person.char "I think you're right. Thanks for the input!"
 
         else: #Both are new!
@@ -395,8 +395,9 @@ label person_new_mc_title(the_person):
 
     return
 
-label small_talk_person(the_person): #Tier 0. Useful for discovering a character's opinions and the first step to building up love.
-    $ mc.change_energy(-15)
+label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful for discovering a character's opinions and the first step to building up love.
+    if apply_energy_cost: # Useful if you want to reuse this event inside of other events.
+        $ mc.change_energy(-15)
     $ smalltalk_opinion = the_person.get_opinion_score("small talk")
     mc.name "So [the_person.title], what's been on your mind recently?"
     $ the_person.discover_opinion("small talk")
@@ -484,7 +485,7 @@ label small_talk_person(the_person): #Tier 0. Useful for discovering a character
         else:
             the_person.char "Oh, not much honestly. How about you?"
             $ the_person.change_happiness(smalltalk_opinion)
-            "[the_person.possessive_title] seems happy to chitchat, and you spend a couple of hours just hanging out."
+            "[the_person.possessive_title] seems happy to chitchat, and you spend a few minutes just hanging out."
             "You don't feel like you've learned much about her, but least she seems to have enjoyed talking."
 
     $ the_person.apply_serum_study()
@@ -991,9 +992,9 @@ label movie_date_label(the_person):
                                 "She purrs in your ear and slides back down to her knees again. Her warm mouth wraps itself around your shaft and she starts to blow you again."
                                 "It doesn't take long for her to bring you to the edge of your orgasm."
                                 "You clutch at the movie seat arm rests and supress a grunt as you climax, blowing your hot load into [the_person.title]'s mouth and down her throat."
-                                $ the_person.cum_mouth()
+                                $ the_person.cum_in_mouth()
                                 "She waits until you're finished, then pulls off your cock, wipes her lips on the back of her hand, and sits down next to you."
-                                $ the_person.change_slut(3)
+                                $ the_person.change_slut_temp(3)
                                 the_person.char "Thank you, that was fun."
                                 "She takes your hand and holds it. You lean back, thoroughly spent, and zone out for the rest of the movie."
 
@@ -1205,8 +1206,9 @@ label dinner_date_label(the_person):
                     mc.name "That sounds like a great idea."
                     $ mc.change_location(the_person.home)
                     $ mc.location.show_background()
-                    if not the_person.home in mc.known_home_locations:
-                        $ mc.known_home_locations.append(the_person.home) #You know where she lives and can visit her.
+                    if not aunt_role in the_person.special_role and not cousin_role in the_person.special_role:
+                        if not the_person.home in mc.known_home_locations:
+                            $ mc.known_home_locations.append(the_person.home) #You know where she lives and can visit her.
                     "You join [the_person.possessive_title] when her taxi arrives. It's not a far ride to her house, and she invites you in."
                     "She pours you a drink and gives you a tour. When the tour ends in her bedroom you aren't surprised."
 
@@ -1416,22 +1418,22 @@ label command_person(the_person):
     the_person.char "Yes [the_person.mc_title]?"
 
     $ change_titles_action = Action("Change how we refer to each other.", requirement = change_titles_requirement, effect = "change_titles_person", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Manage how you refer to [the_person.title] and tell her how she should refer to you. Different combinations of stats, roles, and personalities unlock different titles.", priority = -5)
+        menu_tooltip = "Manage how you refer to "+the_person.title+" and tell her how she should refer to you. Different combinations of stats, roles, and personalities unlock different titles.", priority = -5)
 
     $ wardrobe_change_action = Action("Change your wardrobe.", requirement = wardrobe_change_requirment, effect = "wardrobe_change_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Add and remove outfits from [the_person.title]'s wardrobe, or ask her to put on a specific outfit.", priority = -5)
+        menu_tooltip = "Add and remove outfits from "+the_person.title+"'s wardrobe, or ask her to put on a specific outfit.", priority = -5)
 
     $ serum_demand_action = Action("Drink a dose of serum for me.", requirement = serum_demand_requirement, effect = "serum_demand_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Demand [the_person.title] drinks a dose of serum right now. Easier to command employees to test serum.", priority = -5)
+        menu_tooltip = "Demand " +the_person.title+ " drinks a dose of serum right now. Easier to command employees to test serum.", priority = -5)
 
     $ strip_demand_action = Action("Strip for me.", requirement = demand_strip_requirement, effect = "demand_strip_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Command her to strip off some of her clothing.", priority = -5)
 
     $ touch_demand_action = Action("Let me touch you.\n-10  {image=gui/extra_images/energy_token.png}", requirement = demand_touch_requirement, effect = "demand_touch_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Demand [the_person.title] stays still and lets you touch her. Going too far may damage your relationship.", priority = -5)
+        menu_tooltip = "Demand "+the_person.title+" stays still and lets you touch her. Going too far may damage your relationship.", priority = -5)
 
     $ bc_demand_action = Action("Talk about birth control.", requirement = demand_bc_requirement, effect = "bc_demand_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Discuss [the_person.title]'s use of birth control.", priority = -5)
+        menu_tooltip = "Discuss "+the_person.title+"'s use of birth control.", priority = -5)
 
     #TODO: Add more commands
     #TODO: Add a way to add role specific commands.

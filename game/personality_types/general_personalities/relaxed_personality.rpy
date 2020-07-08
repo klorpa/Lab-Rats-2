@@ -1116,7 +1116,7 @@ label relaxed_condomless_sex_taboo_break(the_person):
 
     elif the_person.love > 60:
         the_person.char "I want to feel close to you too [the_person.mc_title]."
-        if the_person.on_birth_control():
+        if the_person.on_birth_control:
             the_person.char "I'm on birth control, so you don't need to worry about getting me pregnant."
         elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "If we're doing this, I don't want you to pull out when you finish either."

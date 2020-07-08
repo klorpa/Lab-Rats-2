@@ -42,7 +42,7 @@ label intro_cowgirl(the_girl, the_location, the_object):
 
 label taboo_break_cowgirl(the_girl, the_location, the_object):
     "[the_girl.possessive_title] leads you to the [the_object.name]."
-    the_girl.char "Like down for me [the_girl.mc_title]..."
+    the_girl.char "Lie down for me [the_girl.mc_title]..."
     "You nod and follow her instructions. She steps over you and kneels down, straddling your hips."
     if the_girl.effective_sluttiness(cowgirl.associated_taboo) > cowgirl.slut_cap:
         "She reaches between her legs and grabs your cock, bringing it towards her and running the tip against her clit."
@@ -78,14 +78,14 @@ label scene_cowgirl_2(the_girl, the_location, the_object):
             "[the_girl.possessive_title] reaches down and grabs your hands. She brings them up to her tits and plants them there."
             "She moans and grinds your hands into her breasts, then puts her hands on your chest and focuses on fucking you."
         else:
-            $ the_clothing = the_girl.outfit.get_visible_upper()[0]
+            $ the_clothing = the_girl.outfit.get_upper_visible()[0]
             "Her large tits are barely contained by her [the_clothing.name]. You watch them bounce around as she fucks you vigorously."
     else:
         if the_girl.outfit.tits_visible():
             "She reaches up and grabs onto one of her own small tits, squeezing it while she rides you."
             the_girl.char "Ah!"
         else:
-            $ the_clothing = the_girl.outfit.get_visible_upper()[0]
+            $ the_clothing = the_girl.outfit.get_upper_visible()[0]
             "She reaches up and grabs onto one of her small tits through her [the_clothing.name]. She kneeds it through the fabric and moans loudly while she rides you."
             the_girl. char "Ah!"
     return

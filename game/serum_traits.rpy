@@ -319,9 +319,12 @@ init -1:
                 the_person.change_slut_core(amount, add_to_log)
 
         def nora_reward_genius_trait_on_apply(the_person, add_to_log):
-            the_person.charisma = 5
-            the_person.int = 5
-            the_person.focus = 5
+            if (the_person.charisma < 5):        
+                the_person.charisma = 5
+            if (the_person.int < 5):
+                the_person.int = 5
+            if (the_person.focus < 5):
+                the_person.focus = 5
 
         def nora_reward_hucow_trait_on_apply(the_person, add_to_log): #TODO Hook this up so it's possible to recieve this.
             the_person.bc_penalty += 75
@@ -620,7 +623,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 300)
 
         fertility_enhancement_trait = SerumTrait(name = "Fertility Enhancement",
-            desc = "Targets and enhances a womans natural reproductive cycle, increasing the chance that she may become pregnant. If taken. birth control will still prevent most pregnancies.",
+            desc = "Targets and enhances a womans natural reproductive cycle, increasing the chance that she may become pregnant. If taken birth control will still prevent most pregnancies.",
             positive_slug = "+$20 Value, +20% Fertility",
             negative_slug = "+100 Serum Research",
             value_added = 20,

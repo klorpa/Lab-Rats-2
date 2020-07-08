@@ -121,6 +121,9 @@ init -2:
         list_of_names.append("Lilith")
         list_of_names.append("Raislyn")
         list_of_names.append("Gina")
+        list_of_names.append("Chrystal")
+        list_of_names.append("Jenny")
+        list_of_names.append("Selene")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -207,6 +210,7 @@ init -2:
         list_of_last_names.append("Ersson")
         list_of_last_names.append("Sill")
         list_of_last_names.append("Mahjor")
+        list_of_last_names.append("Whitehair")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -308,6 +312,15 @@ init -2:
         list_of_faces.append("Face_4")
         list_of_faces.append("Face_5")
         list_of_faces.append("Face_6")
+        list_of_faces.append("Face_7")
+        list_of_faces.append("Face_8")
+        list_of_faces.append("Face_9")
+        list_of_faces.append("Face_10") #Bad render
+        list_of_faces.append("Face_11")
+        list_of_faces.append("Face_12")
+        list_of_faces.append("Face_13")
+        list_of_faces.append("Face_14")
+
 
         def get_random_face():
             return get_random_from_list(list_of_faces)
@@ -756,6 +769,8 @@ init 1 python:
         # After some time, she met a woman that rekindled her love for biotechnology and put her on the path of a wild woman, never tied down with any one man or woman.
         person_svetlanna = create_random_person(name = "Svetlanna", last_name = "Ivanova", body_type= "thin_body", height = 1.00, skin = "white", tits="E", hair_colour = "blond", hair_style = long_hair, starting_wardrobe = svetlanna_wardrobe,
             personality = wild_personality, stat_array = [3,1,4], skill_array = [1,3,5,2,2], sex_array = [2,1,2,4])
+        person_svetlanna.opinions["research work"] = [2, False] # Patron reward
+        list_of_unique_characters.append(person_svetlanna)
 
         ### STEPHANIE ###
         stephanie_wardrobe = wardrobe_from_xml("Stephanie_Wardrobe")
@@ -766,6 +781,7 @@ init 1 python:
             stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 7, \
             title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
         stephanie.generate_home()
+        stephanie.opinions["research work"] = [2, True] #Steph always loves research work, which you know
 
         ### NORA ##
         nora_wardrobe = wardrobe_from_xml("Nora_Wardrobe")
@@ -815,6 +831,36 @@ init 1 python:
             alexia.schedule[i] = alexia.home #Hide them in their bedroom off the map until they're ready.
         alexia.home.add_person(alexia)
 
+        ### EMILY (18) ###
+        emily_wardrobe = wardrobe_from_xml("Emily_Wardrobe")
+
+        global emily
+        emily_base = Outfit("Emily's accessories") #TODO: Decide on what her wardrobe should look like. Also decide on name colour
+        emily = create_random_person(name = "Emily", last_name = "Vandenberg", age = 19, body_type = "thin_body", face_style = "Face_8", tits = "C", height = 0.91, hair_colour = "chestnut", hair_style = twintail, pubes_style = shaved_pubes, skin = "white", \
+            eyes = "light blue", personality = relaxed_personality, starting_wardrobe = emily_wardrobe, stat_array = [3,2,1], skill_array = [2,1,1,1,2], sex_array = [3,1,1,0], \
+            start_sluttiness = 6, start_obedience = 0, start_happiness = 100, start_love = 0, relationship = "Single", kids = 0, base_outfit = emily_base)
+
+        emily.generate_home()
+        emily.set_schedule([1,2], university)
+        emily.schedule[3] = emily.home
+        emily.home.add_person(emily)
+        #TODO: Add her special role.
+
+
+        ### CHRISTINA (EMILY'S MOM) ###
+        christina_wardrobe = wardrobe_from_xml("Christina_Wardrobe")
+
+        global christina
+        christina_base = Outfit("Christina's accessories") #TODO: Decide on what her wardrobe should look like. Add wedding ring.
+        christina_base.add_accessory(diamond_ring.get_copy())
+
+        christina = create_random_person(name = "Christina", last_name = "Vandenberg", age = 47, body_type = "standard_body", face_style = "Face_8", tits = "DD", height = 0.94, hair_colour = "chestnut", hair_style = braided_bun, pubes_style = diamond_pubes, skin = "white", \
+            eyes = "light blue", personality = reserved_personality, starting_wardrobe = christina_wardrobe, stat_array = [4,2,3], skill_array = [2,1,1,1,1], sex_array = [2,3,3,2], \
+            start_sluttiness = 10, start_obedience = 5, start_happiness = 85, start_love = 0, start_home = emily.home, relationship = "Married", kids = 1, base_outfit = christina_base)
+
+        christina.set_schedule([1,2,3], christina.home) #She's a stay-at-home Mom.
+        christina.home.add_person(christina)
+        #TODO: Special role at some point in the future.
 
         ### LILY ###
         lily_wardrobe = wardrobe_from_xml("Lily_Wardrobe")
@@ -899,6 +945,8 @@ init 1 python:
         town_relationships.update_relationship(aunt, cousin, "Daughter", "Mother")
         town_relationships.update_relationship(aunt, lily, "Niece", "Aunt")
         town_relationships.update_relationship(lily, cousin, "Cousin")
+
+        town_relationships.update_relationship(christina, emily, "Daughter", "Mother")
 
 
     def get_premade_character(): #Get a premade character and return them when the function is called.

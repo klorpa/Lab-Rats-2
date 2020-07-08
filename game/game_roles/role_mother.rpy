@@ -139,7 +139,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
 
 label mom_high_sluttiness_weekly_pay(the_person):
     menu:
-        "Strip for mou. -$100" if mc.business.funds >= 100:
+        "Strip for me. -$100" if mc.business.funds >= 100:
             if mc.business.event_triggers_dict.get("Mom_Strip",0) >= 1:
                 mc.name "I want you to show off yourself off to me, how does that sound?"
                 the_person.char "Fair is fair, but I'll need a little extra if you want to see anything... inappropriate."
@@ -203,12 +203,14 @@ label mom_high_sluttiness_weekly_pay(the_person):
 
         "Suck me off. -$300" if mc.business.funds >= 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
             mc.name "Alright, I'll pay you to give me a blowjob."
-            if the_person.has_taboo("sucking_cock") or the_person.effective_sluttiness("sucking_cock") >= 60:
+            if (not the_person.has_taboo("sucking_cock")) or the_person.effective_sluttiness("sucking_cock") >= 60:
                 the_person.char "If that's what you need."
                 "You pull out your wallet and count out her cash while [the_person.possessive_title] gets onto her knees in front of you."
+                $ mc.business.funds += -300                
                 $ the_person.draw_person(position = "blowjob")
                 the_person.char "Remember, not a word to anyone else though. Okay>"
                 mc.name "Of course, this is just between you and me."
+                $ the_person.break_taboo("sucking_cock")
 
             else:
                 the_person.char "What? I mean... I could never do that! How could you even say that?"
@@ -226,7 +228,9 @@ label mom_high_sluttiness_weekly_pay(the_person):
                 $ the_person.break_taboo("sucking_cock")
 
             "With that she opens her mouth and slides the tip of your hard cock inside. Her tongue swirls around the tip, sending a jolt of pleasure up your spine."
+            $the_person.add_situational_obedience("deal", 20, "I'm doing this for the family")
             call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True, position_locked = True) from _call_fuck_person_33
+            $ the_person.clear_situational_obedience("deal")
             $ the_report = _return
             if the_report.get("girl orgasms", 0) > 0:
                 "You pull up your pants while [the_person.possessive_title] is on her knees panting, trying to get her breath back."

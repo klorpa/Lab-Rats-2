@@ -1,7 +1,7 @@
 init:
     python:
         handjob = Position(name = "Handjob", slut_requirement = 15, slut_cap = 40, requires_hard = False, requires_large_tits = False,
-            position_tag = "standing3", requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
+            position_tag = "stand3", requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
             girl_arousal = 5, girl_energy = 15,
             guy_arousal = 10, guy_energy = 5,
             connections = [],

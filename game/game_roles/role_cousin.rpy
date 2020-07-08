@@ -21,7 +21,7 @@ init -2 python:
         return False
 
     def cousin_blackmail_intro_requirement(the_person):
-        if the_person in lily_bedroom.people and __builtin__.len(lily_bedroom.people) == 1: #Only triggers when she's in there alone (and after the event has been added to the trigger list)
+        if the_person in lily_bedroom.people and __builtin__.len(lily_bedroom.people) == 1 and the_person.event_triggers_dict.get("blackmail_level", -1) < 0: #Only triggers when she's in there alone (and after the event has been added to the trigger list)
             return True
         return False
 
@@ -71,7 +71,7 @@ init -2 python:
         else:
             return True
 
-    def cousin_boobjob_ask_requirement(start_day, the_person):
+    def cousin_boobjob_ask_requirement(the_person,start_day ):
         if day < start_day:
             return False
         elif the_person.event_triggers_dict.get("getting boobjob", False):
@@ -112,6 +112,12 @@ init -2 python:
             return False
         else:
             return True
+
+    def cousin_serum_boobjob_check_requirement(the_person, the_tits, the_day):
+        if day < the_day:
+            return False
+        return True
+
 
 
 
@@ -1099,7 +1105,7 @@ label stripclub_dance():
     #-> If you tip enough she strips off her bra and/or panties.
     #-> When she ends her dance, if you've paid enough she may ask if you want to come back for a private lap dance.
     #-> Lap dance scene may just turn into sex.
-    $ pose_list = ["walking_away","back_peek","standing_doggy","stand2","stand3","stand4","stand5"] #A list to let us randomly get some poses so each dance is a little different.
+    $ pose_list = ["walking_away","back_peek","stand2","stand3","stand4","stand5"] #A list to let us randomly get some poses so each dance is a little different. # "standing_doggy" Removed until we fix this with the clipping
 
 
 
