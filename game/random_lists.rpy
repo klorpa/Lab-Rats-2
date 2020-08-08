@@ -124,6 +124,11 @@ init -2:
         list_of_names.append("Chrystal")
         list_of_names.append("Jenny")
         list_of_names.append("Selene")
+        list_of_names.append("Piper")
+        list_of_names.append("Nicole")
+        list_of_names.append("Seraphina")
+        list_of_names.append("Kitty")
+        list_of_names.append("Isabelle")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -211,6 +216,12 @@ init -2:
         list_of_last_names.append("Sill")
         list_of_last_names.append("Mahjor")
         list_of_last_names.append("Whitehair")
+        list_of_last_names.append("Perrit")
+        list_of_last_names.append("White")
+        list_of_last_names.append("Wolf")
+        list_of_last_names.append("Jung")
+        list_of_last_names.append("Dussoir")
+
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -315,7 +326,7 @@ init -2:
         list_of_faces.append("Face_7")
         list_of_faces.append("Face_8")
         list_of_faces.append("Face_9")
-        list_of_faces.append("Face_10") #Bad render
+        #list_of_faces.append("Face_10") #Bad render
         list_of_faces.append("Face_11")
         list_of_faces.append("Face_12")
         list_of_faces.append("Face_13")
@@ -660,6 +671,9 @@ init -2:
             if the_person.love >= 60 and affair_role in the_person.special_role:
                 list_of_possessive_titles.append("Your lover")
 
+            if student_role in the_person.special_role:
+                list_of_possessive_titles.append("Your student")
+
             return list_of_possessive_titles
 
         def get_random_possessive_title(the_person):
@@ -673,11 +687,11 @@ init -2:
             else:
                 list_of_player_titles.append(personality_player_titles)
 
-            if employee_role in the_person.special_role:
+            if employee_role in the_person.special_role or student_role in the_person.special_role:
                 list_of_player_titles.append("Mr." + mc.last_name)
                 if the_person.obedience > 120:
                     list_of_player_titles.append("Sir")
-                elif the_person.obedience < 80:
+                elif the_person.obedience < 80 and employee_role in the_person.special_role:
                     list_of_player_titles.append("Boss")
 
             if the_person.obedience > 140 and the_person.sluttiness > 50:
@@ -691,6 +705,9 @@ init -2:
                     list_of_player_titles.append("Cunt Slave")
                 else:
                     list_of_player_titles.append("Boy Toy")
+
+            if student_role in the_person.special_role:
+                list_of_player_titles.append("Teacher")
 
             return list_of_player_titles
 
@@ -730,6 +747,8 @@ init 1 python:
         list_of_premade_characters.append(create_random_person(body_type = "thin_body", height=0.94, skin="white", tits="FF", hair_colour="blond", hair_style=long_hair))
         list_of_premade_characters.append(create_random_person(body_type = "standard_body", height=0.95, skin="tan", tits="FF", hair_colour="brown", hair_style=ponytail))
 
+
+        # Patron reward characters!
         list_of_unique_characters = []
 
         dinah_wardrobe = wardrobe_from_xml("Dinah_Wardrobe")
@@ -772,8 +791,23 @@ init 1 python:
         person_svetlanna.opinions["research work"] = [2, False] # Patron reward
         list_of_unique_characters.append(person_svetlanna)
 
+        kelly_wardrobe = wardrobe_from_xml("Kelly_Wardrobe")
+        #
+        person_kelly = create_random_person(name = "Kelly", last_name = "Uhls", body_type = "curvy_body", height = 0.98, skin = "white", eyes = "dark blue", tits = "E", hair_colour = "chestnut", hair_style = ponytail, starting_wardrobe = kelly_wardrobe,
+            personality = reserved_personality, stat_array = [2,2,4], skill_array = [2,1,2,1,5], sex_array = [3,4,2,1])
+        list_of_unique_characters.append(person_kelly)
+
+        #sativa_wardrobe = wardrobe_from_xml("Sativa_Wardrobe") #TODO: Give her a wardrobe if the patron responds
+        # Sativa's parents are very strict and traditional. They were determined to protect her from all the bad things in life, such as boys and booze.
+        #When she turned 18,  Sativa moved out on her own.  Now she is determined to experience everything that she was previously denied.
+        person_sativa = create_random_person(name = "Sativa", last_name = "Menendez", body_type = "curvy_body", face_style = "Face_7", height = 0.90, skin = "tan", eyes = "green", tits = "FF", hair_colour = "black", hair_style = bobbed_hair,
+            personality = wild_personality, stat_array = [3,1,4], skill_array = [2,2,1,1,5], sex_array = [4,3,2,1])
+        list_of_unique_characters.append(person_sativa)
+
+
         ### STEPHANIE ###
         stephanie_wardrobe = wardrobe_from_xml("Stephanie_Wardrobe")
+
 
         global stephanie
         stephanie = create_random_person(name = "Stephanie", age = 29, body_type = "standard_body", face_style = "Face_3",  tits="C", height = 0.94, hair_colour="brown", hair_style = messy_short_hair, skin="white" , \
@@ -844,7 +878,7 @@ init 1 python:
         emily.set_schedule([1,2], university)
         emily.schedule[3] = emily.home
         emily.home.add_person(emily)
-        #TODO: Add her special role.
+        emily.special_role.append(student_role)
 
 
         ### CHRISTINA (EMILY'S MOM) ###
@@ -860,7 +894,7 @@ init 1 python:
 
         christina.set_schedule([1,2,3], christina.home) #She's a stay-at-home Mom.
         christina.home.add_person(christina)
-        #TODO: Special role at some point in the future.
+        #Note: She plays an important role to Emily's story, but she is just given the normal affair role during the game.
 
         ### LILY ###
         lily_wardrobe = wardrobe_from_xml("Lily_Wardrobe")

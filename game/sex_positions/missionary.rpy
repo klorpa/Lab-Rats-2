@@ -206,22 +206,16 @@ label scene_missionary_2(the_girl, the_location, the_object):
 label outro_missionary(the_girl, the_location, the_object):
     "You get to hear every little gasp and moan from [the_girl.title] as you're pressed up against her. Combined with the feeling of fucking her pussy it's not long before you're pushed past the point of no return."
     mc.name "I'm going to cum!"
-    if not mc.condom:
-        if the_girl.sluttiness > 120:
-            the_girl.char "Go ahead and cum inside me. I want it nice and deep again, get me really fucking pregnant!"
-        else:
-            the_girl.char "Ah! Make sure to pull out!"
-    else:
-        the_girl.char "Do it! Cum for me!"
-
+    $ the_girl.call_dialogue("cum_pullout")
     menu:
         "Cum inside of her.":
             "You use your full weight to push your cock deep inside of [the_girl.possessive_title]'s cunt as you climax. She gasps and claws lightly at your back as you pump your seed into her."
-            $ the_girl.call_dialogue("cum_vagina")
+
             if mc.condom:
+                $ the_girl.call_dialogue("cum_condom")
                 "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."
                 "Your condom is ballooned with your seed, hanging off your cock to one side."
-                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
+                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.effective_sluttiness() > 50:
                     $ the_girl.discover_opinion("drinking cum")
                     "[the_girl.possessive_title] reaches over for your cock. With delicate fingers she slides the condom off of you, pinching it off do your cum doesn't spill out."
                     the_girl.char "It would be a shame to waste all of this, right?"
@@ -232,6 +226,7 @@ label outro_missionary(the_girl, the_location, the_object):
                     the_girl.char "Look at all that cum. Well done."
 
             else:
+                $ the_girl.call_dialogue("cum_vagina")
                 $ the_girl.cum_in_vagina()
                 $ missionary.redraw_scene(the_girl)
             "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."

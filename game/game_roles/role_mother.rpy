@@ -358,7 +358,7 @@ label mom_offer_make_dinner_label(the_person):
     the_person.char "Do you know where everything is?"
     mc.name "Yeah, I think I can take care of it."
     the_person.char "Well thank you, you're always such a help around here!"
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ kitchen.show_background()
     "You head to the kitchen and get to work. The cooking isn't hard, but it takes up most of your evening."
     "As you're plating out dinner you have a perfect opportunity to give your mother or sister some serum in secret."

@@ -31,7 +31,7 @@
 init 1 python: #TODO: Prevent you from getting the game goal type twice in a row.
     def create_new_stat_goal(goal_difficulty):
         potential_goal = get_random_from_list(stat_goals)
-        if potential_goal.check_valid(goal_difficulty):# and potential_goal.goal_name != mc.stat_goal.goal_name:
+        if potential_goal.check_valid(goal_difficulty) and (mc.stat_goal is None or potential_goal.name != mc.stat_goal.name):
             goal_template = copy.deepcopy(potential_goal)
             goal_template.activate_goal(goal_difficulty)
             return goal_template
@@ -40,7 +40,7 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
 
     def create_new_work_goal(goal_difficulty):
         potential_goal = get_random_from_list(work_goals)
-        if potential_goal.check_valid(goal_difficulty):# and potential_goal.goal_name != mc.work_goal.goal_name:
+        if potential_goal.check_valid(goal_difficulty) and (mc.work_goal is None or potential_goal.name != mc.work_goal.name):
             goal_template = copy.deepcopy(potential_goal)
             goal_template.activate_goal(goal_difficulty)
             return goal_template
@@ -49,7 +49,7 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
 
     def create_new_sex_goal(goal_difficulty):
         potential_goal = get_random_from_list(sex_goals)
-        if potential_goal.check_valid(goal_difficulty):#and potential_goal.goal_name != mc.sex_goal.goal_name: #Prevents repeats of the same goal.
+        if potential_goal.check_valid(goal_difficulty) and (mc.sex_goal is None or potential_goal.name != mc.sex_goal.name): #Prevents repeats of the same goal.
             goal_template = copy.deepcopy(potential_goal)
             goal_template.activate_goal(goal_difficulty)
             return goal_template

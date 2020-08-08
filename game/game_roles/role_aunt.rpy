@@ -99,7 +99,7 @@ label aunt_intro_label():
             mom.char "Of course, [mom.mc_title]. I'm sure your sister won't mind helping. You get a good night's sleep."
             "[mom.possessive_title] gives you one last smile as she closes your door. You hear her talking to your sister outside while you get ready for bed."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ aunt_intro_phase_two = Action("Aunt introduction phase two", aunt_intro_phase_two_requirement, "aunt_intro_phase_two_label")
     $ mc.business.mandatory_morning_crises_list.append(aunt_intro_phase_two) #Aunt and cousin will be visiting tomorrow in the morning
     return
@@ -175,7 +175,7 @@ label aunt_intro_phase_two_label():
 
     $ cousin_intro_phase_one = Action("cousin_intro_phase_one", cousin_intro_phase_one_requirement, "cousin_intro_phase_one_label", requirement_args = day + renpy.random.randint(2,5))
     $ mc.business.mandatory_crises_list.append(cousin_intro_phase_one)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label aunt_intro_phase_three_label():
@@ -199,7 +199,7 @@ label aunt_intro_phase_three_label():
     aunt.char "I'm so lucky to have such a wonderful nephew, you know that? If only I had married a man like you instead of..."
     aunt.char "Well, never mind that. Thank you."
     "She leans in, gives you a warm, familial hug, and then leaves you to get on with your day."
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ aunt.event_triggers_dict["moving_apartment"] = 0 #If it's a number it's the number of times you've helped her move. If it doesn't exist or is negative the event isn't enabled
 
     $ moving_finished_action = Action("Moving finished", aunt_intro_phase_five_requirement, "aunt_intro_phase_final_label", requirement_args = day + 7)
@@ -222,7 +222,7 @@ label aunt_intro_moving_apartment_label(the_person):
         $ aunt.change_happiness(5)
         $ aunt.change_love(2)
         aunt.char "Thank you so much! I'll go rent that truck, you just stay here and I'll be back in a little bit."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[aunt.title] gets in her car and drives off. You organize the boxes so they'll be easier to load when she gets back."
         cousin.char "What're you doing out here?"
         "You're startled by [cousin.possessive_title]'s voice. You spin around and find her leaning against the house door frame."
@@ -244,7 +244,7 @@ label aunt_intro_moving_apartment_label(the_person):
         cousin.char "Not really. Be careful with my stuff."
         $ cousin.draw_person(position = "walking_away")
         "With that she turns around and goes back inside."
-        $ renpy.scene("Active")
+        $ clear_scene()
         mc.name "You're welcome..."
         "A few minutes later [aunt.title] pulls up in a rented pickup truck. You load up the back with furniture and boxes, then get in the passenger seat."
         aunt.char "Okay, let's get going! I don't know what I'd do without a big strong man like you to lift things for me. I'd be helpless!"
@@ -261,7 +261,7 @@ label aunt_intro_moving_apartment_label(the_person):
         aunt.char "You're my hero [aunt.mc_title]. Come see me if you have any more spare time and we can move the rest of this over."
         "She breaks the hug and smiles."
         aunt.char "Now I'm going to go see if I can use your mothers shower!"
-        $ renpy.scene("Active")
+        $ clear_scene()
 
 
 
@@ -315,19 +315,19 @@ label aunt_intro_moving_apartment_label(the_person):
                 mc.name "Alright, I'm going to go get a glass of water and catch my breath."
                 aunt.char "Go ahead, you've certainly earned it!"
                 $ aunt.change_obedience(1)
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "You get a glass of water and sit down on the new sofa in the living room."
                 "After half an hour [aunt.possessive_title] comes out and dusts off her hands."
 
 
         aunt.char "Alright, that's everything for today [aunt.mc_title]. Let's get you home."
-        $ renpy.scene("Active")
+        $ clear_scene()
 
     elif aunt.event_triggers_dict.get("moving_apartment") == 2:
         #You help move your cousin's wardrobe and get a chance to dig through her underwear. She catches you and taunts you "You little perv, you'll never get to see me wear something like that." kind of stuff.
         "You head to the garage and look at the dwindling pile of boxes that need to be moved."
         aunt.char "I think we can move [cousin.title]'s things today. I'll go get her."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[aunt.possessive_title] is gone for a few minutes before coming back with [cousin.title] in tow."
         $ aunt.draw_person()
         aunt.char "Let's get this show on the road! I know [cousin.title] is excited to have a room to herself again, aren't you sweetheart."
@@ -348,7 +348,7 @@ label aunt_intro_moving_apartment_label(the_person):
         aunt.char "[cousin.title], sweety, we should go downstairs and get an extra key for you."
         "[cousin.title] rolls her eyes dramatically, then gets up and follows her mother. She stops just before leaving and looks back at you."
         cousin.char "Don't touch my stuff."
-        $ renpy.scene("Active")
+        $ clear_scene()
         menu:
             "Touch her stuff.":
                 "She's not the boss of you. You wait a couple of minutes then start snooping around."
@@ -403,7 +403,7 @@ label aunt_intro_moving_apartment_label(the_person):
         #You help them move their kitcehn stuff in. Your aunt gets dirty/sweaty and wants to chance now that her clothes are here. She asks you to wait around whlie hse takes a shower, then
         #the landlord shows up and needs some documents from her, so you have to come into her bathroom and get a chance to see her naked/just in her underwear or something.
         #mc.name "Okay, I'm going to get a drink and catch my breath."
-        #$ renpy.scene("Active")
+        #$ clear_scene()
         #"She smiles at you and nods. You sit down on her new couch in the living room and relax for a bit."
         #"A minute later [aunt.title]'s phone rings. You catch half of the conversation from the living room."
         #aunt.char "Hello? Yes, that's me. I'm actually in the building right now, I can come to the office right away. Okay. See you soon."
@@ -424,7 +424,7 @@ label aunt_intro_moving_apartment_label(the_person):
         aunt.char "I'm sure you are, you've been doing all the heavy lifting for me! You're my big strong man, coming in to rescue me."
         "She gives you a hug, then grabs her phone and finds a local pizza place that delivers. She places your order."
         aunt.char "They said it may take a little while. All this hard work got me all sweaty. I'm going to go take a shower. Back in a bit!"
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[aunt.possessive_title] heads off to the bathroom and you hear the shower start."
         "You're killing time on your phone when there's a knock on the door. It's the pizza guy."
         "Pizza Guy" "Hey, this is for you. One large."
@@ -825,7 +825,7 @@ label aunt_share_drinks_label(the_person):
                         the_person.char "Am I really that out of touch? I'll have to go shopping and update everything then."
                         the_person.char "Maybe I just need to lie down, this wine is really getting to me."
                         "[the_person.title] seems to be drifting off to sleep already. You say goodbye and head to the door."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     call change_location(aunt_apartment) from _call_change_location_3
 
                 elif decision_score <= 65:
@@ -930,7 +930,7 @@ label aunt_share_drinks_label(the_person):
                     mc.name "Sure thing [the_person.title], I'll be by again soon."
 
 
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     call change_location(aunt_apartment) from _call_change_location_4
                     # Same as above but she strips down and asks you for underwear sets.
                 elif decision_score <= 75:

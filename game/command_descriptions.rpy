@@ -18,7 +18,7 @@ label wardrobe_change_label(the_person):
     menu:
         "Add an outfit.":
             mc.name "[the_person.title], I've got something I'd like you to wear for me."
-            $ renpy.scene("Active")
+            $ clear_scene()
             call screen outfit_select_manager()
             $ the_person.draw_person()
             if not _return == "No Return":
@@ -60,14 +60,14 @@ label wardrobe_change_label(the_person):
 
         "Delete an outfit.":
             mc.name "[the_person.title], lets have a talk about what you've been wearing."
-            $ renpy.scene("Active")
+            $ clear_scene()
             call screen outfit_delete_manager(the_person.wardrobe)
             $ the_person.draw_person()
             #TODO: Figure out what happens when someone doesn't have anything in their wardrobe.
 
         "Wear an outfit right now.":
             mc.name "[the_person.title], I want you to get changed for me."
-            $ renpy.scene("Active")
+            $ clear_scene()
             call screen girl_outfit_select_manager(the_person.wardrobe)
             if _return != "None":
                 $ the_person.set_outfit(_return)

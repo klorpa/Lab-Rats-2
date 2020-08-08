@@ -160,7 +160,7 @@ label cousin_intro_phase_one_label():
             $ cousin.change_love(-2)
             "She stands back up and leaves your room. She slams your door on the way out."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label cousin_house_phase_one_label(the_person):
@@ -238,7 +238,7 @@ label cousin_blackmail_intro_label(the_person):
 
     $ blackmail_2_event = Action("Blackmail hint", blackmail_hint_requirement, "aunt_cousin_hint_label", args = [aunt, the_person], requirement_args = [the_person, day + renpy.random.randint(2,4)])
     $ mc.business.mandatory_crises_list.append(blackmail_2_event)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label cousin_blackmail_label(the_person):
@@ -669,7 +669,7 @@ label cousin_search_room_label(the_cousin, the_aunt):
                 "She sighs and nods."
                 the_aunt.char "You're right. If [the_cousin.title] asks, I don't know anything about this, okay?"
                 mc.name "I won't tell a soul."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "[the_aunt.possessive_title] leaves you alone in her daughter's room to continue your search."
 
 
@@ -1092,7 +1092,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         $ the_person.break_taboo("bare_tits")
         "It's a selfie of her in the bathroom, tits on display for you."
         the_person.char "You've saved me a ton of cash, so I thought you might enjoy that."
-        $ renpy.scene("Active")
+        $ clear_scene()
         return #Note: we're returning without adding the boobjob ask again event, which means we can consider this "done" at this point.
 
     $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
@@ -1105,7 +1105,7 @@ label stripclub_dance():
     #-> If you tip enough she strips off her bra and/or panties.
     #-> When she ends her dance, if you've paid enough she may ask if you want to come back for a private lap dance.
     #-> Lap dance scene may just turn into sex.
-    $ pose_list = ["walking_away","back_peek","stand2","stand3","stand4","stand5"] #A list to let us randomly get some poses so each dance is a little different. # "standing_doggy" Removed until we fix this with the clipping
+    $ pose_list = ["walking_away","back_peek","standing_doggy","stand2","stand3","stand4","stand5"] #A list to let us randomly get some poses so each dance is a little different. #  Removed until we fix this with the clipping
 
 
 
@@ -1188,7 +1188,7 @@ label stripclub_dance():
     $ the_person.draw_person(position = "walking_away")
     "[performer_title] blows a kiss and struts off stage."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label stripshow_strip(the_person):

@@ -203,7 +203,7 @@ label pay_strip_scene(the_person):
     #Optional: Some way to ask the person to change into a different outfit.
     #Optional: Way to progress from strip tease to sex and/or mastribation.
 
-    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"]] # ["Hands down, ass up.","standing_doggy"]
+    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"],["Hands down, ass up.","standing_doggy"]] 
 
     $ picked_pose = the_person.idle_pose #She starts in her idle pose (which is a string)
     $ rand_strip_desc = renpy.random.randint(0,3) #Produce 4 different descriptions at each level to help keep this interesting.
@@ -482,5 +482,5 @@ label prostitute_label(the_person):
 
     the_person.char "That was fun, I hope you had a good time [the_person.mc_title]."
     "She gives you a quick peck on the cheek."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return

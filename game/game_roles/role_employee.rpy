@@ -259,7 +259,7 @@ label employee_performance_review(the_person):
                         the_person.char "What? I... I can't believe that [the_person.mc_title], why would you ever think I would stay here for less money?"
                         mc.name "Like I said, I'm sorry but it has to be done."
                         the_person.char "Well you know what, I think I'm just going to find somewhere else to work. I quit."
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "[the_person.title] stands up and storms out."
                         $ mc.business.remove_employee(the_person)
                         call advance_time from _call_advance_time_12
@@ -317,7 +317,7 @@ label employee_performance_review(the_person):
                     else:
                         $ the_person.draw_person(position = "sitting", emotion = "angry")
                         the_person.char "What? You want me to beg to stay at this shitty job? If you don't want me here I think it's best I just move on. I quit!"
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "[the_person.title] stands up and storms out."
                         $ mc.business.remove_employee(the_person)
                         call advance_time from _call_advance_time_13
@@ -365,7 +365,7 @@ label employee_performance_review(the_person):
             the_person.char "Thank you, I'll do my best."
 
     "You stand up and open the door for [the_person.title] at the end of her performance review."
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time from _call_advance_time_14
     return
 
@@ -376,7 +376,7 @@ label move_employee_label(the_person):
             "Yes, move [the_person.title]":
                 pass
             "No, leave [the_person.title]":
-                $renpy.scene("Active")
+                $ clear_scene()
                 return
 
     the_person.char "Where would you like me then?"

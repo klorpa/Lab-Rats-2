@@ -241,13 +241,14 @@ label scene_doggy_2(the_girl, the_location, the_object):
 
 label outro_doggy(the_girl, the_location, the_object):
     "[the_girl.title]'s tight cunt draws you closer to your orgasm with each thrust. You finally pass the point of no return and speed up, fucking her as hard as you can manage."
-    $the_girl.call_dialogue("sex_responses_vaginal")
+    $ the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Ah, I'm going to cum!"
+    $ the_girl.call_dialogue("cum_pullout")
     menu:
         "Cum inside of her.":
             if mc.condom:
                 "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps as you dump your load into her, barely contained by your condom."
-                $ the_girl.call_dialogue("cum_vagina")
+                $ the_girl.call_dialogue("cum_condom")
                 "You wait until your orgasm has passed completely, then pull out and sit back. The condom is ballooned and sagging with the weight of your seed."
                 if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
                     $ the_girl.discover_opinion("drinking cum")
@@ -274,7 +275,7 @@ label outro_doggy(the_girl, the_location, the_object):
                 "You pull out of [the_girl.title] at the last moment, stroking your shaft as you blow your load over her ass. She holds still for you as you cover her with your sperm."
             $ the_girl.cum_on_ass()
             $ doggy.redraw_scene(the_girl)
-            if the_girl.sluttiness > 120:
+            if the_girl.effective_sluttiness() > 120:
                 the_girl.char "What a waste, you should have put that inside of me."
                 "She reaches back and runs a finger through the puddles of cum you've put on her, then licks her finger clean."
             else:

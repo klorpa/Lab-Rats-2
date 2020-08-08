@@ -12,6 +12,8 @@ init -2:
         default persistent.vren_animation = True
         default persistent.vren_mac_scale = 1.0
 
+
+
     default persistent.pregnancy_pref = 0 # 0 = no content, 1 = predictable, 2 = realistic
 
 init -2 python:
@@ -108,8 +110,60 @@ init -2 python:
     prepared_animation_arguments = []
 
 
-    build.archive("character_images") #When building all character images are placed into an archive. This archive make it easier to navigate through the game folder without significant slowdown on non-SSD systems.
-    build.classify("game/images/character_images/**.png", "character_images")
+    #build.classify("game/images/character_images/**.png", "character_images")
+    #build.classify("game/images/character_images/**.png", None)
+
+    build.classify("game/**.rpa", "android")
+
+    #build.archive("character_images","renpy")
+
+
+    build.classify("game/images/character_images/**stand2**.png", "stand2")
+    build.classify("game/images/character_images/**stand3**.png", "stand3")
+    build.classify("game/images/character_images/**stand4**.png", "stand4")
+    build.classify("game/images/character_images/**stand5**.png", "stand5")
+    build.classify("game/images/character_images/**walking_away**.png", "walking_away")
+    build.classify("game/images/character_images/**back_peek**.png", "back_peek")
+    build.classify("game/images/character_images/**sitting**.png", "sitting")
+    build.classify("game/images/character_images/**kissing**.png", "kissing")
+    build.classify("game/images/character_images/**doggy**.png", "doggy")
+    build.classify("game/images/character_images/**missionary**.png", "missionary")
+    build.classify("game/images/character_images/**blowjob**.png", "blowjob")
+    build.classify("game/images/character_images/**against_wall**.png", "against_wall")
+    #build.classify("game/images/character_images/**standing_doggy**.png", "character_images") #Note: This is absorbed by the doggy version. Should be fine until we reach 32k images for each individual position.
+    build.classify("game/images/character_images/**kneeling1**.png", "kneeling1")
+    build.classify("game/images/character_images/**cowgirl**.png", "cowgirl")
+    #
+    build.classify("game/images/character_images/**stand2**.png", None)
+    build.classify("game/images/character_images/**stand3**.png", None)
+    build.classify("game/images/character_images/**stand4**.png", None)
+    build.classify("game/images/character_images/**stand5**.png", None)
+    build.classify("game/images/character_images/**walking_away**.png", None)
+    build.classify("game/images/character_images/**back_peek**.png", None)
+    build.classify("game/images/character_images/**sitting**.png", None)
+    build.classify("game/images/character_images/**kissing**.png", None)
+    build.classify("game/images/character_images/**doggy**.png", None)
+    build.classify("game/images/character_images/**missionary**.png", None)
+    build.classify("game/images/character_images/**blowjob**.png", None)
+    build.classify("game/images/character_images/**against_wall**.png", None)
+    # Standing doggy, for the same reason as above, is not included here
+    build.classify("game/images/character_images/**kneeling1**.png", None)
+    build.classify("game/images/character_images/**cowgirl**.png", None)
+    #
+    build.archive("stand2") #When building all character images are placed into an archive. This archive make it easier to navigate through the game folder without significant slowdown on non-SSD systems.
+    build.archive("stand3")
+    build.archive("stand4")
+    build.archive("stand5")
+    build.archive("walking_away")
+    build.archive("back_peek")
+    build.archive("sitting")
+    build.archive("kissing")
+    build.archive("doggy")
+    build.archive("missionary")
+    build.archive("blowjob")
+    build.archive("against_wall")
+    build.archive("kneeling1")
+    build.archive("cowgirl")
 
 
     def get_obedience_plaintext(obedience_amount):
@@ -389,6 +443,16 @@ init -2 python:
         else:
             return "ERROR - relationship incorrectly defined"
 
+    def girl_relationship_to_title(relationship_string):
+        if relationship_string == "Girlfriend":
+            return "girlfriend"
+        elif relationship_string == "Fiancée":
+            return "fiancée"
+        elif relationship_string == "Married":
+            return "wife"
+        else:
+            return "ERROR - relationship incorrectly defined"
+
     def can_use_animation(): #Checks key properties to determine if we can or cannot use animation (mainly rendering type and config option
         if renpy.mobile: #Unfortunately no animation support for mobile devices.
             return False
@@ -400,6 +464,12 @@ init -2 python:
             return False
 
         return True
+
+    def clear_scene(): # Clears the current scene of characters. Both calls Renpy.scene("Active") as well as advances the current draw count so nothing is drawn by an out of date thread.
+        global current_draw_number
+        current_draw_number += 1
+        renpy.scene("Active")
+
 
 
 
@@ -2071,11 +2141,6 @@ init -2 python:
             elif day%7 == 6 or day%7 == 7: #If the new day is a weekend day
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
 
-        # def threaded_person_displayable(self, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Starts a separate thread to show this displayable, removing delay.
-        #     renpy.scene("Active")
-        #     the_displayable = self.build_person_displayable(lighting = mc.location.get_lighting_conditions())
-        #     renpy.show(self.name, at_list=[character_right, scale_person(self.height)], layer="Active",what = the_displayable, tag = self.name)
-        #
 
         def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Encapsulates what is done when drawing a person and produces a single displayable.
             if position is None:
@@ -2178,8 +2243,6 @@ init -2 python:
 
             global animation_draw_requested
             animation_draw_requested = True
-
-            # Note: The precalcualted
             return
 
         # Renamed from "build_person_animtion" in v0.30, now assuems it is handed a screenshot surface from take_animation_screenshot
@@ -2245,7 +2308,7 @@ init -2 python:
 
             if draw_reference_number is None or draw_reference_number == current_draw_number: #Note: current_draw_number is a global variable that tracks what animation should be drawn. If we don't match it a new animation has been asked for since this oen was requested and it should not be drawn.
                 if clear_active:
-                    renpy.scene("Active")
+                    renpy.scene("Active") #Note: Not clear_scene() because we are already handling the draw number
 
                 if show_person_info:
                     renpy.show_screen("person_info_ui", self)
@@ -2295,46 +2358,6 @@ init -2 python:
                 renpy.invoke_in_thread(self.prepare_animation_screenshot_render, position, emotion, special_modifier, lighting, background_fill, current_draw_number) #This thread prepares the render. When it is finished it is caught by the interact_callback function take_animation_screenshot
 
 
-                # renpy.invoke_in_thread(self.draw_person_animation, displayable_screenshot_surface, the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, draw_reference_number = current_draw_number)
-                # displayable_screenshot_surface = None # Saving surfaces is a no-go for Ren'py so just in case we make sure we have no reference to it after
-
-            # if the_animation:
-            #     final_image = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
-            # else:
-            #     final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
-
-            # renpy.scene("Active")
-            # if show_person_info:
-            #     renpy.show_screen("person_info_ui",self)
-            #renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
-
-        # PROTOTYPE! In an ideal world this would draw the character in another thread. Unfortunately only the main Renpy thread is capable of rendering/capturing displayable images, so having this work with animation will require extra effort.
-        # def draw_person_in_thread(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
-        #
-        #     if position is None:
-        #         position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
-        #
-        #     if the_animation is None:
-        #         the_animation = self.idle_animation
-        #
-        #     if not can_use_animation():
-        #         the_animation = None
-        #
-        #
-        #
-        #
-        #     if lighting is None:
-        #         lighting = mc.location.get_lighting_conditions()
-        #
-        #     if the_animation:
-        #         final_image = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
-        #     else:
-        #         final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
-        #     if show_person_info:
-        #         renpy.show_screen("person_info_ui",self)
-        #     renpy.scene("Active")
-        #     renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
-
         def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
             #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
 
@@ -2374,7 +2397,7 @@ init -2 python:
 
             else:
 
-                renpy.scene("Active")
+                clear_scene()
                 if show_person_info:
                     renpy.show_screen("person_info_ui",self)
 
@@ -2383,25 +2406,6 @@ init -2 python:
                 top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)) #Get the top image
                 renpy.show(self.name+"_new", at_list=[character_right, scale_person(self.height)], layer = "Active", what = top_displayable, tag = self.name+"_new")
                 renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height), clothing_fade], layer = "Active", what = bottom_displayable, tag = self.name+"_old") #Blend from old to new.
-
-            # if the_animation:
-            #
-            # else:
-            #     bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
-            #
-            #
-            #
-            #
-            #
-            # if the_animation:
-            #     renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height)], layer = "Active", what = bottom_displayable, tag = self.name+"_old") #Show old imediately, the new
-            #
-            #     top_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
-            #
-            #
-            # else:
-            #
-
 
             return
 
@@ -3012,6 +3016,52 @@ init -2 python:
             else:
                 return False
 
+        def wants_creampie(self): #Returns True if the girl is going to use dialogue where she wants you to creampie her, False if she's going to be angry about it. Used to help keep dialogue similar throughout events
+            creampie_threshold = 75
+            effective_slut = the_person.effective_sluttiness("creampie") + (10*the_person.get_opinion_score("creampies"))
+            if the_person.on_birth_control:
+                effective_slut += -20 #Much more willing to let you creampie her if she's on BC
+
+            if affair_role in the_person.special_role:
+                effective_slut += 5 - (10 * the_person.get_opinion_score("cheating on men"))
+            elif the_person.relationship != "Single": # Less likely to want to be creampied if she's in a relationship, but cares less if you're officially cheating.
+                effective_slut += 15 - (10 * the_person.get_opinion_score("cheating on men"))
+
+            if girlfriend_role in the_person.special_role:
+                effective_slut += -(10 + (5*the_person.get_opinion_score("being submissive"))) #Desire to be a "good wife"
+
+            if the_person.is_family():
+                effective_slut += 10 - (10 * the_person.get_opinion_score("incest"))
+
+            if effective_slut >= creampie_threshold or the_person.event_triggers_dict.get("preg_knows", False):
+                return True
+
+            return False
+
+        def calculate_realistic_fertility(self):
+            day_difference = self.days_from_ideal_fertility() # Gets the distance between the current day and the ideal fertile day.
+            multiplier = 2 - (float(day_difference)/10.0) # The multiplier is 2 when the day difference is 0, 0.5 when the day difference is 15.
+            effective_fertility = self.fertility_percent * multiplier
+            return effective_fertility
+
+        def days_from_ideal_fertility(self):
+            day_difference = abs((day % 30) - self.ideal_fertile_day)
+            if day_difference > 15:
+                day_difference = 30 - day_difference #Wrap around to get correct distance between months.
+            return day_difference
+
+        def fertility_cycle_string(self): #Turns the difference of days from her ideal fertile day into a string
+            day_difference = self.days_from_ideal_fertility
+            if day_difference >= 12:
+                return "Very Safe"
+            elif day_difference >= 8:
+                return "Safe"
+            elif day_difference >= 3:
+                return "Normal"
+            else:
+                return "Risky"
+
+
         def effective_sluttiness(self, taboos = None): #Used in sex scenes where the girl will be more aroused, making it easier for her to be seduced.
             if taboos is None:
                 taboos = []
@@ -3046,8 +3096,16 @@ init -2 python:
                 the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
 
-            self.change_slut_temp(5*self.get_opinion_score("creampies"))
-            self.change_happiness(5*self.get_opinion_score("creampies"))
+            slut_change_amount = 5*self.get_opinion_score("creampies")
+
+            if the_person.wants_creampie():
+                self.change_happiness(5*self.get_opinion_score("creampies"))
+            else:
+                self.change_happiness(-5 + (5*self.get_opinion_score("creampies")))
+                self.change_love(-2 + self.get_opinion_score("creampies"))
+                slut_change_amount += 1 + self.get_opinion_score("being_submissive")
+
+            self.change_slut_temp(slut_change_amount)
             self.discover_opinion("creampies")
 
             self.sex_record["Vaginal Creampies"] += 1
@@ -3064,11 +3122,7 @@ init -2 python:
                 preg_chance = renpy.random.randint(0,100)
                 bc_chance = renpy.random.randint(0,100)
                 if persistent.pregnancy_pref == 2: # On realistic pregnancy a girls chance to become pregnant fluctuates over the month.
-                    day_difference = abs((day % 30) - self.ideal_fertile_day) # Gets the distance between the current day and the ideal fertile day.
-                    if day_difference > 15:
-                        day_difference = 30 - day_difference #Wrap around to get correct distance between months.
-                    multiplier = 2 - (float(day_difference)/10.0) # The multiplier is 2 when the day difference is 0, 0.5 when the day difference is 15.
-                    modified_fertility = self.fertility_percent * multiplier
+                    modified_fertility = self.calculate_realistic_fertility()
                 else:
                     modified_fertility = self.fertility_percent
 
@@ -3246,7 +3300,7 @@ init -2 python:
             "strip_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
             "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high", "flirt_response_girlfriend", "flirt_response_affair",
-            "cum_face", "cum_mouth", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
+            "cum_face", "cum_mouth", "cum_pullout", "cum_condom", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
             "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction",
             "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
             "condomless_sex_taboo_break", "underwear_nudity_taboo_break", "bare_tits_taboo_break", "bare_pussy_taboo_break",
@@ -4296,7 +4350,7 @@ init -2 python:
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False, body_dependant = True,
         opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0, display_name = None,
-        half_off_regions = None, half_off_ignore_regions = None, constrain_regions = None,
+        can_be_half_off = False, half_off_regions = None, half_off_ignore_regions = None, half_off_gives_access = None, half_off_reveals = None, constrain_regions = None,
         crop_offset_dict = None):
             self.name = name
             self.proper_name = proper_name #The true name used in the file system
@@ -4325,10 +4379,12 @@ init -2 python:
                         if pattern_name:
                             self.pattern_sets[set + "_" + pattern_name] = Clothing_Images(proper_name+"_"+pattern_name, set, draws_breasts, body_dependant = body_dependant)
 
-            if crop_offset_dict:
-                self.crop_offset_dict = crop_offset_dict # Contains a dict of positions and tuples corrisponding to the crop offset used for this clothing item.
-            else:
-                self.crop_offset_dict = {}
+
+            self.crop_offset_dict = master_clothing_offset_dict.get(self.proper_name, {}) # All of the offsets are stored in a single array and distributed. Saves time having to manually change values any time a clothing item render is updated.
+            # if crop_offset_dict:
+            #     self.crop_offset_dict = crop_offset_dict # Contains a dict of positions and tuples corrisponding to the crop offset used for this clothing item.
+            # else:
+            #     self.crop_offset_dict = {}
 
             self.draws_breasts = draws_breasts
             self.underwear = underwear #True if the item of clothing satisfies the desire for underwear for upper or lower (bra or panties), false if it can pass as outerwear. Underwear on outside of outfit gives higher slut requirement.
@@ -4357,6 +4413,15 @@ init -2 python:
             #TODO: Assign ordering variables to all hair based on length (short, medium, long) and then have haircuts and stuff be possible.
 
             self.half_off = False
+            self.can_be_half_off = can_be_half_off
+            self.half_off_gives_access = False
+            if half_off_gives_access: #If True the piece of clothing does not block accessability for tits or vagina
+                self.half_off_gives_access = half_off_gives_access
+
+            self.half_off_reveals = False
+            if half_off_reveals: #If True a piece of clothing does not block visability for anything underneath it when half off.
+                self.half_off_reveals = half_off_reveals
+
             if half_off_regions is None: #A list of body region "clothing items". When self.half_off is True these regions are hidden.
                 self.half_off_regions = []
             elif isinstance(half_off_regions, list):
@@ -4514,22 +4579,22 @@ init -2 python:
                     final_image = AlphaBlend(region_composite, Solid("#00000000"), final_image)
 
 
-                if self.half_off:
+                if self.half_off or (self.has_extension and self.has_extension.half_off):
                     #NOTE: This actually produces some really good looking effects for water/stuff. We should add these kinds of effects as a general thing, probably on the pattern level.
                     #NOTE: Particularly for water/stains, this could work really well (and can use skin-tight region marking, ie. not clothing item dependant).
-                    # list_of_regions_to_hide = self.half_off_regions[:]
-                    # if nipple_wetness > 0 and breast_region not in list_of_regions_to_hide: #TODO: Add a proper nipple region.
-                    #     list_of_regions_to_hide.append(breast_region)
-                    composite_list = None
+
+                    composite_list = [position_size_dict.get(position)]
                     x_size = 0
                     y_size = 0
-                    for region_to_hide in half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
-                        region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
-                        if composite_list is None:
-                            #x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size() #Only get the render size once, since all renders are the same size for a pose. Technically this could also be a lookup table if it was significantly impacting performacne
-                            composite_list = [position_size_dict.get(position)]
 
-                        #composite_list.append((0,0))
+                    total_half_off_regions = [] #Check what all of the half-off regions should be
+                    if self.half_off:
+                        total_half_off_regions.extend(self.half_off_regions)
+                    if (self.has_extension and self.has_extension.half_off):
+                        total_half_off_regions.extend(self.has_extension.half_off_regions) #TODO: Duplicates in this cause everything to run slightly slower. Fix that
+
+                    for region_to_hide in total_half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
+                        region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
                         composite_list.append(region_to_hide.crop_offset_dict.get(position, (0,0)))
                         composite_list.append(region_mask)
 
@@ -4577,14 +4642,17 @@ init -2 python:
             self.position_sets = {} #A list of position set names. When the clothing is created it will make a dict containing these names and image sets for them.
             self.supported_positions = ["stand2","stand3","stand4","stand5","walking_away","kissing","doggy","missionary","blowjob","against_wall","back_peek","sitting","kneeling1","standing_doggy","cowgirl"]
 
+            self.half_off = False # Avoids any problems with the half-off system using facial accessories
+            self.half_off_reveals = False
+            self.half_off_clothing = False
+
+            self.half_off_regions = []
+            self.half_off_ignore_regions = []
 
             for set in self.supported_positions:
                 self.position_sets[set] = Facial_Accessory_Images(proper_name,set)
 
-            if crop_offset_dict:
-                self.crop_offset_dict = crop_offset_dict
-            else:
-                self.crop_offset_dict = {}
+            self.crop_offset_dict = master_clothing_offset_dict.get(self.proper_name, {})
 
             self.draws_breasts = draws_breasts
             self.underwear = underwear #True if the item of clothing satisfies the desire for underwear for upper or lower (bra or panties), false if it can pass as outerwear. Underwear on outside of outfit gives higher slut requirement.
@@ -4793,9 +4861,10 @@ init -2 python:
                     if not item.is_extension:
                         ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions, nipple_wetness = nipple_wetness))
                         for region in item.constrain_regions:
-
                             if item.half_off and region in item.half_off_regions:
                                 pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
+                            elif item.has_extension and item.has_extension.half_off and region in item.has_extension.half_off_regions:
+                                pass # If the extension for an item (a dress bottom, for example) is half off and hiding something that section is not contrained.
                             else:
                                 currently_constrained_regions.append(region)
             return ordered_displayables[::-1] #We iterated over all_items backwards, so our return list needs to be inverted
@@ -4989,6 +5058,14 @@ init -2 python:
 
             self.update_slut_requirement()
 
+        def half_off_clothing(self, the_clothing):
+            the_clothing.half_off = True
+            self.update_slut_requirement()
+
+        def restore_all_clothing(self):
+            for cloth in self.upper_body + self.lower_body + self.feet + self.accessories:
+                cloth.half_off = False
+
         def get_upper_ordered(self): #Returns a list of pieces from bottom to top, on the upper body. Other functions do similar things, but to lower and feet.
             return sorted(self.upper_body, key=lambda clothing: clothing.layer)
 
@@ -5161,28 +5238,28 @@ init -2 python:
         def vagina_available(self): ## Doubles for asshole for anal.
             reachable = True
             for cloth in self.lower_body:
-                if cloth.anchor_below:
+                if cloth.anchor_below and not (cloth.half_off and cloth.half_off_gives_access):
                     reachable = False
             return reachable
 
         def vagina_visible(self):
             visible = True
             for cloth in self.lower_body:
-                if cloth.hide_below:
+                if cloth.hide_below and not (cloth.half_off and cloth.half_off_reveals):
                     visible = False
             return visible
 
         def tits_available(self):
             reachable = True
             for cloth in self.upper_body:
-                if cloth.anchor_below:
+                if cloth.anchor_below and not (cloth.half_off and cloth.half_off_gives_access):
                     reachable = False
             return reachable
 
         def tits_visible(self):
             visible = True
             for cloth in self.upper_body:
-                if cloth.hide_below:
+                if cloth.hide_below and not (cloth.half_off and cloth.half_off_reveals):
                     visible = False
             return visible
 
@@ -5217,16 +5294,28 @@ init -2 python:
             return None
 
         def bra_covered(self):
-            if self.get_upper_ordered():
-                if not self.get_upper_ordered()[-1].underwear:
-                    return True
-            return False
+            if self.wearing_bra():
+                for cloth in self.get_upper_ordered()[::-1]: #Traverse list from outside in
+                    if cloth.underwear:
+                        return False
+                    elif cloth.hide_below and not (cloth.half_off and cloth.half_off_reveals):
+                        return True
+                    else:
+                        pass # Check the next layer
+            else:
+                return False
 
         def panties_covered(self):
-            if self.get_lower_ordered():
-                if not self.get_lower_ordered()[-1].underwear:
-                    return True
-            return False
+            if self.wearing_panties():
+                for cloth in self.get_upper_ordered()[::-1]: #Traverse list from outside in
+                    if cloth.underwear:
+                        return False
+                    elif cloth.hide_below and not (cloth.half_off and cloth.half_off_reveals):
+                        return True
+                    else:
+                        pass # Check the next layer
+            else:
+                return False
 
         def is_suitable_underwear_set(self): #Returns true if the outfit could qualify as an underwear set ie. Only layer 1 clothing.
             for cloth in self.accessories + self.upper_body + self.lower_body + self.feet:
@@ -5257,7 +5346,6 @@ init -2 python:
             new_score += self.get_total_slut_modifiers()
 
             return new_score
-
 
         def get_overwear_slut_score(self): #Calculates the sluttiness of this outfit assuming it's an overwear set. That means we assume a modest underwear set is used (ie. one that denies access).
             new_score = 0
@@ -5373,6 +5461,9 @@ init -2 python:
             if overwear_sets is None:
                 self.overwear_sets = []
 
+            for outfit in self.outfits + self.underwear_sets + self.overwear_sets:
+                outfit.restore_all_clothing() #Make sure none of them are stored half off.
+
         def __copy__(self):
             #TODO: see if adding a .copy() here has A) Fixed any potential bugs and B) not had a major performance impact.
             outfit_copy_list = []
@@ -5425,12 +5516,15 @@ init -2 python:
             return base_wardrobe
 
         def add_outfit(self, new_outfit):
+            new_outfit.restore_all_clothing() #Ensure none of the outfits have half-off clothing.
             self.outfits.append(new_outfit)
 
         def add_underwear_set(self, the_outfit):
+            the_outfit.restore_all_clothing()
             self.underwear_sets.append(the_outfit)
 
         def add_overwear_set(self, the_outfit):
+            the_outfit.restore_all_clothing()
             self.overwear_sets.append(the_outfit)
 
         def remove_outfit(self, old_outfit):
@@ -6928,14 +7022,11 @@ screen person_info_detailed(the_person):
                         if persistent.pregnancy_pref == 1:
                             text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
                         if persistent.pregnancy_pref == 2:
-                            $ day_difference = abs((day % 30) - the_person.ideal_fertile_day) # Gets the distance between the current day and the ideal fertile day.
-                            if day_difference > 15:
-                                $ day_difference = 30 - day_difference #Wrap around to get correct distance between months.
-                            $ multiplier = 2 - (float(day_difference)/10.0) # The multiplier is 2 when the day difference is 0, 0.5 when the day difference is 15.
-                            $ modified_fertility = the_person.fertility_percent * multiplier
+                            $ modified_fertility = the_person.calculate_realistic_fertility()
                             text "Fertility: " + str(round(modified_fertility)) + "%" style "menu_text_style"
                             text "Monthly Peak Day: " + str(the_person.ideal_fertile_day ) style "menu_text_style"
-                        text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style"
+                            #TODO: replace this with less specific info. Replace fertility peak with the_person.fertility_cycle_string()
+                        text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style" #TODO less specific info
 
             frame:
                 background "#1a45a1aa"
@@ -7411,7 +7502,7 @@ screen interview_ui(the_candidates,count):
 
 init -2 python: # Some functions used only within screens for modifying variables
     def show_candidate(the_candidate):
-        renpy.scene("Active")
+        clear_scene()
         the_candidate.draw_person(show_person_info = False, background_fill = "444444")
 
 
@@ -9413,7 +9504,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.30.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.31.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -9493,7 +9584,7 @@ label tutorial_start:
     mc.name "It's fine, Mom. Really."
     mom.char "I know, I know, I'll stop fussing. Good luck sweety."
     "She wraps her arms around you and gives you a tight hug. You hug her back then hurry out the door."
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ downtown.show_background()
     "It takes an hour on public transit then a short walk to find the building. It's a small single level office attached to a slightly larger warehouse style building."
     "You pull on the door handle. It thunks loudly - locked. You try the other one and get the same result."
@@ -9554,7 +9645,7 @@ label tutorial_start:
     $ lily.draw_person(emotion = "happy")
     lily.char "Is that what you've been excited about the last couple days? What're you actually making?"
     mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
-    $ renpy.scene("Active")
+    $ clear_scene()
     "You leave [mom.possessive_title] and sister in the kitchen to talk retreat to your room for some privacy."
 
     $ bedroom.show_background()
@@ -9597,7 +9688,7 @@ label tutorial_start:
     "You clink glasses together and drink."
     stephanie.char "Ah... Okay, so I've got some thoughts already..."
     "Stephanie grabs a napkin and starts doodling on it. You spend the rest of the night with her, drinking and talking until you have to say goodbye."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "A week later [mom.possessive_title] has a new morgage on the house and purchases the lab in your name."
     "You are the sole shareholder of your own company and [stephanie.title] is first, and so far only, employee. She takes her position as your head researcher."
     $ mc.business.event_triggers_dict["Tutorial_Section"] = True
@@ -9993,7 +10084,7 @@ label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS
                 if the_greeter:
                     $ the_greeter.draw_person()
                     $ the_greeter.call_dialogue("work_enter_greeting")
-                    $ renpy.scene("Active")
+                    $ clear_scene()
 
     elif picked_option == "Wait":
         if time_of_day == 4:
@@ -10080,7 +10171,7 @@ label talk_person(the_person):
         if the_person in mc.location.people and time_of_day == starting_time_of_day:
             call talk_person(the_person) from _call_talk_person_1 #If we're in the same place and time hasn't advanced keep talking to them until we stop talking on purpose.
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 
@@ -10253,7 +10344,7 @@ label interview_action_description:
     menu:
         "Yes, I'll pay the cost. -$[interview_cost]":
             $ mc.business.funds += -interview_cost
-            $ renpy.scene("Active")
+            $ clear_scene()
             python: #Build our list of candidates with our proper recruitment requirements
                 candidates = []
 
@@ -10305,7 +10396,7 @@ label hire_select_process(candidates):
     show screen business_ui
     show screen goal_hud_ui
     show screen main_ui
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ mc.location.show_background()
 
     return _return
@@ -10655,7 +10746,7 @@ label advance_time:
             $ crisis.call_action()
             if _return == "Advance Time":
                 $ mandatory_advance_time = True
-            $ renpy.scene("Active")
+            $ clear_scene()
             $ clear_list.append(crisis)
         $ count += 1
     $ mc.location.show_background()
@@ -10678,7 +10769,7 @@ label advance_time:
             if _return == "Advance Time":
                 $ mandatory_advance_time = True
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ renpy.scene()
     $ mc.location.show_background()
     show screen business_ui
@@ -10719,7 +10810,7 @@ label advance_time:
                 $ crisis.call_action()
                 if _return == "Advance Time":
                     $ mandatory_advance_time = True
-                $ renpy.scene("Active")
+                $ clear_scene()
                 $ clear_list.append(crisis)
             $ count += 1
         $ mc.location.show_background()

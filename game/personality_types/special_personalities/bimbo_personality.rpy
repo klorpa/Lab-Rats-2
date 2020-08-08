@@ -644,22 +644,63 @@ label bimbo_cum_mouth(the_person):
             the_person.char "Bleh, I don't know if I'll ever get use to that."
     return
 
-label bimbo_cum_vagina(the_person):
+label bimbo_cum_pullout(the_person):
     if mc.condom:
-        if the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+        "[the_person.possessive_title] giggles happily."
+        the_person.char "Hehe, I'm going to make you cum? Yay!"
+
+    elif the_person.wants_creampie():
+        if the_person.event_triggers_dict.get("preg_knows", False): #She's already knocked up, so who cares!
+            the_person.char "I'm already pregnant, so just cum inside me as much as you want!"
+        elif the_person.get_opinion_score("creampies") > 0:
+            "[the_person.possessive_title] giggles happily."
+            if the_person.on_birth_control: #She just likes creampies.
+                the_person.char "Cum inside me [the_person.mc_title]! Cum inside my slutty pussy!"
+            else: #Yeah, she's not on BC and asking for you to creampie her. She's looking to get pregnant.
+                the_person.char "Oh my god, yes! Cum inside me [the_person.mc_title]! Knock me up!"
+        elif the_person.on_birth_control: #She's on the pill, so she's probably fine
+            the_person.char "I think I took my pill this morning, so you can cum inside me!"
+        else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
+            the_person.char "Hehe, yay! I'm going to make you cum [the_person.mc_title]!"
+    else:
+        if not the_person.on_birth_control: #You need to pull out, I'm not on the pill!
+            the_person.char "Hehe, yay! You shouldn't cum in me though, or I might get pregnant!"
+
+        elif the_person.get_opinion_score("creampies") < 0:
+            the_person.char "Hehe, yay! Pull out and cum all over me [the_person.mc_title]!"
+
+        else:
+            the_person.char "Hehe, yay! Should you, like, pull out just to be safe?"
+    return
+
+label bimbo_cum_condom(the_person):
+    if mc.condom:
+        if the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "That condom is so stretchy! I can feel how much cum you put into it and it's, like, a lot!"
         else:
             the_person.char "Mmm, your cum is so nice and hot!"
+    return
 
-    else:
-        if the_person.on_birth_control:
+label bimbo_cum_vagina(the_person):
+    if the_person.has_taboo("creampie"):
+        $ the_person.call_dialogue("creampie_taboo_break")
+        $ the_person.break_taboo("creampie")
+        return
+
+    if the_person.wants_creampie():
+        if the_person.event_triggers_dict.get("preg_knows", False):
+            the_person.char "Mmm, I love having all of your cum in me!"
+            "She sighs and giggles."
+            the_person.char "I guess that's why I'm pregnant, right? I just can't say no to this!"
+
+        elif the_person.on_birth_control:
             the_person.char "Mmm, wow you came a lot! Wait, does that mean I'm..."
             "She thinks hard for a second, then sighs and giggles."
             the_person.char "It's fine, I remembered to take my pink pill this morning!"
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "My [so_title] gets angry when I forget, but it's not like he fucks me much anyways."
-        elif the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+        elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Mmm, I love having all your cum inside me. That might make me pregnant, right?"
@@ -674,11 +715,33 @@ label bimbo_cum_vagina(the_person):
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Oh, that's so hot... But wait, if I get pregnant what do I tell my [so_title]?"
                 "She bites her lip and looks worried."
-                the_person.char "We shouldn't do this too often. Next time you can cum somewhere else, okay?"
+                the_person.char "We shouldn't do this too often. Next time you should cum somewhere else, okay? Maybe on my face?"
             else:
                 the_person.char "Oh, that's so hot... But what do I do if I get pregnant?"
                 "She bites her lip and looks worried."
-                the_person.char "We shouldn't do this too often, okay? Next time you can cum, like, somewhere else, right?"
+                the_person.char "We shouldn't do this too often, okay? Next time you can cum, like, somewhere else, okay? Maybe on my face?"
+
+    else: #She's angry
+        if not the_person.on_birth_control:
+            if the_person.relationship != "Single":
+                $ so_title = SO_relationship_to_title(the_person.relationship)
+                the_person.char "Oh no, you needed to pull out! Now I might, like, get pregnant!"
+                the_person.char "I don't want to tell that to my [so_title]. He would be sooo angry."
+            else:
+                the_person.char "Oh no, you needed to pull out! Now I might, like, get pregnant!"
+                the_person.char "I guess it's too late now. Oh well."
+
+        elif the_person.relationship != "Single":
+            $ so_title = SO_relationship_to_title(the_person.relationship)
+            the_person.char "Oh no, you should have pulled out! My [so_title] would be so angry if he knew I let other guys cum inside me."
+            the_person.char "I guess it's too late now. Oh well."
+
+        elif the_person.get_opinion_score("creampies") < 0:
+            the_person.char "Hey, I told you to pull out. It feels like you got your cum everywhere inside me. Ew."
+
+        else:
+            the_person.char "Hey, I told you to pull out. Could you cum somewhere else next time? Maybe on my face?"
+
     return
 
 label bimbo_cum_anal(the_person):
@@ -938,9 +1001,65 @@ label bimbo_improved_serum_unlock(the_person):
 #
 #     return
 #
-# label bimbo_creampie_taboo_break(the_person):
-#
-#     return
+label bimbo_creampie_taboo_break(the_person):
+    if the_person.wants_creampie():
+        if the_person.on_birth_control:
+            the_person.char "Ah, yay! Thank you [the_person.mc_title], your cum feels so good inside me!"
+
+        elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
+            if the_person.relationship != "Single":
+                $ so_title = SO_relationship_to_title(the_person.relationship)
+                the_person.char "Like, oh my god, your cum feel so good in me! It's driving me insane!"
+                "She squeals happily."
+                the_person.char "I should have dumped my [so_title] ages ago and let you fuck me more!"
+
+            else:
+                the_person.char "Like, oh my god, your cum feel so good in me! It's driving me insane!"
+                "She squeals happily."
+
+        else:
+            if the_person.relationship != "Single":
+                $ so_title = girl_relationship_to_title(the_person.relationship)
+                the_person.char "Oh my god, I'm like, such a terrible [so_title]!"
+                "She sighs happily."
+                the_person.char "This feels so good though... I want you to do it again, even if I get pregnant!"
+
+            else:
+                the_person.char "Oh my god, your cum feels so good! I think my body wants you to get me pregnant!"
+                "She squeals happily."
+
+    else:
+        if not the_person.on_birth_control:
+            the_person.char "Like, oh my god. Did you just creampie me?!"
+
+            if the_person.relationship != "Single":
+                $ so_title = girl_relationship_to_title(the_person.relationship)
+                the_person.char "Oh no, now I might get pregnant!"
+                "She pouts and sighs unhappily."
+                the_person.char "I'm such a bad [so_title]."
+
+            else:
+                if the_person.kids == 0:
+                    the_person.char "Oh no, now I might get pregnant! I'm, like, not ready to be a mom!"
+                else:
+                    the_person.char "Oh no, now I might get pregnant again!"
+                    the_person.char "I don't want to worry about a kid, I just want to have fun and fuck!"
+
+        elif the_person.relationship != "Single":
+            the_person.char "Hey, I like, told you to pull out!"
+            "She pouts and sighs."
+            the_person.char "Whatever, I guess that's what happens when you're as hot as I am."
+
+
+        elif the_person.get_opinion_score("creampies") < 0:
+            the_person.char "Ew! I told you to pull out!"
+            "She sighs dramatically."
+            the_person.char "Now I've got all this cum inside me, and it's going to be dripping out all day long!"
+
+        else:
+            the_person.char "Did you, like, not hear me?"
+            the_person.char "Whatever, I guess I understand. I'm just, like, too hot for you."
+    return
 #
 # label bimbo_anal_creampie_taboo_break(the_person):
 #

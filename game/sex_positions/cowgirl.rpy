@@ -104,15 +104,14 @@ label outro_cowgirl(the_girl, the_location, the_object):
     mc.name "Fuck, I'm going to cum!"
 
     #Perhaps an option where she hesitates and you grab her hips and pull her down while you cum.
-    $ threshold = 120 + (-20 * the_girl.get_opinion_score("creampies"))
-    if the_girl.sluttiness > threshold or mc.condom:
+    if the_girl.wants_creampie() or mc.condom:
         #She drops down on you as you cum.
         the_girl.char "Yes! Ah!"
         "[the_girl.title] drops herself down, grinding her hips against yours and pushing cock as deep into her as possible."
         "Her breath catches in her throat when you pulse out your hot load of cum deep inside of her."
-        $ the_girl.call_dialogue("cum_vagina")
         #the_girl.char "Oh my god... Give it all to me [the_girl.mc_title]... Fill me up..."
         if mc.condom:
+            $ the_girl.call_dialogue("cum_condom")
             "She rocks herself back and forth on you until you're completely spent, then she pulls up and lets your dick fall out of her."
             "The tip of your condom is ballooned out and hanging to the side, filled with your warm seed."
             if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
@@ -125,12 +124,14 @@ label outro_cowgirl(the_girl, the_location, the_object):
                 "[the_girl.possessive_title] reaches for your cock, removes the condom carefully, and ties the end in a knot."
                 the_girl.char "Look at all that cum. Well done."
         else:
+            $ the_girl.call_dialogue("cum_vagina")
             $ the_girl.cum_in_vagina()
             $ cowgirl.redraw_scene(the_girl)
             "She rocks herself back and forth on you until you're completely spent, then she pulls up and lets your dick fall out of her."
             "[the_girl.possessive_title] straddles you for a few more seconds as she catches her breath. Your cum drips out of her and onto your stomach."
         "She rolls off and lies next to you on the [the_object.name]."
-    elif the_girl.sluttiness < 70:
+
+    elif the_girl.effective_sluttiness("creampie") < 60:
         #She always pull off and you cum on her stomach.
         #There is no condom branch here because 100% of the condom branches go to the first version.
         the_girl.char "Oh shit, you can't cum inside me!"
@@ -153,6 +154,7 @@ label outro_cowgirl(the_girl, the_location, the_object):
                 "The feeling of her warm, wet pussy sliding down and englufing your cock again pushes you over the edge. You pull [the_girl.title] tight against you and unload inside of her."
                 the_girl.char "Ah! Just... Just this once!"
                 $ the_girl.call_dialogue("cum_vagina")
+                $ the_girl.cum_in_vagina()
                 $ the_girl.change_obedience(3)
                 "You give a few half-hearted pumps when you're done, then tap [the_girl.title] on the ass. She slides off of your dick and collapses beside you."
 

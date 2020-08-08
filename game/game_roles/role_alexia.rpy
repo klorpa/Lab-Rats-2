@@ -145,7 +145,7 @@ label alexia_intro_phase_one_label(the_person):
         alexia.schedule[1] = alexia.home
         alexia.schedule[2] = alexia.home
         alexia.schedule[3] = alexia.home
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label alexia_intro_phase_two_label(the_person):
@@ -157,7 +157,7 @@ label alexia_intro_phase_two_label(the_person):
     $ the_person.draw_person()
     "You step inside and see [the_person.possessive_title] behind the front counter. She smiles when she sees you and waves you over."
     the_person.char "Hey, I'm glad you were able to make it! I'm just finishing up my shift. Grab a seat and I'll be over in a minute."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "She heads into the back room of the shop. You sit down at a small table for two by a window and wait."
     "A couple of minutes later [the_person.title] comes over with a paper cup in each hand. She puts one on the table and sits down opposite you."
     $ the_person.draw_person(position = "sitting")
@@ -227,7 +227,7 @@ label alexia_intro_phase_two_label(the_person):
             "She glares at you for a moment, but [the_person.SO_name] doesn't seem to notice."
             the_person.SO_name "Well, we'll have to fix that. If you two are friends we should have dinner together, so you can catch up."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     "[the_person.title] gets into the passenger side of her boyfriend's car. She says goodbye from inside and they drive off."
     python:
         downtown.actions.remove(alexia_intro_phase_two_action) #Clear the action from her actions list.

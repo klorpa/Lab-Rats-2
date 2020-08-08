@@ -41,11 +41,9 @@ label ask_leave_SO_label(the_person): #
     "You nod. She takes a long moment to think, then finally nods back and smiles happily."
     the_person.char "Okay, I'll do it for you!"
     call transform_affair(the_person) from _call_transform_affair_3
-    $ the_person.special_role.remove(affair_role)
-    $ the_person.special_role.append(girlfriend_role)
     $ the_person.change_love(10)
     $ the_person.change_obedience(5)
-    $ the_person.draw_person(position = "happy")
+    $ the_person.draw_person(emotion = "happy")
     "You put your arms around her waist and she kisses you immediately. When you break the kiss she's grinning ear to ear."
     $ ex_title = so_title[:4] #Get's only the first 4 characters of any title for some hesitant-sounding speach.
     the_person.char "It feels so good to not have to hide anything anymore! I'll break the news to my [ex_title]... My ex-[so_title] later today."
@@ -254,7 +252,7 @@ label fuck_date_label(the_person):
                                 else:
                                     "Within minutes you can hear him snoring loudly. [the_person.possessive_title] looks in your direction and nods her head at the door."
                                     "You crack the closet door open and step out as quietly as you can. You sneak out of the bedroom, then hurry to the front door."
-                                $ renpy.scene("Active")
+                                $ clear_scene()
                                 "As soon as you're outside you sprint to the sidewalk, then slow down and walk casually away."
 
                             "Run for it!":
@@ -504,7 +502,7 @@ label fuck_date_label(the_person):
     #As soon as done is True we finish looping. This means each path should narrate it's own end of encounter stuff.
     #Generic stuff to make sure we don't keep showing anyone.
     $ the_person.clear_situational_slut("Date")
-    $ renpy.scene("Active")
+    $ clear_scene()
     return "Advance Time"
 
 
@@ -569,5 +567,5 @@ label caught_affair_cheating_label(the_other_girl, the_girlfriend):
         the_girlfriend.char "Thank you. And come on, you know if you ever need a little fun you can just find me, right?"
         "She gives you a smile and a wink before walking away."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return

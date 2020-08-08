@@ -346,22 +346,74 @@ label mom_cum_mouth(the_person):
             the_person.char "Oh sweetheart... We really shouldn't have done that."
     return
 
-label mom_cum_vagina(the_person):
+label mom_cum_pullout(the_person):
+    # Lead in: "I'm going to cum!"
     if mc.condom:
-        if the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
-            the_person.char "Give me your cum sweetheart! I don't care if the condom works, I want to feel your seed in me!"
-        else:
-            the_person.char "Pump it out into that condom sweetheart, it's perfectly fine to cum inside as long as it's on."
+        the_person.char "Go ahead [the_person.mc_title]!"
+
     else:
-        if the_person.on_birth_control:
-            the_person.char "That's it sweetheart, cum for mommy. I'm on the pill, so you don't have to worry about getting me pregnant."
-            the_person.char "Don't hold back okay? Let it all out inside of me."
+        if the_person.wants_creampie():
+            if the_person.event_triggers_dict.get("preg_knows", False): #She's already knocked up, so who cares!
+                the_person.char "Cum for mommy [the_person.mc_title]!"
+            elif the_person.get_opinion_score("creampies") > 0:
+                "[the_person.possessive_title] moans happily."
+                if the_person.on_birth_control: #She just likes creampies.
+                    the_person.char "Cum inside of me [the_person.mc_title]! I want you to give me all of your cum!"
+                else: #Yeah, she's not on BC and asking for you to creampie her. She's looking to get pregnant.
+                    the_person.char "Cum inside of me [the_person.mc_title]! Cum in me and get your own mommy pregnant!"
+            elif the_person.on_birth_control: #She's on the pill, so she's probably fine
+                the_person.char "You can cum wherever you want [the_person.mc_title], I'm ready!"
+            else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
+                the_person.char "Cum for mommy [the_person.mc_title]! Ah!"
+        else:
+            if not the_person.on_birth_control: #You need to pull out, I'm not on the pill!
+                the_person.char "Oh no, you need to pull out sweetheart! I'm not on birth control, you'll get me pregnant!"
+
+            elif the_person.get_opinion_score("creampies") < 0:
+                the_person.char "Pull out and cum all over me [the_person.mc_title]!"
+
+            else:
+                the_person.char "Wait, you need to pull out! I can't risk getting pregnant with your baby!"
+    return
+
+label mom_cum_condom(the_person):
+    if the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
+        the_person.char "Give me your cum sweetheart! I don't care if the condom works, I want to feel your seed in me!"
+    else:
+        the_person.char "Pump it out into that condom sweetheart, it's perfectly fine to cum inside as long as it's on."
+    return
+
+label mom_cum_vagina(the_person):
+    if the_person.has_taboo("creampie"):
+        $ the_person.call_dialogue("creampie_taboo_break")
+        $ the_person.break_taboo("creampie")
+        return
+
+    if the_person.wants_creampie():
+        if the_person.event_triggers_dict.get("preg_knows", False):
+            the_person.char "Pump it out sweetheart, give mommy all of your cum!"
+
+        elif the_person.on_birth_control:
+            the_person.char "That's it sweetheart, cum inside mommy. I'm on the pill, so you don't have to worry about getting me pregnant."
 
         elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Give mommy your cum, I want every last drop inside of me! Try and get mommy pregnant!"
 
         else:
-            the_person.char "Oh sweety, you shouldn't inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant!"
+            the_person.char "That's it, cum inside mommy. We can worry about me getting pregnant later, just enjoy yourself right now."
+
+
+    else: #She's angry
+        if not the_person.on_birth_control:
+            the_person.char "Oh sweety, you shouldn't finish inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant when she's not on her birth control!"
+
+        elif the_person.get_opinion_score("creampies") < 0:
+            the_person.char "Sweety, I wanted you to pull out. Now I'm going to have to have a shower and try and clean out all of this cum inside me."
+
+        else:
+            the_person.char "Oh sweetheart, you really need to be pulling out. I know you're just having fun, but we can't take risks like this every time."
+        the_person.char "Oh well, it's done now. Just be more careful next time."
+
 
     return
 
@@ -926,22 +978,67 @@ label mom_bare_pussy_taboo_break(the_person, the_clothing):
     mc.name "Okay [the_person.title], I will."
     return
 
-label mom_facial_cum_taboo_break(the_person):
-
-    return
-
-label mom_mouth_cum_taboo_break(the_person):
-
-    return
-
-label mom_body_cum_taboo_break(the_person):
-
-    return
-
+# label mom_facial_cum_taboo_break(the_person):
+#
+#     return
+#
+# label mom_mouth_cum_taboo_break(the_person):
+#
+#     return
+#
+# label mom_body_cum_taboo_break(the_person):
+#
+#     return
+#
 label mom_creampie_taboo_break(the_person):
+    if the_person.wants_creampie():
+        "[the_person.possessive_title] sighs happily, then is quiet for a moment."
+        the_person.char "Did we just... Oh no [the_person.mc_title], I think I've made a mistake."
+        mc.name "What do you mean [the_person.title]?"
+        the_person.char "I don't know what came over me, I wasn't thinking straight. I should have told you to pull out."
+        mc.name "I don't think it's that big of a deal."
+        if the_person.on_birth_control:
+            the_person.char "You shouldn't be cumming inside of your mother, even if she gets a little too excited and starts to ask for it."
+            mc.name "We obviously both liked it, so why is it a problem? You're on the pill, right?"
+            the_person.char "I am."
+            mc.name "Then there's no risk, it's just a little bit of extra fun. It felt so good I don't know if I'll be able to stop now."
+            the_person.char "Really? I... I suppose if you're having a good time it's okay then."
+        else:
+            the_person.char "It's a very big deal! You might have just gotten me pregnant!"
+            mc.name "Don't overreact [the_person.title]. The chance are pretty low that you're going to get pregnant from one creampie."
+            the_person.char "But what if I do?"
+            mc.name "Then there's nobody I would trust more to have my child than you. I know you'll take good care of them."
+            the_person.char "Oh my god, don't even say that!"
+            mc.name "Relax, there's nothing we can do about it either way now. Didn't you have a good time though?"
+            the_person.char "I... I did. I guess a little risk is fine as long as we don't do this too often."
+
+    else:
+        the_person.char "Oh no! [the_person.mc_title], pull out!"
+        "It's obviously too late for that."
+        mc.name "Sorry [the_person.title], I got a little too excited there."
+        if the_person.on_birth_control:
+            the_person.char "Oh no, I shouldn't have let you do that. I should have told you to pull out sooner, or to wear a condom before we started."
+            mc.name "It's not a big deal. I really liked it."
+            "She's silent for a moment before responding."
+            the_person.char "You did? You don't think I'm a terrible mother for letting you... cum inside me?"
+            mc.name "Of cource not! I think it actually brings us closer together. I don't know anyone who is as close to their mom as I am."
+            the_person.char "I guess that's true... Next time you really should still pull out though, we don't want any accidents."
+
+        else:
+            "[the_person.possessive_title] is silent for a few long moments."
+            the_person.char "I'm sorry [the_person.mc_title], this is my fault. I knew I should have made you wear a condom."
+            the_person.char "Or maybe I should have made you use my mouth instead. I know it's not the same, but you would have still had a good time, right?"
+            mc.name "It's okay [the_person.title], it's no big deal."
+            the_person.char "Of course it is! I might get pregnant with my own sons baby! I should have found other ways to satisfy you, so I didn't put you in this position."
+            mc.name "Take a deep breath, you need to relax. The chances of you getting pregnant the very first time are pretty slim."
+            the_person.char "But... But what if we're unlucky?"
+            mc.name "We'll cross that bridge if we ever get to it. For now let's just enjoy our time together. Didn't it feel good?"
+            the_person.char "It did. Did it feel good for you [the_person.mc_title]?"
+            mc.name "Obviously, or we wouldn't be here. I'm just happy I get to spend all this time with you [the_person.title], I think I'm the luckiest son in the world."
+            the_person.char "And I'm lucky to have such an amazing son. Okay, I'll try not to worry. Just... Be a little more careful next time, or you'll have to wear a condom."
 
     return
-
-label mom_anal_creampie_taboo_break(the_person):
-
-    return
+#
+# label mom_anal_creampie_taboo_break(the_person):
+#
+#     return

@@ -333,7 +333,7 @@ label advanced_serum_stage_2_label(the_person):
                     the_person.char "Oh well, how important can it be, right? Glad I could help you with your science. And all that fun other stuff."
                     mc.name "And thank you for all that help."
                     "[the_person.possessive_title] gives you a wink and leaves the room. "
-                    $renpy.scene("Active")
+                    $ clear_scene()
                     "You take [the_person.title]'s phone off of it's tripod and make a copy of the footage it took. Maybe your next head researcher can make use of this to figure out how to press forward."
                     $ mc.business.event_triggers_dict["advanced_serum_stage_3"] = True #Flag the next event to be enabled.
                     $ mc.business.event_triggers_dict["research_bimbo"] = the_person

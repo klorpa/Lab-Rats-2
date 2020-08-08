@@ -196,7 +196,7 @@ label caught_cheating_label(the_other_girl, the_girlfriend): #Note: the_other_gi
         $ the_girlfriend.special_role.remove(girlfriend_role)
         the_girlfriend.char "We're done! Through! Finished!"
         "She turns around and storms off."
-        $ renpy.scene("Active")
+        $ clear_scene()
     else:
         the_girlfriend.char "How could you possibly explain that?"
         mc.name "We were just fooling around, it didn't mean anything. Come on, you know I love you, right?"

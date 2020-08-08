@@ -232,19 +232,16 @@ label scene_against_wall_3(the_girl, the_location, the_object):
 
 label outro_against_wall(the_girl, the_location, the_object):
     "[the_girl.title]'s tight cunt draws you closer to your orgasm with each thrust. You speed up as you pass the point of no return, pushing her up against the [the_object.name] and laying into her."
-    $the_girl.call_dialogue("sex_responses_vaginal")
+    $ the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Fuck, I'm going to cum!"
+    $ the_girl.call_dialogue("cum_pullout")
     menu:
         "Cum inside of her.":
             if mc.condom:
-                "You push forward as you climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She purrs quitly as you pulse your hot cum into the condom you're wearing."
-                $ the_girl.call_dialogue("cum_vagina")
-                # if the_girl.get_opinion_score("creampies") > 0:
-                #     the_girl.char "I wish I could have taken that raw... Ah..."
-                # else:
-                #     the_girl.char "Mmm..."
+                "You push forward as you climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She pants quitly as you pulse your hot cum into the condom you're wearing."
+                $ the_girl.call_dialogue("cum_condom")
                 "Once your climax has passed you step back and pull your cock out from [the_girl.title]. Your condom is ballooned out, filled with your seed."
-                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
+                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.effective_sluttiness() > 50:
                     $ the_girl.discover_opinion("drinking cum")
                     "[the_girl.possessive_title] reaches for your cock. With delicate fingers she slides the condom off of you."
                     the_girl.char "It would be a shame to waste all of this, right?"
@@ -255,10 +252,6 @@ label outro_against_wall(the_girl, the_location, the_object):
                     the_girl.char "Look at all that cum. Well done."
             else:
                 "You push forward as you finally climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She gasps softly each time your dick pulses and shoots hot cum into her."
-                # if the_girl.sluttiness > 80 or the_girl.get_opinion_score("creampies") > 0:
-                #     the_girl.char "That's it, fill me up!"
-                # else:
-                #     the_girl.char "Fuck... Ah you're lucky I'm on the pill..."
                 $ the_girl.call_dialogue("cum_vagina")
                 $ the_girl.cum_in_vagina()
                 $ against_wall.redraw_scene(the_girl)
@@ -272,7 +265,7 @@ label outro_against_wall(the_girl, the_location, the_object):
                 "You pull out of [the_girl.possessive_title] at the last moment and step back. You whip your condom off and blow your load over her stomach while she watches."
             else:
                 "You pull out of [the_girl.possessive_title] at the last moment and step back. You stroke yourself off and blow your load over her stomach while she watches."
-            if the_girl.sluttiness > 120:
+            if the_girl.effective_sluttiness() > 120:
                 the_girl.char "What a waste, that would have felt so much better inside of me..."
                 "She reaches down and runs a finger through the puddles of cum you've put on her, then licks her finger clean and winks at you."
             else:

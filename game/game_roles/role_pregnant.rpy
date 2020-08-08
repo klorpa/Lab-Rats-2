@@ -302,7 +302,7 @@ label pregnant_finish(the_person):
         the_person.body_type = the_person.event_triggers_dict.get("pre_preg_body", "standard_body")
         the_person.schedule = the_person.event_triggers_dict.get("preg_old_schedule")
 
-        the_person.special_role.remove(pregnant_role) #Should this be triggered some time after instead of being instant?
+        the_person.event_triggers_dict["preg_knows"] = False #Otherwise she immediately knows the next time she's pregnant.
         the_person.kids += 1 #TODO: add a new role related to a girl being a mother of your kid?
 
         tit_shrink_one_day = day + renpy.random.randint(21,30)
@@ -319,7 +319,7 @@ label pregnant_finish(the_person):
         the_person.on_talk_event_list.append(tit_shrink_one_announcement_action) #And here is where she tells you about those changes
         the_person.on_talk_event_list.append(tit_shrink_two_announcement_action)
 
-        if pregnant_role in the_person.special_role:
+        while pregnant_role in the_person.special_role: #While loop just in case it's ended up in there multiple times. In theory this should only trigger once.
             the_person.remove(pregnant_role)
 
     "You get a call from [the_person.possessive_title] early in the morning. You answer it."

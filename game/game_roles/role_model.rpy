@@ -67,7 +67,7 @@ label model_photography_list_label(the_person):
                 if the_person.judge_outfit(the_person.outfit, _return.slut_requirement):
                     the_person.char "Yeah, I think that would look good. I'll go put that on."
 
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "[the_person.possessive_title] leaves to get changed and is back in a moment."
                 $ the_person.apply_outfit(_return, update_taboo = True)
                 #$ the_person.outfit = _return #A copy is already what is returned, so we don't have to copy it here. changed v0.24.1

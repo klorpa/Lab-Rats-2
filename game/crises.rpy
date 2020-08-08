@@ -5,6 +5,34 @@
 ## 3) An effect label. Points towards a label that will run the actual event, compute final effects, and take input from the player.
 
 
+## Guidelines for what each level of stats represents or allows.
+# Sluttiness:
+# 0-10: Baseline normal views on what is acceptable behaviour and dress. Relationships progress with Love, sex only happens in private.
+# 11-21: Touching, groping is fine unless there is a good reason not to (in relationship, related). Reliant on circumstance to start making out. Outfits may be provocative but do not outright reveal anything.
+# 21-40: Willing to give handjobs, be fingered, have her tits groped. Willing to forego panties or a bra, but not be fully nude. Willing to start fooling around any time. Girls in relationships or who are related begin to consider kissing, groping. Most girls are willing to start an affair if they also Love you.
+# 41-60: Willing to give blowjobs, recieve head, and have missionary sex if nothing else is holding them back. When having sex girls will usually require you to wear a condom, especially if they are not on birth control.  Willing to go semi-nude and begin to be fine with having sex in public.
+# 61-80: Willing to have all types of vaginal sex and to start having anal. Girls who are related to you will want to have anal sex instead of vaginal. Girls will ask, but don't require you to wear a condom, even if they are not on birth control. Willing to go fully nude. Orgasms are a suitable reward, orgasm denial is a suitable punishment.
+# 81-100: Willing to have all types of sex, and to go fully nude or be adorned with lingerie and/or fetish gear. Girls will ask you not to wear a condom, even if not on birth control.
+# 100+: Even girls related to you will have any type of sex and ask you not to wear a condom.
+#
+# Love:
+# 0-: Active dislike/hate. The girl knows you, she just doesn't like you! Even slutty girls will be turned off by spending time with you.
+# 0-20: New friend. The girl is usually happy to spend time chatting with you, but only about common topics.
+# 21-40: Good friend. The girl is happy to talk, and even to flirt. The girl will go on lunch dates with you. If she is in a relationship she will stress that you are "just friends".
+# 41-60: Great friends. The girl is happy to spend a lot of time with you, and if she is single is open to some "friends with benefits" sex. Even girls in relationships will let you take them out to the movies or dinner.
+# 61-80: Girlfriend/Paramour. If the girl is single she will be happy to start a formal relationship with you, unless she is also related to you. Even girls in relationships may be open to having sex, but they are much more likely to demand a condom or ask you to pull out. Girls who are slutty will want to be in a long term affair with you.
+# 81-100: Devoted partner. Paramours will leave their SO for you if you ask them to, and girlfriends will have sex with you as long as you are in private. Even 0 sluttiness girls who you are't dating are willing to give you blowjobs if you flirt a little bit first.
+# 100+: Infatuation. Girlfriends and paramours will have any sort of sex with you in private. Girls you aren't dating will be willing to have sex if you ask, just to spend more time with you.
+#
+# Obedience:
+# 80-: Actively disobedient. Often doesn't even bother to ask your opinion, or will be angry if you don't do what she says.
+# 81-100: Disobedient. You have no influence over her actions, and she will often do things without you asking.
+# 101-120: Obedient. You have some influence over her actions. You may suggest small changes, like giving her new titles. Se may ask you before stripping down during sex, as long as she isn't too turned on. You can use your influence to push her slightly further than she is comfortable during sex.
+# 121-140: Highly Obedient. You have significant influence over her actions. You may require her to do major actions that she might not want to, like testing serum for you or staying still while you grope her. You may also tell her what she should and should not wear. You can use your influence to push her much furthur during sex, or have someone with no Love or Sluttiness kiss or touch you anyways. You can ask her to show her tits to you at any time.
+# 141-160: Subservient. You have a very significant amount of influence. Even in the heat of the moment she will defer to you before taking clothes off or changing position. You can push her to do very slutty things, like give you a blowjob, even without her being slutty or in love. You can ask her to strip naked at any time.
+# 161+: Highly Subservient. There is little you cannot ask her to do. She will have sex with you, even in public, and even with no love or sluttiness.
+
+
 ## Potential new crises ##
 # Lily is going on a date. Forbid her, help her dress, fuck her first, etc.
 # Girl is seen not wearing uniform - Leads to potential for punishment (level of punishment might depeond on other corporate policies)
@@ -359,7 +387,7 @@ label broken_AC_crisis_label:
 
         "Tell everyone to strip down and keep working.\n{color=#ff0000}{size=22}Requires: [casual_uniform_policy.name]{/color} (disabled)" if not casual_uniform_policy.is_active():
             pass
-    $renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -386,7 +414,7 @@ label get_drink_crisis_label():
     mc.name "Yeah, I was going to get some coffee. Do you want anything?"
     $ coffee = get_random_coffee_style()
     the_person.char "Sure. [coffee], please."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "You nod and head to the little break room in the office. It doesn't take you long to have both of your drinks made up."
     menu:
         "Add a dose of serum to [the_person.title]'s drink.":
@@ -395,7 +423,7 @@ label get_drink_crisis_label():
             "Once you're finished making your drinks you head back to the office. You put [the_person.title]'s coffee down in front of her."
             the_person.char "Thanks [the_person.mc_title]."
             mc.name "No problem at all."
-            $ renpy.scene("Active")
+            $ clear_scene()
 
 
         "Leave her drink alone.":
@@ -525,7 +553,7 @@ label no_uniform_punishment_label():
                             mc.name "Actually I can. You're welcome to check your contract - the latest uniform changes everyone signed off on made it offical company policy."
                             "[the_person.possessive_title] stammers for a moment."
                             the_person.char "Ugh! Fine!"
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "She storms off to the washroom. You wait outside until she's changed."
                             the_person.char "This is humiliating."
                         python:
@@ -589,7 +617,7 @@ label no_uniform_punishment_label():
                     $ the_person.review_outfit()
                     "You leave [the_person.title] to get cleaned up and get back to work."
 
-    $renpy.scene("Active")
+    $ clear_scene()
     return
 
 
@@ -820,7 +848,7 @@ label office_flirt_label():
                         $ change_amount = 10
                         $ slut_report = the_person.change_slut_temp(change_amount)
                         "She winks and walks past your desk, making sure to shake her ass as you watch."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 
@@ -1041,7 +1069,7 @@ label extra_mastery_crisis_label():
             the_person.char "Understood, sorry to have bothered you."
 
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -1104,7 +1132,7 @@ label trait_for_side_effect_label():
             mc.name "I don't think the side effects are acceptable. Revert back to a more stable version and keep going from there."
 
     the_person.char "Understood sir, I'll make the changes to all of the documentation."
-    $ renpy.scene("Active")
+    $ clear_scene()
 
     return
 
@@ -1145,7 +1173,7 @@ label water_spill_crisis_label():
     $ thinks_appropriate = the_person.judge_outfit(test_outfit,10) #Does she think it's appropriate to strip off her top when it's wet?
     if not thinks_appropriate:
         the_person.char "I'm so sorry about this [the_person.mc_title], I just... I just need to go and dry this off!"
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[the_person.title] runs off towards the bathroom."
         $ the_clothing.colour = dry_colour
         "After a few minutes she's back, with her [the_clothing.name] dried off and no longer transparent."
@@ -1219,7 +1247,7 @@ label water_spill_crisis_label():
                 "Dry it off now.":
                     mc.name "You go dry it off, I'll wait here for you."
                     the_person.char "I'll be back as soon as I can."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "[the_person.title] runs off towards the bathroom."
                     $ the_clothing.colour = dry_colour
                     "After a few minutes she's back, with her [the_clothing.name] dried off and no longer transparent."
@@ -1255,7 +1283,7 @@ label water_spill_crisis_label():
                     $ the_clothing.colour = dry_colour
                     $ the_person.outfit.add_upper(the_clothing)
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -1352,7 +1380,7 @@ label home_fuck_crisis_label():
                 $ the_person.change_happiness(-5)
                 the_person.char "Ugh, fuck! This is worse than it was before! Screw it, I'll take care of this at home. Call me a cab, please."
 
-            $ renpy.scene("Active")
+            $ clear_scene()
             "A few minutes later [the_person.title] is gone, and you're able to get back to bed."
 
         "Ask her to leave. (tooltip)She would love to climax, but seems like she would be very disappointed if you can't get here there.":
@@ -1465,7 +1493,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
             "[the_person.possessive_title] leaves, and you return to what you were doing."
             $ mc.business.remove_employee(the_person)
 
-    $renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -1607,14 +1635,14 @@ label invest_rep_visit_label(rep_name):
                 "[seduce_requires_string] (disabled)" if not (helper.sluttiness >= 60 and helper.obedience >= 130):
                     pass
 
-            $ renpy.scene("Active")
+            $ clear_scene()
             $ office.show_background()
             "Half an hour later there is a knock on your office door."
             mc.name "Come in."
             $ helper.draw_person()
             helper.char "All done with the tour. Let me know if you need anything else."
             "[rep_name] steps into your office and [helper.title] closes the door behind him. [rep_name] sits down in the chair on the opposite side of your desk."
-            $ renpy.scene("Active")
+            $ clear_scene()
             $ random_roll = renpy.random.randint(0,100)
             if random_roll < success_chance:
                 rep_name "I won't waste any more of your time [mc.name], I can say with certainty that my investors are going to be interested in investing in your business."
@@ -2072,7 +2100,7 @@ label work_chat_crisis_label:
                     $ the_person.change_obedience(5)
                     $ the_person.change_happiness(-5)
                     "She looks a little disappointed, but goes back to her work immediately."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -2168,7 +2196,7 @@ label cat_fight_crisis_label():
                 $ slut_report = person_two.change_slut_temp(10)
                 "You give [person_two.title] a light slap on the butt to pull her attention back to you. She nods quickly and heads the other way."
                 $ town_relationships.improve_relationship(person_one, person_two)
-                $ renpy.scene("Active")
+                $ clear_scene()
 
             else:
                 mc.name "I said enough. Now do you need my help talking this out?"
@@ -2180,7 +2208,7 @@ label cat_fight_crisis_label():
                 $ person_two.change_obedience(+5)
                 person_two.char "Understood sir, there won't be any more problems."
                 mc.name "Good to hear. Now get back to work."
-                $ renpy.scene("Active")
+                $ clear_scene()
 
 
         "Stay silent and let them fight it out.":
@@ -2368,7 +2396,7 @@ label cat_fight_crisis_label():
                     "[winner.title] leaves and you get back to work."
 
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label cat_fight_pick_winner(winner, loser):
@@ -2383,7 +2411,7 @@ label cat_fight_pick_winner(winner, loser):
     $ winner.change_obedience(5)
     winner.char "My pleasure sir, just trying to keep things orderly around here."
     "[winner.title] shoots a smug look at [loser.title] then turns around and walks away. [loser.title] shakes her head and storms off in the other direction."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -2455,7 +2483,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     rd_staff.char "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
                     rd_staff.char "I'll put the prototype serum in the stockpile as well, if you need it."
                     $ mc.business.inventory.change_serum(the_serum, 1)
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     return
 
         else: # The MC is somewhere else, bring them to the lab for this.
@@ -2484,7 +2512,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     rd_staff.char "I'll put the prototype serum in the stockpile as well, if you need it."
                     "[rd_staff.title] hangs up."
                     $ mc.business.inventory.change_serum(the_serum, 1)
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     return
 
         ## Test the serum out on someone.
@@ -2513,7 +2541,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     mc.name "I'm sure you will. Keep up the good work."
 
                 "You leave [rd_staff.title] to to her work in the lab and return to what you were doing."
-                $renpy.scene("Active")
+                $ clear_scene()
                 return
 
             "Test the [the_serum.name] on someone.":
@@ -2523,7 +2551,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                 $ selected_person = _return
                 if not selected_person == rd_staff:
                     mc.name "[rd_staff.title], fetch me [selected_person.name]."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "She nods and heads off. Soon after [selected_person.name] is standing in front of you."
                     $ selected_person.draw_person()
                     selected_person.char "You wanted me sir?"
@@ -2540,7 +2568,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     mc.name "Fine, just make sure you get it done."
                     rd_staff.char "That's what I'm paid for, isn't it?"
                     "You leave [rd_staff.title] to her to work in the lab and return to what you were doing."
-                    $renpy.scene("Active")
+                    $ clear_scene()
                     return
 
                 elif rd_staff.obedience < 120:
@@ -2560,7 +2588,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                             rd_staff.char "Fine, then I'll just have to put this new design through the normal safety tests. I'll have the results for you as soon as possible."
                             mc.name "Fine, just make sure you get it done."
                             "[rd_staff.possessive_title] nods. You leave her to work in the lab and return to what you were doing."
-                            $renpy.scene("Active")
+                            $ clear_scene()
                             return
 
                 else:
@@ -2577,7 +2605,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         "You leave her to get back to her work and return to what you were doing."
         $ change_amount = 5
         $ rd_staff.change_obedience(change_amount)
-        $ renpy.scene("Active")
+        $ clear_scene()
         return
 
     else: #There's nobody else in the lab, guess you've done all the hard work yourself!
@@ -2675,7 +2703,7 @@ label daughter_work_crisis_label():
                             $ the_prson.change_obedience(1)
                             "She takes the resume back and steps away from your desk, defeated."
                             the_person.char "Right, of course. Sorry for wasting up your time."
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         return
             elif promised_sex:
                 the_person.char "There's nothing I could do? Nothing at all?"
@@ -2691,7 +2719,7 @@ label daughter_work_crisis_label():
                     $ the_prson.change_obedience(1)
                     "She takes the resume back and steps away from your desk, defeated."
                     the_person.char "Right, of course. Sorry for wasting up your time."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 return
 
             else:
@@ -2699,7 +2727,7 @@ label daughter_work_crisis_label():
                 $ the_person.change_happiness(-3)
                 the_person.char "I understand. Sorry for taking up your time."
                 "She collects the resume and leaves your office."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 return
 
     call hire_select_process([the_daughter,make_person()]) from _call_hire_select_process_1 #Hire her or reject her. Padded with an extra person or we crash due to trying to pre-calculate forward/backwards buttons
@@ -2740,7 +2768,7 @@ label daughter_work_crisis_label():
             $ the_person.change_obedience(1)
             the_person.char "I understand, thank you for at least taking a look for me."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -2810,7 +2838,7 @@ label horny_at_work_crisis_label():
 
     menu:
         "Ignore it.\n{size=22}-10%% Business Efficency{/size} (tooltip)Ignore your arousal through sheer willpower. It might save you some embarassment, but your business efficency is sure to suffer.":
-            $ renpy.scene("Active")
+            $ clear_scene()
             "Putting mind over matter into action you redouble your efforts. Time seems to pass slowly and it seems like you're getting no work done at all."
             $ mc.business.change_team_effectiveness(-10)
             "When your erection dies down and you're able to think clearly again you're sure you've made several paperwork mistakes. Sorting this out will take yet more work."
@@ -2823,7 +2851,7 @@ label horny_at_work_crisis_label():
 
 
         "Jerk off at your desk, loud and proud. (tooltip)Your company, your rules, right?" if mc.location.people:
-            $ renpy.scene("Active")
+            $ clear_scene()
             # Girls around the room react. If some are particularly obedient and slutty they will offer to help get you off.
             "You wheel your chair back to give yourself some space, then unzip your pants and pull out your cock. You relax and start to jerk yourself off."
             $ unhappy_people = [] #They're suprised/shocked/disgusted that you're doing this.
@@ -2972,7 +3000,7 @@ label horny_at_work_crisis_label():
                         "Not long after you hear a gasp and a moan as [the_masturbater.title] brings herself to climax as well."
 
         "Sneak away to the bathroom and jerk off. (tooltip)A few minutes in private should fix this right up." if mc.location.people: #If there are people around here's an option to jerk off. There might
-            $ renpy.scene("Active")
+            $ clear_scene()
             "You're going to need to get this taken care of if you want to get any work done."
             "You get up from your desk and head for the washrooms, attempting to hide your erection from your staff as you go."
 
@@ -3004,7 +3032,7 @@ label horny_at_work_crisis_label():
                         if the_report.get("guy orgasms", 0) == 0:
                             "Despite the fun you had with [your_follower.title] you still haven't cum yet."
                             mc.name "You run along, I've still got to deal with this."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "She leaves you alone in the bathroom, and you jerk yourself off to completion."
                         else:
                             "You and [your_follower.possessive_title] leave the bathroom together."
@@ -3016,7 +3044,7 @@ label horny_at_work_crisis_label():
                         $ your_follower.change_obedience(2)
                         $ your_follower.draw-person(emotion = "sad")
                         your_follower.char "I... Oh, I'm sorry [your_follower.mc_title], I don't know what I was thinking..."
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "She blushes and turns around, leaving quickly. You pull up some porn on your phone and get comfortable, jerking yourself off until you cum."
                         "When you're finished you clean up and get back to work, your mind now crystal clear."
                 $ mc.change_location(old_location)
@@ -3042,7 +3070,7 @@ label horny_at_work_crisis_label():
                 $ the_person.change_obedience(-3)
                 "Before you can say anything more she turns around and hurries out of the room."
                 the_person.char "I really need to go..."
-                $ renpy.scene("Active")
+                $ clear_scene()
 
 
             else:
@@ -3112,7 +3140,7 @@ label horny_at_work_crisis_label():
                         mc.name "Thank you [the_person.title], that's taken care of the problem nicely."
                         "She gives you a quick smile."
                         $ the_person.review_outfit()
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "You pull your pants up and get yourself organised, then turn your attention back to your work with a crystal clear mind."
 
 
@@ -3144,7 +3172,7 @@ label horny_at_work_crisis_label():
                             $ the_person.change_happiness(-10)
                             $ the_person.change_obedience(-3)
                             "She stammers for something more to say before settling on storming out of the room instead."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "Frustrated, her rejection has at least taken your mind off of your erection and you're able to get back to work eventually."
 
 
@@ -3206,12 +3234,12 @@ label horny_at_work_crisis_label():
                             $ the_person.change_happiness(-10)
                             $ the_person.change_obedience(-3)
                             "She stammers for something more to say before settling on storming out of the room instead."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "Frustrated, her rejection has at least taken your mind off of your erection and you're able to get back to work eventually."
 
 
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -3619,7 +3647,7 @@ label friends_help_friends_be_sluts_label():
 
 
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 
@@ -3655,7 +3683,7 @@ label mom_outfit_help_crisis_label():
             "Say you're busy.":
                 mc.name "Sorry [the_person.title], I'm a little busy at the moment."
                 the_person.char "Okay, I'll ask your sister."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 return
     else:
         #She's in the room with you right now (how? no clue, but maybe it'll happen one day!)
@@ -3669,7 +3697,7 @@ label mom_outfit_help_crisis_label():
             "Say you're busy.":
                 mc.name "Sorry Mom, I should really be getting to bed."
                 the_person.char "That's okay [the_person.mc_title], I'll ask your sister then."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 return
 
     the_person.char "I've got a meeting with an important client tomorrow and I don't know what I should wear."
@@ -3684,13 +3712,13 @@ label mom_outfit_help_crisis_label():
         the_person.char "Okay, I'll need a moment to get changed."
         mc.name "I can just turn around, if that would be faster."
         the_person.char "I'll just be a second. Go on, out."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[the_person.possessive_title] shoos you out of her bedroom. You lean against her door and wait."
         the_person.char "Okay, all done. Come on in!"
 
     elif the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 50: #She just asks you to turn your back, so you can peek if you want.
         the_person.char "Okay, I'll need a moment to get changed. Could you just turn around for a second?"
-        $ renpy.scene("Active")
+        $ clear_scene()
         "You nod and turn your back to [the_person.possessive_title]. You hear her moving behind you as she starts to get undressed."
         menu:
             "Try and peek.":
@@ -3712,7 +3740,7 @@ label mom_outfit_help_crisis_label():
                         mc.name "No, I... The mirror was just sort of there."
                         "She covers herself with her hands and motions for the door."
                         the_person.char "Could you wait outside, please?"
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "You hurry outside and close the door to [the_person.possessive_title]'s bedroom behind you."
                         the_person.char "Okay, you can come back in."
                         $ caught = True
@@ -3723,7 +3751,7 @@ label mom_outfit_help_crisis_label():
 
                             "Stop peeking.":
                                 "You pull your eyes away from the mirror and do your best not to peek."
-                                $ renpy.scene("Active")
+                                $ clear_scene()
                                 $ strip_choice = None
 
                 if not caught:
@@ -3791,13 +3819,13 @@ label mom_outfit_help_crisis_label():
     #Strip choices for the second peek section
     if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 35 or caught: #She really doesn't want you to see anything
         the_person.char "Okay, I just need to get changed again."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
         the_person.char "Okay, come in!"
 
     elif the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 50: #She just asks you to turn your back, so you can peek if you want.
         the_person.char "I'm going to need to get changed again."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "You turn around to give her some privacy."
         menu:
             "Try and peek.":
@@ -3819,7 +3847,7 @@ label mom_outfit_help_crisis_label():
                         mc.name "No, I... The mirror was just sort of there."
                         "She covers herself with her hands and motions for the door."
                         the_person.char "Could you wait outside, please?"
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "You hurry outside and close the door to [the_person.possessive_title]'s bedroom behind you."
                         the_person.char "Okay, you can come back in."
                         $ caught = True
@@ -3830,7 +3858,7 @@ label mom_outfit_help_crisis_label():
 
                             "Stop peeking.":
                                 "You pull your eyes away from the mirror and do your best not to peek."
-                                $ renpy.scene("Active")
+                                $ clear_scene()
                                 $ strip_choice = None
 
                 if not caught:
@@ -3875,7 +3903,7 @@ label mom_outfit_help_crisis_label():
         "Suggest your own outfit.":
             mc.name "They both look good, but I think I have another idea for something you could wear..."
             "You go to [the_person.possessive_title]'s closet and start to put together an outfit of your own for her."
-            $ renpy.scene("Active")
+            $ clear_scene()
             call screen outfit_select_manager(slut_limit = the_person.sluttiness + 10)
             $ third_outfit = _return
             $ the_person.draw_person()
@@ -3890,13 +3918,13 @@ label mom_outfit_help_crisis_label():
                 the_person.char "I'll try it on, but I think I like it!"
 
                 if the_person.sluttiness + the_person.love < 35 or caught: #She really doesn't want you to see anything
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
                     the_person.char "Okay, come back!"
 
                 elif the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 50: #She just asks you to turn your back, so you can peek if you want.
                     the_person.char "I'm just going to get changed one last time, if you could turn around for a second."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "You turn around to give her some privacy."
                     menu:
                         "Try and peek.":
@@ -3918,7 +3946,7 @@ label mom_outfit_help_crisis_label():
                                     mc.name "No, I... The mirror was just sort of there."
                                     "She covers herself with her hands and motions for the door."
                                     the_person.char "Could you wait outside, please?"
-                                    $ renpy.scene("Active")
+                                    $ clear_scene()
                                     "You hurry outside and close the door to [the_person.possessive_title]'s bedroom behind you."
                                     the_person.char "Okay, you can come back in."
                                     $ caught = True
@@ -3929,7 +3957,7 @@ label mom_outfit_help_crisis_label():
 
                                         "Stop peeking.":
                                             "You pull your eyes away from the mirror and do your best not to peek."
-                                            $ renpy.scene("Active")
+                                            $ clear_scene()
                                             $ strip_choice = None
 
                             if not caught:
@@ -3963,7 +3991,7 @@ label mom_outfit_help_crisis_label():
     mc.name "Any time, I'm just glad to help."
     "You leave [the_person.possessive_title] in her room as she starts to pack her clothes away."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -4028,7 +4056,7 @@ label mom_lingerie_surprise_label():
             $ the_person.draw_person(position = "walking_away")
             "She stands up and leaves your room. You're asleep within minutes."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -4277,7 +4305,7 @@ label mom_selfie_label():
 
     "It's so sweet of her to think of you."
     $ the_person.apply_outfit(the_person.planned_outfit)
-    $renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -4312,7 +4340,7 @@ label mom_morning_surprise_label():
             the_person.char "No, it's perfectly natural. I'll give you some privacy."
             $ the_person.change_slut_temp(2)
             "She takes one last glance at you then hurries from the room."
-            $ renpy.scene("Active")
+            $ clear_scene()
             "You get up and ready, hurrying a little to make up for lost time."
         else:
             the_person.char "Oh, and you might want to take care of that before you go out [the_person.mc_title]."
@@ -4389,7 +4417,7 @@ label mom_morning_surprise_label():
                             the_person.char "Well done. I'll make sure to clean that up while you're out today."
                             "She leans over and kisses you on the forehead."
                             the_person.char "Now get dressed or you'll be late for work."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "[the_person.possessive_title] leaves and you get dressed as quickly as you can manage."
 
                 "Ask her to leave.":
@@ -4397,7 +4425,7 @@ label mom_morning_surprise_label():
                     the_person.char "Oh, okay [the_person.mc_title]. Just make sure don't give any of those nice girls you work with a shock when you walk in."
                     $ the_person.draw_person()
                     "She turns back to you and gives you a hug and a kiss. Her eyes continue to linger on your crotch."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "When she leaves you get dressed as quickly as you can, rushing to make up for lost time."
 
 
@@ -4503,7 +4531,7 @@ label mom_morning_surprise_label():
         $ the_person.change_slut_temp(5)
         "She smiles and leans over to give you a kiss on the forehead."
         the_person.char "My pleasure, now you should be getting up or you'll be late for work!"
-        $renpy.scene("Active")
+        $ clear_scene()
         "[the_person.possessive_title] gets up and leaves you alone to get dressed and ready for the day. You rush a little to make up for lost time."
 
     else:
@@ -4555,10 +4583,10 @@ label mom_morning_surprise_label():
                     "[the_person.title] collects some of her discarded from your floor and heads for the door."
                 else:
                     "[the_person.title] gives you a kiss on the forehead and heads for the door."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "You get up and rush to get ready to make up for lost time."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -4611,7 +4639,7 @@ label lily_new_underwear_crisis_label():
             mc.name "Sure thing, is it in there?"
             "You nod your head towards the bag she is holding."
             the_person.char "Yeah, I'll go put it on and be back in a second. Don't move!"
-            $ renpy.scene("Active")
+            $ clear_scene()
             "[the_person.title] skips out of your room, closing the door behind her."
             $ the_person.apply_outfit(the_underwear)
             "You're left waiting for a few minutes. Finally, your door cracks open and [the_person.title] slips inside."
@@ -4668,17 +4696,17 @@ label lily_new_underwear_crisis_label():
             $ the_person.change_love(3)
             "[the_person.possessive_title] walks over to you and gives you a hug."
             the_person.char "Okay, it's getting cold. I'm going to go put some clothes on!"
-            $ renpy.scene("Active")
+            $ clear_scene()
             "[the_person.title] slips out into the hall, leaving you alone in your room."
 
 
         "Send her away.":
             mc.name "Sorry [the_person.title], but I'm busy right now. You'll have to figure out if you like it by yourself."
             the_person.char "Right, no problem. Have a good night!"
-            $ renpy.scene("Active")
+            $ clear_scene()
             "She leaves and closes your door behind her."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -4822,7 +4850,7 @@ label lily_morning_encounter_label():
 
     $ the_person.apply_outfit(the_person.planned_outfit)
     #$ the_person.outfit = the_person.planned_outfit.get_copy() #Make sure to reset their outfits for the day. changed v0.24.1
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -4860,14 +4888,14 @@ label family_morning_breakfast_label():
         "Your mother cracks your door open and leans in."
         the_mom.char "I'm making some breakfast for you and your sister. Come on down if you'd like some."
         mc.name "Thanks Mom, I'll be down in a minute."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "She flashes you a smile and closes the door."
     else:
         $ the_sister.draw_person()
         "[the_sister.possessive_title] cracks your door open and leans in. She seems just as tired as you are."
         the_sister.char "Hey, I think Mom's making a family breakfast for us."
         mc.name "Thanks for letting me know [the_sister.title], I'll be down in a minute."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "She nods and closes your door as she leaves."
 
     "You get up, get dressed, and head for the kitchen."
@@ -5045,7 +5073,7 @@ label family_morning_breakfast_label():
         "You enjoy a relaxing breakfast bonding with your mother and sister. Your mom seems particularly happy she gets to spend time with you."
         "When you're done you help Mom put the dirty dishes away and get on with your day."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -5102,7 +5130,7 @@ label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
                     mc.name "The door was unlocked, I thought you might have already been finished."
                     the_person.char "Knock next time, okay? I'll be done in a minute."
                     "She shoos you out of the room, seeming more upset about being interupted than being seen naked."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     $ the_person.change_love(-1)
                     $ the_person.change_slut_temp(2)
                     call girl_shower_leave(the_person) from _call_girl_shower_leave_2
@@ -5112,7 +5140,7 @@ label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
         $ the_person.apply_outfit(initial_outfit)
         #$ the_person.outfit = initial_outfit #put her back in her normal outfit after her shower #changed v0.24.1
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label girl_shower_leave(the_person):
@@ -5160,7 +5188,7 @@ label girl_shower_enter(the_person, suprised):
             $ the_person.apply_outfit(towel_outfit)
             $ the_person.draw_person()
             the_person.char "There you go. Enjoy!"
-            $ renpy.scene("Active")
+            $ clear_scene()
             "She steps past you and leaves. You get into the shower and enjoy the relaxing water yourself."
             $ mc.change_energy(20)
 
@@ -5229,7 +5257,7 @@ label girl_shower_enter(the_person, suprised):
                         else:
                             the_person.char "Well maybe we can pick this up some other time. See you later."
 
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "She leaves the room and you finish your shower alone, feeling refreshed by the water."
                         $ mc.change_location(bedroom)
 
@@ -5492,7 +5520,7 @@ label cousin_tease_crisis_label():
 
 
     $ the_person.apply_outfit() #Return to her planned outfit.
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -5528,7 +5556,8 @@ label so_relationship_improve_label():
             for a_person in place.people:
                 if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
                     if not affair_role in a_person.special_role and not girlfriend_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
-                        potential_people.append(a_person)
+                        if a_person is not emily and a_person is not christina: #Cludge to stop them from getting in relationships. TODO: Add a flag to stop people from changing their relationship status.
+                            potential_people.append(a_person)
 
     $ the_person = get_random_from_list(potential_people)
     if the_person is None:
@@ -5588,7 +5617,8 @@ label so_relationship_worsen_label():
             for a_person in place.people:
                 if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Single":
                     if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
-                        potential_people.append(a_person)
+                        if a_person is not emily and a_person is not christina:
+                            potential_people.append(a_person)
 
     $ the_person = get_random_from_list(potential_people)
     if the_person is None:
@@ -5679,7 +5709,7 @@ label affair_dick_pick_label():
                 "There's a long pause, then she texts you back."
                 the_person.char "Just don't make me wait too long, I need to feel your cock again!"
     $ the_person.apply_outfit(the_person.planned_outfit)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -5768,5 +5798,5 @@ label girlfriend_nudes_label():
         $ the_person.apply_outfit(the_person.planned_outfit)
     #TODO: A blojob/deepthroat training video, or an anal stretching video she sends you to show she's "getting ready."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return

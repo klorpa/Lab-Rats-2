@@ -12,7 +12,7 @@ label lobby_tutorial_intro():
     stephanie.title "Sweet, let's go take a look."
     $ lobby.accessable = False
     $ rd_division.accessable = True
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label research_tutorial_intro():
@@ -30,13 +30,13 @@ label research_tutorial_intro():
     mc.name "Right, I think I understand."
     "[stephanie.title] pulls out a notebook and flips it open, handing it over to you."
     stephanie.title "These are my first ideas, you should pick something for me to work on right now. If you change your mind you can always come back here and pick a new topic."
-    $ renpy.scene("Active")
+    $ clear_scene()
     call research_select_action_description from _call_research_select_action_description
     $ stephanie.draw_person(emotion = "happy")
     stephanie.title "Good, I'll work on that later. Can we take a look at the production lab now?"
     $ rd_division.accessable = False
     $ p_division.accessable = True
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label production_tutorial_intro():
@@ -50,7 +50,7 @@ label production_tutorial_intro():
 
     $ p_division.accessable = False
     $ office.accessable = True
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label office_tutorial_intro():
@@ -63,7 +63,7 @@ label office_tutorial_intro():
     stephanie.title "Lead on!"
     $ office.accessable = False
     $ m_division.accessable = True
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label marketing_tutorial_intro():
@@ -77,6 +77,6 @@ label marketing_tutorial_intro():
     python:
         for place in list_of_places:
             place.accessable = True
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time from _call_advance_time_11
     return

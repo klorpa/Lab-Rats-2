@@ -166,6 +166,63 @@ label aunt_flirt_response_high(the_person):
             "She places a gentle hand on your shoulder and kisses you on the cheek."
     return
 
+## Sex dialogue ##
+label aunt_cum_pullout(the_person):
+    if the_person.wants_creampie():
+        if the_person.on_birth_control or the_person.event_triggers_dict.get("preg_knows", False):
+            the_person.char "Cum for me [the_person.mc_title]! Cum wherever you want!"
+        else:
+            the_person.char "I want it! Cum inside me!"
+    else:
+        if the_person.on_birth_control:
+            the_person.char "Oh! Pull out, you can cum wherever else you want!"
+        else:
+            the_person.char "Oh no, you need to pull out! Quick!"
+    return
+
+label aunt_cum_condom(the_person):
+    if the_person.on_birth_control:
+        the_person.char "Good job [the_person.mc_title]. It looks like you had a really good time."
+
+    elif the_person.wants_creampie():
+        the_person.char "Ah, good job [the_person.mc_title]."
+        the_person.char "It's a good thing you were wearing a condom, or I'm sure you would have gotten me pregnant right on the spot."
+        the_person.char "My sister wouldn't be very happy about that."
+        mc.name "What about you? Would you be happy?"
+        "[the_person.possessive_title] stammers for a moment."
+        the_person.char "I... I mean, we shouldn't. We can't, you know? This was nice though."
+
+    else:
+        the_person.char "Oh wow, good job [the_person.mc_title]. I like having you cum inside me, even if you have to wear a condom to do it."
+        the_person.char "Maybe I should start taking the pill, so you don't have to wear one."
+    return
+
+label aunt_cum_vagina(the_person):
+    if the_person.wants_creampie():
+        if the_person.on_birth_control or the_person.event_triggers_dict.get("preg_knows", False):
+            the_person.char "Ah... That felt amazing [the_person.mc_title]."
+            the_person.char "You know just how to make me feel like a young woman again."
+
+        else:
+            the_person.char "Oh god, that feels so good..."
+            "She sighs happily."
+            the_person.char "You should try and pull out though, next time we do it."
+            the_person.char "If you keep cumming inside me when I'm not on my birth control you're going to get me pregnant."
+
+    else:
+        if the_person.on_birth_control:
+            the_person.char "Oh no... [the_person.mc_title], did you just..."
+            "She already knows the answer."
+            the_person.char "[the_person.mc_title], you need to have a little more restraint. I might have to make you wear a condom next time."
+            the_person.char "I suppose it's going to happen time to time though. It's sort of flattering."
+        else:
+            the_person.char "Oh no, did you just..."
+            "She already knows the answer."
+            the_person.char "Oh no, no, no. I'm not on the pill [the_person.mc_title]! What happens if I get pregnant now?"
+            "[the_person.possessive_title] sighs unhappily."
+            the_person.char "I guess the damage is already done... Next time you're going to have to wear a condom. This can't keep happening."
+    return
+
 ## Taboo break dialogue ##
 label aunt_kissing_taboo_break(the_person):
     the_person.char "[the_person.mc_title], what are you doing? We shouldn't... We can't do whatever you're thinking about doing."
@@ -450,10 +507,45 @@ label aunt_bare_pussy_taboo_break(the_person, the_clothing):
 #
 #     return
 #
-# label aunt_creampie_taboo_break(the_person):
-#
-#     return
-#
+label aunt_creampie_taboo_break(the_person):
+    the_person.char "Oh my god, did you just..."
+    "[the_person.possessive_title] gasps, then is silent for a moment."
+    if the_person.wants_creampie():
+        the_person.char "It's not your fault, I know I said I wanted it. I got so carried away that I wasn't thinking straight."
+        mc.name "That means you had a good time, right? So what's the problem?"
+        if the_person.on_birth_control:
+            the_person.char "I... I'm your aunt! My sister would be so disappointed in me if she knew I was fucking her son behind her back!"
+            the_person.char "I don't know what's happens to me, I just lose my mind and want even more!"
+
+        else:
+            the_person.char "I'm your aunt, and I'm not even on birth control! What happens if I got pregnant? What would we tell my sister?"
+            the_person.char "I don't know what's happens to me, I just lose my mind and want even more!"
+        mc.name "Trust your body, what is it telling you?"
+        the_person.char "...That I love you, and I love this."
+        mc.name "Then that's all that matters. We'll worry about my mom later, alright."
+        the_person.char "Okay, I trust you [the_person.mc_title]."
+
+
+    else:
+        if the_person.on_birth_control:
+            the_person.char "I told you to pull out."
+            mc.name "Sorry, I got a little carried away. It felt amazing for me, how about for you?"
+            the_person.char "It felt good for me to, but I know it shouldn't."
+            the_person.char "I'm your aunt, I shouldn't be so turned on by having a pussy full of your cum!"
+            mc.name "It's what your body craves [the_person.title]. You shouldn't be resisting those urges, and who else could you trust as much as family?"
+            "She takes a deep, slow breath as she tries to calm herself."
+            the_person.char "You're probably right."
+
+        else:
+            the_person.char "What have you done [the_person.mc_title]? I'm not on the pill, I might get pregnant!"
+            the_person.char "What would we do then? My sister would find out I'm fucking her son behind her back!"
+            mc.name "[the_person.possessive_title], calm down. You probably aren't going to get pregnant, and nobody needs to know what we're doing."
+            "She takes a deep, slow breath as she tries to calm herself."
+            the_person.char "You're probably right, but you need to be so much more careful! Maybe you should wear a condom next time, just to be extra safe."
+            mc.name "Maybe. We'll worry about that later."
+
+    return
+
 # label aunt_anal_creampie_taboo_break(the_person):
 #
 #     return

@@ -123,7 +123,7 @@ label sister_intro_crisis_label(the_person):
             "[the_person.title] pouts and crosses her arms. She leaves your room in a huff."
             $ mc.business.event_triggers_dict["sister_needs_reintro"] = True
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label sister_reintro_label(the_person):
@@ -198,7 +198,7 @@ label sister_strip_intro_label(the_person):
             $ the_person.change_happiness(-5)
             $ mc.business.event_triggers_dict["sister_strip_reintro"] = True
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label sister_strip_reintro_label(the_person):
@@ -313,7 +313,7 @@ label sister_instathot_intro_label(the_person):
 
     $ sister_instathot_action = Action("Help her take Insta-pics.{image=gui/heart/Time_Advance.png}",instathot_requirement, "sister_instathot_label", menu_tooltip = "Help your sister grow her Insta-pic account by taking some pictures of her.")
     $ sister_role.actions.append(sister_instathot_action)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label sister_instathot_label(the_person):
@@ -429,7 +429,7 @@ label sister_instathot_label(the_person):
 
     #TODO: SHe may keep the outfit.
     #TODO: She lets you suggest an outfit
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time() from _call_advance_time_30
     return
 

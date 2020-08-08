@@ -378,7 +378,7 @@ label person_new_mc_title(the_person):
     else: #She doesn't listen to you, so she just picks one and demands that you use it, or becomes unhappy.
         $ new_title = get_random_from_list(get_player_titles(the_person))
         python:
-            while new_title == the_person.title:
+            while new_title == the_person.mc_title:
                 new_title = get_random_from_list(get_player_titles(the_person))
 
         the_person.char "You know, I think [new_title] fits you better than [the_person.mc_title]. I'm going to start using that."
@@ -655,14 +655,14 @@ label lunch_date_label(the_person): #Could technically be included in the planni
     $ renpy.show("restaurant", what = restaraunt_background)
     "A bell on the door jingles as you walk in."
     mc.name "You grab a seat and I'll order for us."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "You order food for yourself and [the_person.possessive_title] and wait until it's ready."
     $ mc.business.funds += -30
     $ the_person.draw_person(position = "sitting")
     "When it's ready you bring it over to [the_person.title] and sit down at the table across from her."
     if renpy.random.randint(0,100) < 40:
         the_person.char "Mmm, it looks delicious. I'm just going to wash my hands, I'll be back in a moment."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[the_person.possessive_title] stands up heads for the washroom."
         menu:
             "Add some serum to her food." if mc.inventory.get_any_serum_count() > 0:
@@ -732,7 +732,7 @@ label lunch_date_label(the_person): #Could technically be included in the planni
         "She steps close and gives you a quick hug, then steps back."
         mc.name "Yeah, we should. I'll see you around."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time() from _call_advance_time_29
     return
 
@@ -912,7 +912,7 @@ label movie_date_label(the_person):
     menu:
         "Stop at the concession stand. -$20" if mc.business.funds >= 20:
             mc.name "Sure, you run ahead and I'll go get us some snacks."
-            $ renpy.scene("Active")
+            $ clear_scene()
             $ mc.business.funds += -20
             "You give [the_person.possessive_title] her ticket and split up. At the concession stand you get a pair of drinks and some popcorn to share."
             menu:
@@ -1030,7 +1030,7 @@ label movie_date_label(the_person):
         "She leans towards you and gives you a quick kiss."
         the_person.char "Let's head home then."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ mc.change_location(hall) #Put them back at home after the event, so if they were in the bathroom they aren't any more.
     $ mc.location.show_background()
     return "Advance Time"
@@ -1148,7 +1148,7 @@ label dinner_date_label(the_person):
     if renpy.random.randint(0,100) < 40: #Chance to give her some serum.
         "After dinner you decide to order desert. [the_person.title] asks for a piece of cheese cake, then stands up from the table."
         the_person.char "I'm going to go find the little girls room. I'll be back in a moment."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "She heads off, leaving you alone at the table with her half finished glass of wine."
         menu:
             "Add a dose of serum to her drink." if mc.inventory.get_any_serum_count()>0:
@@ -1228,7 +1228,7 @@ label dinner_date_label(the_person):
             mc.name "It would be my pleasure."
             "[the_person.title]'s taxi arrives and she gives you a kiss goodbye. You watch her drive away, then head home yourself."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return "Advance Time"
 
 label serum_give_label(the_person):
@@ -1289,7 +1289,7 @@ label serum_give_label(the_person):
                     the_person.char "Were you about to put that in my drink? Oh my god [the_person.mc_title]!"
                     mc.name "Me? Never!"
                     "[the_person.title] shakes her head and storms off. You can only hope this doesn't turn into soemthing more serious."
-                    $renpy.scene("Active")
+                    $ clear_scene()
                     return
 
         "Ask her to take it.\n{size=22}Success Chance: [ask_serum_chance]%%{/size}" if not mandatory_unpaid_serum_testing_policy.is_active() or mc.business.get_employee_title(the_person) == "None":

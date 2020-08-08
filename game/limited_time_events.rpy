@@ -59,7 +59,7 @@ init -1 python:
         if the_person is not mom:
             return False
         if persistent.pregnancy_pref == 0:
-            return False 
+            return False
         if the_person not in mom_bedroom.people:
             return False
         if mom_bedroom.get_person_count() > 1:
@@ -108,7 +108,7 @@ label sister_walk_in_label(the_person):
         $ the_person.draw_person()
         the_person.char "Oh... [the_person.mc_title], it's only you. Come on in, what's up?"
         "Her face is flush and her breathing rapid. You wonder for a moment what you almost caught her doing as she leans nonchalantly against the door frame."
-        $ renpy.scene("Active")
+        $ clear_scene()
         return
 
     elif the_person.effective_sluttiness() < 25:
@@ -276,7 +276,7 @@ label sister_walk_in_label(the_person):
                     $ the_person.discover_opinion("masturbating")
 
             "Leave her alone.":
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "You take a quick step back and, as quietly as you can manage, close her door."
                 $ mc.change_location(hall)
                 $ the_person.apply_outfit(the_person.planned_outfit)
@@ -284,7 +284,7 @@ label sister_walk_in_label(the_person):
 
 
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 
@@ -301,7 +301,7 @@ label nude_walk_in_label(the_person):
             else:
                 "She turns and tries to cover herself with her hands."
             the_person.char "Just... Just a minute, I was getting changed!"
-            $ renpy.scene("Active")
+            $ clear_scene()
             "[the_person.title] shoos you out of the room. You can hear her getting dressed on the other side."
             $ the_person.apply_outfit(the_person.planned_outfit)
             #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
@@ -330,7 +330,7 @@ label nude_walk_in_label(the_person):
         "You open the door to [the_person.possessive_title]'s room and find her sitting on her bed, wearing nothing but her underwear."
         if the_person.effective_sluttiness("underwear_nudity") < (30 - (the_person.get_opinion_score("not wearing anything")*10)):
             the_person.char "Oh! One second, I'm not dressed!"
-            $ renpy.scene("Active")
+            $ clear_scene()
             "She hurries to the door and closes it in your face, locking it quickly. You can hear her quickly getting dressed on the other side."
             #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
             $ the_person.apply_outfit(the_person.planned_outfit)
@@ -411,7 +411,7 @@ label mom_house_work_nude_label(the_person):
 
     $ the_person.update_outfit_taboos()
     $ the_person.discover_opinion("not wearing anything")
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label breeding_mom_label(the_person):
