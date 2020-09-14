@@ -120,7 +120,7 @@ label student_dinner(the_student, the_mom, first_time):
     the_mom.char "Mr.[the_mom.last_name] should be home any minute now, he's probably just held up at the office."
     mc.name "No problem, we can wait a little..."
     $ the_mom.draw_person(position = "walking_away")
-    "You're interupted by the phone ringing. [the_mom.title] apologies and moves into the kitchen."
+    "You're interrupted by the phone ringing. [the_mom.title] apologies and moves into the kitchen."
     $ clear_scene()
     the_mom.char "Yes... Okay... [the_student.title]'s tutor is over for dinner... I'll tell him... We can talk when you get home..."
     $ the_mom.draw_person(position = "sitting")
@@ -274,7 +274,7 @@ label student_dinner(the_student, the_mom, first_time):
             mc.name "I hope so too. Goodnight [the_mom.title]."
             "She watches you from the front door as you leave the house."
             $ student_mom_appologise_action = Action("Student_mom_appologise", student_mom_appologise_requirement, "student_mom_appologise_label")
-            $ the_mom.on_room_enter_event_list.append(student_mom_appologise_label)
+            $ the_mom.on_room_enter_event_list.append(student_mom_appologise_action)
             $ the_mom.event_triggers_dict["student_mom_door_kiss"] = 1
 
     else:

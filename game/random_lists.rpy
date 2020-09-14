@@ -78,7 +78,7 @@ init -2:
         list_of_names.append("Julie")
         list_of_names.append("Geneviève")
         list_of_names.append("Persephone")
-        list_of_names.append("Kyle")
+        list_of_names.append("Kylie")
         list_of_names.append("Alice")
         list_of_names.append("Ginger")
         list_of_names.append("Shirley")
@@ -129,6 +129,9 @@ init -2:
         list_of_names.append("Seraphina")
         list_of_names.append("Kitty")
         list_of_names.append("Isabelle")
+        list_of_names.append("Fae")
+        list_of_names.append("Beth")
+        list_of_names.append("Lystra")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -221,7 +224,10 @@ init -2:
         list_of_last_names.append("Wolf")
         list_of_last_names.append("Jung")
         list_of_last_names.append("Dussoir")
-
+        list_of_last_names.append("Dreadlow")
+        list_of_last_names.append("Duroche")
+        list_of_last_names.append("Hampson")
+        list_of_last_names.append("Faith")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -316,21 +322,26 @@ init -2:
         def get_random_skin():
             return get_random_from_weighted_list(list_of_skins)
 
-        list_of_faces = []
+        list_of_faces = [] # Only character critical faces are included in all versions.
         list_of_faces.append("Face_1")
         list_of_faces.append("Face_2")
         list_of_faces.append("Face_3")
         list_of_faces.append("Face_4")
-        list_of_faces.append("Face_5")
+
         list_of_faces.append("Face_6")
         list_of_faces.append("Face_7")
         list_of_faces.append("Face_8")
-        list_of_faces.append("Face_9")
+
         #list_of_faces.append("Face_10") #Bad render
-        list_of_faces.append("Face_11")
-        list_of_faces.append("Face_12")
-        list_of_faces.append("Face_13")
-        list_of_faces.append("Face_14")
+
+
+        if not renpy.android: #Extra faces are only included in the PC version due to file count limitations
+            list_of_faces.append("Face_5")
+            list_of_faces.append("Face_9")
+            list_of_faces.append("Face_11")
+            list_of_faces.append("Face_12")
+            list_of_faces.append("Face_13")
+            list_of_faces.append("Face_14")
 
 
         def get_random_face():
@@ -731,6 +742,20 @@ init -2:
             #TODO: Add a varient of this that lets you set a max number of people. A kind of "blah, blah, blah, and 7 more people..." response.
             return return_string
 
+        def format_list_of_clothing(the_list): # Takes a list of strings and formats them to the form "ThingA, thingB, and ThingC"
+            return_string = ""
+            if len(the_list) == 1:
+                return_string = the_list[0].display_name
+            elif len(the_list) ==2:
+                return_string = the_list[0].display_name + " and " + the_list[1].display_name
+            else:
+                for an_item in the_list:
+                    if an_item is the_list[-1]:
+                        return_string += "and " + an_item.display_name
+                    else:
+                        return_string += an_item.display_name + ", "
+            return return_string
+
 
 init 1 python:
     def generate_premade_list():
@@ -936,6 +961,9 @@ init 1 python:
 
         mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
         mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
+
+        mom_promotion_one_crisis = Action("mom promotion one crisis", mom_work_promotion_one_requirement, "mom_work_promotion_one")
+        mom.on_talk_event_list.append(mom_promotion_one_crisis)
 
         mom.home.add_person(mom)
 

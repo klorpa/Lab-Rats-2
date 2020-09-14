@@ -252,13 +252,21 @@ label relaxed_clothing_review(the_person):
             the_person.char "My clothes are a mess! I'll be back in a moment, I'm going to go get cleaned up."
     return
 
-label relaxed_strip_reject(the_person):
+label relaxed_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "I'm sorry, but can we leave that where it is for now?"
+        the_person.char "I'm sorry, but we need to leave my [the_clothing.display_name] on for now. Okay?"
     elif the_person.obedience < 70:
-        the_person.char "Slow down there, I'll decide when that comes off."
+        the_person.char "Slow down there, I'll decide when to take off my [the_clothing.display_name]."
     else:
-        the_person.char "I think that should stay where it is for now."
+        the_person.char "I think that my [the_clothing.display_name] should stay where it is for now."
+    return
+
+label relaxed_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    "[the_person.title] speaks up meekly as you start to move her [the_clothing.display_name]."
+    if the_person.obedience > 130:
+        the_person.char "Maybe I should... Sorry, never mind."
+    else:
+        the_person.char "Wait, I don't know about this..."
     return
 
 label relaxed_sex_accept(the_person):
@@ -321,7 +329,7 @@ label relaxed_seduction_accept_crowded(the_person):
         if the_person.sluttiness < 20:
             the_person.char "I suppose we could sneak away for a few minutes. There's nothing wrong with that, right?"
         elif the_person.sluttiness < 50:
-            the_person.char "Come on, let's go find someplace quiet where we won't be interupted."
+            the_person.char "Come on, let's go find someplace quiet where we won't be interrupted."
         else:
             the_person.char "No point wasting any time then, right? Let's get to it!"
     else:

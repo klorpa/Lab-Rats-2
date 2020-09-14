@@ -18,6 +18,7 @@
 # Walk in on mother masturbating
 # Mom Nude Housework
 # Breeding Mom
+# Mom work report #TODO
 
 init -1 python:
     limited_time_event_pool = [] #Drawn from to form the on_talk and on_enter events generated for people. Given in the form [event, weight, class], where class is "on_talk" or "on_enter"

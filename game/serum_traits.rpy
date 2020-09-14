@@ -319,7 +319,7 @@ init -1:
                 the_person.change_slut_core(amount, add_to_log)
 
         def nora_reward_genius_trait_on_apply(the_person, add_to_log):
-            if (the_person.charisma < 5):        
+            if (the_person.charisma < 5):
                 the_person.charisma = 5
             if (the_person.int < 5):
                 the_person.int = 5

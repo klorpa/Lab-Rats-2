@@ -812,7 +812,7 @@ label student_pick_reward(the_person, punishment):
         the_person.char "Is there something wrong with it? I..."
         mc.name "No, there's nothing wrong! That sounds like a reward where we both win."
         mc.name "We'll start slowly, and for each question you get right we'll make things more intense."
-        the_person.char "Thank you [the_person.mc_name]."
+        the_person.char "Thank you [the_person.mc_title]."
         return "student_punish_suck"
 
     elif (the_person.effective_sluttiness() >= 65 or the_person.get_opinion_score("being submissive") > 0) and punishment != "student_punish_spank":
@@ -1320,7 +1320,7 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
         "This time she doesn't stop there. She slides you deeper in her mouth, running her lips along the length of your shaft."
         "After a moment to adjust she starts to bob her head up and down your length."
         "You rest a hand on the back of [the_person.possessive_title]'s head and lean back, content to just enjoy your blowjob."
-        "You're interupted by your phone beeping the end of her two minutes."
+        "You're interrupted by your phone beeping the end of her two minutes."
         if was_failure:
             "[the_person.title] pops off your cock and wipes the last lines of spit from her lips."
             "Without a word she sits back down on her chair."

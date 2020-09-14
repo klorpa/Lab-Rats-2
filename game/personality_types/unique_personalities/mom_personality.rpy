@@ -56,6 +56,129 @@ label mom_greetings(the_person):
                 the_person.char "Good evening, sweetheart!"
     return
 
+label mom_sex_responses_foreplay(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh [the_person.mc_title], you're going to get me turned on if you keep doing that..."
+        else:
+            the_person.char "Oh my..."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            "[the_person.title] lets out a soft, sensual moan."
+            the_person.char "Oh, [the_person.mc_title]!"
+        else:
+            "She takes a deep breath, trying to suppress a moan."
+            the_person.char "Oh my god... Who taught you how to do that?"
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh [the_person.mc_title], you know just how to... Ah! Push my buttons!"
+        else:
+            "[the_person.possessive_title] whispers to herself under her breath as she tries not to moan too loudly."
+            the_person.char "My own son... Oh my god..."
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Keep... Ah, keep going [the_person.mc_title]! If you keep going you're going to make mommy cum!"
+
+        else:
+            the_person.char "[the_person.mc_title], if you keep doing that you're going to make me... climax..."
+            the_person.char "Oh my god, I can't believe it..."
+    return
+
+label mom_sex_responses_oral(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh sweetheart, you're too good to me... Ah..."
+        else:
+            the_person.char "Oh! I... Ah..."
+            "[the_person.title] bites her lower lip and tries to stifle her moans."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "I'm so lucky to have such a... Mmph!... caring son!"
+        else:
+            the_person.char "Where... where did you learn to do this?"
+            "She struggles not to moan and mutters to herself."
+            the_person.char "This shouldn't feel so good..."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "Ah, right there! Keep... Mmph! Keep doing that [the_person.mc_title], don't stop!"
+        else:
+            "[the_person.possessive_title]'s calm facade begins to break down, as she moans your name."
+            the_person.char "Oh [the_person.mc_title]..."
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Keep licking that pussy sweetheart! Keep licking and make mommy cum!"
+        else:
+            the_person.char "Oh lord, you're going to make me orgasm if you keep doing that!"
+            "You can't tell if she's worried or excited about that, but her moans tell you to keep going either way."
+    return
+
+label mom_sex_responses_vaginal(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Mmm... you fit inside me so perfectly [the_person.mc_title]."
+        else:
+            the_person.char "Your cock is so big [the_person.mc_title], I don't know if I can take it all..."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh [the_person.mc_title], it's so good..."
+            "[the_person.title] closes her eyes and lets out a long, sensual moan."
+        else:
+            the_person.char "God that feels good. I know it's wrong, but I've missed this so badly..."
+            "She moans happily."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "Yes! Oh god yes, fuck me [the_person.mc_title]! I want you to use me!"
+        else:
+            the_person.char "Keep going [the_person.mc_title], you're doing an amazing job!"
+            the_person.char "It feels so good!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Your cock is driving my body crazy, you've gotten me so wet!"
+            the_person.char "Keep fucking mommy so she can cum all over your big dick!"
+
+        else:
+            the_person.char "I feel like I'm going crazy! This should feel wrong, but my body just wants more!"
+    return
+
+label mom_sex_responses_anal(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Your cock feels so big... Come on [the_person.mc_title], fuck mommy's ass!"
+        else:
+            the_person.char "Ah, it's so tight! Be gentle, you might break me if you try and put it all in!"
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Ah! Does my ass feel good to fuck [the_person.mc_title]? Do you like how tight it is?"
+        else:
+            the_person.char "Oh god... Ah!"
+            "She alternates between grunting and moaning as you fuck her."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            if the_person.has_taboo("vaginal_sex"):
+                the_person.char "Fuck me [the_person.mc_title]! You can't have my pussy, but you can use my ass as much as you want!"
+            else:
+                the_person.char "Fuck me [the_person.mc_title]! Stuff me with your cock!"
+        else:
+            "[the_person.title]'s grunts start to soften and she begins moaning more."
+            the_person.char "I think you're starting... ah, to stretch me out! It's getting a little easier... Ah!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "[the_person.mc_title], your cock feels amazing! I might actually be able to cum like this!"
+            "She pants happily."
+
+        else:
+            the_personchar "Oh my god, I'm starting to feel like I might... actually cum!"
+            "She gasps and pants happily as you anal her."
+    return
+
 label mom_clothing_accept(the_person):
     if the_person.obedience > 140:
         the_person.char "Well, if you think it'll look good on me then I'm not going to argue."
@@ -88,13 +211,24 @@ label mom_clothing_review(the_person):
             the_person.char "Oh [the_person.mc_title], I'm not decent, am I? Turn around, I need to get myself covered!"
     return
 
-label mom_strip_reject(the_person):
+label mom_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "I know it would make your day sweety, but I don't think I should take anything else off. I'm your mother, after all."
+        the_person.char "I know it would make your day sweety, but I don't think I should take my [the_clothing.display_name] off. I'm your mother, after all."
     elif the_person.obedience < 70:
         the_person.char "Not yet sweety. You just need to relax and let mommy take care of you."
     else:
-        the_person.char "Don't touch that [the_person.mc_title]. Could you imagine if it came off? I'm your mother, there are lines we just shouldn't cross."
+        the_person.char "Don't touch that [the_person.mc_title]. I'm your mother, you shouldn't be trying to take off my [the_clothing.display_name]"
+    return
+
+label mom_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    "[the_person.title] speaks quietly as you start to move her [the_clothing.display_name]."
+    if the_person.obedience > 130:
+        the_person.char "What are you doing [the_person.mc_title]? Oh..."
+    else:
+        if the_clothing.underwear:
+            the_person.char "[the_person.mc_title], you shouldn't be playing with mommy's underwear like that..."
+        else:
+            the_person.char "[the_person.mc_title], you shouldn't be doing that."
     return
 
 label mom_sex_accept(the_person):
@@ -360,7 +494,7 @@ label mom_cum_pullout(the_person):
                 if the_person.on_birth_control: #She just likes creampies.
                     the_person.char "Cum inside of me [the_person.mc_title]! I want you to give me all of your cum!"
                 else: #Yeah, she's not on BC and asking for you to creampie her. She's looking to get pregnant.
-                    the_person.char "Cum inside of me [the_person.mc_title]! Cum in me and get your own mommy pregnant!"
+                    the_person.char "Cum inside of me [the_person.mc_title]! Cum in me and get mommy pregnant!"
             elif the_person.on_birth_control: #She's on the pill, so she's probably fine
                 the_person.char "You can cum wherever you want [the_person.mc_title], I'm ready!"
             else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
@@ -413,7 +547,6 @@ label mom_cum_vagina(the_person):
         else:
             the_person.char "Oh sweetheart, you really need to be pulling out. I know you're just having fun, but we can't take risks like this every time."
         the_person.char "Oh well, it's done now. Just be more careful next time."
-
 
     return
 

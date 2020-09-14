@@ -887,7 +887,7 @@ label cousin_talk_boobjob_again_label(the_person):
                 the_person.change_slut_temp(2)
                 mc.business.funds += -5000
                 the_person.event_triggers_dict["getting boobjob"] = True #Reset the flag so you can ask her to get _another_ boobjob.
-                cousin_boobjob_get_action = Action("Cousin boob job get", cousin_boobjob_get_requirement, "cousin_boobjob_get_label", args = the_person, requirement_args = [the_person, the_day + renpy.random.randint(4,6)])
+                cousin_boobjob_get_action = Action("Cousin boob job get", cousin_boobjob_get_requirement, "cousin_boobjob_get_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(4,6)])
                 mc.business.mandatory_crises_list.append(cousin_boobjob_get_action)
 
                 for an_action in cousin_role:
@@ -1115,8 +1115,7 @@ label stripclub_dance():
     if the_person is None:
         $ the_person = get_random_from_list(stripclub_strippers) #If there is nobody around make sure to grab them and bring them here so we don't crash.
 
-    $ the_person.apply_outfit(stripclub_wardrobe.pick_random_outfit())
-    #$ the_person.outfit = stripclub_wardrobe.pick_random_outfit() changed v0.24.1 #TODO: Add more stripper outfits.
+    $ the_person.apply_outfit(stripclub_wardrobe.pick_random_outfit()) #TODO: Add more stripper outfits
     $ performer_title = the_person.title
     $ the_person.draw_person()
     "A new song starts playing over the speakers and a girl steps out onto the stage."

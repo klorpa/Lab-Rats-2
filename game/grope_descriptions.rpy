@@ -39,7 +39,7 @@ label grope_waist(the_person):
         mc.name "Of course, no problem."
         return False
 
-    else:
+    elif the_person.effective_sluttiness(["touching_body", "vaginal_sex"]) < 80: # Comfortable enough to let you keep going.
         if the_person.effective_sluttiness("touching_body") < 15:
             the_person.char "I... Uh..."
             "You squeeze her hip and smile."
@@ -52,7 +52,7 @@ label grope_waist(the_person):
 
         else:
             #Comfortable
-            "[the_person.title] keeps talking as if nothing is wrong. She even smiles when you squeeze her soft hip."
+            "[the_person.title] keeps talking as if nothing is wrong. She even smiles when you squeeze her soft hips."
 
         menu:
             "Slide your hand onto her ass.\n-5 {image=gui/extra_images/energy_token.png}" if the_person.energy >=5:
@@ -62,6 +62,40 @@ label grope_waist(the_person):
                 pass
 
             "Stop touching her.":
+                return False
+
+    else: #Sluttiness 80 or higher, wants to fuck right away.
+        the_person.char "Oh god, you're already getting me horny..."
+        if (the_person.outfit.vagina_available() or the_person.outfit.can_half_off_to_vagina()) and (not the_person.has_taboo("vaginal_sex") or not the_person.has_taboo("anal_sex")):
+            $ strip_list = the_person.outfit.get_half_off_to_vagina_list()
+            if strip_list:
+                $ strip_description = format_list_of_clothing(strip_list)
+                $ the_person.draw_animated_removal(strip_list, half_off_instead = True)
+                $ the_person.update_outfit_taboos()
+                "[the_person.possessive_title] pulls her [strip_description] out of the way and spreads her legs."
+                the_person.char "Come on, do you want to fuck me?"
+            else:
+                "She spreads her legs, emphasising the easy availability of her pussy."
+                the_person.char "Do you want to fuck me?"
+
+            $ strip_list = None #Clear the list to save memory
+
+        else:
+            "She leans into you and grinds her crotch against your thigh."
+            the_person.char "We both know where this is going, what are we waiting for?"
+
+        menu:
+            "Skip the foreplay.":
+                call fuck_person(the_person) from _call_fuck_person
+                $ the_person.review_outfit()
+                return False
+
+            "Stop touching her.":
+                "You give her hips a final squeeze, then push her back."
+                mc.name "Maybe later, I just wanted a feel."
+                "She pouts and sighs unhappily."
+                $ the_person.change_happiness(-2)
+                $ the_person.outfit.restore_all_clothing()
                 return False
 
 label grope_ass(the_person):
@@ -173,3 +207,7 @@ label grope_tits(the_person):
 
                 "Stop touching her.":
                     return False
+
+label quick_fuck(the_person):
+    #just grab them and fuck them if theyre really slutty and youve broken taboos already
+    return

@@ -246,14 +246,22 @@ label bimbo_clothing_review(the_person):
             the_person.char "Oh darn, my outfit's all confuzzled! I'm going to go fix this up, I'll be back before you know it!"
     return
 
-label bimbo_strip_reject(the_person):
+label bimbo_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "Don't you think I look cuter with it on? Leave it alone for now, okay?"
+        the_person.char "Don't you think I look cuter wearing my [the_clothing.display_name]? I want to leave it on!"
     elif the_person.obedience < 70:
         the_person.char "Oh no-no-no, I'm going to decide when that comes off. I want to see you work for it!"
     else:
         "[the_person.title] giggles and bats your hand away playfully."
-        the_person.char "Not yet, there's so much fun stuff we have to do first!"
+        the_person.char "Not yet, there's so much fun stuff we have to do first before you get me out of my [the_clothing.display_name]!"
+    return
+
+label bimbo_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    "[the_person.title] giggles as you start to slide her [the_clothing.display_name] out of the way."
+    if the_person.obedience > 130:
+        the_person.char "Hehe, hey! Were you really going to take off my [the_clothing.display_name]? You're so dirty [the_person.mc_title]!"
+    else:
+        the_person.char "Hey, maybe we should, like, slow down."
     return
 
 label bimbo_sex_accept(the_person):

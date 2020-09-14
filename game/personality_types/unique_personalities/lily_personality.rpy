@@ -47,6 +47,135 @@ label lily_greetings(the_person):
                 the_person.char "Hey, need something?"
     return
 
+label lily_sex_responses_foreplay(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Are you trying to get me turned on? Because it might be working..."
+        else:
+            the_person.char "[the_person.mc_title], maybe we should stop before we get too excited..."
+            "She moans happily, obviously not interested in taking her own advice."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, that feels good... Do it again."
+        else:
+            the_person.char "Oh my god... Where did you learn how to do this? You're so good at it..."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            if the_person.outfit.wearing_panties():
+                the_person.char "Ah... If you get me any wetter I'm going to soak right through my panties [the_person.mc_title]."
+            elif the_person.outfit.vagina_available():
+                the_person.char "Fuck, you're getting me so wet [the_person.mc_title]! I can feel it dripping down my thighs..."
+            else:
+                $ item_name = the_person.outfit.get_lower_top_layer().display_name
+                the_person.char "Fuck, you're getting me so wet I'm going to soak right through my [item_name]..."
+        else:
+            the_person.char "I can't believe my own brother is getting me so wet. It feels so good [the_person.mc_title]."
+
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "[the_person.mc_name], do you want to make me cum? Keep going!"
+        else:
+            the_person.char "Oh god, I feel strange, I think... I think you're going to make me cum soon!"
+
+    return
+
+label lily_sex_responses_oral(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh god, you're such a good big brother..."
+            "[the_person.possessive_title] sighs happily."
+        else:
+            the_person.char "Oh god, ah! Ah..."
+            "[the_person.title] tries and fails to stiffle her moans."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Mmm, that feels so good [the_person.mc_title], you're amazing!"
+        else:
+            the_person.char "Where.... Mmmm.... Where did you learn to do this? You're so good at it!"
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "How does my pussy taste [the_person.mc_title]? Do you like eatting me out?"
+            "You respond by making her moan even louder."
+            the_person.char "Oh fuck..."
+
+        else:
+            the_person.char "My own brother is really licking my pussy! It's fucked up, but you've got me so turned on!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, keep licking my clit like that and you're going to make me cum!"
+
+        else:
+            the_person.char "Oh god, I think... I think I'm going to cum soon [the_person.mc_title]!"
+            the_person.char "Ah! Mmmm!"
+    return
+
+label lily_sex_responses_vaginal(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh god, you're cock feel so good inside me..."
+            "She moans happily to herself."
+        else:
+            the_person.char "You're so big, is it even all in yet? Ah..."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck... Ah..."
+        else:
+            the_person.char "Oh my god, that feeling..."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            "Mmm, give it to me [the_person.mc_title]! Stretch out my teen pussy so it will only fit your big, hot cock!"
+
+        else:
+            "[the_person.possessive_title] moans enthusiastically."
+            the_person.char "Fuck, right there! Keep fucking me like that!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "I'm getting close, I'm going to cum soon..."
+            "She moans, almost pleadingly."
+            the_person.char "Make me cum! Make your little sister cum on your dick!"
+        else:
+            "[the_person.possessive_title] mumbles softly to herself between happy moans."
+            the_person.char "Oh fuck, I'm going to cum... I'm going to cum on my brothers cock... Oh fuck!"
+
+    return
+
+label lily_sex_responses_anal(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, I can feel you stretching me out..."
+        else:
+            the_person.char "Oh fuck, I don't know if I can do this... It feels like you're tearing me in half!"
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Ah! Ah! I can take it, don't hold back! Ah!"
+        else:
+            "[the_person.title] growls defiantly."
+            the_person.char "Fuuuuuuuck!"
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "Your cock is so big, it feels like you're moulding me to it!"
+        else:
+            the_person.char "I think you're starting to stretch me out, I'm starting to..."
+            "She moans loudly."
+            the_person.char "... enjoy this!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, I think... I think I'm going to cum soon!"
+            the_person.char "Stuff me full of your big cock [the_person.mc_title]! Make your sister cum like a desperate anal slut!"
+        else:
+            the_person.char "Oh god, I'm... I think I'm going to cum soon!"
+            the_person.char "I can't belive... My brother's cock is in my ass and it's going to make me cum! I feel like such a slut!"
+            "The way she's moaning makes her sound more proud than ashamed."
+    return
+
 label lily_clothing_accept(the_person):
     if the_person.obedience > 140:
         the_person.char "You're right, that looks cute! I'm glad I've got a brother with good fashion sense!"
@@ -74,13 +203,24 @@ label lily_clothing_review(the_person):
             the_person.char "Oh my god, I shouldn't be dressed like this around my own brother. Just... Just look away and give me a moment."
     return
 
-label lily_strip_reject(the_person):
+label lily_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "I wish I could let you, but I don't think I should be taking that off in front of my brother."
+        the_person.char "I wish I could let you, but I don't think I should be taking off my [the_clothing.display_name] in front of my brother."
     elif the_person.obedience < 70:
-        the_person.char "Sorry [the_person.mc_title], your little sister likes being a tease. I want to leave that on for a bit."
+        the_person.char "Sorry [the_person.mc_title], your little sister likes being a tease. I'm going to keem my [the_clothing.display_name] on for a little bit longer."
     else:
-        the_person.char "I couldn't take that off in front of you [the_person.mc_title]. You're my brother, I'd die of embarrassment!"
+        the_person.char "I couldn't take off my [the_clothing.display_name] in front of you [the_person.mc_title]. You're my brother, I'd die of embarrassment!"
+    return
+
+label lily_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    "[the_person.title] speaks up meekly as you start to move her [the_clothing.display_name]."
+    if the_person.obedience > 130:
+        the_person.char "Maybe you shouldn't..."
+    else:
+        if the_clothing.underwear:
+            the_person.char "Wait, do you really want to take off my underwear? [the_person.mc_title], you shouldn't..."
+        else:
+            the_person.char "Wait, I don't know about this..."
     return
 
 label lily_sex_accept(the_person):

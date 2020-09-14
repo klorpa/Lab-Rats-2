@@ -221,15 +221,21 @@ label introvert_clothing_review(the_person):
             "[the_person.title] turns her back to you while she gets put back together."
     return
 
-label introvert_strip_reject(the_person):
+label introvert_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "No, don't take that off please."
+        the_person.char "I'm sorry, but my [the_clothing.display_name] needs to stay on."
 
     elif the_person.love < 10:
-        "[the_person.title] grabs your hand to stop you."
         the_person.char "Keep dreaming."
     else:
-        "[the_person.title] grabs your hand shakes her head."
+        "[the_person.title] shakes her head."
+    return
+
+label introvert_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    if the_person.obedience > 130:
+        "[the_person.title] seems uncomfortably as you grab onto her [the_clothing.display_name], but doesn't say anything."
+    else:
+        the_person.char "I... I don't know if you should do that."
     return
 
 label introvert_sex_accept(the_person):

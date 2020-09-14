@@ -101,7 +101,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         mother_offer_make_dinner = Action("Offer to make dinner. {image=gui/heart/Time_Advance.png}", mom_offer_make_dinner_requirement, "mom_offer_make_dinner_label",
             menu_tooltip = "Earn some good will by making dinner for your mother and sister.", priority = 5)
 
-        mother_role = Role("Mother", [mother_offer_make_dinner])
+        mom_work_promotion_two_prep_action = Action("Prepare for her interview.", mom_work_promotion_two_prep_requirement, "mom_work_promotion_two_prep",
+            menu_tooltip = "Help your mom prepare for her one-on-one interview.", priority = 10)
+
+        mother_role = Role("Mother", [mother_offer_make_dinner, mom_work_promotion_two_prep_action])
 
 
         #AUNT ACTIONS#
@@ -203,7 +206,7 @@ label pay_strip_scene(the_person):
     #Optional: Some way to ask the person to change into a different outfit.
     #Optional: Way to progress from strip tease to sex and/or mastribation.
 
-    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"],["Hands down, ass up.","standing_doggy"]] 
+    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"],["Hands down, ass up.","standing_doggy"]]
 
     $ picked_pose = the_person.idle_pose #She starts in her idle pose (which is a string)
     $ rand_strip_desc = renpy.random.randint(0,3) #Produce 4 different descriptions at each level to help keep this interesting.

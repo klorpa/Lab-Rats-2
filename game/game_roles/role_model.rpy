@@ -24,7 +24,7 @@ label fire_model_label(the_person):
     mc.name "I'm sorry [the_person.title], but I will no longer be needing you to star in our ad campaigns."
     $ the_person.change_happiness(-5)
     the_person.char "Oh... Okay."
-    $ mc.business.current_model = None
+    $ mc.business.company_model = None
     $ the_person.special_role.remove(company_model_role) #TODO: Investigate a crash where Alxia sometimes has this action but not the role itself??
     return
 
@@ -61,9 +61,8 @@ label model_photography_list_label(the_person):
                 the_person.char "Sex sells, right, so it should be something skimpy. Did you have somethign in mind?"
                 "She seems excited to see what you have in mind."
 
-
-            call screen outfit_select_manager(slut_limit = the_person.sluttiness, show_overwear = False, show_underwear = False)
-            if not _return == "No Return":
+            call outfit_master_manager(slut_limit = the_person.sluttiness, show_overwear = False, show_underwear = False) from _call_outfit_master_manager_7
+            if _return:
                 if the_person.judge_outfit(the_person.outfit, _return.slut_requirement):
                     the_person.char "Yeah, I think that would look good. I'll go put that on."
 

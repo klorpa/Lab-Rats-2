@@ -10,10 +10,61 @@
             return True
         return False
 
+    def mom_work_promotion_one_requirement(the_person):
+        if the_person.love < 15:
+            return False
+        elif the_person.sluttiness < 15:
+            return False
+        elif the_person.obedience < 100:
+            return False
+        return True
+
+    def mom_work_prmotion_one_before_requirement(start_day):
+        if day < start_day:
+            return False
+        elif mc.business.is_weekend(): #TODO: we really need to stop using the buisness to define what the weekend is.
+            return False #No interview on the weekend
+        else:
+            return True
+
+    def mom_work_promotion_one_report_requirement(the_person, start_day):
+        if time_of_day <= 2 and day == start_day:
+            return False #Too early in the day for the interview to have happened
+        else:
+            return True
+
+    def mom_work_promotion_two_intro_requirement(start_day):
+        if day < start_day:
+            return False
+        elif time_of_day != 4:
+            return False
+        else:
+            return True
+
+    def mom_work_promotion_two_prep_requirement(the_person):
+        if not the_person.event_triggers_dict.get("mom_work_promotion_two_prep_enabled", False):
+            return False #Not visible if not enabled
+        elif time_of_day < 3:
+            return "Too early to prepare."
+        else:
+            return True
+
+    def mom_work_promotion_two_requirement(start_day):
+        if day < start_day:
+            return False
+        elif mc.business.is_weekend():
+            return False
+        else:
+            return True
+
+    def mom_work_promotion_two_report_requirement(the_person):
+        if the_person in kitchen.people or the_person in mom_bedroom.people: #Only talk about this at home
+            return True
+        return False
+
 ### MOM ACTION LABELS ###
 
 label mom_weekly_pay_label(the_person):
-
     #todo: at some point demand to take over the house, adds extra "house rules" options
     $ bedroom.show_background()
     "You're getting ready for bed when [the_person.possessive_title] calls from downstairs."
@@ -52,6 +103,11 @@ label mom_weekly_pay_label(the_person):
                             $ the_person.event_triggers_dict["Mom_forced_off_bc"] = False
             else:
                 the_person.char "The budget is still really tight [the_person.mc_title], so I was wondering if you wanted to buy any sort of favour from me?"
+
+            if lily.event_triggers_dict.get("sister_instathot_special_pictures_recent", False) and not lily.event_triggers_dict.get("sister_instathot_mom_knows", False): #She sold special pictures this week and Mom doesn't know about them yet.
+                call mom_weekly_pay_lily_question(the_person) from _call_mom_weekly_pay_lily_question
+                $ lily.event_triggers_dict["sister_instathot_special_pictures_recent"] = False
+
 
         else:
             the_person.char "Our budget is really stretched thin right now, and it would be a huge relief if you could help out."
@@ -140,7 +196,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
 label mom_high_sluttiness_weekly_pay(the_person):
     menu:
         "Strip for me. -$100" if mc.business.funds >= 100:
-            if mc.business.event_triggers_dict.get("Mom_Strip",0) >= 1:
+            if mc.business.event_triggers_dict.get("Mom_Strip", 0) >= 1:
                 mc.name "I want you to show off yourself off to me, how does that sound?"
                 the_person.char "Fair is fair, but I'll need a little extra if you want to see anything... inappropriate."
                 $ mc.business.funds += -100
@@ -206,7 +262,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
             if (not the_person.has_taboo("sucking_cock")) or the_person.effective_sluttiness("sucking_cock") >= 60:
                 the_person.char "If that's what you need."
                 "You pull out your wallet and count out her cash while [the_person.possessive_title] gets onto her knees in front of you."
-                $ mc.business.funds += -300                
+                $ mc.business.funds += -300
                 $ the_person.draw_person(position = "blowjob")
                 the_person.char "Remember, not a word to anyone else though. Okay>"
                 mc.name "Of course, this is just between you and me."
@@ -387,12 +443,10 @@ label mom_serve_breakfast_request(the_person):
     the_person.char "I'll have to get up early to get it made before work, but I'll do it for you. Maybe [lily.title] can help me."
     # TODO: She wants some extra money from you every week she keeps doing this.
     # TODO: Hook this up to actually do something.
-
-
     #TODO: If she's slutty enough to move onto the nude_serve level she has a chance of showing up in her underwear.
     return
 
-label mom_nude_serve_breakfast_request(the_person):
+label mom_nude_serve_breakfast_request(the_person): # TODO: Hook this up
     mc.name "When you bring me breakfast in the morning I want you to bring it to me naked."
     if the_person.effective_sluttiness() < 60: #She has some reservations about it
         the_person.char "What! [the_person.mc_title], I couldn't..."
@@ -403,10 +457,10 @@ label mom_nude_serve_breakfast_request(the_person):
         the_person.char "Fine, if you're going to be paying for it I'll go along with it. I want you to know I think it's silly though."
     else: #She's already really slutty and that's not a big deal
         the_person.char "Okay, if that's what you'd like [the_person.mc_title]."
-    # TODO: Hook this up
+
     return
 
-label mom_breakfast_with_service_request(the_person):
+label mom_breakfast_with_service_request(the_person): # TODO: Hook this up. as a reward
     mc.name "When you bring me breakfast I want you to give me some entertainment as well."
     the_person.char "I'm already naked when I come in, what more do you want [the_person.mc_title]?"
     mc.name "I wake up with morning wood a lot, I want you to use your tits and mouth to take care of that for me."
@@ -424,5 +478,526 @@ label mom_breakfast_with_service_request(the_person):
         the_person.char "Of course, I should have thought about that [the_person.mc_title]."
         the_person.char "As long as you're helping with the bills I'll make sure your morning wood is always taken care of."
 
-    # TODO: Hook this up.
+
+    return
+
+label mom_work_promotion_one(the_person): #Mom is up for a promotion and asks you for help. You can tell her to get it on her merits (She doesn't) or to dress up for it.
+    # Triggered when Mom has 15 sluttiness, 15 Love, and at least 100 Obedience
+    $ the_person.draw_person()
+    the_person.char "Hi [the_person.mc_title]. It's nice to see you, I'm feeling a little stressed right now."
+    mc.name "Is everything okay?"
+    the_person.char "Oh, everything is fine. It's actually good news! A promotion is up for grabs at the office, and I'm on the short list."
+    mc.name "Hey, congratulations! I'm proud of you [the_person.title]."
+    the_person.char "Thank you. I'm just... I'm nervous I'm not going to get it. There's a lot of competition and..."
+    "She shrugs and shakes her head."
+    the_person.char "Well, never mind what else."
+    mc.name "What? You can tell me [the_person.title], I'm here for you."
+    "She smiles warmly at you."
+    the_person.char "You're so sweet. I'm just worried that I'm the only woman up for the promotion. The senior positions seem like a boys-only club."
+    "You nod and think for a moment."
+    menu:
+        "Take advantage of your womanly charms.":
+            mc.name "Well they've made this easy for you then. You've got something none of those men have [the_person.title]."
+            the_person.char "What do you mean?"
+            mc.name "If you're the only woman then you're the only person who can bring a womans perspective, and a womans charm."
+            the_person.char "That is one way of looking at... Wait, what do you mean a \"womans charm\", exactly?"
+            the_person.char "I hope you aren't suggesting I do anything unethical."
+            mc.name "No, of course not. I'm just pointing out that your looks alone can catch their attention."
+            mc.name "Once you have their attention your technical skills will shine through."
+            the_person.char "That does make sense... Okay, you're right [the_person.mc_title]."
+            the_person.char "Would you help me pick out my interview outfit? You can tell me how a man thinks about it."
+            $ the_person.change_slut_temp(2)
+            menu:
+                "Help her pick out an outfit.":
+                    mc.name "Sure thing [the_person.title]. Come on, let's go see what we can find in your closet."
+                    the_person.char "Thank you sweetheart. You're such a good boy, helping me out like this."
+                    $ mom_bedroom.show_background()
+                    "You follow her to her bedroom and start digging around in her wardrobe."
+                    call mom_work_promotion_outfit_create(the_person) from _call_mom_work_promotion_outfit_create
+
+                "Let her pick out her own outfit.":
+                    mc.name "Sorry [the_person.title], but I don't have the time right now."
+                    the_person.char "Of course, you're a busy boy these days. I'm sure I can figure something out myself."
+
+            "She puts her hands on your shoulders and gives you a quick kiss on the cheek."
+            the_person.char "Thank you for your support [the_person.mc_title]. I'll let you know how things go!"
+            the_person.char "There are two rounds of interviews, hopefully this will get me through to the next round."
+            $ the_person.event_triggers_dict["mom_work_promotion_outfit_slutty"] = True #Even if you don't make something special for her she'll try and pick something slutty for herself.
+
+        "You've earned this.":
+            mc.name "You don't need to worry [the_person.title]. I know how skilled and dedicated you are, I'm sure your bosses will see it too."
+            mc.name "They won't have any choice but to give you the promotion."
+            the_person.char "Thank you for your confidence [the_person.mc_title]. There are two interview stages, I'm just hoping to get through to the next round."
+
+    $ mom_work_promotion_one_before_crisis = Action("mom work promotion one before", mom_work_prmotion_one_before_requirement, "mom_work_promotion_one_before", args = the_person, requirement_args = renpy.random.randint(day+3, day+8))
+    $ mc.business.mandatory_morning_crises_list.append(mom_work_promotion_one_before_crisis)
+
+    # Leads to a line of events where she basically sleeps her way to a better job.
+    # Could we have an alternative line where you find her boss and either A) Sleep with her or B) Fuck his wife?
+
+
+    $ clear_scene()
+    return
+
+label mom_work_promotion_outfit_create(the_person):
+    call outfit_master_manager(slut_limit = the_person.sluttiness + 15, show_overwear = False, show_underwear = False) from _call_outfit_master_manager_6
+    $ interview_outfit = _return
+    if interview_outfit:
+        $ acceptable = False
+        "You lay the outfit out on [the_person.possessive_title]'s bed."
+        mc.name "Let's see how you look in this."
+        the_person.char "Okay, just give me one moment..."
+        "[the_person.title] starts to strip down."
+        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+        while strip_choice is not None:
+            $ the_person.draw_animated_removal(strip_choice)
+            "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
+            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+        if the_person.update_outfit_taboos():
+            "As she gets naked she tries to cover herself up with her hands, turning her body away from you."
+            the_person.char "You don't mind me being... naked, do you [the_person.mc_title]?"
+            mc.name "No, not at all [the_person.title]. It'll help us finish this faster."
+            the_person.char "Right, of course. It's nice for us to be comfortable together, no matter what."
+            "She smiles and starts to put on your outfit."
+        else:
+            "Once she's stripped naked she starts to put on your outfit."
+
+        $ the_person.apply_outfit(interview_outfit)
+        $ the_person.draw_person()
+
+        if interview_outfit.vagina_visible():
+            the_person.char "I couldn't wear this [the_person.mc_title], I'm not even covered!"
+            the_person.char "You've had your fun, now let's be serious about this, okay?"
+
+        elif interview_outfit.tits_visible():
+            the_person.char "I couldn't wear this [the_person.mc_title], my breasts are..."
+            mc.name "Maybe that'll get you the promotion!"
+            "She rolls her eyes."
+            the_person.char "I don't think the office dress code will ever be that formal."
+            the_person.char "You've had your fun, now let's be serious about this, okay?"
+
+        elif the_person.judge_outfit(interview_outfit): # It's not really pushing the limit
+            $ acceptable = True
+            the_person.char "Ooh, this is nice [the_person.mc_title]."
+            $ the_person.draw_person(position = "back_peek")
+            the_person.char "Does it look good from the back?"
+            mc.name "It looks great [the_person.possessive_title]."
+            $ the_person.draw_person()
+            the_person.char "Do you think it's going far enough though? I mean, if the point is to catch some attention."
+            the_person.char "It's nice, it just feels a little... boring? Do you think this is what I should wear?"
+
+        else: #It's pushing the limit, but she'll wear it.
+            $ acceptable = True
+            the_person.char "Ooh, this could work."
+            mc.name "Give me a spin, let me see it from behind."
+            $ the_person.draw_person(position = "back_peek")
+            the_person.char "Well? How does my butt look?"
+            mc.name "It looks great [the_person.title]. I think you'll have the full attention of the room."
+            "She laughs and gives her hips a wiggle, then turns around and blushes."
+            $ the_person.draw_person()
+            the_person.char "Sorry, I got a little carried away. It's certainly a bold outfit..."
+            the_person.char "Do you think it's appropriate for an interview? I don't want to get in trouble."
+            mc.name "You have everything covered that needs covering, it's just a bit of fun self-expression."
+            mc.name "I'm sure all the men in the room will appreciate having something nice to look at while you tell them all about your qualifications."
+            the_person.char "I suppose it's worth a try... Well, do you think this should be my outfit?"
+
+
+        menu:
+            "Go with it." if acceptable:
+                mc.name "I think we've nailed it. You're going to get this promotion [the_person.title]."
+                $ the_person.event_triggers_dict["mom_work_promotion_outfit"] = interview_outfit
+                $ the_person.wardrobe.add_outfit(interview_outfit.get_copy()) #Add it to her wardrobe so she'll wear it after too.
+
+            "Try something else." if acceptable:
+                mc.name "Let's try something else before we commit. You've only got one shot at this, we want to get it right."
+                call mom_work_promotion_outfit_create(the_person) from _call_mom_work_promotion_outfit_create_1
+
+            "Try something else." if not acceptable:
+                mc.name "Okay, let's try something different and see how it looks."
+                call mom_work_promotion_outfit_create(the_person) from _call_mom_work_promotion_outfit_create_2
+
+            "Out of ideas.":
+                mc.name "Sorry [the_person.title], but I'm all out of ideas."
+                the_person.char "That's okay, you've given me something to think about. I'm sure I can put something together now."
+
+    else:
+        mc.name "Sorry [the_person.title], but I don't really know what you should wear."
+        the_person.char "That's fine [the_person.mc_title], I'm sure I can figure out something to wear by myself."
+
+    return
+
+label mom_work_promotion_one_before(the_person): # She tells you in the morning that she's going to her interview.
+    # If she doesn't have an interview outfit picked she picks one here too.
+
+    "There's a knock on your door shortly after you wake up."
+    the_person.char "[the_person.mc_title], it's me. Do you mind if I come in?"
+    mc.name "Come in [the_person.title]."
+    $ interview_outfit = the_person.event_triggers_dict.get("mom_work_promotion_outfit", None)
+    if interview_outfit is None:
+        if the_person.event_triggers_dict.get("mom_work_promotion_outfit_slutty", False):
+            $ interview_outfit = business_wardrobe.get_outfit_with_name("business_slutty")
+            $ the_person.event_triggers_dict["mom_work_promotion_outfit"] = interview_outfit.get_copy()
+
+        else:
+            $ interview_outfit = business_wardrobe.get_outfit_with_name("business_conservative")
+            $ the_person.event_triggers_dict["mom_work_promotion_outfit"] = interview_outfit.get_copy()
+
+    $ the_person.planned_outfit = interview_outfit
+    $ the_person.apply_outfit(interview_outfit)
+    $ the_person.draw_person()
+    the_person.char "I've got my first interview for my promotion today, so I'm heading to the office early."
+    the_person.char "How do I look? Is it okay?"
+    "She gives you a quick turn left and right."
+    mc.name "You look great [the_person.title], you're going to blow them away."
+    the_person.char "Aw, thank you [the_person.mc_title]. Come on, give me a kiss for good luck"
+    if the_person.effective_sluttiness("kissing") > 30:
+        "[the_person.possessive_title] steps close to you and leans towards you."
+        "You kiss her on the lips. She closes her eyes and kisses you back, mainting it for a few long seconds before stepping back."
+    else:
+        "She leans in and turns her head, letting you give her a peck on the cheek."
+
+    mc.name "Good luck [the_person.title]."
+    the_person.char "I'll let you know how it goes when I see you later today. Have a good time at work."
+    "She steps out of your room, blowing you a kiss as she closes the door behind her."
+    $ clear_scene()
+    $ mom_bedroom.move_person(the_person, downtown)
+    $ mom_work_promotion_one_report_crisis = Action("mom work promotion one report", mom_work_promotion_one_report_requirement, "mom_work_promotion_one_report", requirement_args = day)
+    $ the_person.on_room_enter_event_list.append(mom_work_promotion_one_report_crisis)
+    return
+
+label mom_work_promotion_one_report(the_person): # She tells you how her interview went.
+    if the_person.event_triggers_dict.get("mom_work_promotion_outfit_slutty", False):
+        $ the_person.draw_person(emotion = "happy")
+        $ the_person.change_happiness(20, add_to_log = False)
+        the_person.char "Oh, hi [the_person.mc_title]. I've got good news! My interview went really well!"
+        mc.name "That's great news!"
+        the_person.char "I think you were right about my outfit. I was getting comments on it all day!"
+        the_person.char "The interview board seems very receptive to my points about bringing a womans viewpoint onto the team, too!"
+        "She gives you a tight hug."
+        $ the_person.change_love(3)
+        the_person.char "Thank you for all of the help and encouragement. You're such a sweetheart."
+        mc.name "I'm just happy to see you happy [the_person.title]."
+        the_person.char "The next stage of interviews is next week. I'm having a one-on-one lunch with the man who would be my boss."
+        the_person.char "I'll worry about that later though, right now I'm just going to have a drink and be happy!"
+        # She was using her slutty outfit, things went well
+    else:
+        $ the_person.draw_person()
+        the_person.char "Oh, hi [the_person.mc_title]."
+        mc.name "Hey [the_person.title]. Did you have your interview today?"
+        the_person.char "I did. It went... Fine, I suppose."
+        the_person.char "I made it through to the second round, but there are a lot of other good candidates. I shouldn't get my hopes up."
+        mc.name "Don't count yourself out so early. You just need to find a way to stand out in a crowd."
+        the_person.char "Maybe you're right. At least I made it through the first round, so I can celebrate that!"
+        mc.name "That's the spirit."
+        "She gives you a quick hug and kiss on the cheek."
+        the_person.char "Thank you for your support [the_person.mc_title]."
+        # She was using a conservative outfit, it went poorly
+
+    $ clear_scene()
+    $ mom_work_promotion_two_intro_crisis = Action("mom work promotion two intro crisis", mom_work_promotion_two_intro_requirement, "mom_work_promotion_two_intro", args = the_person, requirement_args = renpy.random.randint(day+2, day+4))
+    $ mc.business.mandatory_crises_list.append(mom_work_promotion_two_intro_crisis)
+    return
+
+label mom_work_promotion_two_intro(the_person): # She asks you to help her prepare for her one-on-one interview.
+    "There's a soft knock at your door as you are getting ready for bed."
+    the_person.char "It's me, can I come in?"
+    mc.name "Come on on [the_person.title]."
+    $ the_person.draw_person()
+    "[the_person.possessive_title] opens the door and leans in."
+    the_person.char "Sorry to bother you, I know you probably want to get to bed after a long day."
+    mc.name "Don't worry about it. What's up?"
+    the_person.char "My second interview for my promotion is coming up soon, and I was hoping you could help me prepare when you've got time."
+    the_person.char "I understand if you're busy, but if you can make time to help your mother out I would appreciate it."
+    the_person.char "Just come talk to me if you've got some free time, okay?"
+    mc.name "Okay, I will [the_person.title]."
+    the_person.char "Thank you [the_person.mc_title]. Sweet dreams."
+    "She blows you a kiss and closes the door."
+    $ clear_scene()
+    $ the_person.event_triggers_dict["mom_work_promotion_two_prep_enabled"] = True
+
+    $ mom_work_promotion_two_crisis = Action("mom_work_promotion_two_crisis", mom_work_promotion_two_requirement, "mom_work_promotion_two", args = the_person, requirement_args = renpy.random.randint(day+6,day+9))
+    $ mc.business.mandatory_morning_crises_list.append(mom_work_promotion_two_crisis)
+    return
+
+label mom_work_promotion_two_prep(the_person):
+    $ the_person.event_triggers_dict["mom_work_promotion_two_prep_enabled"] = False #Disable the action so it can only be taken once.
+    mc.name "I've got some spare time, do you want some help getting ready for your interview?"
+    $ the_person.draw_person(emotion = "happy")
+    if the_person in the_person.home.people: # in her bedroom already
+        the_person.char "That would be so helpful, thank you sweetheart."
+        $ the_person.draw_person(position = "sitting")
+        "She sits down on the side of her bed and motions for you to do the same."
+    else:
+        the_person.char "That would be so helpful, thank you sweetheart. Let's go to my bedroom, so we don't bother your sister."
+        $ mom_bedroom.show_background()
+        $ the_person.draw_person(position = "sitting")
+        "You follow her to her room. She sits down on the side of her bed and motions for you to do the same."
+
+    the_person.char "Okay, um... So I have some notes about topics I want to discuss, and..."
+    mc.name "Wait, before we start you should get into your interview outfit."
+    "She nods."
+    the_person.char "That's a good idea. The way you dress can say a lot about you."
+    the_person.char "Just one second while I get changed..."
+    $ the_person.draw_person(position = "walking_away")
+    "[the_person.possessive_title] stands up and turns towards her wardrobe as she starts stripping down."
+
+    $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+    while next_item:
+        $ the_person.draw_animated_removal(next_item)
+        "..."
+        $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+    $ interview_uniform = the_person.event_triggers_dict.get("mom_work_promotion_outfit", None)
+    "Once she's naked she starts to dig around in her wardrobe."
+    the_person.char "Now let's see, where did I hang it up..."
+
+    if the_person.event_triggers_dict.get("mom_work_promotion_outfit_slutty", False):
+        "She pulls a hanger out of the wardrobe."
+        the_person.char "Ah, here it is."
+        $ interview_uniform = the_person.event_triggers_dict.get("mom_work_promotion_outfit")
+        "[the_person.title] slides the outfit on, then turns around to you and smiles."
+        $ the_person.apply_outfit(interview_uniform)
+        $ the_person.draw_person(emotion = "happy")
+        the_person.char "Does it still look good?"
+        mc.name "It looks great [the_person.title]. I can't take my eyes off of you."
+
+    else:
+        # She was dressed conservatively.
+
+        mc.name "[the_person.title], were you planning to wear the same outfit?"
+        $ the_person.draw_person(position = "back_peek")
+        the_person.char "I was. Why?"
+        menu:
+            "Suggest something sexier.":
+                mc.name "It was a little... severe. If this is a one-on-one you want something a little more friend and eye-catching."
+                mc.name "Something that will show off your womanly assets."
+                the_person.char "Do you think so? I suppose I did have trouble in the first round holding their attention..."
+                the_person.char "Okay, let me try putting on something more... revealing. One moment."
+                "She turns back to her wardrobe and digs around. She pulls out a few pieces of clothing and put them on the bed."
+                the_person.char "Let's try this..."
+                $ interview_uniform = business_wardrobe.get_outfit_with_name("business_slutty")
+                $ the_person.event_triggers_dict["mom_work_promotion_outfit_slutty"] = True
+                $ the_person.apply_outfit(interview_uniform)
+                "[the_person.title] slides on her new outfit in front of you."
+                $ the_person.draw_person(emotion = "happy")
+                the_person.char "What do you think about this? It's a little bolder, but I don't think I would get in any trouble for wearing it."
+                mc.name "I think it's a big improvement. I can't take my eyes off of you now."
+
+            "That outfit is fine.":
+                mc.name "No reason, I was just curious."
+                "She smiles and turns back to the wardrobe. After a moment she pulls out a hanger with the outfit on it."
+                $ interview_uniform = the_person.event_triggers_dict.get("mom_work_promotion_outfit") # This is guaranteed to exist by the step 1 before event.
+                $ the_person.apply_outfit(interview_uniform)
+                "She slides the outfit on in front of you."
+                $ the_person.draw_person(emotion = "happy")
+                the_person.char "There, now I'm feeling professional."
+
+    $ the_person.draw_person(position = "sitting")
+    "[the_person.possessive_title] sits back down on the bed and crosses her legs."
+
+    mc.name "Now let's talk about your attitude. You're going to want to show your potential boss that you're a good fit."
+    the_person.char "Oh, just thinking about this is making me nervous. How do you think I should act?"
+    menu:
+        "Be slutty.": #She gets promoted to be her bosses "secretary"
+            mc.name "You need to grab his attention, and you can rely on men to think with their dicks."
+            the_person.char "Uh, what do you mean [the_person.mc_title]."
+            mc.name "You need to get him excited, [the_person.title]. He's way more likely to enjoy your time together if he's turned on."
+            "She nods, but seems unsure."
+            the_person.char "I don't need to actually... do anything with him, right?"
+            mc.name "No, of course not. You've got a great figure though, so make sure to keep your ti... breasts out front."
+            "[the_person.possessive_title] puffs out her chest a little bit."
+            the_person.char "Like this?"
+            mc.name "That's a good start. Maybe try touching his thigh while you're talking. Just a gentle stroke."
+            "She reaches out and rubs your thigh, maintaining eye contact with you."
+            the_person.char "Is that about right? Oh, I guess it is!"
+            "[the_person.title] pulls her hand back as it brushes against your hardening cock."
+            mc.name "Sorry [the_person.title], that's just a natural reaction. Let's practice one other thing you can try."
+            the_person.char "Alright, what is it?"
+            mc.name "If you think you're losing him try dropping a fork, and then get on your knees to get it."
+            mc.name "Let him get a good look at your butt when he thinks you won't notice."
+            the_person.char "What if he doesn't look?"
+            mc.name "Trust me, he'll look. Give it a try, we can roleplay it a little bit."
+            "[the_person.possessive_title] takes a pen from her bed stand and drops it on the floor in front of her."
+            the_person.char "Oops. One moment..."
+            $ the_person.draw_person(position = "doggy")
+            "She gets off the bed and onto her knees, reaching slowly for the pen."
+            menu:
+                "Slap her ass.":
+                    "You sit forward and slap your hand across [the_person.possessive_title]'s butt. She gasps and stands up"
+                    $ the_person.draw_person()
+                    the_person.char "[the_person.title], try and take this seriously."
+                    mc.name "I am being serious. If something like this happens you need to be ready."
+                    the_person.char "You mean my boss might..."
+                    mc.name "I don't think he would be bold enough, but if he does it means our plan is working."
+                    mc.name "You have to make him feel comfortable after, like everyone is having fun."
+                    the_person.char "Right..."
+                    mc.name "Come on, let's try it again. This time just get the pen and laugh it off."
+                    $ the_person.draw_person(position = "doggy")
+                    "She nods and gets back onto her knees, making an obvious show of reaching for her dropped pen."
+                    the_person.char "Let me just get this..."
+                    "You give her ass a solid slap, setting it jiggling for a moment. [the_person.title] gasps, but grabs the pen before standing up."
+                    $ the_person.draw_person(emotion = "happy")
+                    the_person.char "Haha! Save it for later, we've got business to talk about right now..."
+                    "She sits back down next to you and puts the end of the pen on her lips, almost sucking on it."
+                    the_person.char "How was that? I think I really got it."
+                    "You reposition to make your growing erection more comfortable."
+                    mc.name "Yeah, I think you got it too [the_person.title]. He won't be able to say no to you if you can do something like that."
+
+                "Just watch.":
+                    "You enjoy the view as she stretches forward and retrieves the pen."
+                    $ the_person.draw_person(position = "sitting")
+                    "She stands up, brushes off her knees, and sits back down on the bed beside you."
+                    the_person.char "How was that? Did I do that right?"
+                    mc.name "It was great [the_person.title]."
+                    "She smiles and nods."
+                    the_person.char "Okay, I think I can do all of that. Once I have his attention I can make sure to talk about all my qualifications."
+                    mc.name "Yeah, I'm sure he'll want to hear about that too."
+
+            "[the_person.possessive_title] gives you a warm hug."
+            the_person.char "Thank you for the help [the_person.mc_title]. I couldn't have done this without you."
+            mc.name "It was my pleasure [the_person.title]. Let me know how it goes, okay?"
+            $ the_person.event_triggers_dict["mom_work_promotion_two_tactic"] = "slutty"
+
+
+        "Be friendly.": #She gets promoted to be her bosses "secretary" if she's dressed sluttily
+            mc.name "You need to be friendly with him. Catch his attention and try and make a connection right away."
+            the_person.char "Okay, but how do I do that?"
+            mc.name "Start by being physical with him. Kiss him on the cheek when you meet, touch his arm when you talk, lean close to him when you can."
+            mc.name "If he tries to make any jokes be sure to laugh, even if they aren't funny. Let's give all of that a try now."
+            "[the_person.title] nods, and you both stand up."
+            $ the_person.draw_person()
+            the_person.char "Okay, let's see. Ah... Hello sir, good to see you again."
+            mc.name "Mrs.[the_person.last_name], it's good to see you too."
+            "You hold out your hand to shake hers. She takes it, then steps forward and gives you a quick hug."
+            "She follows it up with a quick peck on the cheek, then motions to the bed."
+            the_person.char "Shall we sit down and talk?"
+            mc.name "That's perfect [the_person.title]. Keep that up for the whole interview and I think you'll do well."
+            the_person.char "Thank you sweetheart, I'm going to do my best."
+            "She pulls you into a real hug for a few seconds."
+            mc.name "Let me know how it goes, okay?"
+            $ the_person.event_triggers_dict["mom_work_promotion_two_tactic"] = "friendly"
+
+        "Be professional.": #She doesn't get any sort of promotion
+            mc.name "Keep it professional. Focus on your qualifications and your training."
+            "She nods."
+            the_person.char "Okay, I think I can do that. I have some notes written down for things I want to tell him about."
+            mc.name "Good, let's go through that list now."
+            "[the_person.possessive_title] grabs a note pad from her bed stand and starts reading through it."
+            "You help her organise her notes and prepare for the interview."
+            the_person.char "I think I'm ready, now I just have to wait and try not to worry too much."
+            the_person.char "Thank you for the help sweetheart."
+            "She leans over and gives you a hug, followed by a kiss on the cheek."
+            mc.name "No problem [the_person.title]. Let me know how it goes, okay?"
+            $ the_person.event_triggers_dict["mom_work_promotion_two_tactic"] = "professional"
+
+
+    the_person.char "I'll tell you as soon as I find out."
+    $ clear_scene()
+    $ mc.location.show_background()
+    return
+
+label mom_work_promotion_two(the_person): # Based on what you tell her to do the promotion offer can turn out different ways.
+    $ the_person.event_triggers_dict["mom_work_promotion_two_prep_enabled"] = False #Too late to prep if you haven't yet.
+    if the_person.event_triggers_dict.get("mom_work_promotion_two_tactic", "none") == "slutty":
+        $ the_person.event_triggers_dict["mom_work_secretary_promotion"] = True
+    elif the_person.event_triggers_dict.get("mom_work_promotion_two_tactic", "none") == "friendly" and the_person.event_triggers_dict.get("mom_work_promotion_outfit_slutty", False):
+        $ the_person.event_triggers_dict["mom_work_secretary_promotion"] = True
+    else:
+        $ the_person.event_triggers_dict["mom_work_secretary_promotion"] = False
+
+    $ mom_work_promotion_two_report_crisis = Action("mom work promotion two report", mom_work_promotion_two_report_requirement, "mom_work_promotion_two_report")
+    $ the_person.on_room_enter_event_list.append(mom_work_promotion_two_report_crisis)
+    return
+
+label mom_work_promotion_two_report(the_person): #TODO: Hook this up as an on_room or maybe a mandatory event
+    if the_person.event_triggers_dict.get("mom_work_secretary_promotion", False): #Promotion, setting her up to be turned into the office slut.
+        $ the_person.change_happiness(20, add_to_log = False)
+        $ the_person.draw_person(emotion = "happy")
+        "[the_person.title] gives you a bright smile and hurries over to you as soon as she sees you."
+        the_person.char "[the_person.mc_title], I have some good news!"
+        mc.name "Let me guess. You got your promtion?"
+        the_person.char "Kind of. I had a fantastic interview with my superior and I think we really made a connection."
+        the_person.char "He told me that the committee had already made their pick, so there wasn't really any chance I was going to get hte promotion."
+        the_person.char "But he did tell me that there was a position in his department as his personal technical assistant."
+        the_person.char "He offered me the job right there! It's not much of a pay raise, but the hours are more flexible and the work should be easier."
+        mc.name "That's fantastic [the_person.title]. I knew it would all work out."
+        if the_person.event_triggers_dict.get("mom_work_promotion_two_tactic", "none") == "friendly":
+            the_person.char "You were right about being friendly. He said he was really excited for us to be working together."
+            the_person.char "I almost think he gave me the job just to spend more time with me."
+
+        elif the_person.event_triggers_dict.get("mom_work_promotion_outfit_slutty", False):
+            the_person.char "You were right about being a little flirty with him. He had his eyes all over me the entire time."
+            the_person.char "I almost think he gave me the job just so he could spend more time looking at me."
+
+        "[the_person.possessive_title] gives you a tight hug."
+        the_person.char "Thank you so much for all of your help sweetheart. You're the best son in the whole world."
+        "You hug her back. When she steps away she's still smiling ear to ear."
+
+    else: #No promotion
+        $ the_person.change_happiness(-20, add_to_log = False)
+        $ the_person.draw_person(emotion = "sad")
+        "[the_person.title] gives you a half-hearted smile when she sees you enter the room."
+        the_person.char "Oh, hi [the_person.mc_title]..."
+        mc.name "Hey [the_person.title]. Is something wrong?"
+        the_person.char "I had my second round interview today, and I was told I'm not getting the position."
+        mc.name "Oh, I'm sorry."
+        "You give [the_person.possessive_title] a gentle hug."
+        the_person.char "Thank you. I'll be okay."
+        mc.name "I know you will [the_person.title]. They're idiots for not believing in you."
+        "She let's you hold her for a few moments, then she steps back and smiles. It seems a little more sincere this time."
+
+    $ clear_scene()
+    return
+
+label mom_weekly_pay_lily_question(the_person):
+    if the_person.event_triggers_dict.get("mom_instathot_questioned", False):
+        the_person.char "Before we talk about that, do can I ask you a question?"
+        mc.name "Sure, what do you want to know?"
+        the_person.char "Well, it's your sister again. She had more money to help with the bills, but she still won't tell me where it's from."
+        the_person.char "I know I said I wouldn't pry, but the only times she leaves the house is to go to class."
+        the_person.char "I just really want to be sure she's not in some sort of trouble."
+    else:
+        the_person.char "Oh, before we talk about that I'm hoping you can answer something for me."
+        mc.name "Okay, what do you need to know?"
+        the_person.char "Your sister was very strange just now. She actually offered to help with the bills."
+        the_person.char "She wouldn't tell me where she's getting this money though."
+        the_person.char "I respect her privacy, but I want to make sure she isn't getting into any trouble."
+        $ the_person.event_triggers_dict["mom_instathot_questioned"] = True
+
+    menu:
+        "Cover for [lily.title].":
+            if the_person.event_triggers_dict.get("mom_instathot_questioned", False):
+                mc.name "She's working on campus, so I guess she's working between classes."
+                the_person.char "I just wish she would trust me."
+                mc.name "I'm sure she'll tell you eventually, but you don't need to worry about her."
+                the_person.char "I hope she does. Thank you [the_person.mc_title]."
+
+            else:
+                mc.name "Uh... No, she isn't getting into any trouble. I think she's just got a job on campus."
+                the_person.char "Really? Why wouldn't she tell me about that, I'm so proud of her!"
+                mc.name "I don't know, maybe she didn't want you to think she's doing it just because we need money."
+                the_person.char "Well, I'll let her tell me when she's ready. I'm just happy to know it's nothing to worry about."
+
+        "Tell her about Insta-pic.":
+            mc.name "Well, I think she's picked up a part time job."
+            the_person.char "Oh, why haven't I heard about this?"
+            mc.name "It's not exactly a traditional job. She's been putting picture up on Insta-pic."
+            the_person.char "Insta-pic? Isn't that an internet thing? I don't understand."
+            mc.name "[lily.title] puts up pictures showing off clothing, and Insta-pic pays her for the ad traffic she generates."
+            the_person.char "So it's like modeling, but she can do it from home?"
+            mc.name "I guess so, yeah. She's just worried that you wouldn't approve."
+            the_person.char "Why wouldn't I? Models can be very successful. And there are no photographers or agents to take advantage of her."
+            the_person.char "I'm going to tell her how proud I am of her. Maybe she'll even let her Mom take a few photos with her."
+            "She laughs and shrugs."
+            the_person.char "Never mind, nobody's interested in looking at someone old like me."
+            mc.name "You should absolutely ask [lily.title] to take some pictures with you. I think you'd be surprised."
+            the_person.char "Aww, you're too sweet."
+            $ lily.event_triggers_dict["sister_instathot_mom_knows"] = True
+            $ sister_instapic_discover_crisis = Action("sister insta mom reveal", sister_instapic_discover_requirement, "sister_instathot_mom_discover", args = lily, requirement_args = lily)
+            $ mc.business.mandatory_crises_list.append(sister_instapic_discover_crisis)
+    return
+
+label mom_stress_relief_offer(the_person): #TODO: Write and hook this up.
+
     return

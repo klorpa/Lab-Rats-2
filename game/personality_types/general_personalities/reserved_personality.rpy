@@ -244,13 +244,21 @@ label reserved_clothing_review(the_person):
             the_person.char "Oh, I look like such a mess right now. I'll be back in a moment."
     return
 
-label reserved_strip_reject(the_person):
+label reserved_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "I'm sorry [the_person.mc_title], but I think that should stay where it is for now. For modesty's sake."
+        the_person.char "I'm sorry [the_person.mc_title], but I think my [the_clothing.display_name] should stay where it is for now. For modesty's sake."
     elif the_person.obedience < 70:
         the_person.char "That's going to stay right there for now. I'll decide when I want it to come off, okay?."
     else:
         the_person.char "[the_person.mc_title], I don't feel comfortable taking that off. Just leave it put."
+    return
+
+label reserved_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    "[the_person.title] speaks quietly as you start to move her [the_clothing.display_name]."
+    if the_person.obedience > 130:
+        the_person.char "I... I'm sorry, but I don't know if you should take that off [the_person.mc_title]..."
+    else:
+        the_person.char "I really shouldn't take that off [the_person.mc_title]..."
     return
 
 label reserved_sex_accept(the_person):

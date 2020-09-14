@@ -171,7 +171,6 @@ label pregnant_announce(the_person):
             the_person.char "I wasn't on any sort of birth control when we fooled around. It felt so good when you came inside me, but..."
             "She sighs and shrugs."
             the_person.char "It must have been the right time of the month, because I'm pregnant."
-
         the_person.char "You don't need to do anything, I knew the risks when we had sex. I just thought you should know."
         menu:
             "Take responsability." if ask_girlfriend_requirement(the_person):
@@ -320,7 +319,7 @@ label pregnant_finish(the_person):
         the_person.on_talk_event_list.append(tit_shrink_two_announcement_action)
 
         while pregnant_role in the_person.special_role: #While loop just in case it's ended up in there multiple times. In theory this should only trigger once.
-            the_person.remove(pregnant_role)
+            the_person.special_role.remove(pregnant_role)
 
     "You get a call from [the_person.possessive_title] early in the morning. You answer it."
     the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.

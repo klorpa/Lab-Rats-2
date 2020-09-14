@@ -157,6 +157,15 @@ init -2 python:
         else:
             return True
 
+    def suck_demand_requirement(the_person):
+        if the_person.has_taboo("sucking_cock"):
+            return False #Doesn't appear until you've broken the taboo in the first place
+        elif the_person.obedience < 150:
+            return "Requires: 150 Obedience"
+        else:
+            return True
+
+
     def demand_strip_requirement(the_person):
         if not (demand_strip_tits_requirement(the_person) or demand_strip_underwear_requirement(the_person) or demand_strip_naked_requirement(the_person)):
             return False
@@ -571,6 +580,8 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
         # High Love
         mc.name "[the_person.title], your outfit is driving me crazy. What are my chances of getting you out of it?"
         $ the_person.call_dialogue("flirt_response_high")
+
+    $ the_person.review_outfit() #In case we had sex, she sorts out her outfit.
 
     # mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
     $ mc.listener_system.fire_event("player_flirt", the_person = the_person)
@@ -1390,7 +1401,7 @@ label grope_person(the_person):
                             "[the_person.possessive_title] either doesn't notice or doesn't care, but there are other people around."
                             menu:
                                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
-                                    mc.name "Come with me, I don't want to be interupted."
+                                    mc.name "Come with me, I don't want to be interrupted."
                                     "You take [the_person.title] by the wrist and lead her away. She follows eagerly."
                                     "After searching for a couple of minutes you find a quiet space with just the two of you."
                                     #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
@@ -1402,6 +1413,7 @@ label grope_person(the_person):
 
 
                     call fuck_person(the_person, private = should_be_private, start_position = standing_grope, start_object = None, skip_intro = True) from _call_fuck_person_43 # Enter the sex system, starting from this point.
+                    $ the_person.review_outfit()
     return
 
 label command_person(the_person):
@@ -1432,13 +1444,16 @@ label command_person(the_person):
     $ touch_demand_action = Action("Let me touch you.\n-10  {image=gui/extra_images/energy_token.png}", requirement = demand_touch_requirement, effect = "demand_touch_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Demand "+the_person.title+" stays still and lets you touch her. Going too far may damage your relationship.", priority = -5)
 
+    $ suck_demand_action = Action("Suck my cock.", requirement = suck_demand_requirement, effect = "suck_demand_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Demand " + the_person.title + " gets onto her knees and worships your cock.", priority = -5)
+
     $ bc_demand_action = Action("Talk about birth control.", requirement = demand_bc_requirement, effect = "bc_demand_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Discuss "+the_person.title+"'s use of birth control.", priority = -5)
 
     #TODO: Add more commands
     #TODO: Add a way to add role specific commands.
 
-    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, bc_demand_action, "Return"])
+    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, suck_demand_action, bc_demand_action, "Return"])
     #call screen main_choice_display([["Command her to...", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"]])
     #$ player_choice = _return
     if player_choice == "Return":
@@ -1447,104 +1462,104 @@ label command_person(the_person):
         $ player_choice.call_action()
     return
 
-label seduce_label(the_person):
-    mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
-
-    if prostitute_role in the_person.special_role and the_person.love < 20:
-        the_person.char "I've been thinking about you too, but I've got bills to pay and I can't do this for free."
-        return
-    elif prostitute_role in the_person.special_role and the_person.love >= 20:
-        the_person.char "I should really make you pay for this... but you're one of my favourites and I'm curious what you had in mind."
-    else:
-        $ the_person.call_dialogue("seduction_response")
-
-    $ random_chance = renpy.random.randint(0,100)
-    $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
-    $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
-    $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
-
-    if chance_service_her > 100:
-        $ chance_service_her = 100
-    elif chance_service_her < 0:
-        $ chance_service_her = 0
-
-    if chance_both_good > 100:
-        $ chance_both_good = 100
-    elif chance_both_good < 0:
-        $ chance_both_good = 0
-
-    if chance_service_him > 100:
-        $ chance_service_him = 100
-    elif chance_service_him < 0:
-        $ chance_service_him = 0
-
-    $ seduced = False #Flip to true if the approach works
-    menu:
-        "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
-            "You lean in close whisper what you want to do to her."
-            if random_chance < chance_service_her: #Success
-                $ seduced = True
-                $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
-                $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
-                $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
-                $ the_person.discover_opinion("taking control")
-            else: #Failure
-                pass
-
-        "Let's have a good time.\n{size=22}Success Chance: [chance_both_good]%%\nModifiers: None{/size} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
-            "You lean in close and whisper what you want to do together."
-            if random_chance < chance_both_good:
-                $ seduced = True
-            else:
-                pass
-
-        "I need you to get me off.\n{size=22}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
-            "You lean in close and whisper what you want her to do to you."
-            if random_chance < chance_service_him:
-                $ seduced = True
-                $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
-                $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
-                $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
-                $ the_person.discover_opinion("being submissive")
-            else:
-                pass
-
-
-
-    if seduced and the_person.sexed_count < 1:
-
-        $ extra_people_count = mc.location.get_person_count() - 1
-        $ in_private = True
-        if extra_people_count > 0: #We have more than one person here
-            $ the_person.call_dialogue("seduction_accept_crowded")
-            menu:
-                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
-                    "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interupted."
-
-                "Stay right here.\n{size=22}[extra_people_count] watching{/size}":
-                    if the_person.sluttiness < 50:
-                        mc.name "I think we'll be fine right here."
-                        the_person.char "I... Okay, if you say so."
-
-                    $ in_private = False
-        else:
-            $ the_person.call_dialogue("seduction_accept_alone")
-
-        call fuck_person(the_person,private = in_private) from _call_fuck_person
-
-        $ the_person.review_outfit()
-
-        #Tidy up our situational modifiers, if any.
-        $ the_person.clear_situational_slut("public_sex")
-        $ the_person.clear_situational_slut("seduction_approach")
-        $ the_person.clear_situational_obedience("seduction_approach")
-    else:
-        $ the_person.call_dialogue("seduction_refuse")
-        $ the_person.clear_situational_slut("seduction_approach")
-        $ the_person.clear_situational_obedience("seduction_approach")
-
-    $ the_person.sexed_count += 1
-    return
+# label seduce_label(the_person): No longer needed since "seduce" was split up to be multiple different approaches
+#     mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
+#
+#     if prostitute_role in the_person.special_role and the_person.love < 20:
+#         the_person.char "I've been thinking about you too, but I've got bills to pay and I can't do this for free."
+#         return
+#     elif prostitute_role in the_person.special_role and the_person.love >= 20:
+#         the_person.char "I should really make you pay for this... but you're one of my favourites and I'm curious what you had in mind."
+#     else:
+#         $ the_person.call_dialogue("seduction_response")
+#
+#     $ random_chance = renpy.random.randint(0,100)
+#     $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
+#     $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
+#     $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
+#
+#     if chance_service_her > 100:
+#         $ chance_service_her = 100
+#     elif chance_service_her < 0:
+#         $ chance_service_her = 0
+#
+#     if chance_both_good > 100:
+#         $ chance_both_good = 100
+#     elif chance_both_good < 0:
+#         $ chance_both_good = 0
+#
+#     if chance_service_him > 100:
+#         $ chance_service_him = 100
+#     elif chance_service_him < 0:
+#         $ chance_service_him = 0
+#
+#     $ seduced = False #Flip to true if the approach works
+#     menu:
+#         "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
+#             "You lean in close whisper what you want to do to her."
+#             if random_chance < chance_service_her: #Success
+#                 $ seduced = True
+#                 $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
+#                 $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
+#                 $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
+#                 $ the_person.discover_opinion("taking control")
+#             else: #Failure
+#                 pass
+#
+#         "Let's have a good time.\n{size=22}Success Chance: [chance_both_good]%%\nModifiers: None{/size} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
+#             "You lean in close and whisper what you want to do together."
+#             if random_chance < chance_both_good:
+#                 $ seduced = True
+#             else:
+#                 pass
+#
+#         "I need you to get me off.\n{size=22}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
+#             "You lean in close and whisper what you want her to do to you."
+#             if random_chance < chance_service_him:
+#                 $ seduced = True
+#                 $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
+#                 $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
+#                 $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
+#                 $ the_person.discover_opinion("being submissive")
+#             else:
+#                 pass
+#
+#
+#
+#     if seduced and the_person.sexed_count < 1:
+#
+#         $ extra_people_count = mc.location.get_person_count() - 1
+#         $ in_private = True
+#         if extra_people_count > 0: #We have more than one person here
+#             $ the_person.call_dialogue("seduction_accept_crowded")
+#             menu:
+#                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+#                     "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interrupted."
+#
+#                 "Stay right here.\n{size=22}[extra_people_count] watching{/size}":
+#                     if the_person.sluttiness < 50:
+#                         mc.name "I think we'll be fine right here."
+#                         the_person.char "I... Okay, if you say so."
+#
+#                     $ in_private = False
+#         else:
+#             $ the_person.call_dialogue("seduction_accept_alone")
+#
+#         call fuck_person(the_person,private = in_private) from _call_fuck_person
+#
+#         $ the_person.review_outfit()
+#
+#         #Tidy up our situational modifiers, if any.
+#         $ the_person.clear_situational_slut("public_sex")
+#         $ the_person.clear_situational_slut("seduction_approach")
+#         $ the_person.clear_situational_obedience("seduction_approach")
+#     else:
+#         $ the_person.call_dialogue("seduction_refuse")
+#         $ the_person.clear_situational_slut("seduction_approach")
+#         $ the_person.clear_situational_obedience("seduction_approach")
+#
+#     $ the_person.sexed_count += 1
+#     return
 
 label bc_talk_label(the_person):
     # Contains the Love and Sluttiness based approaches to asking someone to stop taking birth control.

@@ -316,10 +316,10 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
                                 if person_preview_args is None:
                                     $ person_preview_args = {}
 
-                                #$ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
-                                #$ hovered_list.append(Function(renpy.invoke_in_thread, item.threaded_person_displayable, lighting = mc.location.get_lighting_conditions(), **person_preview_args))
-                                #$ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="Active",what=person_displayable,tag=item.name))
-                                #$ unhovered_list.append(Function(renpy.scene, "Active"))
+                                $ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
+                                #$ hovered_list.append(Function(item.draw_person, **person_preview_args))
+                                $ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="Active",what=person_displayable,tag=item.name))
+                                $ unhovered_list.append(Function(clear_scene))
 
                             if isinstance(item,Action):
                                 $ title = ""

@@ -17,11 +17,11 @@ label serum_demand_label(the_person):
 label wardrobe_change_label(the_person):
     menu:
         "Add an outfit.":
-            mc.name "[the_person.title], I've got something I'd like you to wear for me."
+            mc.name "[the_person.title], I got you something I think you might like."
             $ clear_scene()
-            call screen outfit_select_manager()
+            call outfit_master_manager(main_selectable = True) from _call_outfit_master_manager_8
             $ the_person.draw_person()
-            if not _return == "No Return":
+            if _return:
                 $ new_outfit = _return
                 menu:
                     "Save as a full outfit.":
@@ -134,6 +134,8 @@ label demand_touch_label(the_person):
     else:
         "You take your hand off her ass and walk behind her. You grab one of her small tits with one hand and move the other down between her thighs."
 
+
+
     if mc.location.get_person_count() > 1: #We're not in private, give the option to go somewhere quiet.
         $ extra_people_count = mc.location.get_person_count() - 1
         $ the_person.discover_opinion("public sex")
@@ -162,7 +164,7 @@ label demand_touch_label(the_person):
                     return
 
         elif the_person.effective_sluttiness("touching_body") < (30 - (the_person.get_opinion_score("public sex" * 5))):
-            #She's embarassed by it and demands to go somewhere else. If she's v
+            #She's embarassed by it and demands to go somewhere else.
             "[the_person.possessive_title] looks around nervously."
             the_person.char "[the_person.mc_title], there are other people looking. Could we please find somewhere private?"
             menu:
@@ -187,7 +189,7 @@ label demand_touch_label(the_person):
             "There are other people around, but [the_person.possessive_title] either doesn't care or is too determined to follow your instructions exactly."
             menu:
                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
-                    mc.name "Come with me, I don't want to be interupted."
+                    mc.name "Come with me, I don't want to be interrupted."
                     "You take [the_person.title] by the wrist and lead her away. She follows without question."
                     "After searching for a couple of minutes you find a quiet space with just the two of you."
                     "You don't waste any time getting back to what you were doing, grabbing [the_person.possessive_title]'s tits and groping her ass."
@@ -202,6 +204,7 @@ label demand_touch_label(the_person):
 
 
     call fuck_person(the_person, private = should_be_private, start_position = standing_grope, start_object = None, skip_intro = True) from _call_fuck_person_44
+    $ the_person.review_outfit()
     return
 
 init -3 python:
@@ -281,7 +284,7 @@ label demand_strip_tits_label(the_person):
             #We're in private, so she's a little more brave. If she loves you she might even do it for fun
             if the_person.effective_sluttiness("bare_tits") + the_person.love < (40 - (5*the_person.get_opinion_score("showing her tits"))):
                 #Pure Obedience going on
-                "[the_person.possessive_title] seems uncomfortable, but without hesitation begins to take off her [first_item.display_name]."
+                "[the_person.possessive_title] seems uncomfortable, but she doesn't hesitation to follow instructions. She begins to take off her [first_item.display_name]."
 
             else:
                 #She loves you, this is just cutting to the chase.
@@ -548,4 +551,84 @@ label demand_strip_naked_label(the_person):
             else:
                 the_person.char "Okay, if that's what you want me to do [the_person.mc_title]."
                 "[the_person.title] doesn't seem to mind."
+    return
+
+label suck_demand_label(the_person):
+    $ private = True
+    if mc.location.get_person_count() > 1:
+        # There are other people here, let's ask if we want to go someplace quiet first.
+        menu:
+            "Find someplace quiet first.":
+                mc.name "Follow me."
+                "[the_person.possessive_title] nods and follows obediently after you."
+                "You find a quiet spot where you're unlikely to be interrupted and turn back to her."
+
+            "Do it right here.":
+                $ private = False
+                pass
+
+    "You unzip your pants and pull your cock free, already hardening with excitement."
+    mc.name "Get on your knees. You're going to suck my cock."
+    if the_person.effective_sluttiness("sucking_cock") + (the_person.get_opinion_score("being_submissive") * 10) >= 60: #She would do it anyways and doesn't even think it's strange. Note: We require you to already have broken the blowjob taboo to get here as well.
+        the_person.char "Right away [the_person.mc_title]."
+        $ the_person.draw_person(position = blowjob)
+        "She drops to her knees immediately, spreading her legs and planting her hands on the ground between them."
+
+    elif the_person.effective_sluttiness("sucking_cock") + (the_person.get_opinion_score("being_submissive") * 10) >= 40:
+        if private:
+            "[the_person.possessive_title] hesitates, but starts to move before you have to command her again."
+        else:
+            "[the_person.possessive_title] hesitates, glancing around."
+            the_person.char "I... Right here? Wouldn't you like to find somewhere private so we can..."
+            mc.name "Right here. Get on your knees and get my cock in your mouth before I run out of patience."
+        $ the_person.draw_person(position = blowjob)
+        "She drops to her knees, putting her hands on her thighs and moving her face to cock level."
+
+    else:
+        if private:
+            "[the_person.possessive_title] hesitates, shaking her head."
+            the_person.char "I can't do that, I..."
+            mc.name "I wasn't asking you a question. On your knees, now. The longer you take the more stress I'm going to need relieved."
+            "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."
+        else:
+            "[the_person.possessive_title] looks around, almost paniced."
+            the_person.char "I can't... We can't do that here! People would see me, I would..."
+            mc.name "I've already got my cock out, and I'm not putting it back in my pants until it's been down your throat."
+            mc.name "On your knees. Now."
+            "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."
+
+    $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.3)
+    "[the_person.title] licks the tip of your cock, then slides it tenderly into her mouth."
+    menu:
+        "Let her worship your cock.":
+            "You sigh and enjoy the feeling of her warm, wet blowjob."
+            mc.name "That's a good girl..."
+            call fuck_person(the_person, private = private, start_position = deepthroat, skip_intro = True) from _call_fuck_person_87
+            #TODO: Some end of sex stuff if we want it
+
+        "Grab her head and fuck her mouth.":
+            "You place your hands on either side of [the_person.possessive_title]'s head. She cocks her head and looks up at you."
+            mc.name "That's a good girl, now let's put you to good use."
+            "You hold her head in place as you shove your hips forward."
+            if the_person.sex_skills["Oral"] >= 4: #She throats you like a pro
+                "[the_person.title] instinctively kneels a little lower and tilts her head up, giving your cock a clear path down her throat."
+                "Her eyes flutter briefly as you bottom out, balls rubbing against her chin. You can feel her quiver as she tries to suppress her gag reflex."
+
+            else: #Gags
+                "[the_person.title] instinctively tries to jerk away, but clamp down and don't let her move."
+                "Her eyes open wide as you force your cock clear down her throat. She gags hard, blowing spit out where her lips meet the base of your shaft."
+                mc.name "I think you still need a little more practice. Let's see what we can do about that..."
+
+            "You hold yourself there for a moment, enjoying the feeling of your dick fully engulfed by your obedient [the_person.title]."
+            $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.6)
+            "You can't resist moving for long though. You pull back to give yourself room, then thrust your cock home, then again, and again."
+            if the_person.sex_skills["Oral"] >= 4: #She throats you like a pro
+                "[the_person.title] takes your cock as well as can be expected, eyes turned up to meet yours as you fuck her face."
+            else:
+                "[the_person.title] squirms and gags reflexively, but she seems to be trying her best to stay still as you fuck her face."
+
+            call fuck_person(the_person, private = private, start_position = skull_fuck, skip_intro = True) from _call_fuck_person_88
+            # TODO: End of sex stuff if we want it
+
+    $ the_person.review_outfit()
     return
