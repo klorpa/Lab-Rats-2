@@ -146,7 +146,7 @@ label employee_pay_cash_bonus(the_person):
                 $ the_person.add_situational_slut("situation", 10, "He's given me such a generous bonus, I should repay the favour!")
                 call fuck_person(the_person) from _call_fuck_person_3
                 #Now that you've had sex, we calculate the change to her stats and move on.
-                $ the_person.clear_situational_slut("situation")                
+                $ the_person.clear_situational_slut("situation")
                 $ the_person.review_outfit()
             else:
                 the_person.char "Wow... this is amazing sir. I'll do everything I can for you and the company!"
@@ -397,27 +397,27 @@ label move_employee_label(the_person):
         "Research and Development.":
             $ mc.business.add_employee_research(the_person)
             $ mc.business.r_div.add_person(the_person)
-            $ the_person.set_work([1,2,3],mc.business.r_div) #TODO: This should reference the business r_div, p_div, etc. not the actual rooms.
+            $ the_person.set_work(mc.business.r_div) #TODO: This should reference the business r_div, p_div, etc. not the actual rooms.
 
         "Production.":
             $ mc.business.add_employee_production(the_person)
             $ mc.business.p_div.add_person(the_person)
-            $ the_person.set_work([1,2,3],mc.business.p_div)
+            $ the_person.set_work(mc.business.p_div)
 
         "Supply Procurement.":
             $ mc.business.add_employee_supply(the_person)
             $ mc.business.s_div.add_person(the_person)
-            $ the_person.set_work([1,2,3],mc.business.s_div)
+            $ the_person.set_work(mc.business.s_div)
 
         "Marketing.":
             $ mc.business.add_employee_marketing(the_person)
             $ mc.business.m_div.add_person(the_person)
-            $ the_person.set_work([1,2,3], mc.business.m_div)
+            $ the_person.set_work(mc.business.m_div)
 
         "Human Resources.":
             $ mc.business.add_employee_hr(the_person)
             $ mc.business.h_div.add_person(the_person)
-            $ the_person.set_work([1,2,3],mc.business.h_div)
+            $ the_person.set_work(mc.business.h_div)
 
     the_person.char "I'll move over there right away!"
     return

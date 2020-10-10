@@ -132,6 +132,11 @@ init -2:
         list_of_names.append("Fae")
         list_of_names.append("Beth")
         list_of_names.append("Lystra")
+        list_of_names.append("Katreena")
+        list_of_names.append("Hannah")
+        list_of_names.append("Mara")
+        list_of_names.append("Trinity")
+        list_of_names.append("Stephine")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -228,6 +233,11 @@ init -2:
         list_of_last_names.append("Duroche")
         list_of_last_names.append("Hampson")
         list_of_last_names.append("Faith")
+        list_of_last_names.append("Lee")
+        list_of_last_names.append("Carbonero")
+        list_of_last_names.append("Cotten")
+        list_of_last_names.append("Ookami")
+        list_of_last_names.append("Du Roche")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -331,17 +341,23 @@ init -2:
         list_of_faces.append("Face_6")
         list_of_faces.append("Face_7")
         list_of_faces.append("Face_8")
+        list_of_faces.append("Face_5")
+        list_of_faces.append("Face_9")
+        list_of_faces.append("Face_11")
+        list_of_faces.append("Face_12")
+        list_of_faces.append("Face_13")
+        list_of_faces.append("Face_14")
 
         #list_of_faces.append("Face_10") #Bad render
 
 
-        if not renpy.android: #Extra faces are only included in the PC version due to file count limitations
-            list_of_faces.append("Face_5")
-            list_of_faces.append("Face_9")
-            list_of_faces.append("Face_11")
-            list_of_faces.append("Face_12")
-            list_of_faces.append("Face_13")
-            list_of_faces.append("Face_14")
+        # if not renpy.android: #Extra faces are only included in the PC version due to file count limitations
+        #     list_of_faces.append("Face_5")
+        #     list_of_faces.append("Face_9")
+        #     list_of_faces.append("Face_11")
+        #     list_of_faces.append("Face_12")
+        #     list_of_faces.append("Face_13")
+        #     list_of_faces.append("Face_14")
 
 
         def get_random_face():
@@ -860,7 +876,7 @@ init 1 python:
 
         nora.generate_home()
         nora.special_role.append(nora_role)
-        nora.set_schedule([0,1,2,3,4], nora.home)
+        nora.set_schedule(nora.home, times = [0,1,2,3,4])
         nora.home.add_person(nora)
 
         town_relationships.update_relationship(nora, stephanie, "Friend")
@@ -886,8 +902,7 @@ init 1 python:
         alexia.on_room_enter_event_list.append(alexia_intro_phase_one_action)
 
         alexia.special_role.append(alexia_role)
-        for i in range(0,5):
-            alexia.schedule[i] = alexia.home #Hide them in their bedroom off the map until they're ready.
+        alexia.set_schedule(alexia.home, times = [0,1,2,3,4])#Hide them in their bedroom off the map until they're ready.
         alexia.home.add_person(alexia)
 
         ### EMILY (18) ###
@@ -900,8 +915,8 @@ init 1 python:
             start_sluttiness = 6, start_obedience = 0, start_happiness = 100, start_love = 0, relationship = "Single", kids = 0, base_outfit = emily_base)
 
         emily.generate_home()
-        emily.set_schedule([1,2], university)
-        emily.schedule[3] = emily.home
+        emily.set_schedule(university, times = [1,2])
+        emily.set_schedule(emily.home, times = [3])
         emily.home.add_person(emily)
         emily.special_role.append(student_role)
 
@@ -917,7 +932,7 @@ init 1 python:
             eyes = "light blue", personality = reserved_personality, starting_wardrobe = christina_wardrobe, stat_array = [4,2,3], skill_array = [2,1,1,1,1], sex_array = [2,3,3,2], \
             start_sluttiness = 10, start_obedience = 5, start_happiness = 85, start_love = 0, start_home = emily.home, relationship = "Married", kids = 1, base_outfit = christina_base)
 
-        christina.set_schedule([1,2,3], christina.home) #She's a stay-at-home Mom.
+        christina.set_schedule(christina.home, times = [1,2,3]) #She's a stay-at-home Mom.
         christina.home.add_person(christina)
         #Note: She plays an important role to Emily's story, but she is just given the normal affair role during the game.
 
@@ -931,8 +946,8 @@ init 1 python:
             title = "Lily", possessive_title = "Your sister", mc_title = mc.name, relationship = "Single", kids = 0)
 
         lily.special_role.append(sister_role)
-        lily.schedule[3] = lily.home
-        lily.set_schedule([1,2],university)
+        lily.set_schedule(lily.home, times = [3])
+        lily.set_schedule(university, times = [1,2])
 
         sister_intro_crisis = Action("sister_intro_crisis", sister_intro_crisis_requirements, "sister_intro_crisis_label", args=lily, requirement_args = [lily, renpy.random.randint(7,14)]) #Def is in roles.rpy
         sister_strip_intro_crisis = Action("sister_strip_intro_crisis", sister_strip_intro_requirement, "sister_strip_intro_label", args=lily, requirement_args = lily)
@@ -957,7 +972,7 @@ init 1 python:
             title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2, base_outfit = mom_base)
 
         mom.special_role.append(mother_role)
-        mom.schedule[3] = kitchen
+        mom.set_schedule(kitchen, times = [3])
 
         mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
         mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
@@ -978,12 +993,14 @@ init 1 python:
 
 
         aunt.special_role.append(aunt_role)
-        for i in range(0,5):
-            aunt.schedule[i] = aunt_bedroom #Hide them in their bedroom off the map until they're ready.
+        aunt.set_schedule(aunt_bedroom, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready.
         aunt.home.add_person(aunt)
 
         aunt_intro_action = Action("Aunt introduction", aunt_intro_requirement, "aunt_intro_label", requirement_args = renpy.random.randint(15,20))
         mc.business.mandatory_crises_list.append(aunt_intro_action) #Aunt and cousin will be visiting tomorrow in the morning
+
+        family_games_night_intro_action = Action("Family games night intro", family_games_night_intro_requirement, "family_games_night_intro")
+        aunt.on_room_enter_event_list.append(family_games_night_intro_action)
 
 
         ### COUSIN ###
@@ -996,8 +1013,7 @@ init 1 python:
             title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = "Single", kids = 0)
 
         cousin.special_role.append(cousin_role)
-        for i in range(0,5):
-            cousin.schedule[i] = cousin_bedroom #Hide them in their bedroom off the map until they're ready
+        cousin.set_schedule(cousin_bedroom, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready
         cousin.home.add_person(cousin)
 
 

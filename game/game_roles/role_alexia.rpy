@@ -93,10 +93,7 @@ init -2 python:
 
 label alexia_phase_zero_label():
     #Sets Alexia's schedule so she is downtown during time periods 1,2,3.
-    python:
-        alexia.schedule[1] = downtown
-        alexia.schedule[2] = downtown
-        alexia.schedule[3] = downtown
+    $alexia.set_schedule(downtown, times = [1,2,3])
     return
 
 label alexia_intro_phase_one_label(the_person):
@@ -142,9 +139,7 @@ label alexia_intro_phase_one_label(the_person):
         alexia_intro_phase_two_action = Action("Visit " + the_person.title + " at work", alexia_intro_phase_two_requirement, "alexia_intro_phase_two_label", args = the_person, requirement_args = the_person)
         downtown.actions.append(alexia_intro_phase_two_action)
         downtown.move_person(the_person, the_person.home) #Change her schedule again so you don't see her anymore unless you visit her explicitly.
-        alexia.schedule[1] = alexia.home
-        alexia.schedule[2] = alexia.home
-        alexia.schedule[3] = alexia.home
+        alexia.set_schedule(alexia.home, times = [1,2,3])
     $ clear_scene()
     return
 
@@ -231,9 +226,7 @@ label alexia_intro_phase_two_label(the_person):
     "[the_person.title] gets into the passenger side of her boyfriend's car. She says goodbye from inside and they drive off."
     python:
         downtown.actions.remove(alexia_intro_phase_two_action) #Clear the action from her actions list.
-        alexia.schedule[1] = downtown #She spends her time downtown "working".
-        alexia.schedule[2] = downtown
-        alexia.schedule[3] = downtown
+        alexia.set_schedule(downtown, times = [1,2,3]) #She spends her time downtown "working".
 
         alexia_hire_action = Action("Hire " + alexia.title + " to work in sales.", alexia_hire_requirement, "alexia_hire_label")
         the_person.get_role_reference_by_name("Alexia").actions.append(alexia_hire_action)
@@ -274,7 +267,7 @@ label alexia_hire_label(the_person):
             town_relationships.begin_relationship(the_person, other_employee) #She is introduced to everyone at work
 
         mc.business.add_employee_marketing(the_person)
-        the_person.set_work([1,2,3], mc.business.m_div)
+        the_person.set_work(mc.business.m_div)
         the_person.get_role_reference_by_name("Alexia").actions.remove(alexia_hire_action) #Remove the hire action because this story event has played itself out.
 
         ad_suggest_event = Action("Ad Suggestion", alexia_ad_suggest_requirement, "alexia_ad_suggest_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(7,12)])

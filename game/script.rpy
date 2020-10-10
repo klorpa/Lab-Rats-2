@@ -1,17 +1,11 @@
-#How the new position code is set up:
-#Each clothing set now has a dictionary of images. The only one that is required is "standing", which is used when you are talking to the person most of the time.
-#Each position has a "position_tag". When you start having sex with someone the draw_person code will check it's dictionaryto see if it has a position_tag entry. If yes, it uses that set.
-#Otherwise, it uses the default standing images. Right now, this should have changed absolutely nothing about the way the game works.
-
-init -2:
-    if renpy.macintosh: #Macs have a bug related to high resolution monitors that breaks the animation system. Animation is possible on some monitors, but users must explicitly enable it from the menu.
+init -2: # Establis hsome platform specific stuff.
+    if renpy.macintosh:
         default persistent.vren_animation = True
-        default persistent.vren_mac_scale = 2.0
+        $ persistent.vren_mac_scale = 1.0 #2.0 # Changes to the way the surface size is calculated has made a mac specific setting like this oboslete. This section is only here until I can confirm everything is working properly.
 
     else:
         default persistent.vren_animation = True
-        default persistent.vren_mac_scale = 1.0
-
+        $ persistent.vren_mac_scale = 1.0
 
 
     default persistent.pregnancy_pref = 0 # 0 = no content, 1 = predictable, 2 = realistic
@@ -24,38 +18,74 @@ init -2 python:
     import xml.etree.ElementTree as ET
     import time
     import zipfile
+    import io
     from collections import defaultdict
 
-    if not renpy.mobile:
+    if not renpy.mobile: #Mobile platforms do not support animation, so we only want to try to import it if we're going to use it.
         import shader
 
     def take_animation_screenshot(): #Called on every interact beginning, if animation_draw_requested is True it makes the screenshot and starts a new thread to display the image.
         # This approach is needed because draw.screenshot is fast, but must be done in the main thread. Rendering is slower, but can be threaded. This lets us get the best of both worlds.
         global animation_draw_requested #This might have some race conditions if character images are drawn very quickly, but I doubt it will be something to worry about.
+        log_message("General" + " | CLBK | " + str(time.time()))
 
-        if animation_draw_requested:
-            global person_being_drawn
-            global prepared_animation_render
-            animation_draw_requested = False
-            if isinstance(prepared_animation_render, list): #It's a removal draw (Which makes prepared_animation_render a list of renders, the first (old) one should be drawn on top and faded out.
-                surface_old = renpy.display.draw.screenshot(prepared_animation_render[0], False)
-                surface_new = renpy.display.draw.screenshot(prepared_animation_render[1], False)
-                prepared_animation_render = None
-                person_being_drawn.draw_person_animation(surface_new, *prepared_animation_arguments, overwrite_at_arguments = [character_right, scale_person(person_being_drawn.height)])
-                person_being_drawn.draw_person_animation(surface_old, *prepared_animation_arguments, overwrite_at_arguments = [character_right, scale_person(person_being_drawn.height), clothing_fade], clear_active = False) #as_top_fade is a hack that overrides the normal clear of a character so we can reuse the drawing code.
+        for draw_layer in draw_layers: #If multiple draws are prepared in a single interaction we want to screenshot all of them.
+            if animation_draw_requested[draw_layer]:
+                remove_list = [] #Don't modify the list while iterating, but remove all draws completed when finished.
+                for draw_package in animation_draw_requested[draw_layer]:
+                    global prepared_animation_render
+                    global global_draw_number
+                    remove_list.append(draw_package)
 
-                surface_old = None
-                surface_new = None
-                prepared_animation_render = None
+                    the_person = draw_package[0]
+                    reference_draw_number = draw_package[1]
 
-            else: #It's just a normal draw
-                the_surface = renpy.display.draw.screenshot(prepared_animation_render, False) #This is the operation that must be in the
-                prepared_animation_render = None
-                person_being_drawn.draw_person_animation(the_surface, *prepared_animation_arguments)
-                the_surface = None
-                # renpy.invoke_in_thread(person_being_drawn.draw_person_animation, the_surface, *prepared_animation_arguments)
+                    the_render = prepared_animation_render[draw_layer].get(the_person.character_number, None) #TODO: Change how we are stashing things in prepared_animation_render
 
+                    if reference_draw_number == the_person.draw_number[draw_layer]+global_draw_number[draw_layer] and the_render is not None: #Only make draws taht are current. If eitehr the personal or global draw number has increased we do not need to draw this.
+                        if isinstance(the_render, list): #It's a removal draw (Which makes prepared_animation_render a list of renders, the first (old) one should be drawn on top and faded out.
+                            surface_old = renpy.display.draw.screenshot(the_render[0], False)
+                            surface_new = renpy.display.draw.screenshot(the_render[1], False)
+                            the_render = None
+
+                            position = prepared_animation_arguments[draw_layer][the_person.character_number][1]
+                            the_person.draw_person_animation(surface_new, *prepared_animation_arguments[draw_layer][the_person.character_number]) #TODO make sure changing the animation arguments doesn't require us to copy the list to avoid an incorrect shared reference.
+                            prepared_animation_arguments[draw_layer][the_person.character_number][11].append(clothing_fade) #Add clothing fade to the extra arguments
+                            the_person.draw_person_animation(surface_old, *prepared_animation_arguments[draw_layer][the_person.character_number], clear_active = False) #clear_active is a hack that overrides the normal clear of a character so we can reuse the drawing code.
+
+                            surface_old = None
+                            surface_new = None
+                            the_render = None
+
+                        else: #It's just a normal draw
+                            log_message(the_person.name + " | SCR1 | " + str(time.time()))
+                            the_surface = renpy.display.draw.screenshot(the_render, False) #This is the operation that must be in the main thread, and is the major time-consumer for the animation system at the moment.
+                            log_message(the_person.name + " | SCR2 | " + str(time.time()))
+                            the_render = None
+                            the_person.draw_person_animation(the_surface, *prepared_animation_arguments[draw_layer][the_person.character_number])
+                            the_surface = None
+
+                for item in remove_list: #Don't just set the list to empty in case a new thread has returned and placed something in the list.
+                    animation_draw_requested[draw_layer].remove(item)
         return
+
+    def add_draw_layer(layer_name): #Sets up a character draw layer under the name of "layer name". This can be used to draw multiple characters on the screen at once.
+        global draw_layers
+        global global_draw_number
+        global prepared_animation_render
+        global prepared_animation_arguments
+        global animation_draw_requested
+
+        if layer_name not in draw_layers:
+            draw_layers.append(layer_name)
+            renpy.add_layer(layer_name, above = "master")
+            config.menu_clear_layers.append(layer_name)
+            config.context_clear_layers.append(layer_name)
+
+            global_draw_number[layer_name] = 0
+            prepared_animation_render[layer_name] = {}
+            prepared_animation_arguments[layer_name] = {} #Stores the arguments based on dict.
+            animation_draw_requested[layer_name] = []
 
     config.interact_callbacks.append(take_animation_screenshot)
 
@@ -67,9 +97,7 @@ init -2 python:
     config_image_cache_size = 8
 
     config.image_cache_size = 2
-    config.layers.insert(1,"Active") ## The "Active" layer is used to display the girls images when you talk to them. The next two lines signal it is to be hidden when you bring up the menu and when you change contexts (like calling a screen)
-    config.menu_clear_layers.append("Active")
-    config.context_clear_layers.append("Active")
+
     config.has_autosave = False
     config.autosave_frequency = None
     config.has_quicksave = True
@@ -77,7 +105,6 @@ init -2 python:
 
     config.rollback_enabled = True #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
     config.rollback_length = 32
-
 
     if persistent.colour_palette is None:
         persistent.colour_palette = [[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1]]
@@ -97,27 +124,69 @@ init -2 python:
 
     _preferences.show_empty_window = False #Prevents Ren'py from incorrectly showing the text window in complex menu sitations (which was a new bug/behaviour in Ren'py v7.2)
 
-    global current_draw_number
-    current_draw_number = 0 #This value is increased by one every time a character animation thread is created. If the value is not the same when the thread goes to show the animation the draw is skipped (as a new animation has already been requested)
+    global animation_draw_requested #Note that this is broken down by draw layer so that multiple threads can return safely in a single interaction.
+    animation_draw_requested = {} #This dict holds each draw layer request. Inside of each draw layer request are lists, which hold the character and their personal reference draw number, so that we can cull out of date draws
 
-    global animation_draw_requested
-    animation_draw_requested = False #If True when an interaction starts (which happens when a thread returns)... TODO: Document this more once the functions are actually written
+    global global_draw_number # Holds the draw numbers for all possible scenes ("solo" is the main one). This value is increased by one every time a scene is cleared, and is used to prevent animations from being drawn after moving on from a scene.
+    global_draw_number = {}
 
     global prepared_animation_render #The render that has been prepared by a separate thread should be placed here.
-    prepared_animation_render = None
+    prepared_animation_render = {}
 
     global prepared_animation_arguments #Holds all of the extra arguments that should be passed onto the display code.
-    prepared_animation_arguments = []
+    prepared_animation_arguments = {}
 
-    build.classify("game/images/character_images/**_Face_10**.png", None) # Bad render
+    global draw_layers
+    draw_layers = []
 
-    build.classify("game/images/character_images/**_Face_9**.png", "renpy") # These faces are excluded from the android build due to file size limitaionts
-    build.classify("game/images/character_images/**_Face_11**.png", "renpy")
-    build.classify("game/images/character_images/**_Face_12**.png", "renpy")
-    build.classify("game/images/character_images/**_Face_13**.png", "renpy")
-    build.classify("game/images/character_images/**_Face_14**.png", "renpy")
+    add_draw_layer("front_1") # Layers used for extra characters. In theory this can be expanded infinitely, but it reacts poorly to being adjusted mid-game.
+    add_draw_layer("solo") # Add the main default draw layer, used for all single character displays
+    add_draw_layer("back_1")
+    add_draw_layer("back_2")
+
+    build.archive("stand2", "renpy")
+    build.archive("stand3", "renpy")
+    build.archive("stand4", "renpy")
+    build.archive("stand5", "renpy")
+    build.archive("walking_away", "renpy")
+    build.archive("back_peek", "renpy")
+    build.archive("sitting", "renpy")
+    build.archive("kissing", "renpy")
+    build.archive("doggy", "renpy")
+    build.archive("missionary", "renpy")
+    build.archive("blowjob", "renpy")
+    build.archive("against_wall", "renpy")
+    build.archive("standing_doggy", "renpy")
+    build.archive("kneeling1", "renpy")
+    build.archive("cowgirl", "renpy")
+
+    build.classify("game/images/character_images/**stand2**.png", "stand2") #These are already packaged into a zip file, not needed as standalone images.
+    build.classify("game/images/character_images/**stand3**.png", "stand3")
+    build.classify("game/images/character_images/**stand4**.png", "stand4")
+    build.classify("game/images/character_images/**stand5**.png", "stand5")
+    build.classify("game/images/character_images/**walking_away**.png", "walking_away")
+    build.classify("game/images/character_images/**back_peek**.png", "back_peek")
+    build.classify("game/images/character_images/**sitting**.png", "sitting")
+    build.classify("game/images/character_images/**kissing**.png", "kissing")
+    build.classify("game/images/character_images/**doggy**.png", "doggy")
+    build.classify("game/images/character_images/**missionary**.png", "missionary")
+    build.classify("game/images/character_images/**blowjob**.png", "blowjob")
+    build.classify("game/images/character_images/**against_wall**.png", "against_wall")
+    build.classify("game/images/character_images/**standing_doggy**.png", "standing_doggy")
+    build.classify("game/images/character_images/**kneeling1**.png", "kneeling1")
+    build.classify("game/images/character_images/**cowgirl**.png", "cowgirl")
+
+    build.classify("game/images/character_images/**.png", None)
+    build.classify("game/images/character_images/**.zip", "android")
 
 
+    # build.classify("game/images/character_images/**_Face_10**.png", None) # Bad render, don't add it to any of the builds
+    #
+    # build.classify("game/images/character_images/**_Face_9**.png", "renpy") # These faces are excluded from the android build due to file size limitaionts
+    # build.classify("game/images/character_images/**_Face_11**.png", "renpy")
+    # build.classify("game/images/character_images/**_Face_12**.png", "renpy")
+    # build.classify("game/images/character_images/**_Face_13**.png", "renpy")
+    # build.classify("game/images/character_images/**_Face_14**.png", "renpy")
 
     def get_obedience_plaintext(obedience_amount):
         obedience_string = "ERROR - Please Tell Vren!"
@@ -418,13 +487,15 @@ init -2 python:
 
         return True
 
-    def clear_scene(): # Clears the current scene of characters. Both calls Renpy.scene("Active") as well as advances the current draw count so nothing is drawn by an out of date thread.
-        global current_draw_number
-        current_draw_number += 1
-        renpy.scene("Active")
+    def clear_scene(specific_layers = None): # Clears the current scene of characters. Both calls Renpy.scene("solo") as well as advances the current draw count so nothing is drawn by an out of date thread.
+        global draw_layers
+        if specific_layers is not None and not isinstance(specific_layers, list):
+            specific_layers = [specific_layers] #Allows for passing lists or single names.
 
-
-
+        for a_layer in draw_layers:
+            if specific_layers is None or a_layer in specific_layers:
+                global_draw_number[a_layer] += 1
+                renpy.scene(a_layer)
 
     class Business(renpy.store.object):
         # main jobs to start with:
@@ -977,7 +1048,7 @@ init -2 python:
             elif the_person in self.hr_team:
                 self.hr_team.remove(the_person)
 
-            the_person.set_work(None,None)
+            the_person.set_work(None)
             the_person.special_role.remove(employee_role)
 
             if the_person == self.head_researcher:
@@ -1633,8 +1704,9 @@ init -2 python:
                 self.log_items.pop() #Pop off extra items until we are down to size.
 
 
-
     class Person(renpy.store.object): #Everything that needs to be known about a person.
+        global_character_number = 0 #This is increased for each character that is created.
+
         def __init__(self,name,last_name,age,body_type,tits,height,body_images,expression_images,hair_colour,hair_style,pubes_colour,pubes_style,skin,eyes,job,wardrobe,personality,stat_list,skill_list,
             sluttiness=0,obedience=0,suggest=0,sex_list=[0,0,0,0], love = 0, happiness = 100, home = None, work = None,
             font = "Avara.tff", name_color = "#ffffff", dialogue_color = "#ffffff",
@@ -1646,6 +1718,10 @@ init -2 python:
             ## Personality stuff, name, ect. Non-physical stuff.
             self.name = name
             self.last_name = last_name
+            self.character_number = Person.global_character_number #This is a gunique number for each character. Used as a tag when showing a character to identify if they are already drawn (and thus need to be hidden)
+            Person.global_character_number += 1
+
+            self.draw_number = defaultdict(int) #Used while drawing a character to avoid drawing an animation that has already been replaced with a new draw. Defaults to 0
 
             self.title = title #Note: We format these down below!
             self.possessive_title = possessive_title #The way the girl is refered to in relation to you. For example "your sister", "your head researcher", or just their title again.
@@ -1656,7 +1732,9 @@ init -2 python:
 
             self.home = home #The room the character goes to at night. If none a ranjdom public location is picked.
             self.work = work #The room the character goes to for work.
-            self.schedule = {0:home,1:None,2:None,3:None,4:home} #A character's schedule is a dict of 0,1,2,3,4 (time periods) mapped to locations.
+            self.schedule = {}
+            for x in range(0,7):
+                self.schedule[x] = {0:home,1:None,2:None,3:None,4:home}
             #If there is a place in the schedule the character will go there. Otherwise they have free time and will do whatever they want.
             self.job = job
 
@@ -1887,7 +1965,7 @@ init -2 python:
 
                 self.home = start_home
                 if set_home_time:
-                    self.set_schedule([0,4], start_home)
+                    self.set_schedule(start_home, times = [0,4])
                 list_of_places.append(start_home)
             return self.home
 
@@ -1989,13 +2067,13 @@ init -2 python:
                 self.apply_outfit(self.planned_outfit)
                 self.planned_uniform = None
 
-            destination = self.schedule[time_of_day] #None destination means they have free time
-            if destination == self.work and not mc.business.is_open_for_business(): #NOTE: Right now we give everyone time off based on when the mc has work scheduled.
-                destination = None
+            destination = self.get_desination() #None destination means they have free time
+            if destination == self.work and not mc.business.is_open_for_business():
+                destination = None #TODO: We can now do day-of-the-week scheduling, so this is no longer needed.
 
             if destination is not None: #We have somewhere scheduled to be for this time chunk. Let's move over there.
                 location.move_person(self, destination) #Always go where you're scheduled to be.
-                if self.schedule[time_of_day] == self.work: #We're going to work.
+                if self.get_desination() == self.work: #We're going to work.
                     if self.should_wear_uniform(): #Get a uniform if we should be wearing one.
                         self.wear_uniform()
                         self.change_happiness(self.get_opinion_score("work uniforms"),add_to_log = False)
@@ -2039,14 +2117,14 @@ init -2 python:
             if self.outfit.vagina_visible():
                 self.change_slut_temp(self.get_opinion_score("showing her ass"), add_to_log = False)
 
-            if self.outfit.get_bra() or self.outfit.get_panties():
-                lingerie_bonus = 0
-                if self.outfit.get_bra() and self.outfit.get_bra().slut_value > 1: #We consider underwear with an innate sluttiness of 2 or higher "lingerie" rather than just underwear.
-                    lingerie_bonus += self.get_opinion_score("lingerie")
-                if self.outfit.get_panties() and self.outfit.get_panties().slut_value > 1:
-                    lingerie_bonus += self.get_opinion_score("lingerie")
-                lingerie_bonus = __builtin__.int(lingerie_bonus/2.0)
-                self.change_slut_temp(lingerie_bonus, add_to_log = False)
+            # if self.outfit.get_bra() or self.outfit.get_panties():
+            #     lingerie_bonus = 0
+            #     if self.outfit.get_bra() and self.outfit.get_bra().slut_value > 1: #We consider underwear with an innate sluttiness of 2 or higher "lingerie" rather than just underwear.
+            #         lingerie_bonus += self.get_opinion_score("lingerie")
+            #     if self.outfit.get_panties() and self.outfit.get_panties().slut_value > 1:
+            #         lingerie_bonus += self.get_opinion_score("lingerie")
+            #     lingerie_bonus = __builtin__.int(lingerie_bonus/2.0)
+            #     self.change_slut_temp(lingerie_bonus, add_to_log = False)
 
 
             for event_list in [self.on_room_enter_event_list, self.on_talk_event_list]: #Go through both of these lists and curate them, ie trim out events that should have expired.
@@ -2109,10 +2187,6 @@ init -2 python:
             displayable_list.append(self.expression_images.generate_emotion_displayable(position,emotion, special_modifier = special_modifier, eye_colour = self.eyes[1], lighting = lighting)) #Get the face displayable
             displayable_list.append(self.pubes_style.generate_item_displayable(self.body_type,self.tits, position, lighting = lighting)) #Add in her pubes. #TODO: See if we need to mask this with her body profile for particularly bush-y bushes to prevent clothing overflow.
 
-            # size_render = renpy.render(displayable_list[0], 10, 10, 0, 0) #We need a render object to check the actual size of the body displayable so we can build our composite accordingly.
-            # the_size = size_render.get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size ofthings inside it.
-            # x_size = __builtin__.int(the_size[0])
-            # y_size = __builtin__.int(the_size[1])
             x_size = position_size_dict.get(position)[0]
             y_size = position_size_dict.get(position)[1]
             # hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplate
@@ -2138,83 +2212,67 @@ init -2 python:
                 composite_list.append((0,0))
                 composite_list.append(Frame("/gui/Character_Window_Frame.png", 12, 12))
 
-            final_image = Composite(*composite_list) # Create a composite image using all of the displayables
+            final_image = Flatten(Composite(*composite_list)) # Create a composite image using all of the displayables
             return final_image
 
-        # def test_thread(self):
-        #     the_render = the_displayable = self.build_person_displayable(no_frame = True).render(1920, 1080, 0 ,0)
-        #     the_surface = renpy.display.draw.screenshot(the_render, False)
-        #     renpy.invoke_in_thread(self.test_function, the_surface)
-        #
-        # def test_function(self, the_surface):
-        #     #Something in this function causes this thread never to exit. We need to find out what!
-        #     print("Hello World!")
-        #     # the_displayable = self.build_person_displayable(no_frame = True)
-        #     # print("Break 1")
-        #     # #the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height) #This seems to hang while this thread is in action.
-        #     # the_render = renpy.render(the_displayable, 1920, 1080,0,0)
-        #     print("Break 2")
-        #     # the_surface = renpy.display.draw.screenshot(the_render, False) #This is a relatively time expensive operation.
-        #     print("Break 3")
-        #     save_surface(the_surface,"_TEST004")
-        #     #renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform.
-        #     print("All Done!") #This style works. We have to generate the displayable inside of the main thread, because display.draw only functions
-
-        def prepare_animation_screenshot_render(self, position, emotion, special_modifier, lighting, background_fill, given_reference_draw_number):
+        def prepare_animation_screenshot_render(self, position, emotion, special_modifier, lighting, background_fill, given_reference_draw_number, draw_layer):
+            log_message(self.name + " | PREP | " + str(time.time()))
             if background_fill is None:
                 background_fill = "#0026a5"
 
 
             the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
 
+
+
             x_size = position_size_dict.get(position)[0]
             y_size = position_size_dict.get(position)[1]
+            log_message(self.name + " | DISB | " + str(time.time()))
             the_render = the_displayable.render(x_size,y_size,0,0)
-
-            global reference_draw_number
-            reference_draw_number = given_reference_draw_number #Let's us check later if this animation is still wanted or if a new one has been requested.
+            log_message(self.name + " | REND | " + str(time.time()))
 
             global prepared_animation_render
-            prepared_animation_render = the_render
+            prepared_animation_render[draw_layer][self.character_number] = the_render
 
             global animation_draw_requested
-            animation_draw_requested = True
+            animation_draw_requested[draw_layer].append([self, given_reference_draw_number])
             return
 
-        def prepare_animation_screenshot_render_multi(self, position, old_precalculated_render, new_precalculated_render, given_reference_draw_number):
+        def prepare_animation_screenshot_render_multi(self, position, old_precalculated_render, new_precalculated_render, given_reference_draw_number, draw_layer):
 
             x_size, y_size = position_size_dict.get(position)
 
             old_render = old_precalculated_render
             new_render = new_precalculated_render
 
-            global reference_draw_number
-            reference_draw_number = given_reference_draw_number
-
             global prepared_animation_render
-            prepared_animation_render = [old_render, new_render]
+            prepared_animation_render[draw_layer][self.character_number] = [old_render, new_render]
 
             global animation_draw_requested
-            animation_draw_requested = True
+            animation_draw_requested[draw_layer].append([self, given_reference_draw_number])
             return
 
         # Renamed from "build_person_animtion" in v0.30, now assuems it is handed a screenshot surface from take_animation_screenshot
-        def draw_person_animation(self, the_surface, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0, show_person_info = True, draw_reference_number = None, overwrite_at_arguments = None, clear_active = True):
+        def draw_person_animation(self, the_surface, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0, show_person_info = True, draw_reference_number = None,
+            draw_layer = "solo", display_transform = None, extra_at_arguments = None, display_zorder = None, clear_active = True): #Note: clear_active needs to be the last parameter here for the animation call to properly insert it as a parameter.
+
+            log_message(self.name + " | ASTR | " + str(time.time()))
+            if display_zorder is None:
+                display_zorder = 0
+
             x_size, y_size = position_size_dict.get(position)
 
-            surface_file = io.BytesIO()
-            renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform.
-            static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
-            surface_file.close()
+            physical_x, physical_y = the_surface.get_size() #Use the surface render to figure out how large the displayed area is.
 
-            physical_x, physical_y = renpy.get_physical_size()
             physical_x = physical_x*1.0
             physical_y = physical_y*1.0
+
             config_x = config.screen_width * 1.0
-            config_y = config.screen_height * 1.0
+            config_y = config.screen_height * 1.
 
             if physical_x/(16.0/9.0) > physical_y: #Account for the screen resolution difference from 16x9
                 #y_scale = 1080.0/physical_y
+                # TODO: Remove references to vren_mac_scale once we are sure they are no longer needed
                 y_scale = 1*(config_y/(physical_y*persistent.vren_mac_scale)) #This should adjust for high DPI displays that have a higher physical pixel density than their stated resolution
 
                 x_scale = y_scale
@@ -2224,9 +2282,24 @@ init -2 python:
 
                 y_scale = x_scale
 
+            surface_file = io.BytesIO()
+            #log_image(surface_file)
+            the_surface = the_surface.subsurface((0,0,(x_size/x_scale),(y_size/y_scale))) # Take a subsurface of the surface screenshotted, so that we only save what is strictly nessesary.
+
+            #log_message("Starting to render surface")
+            #the_time = time.time()
+            log_message(self.name + " | ACP1 | " + str(time.time()))
+            renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform. #TODO: Retest how long this takes with the trimmed surface
+            #log_message("  Finished. Took: " + str(time.time() - the_time))
+            static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
+            surface_file.close()
+
+
+            log_message(self.name + " | ACP2 | " + str(time.time()))
+
             scaled_image = im.FactorScale(static_image, x_scale, y_scale)
 
-            the_image_name = self.name + " | " + str(time.time())
+            the_image_name = self.name + " | " + str(self.character_number) #Note: use to make use of a unique time stamp
 
             composite_components = []
             region_weight_items_dict = the_animation.get_weight_items()
@@ -2240,47 +2313,59 @@ init -2 python:
                 #renpy.notify(str(animation_effect_strength) + " | " + str(self.personal_region_modifiers.get(region_weight_name, 1)) + " | " + str(the_animation.innate_animation_strength) + " | " + str(the_animation.region_specific_weights.get(region_weight_name, 1)))
 
                 region_brightness_matrix = im.matrix.brightness(-1 + region_weight_modifier)
-                region_mask = renpy.displayable(the_weight_item.generate_item_image_name(self.body_type, self.tits, position))
+                region_mask = the_weight_item.generate_raw_image(self.body_type, self.tits, position)
+                #region_mask = renpy.displayable(the_weight_item.generate_item_image_name(self.body_type, self.tits, position))
                 region_mask = im.MatrixColor(region_mask, region_brightness_matrix)
                 composite_components.append(region_mask)
 
 
 
-            the_mask_composite = im.Composite((renpy.config.screen_width, renpy.config.screen_height), *composite_components)
+            the_mask_composite = im.Composite((x_size, y_size), *composite_components)
 
             mask_image = im.Blur(the_mask_composite, 2)
-            mask_image_name = self.name + "_tex | " + str(time.time())
+            mask_image_name = self.name + "_tex | " + str(self.character_number)
 
             animation_uniforms = the_animation.uniforms #Copy the default uniforms for the animation
             animation_uniforms["animation_strength"] = animation_effect_strength
 
+            log_message(self.name + " | MASK | " + str(time.time()))
+
             raw_animated_displayable = ShaderDisplayable(shader.MODE_2D, scaled_image, the_image_name, shader.VS_2D, the_animation.shader,{"tex1":mask_image}, animation_uniforms, None, None, mask_name = mask_image_name)
+
+            log_message(self.name + " | DISP | " + str(time.time()))
 
             cropped_animated_displayable = Crop((0,0,x_size,y_size), raw_animated_displayable)
             framed_animated_displayable = Composite((x_size,y_size),(0,0),cropped_animated_displayable,(0,0),Frame("/gui/Character_Window_Frame.png", 12, 12))
 
-            if draw_reference_number is None or draw_reference_number == current_draw_number: #Note: current_draw_number is a global variable that tracks what animation should be drawn. If we don't match it a new animation has been asked for since this oen was requested and it should not be drawn.
-                if clear_active:
-                    renpy.scene("Active") #Note: Not clear_scene() because we are already handling the draw number
+            if show_person_info:
+                renpy.show_screen("person_info_ui", self)
 
-                if show_person_info:
-                    renpy.show_screen("person_info_ui", self)
+            if display_transform is None:
+                display_transform = character_right
 
-                at_list_arguments = [character_right, scale_person(self.height)]
+            at_list_arguments = [display_transform, scale_person(self.height)]
 
-                if overwrite_at_arguments:
-                    at_list_arguments = overwrite_at_arguments
+            if extra_at_arguments:
+                if not isinstance(extra_at_arguments, list):
+                    extra_at_arguments = [extra_at_arguments]
+                at_list_arguments.extend(extra_at_arguments)
+            else:
+                extra_at_arguments = []
 
-                name = self.name+"_anim"
-                if not clear_active:
-                    name+= "_noclear" # A hack for the clothing removal system
-                renpy.show(name,at_list=at_list_arguments,layer="Active",what=framed_animated_displayable,tag=name)
+            character_tag = str(self.character_number)
 
+            if clear_active: #Clear out the old version of this character, if they exist.
+                self.hide_person()
+            else:
+                character_tag += "_extra" #Allows for two varients of teh same character to be drawn, useful when fading from one to another to show clothing being removed.
 
-        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0): #Draw the person, standing as default if they aren't standing in any other position.
-            # PROOTOTYPE! Soon character drawing will be multithreaded with everything except for the screen render for animation handled by the main thread.
-            # Alternatively I may be able to process the render myself in PyOpenGL and create a .png from that. This would allow the entire process to function without the main thread.
-            #renpy.invoke_in_thread(self.draw_person_in_thread, position, emotion, special_modifier, show_person_info, lighting, background_fill, the_animation, animation_effect_strength)
+            renpy.show(character_tag,at_list=at_list_arguments,layer=draw_layer,what=framed_animated_displayable,zorder=display_zorder, tag=character_tag)
+            log_message(self.name + " | Anim | " + str(time.time()))
+
+        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0,
+            draw_layer = "solo", display_transform = None, extra_at_arguments = None, display_zorder = None, wipe_scene = True): #Draw the person, standing as default if they aren't standing in any other position
+            log_message(self.name + " | Start | " + str(time.time()))
+
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
 
@@ -2294,24 +2379,51 @@ init -2 python:
                 lighting = mc.location.get_lighting_conditions()
 
             character_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
-            renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=character_image,tag=self.name+"_anim") #Display a static image of the character as soon as possible
 
+            if display_transform is None:
+                display_transform = character_right
+
+            at_arguments = [display_transform, scale_person(self.height)]
+            if extra_at_arguments:
+                if isinstance(extra_at_arguments, list):
+                    at_arguments.extend(extra_at_arguments)
+                else:
+                    at_arguments.append(extra_at_arguments)
+            else:
+                extra_at_arguments = []
+
+            if display_zorder is None:
+                display_zorder = 0
+
+            character_tag = str(self.character_number)
+
+            self.draw_number[draw_layer] += 1
+            self.hide_person()
+            if wipe_scene:
+                clear_scene() #Make sure no other characters are drawn either.
+
+            renpy.show(character_tag, at_list=at_arguments, layer=draw_layer, what=character_image, zorder = display_zorder, tag=character_tag) #Display a static image of the character as soon as possible
+            log_message(self.name + " | Flat | " + str(time.time()))
             if show_person_info:
                 renpy.show_screen("person_info_ui",self)
 
             if the_animation:
-                global person_being_drawn
-                person_being_drawn = self
-
-                global current_draw_number
-                current_draw_number += 1
+                global global_draw_number
+                animation_draw_number = self.draw_number[draw_layer] + global_draw_number[draw_layer]
 
                 global prepared_animation_arguments
-                prepared_animation_arguments = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, current_draw_number] #Effectively these are being stored and passed to draw_person_animation once take_animation_screenshot returns the surface
-                renpy.invoke_in_thread(self.prepare_animation_screenshot_render, position, emotion, special_modifier, lighting, background_fill, current_draw_number) #This thread prepares the render. When it is finished it is caught by the interact_callback function take_animation_screenshot
+                prepared_animation_arguments[draw_layer][self.character_number] = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, animation_draw_number, draw_layer, display_transform, extra_at_arguments, display_zorder] #Effectively these are being stored and passed to draw_person_animation once take_animation_screenshot returns the surface
+                renpy.invoke_in_thread(self.prepare_animation_screenshot_render, position, emotion, special_modifier, lighting, background_fill, animation_draw_number, draw_layer) #This thread prepares the render. When it is finished it is caught by the interact_callback function take_animation_screenshot
+
+        def hide_person(self, draw_layer = "solo"): #Hides the person. Makes sure to hide all posible known tags for the character.
+            # We keep track of tags used to display a character so that they can always be unique, but still tied to them so they can be hidden
+            character_tag = str(self.character_number)
+            renpy.hide(character_tag, draw_layer)
+            renpy.hide(character_tag+"_extra", draw_layer)
 
 
-        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0, half_off_instead = False):
+        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0, half_off_instead = False,
+            draw_layer = "solo", display_transform = None, extra_at_arguments = None, display_zorder = None, wipe_scene = True):
             #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
 
             if position is None:
@@ -2325,6 +2437,27 @@ init -2 python:
 
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
+
+            global draw_layers
+            if draw_layer not in draw_layers:
+                add_draw_layer(draw_layer)
+
+            if display_transform is None:
+                display_transform = character_right
+
+            at_arguments = [display_transform, scale_person(self.height)]
+            if extra_at_arguments:
+                if isinstance(extra_at_arguments, list):
+                    at_arguments.extend(extra_at_arguments)
+                else:
+                    at_arguments.append(extra_at_arguments)
+            else:
+                extra_at_arguments = []
+
+            self.draw_number[draw_layer] += 1
+
+            if display_zorder is None:
+                display_zorder = 0
 
 
             if the_animation:
@@ -2341,25 +2474,24 @@ init -2 python:
                         self.outfit.half_off_clothing(the_clothing) #Half-off the clothing
                     else:
                         self.outfit.remove_clothing(the_clothing) #Remove the clothing
-                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)) #Get the top image without the frame
+                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)) #Get the top image, with frame.
 
                 x_size, y_size = position_size_dict.get(position)
                 bottom_render = bottom_displayable.render(x_size, y_size, 0, 0)
                 top_render = top_displayable.render(x_size, y_size, 0, 0)
 
-                global current_draw_number
-                current_draw_number += 1
+                global global_draw_number
+                animation_draw_number = self.draw_number[draw_layer] + global_draw_number[draw_layer]
 
                 global prepared_animation_arguments
-                prepared_animation_arguments = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, current_draw_number]
+                prepared_animation_arguments[draw_layer][self.character_number] = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, animation_draw_number, draw_layer, display_transform, extra_at_arguments, display_zorder]
 
-                global person_being_drawn
-                person_being_drawn = self
-                renpy.invoke_in_thread(self.prepare_animation_screenshot_render_multi, position, bottom_render, top_render, current_draw_number)
+                renpy.invoke_in_thread(self.prepare_animation_screenshot_render_multi, position, bottom_render, top_render, animation_draw_number, draw_layer)
 
             else:
+                if wipe_scene:
+                    clear_scene()
 
-                clear_scene()
                 if show_person_info:
                     renpy.show_screen("person_info_ui",self)
 
@@ -2375,9 +2507,14 @@ init -2 python:
                         self.outfit.half_off_clothing(the_clothing) #Half-off the clothing
                     else:
                         self.outfit.remove_clothing(the_clothing) #Remove the clothing
-                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)) #Get the top image
-                renpy.show(self.name+"_new", at_list=[character_right, scale_person(self.height)], layer = "Active", what = top_displayable, tag = self.name+"_new")
-                renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height), clothing_fade], layer = "Active", what = bottom_displayable, tag = self.name+"_old") #Blend from old to new.
+                top_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill) #Get the top image
+
+                self.hide_person()
+                character_tag = str(self.character_number)
+                renpy.show(character_tag, at_list=at_arguments, layer = draw_layer, what = top_displayable, zorder = display_zorder, tag = character_tag)
+                fade_at_arguments = at_arguments[:]
+                fade_at_arguments.append(clothing_fade)
+                renpy.show(character_tag + "_extra", at_list=fade_at_arguments, layer = draw_layer, what = bottom_displayable, zorder = display_zorder, tag = character_tag + "_extra") #Blend from old to new.
 
             return
 
@@ -2834,7 +2971,7 @@ init -2 python:
                 self.wear_uniform()#Reset uniform
 #                self.call_uniform_review() #TODO: actually impliment this call, but only when her outfit significantly differs from the real uniform.
 
-            elif self.outfit.slut_requirement > self.effective_sluttiness():
+            elif self.judge_outfit(self.outfit) > self.effective_sluttiness():
                 self.apply_outfit(self.planned_outfit)
                 if dialogue:
                     self.call_dialogue("clothing_review")
@@ -2857,8 +2994,19 @@ init -2 python:
             slut_require = outfit.slut_requirement
             if as_underwear:
                 slut_require = outfit.get_underwear_slut_score()
+                #TODO: lingerie checks here
+
             elif as_overwear:
                 slut_require = outfit.get_overwear_slut_score()
+
+            if (outfit.get_bra() or outfit.get_panties()) and not as_overwear: #Girls who like lingerie judge outfits with lingerie as less slutty than normal
+                lingerie_bonus = 0
+                if outfit.get_bra() and outfit.get_bra().slut_value > 1: #We consider underwear with an innate sluttiness of 2 or higher "lingerie" rather than just underwear.
+                    lingerie_bonus += self.get_opinion_score("lingerie")
+                if outfit.get_panties() and outfit.get_panties().slut_value > 1:
+                    lingerie_bonus += self.get_opinion_score("lingerie")
+                lingerie_bonus = __builtin__.int(lingerie_bonus*2) # Up to an 8 point swing in either direction
+                slut_require += -lingerie_bonus #Treated as less slutty if she likes it, more slutty if she dislikes lingerie
 
 
             if slut_require > (self.effective_sluttiness(taboo_modifier) + temp_sluttiness_boost): #Arousal is important for judging potential changes to her outfit while being stripped down during sex.
@@ -3201,20 +3349,39 @@ init -2 python:
         def calculate_base_salary(self): #returns the default value this person should be worth on a per day basis.
             return (self.int + self.focus + self.charisma)*2 + (self.hr_skill + self.market_skill + self.research_skill + self.production_skill + self.supply_skill)
 
-        def set_work(self, work_times, the_location): #Sets the person's schedule so they visit their location at those times.
-            if work_times is None or the_location is None:
-                for time_chunk in self.schedule:
-                    if self.schedule[time_chunk] == self.work:
-                        self.schedule[time_chunk] = None #For all of the times we were scheudled to be at work, set it to None.
-                return #Finished, only do the other stuff if we're dealing with non-None inputs.
+        def set_work(self, the_location, work_days = None, work_times = None): #Sets the person's schedule so they visit their location at those times.
+            if work_days is None:
+                work_days = [0,1,2,3,4] #Standard values
+            if work_times is None:
+                work_times = [1,2,3] #Standard values
 
-            for time_chunk in work_times:
-                self.schedule[time_chunk] = the_location
+            if the_location is None: #Setting Location as None clears their work schedule completely
+                for the_day in range(0,7):
+                    for the_time in range(0,5):
+                        if self.schedule[the_day][the_time] == self.work:
+                            self.schedule[the_day][the_time] = None
+
+            else:
+                self.set_schedule(the_location, work_days, work_times) #Set them to work M-F, morning till afternoon
+
             self.work = the_location
 
-        def set_schedule(self, times = None, location = None):
-            for time_chunk in times:
-                self.schedule[time_chunk] = location
+        def set_schedule(self, the_location, days = None, times = None):
+            if days is None:
+                days = [0,1,2,3,4,5,6] #Full week if not specified
+            if times is None:
+                times = []
+
+            for the_day in days:
+                for time_chunk in times:
+                    self.schedule[the_day][time_chunk] = the_location
+
+        def get_desination(self, specified_day = None, specified_time = None):
+            if specified_day is None:
+                specified_day = day%7 #Today
+            if specified_time is None:
+                specified_time = time_of_day #Now
+            return self.schedule[specified_day][specified_time] #Returns the Room this person should be in during the specified time chunk.
 
 
         def person_meets_requirements(self, slut_required = 0, core_slut_required = 0, obedience_required = 0, obedience_max = 2000, love_required = -200):
@@ -3540,6 +3707,119 @@ init -2 python:
             title = title, possessive_title = possessive_title, mc_title = mc_title,
             relationship = relationship, kids = kids, SO_name = SO_name, base_outfit = base_outfit)
 
+    class GroupDisplayManager(renpy.store.object):
+        default_shift_amount = 0.15
+        adjust_per_person = 0.05
+        def __init__(self, group_of_people, primary_speaker = None):
+            self.group_of_people = group_of_people #First person in the list is drawn on the left size, with new people being added to the right
+            if primary_speaker is not None and primary_speaker in self.group_of_people:
+                self.primary_speaker = primary_speaker
+            else:
+                self.primary_speaker = group_of_people[0]
+
+            self.last_draw_commands = {} # Tracks the list of arguments for the last draw_person or draw_animated_removal called for a person, sorted by character_number. Allows for characters to be redrawn when they are moved behind a new primary.
+
+        def add_person(self, the_person, make_primary = False): #Add a person to the character list. Doesn't provoke a redraw automatically.
+            if the_person not in self.group_of_people:
+                self.group_of_people.append(the_person)
+
+            if make_primary:
+                self.primary_speaker = the_person
+
+        def remove_person(self, the_person, new_primary = None): #Remove the_person from the list of people being drawn. Does not redraw (call redraw_group for that)
+            if the_person in self.group_of_people:
+                self.group_of_people.remove(the_person)
+                if the_person.character_number in self.last_draw_commands:
+                    del self.last_draw_commands[the_person.character_number]
+
+            if new_primary is not None:
+                self.set_primary(the_person)
+
+        def set_primary(self, the_person): #Note: Does not redraw #TODO: maybe it should?
+            if the_person in self.group_of_people:
+                self.primary_speaker = the_person
+
+        # NOTE: It is most convenient to pass everything through as a key word argument, to avoid issues with normally defaulted arguments inside of draw_person or draw_animated_removal eating them as the wrong argument.
+        def draw_person(self, the_person, make_primary = True, *args, **kwargs): #Seperate accessor methods to maintain consistency between group and single draws, while keeping all similar code in one place.
+            self.last_draw_commands[the_person.character_number] = [args, kwargs]
+            self.do_draw(the_person, Person.draw_person, make_primary, *args, **kwargs)
+
+        def draw_animated_removal(self, the_person, make_primary = True, *args, **kwargs): #Removal draws need to have some arguments removed so we can redraw the character without redrawing the clothing removal
+            # Remove animated_removal specific arguments so we can store a "draw_person" compatable set of arguments
+
+            last_args = [] #Note: We are assuming all parameter are passed through as key words
+            last_kwargs = kwargs.copy() #Note this is a shallow copy, so no copies of clothing items, ect are being made.
+            if "half_off_instead" in last_kwargs:
+                del last_kwargs["half_off_instead"] #Technically this could also be provided inside of args, but in practice that is a massive number of items to specify.
+            if "the_clothing" in last_kwargs:
+                del last_kwargs["the_clothing"]
+
+            self.last_draw_commands[the_person.character_number] = [last_args, last_kwargs]
+            self.do_draw(the_person, Person.draw_animated_removal, make_primary, *args, **kwargs)
+
+        def draw_group(self, *args, **kwargs): #Draws every member in the group. Parameters passed are applied to everyone in the group. Draw one person at a time if you need that level of control.
+            clear_scene() #We can assume we are clearing the scene if we are drawing a group.
+            for group_member in self.group_of_people:
+                self.draw_person(group_member, False, *args, **kwargs)
+
+        def redraw_person(self, the_person, make_primary = True): # Draws the_person using the last recorded set of draw commands. Useful to redraw people as primary speaker change but their position does not.
+            the_args, the_kwargs = self.last_draw_commands.get(the_person.character_number, [[],{}]) #If we have drawn them before reuse those parameters.
+            self.draw_person(the_person, make_primary, *the_args, **the_kwargs)
+
+
+        def redraw_group(self): #Attemps to redraw everyone in the group using hte last known set of draw commands. Useful when you add in a new person or someone's spacing changes
+            clear_scene()
+            for group_member in self.group_of_people:
+                self.redraw_person(group_member, make_primary = False)
+
+        def do_draw(self, the_person, the_draw_method, make_primary = True, *args, **kwargs): # Holds all of the similar code for all group based drawing methods (ie. passes through all information, keeping what is needed to redraw a character)
+            #TODO: have the positioning account for different position widths.
+            if make_primary and the_person is not self.primary_speaker: #We're replacing the primary speaker, so we need to redraw them into the background
+                old_primary = self.primary_speaker
+                self.set_primary(the_person)
+                last_args, last_kwargs = self.last_draw_commands.get(old_primary.character_number, [[],{}]) #Get the last arguments provided.
+                #last_kwargs["display_zorder"] = None #Ensures their z-position is reset and drawn properly #TODO: This is going to fuck with manually set z-levels, but we don't have a good way of dealing with that.
+                self.draw_person(old_primary, make_primary = False, *last_args, **last_kwargs) #Redraw the character in their previous state, but now in the background.
+
+            character_index = self.group_of_people.index(the_person)
+            primary_index = self.group_of_people.index(self.primary_speaker)
+
+
+
+            if len(self.group_of_people) > 1:
+                posible_shift_amount = GroupDisplayManager.default_shift_amount + (GroupDisplayManager.adjust_per_person*len(self.group_of_people))
+                shift_amount = 1.0 - (posible_shift_amount/(len(self.group_of_people)-1))*(character_index+1/len(self.group_of_people))
+            else:
+                shift_amount = 1.0
+
+            scale_amount = 1.0
+            if character_index != primary_index: #Scale down everyone who isn't the primary
+                scale_amount = 0.8
+
+
+            z_level = -abs(character_index - primary_index)
+            # When drawing a character they are only animated if they are one of the 2 closest people to the primary speaker.
+            # Note that they _stay_ animated even if the primary changes; It is almost identical to just redraw the entire group for most groups of size 5 or so.
+            if primary_index == 0 or primary_index == len(self.group_of_people): #Side position primary, only animate them and 2 slots away
+                if z_level < -2:
+                    kwargs["the_animation"] = no_animation
+            else: #Some middle psoition primary
+                if z_level < -1: # Only animate characters on either side from the primary speaker.
+                    kwargs["the_animation"] = no_animation
+
+            if kwargs.get("display_transform", None) is None: # If the event specifies a specific display transform let it override (and trust the event to handle multi-person display somehow), otherwise, apply a position shift
+                kwargs["display_transform"] = position_shift(shift_amount, scale_amount)
+
+            if kwargs.get("display_zorder", None) is None:
+                kwargs["display_zorder"] = z_level
+
+            if kwargs.get("wipe_scene", None) is None:
+                kwargs["wipe_scene"] = False #Don't clear the scene of other characters, we need them to remain so the whole group can be drawn/redrawn.
+
+            the_draw_method(the_person, *args, **kwargs)
+
+
+
     def height_to_string(the_height): #Height is a value between 0.9 and 1.0 which corisponds to 5' 0" and 5' 10"
         rounded_height = __builtin__.round(the_height,2) #Round height to 2 decimal points.
         if rounded_height >= 1.00:
@@ -3610,14 +3890,24 @@ init -2 python:
             if eye_colour is None:
                 eye_colour = [0.8,0.8,0.8,1] #grey by default.
 
-            image_name = "character_images/"+ self.position_dict[position][emotion]
-            base_image = Image(image_name)
+            if renpy.mobile: #On mobile platforms we use .zip files to hold all of the individual images to bypass the andorid file limit. This results in significantly slower animation (for reasons currently unknown), but android douesn't animate anyways.
+                file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", position + ".zip"))
+                base_image = renpy.display.im.ZipFileImage(file_path, self.position_dict[position][emotion])
 
-            mask_name = image_name.replace("_" + self.skin_colour,"_Pattern_1") # Match the naming scheme used for the eye patterns.
-            mask_image = Image(mask_name)
+                mask_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", position + ".zip"))
+                mask_name = self.position_dict[position][emotion].replace("_" + self.skin_colour,"_Pattern_1")
+                mask_image = renpy.display.im.ZipFileImage(file_path, mask_name)
+            else:
+                base_name = "character_images/" + self.position_dict[position][emotion]
+                base_image = Image(base_name)
+
+                mask_name = base_name.replace("_" + self.skin_colour,"_Pattern_1") # Match the naming scheme used for the eye patterns.
+                mask_image = Image(mask_name)
+
+
 
             inverted_mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,-1,1])
-            #mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0]) #Does this even do anything??? #TODO: Check that this does something. (Doesn't look like it does)
+            #mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0]) #Does this even do anything??? #TODO: Check that this does something. (Might have been used to ensure image values were capped properly)
 
             colour_pattern_matrix = im.matrix.tint(eye_colour[0], eye_colour[1], eye_colour[2]) * im.matrix.tint(*lighting)
             shader_pattern_image = im.MatrixColor(base_image, colour_pattern_matrix)
@@ -3626,7 +3916,6 @@ init -2 python:
             final_image = AlphaBlend(mask_image, base_image, shader_pattern_image, alpha=False)
 
             return final_image
-            # renpy.show(self.name+position+emotion+self.facial_style,at_list=[right,scale_person(height)],layer="Active",what=self.position_dict[position][emotion],tag=self.name+position+emotion)
 
     class Relationship(): #A class used to store information about the relationship between two people. Do not manipulate directly, use RelationshipArray to change things.
         def __init__(self, person_a, person_b, type_a, type_b = None, visible = None):
@@ -4504,6 +4793,20 @@ init -2 python:
 
             return image_name
 
+        def generate_raw_image(self, body_type, tit_size, position): #Returns the raw ZipFileImage or IMage, instead of the displayable (used for generating region masks)
+            if not self.body_dependant:
+                body_type = "standard_body"
+            image_set = self.position_sets.get(position)
+            if image_set is None:
+                image_set = self.position_sets.get("stand3")
+
+            if self.draws_breasts:
+                return_imge = image_set.get_image(body_type, tit_size)
+            else:
+                return_imge = image_set.get_image(body_type, "AA")
+
+            return return_imge
+
         def generate_item_displayable(self, body_type, tit_size, position, lighting = None, regions_constrained = None, nipple_wetness = 0.0):
             if not self.is_extension: #We don't draw extension items, because the image is taken care of in the main object.
                 if lighting is None:
@@ -4520,6 +4823,8 @@ init -2 python:
                     the_image = image_set.get_image(body_type, tit_size)
                 else:
                     the_image = image_set.get_image(body_type, "AA")
+
+                #return the_image
 
                 if regions_constrained is None:
                     regions_constrained = []
@@ -4580,7 +4885,8 @@ init -2 python:
                     composite_list = None
                     for region in regions_constrained:
                         #Begin by building a total mask of all constrained regions
-                        region_mask = Image(region.generate_item_image_name(body_type, tit_size, position))
+                        region_mask = region.generate_raw_image(body_type, tit_size, position)
+                        #region_mask = Image(region.generate_item_image_name(body_type, tit_size, position))
 
                         if composite_list is None:
                             #x_size, y_size = renpy.render(region_mask, 0,0,0,0).get_size() #Only get the render size once, since all renders are the same size for a pose. Technically this could also be a lookup table if it was significantly impacting performacne
@@ -4592,7 +4898,8 @@ init -2 python:
                     composite = im.Composite(*composite_list)
                     blurred_composite = im.Blur(composite, 8) #Blur the combined region mask to make it wider than the original. This would start to incorrectly include the interior of the mask, but...
                     constrained_region_mask = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,8,0]) #This is the area to be subracted from the image.
-                    full_body_mask = Image(all_regions.generate_item_image_name(body_type, tit_size, position)) #And this is the area to add back in so it is displayed only along the body in some regions
+                    full_body_mask = all_regions.generate_raw_image(body_type, tit_size, position)
+                    #full_body_mask = Image(all_regions.generate_item_image_name(body_type, tit_size, position)) #And this is the area to add back in so it is displayed only along the body in some regions
                     composite_list.extend([all_regions.crop_offset_dict.get(position, (0,0)),full_body_mask])
                     #BUG: It only seems to be using the first region constrain.
                     full_body_comp = im.Composite(*composite_list) # This ensures all constrained regions are part of the body mask, enabling support for items like skirts w/ clothing between body parts.
@@ -4600,7 +4907,8 @@ init -2 python:
                     final_image = AlphaBlend(constrained_mask, Solid("#00000000"), final_image)
 
                 if nipple_wetness > 0: #TODO: Expand this system to a generic "Wetness" system
-                    region_mask = Image(wet_nipple_region.generate_item_image_name(body_type, tit_size, position))
+                    region_mask = region.generate_raw_image(body_type, tit_size, position)
+                    #region_mask = Image(wet_nipple_region.generate_item_image_name(body_type, tit_size, position))
                     position_size = position_size_dict[position]
                     region_mask = im.MatrixColor(region_mask, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,nipple_wetness,0])
                     region_composite = Composite(position_size,(0,0), Solid("00000000", xsize = position_size[0], ysize = position_size[1]), wet_nipple_region.crop_offset_dict.get(position,(0,0)), region_mask)
@@ -4623,7 +4931,8 @@ init -2 python:
                         total_half_off_regions.extend(self.has_extension.half_off_regions) #TODO: Duplicates in this cause everything to run slightly slower. Fix that
 
                     for region_to_hide in total_half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
-                        region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
+                        #region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
+                        region_mask = region.generate_raw_image(body_type, tit_size, position)
                         composite_list.append(region_to_hide.crop_offset_dict.get(position, (0,0)))
                         composite_list.append(region_mask)
 
@@ -4634,7 +4943,8 @@ init -2 python:
                     if self.half_off_ignore_regions: #Sometimes you want hard edges, or a section of a piece of clothing not to be moved. These regions are not blured/enlarged and are subtracted from the mask generated above.
                         add_composite_list = None
                         for region_to_add in self.half_off_ignore_regions:
-                            region_mask = Image(region_to_add.generate_item_image_name(body_type, tit_size, position))
+                            region_mask = region.generate_raw_image(body_type, tit_size, position)
+                            #region_mask = Image(region_to_add.generate_item_image_name(body_type, tit_size, position))
                             if add_composite_list is None:
                                 add_composite_list = [position_size_dict.get(position)] #We can reuse the size from our first pass building the mask.
                             #add_composite_list.append((0,0))
@@ -4750,6 +5060,7 @@ init -2 python:
     class Facial_Accessory_Images(renpy.store.object):
         def __init__(self,accessory_name,position):
             self.images = {}
+            self.position_name = position
             if renpy.android:
                 self.supported_faces = ["Face_1","Face_2","Face_3","Face_4","Face_6","Face_7","Face_8"] # Limited number of faces are supported on android due to file size limitations.
             else:
@@ -4772,25 +5083,43 @@ init -2 python:
 
         def get_image(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
-            if not special_modifier is None:
-                if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
-                    index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
+            #TODO: Check to see what the performance impact of having to define this repeatedly is. We could init it at the start and then repeatedly access it if we neeeded to.
 
-            return Image("character_images/" + self.images[index_string])
-            #return Image(self.images[index_string]) #We have made an index string, use it to get the full filepath for the image used in this position.
+            if renpy.mobile:
+                file_path = file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", self.position_name + ".zip"))
+                file = zipfile.ZipFile(file_path)
+                if not special_modifier is None:
+                    if index_string in file.namelist():
+                    #if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier
+                        index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
+
+                the_image = renpy.display.im.ZipFileImage(file_path + self.position_name + ".zip", self.images[index_string])
+                return the_image
+            else:
+                return Image("character_images/" + self.images[index_string]) #We have made an index string, use it to get the full filepath for the image used in this position.
 
         def get_image_name(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
-            if not special_modifier is None:
-                if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
-                    index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
+            if renpy.mobile:
+                file_path = file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", self.position_name + ".zip"))
+                file = zipfile.ZipFile(file_path + self.position_name + ".zip")
+                if not special_modifier is None:
+                    if index_string in file.namelist():
+                    #if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
+                        index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
+            else:
+                if not special_modifier is None:
+                    if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
+                        index_string += "_" + special_modifier
 
-            return "character_images/" + self.images[index_string]
+            return self.images[index_string]
 
     class Clothing_Images(renpy.store.object): # Stores a set of images for a single piece of clothing in a single position. The position is stored when it is put into the clothing object dict.
         def __init__(self,clothing_name,position_name,is_top, body_dependant = True):
 
             self.images = {}
+            self.clothing_name = clothing_name #Used for some debugging, not needed for the actual game logic.
+            self.position_name = position_name #Used so we can access the correct .zip file
             if body_dependant:
                 self.body_types = ["standard_body","thin_body","curvy_body","standard_preg_body"]
             else:
@@ -4813,13 +5142,22 @@ init -2 python:
 
         def get_image(self, body_type, breast_size = "AA" ): #Generates a proper Image object from the file path strings we have stored previously. Prevents object bloat by storing large objects repeatedly for everyone.
             index_string = body_type + "_" + breast_size
-            return Image("character_images/" + self.images[index_string])
-            #return Image(self.images[index_string])
+
+            if renpy.mobile:
+                file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", self.position_name + ".zip"))
+                return_image = renpy.display.im.ZipFileImage(file_path, self.images[index_string])
+            else:
+                return_image = Image("character_images/" + self.images[index_string])
+
+            if return_image:
+                return return_image
+            else:
+                return
 
         def get_image_name(self, body_type, breast_size = "AA" ): #Generates a proper Image object from the file path strings we have stored previously. Prevents object bloat by storing large objects repeatedly for everyone.
             index_string = body_type + "_" + breast_size
-            return "character_images/" + self.images[index_string]
-            #return Image(self.images[index_string])
+            return self.images[index_string]
+            #return "character_images/" + self.images[index_string]
 
     class VrenAnimation(renpy.store.object):
         def __init__(self, name, shader, tex_1_regions, innate_animation_strength = 1.0, region_specific_weights = None):
@@ -5258,13 +5596,11 @@ init -2 python:
         def get_upper_unanchored(self):
             return_list = []
             for top in reversed(sorted(self.upper_body, key=lambda clothing: clothing.layer)):
-                if top.has_extension is None:
-                    return_list.append(top)
-                elif self.is_item_unanchored(top.has_extension):
+                if top.has_extension is None or self.is_item_unanchored(top.has_extension):
                     return_list.append(top)
 
 
-                if top.anchor_below and not (top.can_be_half_off and top.half_off_gives_access):
+                if top.anchor_below:
                     break #Search the list, starting at the outermost item, until you find something that anchors the stuff below it.
             return return_list
 
@@ -5274,7 +5610,7 @@ init -2 python:
                 if bottom.has_extension is None or self.is_item_unanchored(bottom.has_extension):
                     return_list.append(bottom)
 
-                if bottom.anchor_below and not (bottom.can_be_half_off and bottom.half_off_gives_access):
+                if bottom.anchor_below:
                     break
             return return_list
 
@@ -5284,7 +5620,7 @@ init -2 python:
                 if foot.has_extension is None or self.is_item_unanchored(foot.has_extension):
                     return_list.append(foot)
 
-                if foot.anchor_below and not (foot.can_be_half_off and foot.half_off_gives_access):
+                if foot.anchor_below:
                     break
             return return_list
 
@@ -6348,16 +6684,26 @@ transform scale_person(height_factor = 1):
     zoom height_factor
 
 transform character_right():
-    yalign 0.5
-    yanchor 0.5
+    yalign 0.95
+    yanchor 1.0
     xalign 1.0
     xanchor 1.0
 
-transform character_test_right():
-    yalign 0.5
-    yanchor 0.5
-    xalign 0.9
+transform position_shift(character_xalign = 1.0, scale_mod = 1.0, character_alpha = 1.0):
+    yalign 0.95
+    yanchor 1.0
     xanchor 1.0
+    xalign character_xalign
+    zoom scale_mod
+    alpha character_alpha
+
+# init -1 python:
+#     def clothing_fade_function(trans, st, at):
+#         if st > 1.0:
+#             trans.alpha = 0.0
+#
+#         else:
+#             trans.alpha = st
 
 transform clothing_fade():
     linear 1.0 alpha 0.0
@@ -6982,8 +7328,8 @@ screen employee_overview(white_list = None, black_list = None, person_select = F
             textbutton "Return" align [0.5,0.5] style "return_button_style" text_style "return_button_style"
 
 
-screen person_info_ui(the_person): #Used to display stats for a person while you're talking to them.
-    layer "Active" #By making this layer active it is cleared whenever we draw a person or clear them off the screen.
+screen person_info_ui(the_person, display_layer = "solo"): #Used to display stats for a person while you're talking to them.
+    layer "solo" #By making this layer active it is cleared whenever we draw a person or clear them off the screen.
     $ formatted_tooltip = ""
     $ formatted_obedience_tooltip = ""
     python:
@@ -7652,7 +7998,7 @@ screen interview_ui(the_candidates,count):
 init -2 python: # Some functions used only within screens for modifying variables
     def show_candidate(the_candidate):
         clear_scene()
-        the_candidate.draw_person(show_person_info = False, background_fill = "444444")
+        the_candidate.draw_person(show_person_info = False, background_fill = "444444", the_animation = no_animation)
 
 
 screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_names = []): #You can now pass extra inventories, as well as names for all of the inventories you are passing. Returns nothing, but is used to view inventories.
@@ -9630,6 +9976,13 @@ init -2 style map_frame_blue_style:
 init -2 style map_frame_grey_style:
     background "#222222"
 
+init -2 python:
+    def greyout_transform(d):
+        return AlphaBlend(Solid("#fff"), d, Solid("#000"), True)
+
+
+
+
 transform float_up:
     subpixel True #Experimental, might have performance impact.
     xalign 0.92
@@ -9679,7 +10032,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.32.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.33.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -9890,7 +10243,7 @@ label normal_start:
     $ mc.business.add_employee_research(stephanie)
     $ mc.business.r_div.add_person(stephanie) #Lets make sure we actually put her somewhere
     $ mc.business.r_div.move_person(stephanie,lobby)
-    $ stephanie.set_work([1,2,3],mc.business.r_div)
+    $ stephanie.set_work(mc.business.r_div)
     $ mc.business.head_researcher = stephanie
     $ stephanie.special_role = [steph_role, employee_role, head_researcher]
 
@@ -10600,31 +10953,31 @@ label hire_someone(new_person, add_to_location = False): # Breaks out some of th
     menu:
         "Research and Development.":
             $ mc.business.add_employee_research(new_person)
-            $ new_person.set_work([1,2,3], mc.business.r_div)
+            $ new_person.set_work(mc.business.r_div)
             if add_to_location:
                 $ mc.business.r_div.add_person(new_person)
 
         "Production.":
             $ mc.business.add_employee_production(new_person)
-            $ new_person.set_work([1,2,3], mc.business.p_div)
+            $ new_person.set_work(mc.business.p_div)
             if add_to_location:
                 $ mc.business.p_div.add_person(new_person)
 
         "Supply Procurement.":
             $ mc.business.add_employee_supply(new_person)
-            $ new_person.set_work([1,2,3], mc.business.s_div)
+            $ new_person.set_work(mc.business.s_div)
             if add_to_location:
                 $ mc.business.s_div.add_person(new_person)
 
         "Marketing.":
             $ mc.business.add_employee_marketing(new_person)
-            $ new_person.set_work([1,2,3], mc.business.m_div)
+            $ new_person.set_work(mc.business.m_div)
             if add_to_location:
                 $ mc.business.m_div.add_person(new_person)
 
         "Human Resources.":
             $ mc.business.add_employee_hr(new_person)
-            $ new_person.set_work([1,2,3], mc.business.h_div)
+            $ new_person.set_work(mc.business.h_div)
             if add_to_location:
                 $ mc.business.h_div.add_person(new_person)
 
@@ -11022,7 +11375,7 @@ label advance_time:
     else:
         $ time_of_day += 1 ##Otherwise, just run the end of day code.
 
-    if time_of_day == 1 and daily_serum_dosage_policy.is_active(): #It is the start of the work day, give everyone their daily dose of serum
+    if time_of_day == 1 and daily_serum_dosage_policy.is_active() and mc.business.is_work_day(): #It is the start of the work day, give everyone their daily dose of serum
         $ mc.business.give_daily_serum()
 
     python:
@@ -11326,7 +11679,7 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         for i in __builtin__.range(0,4):
             a_girl = create_random_person(start_sluttiness = renpy.random.randint(15,30))
             a_girl.generate_home()
-            a_girl.set_schedule([3,4],strip_club)
+            a_girl.set_schedule(strip_club, times = [3,4])
             stripclub_strippers.append(a_girl)
             strip_club.add_person(a_girl)
 

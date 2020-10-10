@@ -2,6 +2,8 @@
 # This file holds all of the role requirements and labels for the sister role.
 ##########################################
 
+#TODO: add a punish line for Lilys instathot storyline
+
 init -2 python:
     #SISTER ACTION REQUIREMENTS#
     def sister_intro_crisis_requirements(the_person, day_trigger):
@@ -657,36 +659,38 @@ label sister_instathot_label_mom(the_sister, the_mom):
         the_mom.char "Oh what the heck, dinner can be a little late tonight."
 
     "[the_mom.possessive_title] closes the fridge and follows you back to [the_sister.possessive_title]'s room."
+    $ clear_scene()
     $ lily_bedroom.show_background()
-    $ the_sister.draw_person()
+    $ the_group = GroupDisplayManager([the_sister, the_mom], primary_speaker = the_sister)
+    $ the_group.draw_group()
 
     if first_time:
         the_sister.char "Hey [the_mom.title], come on in."
-        $ the_mom.draw_person()
+        $ the_group.draw_person(the_mom)
         the_mom.char "Thank you for inviting me, I just hope I'm not going to get in your way."
         mc.name "You're going to do great [the_mom.title]."
         the_mom.char "Thank you sweetheart. You can run along then, me and your sister will..."
-        $ the_sister.draw_person()
+        $ the_group.draw_person(the_sister)
         the_sister.char "Wait [the_mom.title], we need him. He's going to take the pictures."
-        $ the_mom.draw_person()
+        $ the_group.draw_person(the_mom)
         the_mom.char "Oh! I was wondering how we were going to both be in the pictures. That makes sense."
         the_mom.char "What do we first then?"
-        $ the_sister.draw_person()
+        $ the_group.draw_person(the_sister)
         if the_sister.event_triggers_dict.get("sister_instathot_mom_pics_slutty", False):
             the_sister.char "I've got some outfits picked out for us. I had to guess at some of your sizes, so it might be a bit small."
             the_sister.char "You don't have to wear it if you don't want to though. I..."
-            $ the_mom.draw_person()
+            $ the_group.draw_person(the_mom)
             "[the_mom.title] shakes her head and interrupts."
             the_mom.char "[the_sister.title], I want the whole experience! These outfits will get you more view on your insta... view... pic thing, right?"
             the_mom.char "Come on, show me what you picked out for me. I'm sure I can squeeze into it with a little bit of work."
         else:
             the_sister.char "First I need to pick an outfit and get changed."
             the_sister.char "You don't have to change anything though, I'll just..."
-            $ the_mom.draw_person()
+            $ the_group.draw_person(the_mom)
             "[the_mom.title] shakes her head and interrupts."
             the_mom.char "[the_sister.title], I want the whole experience! Don't you want more views on your insta... view... pic thing?"
             the_mom.char "Come on, show me what you have. I'm sure you have something I can squeeze into."
-        $ the_sister.draw_person()
+        $ the_group.draw_person(the_sister)
         "[the_sister.possessive_title] smiles and nods. She waves [the_mom.possessive_title] over to the pile of clothes she has laid out on her bed."
         the_sister.char "Really? Alright! Well, I've got this a few days ago that's really cute and..."
         "You lean against a wall and pass some time on your phone while [the_sister.possessive_title] and [the_mom.title] pick out outfits."
@@ -694,13 +698,13 @@ label sister_instathot_label_mom(the_sister, the_mom):
 
     else:
         the_sister.char "Hey [the_mom.title], come on in!"
-        $ the_mom.draw_person()
+        $ the_group.draw_person(the_mom)
         the_mom.char "Hi sweety, thanks for having me back. So, do you have something for us to wear today?"
-        $ the_sister.draw_person()
+        $ the_group.draw_person(the_sister)
         the_sister.char "I've got some really cute outfits I think we'll look amazing in. Come on, let's get changed."
 
     if the_mom.has_taboo(["bare_tits", "bare_pussy"]): #She doesn't want to strip in front of you, let's break those taboos!
-        $ the_mom.draw_person()
+        $ the_group.draw_person(the_mom)
         the_mom.char "[the_mom.mc_title], you don't mind, do you? I can go back to my room if this..."
         mc.name "Don't worry [the_mom.title], I don't mind at all. Go ahead and get changed and we can take some pics."
         the_mom.char "Right, nothing to worry about then..."
@@ -710,7 +714,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
     else: #No problems here, strip away!
         "[the_sister.title] starts to strip down, and [the_mom.possessive_title] hurries to keep up."
 
-    $ stripper = the_sister  #TODO: This event is screaming for some multi-girl display support.
+    $ stripper = the_sister # Pick which girl you want to make the primary for this event.
     menu:
         "Watch [the_sister.title] strip.":
             $ stripper = the_sister
@@ -720,21 +724,29 @@ label sister_instathot_label_mom(the_sister, the_mom):
             $ stripper = the_mom
             $ not_stripper = the_sister
 
-    $ next_item = stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-    while next_item:
-        $ stripper.draw_animated_removal(next_item)
-        "..."
-        $ next_item = stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+    $ the_group.set_primary(stripper)
+    $ the_group.draw_person(stripper)
 
-    $ next_item = not_stripper.outfit.remove_random_any(top_layer_first = True)
-    while next_item:
-        $ next_item = not_stripper.outfit.remove_random_any(top_layer_first = True)
+    # Now loop through everyone
+    python: #TODO: generalise some of this and drip it into the group manager to make future scenes like this easy.
+        something_removed = True #Start with this True so that the first loop is always executed.
+        while something_removed:
+            something_removed = False # We end once both girls fail to remove something
+            for the_stripper in [the_mom, the_sister]:
+                next_item = the_stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                if next_item:
+                    something_removed = True
+                    the_group.draw_animated_removal(the_stripper, False, the_clothing = next_item)
+                    #renpy.say(the_stripper.title, "Removing: " + next_item.display_name) #TOOD: Remove this, it's just here for debugging purposes
+
+            renpy.say("","...")
+            clear_scene() #The clothing fade breaks without this clear, because the fade time doesn't seem to reset.
+            the_group.redraw_group()
 
     "You watch as [stripper.title] finishes stripping naked and starts to put on her outfit."
-    $ not_stripper.draw_person()
-    "You glance over at [not_stripper.title], naked now too and doing the same."
+    "[not_stripper.title] is naked now too, doing the same."
 
-    $ stripper = None
+    $ stripper = None #Clear the reference.
     $ not_stripper = None
 
     $ insta_outfit_mom = insta_wardrobe.pick_random_outfit()
@@ -742,7 +754,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
 
 
     if insta_outfit_mom.name == insta_outfit_sister.name:
-        $ the_sister.draw_person()
+        $ the_group.draw_person(the_sister)
         the_sister.char "I got us matching outfits, because I thought it would really show off the family resemblance."
         the_sister.char "It should make for a really cute shoot! Maybe [the_sister.mc_title] can tell us who wears it best."
 
@@ -752,23 +764,23 @@ label sister_instathot_label_mom(the_sister, the_mom):
 
     "The girls get dressed. [the_mom.title] turns to [the_sister.possessive_title], ready for her inspection."
 
-    $ the_mom.draw_person()
+    $ the_group.draw_person(the_mom)
     the_mom.char "Okay, am I wearing this right?"
-    $ the_sister.draw_person()
+    $ the_group.draw_person(the_sister)
     the_sister.char "You look great [mom.title], it's so cute on you!"
-    $ the_mom.draw_person()
+    $ the_group.draw_person(the_mom)
     if the_mom.judge_outfit(insta_outfit_mom):
         the_mom.char "Thank you! We need to go shopping together, I think I need more fashion advice from you."
     else:
         the_mom.char "Are you sure there isn't any more? A slip or a cover-up, maybe?"
 
-    $ the_sister.draw_person()
+    $ the_group.draw_person(the_sister)
     the_sister.char "Come on [mom.title], we've got to take some pictures now. Get up here."
-    $ the_sister.draw_person(position = "kneeling1", emotion = "happy")
+    $ the_group.draw_person(the_sister, position = "kneeling1", emotion = "happy")
     "[the_sister.title] jumps onto her bed and gets onto her knees, looking towards you and her phone camera."
-    $ the_mom.draw_person()
+    $ the_group.draw_person(the_mom)
     the_mom.char "Okay, I think I can do that..."
-    $ the_mom.draw_person(position = "kneeling1", emotion = "happy")
+    $ the_group.draw_person(the_mom, position = "kneeling1", emotion = "happy")
     "[the_mom.possessive_title] gets onto the bed with [the_sister.possessive_title]."
     mc.name "That's looking good you two, now look at me and smile."
     "You take a few pictures of them, moving around the bed to get a few different angles."
@@ -780,9 +792,9 @@ label sister_instathot_label_mom(the_sister, the_mom):
             mc.name "A little more. Try putting your arms around her."
             "[the_mom.possessive_title] slips behind [the_sister.possessive_title] and pulls her into a hug"
             the_mom.char "I haven't played ith you like this since you were a kid [the_sister.title]!"
-            $ the_sister.draw_person(position = "kneeling1", emotion = "happy")
+            $ the_group.draw_person(the_sister, position = "kneeling1", emotion = "happy")
             the_sister.char "Oh my god, you're so embarrassing [the_mom.title]!"
-            $ the_mom.draw_person(position = "kneeling1", emotion = "happy")
+            $ the_group.draw_person(the_mom, position = "kneeling1", emotion = "happy")
             the_mom.char "[the_mom.mc_title], make sure to get some shots of me embarrassing your sister."
             "She leans over [the_sister.title]'s shoulder and kisses her on the side of the cheek."
             $ the_mom.change_happiness(10)
@@ -796,15 +808,15 @@ label sister_instathot_label_mom(the_sister, the_mom):
             pass
 
     mc.name "Alright, I think we've got all the shots we need."
-    $ the_mom.draw_person(emotion = "happy")
+    $ the_group.draw_person(the_mom, emotion = "happy")
     "[the_mom.possessive_title] hops off of the bed."
     the_mom.char "That was really fun, thanks for inviting me you two."
-    $ the_sister.draw_person(emotion = "happy")
+    $ the_group.draw_person(the_sister, emotion = "happy")
     the_sister.char "It was! Oh, I should give [the_sister.mc_title] his cut for being our photographer."
 
     menu:
         "Take the money. +$100":
-            $ the_mom.draw_person()
+            $ the_group.draw_person(the_mom)
             the_mom.char "It's so nice to see you two working well together."
             $ mc.business.funds += 100
 
@@ -813,15 +825,14 @@ label sister_instathot_label_mom(the_sister, the_mom):
             $ the_sister.change_love(1)
             the_sister.char "Aww, you're the best!"
             "She gives you a hug and a quick kiss on the cheek."
-            $ the_mom.draw_person()
+            $ the_group.draw_person(the_mom)
             $ the_mom.change_love(1)
-            $ the_mom.draw_person()
             the_mom.char "You're such a good brother [the_mom.mc_title]."
 
         "Let [the_mom.title] have it.":
             mc.name "[the_mom.title], you can have what [the_sister.title] normally gives me."
             mc.name "I hope that helps with the bills."
-            $ the_mom.draw_person()
+            $ the_group.draw_person(the_mom)
             the_mom.char "Oh sweetheart, you don't have to..."
             mc.name "Really [the_mom.title], I want you to have it."
             $ the_mom.change_love(2)
@@ -829,7 +840,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
 
     if the_mom.judge_outfit(insta_outfit_mom) and not the_mom.wardrobe.has_outfit_with_name(insta_outfit_mom.name):
         the_mom.char "Say [the_sister.title], do you need this outfit back?"
-        $ the_sister.draw_person()
+        $ the_group.draw_person(the_sister)
         the_sister.char "No, you can keep it if you want. It's obviously not my size, and I don't think they'll take returns."
         $ the_mom.wardrobe.add_outfit(insta_outfit_mom)
         $ the_mom.planned_outfit = insta_outfit_mom #She wears it for the rest of the day.
@@ -841,7 +852,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
         "[the_mom.title] collects her clothing and hurries off to her room. You give [the_sister.title] her phone back and leave her to upload the pics."
 
 
-    if the_sister.judge_outfit(insta_outfit_sister) and not the_sister.wardrobe.has_outfit_with_name(insta_outfit_mom.name):
+    if the_sister.judge_outfit(insta_outfit_sister) and not the_sister.wardrobe.has_outfit_with_name(insta_outfit_sister.name):
         $ the_mom.wardrobe.add_outfit(insta_outfit_sister)
 
 

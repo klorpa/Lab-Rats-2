@@ -165,7 +165,7 @@ label cousin_intro_phase_one_label():
 
 label cousin_house_phase_one_label(the_person):
     #Changes her schedule to be at your house
-    $ the_person.schedule[2] = hall
+    $ the_person.set_schedule(hall, times = [2])
     $ cousin_house_phase_two_action = Action("Cousin visits house", cousin_house_phase_two_requirement, "cousin_house_phase_two_label")
     $ cousin.on_room_enter_event_list.append(cousin_house_phase_two_action) #When you see her next in your house this event triggers and she explains why she's there.
     return
@@ -184,7 +184,7 @@ label cousin_house_phase_two_label(the_person):
     return
 
 label cousin_house_phase_three_label(the_person):
-    $ the_person.schedule[2] = lily_bedroom #Set her to be in Lily's room AND for an event to trigger when you walk in on her.
+    $ the_person.set_schedule(lily_bedroom, times = [2])#Set her to be in Lily's room AND for an event to trigger when you walk in on her.
     $ cousin_blackmail_intro_action = Action("Cousin caught stealing", cousin_blackmail_intro_requirement, "cousin_blackmail_intro_label")
     $ the_person.on_room_enter_event_list.append(cousin_blackmail_intro_action)
     return
@@ -233,7 +233,7 @@ label cousin_blackmail_intro_label(the_person):
             the_person.char "Okay. I better not find out you told someone."
             mc.name "Your secret's safe with me."
 
-    $ the_person.schedule[2] = hall
+    $ the_person.set_schedule(hall, times = [2])
     $ the_person.event_triggers_dict["blackmail_level"] = 1
 
     $ blackmail_2_event = Action("Blackmail hint", blackmail_hint_requirement, "aunt_cousin_hint_label", args = [aunt, the_person], requirement_args = [the_person, day + renpy.random.randint(2,4)])
@@ -553,7 +553,7 @@ label aunt_cousin_hint_label(the_aunt, the_cousin):
     the_aunt.title "Thank you. I won't keep you any longer then, I'm sure you're busy!"
 
     $ stripclub_strippers.append(the_cousin)
-    $ the_cousin.set_schedule([4], strip_club)
+    $ the_cousin.set_schedule(strip_club, times = [4])
 
     $ the_cousin.event_triggers_dict["stripping"] = True #Used to flag the blackmail event.
     $ cousin_room_search_action = Action("Search her room. {image=gui/heart/Time_Advance.png}", cousin_room_search_requirement, "cousin_search_room_label",requirement_args = [the_cousin], args = [the_cousin, the_aunt])
@@ -890,9 +890,9 @@ label cousin_talk_boobjob_again_label(the_person):
                 cousin_boobjob_get_action = Action("Cousin boob job get", cousin_boobjob_get_requirement, "cousin_boobjob_get_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(4,6)])
                 mc.business.mandatory_crises_list.append(cousin_boobjob_get_action)
 
-                for an_action in cousin_role:
+                for an_action in cousin_role.actions:
                     if an_action == cousin_talk_boobjob_again_action: #Find and remove this action.
-                        cousin_role.remove(an_action)
+                        cousin_role.actions.remove(an_action)
                         break
 
         "Pay for it. -$5000 (disabled)" if mc.business.funds < 5000:
@@ -922,9 +922,9 @@ label cousin_talk_boobjob_again_label(the_person):
                 $ cousin_serum_boobjob_check_action = Action("Cousin serum boobjob check", cousin_serum_boobjob_check_requirement, "cousin_serum_boobjob_label", args = [the_person, the_person.tits], requirement_args = [the_person, the_person.tits, day + 3])
                 $ mc.business.mandatory_crises_list.append(cousin_serum_boobjob_check_action)
                 python:
-                    for an_action in cousin_role:
+                    for an_action in cousin_role.actions:
                         if an_action == cousin_talk_boobjob_again_action: #Find and remove this action.
-                            cousin_role.remove(an_action)
+                            cousin_role.actions.remove(an_action)
                             break
                 return
 

@@ -462,19 +462,23 @@ label futuristic_serum_stage_2_label(the_person):
     $ the_person.draw_person(emotion = "happy")
     the_person.char "Excellent!"
     "[the_person.title] gets her phone out and calls all three girls down to the lab. It doesn't take long for them all to assemble."
-    the_person.char "The testing might take some time sir, I'll get started right now and have all my findings recorded. Come by later and we can review any discoveries."
-    "[the_person.title] turns to the other girls."
-    the_person.char "Well then, we have some special testing to get through today! Who would like to go first?"
     $ go_first = pick_1
     if pick_2.obedience > go_first:
         $ go_first = pick_2
     if pick_3.obedience > go_first:
         $ go_first = pick_3
-    "[go_first.name] raises her hand and [the_person.title] smiles and grabs her clipboard."
+    $ the_group = GroupDisplayManager([the_person, pick_1, pick_2, pick_3], primary_speaker = the_person)
+    $ clear_scene()
+    $ the_group.draw_group()
+    the_person.char "The testing might take some time sir, I'll get started right now and have all my findings recorded. Come by later and we can review any discoveries."
+    "[the_person.title] turns to the other girls."
+    the_person.char "Well then, we have some special testing to get through today! Who would like to go first?"
+    "[go_first.name] raises her hand. [the_person.title] smiles and grabs her clipboard."
     the_person.char "Very good. Come with me, you two can wait here until we're done."
     "[the_person.title] leads [go_first.title] into a side office, and you decide to leave her to her work."
     #TODO: Expand this event for more sexy stuff.
     $ mc.business.research_tier = 3
     $ mc.log_event("Max Research Tier Unlocked", "float_text_grey")
+    $ clear_scene()
     call advance_time from _call_advance_time_9
     return

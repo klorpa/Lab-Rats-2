@@ -290,7 +290,7 @@ label pregnant_finish_announce(the_person): #TODO: have more varients for girlfr
 
     python:
         the_person.event_triggers_dict["preg_old_schedule"] = the_person.schedule.copy() #Take a shallow copy so we can change their current schedule to nothing
-        the_person.set_schedule([0,1,2,3,4], the_person.home)
+        the_person.set_schedule(the_person.home, times = [0,1,2,3,4])
 
         preg_finish_action = Action("Pregnancy Finish", preg_finish_requirement, "pregnant_finish", args = the_person, requirement_args = [the_person, day + renpy.random.randint(4,7)])
         mc.business.mandatory_morning_crises_list.append(preg_finish_action)

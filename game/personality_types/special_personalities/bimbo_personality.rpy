@@ -654,8 +654,32 @@ label bimbo_cum_mouth(the_person):
 
 label bimbo_cum_pullout(the_person):
     if mc.condom:
-        "[the_person.possessive_title] giggles happily."
-        the_person.char "Hehe, I'm going to make you cum? Yay!"
+        if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
+            if the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "Why are you even wearing a condom? I'm, like, already pregnant."
+                the_person.char "Come on, just take it off and cum inside me again. You know I love it, right?"
+                "She giggles happily."
+
+            elif the_person.on_birth_control:
+                the_person.char "Oh my god I'm, like, going to go crazy! Take the condom off so you can cum inside of me!"
+                the_person.char "Please [the_person.mc_title]? I, like, want it so badly!"
+
+            else:
+                the_person.char "[the_person.mc_title], I want you to knock me up! Take off the condom and cum inside of me, okay?"
+                the_person.char "I want you to make me your personal breeding slut! It would make me so happy if you knocked me up!"
+
+            menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
+                "Take off the condom.":
+                    "You don't have much time to spare. You pull out, barely clearing her pussy, and pull the condom off as quickly as you can manage."
+                    $ mc.condom = False
+                "Leave it on.":
+                    "You ignore [the_person.possessive_title]'s cum-drunk offer and keep the condom in place."
+
+        else:
+            "[the_person.possessive_title] giggles happily."
+            the_person.char "Hehe, I'm going to make you cum? Yay!"
+
+
 
     elif the_person.wants_creampie():
         if the_person.event_triggers_dict.get("preg_knows", False): #She's already knocked up, so who cares!

@@ -716,8 +716,31 @@ label relaxed_cum_mouth(the_person):
 
 label relaxed_cum_pullout(the_person):
     # Lead in: "I'm going to cum!"
-    if mc.condom:
-        the_person.char "Oh yeah, cum for me [the_person.mc_title]!"
+    if mc.condom: #TODO: All of the cum-drunk stuff
+        if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
+            if the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "I'm already pregnant, why are we even bothering with a condom?"
+                the_person.char "Take it off and cum inside my pussy, just like you did when you knocked me up!"
+            elif the_person.on_birth_control:
+                the_person.char "You are? Do..."
+                "She moans, almost desperately."
+                the_person.char "...Do you want to cum inside me? Just take the condom off, I don't care any more!"
+                the_person.char "I just want your cum!"
+            else:
+                the_person.char "Oh god... I can't resist it!"
+                the_person.char "I want you to cum in my pussy [the_person.mc_title]!"
+                "She seems almost desperate as she moans."
+                the_person.char "I don't care if you knock me up! I'm just your... breeding slut!"
+
+            menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
+                "Take off the condom.":
+                    "You don't have much time to spare. You pull out, barely clearing her pussy, and pull the condom off as quickly as you can manage."
+                    $ mc.condom = False
+                "Leave it on.":
+                    "You ignore [the_person.possessive_title]'s cum-drunk offer and keep the condom in place."
+
+        else:
+            the_person.char "Oh yeah, cum for me [the_person.mc_title]!"
 
     else:
         if the_person.wants_creampie():

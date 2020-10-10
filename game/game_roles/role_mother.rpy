@@ -916,9 +916,9 @@ label mom_work_promotion_two_report(the_person): #TODO: Hook this up as an on_ro
         $ the_person.draw_person(emotion = "happy")
         "[the_person.title] gives you a bright smile and hurries over to you as soon as she sees you."
         the_person.char "[the_person.mc_title], I have some good news!"
-        mc.name "Let me guess. You got your promtion?"
+        mc.name "Let me guess. You got your promotion?"
         the_person.char "Kind of. I had a fantastic interview with my superior and I think we really made a connection."
-        the_person.char "He told me that the committee had already made their pick, so there wasn't really any chance I was going to get hte promotion."
+        the_person.char "He told me that the committee had already made their pick, so there wasn't really any chance I was going to get the promotion."
         the_person.char "But he did tell me that there was a position in his department as his personal technical assistant."
         the_person.char "He offered me the job right there! It's not much of a pay raise, but the hours are more flexible and the work should be easier."
         mc.name "That's fantastic [the_person.title]. I knew it would all work out."

@@ -163,18 +163,41 @@ label cousin_flirt_response_high(the_person):
 
 ## Sex dialogue ##
 label cousin_cum_pullout(the_person):
-    if the_person.wants_creampie():
-        if the_person.on_birth_control or the_person.event_triggers_dict.get("preg_knows", False):
-            the_person.char "Hurry up! Cum for me [the_person.mc_title]!"
+    if mc.condom:
+        if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
+            if the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "Fuck, get that condom off then!"
+                the_person.char "I'm already pregnant, so just pump your load inside of me!"
+
+            elif the_person.on_birth_control:
+                the_person.char "I... Fuck it, take that condom off first [the_person.mc_title]! Put that load inside of my pussy!"
+                "She moans aggressively."
+            else:
+                the_person.char "I... Oh fuck, I can't think straight! Take that condom off before you cum [the_person.mc_title]!"
+                the_person.char "Don't waste your load, put it into my fertile little pussy! Try and get me fucking pregnant!"
+
+            menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
+                "Take off the condom.":
+                    "You don't have much time to spare. You pull out, barely clearing her pussy, and pull the condom off as quickly as you can manage."
+                    $ mc.condom = False
+                "Leave it on.":
+                    "You ignore [the_person.possessive_title]'s cum-drunk offer and keep the condom in place."
+
         else:
-            the_person.char "Yeah? Is my pussy going to make you cum?"
-            "She pants happily."
-            the_person.char "Then hurry up and do it! Give me that creampie!"
+            the_person.char "Yeah? My tight, wet, pussy is going to make you cum? Then fucking do it!"
     else:
-        if the_person.on_birth_control:
-            the_person.char "Oh fuck, you better pull out!"
+        if the_person.wants_creampie():
+            if the_person.on_birth_control or the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "Hurry up! Cum for me [the_person.mc_title]!"
+            else:
+                the_person.char "Yeah? Is my pussy going to make you cum?"
+                "She pants happily."
+                the_person.char "Then hurry up and do it! Give me that creampie!"
         else:
-            the_person.char "What are you waiting for? Pull out!"
+            if the_person.on_birth_control:
+                the_person.char "Oh fuck, you better pull out!"
+            else:
+                the_person.char "What are you waiting for? Pull out!"
     return
 
 label cousin_cum_condom(the_person):

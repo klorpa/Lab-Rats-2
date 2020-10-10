@@ -318,7 +318,7 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, person_
 
                                 $ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
                                 #$ hovered_list.append(Function(item.draw_person, **person_preview_args))
-                                $ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="Active",what=person_displayable,tag=item.name))
+                                $ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="solo",what=person_displayable,tag=item.name))
                                 $ unhovered_list.append(Function(clear_scene))
 
                             if isinstance(item,Action):
@@ -403,10 +403,10 @@ screen person_choice(people, draw_hearts = False, person_prefix = None, person_s
 
                     $ person_displayable = i.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
                     textbutton her_title:
-                        action Return(i)
+                        action [Function(renpy.scene, "front_1"), Return(i)]
                         if show_person_preview:
-                            hovered Function(renpy.show, i.name, at_list=[character_right, scale_person(i.height)],layer="Active",what=person_displayable,tag=i.name)
-                            unhovered Function(renpy.scene,"Active")
+                            hovered Function(renpy.show, i.name, at_list=[character_right, scale_person(i.height)],layer="front_1",what=person_displayable,tag=i.name)
+                            unhovered Function(renpy.scene,"front_1")
                 else:
                     textbutton i action Return(i)
 
@@ -432,10 +432,10 @@ screen person_choice(people, draw_hearts = False, person_prefix = None, person_s
 
                     $ person_displayable = j.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
                     textbutton her_title:
-                        action Return(i)
+                        action [Function(renpy.scene, "front_1"), Return(j)]
                         if show_person_preview:
-                            hovered Function(renpy.show, j.name, at_list=[character_right, scale_person(j.height)],layer="Active",what=person_displayable,tag=j.name)
-                            unhovered Function(renpy.scene,"Active")
+                            hovered Function(renpy.show, j.name, at_list=[character_right, scale_person(j.height)],layer="front_1",what=person_displayable,tag=j.name)
+                            unhovered Function(renpy.scene,"front_1")
                 else:
                     textbutton j action Return(j)
 
@@ -1098,11 +1098,11 @@ screen preferences():
                         textbutton "Enable" action SetField(persistent, "vren_animation", True)
                         textbutton "Disable" action SetField(persistent, "vren_animation", False)
 
-                    vbox:
-                        style_prefix "radio"
-                        label "Animation Scaling"
-                        textbutton "1.0" action SetField(persistent, "vren_mac_scale", 1.0)
-                        textbutton "2.0" action SetField(persistent, "vren_mac_scale", 2.0)
+                    # vbox:
+                    #     style_prefix "radio"
+                    #     label "Animation Scaling"
+                    #     textbutton "1.0" action SetField(persistent, "vren_mac_scale", 1.0)
+                    #     textbutton "2.0" action SetField(persistent, "vren_mac_scale", 2.0)
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.

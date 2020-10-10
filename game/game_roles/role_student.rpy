@@ -41,26 +41,32 @@ init -2 python:
 
 label student_intro_one(the_nora, the_student): #the_nora just because we don't want to conflict with the global Nora name.
     "You knock on the door to the lab. After a moment [the_nora.title] answers and steps out into the hallway."
-    $ the_nora.draw_person()
+    $ the_group = GroupDisplayManager([the_nora], primary_speaker = the_nora)
+    $ the_group.draw_group()
     the_nora.char "Hello, I'm glad you were able to make it. Come on, let's..."
     the_student.char "Professor [the_nora.last_name]!"
+    $ the_group.add_person(the_student)
+    $ the_group.draw_person(the_student, make_primary = False)
     "Your conversation is interrupted by a girl hurrying down the hallway towards you. [the_nora.title] sighs."
     the_nora.char "Sorry, this will just take a moment."
-    $ the_student.draw_person()
+    $ the_group.draw_person(the_student)
     the_student.char "Professor, I'm glad I was able to catch you, I..."
-    $ the_nora.draw_person()
+    $ the_group.draw_person(the_nora)
     $ the_student.set_title(the_student.name)
     $ the_student.set_possessive_title(the_student.name)
     the_nora.char "[the_student.title], you know I'm not allowed to have students in my lab."
-    $ the_student.draw_person()
+    $ the_group.draw_person(the_student)
     the_student.char "I know, which is why I was hoping I could talk to you here. There are a few questions I'm really struggling with on..."
-    $ the_nora.draw_person()
+    $ the_group.draw_person(the_nora)
     the_nora.char "Okay, but I'm with a colleague of mine right now. I will be back in a few minutes."
-    $ the_student.draw_person()
+    $ the_group.draw_person(the_student)
     the_student.char "Thank you Professor."
     "She turns to you and smiles."
     the_student.char "Sorry for the interruption."
     mc.name "No problem at all."
+    $ clear_scene()
+
+
     $ the_nora.draw_person()
     $ university.show_background()
     "[the_nora.title] leads you upstairs to make sure none of her co-workers are around."

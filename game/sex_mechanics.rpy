@@ -532,7 +532,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
                     interfering_clothing.append(clothing)
 
     if clothing_count > 0:
-        $ clothing_string = format_list_of_clothing(interfering_clothing) 
+        $ clothing_string = format_list_of_clothing(interfering_clothing)
         "[the_person.title]'s half off [clothing_string] get in the way, lowering your enjoyment somewhat."
 
 
@@ -783,7 +783,7 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
                 $ willing_if_ordered = the_person.judge_outfit(test_outfit, temp_sluttiness_boost = obedeince_modifier, use_taboos = True)
 
             if willing_if_ordered:
-                $ the_person.call_dialogue("strip_obedience_accept", strip_choice, strip_type)
+                $ the_person.call_dialogue("strip_obedience_accept", the_clothing = strip_choice, strip_type = strip_type)
                 menu:
                     "Do it anyways.":
                         "You proceed despite [the_person.possessive_title]'s objections, trusting her to remain obedient and docile."

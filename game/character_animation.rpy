@@ -1,6 +1,4 @@
 # Holds all functions used to animate characters.
-#TODO: See how this is going to affect the android community.
-
 
 
 #from gl cimport *
@@ -11,9 +9,13 @@ init -1 python:
         import shader.gpu as gpu
         from renpy.display.render import blit_lock
 
-    import io
+
+
+
 
     if renpy.mobile:
+        no_animation = VrenAnimation("No Animation", None, []) #A placeholder that can be used to explicitly not animate an image (otherwise characters grab a default animation)
+
         wiggle_animation = VrenAnimation("Boob Butt Wiggle", None, ["breasts","butt"], region_specific_weights = {"butt":0.2})
         idle_wiggle_animation = VrenAnimation("Idle Boob Butt Wiggle", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"butt":0.2})
 
@@ -25,11 +27,16 @@ init -1 python:
         #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
         missionary_bob = VrenAnimation("Missionary Style Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
 
+        # Test animation with nothing actually manipulated, to see the performance impact of the animation vs. overhead
+        none_test_animation = VrenAnimation("No Animation", None, [], innate_animation_strength = 1.0, region_specific_weights = {})
+
         #Ass_bob moves the center of the screen while keeping the top and bottom still.
         ass_bob = VrenAnimation("Ass Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":0.7,"butt":0.35})
         tit_bob = VrenAnimation("Tit Bob", None, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
 
     else:
+        no_animation = VrenAnimation("No Animation", shader.PS_BOUNCE2_2D, []) #A placeholder that can be used to explicitly not animate an image (otherwise characters grab a default animation)
+
         wiggle_animation = VrenAnimation("Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], region_specific_weights = {"butt":0.2})
         idle_wiggle_animation = VrenAnimation("Idle Boob Butt Wiggle", shader.PS_BOUNCE2_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"butt":0.2})
 
@@ -41,65 +48,76 @@ init -1 python:
         #Missionary bob is an inverted blowjob bob, it moves the bottom of the screen while holding the top still
         missionary_bob = VrenAnimation("Missionary Style Bob", shader.PS_DOGGY_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.3})
 
+        # Test animation with nothing actually manipulated, to see the performance impact of the animation vs. overhead
+        none_test_animation = VrenAnimation("No Animation", shader.PS_NONE, [], innate_animation_strength = 1.0, region_specific_weights = {})
+
         #Ass_bob moves the center of the screen while keeping the top and bottom still.
         ass_bob = VrenAnimation("Ass Bob", shader.PS_ASSBOUNCE_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":0.7,"butt":0.35})
         tit_bob = VrenAnimation("Tit Bob", shader.PS_ASSBOUNCE_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
 
 
+label draw_tests():
+    "Test starts after this statement proceeds."
+    $ mom.apply_outfit(mom.planned_outfit)
+    $ lily.apply_outfit(lily.planned_outfit)
+    $ the_group = GroupDisplayManager([aunt, mom, lily], mom)
+    python:
+        something_removed = True #Start with this True so that the first loop is always executed.
+        while something_removed:
+            something_removed = False # We end once both girls fail to remove something
+            for the_stripper in [aunt, mom, lily]:
+                next_item = the_stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                if next_item:
+                    something_removed = True
+                    the_group.draw_animated_removal(the_stripper, False, the_clothing = next_item)
+                    #renpy.say(the_stripper.title, "Removing: " + next_item.display_name) #TOOD: Remove this, it's just here for debugging purposes
 
-    # def convert_to_animation(the_person, the_displayable, background_fill = "#0026a5", a_shader = shader.PS_WALK_2D):
-    #     #the_displayable = the_person.build_person_displayable(position, emotion, special_modifier, show_person_info, lighting, background_fill = "#0026a5")
-    #     the_size = the_displayable.render(10,10,0,0).get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size ofthings inside it.
-    #     x_size = __builtin__.int(the_size[0])
-    #     y_size = __builtin__.int(the_size[1])
-    #
-    #     the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height)
-    #     the_surface = renpy.display.draw.screenshot(the_surftree, False)
-    #     surface_file = io.BytesIO()
-    #     #save_surface (the_surface, "FullAnimTest.png")
-    #     renpy.display.module.save_png(the_surface, surface_file, 0)
-    #     static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
-    #
-    #
-    #     the_image_name = "TEST"
-    #     the_mask_name = "test_images/FullAnimTest_Mask.png"
-    #
-    #
-    #     #background_mask = Solid("#0000", size = the_size)
-    #     the_animation = ShaderDisplayable(shader.MODE_2D, static_image, the_image_name, shader.VS_2D, a_shader,{"tex1":the_mask_name}, {}, None, None)
-    #     the_animated_displayable = Crop((0,0,x_size,y_size), the_animation)
-    #
-    #     renpy.show(the_image_name, at_list=[character_right], layer = "Active", what = the_animated_displayable)
-    #     return the_animated_displayable#The shaderdisplayable
+            print (renpy.get_showing_tags("solo", True))
+            renpy.say("","...")
+    return
 
+label draw_tests_2():
+    "Test starts after this statement proceeds."
+    $ mom.apply_outfit(mom.planned_outfit)
+    $ lily.apply_outfit(lily.planned_outfit)
+    $ the_group = GroupDisplayManager([mom, lily], mom)
 
+    $ something_removed = True
+    while something_removed:
+        $ something_removed = False
+        $ next_item = mom.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+        if next_item:
+            $ something_removed = True
+            $ the_group.draw_animated_removal(mom, False, the_clothing = next_item)
 
+        $ next_item = lily.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+        if next_item:
+            $ something_removed = True
+            $ the_group.draw_animated_removal(lily, False, the_clothing = next_item)
 
+        "..."
+    return
 
+label zip_test():
+    $ file_path = os.path.abspath(os.path.join(config.basedir, "game"))
+    $ test_image = renpy.display.im.ZipFileImage(file_path + "\images\character_images\stand2.zip","white_stand2_standard_body_DD.png") #TODO: test this
+    $ renpy.show(name = "Test", layer = "solo", what = test_image)
+    "Wait to see if it worked"
+    return
 
+label speed_test():
+    $ log_message("Beginning test.")
+    $ start_time = time.time()
+    $ mom.draw_person(position = "stand2")
+    $ log_message("Person one time: " + str(time.time() - start_time))
+    "..."
+    $ clear_scene()
 
-    def test_shader(the_person):
-        image_name = "test_images/FullAnimTest.png"
-        mask_name = "test_images/Test_Mask.png"
-        the_animation = ShaderDisplayable(shader.MODE_2D, image_name, image_name, shader.VS_2D, shader.PS_WALK_2D,{"tex1":mask_name}, {}, None, None)
-        renpy.show(image_name, layer = "Active", what = the_animation)
+    $ start_time = time.time()
+    $ lily.draw_person(position = "stand2")
+    $ log_message("Person two time: " + str(time.time() - start_time))
+    "..."
+    $ clear_scene()
 
-        return
-
-    def save_surface(the_surface, the_name):
-        file_path = os.path.abspath(os.path.join(config.basedir, "game"))
-        file_name = os.path.join(file_path,"images/test_images/"+the_name + ".png")
-
-        pygame.image.save(the_surface, file_name)
-
-    def test_anim_6(the_person): #WORKS! Generates a centered displayable of the person built from their surface
-        the_displayable = the_person.build_person_displayable()
-        the_psudo = PsudoSurface(the_displayable)
-        renpy.show("Test", layer = "Active", what = the_psudo)
-
-    def test_anim_7(the_person): #WORKS! Generates a .png file for a character.
-        #Bug: Backround is always black because the draw_screen function
-        the_displayable = the_person.build_person_displayable()
-        the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height)
-        the_surface = renpy.display.draw.screenshot(the_surftree, False)
-        save_surface(the_surface, "TEST35")
+    "Test Complete."
+    return

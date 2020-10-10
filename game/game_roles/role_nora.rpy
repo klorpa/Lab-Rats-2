@@ -197,8 +197,8 @@ label nora_research_up_label(the_person):
     $ mc.business.event_triggers_dict["nora_trait_researched"] = None
     $ list_of_traits.remove(the_trait)
     $ list_of_nora_traits.remove(the_trait)
-    $ nora.set_schedule([1,2,3], university)
-    $ renpy.scene ("Active")
+    $ nora.set_schedule(university, times = [1,2,3])
+    $ clear_scene()
 
 
     # Prepare the event that triggers the next phase

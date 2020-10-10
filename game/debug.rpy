@@ -30,7 +30,18 @@
 init -15 python:
     from datetime import datetime
 
+    # def log_image(the_image_stream):
+    #     file_path = os.path.abspath(os.path.join(config.basedir, "game"))
+    #     file_name = os.path.join(file_path,"DEBUG_IMAGE_LOG.txt")
+    #     opened_file = os.open(file_name,os.O_WRONLY|os.O_APPEND|os.O_CREAT) #Open the log, create it if it doesn't exist already.
+    #
+    #     string_to_write = "TIME: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ":\n" + the_image_stream.getbuffer() + "\n"
+    #     os.write(opened_file, string_to_write)
+    #     os.close(opened_file) #Close everything
+
     def log_message(the_message):
+        if not config.developer:
+            return #Don't log anything if we're on a production platform.
         file_path = os.path.abspath(os.path.join(config.basedir, "game"))
         file_name = os.path.join(file_path,"DEBUG_LOG.txt")
         opened_file = os.open(file_name,os.O_WRONLY|os.O_APPEND|os.O_CREAT) #Open the log, create it if it doesn't exist already.

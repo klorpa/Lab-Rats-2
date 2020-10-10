@@ -655,7 +655,36 @@ label introvert_cum_mouth(the_person):
 label introvert_cum_pullout(the_person):
     # Lead in: "I'm going to cum!"
     if mc.condom:
-        the_person.char "Yeah? Fucking do it! Cum for me [the_person.mc_title]!"
+        #TODO: We might want to split the ask section off into a different dialogue option
+        if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
+            if the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "I'm already pregnant, do you want to take that condom off and cum inside?"
+            elif the_person.on_birth_control:
+                the_person.char "Fuck, I want you to feel your cum inside me [the_person.mc_title]!"
+                the_person.char "Do you... want to take the condom off? Just this once, I'm on the pill."
+                "She moans deserately."
+                the_person.char "Come on, I need it so badly!"
+            else:
+                the_person.char "Oh fuck... Do you want to knock me up?"
+                "She seems almost desperate as asks between breathy moans."
+                the_person.char "You can take the condom off and cum inside me. I want you to fuck my life up and get me pregnant!"
+            #TODO: Add some more varients if she has a boyfriend or something
+            #TODO: Add a varient if she's related to you ("Get me pregnant with our incest baby!")
+
+            menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
+                "Take off the condom.":
+                    "You don't have much time to spare. You pull out, barely clearing her pussy, and pull the condom off as quickly as you can manage."
+                    $ mc.condom = False
+                "Leave it on.":
+                    "You ignore [the_person.possessive_title]'s cum-drunk offer and keep the condom in place."
+
+
+        else:
+            the_person.char "Yeah? Fucking do it! Cum for me [the_person.mc_title]!"
+
+
+        #TODO: Add a check that lets a cum crazed girl offer to let you take a condom off to cum in her
+        # "Do you want to get me pregnant?"
 
     else:
         if the_person.wants_creampie():

@@ -13,14 +13,17 @@ init -2 python:
 label study_check_up(the_student, the_mom):
     # TODO: Christina asks how things are going after a study session.
     # If her marks have improved enough, and if you haven't been already, Christina invites you to stay for dinner.
+
+    $ clear_scene()
+    $ the_group = GroupDisplayManager([the_student, the_mom], primary_speaker = the_mom)
+    $ the_group.draw_group()
     "[the_student.title] opens the door to her room and leads you downstairs. [the_mom.title] is waiting at the front door."
-    $ the_mom.draw_person()
     the_mom.char "All done for tonight? Tell me [the_mom.mc_title], how is my daughter doing?"
     $ current_marks = the_student.event_triggers_dict.get("current_marks",0)
     if current_marks < 20:
         mc.name "I'll be honest, there's still a lot of work to do. It's going to take a lot of hard work if she wants to succeed."
         the_mom.char "Do you hear that [the_person.title]? I expect you to keep working at this and to listen to everything [the_mom.mc_title] says."
-        $ the_student.draw_person()
+        $ the_group.draw_person(the_student)
         $ the_student.change_happiness(-5)
         $ the_student.change_obedience(1)
         the_student.char "I promise I'm doing my best Mom."
@@ -29,7 +32,7 @@ label study_check_up(the_student, the_mom):
         mc.name "I've watched her improve a little, but there's still a long way to go."
         mc.name "[the_student.title] has been giving it her all though. I think with more time and focus she'll be able to do it."
         the_mom.char "At least she's improving. [the_student.title], I expect you to listen to [the_mom.mc_title] and do everything he suggests."
-        $ the_student.draw_person()
+        $ the_group.draw_person(the_student)
         $ the_student.change_happiness(-5)
         $ the_student.change_obedience(1)
         the_student.char "Okay Mom, I will."
@@ -37,7 +40,7 @@ label study_check_up(the_student, the_mom):
     elif current_marks < 75:
         mc.name "[the_student.title] is really starting to improve. As long as she can keep this up she will do fine."
         the_mom.char "That's good to hear. I'm glad to hear you are working so well with [the_mom.mc_title]."
-        $ the_student.draw_person()
+        $ the_group.draw_person(the_student)
         $ the_student.change_obedience(1)
         the_student.char "Thank you Mom. He's been such a big help."
 
@@ -45,7 +48,7 @@ label study_check_up(the_student, the_mom):
         mc.name "[the_student.title] has turned things around. As long as she stays on top of her studies she shouldn't have any more problems."
         $ the_mom.change_love(1)
         the_mom.char "That's very good to hear. [the_student.title], I'm proud of you."
-        $ the_student.draw_person()
+        $ the_group.draw_person(the_student)
         $ the_student.change_obedience(1)
         $ the_student.change_love(1)
         the_student.char "Thanks Mom, It was really [the_student.title], he's a very engaging teacher."
@@ -55,12 +58,12 @@ label study_check_up(the_student, the_mom):
         mc.name "[the_student.title] has been a model student. She's put in the hard work, and her marks reflect that. I'm expecting her to be the top of her class."
         $ the_mom.change_love(1)
         the_mom.char "Well that's suprising to hear. [the_student.title] has never been very invested in her academics before."
-        $ the_student.draw_person()
+        $ the_group.draw_person(the_student)
         $ the_student.change_obedience(1)
         $ the_student.change_love(2)
         the_student.char "I owe it all to [the_student.mc_title], he's the best teacher I've ever had. He really knows how to teach me a lesson."
 
-    $ the_mom.draw_person()
+    $ the_group.draw_person(the_mom)
     if the_student.event_triggers_dict.get("current_marks",0) >= 75:
         if the_mom.event_triggers_dict.get("offered_dinner", 0) == 0:
             $ the_mom.event_triggers_dict["stayed_for_dinner"] = 0
@@ -71,14 +74,14 @@ label study_check_up(the_student, the_mom):
         else:
             the_mom.char "Thank you for all of your hard work [the_mom.mc_title]. Would you like to join us for dinner tonight?"
 
-        $ the_student.draw_person(emotion = "happy")
+        $ the_group.draw_person(the_student, emotion = "happy")
         "[the_student.possessive_title] holds onto your arm and smiles happily."
         the_student.char "You can stay a little longer, right [the_student.mc_title]?"
 
         menu:
             "Stay for dinner.":
                 mc.name "I'd love to say for dinner. Thank you [the_mom.title]."
-                $ the_mom.draw_person()
+                $ the_group.draw_person(the_mom)
                 if the_mom.event_triggers_dict["stayed_for_dinner"] == 0:
                     the_mom.char "Excellent! Mr.[the_mom.last_name] will be home soon, he has wanted to meet you for a long time."
                     the_mom.char "I will have dinner ready in a few minutes. [the_student.title], can you show [the_mom.mc_title] to the dining room and get the places set?"
@@ -86,14 +89,14 @@ label study_check_up(the_student, the_mom):
                 else:
                     the_mom.char "Excellent! I will have dinner ready in a few minutes."
                     the_mom.char "[the_student.title], can you show [the_mom.mc_title] to the dining room and get the places set?"
-                    $ the_student.draw_person()
+                    $ the_group.draw_person(the_student)
                     the_student.char "Right away Mom. Come with me."
                     call student_dinner(the_student, the_mom, first_time = False) from _call_student_dinner_1
                 $ the_mom.event_triggers_dict["stayed_for_dinner"] += 1
 
             "Leave politely.":
                 mc.name "I'm sorry, I made other plans for tonight."
-                $ the_mom.draw_person()
+                $ the_group.draw_person(the_mom)
                 the_mom.char "That's a shame. Maybe next time you're over to tutor [the_student.title] then."
                 mc.name "I'll do my best."
 
@@ -105,25 +108,31 @@ label study_check_up(the_student, the_mom):
 
 label student_dinner(the_student, the_mom, first_time):
     #TODO Have a unique dining room background
+    $ clear_scene()
+    $ the_group = GroupDisplayManager([the_student], primary_speaker = the_student)
+    $ the_group.draw_group()
+
     if first_time:
         "[the_student.possessive_title] leads you into a finely decorated dining room. She pulls out a chair and motions for you to sit down at the table."
 
     else:
         "[the_student.possessive_title] leads you into the dining room and pulls out a chair for you."
     the_student.char "You just have a seat, I'll get everything ready."
+    $ the_group.draw_person(the_student, position = "sitting")
     "You sit down and wait while [the_student.title] sets out placemats and cutlery. When she's done she sits down in the seat next to you."
-    $ the_mom.draw_person()
+    $ the_group.add_person(the_mom, make_primary = True)
+    $ the_group.redraw_person(the_student)
+    $ the_group.draw_person(the_mom)
     "After waiting for a few minutes [the_mom.possessive_title] steps into the kitchen, carrying a tray of roast chicked and a bottle of wine under her arm."
     "She places the tray down, places the bottle of wine down, and sit down across from you and her daughter."
-    $ the_mom.draw_person(position = "sitting")
-
+    $ the_group.draw_person(the_mom, position = "sitting")
     the_mom.char "Mr.[the_mom.last_name] should be home any minute now, he's probably just held up at the office."
     mc.name "No problem, we can wait a little..."
-    $ the_mom.draw_person(position = "walking_away")
+    $ the_group.draw_person(the_student, position = "sitting")
+    $ the_group.draw_person(the_mom, make_primary = False, position = "walking_away")
     "You're interrupted by the phone ringing. [the_mom.title] apologies and moves into the kitchen."
-    $ clear_scene()
     the_mom.char "Yes... Okay... [the_student.title]'s tutor is over for dinner... I'll tell him... We can talk when you get home..."
-    $ the_mom.draw_person(position = "sitting")
+    $ the_group.draw_person(the_mom, position = "sitting")
     "[the_mom.possessive_title] comes back into the room and sits down. She has a tense smile as she reaches for the bottle of wine."
     if first_time:
         the_mom.char "My husband is going to be at the office for the rest of the night, so we should just get started."
@@ -134,20 +143,19 @@ label student_dinner(the_student, the_mom, first_time):
         "[the_student.title] sighs unhappily as her mother uncorks the bottle of wine. She pours herself a generous glass."
 
     the_mom.char "Let me pour you both a glass..."
-    $ clear_scene()
     "You have dinner with [the_student.possessive_title] and [the_mom.title]."
     "[the_mom.possessive_title] seems tense at first, but after some food and two glasses of wine she is smiling and making pleasant conversation."
-    $ the_mom.draw_person(position = "sitting", emotion = "happy")
+    $ the_group.draw_person(the_mom, position = "sitting", emotion = "happy")
     the_mom.char "[the_student.title], you made a very good choice when you asked [the_mom.mc_title] to tutor you. He's an absolute pleasure to have around."
     if the_student.love > 40 or the_student.effective_sluttiness() > 30:
-        $ the_student.draw_person(position = "sitting")
+        $ the_group.draw_person(the_student, position = "sitting")
         "[the_student.possessive_title] places her hand on your thigh and rubs it for emphasis."
         if the_student.effective_sluttiness() > 50:
             "She carries on the conversation with her mother, but her hand starts to drift higher up."
             "Soon [the_student.title] is rubbing your bulge under the table, massaging it through your pants."
 
     if the_mom.effective_sluttiness() > 20:
-        $ the_mom.draw_person(position = "sitting")
+        $ the_group.draw_person(the_mom, position = "sitting")
         "While you are talking you feel a gentle touch on your leg. You glance under the table and see it is [the_mom.title]'s foot caressing your calf."
         "She turns to you and smiles, keeping up her conversation with her daughter while her foot moves up your leg."
         "Soon enough she is rubbing her soft foot against your inner thigh. The movement brings her dangerously close to brushing your cock."
@@ -155,9 +163,11 @@ label student_dinner(the_student, the_mom, first_time):
 
 
     the_mom.char "Now, how about I get desert ready. [the_student.title], please clean the table. Leave my wine, I'll have the rest with desert."
-    $ the_student.draw_person(position = "sitting")
+    $ the_group.draw_person(the_student, position = "sitting")
     the_student.char "Okay Mom."
+    $ the_group.draw_group(position = "walking_away")
     "Both women stand up. [the_mom.title] moves into the kitchen, while her daughter collects a stack of dirty dishes before following behind her."
+    $ clear_scene()
     # You can already give Emily serum while she's studying, so this is just to corrupt her Mom.
     menu:
         "Add serum to [the_mom.title]'s wine." if mc.inventory.get_any_serum_count() > 0:
@@ -172,9 +182,12 @@ label student_dinner(the_student, the_mom, first_time):
         "Leave her drink alone.":
             "You lean back in your chair and relax while you wait for [the_mom.title] and [the_student.title] to return."
 
+
     "After another minute or two both of them come back from the kitchen, now carrying small bowls of ice cream."
+    $ the_group.draw_person(the_mom)
+    $ the_group.draw_person(the_student, position = "sitting")
     "[the_student.title] places one bowl down in front of you before sitting back in her chair beside you."
-    $ the_mom.draw_person(position = "sitting")
+    $ the_group.draw_person(the_mom, position = "sitting")
     "[the_mom.possessive_title] sits down and takes a sip from her wine."
     the_mom.char "I'm glad you were able to join us for the evening [the_mom.mc_title]."
     the_mom.char "It seems like my husband is always at work, it's nice to have some company."
@@ -193,7 +206,7 @@ label student_dinner(the_student, the_mom, first_time):
                 mc.name "No, she is doing very well. There are some new study techniques that I would like to try though."
                 the_mom.char "Is that so? Well you have my full permission. [the_student.title], I want you to do everything [the_mom.mc_title] tells you to do."
                 the_mom.char "Please treat his instructions as if they were coming from me or your father."
-                $ the_student.draw_person(position = "sitting")
+                $ the_group.draw_person(the_student, position = "sitting")
                 $ the_student.change_obedience(10)
                 the_student.char "Yes Mom, I promise I will."
                 $ the_mom.event_triggers_dict["student_mom_extra_obedience"] = True
@@ -208,7 +221,7 @@ label student_dinner(the_student, the_mom, first_time):
 
         "Touch [the_student.title]." if the_student.effective_sluttiness("touching_body") > 35:
             mc.name "I'm glad to be here. I'm always happy to spend time with you and your daughter."
-            $ the_student.draw_person(position = "sitting")
+            $ the_group.draw_person(the_student, position = "sitting")
             "You move a hand to your side, then and onto [the_student.possessive_title]'s thigh, rubbing it gently."
             "You move your hand higher, up her thigh and to her crotch. You can feel her struggling to keep still in front of her mother."
 
@@ -227,20 +240,23 @@ label student_dinner(the_student, the_mom, first_time):
             $ the_student.change_slut_temp(1 + the_student.get_opinion_score("public sex"))
             $ the_student.discover_opinion("public sex")
             "Eventually you finish your ice cream."
-            $ the_mom.draw_person(position = "sitting")
+            $ the_group.draw_person(the_mom, position = "sitting")
             the_mom.char "[the_student.title], could you clean things up for us?"
 
     "[the_student.possessive_title] collects up the dishes again when you are finished desert and carries them to the kitchen."
     the_mom.char "It's been wonderful having you over [the_mom.mc_title], but I'm sure you're looking forward to getting home."
     mc.name "The dinner was fantastic. I'm lucky to have such a generous, beautiful host."
     "[the_mom.title] seems to blush, although it might just be wine taking effect."
+    $ the_group.draw_group()
     "[the_mom.title] and [the_student.title] walk you to the door to say goodbye."
-    $ the_student.draw_person()
     the_student.char "Bye [the_student.mc_title], I hope you'll be by again soon!"
 
     if the_mom.effective_sluttiness("kissing") > 20 and not the_mom.event_triggers_dict.get("student_mom_door_kiss", 0) == 1: #TODO: Add a check that we haven't triggered the "I'm sorry" event.
-        $ the_mom.draw_person()
+        $ the_group.draw_person(the_mom)
         the_mom.char "[the_student.title], I need to have a private word with [the_mom.mc_title] before he goes."
+
+        $ clear_scene()
+        $ the_mom.draw_person()
         "[the_student.possessive_title] nods and goes upstairs to her room. [the_mom.title] waits until she is gone before turning back to you."
         if the_mom.event_triggers_dict.get("student_mom_door_kiss", 0) == 2: #TODO: Add a check that you've also triggered the "I'm sorry event
             # She wants to kiss you, and you've already done it before
@@ -278,7 +294,7 @@ label student_dinner(the_student, the_mom, first_time):
             $ the_mom.event_triggers_dict["student_mom_door_kiss"] = 1
 
     else:
-        $ the_mom.draw_person()
+        $ the_group.draw_person(the_mom)
         the_mom.char "You're welcome to come again for dinner any time [the_mom.mc_title]. Have a good evening."
         "They watch you from the porch as you leave."
 
