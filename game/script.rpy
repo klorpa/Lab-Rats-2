@@ -2271,26 +2271,20 @@ init -2 python:
             config_y = config.screen_height * 1.
 
             if physical_x/(16.0/9.0) > physical_y: #Account for the screen resolution difference from 16x9
-                #y_scale = 1080.0/physical_y
                 # TODO: Remove references to vren_mac_scale once we are sure they are no longer needed
                 y_scale = 1*(config_y/(physical_y*persistent.vren_mac_scale)) #This should adjust for high DPI displays that have a higher physical pixel density than their stated resolution
 
                 x_scale = y_scale
             else:
-                #x_scale = 1920.0/physical_x
                 x_scale = 1*(config_x/(physical_x*persistent.vren_mac_scale))
 
                 y_scale = x_scale
 
             surface_file = io.BytesIO()
-            #log_image(surface_file)
             the_surface = the_surface.subsurface((0,0,(x_size/x_scale),(y_size/y_scale))) # Take a subsurface of the surface screenshotted, so that we only save what is strictly nessesary.
 
-            #log_message("Starting to render surface")
-            #the_time = time.time()
             log_message(self.name + " | ACP1 | " + str(time.time()))
             renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform. #TODO: Retest how long this takes with the trimmed surface
-            #log_message("  Finished. Took: " + str(time.time() - the_time))
             static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
             surface_file.close()
 
@@ -2299,13 +2293,12 @@ init -2 python:
 
             scaled_image = im.FactorScale(static_image, x_scale, y_scale)
 
-            the_image_name = self.name + " | " + str(self.character_number) #Note: use to make use of a unique time stamp
+            the_image_name = self.name + " | " + str(time.time()) #Note: use to make use of a unique time stamp
 
             composite_components = []
             region_weight_items_dict = the_animation.get_weight_items()
             for region_weight_name in region_weight_items_dict: #Goes through each region ie. "breasts", "butt", and others to come, and applies the animation strength, the personal region strength, and animation region strength
                 the_weight_item = region_weight_items_dict[region_weight_name]
-                #composite_components.append((0,0))
                 composite_components.append(the_weight_item.crop_offset_dict.get(position, (0,0)))
                 region_weight_modifier = animation_effect_strength * self.personal_region_modifiers.get(region_weight_name, 1) * the_animation.innate_animation_strength * the_animation.region_specific_weights.get(region_weight_name, 1)
                 if region_weight_modifier > 1:
@@ -2314,7 +2307,6 @@ init -2 python:
 
                 region_brightness_matrix = im.matrix.brightness(-1 + region_weight_modifier)
                 region_mask = the_weight_item.generate_raw_image(self.body_type, self.tits, position)
-                #region_mask = renpy.displayable(the_weight_item.generate_item_image_name(self.body_type, self.tits, position))
                 region_mask = im.MatrixColor(region_mask, region_brightness_matrix)
                 composite_components.append(region_mask)
 
@@ -5697,7 +5689,7 @@ init -2 python:
 
         def panties_covered(self):
             if self.wearing_panties():
-                for cloth in self.get_upper_ordered()[::-1]: #Traverse list from outside in
+                for cloth in self.get_lower_ordered()[::-1]: #Traverse list from outside in
                     if cloth.underwear:
                         return False
                     elif cloth.hide_below and not (cloth.half_off and cloth.half_off_reveals):
@@ -10032,7 +10024,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.33.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.33.3 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
