@@ -366,6 +366,7 @@ label nude_walk_in_label(the_person):
             else:
                 "She turns to you and smiles, waving a hand to invite you in."
                 the_person.char "Come on in, do you need something?"
+    $ clear_scene()
     return
 
 
@@ -434,7 +435,6 @@ label mom_house_work_nude_label(the_person):
 
 label breeding_mom_label(the_person):
     $ the_person.apply_outfit(Outfit("Nude"))
-    # $ the_person.outfit = Outfit("Nude") changed v0.24.1
     $ the_person.draw_person(position = "sitting")
     $ the_person.update_outfit_taboos()
     "You walk into [the_person.title]'s room and find her sitting on the edge of her bed, completely naked."
@@ -460,7 +460,7 @@ label breeding_mom_label(the_person):
             $ the_person.break_taboo("vaginal_sex")
             $ the_person.break_taboo("condomless_sex")
             "She wraps her arms around your torso and pulls you tight against her. She gives you a breathy moan when you slide your cock home."
-            the_person.char "Ah... Fuck me and give me your baby! I'll take such good care of it, just like I did for you and [lily.title]!"
+            the_person.char "Ah... Fuck me and give me your baby! I'll take such good care of them, just like I did for you and [lily.title]!"
             $ starting_creampies = the_person.sex_record.get("Vaginal Creampies",0)
             call fuck_person(the_person, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, position_locked = True) from _call_fuck_person_19
             $ the_report = _return #TODO: The creampie check should now be possible with the report system instead of checking her total record.

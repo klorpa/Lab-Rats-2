@@ -254,6 +254,23 @@ label wild_strip_obedience_accept(the_person, the_clothing, strip_type = "Full")
         the_person.char "Hey, let's not take this too far..."
     return
 
+label wild_grope_body_reject(the_person):
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        the_person "Ah!"
+        "[the_person.title] steps back as you touch her, then laughs awkwardly."
+        the_person "Haha, sorry... Your hand just kind of came out of nowhere."
+        mc.name "Sorry, I didn't mean to startle you."
+        the_person "Don't worry about it, just give me a little warning next time, okay?"
+        "She seems a little uncomfortable, but you both laugh about it and try and move on."
+    else: #Fail point for touching waist
+        the_person "Hey, could you just..."
+        "[the_person.title] takes your hand and pulls it off of her waist."
+        the_person "... Keep your hands to yourself? Thanks."
+        mc.name "Oh yeah, of course. My bad."
+        the_person "No problem, just don't make a habit of it. Alright?"
+        "She doesn't say anything else, but she still sems uncomfortable with the situation."
+    return
+
 label wild_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 70:
@@ -516,7 +533,7 @@ label wild_flirt_response_high(the_person):
                 the_person.char "Maybe I can get these girls out for you. Does that sound nice?"
 
             else: #No big tits, so she can't bounce them (as much)
-                "[the_person.title] runs her hands over her hips sensually, obviously encouraging you to take things furthur."
+                "[the_person.title] runs her hands over her hips sensually, obviously encouraging you to take things further."
 
         menu:
             "Kiss her.":
@@ -724,11 +741,13 @@ label wild_cum_pullout(the_person):
                     the_person.char "Oh fuck, cum inside me and knock me up [the_person.mc_title]! I want you to breed me like a slut!"
             elif the_person.on_birth_control: #She's on the pill, so she's probably fine
                 the_person.char "Cum wherever you want [the_person.mc_title], I'm on the pill!"
+                $ the_person.update_birth_control_knowledge()
             else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
                 the_person.char "Do it! Cum!"
         else:
             if not the_person.on_birth_control: #You need to pull out, I'm not on the pill!
                 the_person.char "Fuck, pull out! I'm not on the pill!"
+                $ the_person.update_birth_control_knowledge()
 
             elif the_person.get_opinion_score("creampies") < 0:
                 the_person.char "Pull out, I want you to cum on me!"
@@ -761,6 +780,7 @@ label wild_cum_vagina(the_person):
                 the_person.char "Oh fuck, wow! My [so_title] never cums like that, there's so much of it!"
             else:
                 the_person.char "Oh fuck that's a lot of cum. Good thing I'm on the pill, because I don't think you're firing blanks."
+                $ the_person.update_birth_control_knowledge()
 
         elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             if the_person.relationship != "Single":
@@ -786,11 +806,13 @@ label wild_cum_vagina(the_person):
                     the_person.char "...Again."
             else:
                 the_person.char "Oh fuck, I said to pull out! I'm not on the pill [the_person.mc_title], what happens if I get pregnant?"
+                $ the_person.update_birth_control_knowledge()
                 the_person.char "Whatever, I guess it's already happened. Maybe next time I should make you wear a condom."
 
         elif the_person.relationship != "Single":
             $ so_title = SO_relationship_to_title(the_person.relationship)
             the_person.char "Hey, I said to pull out! I have a [so_title], even if I'm on the pill you shouldn't be creampieing me."
+            $ the_person.update_birth_control_knowledge()
             the_person.char "I don't want to have to make you wear a condom, so be a little more careful next time."
 
         elif the_person.get_opinion_score("creampies") < 0:
@@ -1171,6 +1193,7 @@ label wild_condomless_sex_taboo_break(the_person):
         the_person.char "You want to fuck me raw? That's pretty hot."
         if the_person.on_birth_control:
             the_person.char "I'm on the pill, so you don't need to worry about cumming inside me."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "It would be so easy for you to cum inside me though."
             the_person.char "So easy for you to pump my little cunt full of hot cum..."
@@ -1183,12 +1206,14 @@ label wild_condomless_sex_taboo_break(the_person):
     elif the_person.love > 60:
         if the_person.on_birth_control:
             the_person.char "You want to fuck me raw? Fuck it, I'm on the pill. What's the worst that can happen?"
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "I guess if I can't trust you I can't trust anyone. You make me make terrible decisions, you know that?"
             the_person.char "Well fuck it, if we're doing this I want you to go the whole nine yards and finish inside of me."
             mc.name "Are you on the pill?"
             "She shakes her head."
             the_person.char "Of course not. If we're fucking raw I want you to be trying to get me knocked up every single time."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") < 0:
             the_person.char "I guess if I can't trust you I can't trust anyone. You make me make terrible decisions, you know that?"
             the_person.char "You'll need to pull out though. If you get me knocked up there's no way we're ever doing it unprotected again."
@@ -1204,8 +1229,10 @@ label wild_condomless_sex_taboo_break(the_person):
     else:
         if the_person.on_birth_control:
             the_person.char "Yeah, you want to fuck me raw? Well, I'm on the pill, so why not? It's not like I'm going to end up pregnant."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.has_taboo("vaginal_sex"):
             the_person.char "You really don't think we should use a condom? I'm not on the pill, aren't you worried about knocking me up?"
+            $ the_person.update_birth_control_knowledge()
             the_person.char "Or is this your master plan to sneak a baby into me?"
             mc.name "I promise I'll pull out. Don't you want our first time together to be special?"
             "She rolls her eyes and sighs."
@@ -1213,6 +1240,7 @@ label wild_condomless_sex_taboo_break(the_person):
             the_person.char "But you better fucking pull out, understand? Good."
         else:
             the_person.char "You really don't think we should use a condom? I'm not on the pill, aren't you worried about knocking me up?"
+            $ the_person.update_birth_control_knowledge()
             the_person.char "Or is this your master plan to sneak a baby into me?"
             mc.name "I promise I'll pull out. It'll feel so much better without anything between us."
             the_person.char "Fuck, I know. I'm trying to make this decision with my head and not my clit."

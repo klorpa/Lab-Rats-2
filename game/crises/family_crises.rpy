@@ -1074,9 +1074,10 @@ label lily_morning_encounter_label():
     "You wake up in the morning to your alarm. You get dressed and leave your room to get some breakfast."
     $ the_person.draw_person()
     if the_person.outfit.wearing_panties():
-        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completeley naked."
-    else:
         "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, wearing nothing but her underwear."
+    else:
+        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completeley naked."
+
 
     if the_person.effective_sluttiness("underwear_nudity") < 10:
         #She's startled and embarassed.

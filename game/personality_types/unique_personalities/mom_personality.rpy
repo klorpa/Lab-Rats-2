@@ -231,6 +231,31 @@ label mom_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
             the_person.char "[the_person.mc_title], you shouldn't be doing that."
     return
 
+label mom_grope_body_reject(the_person):
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        "[the_person.title] seems uncomfortable as you touch her."
+        the_person "What are you doing [the_person.mc_title]?"
+        mc.name "I was... going to give you a shoulder rub? You seem tense."
+        if the_person.love > 20:
+            the_person "It's so sweet of you to think about that. I'm okay right now though."
+            "She gives you a quick hug, then steps back and smiles."
+            the_person "I'm so lucky, you're always looking out for ways to help me."
+            $ the_person.change_love(1) #Just cancels out the -1 Love you'd get otherwise.
+
+        else:
+            the_person "Oh, it's okay [the_person.title]. My shoulders feel fine."
+            mc.name "Well, if you ever change your mind."
+            "She smiles and nods, but she still seems slightly uncomfortable."
+
+    else: #Fail point for touching waist
+        the_person "[the_person.mc_title], maybe you should move your hand..."
+        mc.name "Is there something wrong?"
+        the_person "I know you're just being affectionate, but it's a little... personal."
+        mc.name "Oh, I'm sorry [the_person.title], I didn't mean..."
+        the_person "It's fine, it really is. Let's just forget about it, okay?"
+        "You nod, and [the_person.possessive_title] seems to relax a little bit."
+    return
+
 label mom_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 100:
@@ -495,6 +520,7 @@ label mom_cum_pullout(the_person):
             else:
                 the_person.char "Ah... Do you want to take the condom off and cum inside of me?"
                 the_person.char "You can do it, okay? You can put your big load right into mommy's unprotected pussy!"
+                $ the_person.update_birth_control_knowledge()
                 "She moans happily, excited just by the thought."
 
             menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
@@ -523,6 +549,7 @@ label mom_cum_pullout(the_person):
         else:
             if not the_person.on_birth_control: #You need to pull out, I'm not on the pill!
                 the_person.char "Oh no, you need to pull out sweetheart! I'm not on birth control, you'll get me pregnant!"
+                $ the_person.update_birth_control_knowledge()
 
             elif the_person.get_opinion_score("creampies") < 0:
                 the_person.char "Pull out and cum all over me [the_person.mc_title]!"
@@ -550,6 +577,7 @@ label mom_cum_vagina(the_person):
 
         elif the_person.on_birth_control:
             the_person.char "That's it sweetheart, cum inside mommy. I'm on the pill, so you don't have to worry about getting me pregnant."
+            $ the_person.update_birth_control_knowledge()
 
         elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Give mommy your cum, I want every last drop inside of me! Try and get mommy pregnant!"
@@ -561,6 +589,7 @@ label mom_cum_vagina(the_person):
     else: #She's angry
         if not the_person.on_birth_control:
             the_person.char "Oh sweety, you shouldn't finish inside of me! You're so young and virile, it wouldn't take much to get mommy pregnant when she's not on her birth control!"
+            $ the_person.update_birth_control_knowledge()
 
         elif the_person.get_opinion_score("creampies") < 0:
             the_person.char "Sweety, I wanted you to pull out. Now I'm going to have to have a shower and try and clean out all of this cum inside me."
@@ -919,8 +948,8 @@ label mom_sucking_cock_taboo_break(the_person):
                 the_person.char "I did, but..."
                 mc.name "And it's what you said about feeling up my cock, but I think we both had a good time with that."
                 if not the_person.has_taboo("touching_vagina"):
-                    the_person.char "It was very impressive... But that doesn't mean we should go any furthur! Does it?"
-                    mc.name "We went furthur when I touched your pussy, and you got really turned on by that, didn't you?"
+                    the_person.char "It was very impressive... But that doesn't mean we should go any further! Does it?"
+                    mc.name "We went further when I touched your pussy, and you got really turned on by that, didn't you?"
 
         else:
             mc.name "I'm not normal [the_person.title], and I don't think you are either. We do lots of things normal families shouldn't do."
@@ -1079,6 +1108,8 @@ label mom_condomless_sex_taboo_break(the_person):
         the_person.char "No, I'm not. If you get a little too excited and don't pull out..."
         mc.name "Don't you trust me [the_person.title]?"
 
+    $ the_person.update_birth_control_knowledge()
+
     the_person.char "I trust you, but accidents happen. We should be safe."
 
 
@@ -1155,6 +1186,7 @@ label mom_creampie_taboo_break(the_person):
             the_person.char "You shouldn't be cumming inside of your mother, even if she gets a little too excited and starts to ask for it."
             mc.name "We obviously both liked it, so why is it a problem? You're on the pill, right?"
             the_person.char "I am."
+            $ the_person.update_birth_control_knowledge()
             mc.name "Then there's no risk, it's just a little bit of extra fun. It felt so good I don't know if I'll be able to stop now."
             the_person.char "Really? I... I suppose if you're having a good time it's okay then."
         else:

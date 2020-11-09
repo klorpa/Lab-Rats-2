@@ -177,6 +177,7 @@ label aunt_cum_pullout(the_person):
                 the_person.char "I... I shouldn't say this, but just this once do you want to take the condom off and..."
                 "She moans desperately."
                 the_person.char "Cum inside of me? I'm on the pill, and it would feel so good!"
+                $ the_person.update_birth_control_knowledge()
             else:
                 the_person.char "Oh fuck... Do you want to take the condom off?"
                 "She moans desperately."
@@ -220,6 +221,7 @@ label aunt_cum_condom(the_person):
     else:
         the_person.char "Oh wow, good job [the_person.mc_title]. I like having you cum inside me, even if you have to wear a condom to do it."
         the_person.char "Maybe I should start taking the pill, so you don't have to wear one."
+        $ the_person.update_birth_control_knowledge()
     return
 
 label aunt_cum_vagina(the_person):
@@ -233,6 +235,7 @@ label aunt_cum_vagina(the_person):
             "She sighs happily."
             the_person.char "You should try and pull out though, next time we do it."
             the_person.char "If you keep cumming inside me when I'm not on my birth control you're going to get me pregnant."
+            $ the_person.update_birth_control_knowledge()
 
     else:
         if the_person.on_birth_control:
@@ -244,6 +247,7 @@ label aunt_cum_vagina(the_person):
             the_person.char "Oh no, did you just..."
             "She already knows the answer."
             the_person.char "Oh no, no, no. I'm not on the pill [the_person.mc_title]! What happens if I get pregnant now?"
+            $ the_person.update_birth_control_knowledge()
             "[the_person.possessive_title] sighs unhappily."
             the_person.char "I guess the damage is already done... Next time you're going to have to wear a condom. This can't keep happening."
     return
@@ -310,7 +314,7 @@ label aunt_touching_penis_taboo_break(the_person):
     else:
         the_person.char "Oh look at you sweetheart... You should be very proud, {i}this{/i} is impressive."
         "She clears her throat and looks away from you."
-        the_person.char "But we shouldn't... We shouldn't go any furthur..."
+        the_person.char "But we shouldn't... We shouldn't go any further..."
         "[the_person.possessive_title] doesn't look away for long, her eyes drifting back down to your hard cock, inches from her hand."
         mc.name "Come on, just a little touch. Please [the_person.title]? I'm so horny it hurts."
         "She bites her lip and thinks for a moment, then her hand starts to move."
@@ -480,8 +484,10 @@ label aunt_condomless_sex_taboo_break(the_person):
 
     if the_person.on_birth_control:
         the_person.char "Well... Okay, but only because I'm on birth control. You should still be careful and try and pull out."
+        $ the_person.update_birth_control_knowledge()
     else:
         the_person.char "Well... Okay, but I'm not on any birth control right now so you'll need to be very careful."
+        $ the_person.update_birth_control_knowledge()
     mc.name "I will be. Thank you [the_person.title]."
     return
 
@@ -544,6 +550,7 @@ label aunt_creampie_taboo_break(the_person):
 
         else:
             the_person.char "I'm your aunt, and I'm not even on birth control! What happens if I got pregnant? What would we tell my sister?"
+            $ the_person.update_birth_control_knowledge()
             the_person.char "I don't know what's happens to me, I just lose my mind and want even more!"
         mc.name "Trust your body, what is it telling you?"
         the_person.char "...That I love you, and I love this."
@@ -563,6 +570,7 @@ label aunt_creampie_taboo_break(the_person):
 
         else:
             the_person.char "What have you done [the_person.mc_title]? I'm not on the pill, I might get pregnant!"
+            $ the_person.update_birth_control_knowledge()
             the_person.char "What would we do then? My sister would find out I'm fucking her son behind her back!"
             mc.name "[the_person.possessive_title], calm down. You probably aren't going to get pregnant, and nobody needs to know what we're doing."
             "She takes a deep, slow breath as she tries to calm herself."

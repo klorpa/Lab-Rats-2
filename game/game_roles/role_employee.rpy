@@ -3,6 +3,34 @@
 ##########################################
 
 init -2 python:
+    def employee_on_turn(the_person):
+        #Each turn check to see if the person wants to quit.
+        if mc.business.is_work_day():
+            happy_points = the_person.get_job_happiness_score()
+            if happy_points < 0: #We have a chance of quitting.
+                chance_to_quit = happy_points * -2 #there is a %2*unhappiness chance that the girl will quit.
+                if renpy.random.randint(0,100) < chance_to_quit: #She is quitting
+                    potential_quit_action = Action(the_person.name + " is quitting.", quiting_crisis_requirement, "quitting_crisis_label", the_person)
+                    if potential_quit_action not in mc.business.mandatory_crises_list:
+                        mc.business.mandatory_crises_list.append(potential_quit_action)
+
+                else: #She's not quitting, but we'll let the player know she's unhappy TODO: Only present this message with a certain research/policy.
+                    warning_message = the_person.title + " (" +mc.business.get_employee_title(the_person) + ") " + " is unhappy with her job and is considering quitting."
+                    if warning_message not in mc.business.message_list:
+                        mc.business.add_normal_message(warning_message)
+        return
+
+    def employee_on_move(the_person):
+
+        return
+
+    def employee_on_day(the_person):
+        if the_person.event_triggers_dict.get("forced_uniform", None):
+            the_person.event_triggers_dict["forced_uniform"] = None #TODO: Add a way to have special uniforms hang around for future events.
+        return
+
+
+
     #EMPLOYEE ACTION REQUIREMENTS#
     def employee_complement_requirement(the_person):
         if not mc.business.is_open_for_business():
@@ -58,6 +86,31 @@ init -2 python:
             return False #"Requires Policy: Mandatory Unpaid Serum Testing"
         else:
             return True
+
+    def employee_punishment_hub_requirement(the_person):
+        if not office_punishment.is_active():
+            return False
+        elif not mc.is_at_work():
+            return False
+        elif not mc.business.is_open_for_business():
+            return False
+        elif len(the_person.infractions) <= 0:
+            return "Requires: Rules Infraction"
+        elif the_person.event_triggers_dict.get("last_punished",-1) >= day:
+            return "Already punished today"
+        else:
+            return True
+
+    def employee_generate_infraction_requirement(the_person):
+        if not bureaucratic_nightmare.is_active():
+            return False
+        elif not mc.is_at_work():
+            return False
+        elif not mc.business.is_open_for_business():
+            return False
+        else:
+            return True
+
 
 #### EMPLOYEE ACTION LABELS ####
 
@@ -357,6 +410,17 @@ label employee_performance_review(the_person):
 
                     $ the_person.review_outfit()
 
+                "Record an infraction." if office_punishment.is_active():
+                    mc.name "Your performance lately has been less than stellar. I hope the problem is simply a matter of discipline, which we can correct."
+                    mc.name "I'm going to take some time to think about what punishment would be suitable."
+                    $ the_person.add_infraction(Infraction.underperformance_factory())
+                    if the_person.get_job_happiness_score() > 0:
+                        the_person "I can improve [the_person.mc_title], I promise."
+
+                    else:
+                        the_person "I... Fine, I understand."
+                    mc.name "Good to hear it."
+
 
         "Finish the performance review.":
             mc.name "Well, I think you're doing a perfectly adequate job around here [the_person.title]. If you keep up the good work I don't think we will have any issues."
@@ -380,8 +444,8 @@ label move_employee_label(the_person):
                 return
 
     the_person.char "Where would you like me then?"
-    $ mc.business.remove_employee(the_person)
-    $ the_person.special_role.append(employee_role) #Remove_employee strips them of their workplace roles. We want to make sure we add it back.
+    $ mc.business.remove_employee(the_person, remove_linked = False)
+    $ the_person.add_role(employee_role) #Remove_employee strips them of their workplace roles. We want to make sure we add it back.
     #TODO: All of the moving employees around should probably be its own function, which would let us set up an employee schedule where they work in different sections if we wanted.
 
     if rd_division.has_person(the_person):
@@ -433,4 +497,54 @@ label employee_paid_serum_test_label(the_person):
 label employee_unpaid_serum_test_label(the_person):
     mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this."
     call give_serum(the_person) from _call_give_serum_19
+    return
+
+label employee_punishment_hub(the_person):
+    #TODO: Decide if we need intro dialogue.
+    python:
+        infraction_list = []
+        for infraction in the_person.infractions:
+            infraction_list.append([infraction.name + "\n{size=16}Severity " + str(infraction.severity) + ", Valid for " + str(infraction.days_valid) + " days{/size} (tooltip)" + infraction.desc, infraction])
+
+        infraction_list.append(["Return", "Return"])
+
+    $ selected_infraction = renpy.display_menu(infraction_list,True,"Choice")
+    if selected_infraction == "Return":
+        return
+
+    $ valid_punishments = ["Available Punishments"]
+    $ invalid_punishments = ["Locked Punishments"]
+    $ other_actions = ["Other Actions","Back"]
+
+    python:
+        for punishment in list_of_punishments:
+            if punishment.is_action_enabled([the_person, selected_infraction]):
+                valid_punishments.append([punishment,[the_person, selected_infraction]]) # This list is broken down by the menu function, the nested list are extra arguments so it can check which buttons are enabled.
+            else:
+                invalid_punishments.append([punishment,[the_person, selected_infraction]])
+
+    call screen main_choice_display([valid_punishments, invalid_punishments, other_actions])
+    $ selected_option = _return
+    $ valid_punishments = None
+    $ invalid_punishments = None
+    $ other_actions = None
+    if selected_option == "Back":
+        call employee_punishment_hub(the_person) from _call_employee_punishment_hub
+    else:
+        $ selected_option.call_action([the_person, selected_infraction])
+        $ the_person.remove_infraction(selected_infraction)
+        $ happiness_drop = -2*(selected_infraction.severity - the_person.get_opinion_score("being submissive"))
+        if happiness_drop < 0:
+            $ happiness_drop = 0
+        $ the_person.change_happiness(happiness_drop)
+        $ the_person.event_triggers_dict["last_punished"] = day
+    return
+
+label employee_generate_infraction_label(the_person):
+    mc.name "[the_person.title], I was reviewing your work and I've found some discrepancies."
+    the_person "Oh, I'm sorry [the_person.mc_title], I..."
+    mc.name "Unfortunately company policy requires I write you up for it. Don't worry, everyone makes mistakes."
+    $ the_person.change_happiness(-5)
+    "She frowns, but nods obediently."
+    $ the_person.add_infraction(Infraction.bureaucratic_mistake_factory())
     return

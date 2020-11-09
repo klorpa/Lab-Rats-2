@@ -3,6 +3,7 @@
 ##########################################
 
 #TODO: add a punish line for Lilys instathot storyline
+#TODO: Purposeful teasing ebents
 
 init -2 python:
     #SISTER ACTION REQUIREMENTS#
@@ -383,11 +384,9 @@ label sister_instathot_label_solo(the_person):
     $ insta_outfit = insta_wardrobe.pick_random_outfit()
     "She hands you her phone and starts stripping down."
     the_person.char "Just give me a moment to get changed. It'll just be a sec!"
-    $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-    while next_item:
-        $ the_person.draw_animated_removal(next_item)
-        "..."
-        $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+    $ strip_list = the_person.outfit.get_full_strip_list()
+    $ generalised_strip_description(the_person, strip_list)
 
     $ the_person.draw_person(position = "doggy")
     "She gets onto her knees and pulls a shopping bag from the mall out from under her bed."
@@ -444,11 +443,10 @@ label sister_instathot_label_solo(the_person):
 
             else:
                 the_person.char "Oh, that would look really cute! Okay, I'll try it on!"
-                $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                while next_item:
-                    $ the_person.draw_animated_removal(next_item)
-                    "..."
-                    $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                $ strip_list = the_person.outfit.get_full_strip_list()
+                $ generalised_strip_description(the_person, strip_list)
+
                 "Once she's stripped down she puts on the outfit you've suggested."
                 $ the_person.apply_outfit(the_suggested_outfit, update_taboo = True)
                 #$ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want. changed v0.24.1
@@ -728,23 +726,10 @@ label sister_instathot_label_mom(the_sister, the_mom):
     $ the_group.draw_person(stripper)
 
     # Now loop through everyone
-    python: #TODO: generalise some of this and drip it into the group manager to make future scenes like this easy.
-        something_removed = True #Start with this True so that the first loop is always executed.
-        while something_removed:
-            something_removed = False # We end once both girls fail to remove something
-            for the_stripper in [the_mom, the_sister]:
-                next_item = the_stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                if next_item:
-                    something_removed = True
-                    the_group.draw_animated_removal(the_stripper, False, the_clothing = next_item)
-                    #renpy.say(the_stripper.title, "Removing: " + next_item.display_name) #TOOD: Remove this, it's just here for debugging purposes
 
-            renpy.say("","...")
-            clear_scene() #The clothing fade breaks without this clear, because the fade time doesn't seem to reset.
-            the_group.redraw_group()
+    $ generalised_strip_description(stripper, stripper.outfit.get_full_strip_list(), group_display = the_group, other_people = [(not_stripper, not_stripper.outfit.get_full_strip_list())])
 
-    "You watch as [stripper.title] finishes stripping naked and starts to put on her outfit."
-    "[not_stripper.title] is naked now too, doing the same."
+    "[stripper.title] finishes stripping naked and starts to put on her outfit. [not_stripper.title] is naked now too, and is doing the same."
 
     $ stripper = None #Clear the reference.
     $ not_stripper = None
@@ -853,7 +838,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
 
 
     if the_sister.judge_outfit(insta_outfit_sister) and not the_sister.wardrobe.has_outfit_with_name(insta_outfit_sister.name):
-        $ the_mom.wardrobe.add_outfit(insta_outfit_sister)
+        $ the_sister.wardrobe.add_outfit(insta_outfit_sister)
 
 
     if the_mom.event_triggers_dict.get("mom_instathot_pic_count", 0) == 0:

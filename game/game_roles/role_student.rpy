@@ -559,8 +559,8 @@ label study_normally(the_person, public = True):
                             $ the_person.change_slut_temp(2, 15)
                             mc.name "Good to hear, now let's get back to it."
 
-                        "\"Help\" her push a little furthur.":
-                            mc.name "You can push your hips out a little furthur. Here."
+                        "\"Help\" her push a little further.":
+                            mc.name "You can push your hips out a little further. Here."
                             "You step close behind her and place your hands on her hips. You pull back gently helping her stretch while also pushing her butt against your crotch."
                             the_person.char "Ooh, I can really feel that..."
                             $ the_person.change_slut_temp(3, 25)
@@ -690,7 +690,7 @@ label student_masturbate_label(the_person):
         $ the_person.draw_person()
         "The bedroom door opens. Her face is beet red."
         mc.name "Did you have a good time?"
-        the_person.char "Oh my god, this is so embarassing. Come on, let's get to work..."
+        the_person.char "Oh my god, this is so embarrassing. Come on, let's get to work..."
         $ the_person.arousal = 25 # Her arousal goes up because she was touching herself.
         $ the_person.event_triggers_dict["current_marks"] += 1 + the_person.get_opinion_score("masturbating")
         $ the_person.discover_opinion("masturbating")
@@ -723,7 +723,7 @@ label student_masturbate_label(the_person):
                 "She closes her eyes and start to run her index finger up and down her slit."
                 the_person.char "Mmm..."
                 #TODO: Add the ability to take pictures in a future update.
-                "After teasing herself [the_person.title] slowly slips two fingers into her pussy. She moans softly, her chair creaking as she leans even furthur back."
+                "After teasing herself [the_person.title] slowly slips two fingers into her pussy. She moans softly, her chair creaking as she leans even further back."
                 the_person.char "Oh yeah... That's it..."
                 "She rubs her clit with her thumb while fingering herself."
                 the_person.char "I think... I think I'm going to get there soon..."

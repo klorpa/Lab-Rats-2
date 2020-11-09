@@ -1,13 +1,11 @@
 ## Holds all of the labels for groping someone to seduce them. Each returns True or False depending on if the character was rejected or not.
 
 label grope_shoulder(the_person):
-    # TODO: Make all of this dialogue/reaction personality based.
     "You put your hand on [the_person.title]'s shoulder as you make small talk."
     if the_person.effective_sluttiness("touching_body") < 5:
         #Failure, and you've pissed her off in the process.
-        "She shoots you a cold look and takes a step back."
+        $ the_person.call_dialogue("grope_body_reject") #Note: The different variations based on different levels of sluttiness
         $ the_person.change_love(-1)
-        the_person.char "I'm sorry, I'd prefer if you didn't touch me without permission."
         return False
 
     else:
@@ -31,12 +29,10 @@ label grope_shoulder(the_person):
                 return False
 
 label grope_waist(the_person):
-    "You give her shoulder a final squeeze, then slide your hand down her back until it's resting on her waist."
+    "You give her shoulder a light squeeze, then slide your hand down her back until it's resting on her waist."
     if the_person.effective_sluttiness("touching_body") < 10:
-        "[the_person.title] shifts and tries to move away from you."
-        the_person.char "Sorry, but could you... Move your hand? I'm just not comfortable with this."
+        $ the_person.call_dialogue("grope_body_reject")
         $ the_person.change_love(-1)
-        mc.name "Of course, no problem."
         return False
 
     elif the_person.effective_sluttiness(["touching_body", "vaginal_sex"]) < 80: # Comfortable enough to let you keep going.
@@ -180,7 +176,7 @@ label grope_tits(the_person):
             $ the_person.change_slut_temp(2)
             mc.name "That's okay, I don't mind. Take your time."
             "She still seems nervous, but takes a deep breath and tries her best to continue holding up her side of the conversation."
-            "You think about going even furthur, but [the_person.possessive_title] seems to be on the edge of what she would tolerate."
+            "You think about going even further, but [the_person.possessive_title] seems to be on the edge of what she would tolerate."
             "You satisfy yourself with grabbing her ass and massaging her tits while you talk."
             return False #If she's uncomfortable at this level you can't enter the sex system (ie. you need 35+ sluttiness OR need to have broken the touching body taboo some other way).
 

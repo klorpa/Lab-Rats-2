@@ -36,7 +36,7 @@ init -1 python:
         preg_transform_action = Action("Pregnancy Transform", preg_transform_requirement, "pregnant_transform", args = the_person, requirement_args = the_person)
         mc.business.mandatory_morning_crises_list.append(preg_transform_action) #This event adds an announcement event the next time you enter the same room as the girl.
 
-        the_person.special_role.append(pregnant_role)
+        the_person.add_role(pregnant_role)
 
     def preg_transform_announce_requirement(the_person):
         return True
@@ -156,7 +156,7 @@ label pregnant_announce(the_person):
 
             "Start having an affair." if ask_girlfriend_requirement(the_person):
                 mc.name "Just tell him it's his, and we can start seeing each other more so I can help you in this difficult time."
-                $ the_person.special_role.append(affair_role)
+                $ the_person.add_role(affair_role)
 
             "Tell him it's his.":
                 mc.name "Just tell him it's his. I'm sure he'll be ecstatic to hear the good news."
@@ -178,7 +178,7 @@ label pregnant_announce(the_person):
                 "She blinks away a few tears and nods."
                 $ the_person.change_happiness(10)
                 the_person.char "I'm sorry, I guess the hormones are already getting to me. I'd like that."
-                $ the_person.special_role.append(girlfriend_role)
+                $ the_person.add_role(girlfriend_role)
                 "You hug [the_person.possessive_title], and she hugs you back."
                 the_person.char "That's all for now, I'll keep you informed as things progress."
 
@@ -260,7 +260,7 @@ label pregnant_transform_announce(start_day, the_person):
         the_person.char "Hey [the_person.mc_title]. So, I'm past the point of just having a little baby bump..."
         "She turns and runs a hand over her belly, accentuating the new and prominent curves that have formed there."
 
-    the_person.char "My boobs are starting to swell with milk too. It's a little embarassing but..."
+    the_person.char "My boobs are starting to swell with milk too. It's a little embarrassing but..."
     the_person.char "Now when I get aroused they leak just a little bit."
     mc.name "You look fantastic. You really are glowing."
     $ the_person.change_happiness(10)
@@ -319,7 +319,7 @@ label pregnant_finish(the_person):
         the_person.on_talk_event_list.append(tit_shrink_two_announcement_action)
 
         while pregnant_role in the_person.special_role: #While loop just in case it's ended up in there multiple times. In theory this should only trigger once.
-            the_person.special_role.remove(pregnant_role)
+            the_person.remove_role(pregnant_role)
 
     "You get a call from [the_person.possessive_title] early in the morning. You answer it."
     the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.

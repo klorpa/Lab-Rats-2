@@ -363,5 +363,5 @@ label student_mom_appologise_label(the_person): #TODO Provide a way to not activ
     "You slap her ass hard, making her jump a little bit."
     mc.name "I'll be seeing you soon."
     "She nods meekly, cheeks flush."
-    $ the_person.special_role.append(affair_role)
+    $ the_person.add_role(affair_role)
     return

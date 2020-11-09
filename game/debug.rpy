@@ -174,3 +174,8 @@ screen display_all_hair():
                     text hair.name
                     $ hair_displayable = hair.generate_item_displayable("standard_body", "AA", "stand2")
                     add hair_displayable
+
+label test_malformed_say(the_person):
+    the_person "Hello world!"
+    the_person "This is a test!"
+    return

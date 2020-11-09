@@ -43,7 +43,7 @@ init 1300 python:
             return False
 
     relaxed_uniform_policy = Policy(name = "Relaxed Corporate Uniforms",
-        desc = "Corporate dress code is broadened to include more casu al apparel. You can designate overwear sets up to sluttiness 15 as part of your business uniform.",
+        desc = "Corporate dress code is broadened to include more casual apparel. You can designate overwear sets up to sluttiness 15 as part of your business uniform.",
         cost = 1000,
         toggleable = True,
         requirement = relaxed_uniform_policy_requirement,
@@ -498,3 +498,79 @@ init 1300 python:
         requirement = public_advertising_license_requirement)
 
     organisation_policies_list.append(public_advertising_license_policy)
+
+    def office_punishment_policy_requirement():
+        return True
+
+    office_punishment = Policy(name = "Office Punishment",
+        desc = "Establish a formal set of punishments for business policy violations. Allows you to punish employees for infractions they have committed. More severe infractions enable more severe punishments.",
+        cost = 700,
+        toggleable = False,
+        requirement = office_punishment_policy_requirement)
+    organisation_policies_list.append(office_punishment)
+
+    def corporal_punishment_policy_requirement():
+        if office_punishment.is_owned():
+            return True
+        else:
+            return False
+
+    corporal_punishment = Policy(name = "Corporal Punishment",
+        desc = "Updates to the company punishment guidelines allow for punishments involving physical contact. Research into the topic has shown sexual punishment to be extremely effective in cases of severe disobedience.",
+        cost = 2000,
+        toggleable = False,
+        requirement = corporal_punishment_policy_requirement)
+    organisation_policies_list.append(corporal_punishment)
+
+    def strict_enforcement_policy_requirment():
+        if office_punishment.is_owned():
+            return True
+        else:
+            return False
+
+    def strict_enforcement_on_day():
+        mc.business.change_team_effectiveness(-1*mc.business.get_employee_count())
+
+    strict_enforcement = Policy(name = "Strict Enforcement",
+        desc = "By strictly applying the letter, rather than spirit, of the company punishment guidelines you are able to treat infractions as more severe than they initially seem. All infraction severities are increased by one while this policy is active, but the increased administrative work lowers business efficency by one per employee every day.",
+        cost = 2500,
+        toggleable = True,
+        requirement = strict_enforcement_policy_requirment,
+        on_day_function = strict_enforcement_on_day)
+    organisation_policies_list.append(strict_enforcement)
+
+    def draconian_enforcement_policy_requirement():
+        if strict_enforcement.is_owned():
+            return True
+        else:
+            return False
+
+    def draconian_enforcement_on_day():
+        for employee in mc.business.get_employee_list():
+            employee.change_happiness(-5)
+
+    draconian_enforcement = Policy(name = "Draconian Enforcement",
+        desc = "Each policy infraction is to be punished to the utmost tolerable. All infraction severities are increased by one, but the restrictive office environment affects company morale, lowering all empolyee happiness by -5 per day.",
+        cost = 5000,
+        toggleable = True,
+        requirement = draconian_enforcement_policy_requirement,
+        on_day_function = draconian_enforcement_on_day,
+        dependant_policies = strict_enforcement)
+    organisation_policies_list.append(draconian_enforcement)
+
+    def bureaucratic_nightmare_policy_requirement():
+        if office_punishment.is_owned():
+            return True
+        else:
+            return False
+
+    def bureaucratic_nightmare_on_day():
+        mc.business.change_team_effectiveness(-1*mc.business.get_employee_count())
+
+    bureaucratic_nightmare = Policy(name = "Bureaucratic Nightmare",
+        desc = "Rewriting all company policies to be intentionally vague and misleading creates a work environment where mistakes are practically unavoidable. Allows you to generate minor infractions at will, but the new labyrinthian rules result in business efficency dropping by an additional one per employee each day.",
+        cost = 2500,
+        toggleable = True,
+        requirement = bureaucratic_nightmare_policy_requirement,
+        on_day_function = bureaucratic_nightmare_on_day)
+    organisation_policies_list.append(bureaucratic_nightmare)

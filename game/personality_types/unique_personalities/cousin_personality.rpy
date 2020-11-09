@@ -225,6 +225,7 @@ label cousin_cum_vagina(the_person):
 
         else:
             the_person.char "Oh fuck, you really did it. You know I'm not on the pill, right?"
+            $ the_person.update_birth_control_knowledge()
             the_person.char "I bet you're a pervert like that and you wanted to get your own cousin knocked up."
             the_person.char "Whatever, you're probably shooting blanks anyways."
 
@@ -235,6 +236,7 @@ label cousin_cum_vagina(the_person):
         else:
             "She groans loudly."
             the_person.char "Oh my god, you asshole! I said pull out, I'm not on fucking birth control!"
+            $ the_person.update_birth_control_knowledge()
             the_person.char "Ugh, whatever. You're probably shooting blanks, I bet I don't even need to worry about it."
     return
 
@@ -439,18 +441,22 @@ label cousin_condomless_sex_taboo_break(the_person):
             mc.name "Why not? Afraid I'm going to get you knocked up?"
             if the_person.on_birth_control:
                 the_person.char "As if. That's why I'm on the pill."
+                $ the_person.update_birth_control_knowledge()
                 mc.name "So you can fuck your cousin?"
                 "She groans and rolls her eyes."
             else:
                 the_person.char "You better not, or you'll be the one telling both of our moms."
                 mc.name "Wait, are you on the pill?"
                 the_person.char "Obviously not, or I wouldn't be worried."
+                $ the_person.update_birth_control_knowledge()
 
         else:
             if the_person.on_birth_control:
                 the_person.char "Me too. Fuck it, I'm on the pill so why not?"
+                $ the_person.update_birth_control_knowledge()
             else:
                 the_person.char "Me too, but we need to be really careful if you're going to take me bareback. I'm not on birth control."
+                $ the_person.update_birth_control_knowledge()
                 mc.name "Fine, I'll pull out."
             the_person.char "You better. If you get me prengant you're going to be the one to tell both of our moms."
         the_person.char "Come on, hurry up and fuck me before I realise this is a bad idea."
@@ -471,6 +477,7 @@ label cousin_condomless_sex_taboo_break(the_person):
             the_person.char "Fine... But I swear to God if you don't pull out..."
         else:
             the_person.char "Fine, but I'm not on the pill so you better be damn sure to pull out. If you don't, I swear to God..."
+            $ the_person.update_birth_control_knowledge()
         mc.name "What, you'll tell your Mom that you're banging your own cousin? You might want to think of a better threat than that."
         the_person.char "Ugh, whatever. Just hurry up and fuck me."
     return
@@ -533,6 +540,7 @@ label cousin_creampie_taboo_break(the_person):
 
         else:
             the_person.char "Because I'm not on the pill, you idiot. I thought you were suppose to be the smart one in the family."
+            $ the_person.update_birth_control_knowledge()
             the_person.char "Unless this was your plan the whole time..."
 
     else:
@@ -546,6 +554,7 @@ label cousin_creampie_taboo_break(the_person):
             "She groans unhappily."
             mc.name "What's wrong? Aren't you having a good time?"
             the_person.char "I'm not on the pill, and you just came inside of me. So no, I'm not having a good time any more."
+            $ the_person.update_birth_control_knowledge()
             mc.name "Come on, who cares about that? What are the actual odds you're going to get pregnant?"
             the_person.char "I don't know... Low, I think, but that's not the point."
             mc.name "Of course it's the point. You're probably not going to get pregnant, but this feels so much better for both of us. Right?"

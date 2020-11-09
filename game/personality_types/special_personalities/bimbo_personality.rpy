@@ -264,6 +264,22 @@ label bimbo_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"
         the_person.char "Hey, maybe we should, like, slow down."
     return
 
+label bimbo_grope_body_reject(the_person):
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        the_person "Oh my god [the_person.title], you can't touch me like this."
+        "She takes a step back and giggles."
+        the_person "I'm flattered, but I don't think it's okay..."
+        "You pull your hand back and laugh along with her, diffusing the tension."
+        mc.name "Of course, forget I did anything."
+    else: #Fail point for touching waist
+        the_person "Hey... I don't think you should be touching me like that..."
+        "She giggles to herself."
+        the_person "It's kind of fun, but I know where this is going."
+        "You give her a last squeeze and pull your hand back."
+        mc.name "Yeah, of course. Maybe I'll be able to convince you."
+        the_person "Hehe, we'll see..."
+    return
+
 label bimbo_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 70:
@@ -692,6 +708,7 @@ label bimbo_cum_pullout(the_person):
                 the_person.char "Oh my god, yes! Cum inside me [the_person.mc_title]! Knock me up!"
         elif the_person.on_birth_control: #She's on the pill, so she's probably fine
             the_person.char "I think I took my pill this morning, so you can cum inside me!"
+            $ the_person.update_birth_control_knowledge()
         else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
             the_person.char "Hehe, yay! I'm going to make you cum [the_person.mc_title]!"
     else:
@@ -729,6 +746,7 @@ label bimbo_cum_vagina(the_person):
             the_person.char "Mmm, wow you came a lot! Wait, does that mean I'm..."
             "She thinks hard for a second, then sighs and giggles."
             the_person.char "It's fine, I remembered to take my pink pill this morning!"
+            $ the_person.update_birth_control_knowledge()
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "My [so_title] gets angry when I forget, but it's not like he fucks me much anyways."

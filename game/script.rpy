@@ -24,6 +24,8 @@ init -2 python:
     if not renpy.mobile: #Mobile platforms do not support animation, so we only want to try to import it if we're going to use it.
         import shader
 
+    #config.use_cpickle = False
+
     def take_animation_screenshot(): #Called on every interact beginning, if animation_draw_requested is True it makes the screenshot and starts a new thread to display the image.
         # This approach is needed because draw.screenshot is fast, but must be done in the main thread. Rendering is slower, but can be threaded. This lets us get the best of both worlds.
         global animation_draw_requested #This might have some race conditions if character images are drawn very quickly, but I doubt it will be something to worry about.
@@ -160,7 +162,7 @@ init -2 python:
     build.archive("kneeling1", "renpy")
     build.archive("cowgirl", "renpy")
 
-    build.classify("game/images/character_images/**stand2**.png", "stand2") #These are already packaged into a zip file, not needed as standalone images.
+    build.classify("game/images/character_images/**stand2**.png", "stand2") #Package the individual images into archives for the PC versions
     build.classify("game/images/character_images/**stand3**.png", "stand3")
     build.classify("game/images/character_images/**stand4**.png", "stand4")
     build.classify("game/images/character_images/**stand5**.png", "stand5")
@@ -176,7 +178,22 @@ init -2 python:
     build.classify("game/images/character_images/**kneeling1**.png", "kneeling1")
     build.classify("game/images/character_images/**cowgirl**.png", "cowgirl")
 
-    build.classify("game/images/character_images/**.png", None)
+    build.classify("game/images/character_images/**stand2**.png", None) #On android these are already packaged into a zip file, so the standalone images are not needed.
+    build.classify("game/images/character_images/**stand3**.png", None)
+    build.classify("game/images/character_images/**stand4**.png", None)
+    build.classify("game/images/character_images/**stand5**.png", None)
+    build.classify("game/images/character_images/**walking_away**.png", None)
+    build.classify("game/images/character_images/**back_peek**.png", None)
+    build.classify("game/images/character_images/**sitting**.png", None)
+    build.classify("game/images/character_images/**kissing**.png", None)
+    build.classify("game/images/character_images/**doggy**.png", None)
+    build.classify("game/images/character_images/**missionary**.png", None)
+    build.classify("game/images/character_images/**blowjob**.png", None)
+    build.classify("game/images/character_images/**against_wall**.png", None)
+    build.classify("game/images/character_images/**standing_doggy**.png", None)
+    build.classify("game/images/character_images/**kneeling1**.png", None)
+    build.classify("game/images/character_images/**cowgirl**.png", None)
+
     build.classify("game/images/character_images/**.zip", "android")
 
 
@@ -596,6 +613,8 @@ init -2 python:
             self.listener_system = Listener_Management_System()
 
         def run_turn(self): #Run each time the time segment changes. Most changes are done here.
+            if time_of_day == 1 and daily_serum_dosage_policy.is_active() and self.is_work_day(): #Not done on run_day because we want it to apply at the _start_ of the day.
+                self.give_daily_serum()
 
             #Compute efficency drop
             for person in self.supply_team + self.research_team + self.production_team + self.market_team:
@@ -1036,7 +1055,7 @@ init -2 python:
             self.hr_team.append(new_person)
             new_person.job = self.get_employee_title(new_person)
 
-        def remove_employee(self, the_person):
+        def remove_employee(self, the_person, remove_linked = False):
             if the_person in self.research_team:
                 self.research_team.remove(the_person)
             elif the_person in self.production_team:
@@ -1049,8 +1068,9 @@ init -2 python:
                 self.hr_team.remove(the_person)
 
             the_person.set_work(None)
-            the_person.special_role.remove(employee_role)
+            the_person.remove_role(employee_role, remove_linked = remove_linked) #Some events only shuffle employees around, leaving employee related roles in place. For those, set remove_linked to True
 
+            #TODO: We should support roles having an on_remove function, so we can make this style of removal generic
             if the_person == self.head_researcher:
                 renpy.call("fire_head_researcher", the_person) #Call the label we use for firing the person as a role action. This should trigger it any time you fire or move your head researcher.
 
@@ -1456,6 +1476,61 @@ init -2 python:
                 has_prereqs = False
             return has_prereqs
 
+    class Infraction(renpy.store.object):
+        #These are common infractions that may be used throughout the game
+        @staticmethod
+        def bureaucratic_mistake_factory(name = "Bureaucratic Mistake", desc = None, severity = 1, days_valid = 3):
+            if desc is None:
+                desc = "Failure to dot all i's and cross all t's. It's impossible to do anything right here!"
+            return Infraction(name, desc, severity, days_valid)
+
+        @staticmethod
+        def underperformance_factory(name = "Underperformance", desc = None, severity = 1, days_valid = 7):
+            if desc is None:
+                desc = "Work performance lower than expected of the employee."
+            return Infraction(name, desc, severity, days_valid)
+
+        @staticmethod
+        def careless_accident_factory(name = "Careless Accident", desc = None, severity = 2, days_valid = 7):
+            if desc is None:
+                desc = "Damage to company equipment or waste of company supplies due to a careless mistake."
+            return Infraction(name, desc, severity, days_valid)
+
+        @staticmethod
+        def office_disturbance_factory(name = "Workplace Disturbance", desc = None, severity = 2, days_valid = 7):
+            if desc is None:
+                desc = "Actions that have upset the normal peace and quiet of the office."
+            return Infraction(name, desc, severity, days_valid)
+
+        @staticmethod
+        def out_of_uniform_factory(name = "Out of Uniform", desc = None, severity = 3, days_valid = 7):
+            if desc is None:
+                desc = "Failure to wear a company mandated uniform."
+            return Infraction(name, desc, severity, days_valid)
+
+        @staticmethod
+        def disobedience_factory(name = "Disobedience", desc = None, severity = 3, days_valid = 7):
+            if desc is None: #Not in the parameters to keep things a little tidier.
+                desc = "Intentional disregard of a direct order order or instruction."
+            return Infraction(name, desc, severity, days_valid)
+
+        @staticmethod
+        def inappropriate_behaviour_factory(name = "Inappropriate Behaviour", desc = None, severity = 3, days_valid = 7):
+            if desc is None:
+                desc = "Actions inappropriate for a workplace setting. Strange how this never applies to the owner..."
+
+        def __init__(self, name, desc, severity, days_valid, days_existed = 0):
+            self.name = name #The name of the infraction, as might show up on a menu
+            self.desc = desc #A short, two or three sentence explanation for what the infraction is, for tooltip purposes.
+            self.severity = severity #An int from 1 (least severe) to 5 (most severe). Punishments are gated by the severity of the infraciton
+            if strict_enforcement.is_active():
+                self.severity += 1
+            if draconian_enforcement.is_active():
+                self.severity += 1
+
+            self.days_valid = days_valid #How many days from the creation of the infraction it is valid to punish someone for
+            self.days_existed = days_existed #How long this infraction has existed on someone.
+
     class MainCharacter(renpy.store.object):
         def __init__(self, location, name, last_name, business, stat_array, skill_array, sex_array):
             self.location = location
@@ -1804,6 +1879,8 @@ init -2 python:
             if possessive_title:
                 self.set_possessive_title(possessive_title)
 
+            self.text_modifiers = [] #A list of functions, each of which take Person, String and return a modified String. Used to modify text to dynamically highlight words, or reflect a speech difference.
+
             ## Physical things.
             self.age = age
             self.body_type = body_type
@@ -1945,6 +2022,8 @@ init -2 python:
                 self.base_outfit = base_outfit
 
 
+            self.infractions = [] #List of infractions this character has committed.
+
             self.planned_outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #planned_outfit is the outfit the girl plans to wear today while not at work. She will change back into it after work or if she gets stripped. Cop0y it in case the outfit is changed during the day.
             self.planned_uniform = None #The uniform the person was planning on wearing for today, so they can return to it if they need to while at work.
             self.apply_outfit(self.planned_outfit)
@@ -2042,20 +2121,10 @@ init -2 python:
                 self.serum_effects.remove(serum)
 
             #Now we want to see if she's unhappy enough to quit. We will tally her "happy points", a negative number means a chance to quit.
+            for a_role in self.special_role:
+                a_role.run_turn(self)
 
-            if mc.business.get_employee_workstation(self) is not None and mc.business.is_work_day(): #Only let people who work for us quit their job.
-                happy_points = self.get_job_happiness_score()
-                if happy_points < 0: #We have a chance of quitting.
-                    chance_to_quit = happy_points * -2 #there is a %2*unhappiness chance that the girl will quit.
-                    if renpy.random.randint(0,100) < chance_to_quit: #She is quitting
-                        potential_quit_action = Action(self.name + " is quitting.", quiting_crisis_requirement, "quitting_crisis_label", self)
-                        if potential_quit_action not in mc.business.mandatory_crises_list:
-                            mc.business.mandatory_crises_list.append(potential_quit_action)
 
-                    else: #She's not quitting, but we'll let the player know she's unhappy TODO: Only present this message with a certain research/policy.
-                        warning_message = self.title + " (" +mc.business.get_employee_title(self) + ") " + " is unhappy with her job and is considering quitting."
-                        if warning_message not in mc.business.message_list:
-                            mc.business.add_normal_message(warning_message)
 
         def run_move(self,location): #Move to the apporpriate place for the current time unit, ie. where the player should find us.
 
@@ -2117,16 +2186,6 @@ init -2 python:
             if self.outfit.vagina_visible():
                 self.change_slut_temp(self.get_opinion_score("showing her ass"), add_to_log = False)
 
-            # if self.outfit.get_bra() or self.outfit.get_panties():
-            #     lingerie_bonus = 0
-            #     if self.outfit.get_bra() and self.outfit.get_bra().slut_value > 1: #We consider underwear with an innate sluttiness of 2 or higher "lingerie" rather than just underwear.
-            #         lingerie_bonus += self.get_opinion_score("lingerie")
-            #     if self.outfit.get_panties() and self.outfit.get_panties().slut_value > 1:
-            #         lingerie_bonus += self.get_opinion_score("lingerie")
-            #     lingerie_bonus = __builtin__.int(lingerie_bonus/2.0)
-            #     self.change_slut_temp(lingerie_bonus, add_to_log = False)
-
-
             for event_list in [self.on_room_enter_event_list, self.on_talk_event_list]: #Go through both of these lists and curate them, ie trim out events that should have expired.
                 removal_list = [] #So we can iterate through without removing and damaging the list.
                 for an_action in event_list:
@@ -2137,6 +2196,9 @@ init -2 python:
 
                 for action_to_remove in removal_list:
                     event_list.remove(action_to_remove)
+
+            for a_role in self.special_role:
+                a_role.run_move(self)
 
 
 
@@ -2162,6 +2224,11 @@ init -2 python:
                 serum.run_on_remove(self)
                 self.serum_effects.remove(serum)
 
+            for infraction in self.infractions:
+                infraction.days_existed += 1
+                if infraction.days_existed > infraction.days_valid:
+                    self.remove_infraction(infraction)
+
 
             if day%7 == 0: #If the new day is Monday
                 self.change_happiness(self.get_opinion_score("Mondays"), add_to_log = False)
@@ -2171,6 +2238,9 @@ init -2 python:
 
             elif day%7 == 6 or day%7 == 7: #If the new day is a weekend day
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
+
+            for a_role in self.special_role:
+                a_role.run_day(self)
 
 
         def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Encapsulates what is done when drawing a person and produces a single displayable.
@@ -2667,14 +2737,14 @@ init -2 python:
         def update_outfit_taboos(self):
             return_value = False
             if self.outfit.tits_visible():
-                self.break_taboo("bare_tits")
-                return_value = True
+                if self.break_taboo("bare_tits"):
+                    return_value = True
             if self.outfit.vagina_visible():
-                self.break_taboo("bare_pussy")
-                return_value = True
+                if self.break_taboo("bare_pussy"):
+                    return_value = True
             if (self.outfit.wearing_panties() and not self.outfit.panties_covered()) or (self.outfit.wearing_bra() and not self.outfit.bra_covered()):
-                self.break_taboo("underwear_nudity")
-                return_value = True
+                if self.break_taboo("underwear_nudity"):
+                    return_value = True
             return return_value
 
 
@@ -2823,11 +2893,11 @@ init -2 python:
             #Adds a conditional, temporary sluttiness amount. This is added now and removed when clear_situational is called, or when another add_situational is called with the same source.
             if source in self.situational_sluttiness:
                 difference = amount - self.situational_sluttiness[source][0]
-                self.change_slut_core(difference, add_to_log = False)
+                self.change_slut_core(difference, add_to_log = False, fire_event = False)
                 self.change_slut_temp(difference, add_to_log = False)
 
             else:
-                self.change_slut_core(amount, add_to_log = False)
+                self.change_slut_core(amount, add_to_log = False, fire_event = False)
                 self.change_slut_temp(amount, add_to_log = False)
 
             self.situational_sluttiness[source] = (amount,description)
@@ -3011,14 +3081,17 @@ init -2 python:
             employment_title = mc.business.get_employee_title(self)
             if employment_title != "None":
                 if mc.business.is_open_for_business(): #We should be at work right now, so if there is a uniform we should wear it.
-                    if mc.business.get_uniform_wardrobe(employment_title).get_count() > 0: #Check to see if there's anything stored in the uniform section.
+                    if mc.business.get_uniform_wardrobe(employment_title).get_count() > 0 or self.event_triggers_dict.get("forced_uniform", False): #Check to see if there's anything stored in the uniform section.
                         return True
 
             return False #If we fail to meet any of the above conditions we should return false.
 
         def wear_uniform(self): #Puts the girl into her uniform, if it exists.
             if self.planned_uniform is None:
-                self.set_uniform(mc.business.get_uniform_wardrobe(mc.business.get_employee_title(self)).decide_on_uniform(self),False) #If we don't have a uniform planned for today get one.
+                the_uniform = mc.business.get_uniform_wardrobe(mc.business.get_employee_title(self)).decide_on_uniform(self)
+                if self.event_triggers_dict.get("forced_uniform", False):
+                    the_uniform = self.event_triggers_dict.get("forced_uniform")
+                self.set_uniform(the_uniform, False) #If we don't have a uniform planned for today get one.
 
             if self.planned_uniform is not None: #If our planned uniform is STILL None it means we are unable to construct a valid uniform. Only assign it as our outfit if we have managed to construct a uniform.
                 self.apply_outfit(self.planned_uniform) #We apply clothing taboos to uniforms because the character is assumed to have seen them in them.
@@ -3172,6 +3245,16 @@ init -2 python:
                 return "Normal"
             else:
                 return "Risky"
+
+        def update_birth_control_knowledge(self, force_known_state = None, force_known_day = None): #Called any time a girl gives you information about her BC. Allows for an up to date detailed info screen that doesn't give more than you know
+            if force_known_state is None: #Useful when you an event changes a girls BC and you can expect that she's not going to be on birth control the next day.
+                known_state = self.on_birth_control
+
+            if force_known_day is None:
+                known_day = day
+
+            self.event_triggers_dict["birth_control_status"] = known_state
+            self.event_triggers_dict["birth_control_known_day"] = known_day
 
 
         def effective_sluttiness(self, taboos = None): #Used in sex scenes where the girl will be more aroused, making it easier for her to be seduced.
@@ -3404,11 +3487,48 @@ init -2 python:
         def set_mc_title(self, new_title):
             self.mc_title = new_title
 
+        def personalise_text(self, what):
+            for text_modifier in self.text_modifiers:
+                what = text_modifier(self, what)
+
+            return what
+
+        def add_role(self, the_role):
+            self.special_role.append(the_role)
+
+        def remove_role(self, the_role, remove_all = False, remove_linked = True):
+            if the_role in self.special_role:
+                self.special_role.remove(the_role)
+                if remove_linked:
+                    for linked_role in the_role.linked_roles:
+                        self.remove_role(linked_role, remove_all, remove_linked)
+                if remove_all:
+                    self.remove_role(the_role, remove_all, remove_linked)
+
+        def has_role(self, the_role):
+            if the_role in self.special_role:
+                return True
+            else:
+                return False
+
         def get_role_reference_by_name(self, the_role):
             for role in self.special_role:
                 if role.role_name == the_role:
                     return role
             return None
+
+        def add_infraction(self, the_infraction, add_to_log = True, require_policy = True):
+            if office_punishment.is_active() or not require_policy:
+                self.infractions.append(the_infraction)
+                if add_to_log:
+                    display_name = self.create_formatted_title("???")
+                    if self.title:
+                        display_name = self.title
+                    mc.log_event(display_name + " committed infraction: " + the_infraction.name + ", Severity " + str(the_infraction.severity), "float_text_grey")
+
+        def remove_infraction(self, the_infraction):
+            if the_infraction in self.infractions:
+                self.infractions.remove(the_infraction)
 
     class Personality(): #How the character responds to various actions
         def __init__(self, personality_type_prefix, default_prefix = None,
@@ -3428,7 +3548,7 @@ init -2 python:
             "sex_responses_foreplay", "sex_responses_oral", "sex_responses_vaginal", "sex_responses_anal",
             "climax_responses_foreplay", "climax_responses_oral", "climax_responses_vaginal", "climax_responses_anal",
             "clothing_accept", "clothing_reject", "clothing_review",
-            "strip_reject", "strip_obedience_accept", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
+            "strip_reject", "strip_obedience_accept", "grope_body_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
             "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high", "flirt_response_girlfriend", "flirt_response_affair",
             "cum_face", "cum_mouth", "cum_pullout", "cum_condom", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
@@ -3721,6 +3841,8 @@ init -2 python:
         def remove_person(self, the_person, new_primary = None): #Remove the_person from the list of people being drawn. Does not redraw (call redraw_group for that)
             if the_person in self.group_of_people:
                 self.group_of_people.remove(the_person)
+                if the_person is self.primary_speaker:
+                    self.primary_speaker = None
                 if the_person.character_number in self.last_draw_commands:
                     del self.last_draw_commands[the_person.character_number]
 
@@ -3730,6 +3852,10 @@ init -2 python:
         def set_primary(self, the_person): #Note: Does not redraw #TODO: maybe it should?
             if the_person in self.group_of_people:
                 self.primary_speaker = the_person
+
+        def pick_arbitrary_primary(self): #Picks a new primary if none exists (because they have left, for example). Usually not needed, events should manage who is primary themselves.
+            if len(self.group_of_people) > 0: #If there's nobody in the group by definition there is no primary.
+                self.set_primary(get_random_from_list(self.group_of_people))
 
         # NOTE: It is most convenient to pass everything through as a key word argument, to avoid issues with normally defaulted arguments inside of draw_person or draw_animated_removal eating them as the wrong argument.
         def draw_person(self, the_person, make_primary = True, *args, **kwargs): #Seperate accessor methods to maintain consistency between group and single draws, while keeping all similar code in one place.
@@ -3766,6 +3892,9 @@ init -2 python:
 
         def do_draw(self, the_person, the_draw_method, make_primary = True, *args, **kwargs): # Holds all of the similar code for all group based drawing methods (ie. passes through all information, keeping what is needed to redraw a character)
             #TODO: have the positioning account for different position widths.
+            if self.primary_speaker is None: #Ensure there is always technically a primary, even if one was just removed.
+                self.pick_arbitrary_primary()
+
             if make_primary and the_person is not self.primary_speaker: #We're replacing the primary speaker, so we need to redraw them into the background
                 old_primary = self.primary_speaker
                 self.set_primary(the_person)
@@ -3883,12 +4012,14 @@ init -2 python:
                 eye_colour = [0.8,0.8,0.8,1] #grey by default.
 
             if renpy.mobile: #On mobile platforms we use .zip files to hold all of the individual images to bypass the andorid file limit. This results in significantly slower animation (for reasons currently unknown), but android douesn't animate anyways.
-                file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", position + ".zip"))
-                base_image = renpy.display.im.ZipFileImage(file_path, self.position_dict[position][emotion])
+                file_path = "images/character_images/" + position + ".zip"
+                renpy_file = renpy.file(file_path)
+                base_image = renpy.display.im.ZipFileImage(renpy_file, self.position_dict[position][emotion])
 
-                mask_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", position + ".zip"))
+                mask_path = "images/character_images/" + position + ".zip"
                 mask_name = self.position_dict[position][emotion].replace("_" + self.skin_colour,"_Pattern_1")
-                mask_image = renpy.display.im.ZipFileImage(file_path, mask_name)
+                renpy_file = renpy.file(mask_path)
+                mask_image = renpy.display.im.ZipFileImage(renpy_file, mask_name)
             else:
                 base_name = "character_images/" + self.position_dict[position][emotion]
                 base_image = Image(base_name)
@@ -4320,10 +4451,31 @@ init -2 python:
             return 0
 
     class Role(renpy.store.object): #Roles are assigned to special people. They have a list of actions that can be taken when you talk to the person and acts as a flag for special dialogue options.
-        def __init__(self, role_name, actions, hidden = False):
+        def __init__(self, role_name, actions, hidden = False, on_turn = None, on_move = None, on_day = None):
             self.role_name = role_name
             self.actions = actions # A list of actions that can be taken. These actions are shown when you talk to a person with this role if their requirement is met.
             self.hidden = hidden #A hidden role is not shown on the "Roles" list
+            self.on_turn = on_turn #A function that is run each turn on every person with this Role.
+            self.on_move = on_move #A function that is run each move phase on every person with this Role.
+            self.on_day = on_day
+
+            self.linked_roles = [] #A list of other roles. If this role is removed, all linked roles are removed as well.
+
+        def run_turn(self, the_person):
+            if self.on_turn is not None:
+                self.on_turn(the_person)
+
+        def run_move(self, the_person):
+            if self.on_move is not None:
+                self.on_move(the_person)
+
+        def run_day(self, the_person):
+            if self.on_day is not None:
+                self.on_day(the_person)
+
+        def link_role(self, the_role):
+            if the_role not in self.linked_roles:
+                self.linked_roles.append(the_role)
 
     class Listener_Management_System(renpy.store.object): #Used to manage listeners in objects. Contains functiosn for enrolling and removing triggers as well as firing notices to those triggers.
         def __init__(self):
@@ -4899,7 +5051,7 @@ init -2 python:
                     final_image = AlphaBlend(constrained_mask, Solid("#00000000"), final_image)
 
                 if nipple_wetness > 0: #TODO: Expand this system to a generic "Wetness" system
-                    region_mask = region.generate_raw_image(body_type, tit_size, position)
+                    region_mask = wet_nipple_region.generate_raw_image(body_type, tit_size, position)
                     #region_mask = Image(wet_nipple_region.generate_item_image_name(body_type, tit_size, position))
                     position_size = position_size_dict[position]
                     region_mask = im.MatrixColor(region_mask, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,nipple_wetness,0])
@@ -4924,7 +5076,7 @@ init -2 python:
 
                     for region_to_hide in total_half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
                         #region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
-                        region_mask = region.generate_raw_image(body_type, tit_size, position)
+                        region_mask = region_to_hide.generate_raw_image(body_type, tit_size, position)
                         composite_list.append(region_to_hide.crop_offset_dict.get(position, (0,0)))
                         composite_list.append(region_mask)
 
@@ -4935,7 +5087,7 @@ init -2 python:
                     if self.half_off_ignore_regions: #Sometimes you want hard edges, or a section of a piece of clothing not to be moved. These regions are not blured/enlarged and are subtracted from the mask generated above.
                         add_composite_list = None
                         for region_to_add in self.half_off_ignore_regions:
-                            region_mask = region.generate_raw_image(body_type, tit_size, position)
+                            region_mask = region_to_add.generate_raw_image(body_type, tit_size, position)
                             #region_mask = Image(region_to_add.generate_item_image_name(body_type, tit_size, position))
                             if add_composite_list is None:
                                 add_composite_list = [position_size_dict.get(position)] #We can reuse the size from our first pass building the mask.
@@ -5078,29 +5230,35 @@ init -2 python:
             #TODO: Check to see what the performance impact of having to define this repeatedly is. We could init it at the start and then repeatedly access it if we neeeded to.
 
             if renpy.mobile:
-                file_path = file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", self.position_name + ".zip"))
-                file = zipfile.ZipFile(file_path)
+                file_path = "images/character_images/" + self.position_name + ".zip"
+                renpy_file = renpy.file(file_path)
+                file = zipfile.ZipFile(renpy_file)
                 if not special_modifier is None:
                     if index_string in file.namelist():
                     #if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier
                         index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
 
-                the_image = renpy.display.im.ZipFileImage(file_path + self.position_name + ".zip", self.images[index_string])
+
+                the_image = renpy.display.im.ZipFileImage(renpy_file, self.images[index_string])
                 return the_image
             else:
+                if special_modifier is not None:
+                    if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
+                        index_string += "_" + special_modifier
                 return Image("character_images/" + self.images[index_string]) #We have made an index string, use it to get the full filepath for the image used in this position.
 
         def get_image_name(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
             if renpy.mobile:
-                file_path = file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", self.position_name + ".zip"))
-                file = zipfile.ZipFile(file_path + self.position_name + ".zip")
-                if not special_modifier is None:
+                file_path = "images/character_images/" + self.position_name + ".zip"
+                renpy_file = renpy.file(file_path)
+                file = zipfile.ZipFile(renpy_file)
+                if special_modifier is not None:
                     if index_string in file.namelist():
                     #if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
                         index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
             else:
-                if not special_modifier is None:
+                if special_modifier is not None:
                     if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
                         index_string += "_" + special_modifier
 
@@ -5136,8 +5294,10 @@ init -2 python:
             index_string = body_type + "_" + breast_size
 
             if renpy.mobile:
-                file_path = os.path.abspath(os.path.join(config.basedir, "game", "images", "character_images", self.position_name + ".zip"))
-                return_image = renpy.display.im.ZipFileImage(file_path, self.images[index_string])
+
+                file_path = "images/character_images/" + self.position_name + ".zip"
+                renpy_file = renpy.file(file_path)
+                return_image = renpy.display.im.ZipFileImage(renpy_file, self.images[index_string])
             else:
                 return_image = Image("character_images/" + self.images[index_string])
 
@@ -5554,16 +5714,17 @@ init -2 python:
                 self.remove_clothing(to_remove)
             return to_remove
 
-        def get_unanchored(self): #Returns a list of the pieces of clothing that can be removed.
+        def get_unanchored(self, half_off_instead = False): #Returns a list of the pieces of clothing that can be removed.
             #Question: should be be able to remove accessories like this? We would need a way to flag some things like makeup as unremovable.
+            # Note: half_off_instead returns a list of clothing items that can be half-offed, which means eitehr they are completely unanchored, or they are anchored but all upper layers are half-off and half-off gives access
             return_list = []
-            return_list.extend(self.get_upper_unanchored())
-            return_list.extend(self.get_lower_unanchored())
-            return_list.extend(self.get_foot_unanchored())
+            return_list.extend(self.get_upper_unanchored(half_off_instead))
+            return_list.extend(self.get_lower_unanchored(half_off_instead))
+            return_list.extend(self.get_foot_unanchored(half_off_instead))
 
             return return_list
 
-        def is_item_unanchored(self, the_clothing): #Returns true if the clothing item passed is unanchored, ie. could be logically taken off.
+        def is_item_unanchored(self, the_clothing, half_off_instead = False): #Returns true if the clothing item passed is unanchored, ie. could be logically taken off.
             if the_clothing in self.upper_body:
                 if the_clothing in self.get_upper_unanchored():
                     return True
@@ -5585,34 +5746,37 @@ init -2 python:
             else:
                 return True
 
-        def get_upper_unanchored(self):
+        def get_upper_unanchored(self, half_off_instead = False):
             return_list = []
             for top in reversed(sorted(self.upper_body, key=lambda clothing: clothing.layer)):
-                if top.has_extension is None or self.is_item_unanchored(top.has_extension):
-                    return_list.append(top)
+                if top.has_extension is None or self.is_item_unanchored(top.has_extension, half_off_instead): #Clothing items that cover two slots (dresses) are unanchored if both halves are unanchored.
+                    if not half_off_instead or (half_off_instead and top.can_be_half_off):
+                        return_list.append(top) #Always add the first item because the top is, by definition, unanchored
 
 
-                if top.anchor_below:
+                if top.anchor_below and not (half_off_instead and top.half_off and top.half_off_gives_access):
                     break #Search the list, starting at the outermost item, until you find something that anchors the stuff below it.
             return return_list
 
-        def get_lower_unanchored(self):
+        def get_lower_unanchored(self, half_off_instead = False):
             return_list = []
             for bottom in reversed(sorted(self.lower_body, key=lambda clothing: clothing.layer)):
-                if bottom.has_extension is None or self.is_item_unanchored(bottom.has_extension):
-                    return_list.append(bottom)
+                if bottom.has_extension is None or self.is_item_unanchored(bottom.has_extension, half_off_instead):
+                    if not half_off_instead or (half_off_instead and bottom.can_be_half_off):
+                        return_list.append(bottom)
 
-                if bottom.anchor_below:
+                if bottom.anchor_below and not (half_off_instead and bottom.half_off and bottom.half_off_gives_access):
                     break
             return return_list
 
-        def get_foot_unanchored(self):
+        def get_foot_unanchored(self, half_off_instead = False):
             return_list = []
             for foot in reversed(sorted(self.feet, key=lambda clothing: clothing.layer)):
-                if foot.has_extension is None or self.is_item_unanchored(foot.has_extension):
-                    return_list.append(foot)
+                if foot.has_extension is None or self.is_item_unanchored(foot.has_extension, half_off_instead):
+                    if not half_off_instead or (half_off_instead and foot.can_be_half_off):
+                        return_list.append(foot)
 
-                if foot.anchor_below:
+                if foot.anchor_below and not (half_off_instead and foot.half_off and foot.half_off_gives_access):
                     break
             return return_list
 
@@ -5779,6 +5943,72 @@ init -2 python:
         def get_slut_requirement(self): #A getter function for slut_requriement to be used for functional programming stuff.
             return self.slut_requirement
 
+        def get_full_strip_list(self, strip_feet = True, strip_accessories = False): #TODO: This should support visible_enough at some point.
+            items_to_strip = self.lower_body + self.upper_body
+            if strip_feet:
+                items_to_strip.extend(self.feet)
+            if strip_accessories:
+                items_to_strip.extend(self.accessories)
+            items_to_strip.sort(key= lambda clothing: clothing.tucked, reverse = True) #Tucked upper body stuff draws after lower body.
+            items_to_strip.sort(key= lambda clothing: clothing.layer) #Sort the clothing so it is removed top to bottom based on layer.
+
+            extension_items = []
+            for item in items_to_strip:
+                if item.is_extension:
+                    extension_items.append(item)
+
+            for item in extension_items:
+                items_to_strip.remove(extension_items) #Don't try and strip extension directly.
+            return items_to_strip[::-1] #Put it in reverse order so when stripped it will be done from outside in.
+
+        def get_underwear_strip_list(self, visible_enough = True, avoid_nudity = False): #Gets a list of things to strip until this outfit would have a girl in her underwear
+            #If a girl isn't wearning underwear this ends up being a full strip. If she is wearing only a bra/panties she'll strip until they are visible, and the other slot is naked.
+            test_outfit = self.get_copy() #We'll use a copy of the outfit. Slightly less efficent, but makes it easier to ensure we are generating valid strip orders.
+            items_to_strip = []
+
+            keep_stripping = not ((self.wearing_bra() and not self.bra_covered()) or self.tits_visible())
+            while keep_stripping:
+                keep_stripping = False
+                item = test_outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
+                if item is not None:
+                    if item.underwear:
+                        pass
+                    else:
+                        test_outfit.remove_clothing(item)
+                        if avoid_nudity and ((visible_enough and self.tits_visible()) or self.tits_available()):
+                            test_outfit.add_upper(item) #Stripping this would result in nudity, which we need to avoid.
+                            pass
+                        elif visible_enough and (self.wearing_bra() and not self.bra_covered()) or self.tits_visible():
+                            items_to_strip.append(item)
+                        else:
+                            items_to_strip.append(item)
+                            keep_stripping = True
+
+
+            keep_stripping = not ((self.wearing_panties() and not self.panties_covered()) or self.vagina_visible())
+            while keep_stripping:
+                keep_stripping = False
+                item = test_outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+                if item is not None:
+                    if item.underwear:
+                        pass
+                    else:
+                        test_outfit.remove_clothing(item)
+                        if avoid_nudity and ((visible_enough and self.vagina_visible()) or self.vagina_available()):
+                            test_outfit.add_lower(item) #Stripping this would result in nudity, which we need to avoid.
+                            pass
+                        elif visible_enough and (self.wearing_panties() and not self.panties_covered()) or self.vagina_visible():
+                            items_to_strip.append(item)
+                        else:
+                            items_to_strip.append(item)
+                            keep_stripping = True
+            return items_to_strip
+
+        def strip_to_underwear(self, visible_enough = True, avoid_nudity = False): #Used to off screen strip a girl down to her underwear, or completely if she isn't wearing any.
+            items_to_strip = self.get_underwear_strip_list(visible_enough, avoid_nudity)
+            for item in items_to_strip:
+                self.remove_clothing(item)
+
         def get_tit_strip_list(self, visible_enough = True): #Generates a list of clothing that, when removed from this outfit, result in tits being visible. Useful for animated clothing removal.
             # TODO: Add a way to generate this while including half-off options.
             #TODO: Add some pussy equivalent functions, I'll get to them when I need them for a crisis.
@@ -5908,10 +6138,6 @@ init -2 python:
             else:
                 return return_list
         #TODO: Update existing crises to make use of these centralised functions instead of handeling stripping as a special case each time.
-
-
-
-
 
     def get_visible_list(list):
         temp_list = sorted(list, key=lambda clothing: clothing.layer) #Get a sorted list
@@ -7513,7 +7739,16 @@ screen person_info_detailed(the_person):
                             text "Fertility: " + str(round(modified_fertility)) + "%" style "menu_text_style"
                             text "Monthly Peak Day: " + str(the_person.ideal_fertile_day ) style "menu_text_style"
                             #TODO: replace this with less specific info. Replace fertility peak with the_person.fertility_cycle_string()
-                        text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style" #TODO less specific info
+
+                        if the_person.event_triggers_dict.get("birth_control_status", None) is None:
+                            text "Birth Control: Unknown" style "menu_text_style" size 16
+                        else:
+                            if the_person.event_triggers_dict.get("birth_control_status"):
+                                #text "Taking Birth Control: Yes" style "menu_text_style"
+                                text "Birth Control: Yes {size=12}(Known " + str(the_person.event_triggers_dict.get("birth_control_known_day")-day) + " days ago){/size}" style "menu_text_style" size 16
+                            else:
+                                text "Birth Control: No {size=12}(Known " + str(the_person.event_triggers_dict.get("birth_control_known_day")-day) + " days ago){/size}" style "menu_text_style" size 16
+                        #text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style" #TODO less specific info
 
             frame:
                 background "#1a45a1aa"
@@ -8228,18 +8463,35 @@ screen serum_design_ui(starting_serum,current_traits):
 
 screen review_designs_screen():
     add "Science_Menu_Background.png"
+    default selected_serum = None
     vbox:
         text "Serum Designs:" style "menu_text_style" size 30
         grid 2 len(mc.business.serum_designs):
             for serum_design in mc.business.serum_designs:
+                $ serum_name = serum_design.name
                 if serum_design.researched:
-                    textbutton serum_design.name + " - Research Finished":
-                        action NullAction() hovered Show("serum_tooltip",None,serum_design) unhovered Hide("serum_tooltip") style "textbutton_style" text_style "textbutton_text_style"
+                    $ serum_name += " - Research Finished"
                 else:
-                    textbutton serum_design.name + " - " + str(serum_design.current_research) + "/" + str(serum_design.research_needed) + " Research Required":
-                        action NullAction() hovered Show("serum_tooltip",None,serum_design) unhovered Hide("serum_tooltip") style "textbutton_style" text_style "textbutton_text_style"
+                    $ serum_name += " - " + str(serum_design.current_research) + "/" + str(serum_design.research_needed) + " Research Required"
+
+                if serum_design == selected_serum:
+                    textbutton serum_name:
+                        action [SetScreenVariable("selected_serum", None), Hide("serum_tooltip")] style "textbutton_style" text_style "textbutton_text_style" background "#888888"
+
+                else:
+                    textbutton serum_name:
+                        action SetScreenVariable("selected_serum",serum_design) hovered [SetScreenVariable("selected_serum", None), Show("serum_tooltip",None,serum_design)] unhovered Hide("serum_tooltip") style "textbutton_style" text_style "textbutton_text_style"
+
+                # if serum_design.researched:
+                #     textbutton serum_design.name + " - Research Finished":
+                #         action Show("serum_tooltip",None,serum_design) style "textbutton_style" text_style "textbutton_text_style"
+                # else:
+                #     textbutton serum_design.name + :
+                #         action Show("serum_tooltip",None,serum_design) style "textbutton_style" text_style "textbutton_text_style"
 
                 textbutton "Scrap Design" action Function(mc.business.remove_serum_design,serum_design) style "textbutton_style" text_style "textbutton_text_style"
+
+                #unhovered Hide("serum_tooltip")
 
     frame:
         background None
@@ -8250,41 +8502,47 @@ screen review_designs_screen():
             align [0.5,0.5]
             auto "gui/button/choice_%s_background.png"
             focus_mask "gui/button/choice_idle_background.png"
-            action Return()
-        textbutton "Return" align [0.5,0.5] style "return_button_style"
+            action [Hide("serum_tooltip"), Return()]
+        textbutton "Return" align [0.5,0.5] style "return_button_style" text_style "return_button_style"
 
 
 screen serum_tooltip(the_serum, set_x_align = 0.9, set_y_align = 0.1):
     frame:
         background "#888888"
+
         xalign set_x_align
         yalign set_y_align
         yanchor 0.0
-        vbox:
-            text "[the_serum.name]" style "menu_text_style" xanchor 0.5 xalign 0.5 size 26
-            grid 2 3 xanchor 0.5 xalign 0.5:
-                spacing 10
-                text "Research Required: [the_serum.research_needed]" style "menu_text_style"
-                text "Production Cost: [the_serum.production_cost]" style "menu_text_style"
-                text "Value: $[the_serum.value]" style "menu_text_style"
-                $ calculated_profit = (the_serum.value*mc.business.batch_size)-the_serum.production_cost
-                if calculated_profit > 0:
-                    text "Expected Profit:{color=#98fb98} $[calculated_profit]{/color}" style "menu_text_style"
-                else:
-                    $ calculated_profit = 0 - calculated_profit
-                    text "Expected Profit:{color=#ff0000} -$[calculated_profit]{/color}" style "menu_text_style"
+        viewport:
+            xsize 540
+            ymaximum 800 #TODO: Figure this out
+            scrollbars "vertical"
+            mousewheel True
+            vbox:
+                text "[the_serum.name]" style "menu_text_style" xanchor 0.5 xalign 0.5 size 26
+                grid 2 3 xanchor 0.5 xalign 0.5:
+                    spacing 10
+                    text "Research Required: [the_serum.research_needed]" style "menu_text_style"
+                    text "Production Cost: [the_serum.production_cost]" style "menu_text_style"
+                    text "Value: $[the_serum.value]" style "menu_text_style"
+                    $ calculated_profit = (the_serum.value*mc.business.batch_size)-the_serum.production_cost
+                    if calculated_profit > 0:
+                        text "Expected Profit:{color=#98fb98} $[calculated_profit]{/color}" style "menu_text_style"
+                    else:
+                        $ calculated_profit = 0 - calculated_profit
+                        text "Expected Profit:{color=#ff0000} -$[calculated_profit]{/color}" style "menu_text_style"
 
-                text "Duration: [the_serum.duration] Turns" style "menu_text_style"
-                null
+                    text "Duration: [the_serum.duration] Turns" style "menu_text_style"
+                    null
 
-            for trait in the_serum.traits:
-                text trait.name style "menu_text_style"
-                text "    "  + trait.positive_slug style "menu_text_style" color "#98fb98"
-                text "    "  + trait.negative_slug style "menu_text_style" color "#ff0000"
-            if the_serum.side_effects:
-                for side_effect in the_serum.side_effects:
-                    text side_effect.name style "menu_text_style"
-                    text "    "  + side_effect.negative_slug style "menu_text_style" color "#ff0000"
+                for trait in the_serum.traits:
+                    text trait.name style "menu_text_style"
+                    text "    "  + trait.positive_slug style "menu_text_style" color "#98fb98"
+                    text "    "  + trait.negative_slug style "menu_text_style" color "#ff0000"
+                if the_serum.side_effects:
+                    for side_effect in the_serum.side_effects:
+                        text side_effect.name style "menu_text_style"
+                        text "    "  + side_effect.negative_slug style "menu_text_style" color "#ff0000"
 
 
 screen trait_tooltip(the_trait,given_xalign=0.9,given_yalign=0.1):
@@ -10024,7 +10282,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.33.3 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.34.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -10821,7 +11079,7 @@ label give_serum(the_person):
         "You decide to give [the_person.title] a dose of [the_serum.name]."
         $ mc.inventory.change_serum(the_serum,-1)
         $ the_person.give_serum(copy.copy(the_serum)) #use a copy rather than the main class, so we can modify and delete the effects without changing anything else.
-        return True
+        return the_serum
     else:
         "You decide not to give [the_person.title] anything."
         return False
@@ -10876,6 +11134,7 @@ label interview_action_description:
         "Yes, I'll pay the cost. -$[interview_cost]":
             $ mc.business.funds += -interview_cost
             $ clear_scene()
+            $ renpy.free_memory() #Try and free available memory
             python: #Build our list of candidates with our proper recruitment requirements
                 candidates = []
 
@@ -10898,6 +11157,7 @@ label interview_action_description:
                         a_candidate.discover_opinion(a_candidate.get_random_opinion(include_known = False, include_sexy = reveal_sex),add_to_log = False) #Get a random opinion and reveal it.
             call hire_select_process(candidates) from _call_hire_select_process
             $ candidates = [] #Prevent it from using up extra memory
+            $ renpy.free_memory() #Try and force a clean up of unused memory.
 
             if not _return == "None":
                 $ new_person = _return
@@ -10937,7 +11197,7 @@ label hire_someone(new_person, add_to_location = False): # Breaks out some of th
     python:
         new_person.event_triggers_dict["employed_since"] = day
         mc.business.listener_system.fire_event("new_hire", the_person = new_person)
-        new_person.special_role.append(employee_role)
+        new_person.add_role(employee_role)
         for other_employee in mc.business.get_employee_list():
             town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
 
@@ -11089,7 +11349,7 @@ label head_researcher_select_description:
     call screen employee_overview(white_list = mc.business.research_team, person_select = True)
     $ new_head = _return
     $ mc.business.head_researcher = new_head
-    $ new_head.special_role.append(head_researcher)
+    $ new_head.add_role(head_researcher)
     return
 
 label pick_company_model_description:
@@ -11097,7 +11357,7 @@ label pick_company_model_description:
     $ new_model = _return
     if new_model is not None:
         $ mc.business.company_model = new_model
-        $ new_model.special_role.append(company_model_role)
+        $ new_model.add_role(company_model_role)
     return
 
 label set_uniform_description:
@@ -11247,12 +11507,11 @@ label advance_time:
     # 1a) crises are processed if they are triggered.
     # 2) Time is advanced, day is advanced if required.
     # 3) People go to their next intended location.
-    # Note: This will require breaking people's turns into movement and actions.
     # Then: Add research crisis when serum is finished, requiring additional input from the player and giving the chance to test a serum on the R&D staff.
 
     #$mc.can_skip_time = False #Ensure the player cannot skip time during crises.
 
-    $ mandatory_advance_time = False #If a crisis returns a "Advance Time" value once this turn is finished processing it will process ANOTHER turn, so a crisis can require a turn to pass.
+    $ mandatory_advance_time = False #If a crisis returns an "Advance Time" value once this turn is finished processing it will process ANOTHER turn, so a crisis can require a turn to pass.
 
     python:
         people_to_process = [] #This is a master list of turns of need to process, stored as tuples [character,location]. Used to avoid modifying a list while we iterate over it, and to avoid repeat movements.
@@ -11263,6 +11522,7 @@ label advance_time:
     python:
         for (people,place) in people_to_process: #Run the results of people spending their turn in their current location.
             people.run_turn()
+
         mc.business.run_turn()
         mc.run_turn()
 
@@ -11366,9 +11626,6 @@ label advance_time:
 
     else:
         $ time_of_day += 1 ##Otherwise, just run the end of day code.
-
-    if time_of_day == 1 and daily_serum_dosage_policy.is_active() and mc.business.is_work_day(): #It is the start of the work day, give everyone their daily dose of serum
-        $ mc.business.give_daily_serum()
 
     python:
         for (people,place) in people_to_process: #Now move everyone to where the should be in the next time chunk. That may be home, work, etc.

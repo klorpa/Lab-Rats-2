@@ -519,33 +519,35 @@ label friends_help_friends_be_sluts_label():
                                 person_one.char "Well, here are mine. Come on [person_two.title], whip 'em out!"
                             else:
                                 person_one.char "Of course."
-                                $ strip_list = person_one.outfit.get_half_off_to_tits_list()
+                                $ strip_list = person_one.outfit.get_half_off_to_tits_list() #TODO: Expand generalised_strip_description to support half_offing clothing.
                                 if strip_list:
-                                    $ top_item = strip_list[0]
-                                    python:
-                                        for clothing in strip_list: # TODO: Loops like this should probably have some way of stripping only what is required, and half-offing the rest
-                                            the_group.draw_animated_removal(person_one, the_clothing = clothing, half_off_instead = True)
-                                            if person_one.outfit.tits_visible(): #Last loop
-                                                if person_one.has_large_tits():
-                                                    renpy.say("", "She jiggles large tits free of her " + clothing.display_name + ", putting them on display for you to judge.")
-                                                else:
-                                                    renpy.say("", "She pulls her " + clothing.display_name + " away and her perky tits spring free, on display for you to judge.")
-                                            else:
-                                                renpy.say("",person_one.title + " pulls her " + clothing.display_name + " up and out of the way.")
+                                    $ generalised_strip_description(person_one, strip_list, half_off_instead = True, group_display = the_group)
+                                #     $ top_item = strip_list[0]
+                                #     python:
+                                #         for clothing in strip_list: # TODO: Loops like this should probably have some way of stripping only what is required, and half-offing the rest
+                                #             the_group.draw_animated_removal(person_one, the_clothing = clothing, half_off_instead = True)
+                                #             if person_one.outfit.tits_visible(): #Last loop
+                                #                 if person_one.has_large_tits():
+                                #                     renpy.say("", "She jiggles large tits free of her " + clothing.display_name + ", putting them on display for you to judge.")
+                                #                 else:
+                                #                     renpy.say("", "She pulls her " + clothing.display_name + " away and her perky tits spring free, on display for you to judge.")
+                                #             else:
+                                #                 renpy.say("",person_one.title + " pulls her " + clothing.display_name + " up and out of the way.")
 
                                 else: #We need to strip something off completely.
                                     $ strip_list = person_one.outfit.get_tit_strip_list()
-                                    $ top_item = strip_list[0]
-                                    python:
-                                        for clothing in strip_list:
-                                            the_group.draw_animated_removal(person_one, the_clothing = clothing)
-                                            if person_one.outfit.tits_visible(): #Last loop
-                                                if person_one.has_large_tits():
-                                                    renpy.say("", "Her tits jiggle free as she strips off her " + clothing.display_name + " and puts it on the break room table.")
-                                                else:
-                                                    renpy.say("", "She pulls her " + clothing.display_name + " off, letting her perky tits spring free.")
-                                            else:
-                                                renpy.say("",person_one.title + " pulls her " + clothing.display_name + " off and puts it to the side.")
+                                    $ generalised_strip_description(person_one, strip_list, group_display = the_group)
+                                    # $ top_item = strip_list[0]
+                                    # python:
+                                    #     for clothing in strip_list:
+                                    #         the_group.draw_animated_removal(person_one, the_clothing = clothing)
+                                    #         if person_one.outfit.tits_visible(): #Last loop
+                                    #             if person_one.has_large_tits():
+                                    #                 renpy.say("", "Her tits jiggle free as she strips off her " + clothing.display_name + " and puts it on the break room table.")
+                                    #             else:
+                                    #                 renpy.say("", "She pulls her " + clothing.display_name + " off, letting her perky tits spring free.")
+                                    #         else:
+                                    #             renpy.say("",person_one.title + " pulls her " + clothing.display_name + " off and puts it to the side.")
 
                                 if person_two.outfit.tits_visible():
                                     $ person_one.break_taboo("bare_tits")
@@ -603,29 +605,30 @@ label friends_help_friends_be_sluts_label():
                                     $ the_group.draw_person(person_two)
                                     "[person_one.title] moves behind [person_two.title] and starts to dress her down, starting with her [the_item.name]."
 
-                                python:
-                                    if half_off_instead:
-                                        for clothing in strip_list: # TODO: Loops like this should probably have some way of stripping only what is required, and half-offing the rest
-                                            the_group.draw_animated_removal(person_one, the_clothing = clothing, half_off_instead = True)
-                                            if person_one.outfit.tits_visible(): #Last loop
-                                                if person_one.has_large_tits():
-                                                    renpy.say("", "Her breasts drop free as she pulls her " + clothing.display_name + " up, jiggling briefly.")
-                                                else:
-                                                    renpy.say("", "She pulls her " + clothing.display_name + " up, letting her well shaped breasts jump free.")
-                                            else:
-                                                renpy.say("",person_one.title + " pulls her " + clothing.display_name + " up and out of the way.")
 
-                                    else: #We need to strip something off completely.
-                                        strip_list = person_one.outfit.get_tit_strip_list()
-                                        for clothing in strip_list:
-                                            the_group.draw_animated_removal(person_one, the_clothing = clothing)
-                                            if person_one.outfit.tits_visible(): #Last loop
-                                                if person_one.has_large_tits():
-                                                    renpy.say("", "Her breasts drop free as she pulls her " + clothing.display_name + " off. They jiggle briefly before coming to a stop.")
-                                                else:
-                                                    renpy.say("", "She pulls her " + clothing.display_name + " off, and her well shaped breasts jump free as soon as possible.")
-                                            else:
-                                                renpy.say("",person_one.title + " pulls her " + clothing.display_name + " off and puts it to the side.")
+                                $ generalised_strip_description(person_two, strip_list, half_off_instead = half_off_instead, group_display = the_group)
+                                    # if half_off_instead:
+                                    #     for clothing in strip_list: # TODO: Loops like this should probably have some way of stripping only what is required, and half-offing the rest
+                                    #         the_group.draw_animated_removal(person_one, the_clothing = clothing, half_off_instead = True)
+                                    #         if person_one.outfit.tits_visible(): #Last loop
+                                    #             if person_one.has_large_tits():
+                                    #                 renpy.say("", "Her breasts drop free as she pulls her " + clothing.display_name + " up, jiggling briefly.")
+                                    #             else:
+                                    #                 renpy.say("", "She pulls her " + clothing.display_name + " up, letting her well shaped breasts jump free.")
+                                    #         else:
+                                    #             renpy.say("",person_one.title + " pulls her " + clothing.display_name + " up and out of the way.")
+                                    #
+                                    # else: #We need to strip something off completely.
+                                    #     strip_list = person_one.outfit.get_tit_strip_list()
+                                    #     for clothing in strip_list:
+                                    #         the_group.draw_animated_removal(person_one, the_clothing = clothing)
+                                    #         if person_one.outfit.tits_visible(): #Last loop
+                                    #             if person_one.has_large_tits():
+                                    #                 renpy.say("", "Her breasts drop free as she pulls her " + clothing.display_name + " off. They jiggle briefly before coming to a stop.")
+                                    #             else:
+                                    #                 renpy.say("", "She pulls her " + clothing.display_name + " off, and her well shaped breasts jump free as soon as possible.")
+                                    #         else:
+                                    #             renpy.say("",person_one.title + " pulls her " + clothing.display_name + " off and puts it to the side.")
 
                                 if person_two.get_opinion_score("showing her tits") > 0:
                                     "When she has her tits out she crosses her arms in front of her in a small attempt to preserve her modesty."
@@ -678,6 +681,20 @@ label friends_help_friends_be_sluts_label():
                             "[person_one.title] gives you a smile and a wink, then leaves the room with [person_two.title]."
                             $ person_one.review_outfit()
                             $ person_two.review_outfit()
+
+                        "Punish them for inappropriate behaviour." if office_punishment.is_active():
+                            mc.name "[person_one.title], [person_two.title], this is completely inappropriate, even if you're on your break."
+                            mc.name "I don't have any choice but to record this for disciplinary action later."
+                            $ person_one.add_infraction(infraction.inappropriate_behaviour_factory())
+                            $ person_two.add_infraction(Infraction.inappropriate_behaviour_factory())
+                            $ the_group.draw_person(person_one)
+                            person_one "Really? I..."
+                            $ the_group.draw_person(person_two)
+                            person_two "Don't get us in any more trouble [person_one.title]. Sorry [person_two.mc_title], we'll get back to work right away."
+                            $ the_group.draw_person(person_one)
+                            person_one "Ugh, whatever. Come on [person_two.title], let's go."
+                            "They turn and leave the room together."
+
 
                 else: #She wants to suck your dick, but is embarassed about it.
                     $ the_group.draw_group()
@@ -762,6 +779,21 @@ label friends_help_friends_be_sluts_label():
                             $ person_one.draw_person()
                             person_one.char "Really? I bring you a cute girl to suck your dick and you're not in the mood? I'll never understand men..."
                             "She shrugs and leaves your office, following her friend."
+
+
+                        "Punish them for inappropriate behaviour." if office_punishment.is_active():
+                            mc.name "[person_one.title], [person_two.title], I expected better from both of you."
+                            mc.name "This is completely inappropriate, I'm going to have to write both of you up for this."
+                            $ person_one.add_infraction(infraction.inappropriate_behaviour_factory())
+                            $ person_two.add_infraction(Infraction.inappropriate_behaviour_factory())
+                            person_two "I... Of course, I'm sorry I even brought it up [person_two.mc_title]!"
+                            "She hurries out of your office. [person_one.title] sighs and rolls her eyes."
+                            $ clear_scene()
+                            $ person_one.draw_person()
+                            person_one "Really? I bring you a cute girl to suck your dick and you decide you need to punish both of us? What more do you want?"
+                            mc.name "I'm sorry, but rules are rules. You didn't leave me much of a choice."
+                            person_one "Whatever, I need to go make sure [person_one.title] is fine."
+                            "She turns and leaves your office, following after her friend."
 
             "Ignore them.":
                 "You leave them to their discussion and circle back to your desk."

@@ -103,13 +103,16 @@ style frame:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
-screen say(who, what):
+screen say(who, what, vren_test = None):
     style_prefix "say"
 
     window:
         id "window"
 
-        text what id "what"
+        if vren_test is not None:
+            text vren_test id "what"
+        else:
+            text what id "what"
 
         if who is not None:
             window:

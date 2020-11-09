@@ -238,6 +238,22 @@ label introvert_strip_obedience_accept(the_person, the_clothing, strip_type = "F
         the_person.char "I... I don't know if you should do that."
     return
 
+label introvert_grope_body_reject(the_person): #TODO: Might be more of a reserved response.
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        "[the_person.title] steps back suddenly to avoid your touch."
+        the_person "Sorry. I don't like people touching me..."
+        mc.name "Right, of course. Don't worry about it."
+        "[the_person.possessive_title] doesn't say anything else, but she seems more uncomfortable than she was before."
+
+    else: #Fail point for touching waist
+        "[the_person.possessive_title] squirms in place, then finally takes a step back to get out of your reach."
+        the_person "I just... Don't like people touching me. Sorry..."
+        "You hold your hands up."
+        mc.name "Oh, no problem. I understand."
+        the_person "Thanks..."
+        "She seems uncomfortable, but doesn't say anything more about it."
+    return
+
 label introvert_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 70:
@@ -662,6 +678,7 @@ label introvert_cum_pullout(the_person):
             elif the_person.on_birth_control:
                 the_person.char "Fuck, I want you to feel your cum inside me [the_person.mc_title]!"
                 the_person.char "Do you... want to take the condom off? Just this once, I'm on the pill."
+                $ the_person.update_birth_control_knowledge()
                 "She moans deserately."
                 the_person.char "Come on, I need it so badly!"
             else:
@@ -698,11 +715,13 @@ label introvert_cum_pullout(the_person):
                     the_person.char "Oh god, yes! Cum and knock me up! Aaah!"
             elif the_person.on_birth_control: #She's on the pill, so she's probably fine
                 the_person.char "Yeah? Cum wherever you want, I'm on the pill. Ah!"
+                $ the_person.update_birth_control_knowledge()
             else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
                 the_person.char "Yeah? Do it! Cum for me [the_person.mc_title]!"
         else:
             if not the_person.on_birth_control: #You need to pull out, I'm not on the pill!
                 the_person.char "Fuck, you've got to pull out! I'm not taking the pill!"
+                $ the_person.update_birth_control_knowledge()
 
             elif the_person.get_opinion_score("creampies") < 0:
                 the_person.char "Ah, make sure to pull out!"
@@ -1128,6 +1147,7 @@ label introvert_condomless_sex_taboo_break(the_person):
         the_person.char "You want to fuck me raw? Fuck... That's so hot."
         if the_person.on_birth_control:
             the_person.char "I'm on birth control, so it should be fine, right? The chance of it not working is almost zero."
+            $ the_person.update_birth_control_knowledge()
         if the_person.get_opinion_score("creampies") > 0:
             the_person.char "I should really tell you to pull out when you cum..."
             mc.name "{i}Are{/i} you telling me I should pull out?"
@@ -1142,11 +1162,13 @@ label introvert_condomless_sex_taboo_break(the_person):
         the_person.char "Okay... I want to feel close to you too [the_person.mc_title]."
         if the_person.on_birth_control:
             the_person.char "I'm taking birth control, so it's okay if you cum inside me."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "If we're doing this, I don't want you to pull out when you finish either."
             mc.name "Are you on the pill?"
             "She shakes her head."
             the_person.char "No, but I know that whatever happens we will be together."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") < 0:
             the_person.char "You'll need to pull out though. I don't want you to get me pregnant, okay?"
         else:
@@ -1155,13 +1177,15 @@ label introvert_condomless_sex_taboo_break(the_person):
     else:
         if the_person.on_birth_control:
             the_person.char "You really want to do it raw? Well, I'm on birth control, so I guess that's okay..."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.has_taboo("vaginal_sex"):
             the_person.char "You want to do me raw? I'm not on birth control, isn't that a little risky?"
-            the_person.char "You want to do me raw? Isn't that a little risky?"
+            $ the_person.update_birth_control_knowledge()
             mc.name "I want our first time to be special though, don't you?"
             the_person.char "I... Fine, but just please don't cum in me right away, okay?"
         else:
             the_person.char "You want to do me raw? I'm not on birth control, isn't that a little risky?"
+            $ the_person.update_birth_control_knowledge()
             mc.name "It'll feel so much better though. Didn't you hate how the condom felt last time?"
             the_person.char "I did kind of want to know what it was like without it..."
             the_person.char "Fine, but just please don't cum in me right away, okay?"
@@ -1288,9 +1312,11 @@ label introvert_creampie_taboo_break(the_person):
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Oh fuck, you really did it. You don't even care that I have a [so_title], or that I'm not on birth control..."
+                $ the_person.update_birth_control_knowledge()
 
             else:
-                the_person.char "Oh fuck, you really did it. You just put your whole load right into unprotected pussy..."
+                the_person.char "Oh fuck, you really did it. You just put your whole load right into my unprotected pussy..."
+                $ the_person.update_birth_control_knowledge()
 
             the_person.char "I guess now I just have to wait and see if you knocked me up. You should put a second load in me, just to be sure."
         else:

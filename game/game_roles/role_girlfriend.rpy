@@ -73,7 +73,7 @@ label ask_break_up_label(the_person):
     the_person.char "Okay... I don't know what to say."
     $ the_person.change_love(-10)
     mc.name "I'm sorry, but it's just the way things are."
-    $ the_person.special_role.remove(girlfriend_role)
+    $ the_person.remove_role(girlfriend_role)
     return
 
 label ask_be_girlfriend_label(the_person):
@@ -98,7 +98,7 @@ label ask_be_girlfriend_label(the_person):
                 "Have an affair with [the_person.title].":
                     mc.name "I can be if that's what you need."
                     $ the_person.draw_person(emotion = "happy")
-                    $ the_person.special_role.append(affair_role)
+                    $ the_person.add_role(affair_role)
                     $ the_person.change_slut_temp(2)
                     "She leans forward and kisses you, putting an arm around your waist and pulling you close. When she breaks the kiss she looks deep into your eyes."
                     the_person.char "Well then, you know where to find me."
@@ -171,7 +171,7 @@ label ask_be_girlfriend_label(the_person):
             the_person.char "Oh my god, I'm so happy! Yes, I want you to be your girlfriend!"
             "She puts her arms around you and pulls you close."
         "She kisses you, and you kiss her back."
-        $ the_person.special_role.append(girlfriend_role)
+        $ the_person.add_role(girlfriend_role)
 
     return
 
@@ -193,7 +193,7 @@ label caught_cheating_label(the_other_girl, the_girlfriend): #Note: the_other_gi
     $ the_girlfriend.change_happiness(-20)
     if the_girlfriend.love < 60:
         the_girlfriend.char "I don't want to hear it. You're a lying scumbag who broke my heart..."
-        $ the_girlfriend.special_role.remove(girlfriend_role)
+        $ the_girlfriend.remove_role(girlfriend_role)
         the_girlfriend.char "We're done! Through! Finished!"
         "She turns around and storms off."
         $ clear_scene()

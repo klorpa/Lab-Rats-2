@@ -55,7 +55,9 @@ init -2 python:
     def alexia_ad_suggest_reintro_requirement(the_person):
         if public_advertising_license_policy.is_owned():
             return False
-        elif the_person.event_triggers_dict.get("camera_purchased", False):
+        elif not the_person.event_triggers_dict.get("camera_reintro_enabled", False):
+            return False
+        elif the_person.event_triggers_dict.get("camera_purchased", True):
             return False
         elif mc.location != mc.business.m_div:
             return False
@@ -259,10 +261,10 @@ label alexia_hire_label(the_person):
     $ the_person.draw_person(emotion = "happy") #TODO: When we have a hugging position draw them as happy.
     the_person.char "So, when can I start?"
     "You give [the_person.title] all of the details about her new job. She phones the coffee shop and quits on the spot."
-    python: #TODO: Consider calling hte "hire someone" label instead of having a special section for this.
+    python: #TODO: Consider calling the "hire someone" label instead of having a special section for this.
         the_person.event_triggers_dict["employed_since"] = day
         mc.business.listener_system.fire_event("new_hire", the_person = the_person)
-        the_person.special_role.append(employee_role)
+        the_person.add_role(employee_role)
         for other_employee in mc.business.get_employee_list():
             town_relationships.begin_relationship(the_person, other_employee) #She is introduced to everyone at work
 
@@ -324,6 +326,7 @@ label alexia_ad_suggest_label(the_person):
             pass
 
         "Talk to her later.":
+            $ the_person.event_triggers_dict["camera_reintro_enabled"] = True
             mc.name "Okay, I'll come talk to you soon and we can sort out these details. Great work [the_person.title], you're a credit to the team."
 
     the_person.char "Thanks [the_person.mc_title], I'm just happy to have a chance to contribute!"
@@ -340,6 +343,7 @@ label alexia_ad_suggest_reintro_label(the_person):
     $ camera_arrive_action = Action("Camera Arrive", camera_arrive_requirement, "alexia_ad_camera_label", args = the_person, requirement_args = day + renpy.random.randint(3,7))
     $ mc.business.mandatory_crises_list.append(camera_arrive_action)
     $ the_person.event_triggers_dict["camera_purchased"] = True
+    $ the_person.event_triggers_dict["camera_reintro_enabled"] = False
     return
 
 label alexia_ad_camera_label(the_person):
@@ -396,9 +400,9 @@ label alexia_photography_intro_label(the_person):
     the_person.char "Yeah, I can do that! I don't know why, but I thought it was really exciting to be in front of that camera."
     mc.name "I'll let you get back to work then. See you around [the_person.title]."
     if mc.business.company_model is not None:
-        $ mc.business.company_model.special_role.remove(company_model_role) #If we somehow ended up with her here, fire her.
+        $ mc.business.company_model.remove_role(company_model_role) #If we somehow ended up with her here, fire her.
     $ mc.business.company_model = the_person
-    $ the_person.special_role.append(company_model_role) #Now we just make Alexia a model instead of having this be specific to her role. You get there by either buying the policy or following her storyline here.
+    $ the_person.add_role(company_model_role) #Now we just make Alexia a model instead of having this be specific to her role. You get there by either buying the policy or following her storyline here.
 
     $ public_advertising_license_policy.buy_policy(ignore_cost = True) # This special storyline "buys" the policy for free.
     call advance_time from _call_advance_time_19

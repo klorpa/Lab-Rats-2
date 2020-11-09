@@ -113,7 +113,7 @@ label fire_head_researcher(the_person):
     else:
         $ the_person.draw_person(emotion="happy")
         the_person.char "Whew, I found all that science stuff super confusing to be honest. I hope whoever replaces me can do a better job at it!"
-    $ the_person.special_role.remove(head_researcher)
+    $ the_person.remove_role(head_researcher)
     $ mc.business.head_researcher = None
     return
 
@@ -199,7 +199,7 @@ label advanced_serum_stage_1_label(the_person):
     mc.name "[the_person.title], the research department has been doing an incredible job lately. I wanted to say thank you."
     $ the_person.draw_person(emotion = "happy")
     the_person.char "Thank you sir, it's been my pleasure. It's my job after all."
-    mc.name "On the topic of research: I was wondering if there was anything you needed here to push your discoveries even furthur."
+    mc.name "On the topic of research: I was wondering if there was anything you needed here to push your discoveries even further."
     "[the_person.possessive_title] thinks for a moment."
     the_person.char "We have everything we need for our basic research, but our theoretical work has hit a wall."
     mc.name "Tell me what you need and I'll do what I can."

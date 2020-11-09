@@ -295,7 +295,7 @@ init -1:
 
         jean_hotpants = Clothing("Jean Hotpants", 2, True, True, "Jean_Hotpants", False, False, 4, whiteness_adjustment = 0.1, display_name = "shorts",
             can_be_half_off = True, half_off_regions = [pelvis_region], half_off_ignore_regions = [upper_leg_region], half_off_gives_access = True, half_off_reveals = True,
-            constrain_regions = [upper_leg_region, pelvis_region])
+            constrain_regions = [pelvis_region])
         pants_list.append(jean_hotpants)
 
         daisy_dukes = Clothing("Daisy Dukes", 2, True, True, "Daisy_Dukes", False, False, 6, display_name = "shorts",
@@ -550,7 +550,7 @@ init -1:
         shirts_list.append(vest)
 
         business_vest = Clothing("Business Vest", 3, True, True, "Tight_Vest", True, False, 2, whiteness_adjustment = 0.15, opacity_adjustment = 1.3, display_name = "vest",
-            can_be_half_off = True, half_off_regions = [breast_region], half_off_gives_access = True, half_off_reveals = True,
+            can_be_half_off = True, half_off_regions = [breast_region, stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region])
         shirts_list.append(business_vest)
 

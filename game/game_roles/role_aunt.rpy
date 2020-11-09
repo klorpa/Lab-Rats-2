@@ -291,10 +291,12 @@ label aunt_intro_moving_apartment_label(the_person):
         $ clear_scene()
         mc.name "You're welcome..."
         "A few minutes later [aunt.title] pulls up in a rented pickup truck. You load up the back with furniture and boxes, then get in the passenger seat."
+        $ aunt.draw_person(position = "sitting")
         aunt.char "Okay, let's get going! I don't know what I'd do without a big strong man like you to lift things for me. I'd be helpless!"
         $ aunt.change_love(1)
         $ downtown.show_background()
         "It doesn't take long to drive to [aunt.title]'s new apartment. She parks out front and you grab a box to bring up with you."
+        $ aunt.draw_person()
         $ aunt_apartment.show_background()
         "The apartment is small but tidy, with two bedrooms and a combined living area and kitchen. [aunt.title] gestures to one of the bedrooms."
         aunt.char "My room will be in there, and the other one will be [cousin.title]'s room. You can put that box down and go get another, I'll start unpacking."
@@ -302,6 +304,7 @@ label aunt_intro_moving_apartment_label(the_person):
         "When you're done [aunt.title] returns the truck and drives you both home. When you get out of the car she gives you a tight hug."
         $ aunt.change_love(3)
         $ aunt.change_happiness(5)
+        $ aunt.draw_person(emotion = "happy")
         aunt.char "You're my hero [aunt.mc_title]. Come see me if you have any more spare time and we can move the rest of this over."
         "She breaks the hug and smiles."
         aunt.char "Now I'm going to go see if I can use your mothers shower!"
@@ -506,7 +509,10 @@ label aunt_intro_moving_apartment_label(the_person):
                 $ aunt.change_slut_temp(2)
                 aunt.char "It's right over there. Just grab it and go."
                 "She nods her head towards her purse. You hurry inside, grab it, then retreat. You pull the cash out of her wallet and give it to the pizza guy."
+                $ clear_scene()
                 "Pizza Guy" "Thanks man, enjoy."
+                $ aunt.apply_outfit()
+                $ aunt.draw_person()
                 "You take the pizza into the kitchen. A couple of minutes later [aunt.title] comes out of the bathroom."
                 aunt.char "I'm so sorry about that. I know it must be embarrassing to see your aunt naked."
                 mc.name "It's fine. We're family, right? We're supposed to be comfortable with each other."
@@ -795,11 +801,8 @@ label aunt_share_drinks_label(the_person):
                             mc.name "Of course not."
                             $ the_person.change_slut_temp(2)
                             the_person.char "I didn't think so. Just don't tell my sister."
-                            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                            while strip_choice is not None:
-                                $ the_person.draw_animated_removal(strip_choice)
-                                "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
-                                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                            $ strip_list = the_person.outfit.get_full_strip_list()
+                            $ generalised_strip_description(the_person, strip_list)
 
                             "Once she's stripped out of her clothing, [the_person.possessive_title] puts on the outfit you've made for her."
                             $ the_person.apply_outfit(created_outfit, update_taboo = True)
@@ -831,11 +834,9 @@ label aunt_share_drinks_label(the_person):
                                     the_person.char "That's a shame. Well, that's why I wanted your opinion in the first place!"
                                     $ the_person.change_obedience(1)
                                     "[the_person.title] starts to get naked again to put on her old outfit."
-                                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                                    while strip_choice is not None:
-                                        $ the_person.draw_animated_removal(strip_choice)
-                                        "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
-                                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                                    $ strip_list = the_person.outfit.get_full_strip_list()
+                                    $ generalised_strip_description(the_person, strip_list)
                                     $ the_person.apply_outfit(the_person.planned_outfit)
                                     #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                                     $ the_person.draw_person()
@@ -892,11 +893,9 @@ label aunt_share_drinks_label(the_person):
                     the_person.char "Don't tell my sister I'm doing this with you. We're both adults, but I don't think she'd understand."
                     "She rolls her eyes and keeps going."
                     $ the_person.change_slut_temp(1)
-                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                    while strip_choice is not None:
-                        $ the_person.draw_animated_removal(strip_choice)
-                        "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
-                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    $ strip_list = the_person.outfit.get_full_strip_list()
+                    $ generalised_strip_description(the_person, strip_list)
 
                     the_person.char "Okay, first one."
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-30, guarantee_output = True)
@@ -918,11 +917,9 @@ label aunt_share_drinks_label(the_person):
                             the_person.char "I think so too. Let's see what's up next..."
 
                     $ the_person.change_slut_temp(1)
-                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                    while strip_choice is not None:
-                        $ the_person.draw_animated_removal(strip_choice)
-                        "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
-                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    $ strip_list = the_person.outfit.get_full_strip_list()
+                    $ generalised_strip_description(the_person, strip_list)
 
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-25, guarantee_output = True)
                     $ the_person.apply_outfit(lingerie, update_taboo = True)
@@ -943,11 +940,9 @@ label aunt_share_drinks_label(the_person):
                             the_person.char "Tough customer. Okay, one more..."
 
                     $ the_person.change_slut_temp(1)
-                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                    while strip_choice is not None:
-                        $ the_person.draw_animated_removal(strip_choice)
-                        "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
-                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+                    $ strip_list = the_person.outfit.get_full_strip_list()
+                    $ generalised_strip_description(the_person, strip_list)
 
                     $ lingerie = default_wardrobe.get_random_appropriate_underwear(the_person.sluttiness, the_person.sluttiness-20, guarantee_output = True)
                     $ the_person.apply_outfit(lingerie, update_taboo = True)
@@ -966,11 +961,8 @@ label aunt_share_drinks_label(the_person):
                             mc.name "Toss it, you've got nice stuff you could wear."
                             $ the_person.draw_person()
                             the_person.char "Yeah, I think you're right. Let's get this off then!"
-                            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                            while strip_choice is not None:
-                                $ the_person.draw_animated_removal(strip_choice)
-                                "You watch as [the_person.possessive_title] takes off her [strip_choice.name]."
-                                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                            $ strip_list = the_person.outfit.get_full_strip_list()
+                            $ generalised_strip_description(the_person, strip_list)
 
                     $ the_person.change_love(2)
                     $ the_person.change_slut_temp(2)
@@ -1114,12 +1106,12 @@ label family_games_night_intro(the_person): # Triggered as an on-talk event in h
             mc.name "I'd love to spend time with both of you. I'll do my best to make it."
             the_person.char "I'm looking forward to it even more now!"
 
-        "Remain noncommittal":
+        "You'll think about it.":
             mc.name "It sounds like fun, but I'm not sure if I'll be free."
             the_person.char "I understand, you're a busy boy."
 
     $ init_family_games_night()
-
+    $ clear_scene()
     return
 
 label family_games_night_setup(the_mom, the_aunt): # Triggered as a mandatory crisis right before the
@@ -1467,7 +1459,7 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
                 the_aunt.char "That's why you try and win! Don't be such a stick in the mud, it'll be fun!"
                 "[the_mom.possessive_title] considers it for a long moment, then sighs and srugs."
                 $ the_group.redraw_person(the_mom)
-                the_mom.char "Fine, but I don't want anyone taking this furthur than they're comfortable with. Okay?"
+                the_mom.char "Fine, but I don't want anyone taking this further than they're comfortable with. Okay?"
                 $ the_group.redraw_person(the_aunt)
                 the_aunt.char "Of course. Okay, let's play!"
             else:
@@ -1730,7 +1722,7 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                         $ the_group.draw_person(opponent_a, the_animation = tit_bob, animation_effect_strength = 0.6)
                         "After watching for a second [opponent_a.title] starts to follow along."
                         mc.name "Turn around ladies, let's get a full view of things."
-                        opponent_a.char "Oh my god, this is so embarassing..."
+                        opponent_a.char "Oh my god, this is so embarrassing..."
                         $ the_group.draw_person(opponent_a, position = "walking_away", the_animation = tit_bob, animation_effect_strength = 0.6)
                         $ the_group.draw_person(opponent_b, False, position = "walking_away", the_animation = tit_bob, animation_effect_strength = 0.6)
                         "Despite her complains she spins around, and [opponent_b.possessive_title] does the same."

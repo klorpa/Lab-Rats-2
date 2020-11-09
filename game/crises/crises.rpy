@@ -28,7 +28,7 @@
 # 80-: Actively disobedient. Often doesn't even bother to ask your opinion, or will be angry if you don't do what she says.
 # 81-100: Disobedient. You have no influence over her actions, and she will often do things without you asking.
 # 101-120: Obedient. You have some influence over her actions. You may suggest small changes, like giving her new titles. Se may ask you before stripping down during sex, as long as she isn't too turned on. You can use your influence to push her slightly further than she is comfortable during sex.
-# 121-140: Highly Obedient. You have significant influence over her actions. You may require her to do major actions that she might not want to, like testing serum for you or staying still while you grope her. You may also tell her what she should and should not wear. You can use your influence to push her much furthur during sex, or have someone with no Love or Sluttiness kiss or touch you anyways. You can ask her to show her tits to you at any time.
+# 121-140: Highly Obedient. You have significant influence over her actions. You may require her to do major actions that she might not want to, like testing serum for you or staying still while you grope her. You may also tell her what she should and should not wear. You can use your influence to push her much further during sex, or have someone with no Love or Sluttiness kiss or touch you anyways. You can ask her to show her tits to you at any time.
 # 141-160: Subservient. You have a very significant amount of influence. Even in the heat of the moment she will defer to you before taking clothes off or changing position. You can push her to do very slutty things, like give you a blowjob, even without her being slutty or in love. You can ask her to strip naked at any time.
 # 161+: Highly Subservient. There is little you cannot ask her to do. She will have sex with you, even in public, and even with no love or sluttiness.
 
@@ -510,135 +510,140 @@ label no_uniform_punishment_label():
 
         "Punish her.":
             mc.name "The uniform policy isn't just a suggesiton. When you're on the clock you're the face of this company, which means I expect you to be in uniform."
-            menu:
-                "Lecture her.":
-                    "You shake your head, disappointed."
-                    mc.name "You should know better than this [the_person.title], I honestly thought you were smarter."
-                    the_person.char "I'll make sure it doesn't happen again."
-                    mc.name "Make sure you do. If you aren't able to fit into the corporate culture here I'll have to find someone to replace you."
-                    $ the_person.draw_person(emotion="sad")
-                    the_person.char "Understood. I'm sorry."
-                    $ the_person.change_obedience(1)
-                    $ the_person.change_happiness(-2)
-                    "[the_person.title] walks off."
-
-                "Reduce her pay. -$[pay_percent]/day":
-                    mc.name "This is honestly unacceptable [the_person.title]. You knew what the uniform policy was and chose to violate it anyway."
-                    the_person.char "It won't happen again, I'll go get changed right now."
-                    mc.name "I'm sorry, but that's not good enough. I'm going to have to reduce your pay until your behaviour improves."
-                    $ the_person.draw_person(emotion="angry")
-                    $ the_person.change_obedience(5)
-                    $ the_person.change_happiness(-10)
-                    $ the_person.salary += -pay_percent
-                    $ mc.log_event("[the_person.title] -$[pay_percent]/day Salary","float_text_green")
-                    the_person.char "What? Come on [the_person.mc_title], that's bullshit!"
-                    mc.name "I can't be making rules exceptions just for you. Go get changed and get back to work, we can talk about this later."
-                    "[the_person.title] huffs and walks off."
-
-                "Tell her to work naked instead." if the_person.effective_sluttiness() > 40 and reduced_coverage_uniform_policy.is_active():
-                    "You shake your head, disappointed."
-                    mc.name "Well if you don't want to wear your uniform, I guess you're just going to be wearing nothing at all."
-                    if the_person.effective_sluttiness(["bare_pussy","bare_tits"]) > 60 - (10 * the_person.get_opinion_score("not wearing anything")): #triggers easier if the person likes getting naked.
-                        the_person.char "Ugh, fine."
-                        if the_person.outfit.slut_requirement < 40:
-                            "[the_person.title] starts to strip down right in front of you, pulling off one piece of clothing at a time."
-                        else:
-                            "[the_person.title] starts to pull off what little clothing she was wearing."
-
-                        python:
-                            for clothing in the_person.outfit.get_upper_ordered():
-                                the_person.draw_animated_removal(clothing)
-                                renpy.say("","") #Make the player click through as she strips
-                            for clothing in the_person.outfit.get_lower_ordered():
-                                the_person.draw_animated_removal(clothing)
-                                renpy.say("","")
-
-                        $ the_person.update_outfit_taboos()
-
-                        the_person.char "There, can I get back to work now?"
-                        mc.name "Yes. Maybe you'll think next time before you violate company policy."
-                        $ the_person.change_obedience(5)
-                        $ the_person.change_happiness(-5)
-                        $ slut_report = the_person.change_slut_temp(3)
-
-                    else:
-                        the_person.char "Very funny [the_person.mc_title]. I promise I'll get changed as soon as I can."
-                        mc.name "I'm not joking [the_person.title]. You can put your uniform back on in a few hours; until then you'll be working naked."
-                        if the_person.get_opinion_score("not wearing anything") > 0:
-                            the_person.char "What? Are you really going to make me do that?"
-                            mc.name "I am. You're welcome to check your contract - the latest uniform changes, which you signed off on by the way, made it official company policy."
-                            "[the_person.possessive_title] is flustered for a moment."
-                            the_person.char "I... If you say I have to."
-                            "She turns and heads to the washroom. You follow and wait outside until she's changed out of her clothing."
-                        else:
-                            $ the_person.draw_person(emotion = "angry")
-                            the_person.char "You can't make me do that!"
-                            mc.name "Actually I can. You're welcome to check your contract - the latest uniform changes everyone signed off on made it offical company policy."
-                            "[the_person.possessive_title] stammers for a moment."
-                            the_person.char "Ugh! Fine!"
-                            $ clear_scene()
-                            "She storms off to the washroom. You wait outside until she's changed."
-                            the_person.char "This is humiliating."
-                        python:
-                            for clothing in the_person.outfit.get_upper_ordered():
-                                the_person.outfit.remove_clothing(clothing)
-                            for clothing in the_person.outfit.get_lower_ordered():
-                                the_person.outfit.remove_clothing(clothing)
-                        $ the_person.draw_person(emotion = "angry")
-                        $ the_person.update_outfit_taboos()
-                        "She steps out into the hallway again, completely naked."
-                        mc.name "Well maybe you'll think next time before you violate company policy."
-
-                        if the_person.get_opinion_score("not wearing anything") <= 0:
-                            "[the_person.possessive_title] glares at you."
-                            $ the_person.change_happiness(-10)
-
-                        else:
-                            "[the_person.possessive_title] seems embarrassed and looks away from you."
-                        the_person.char "Can I get back to work now?"
-                        mc.name "Get going."
-
-                        $ the_person.change_obedience(10)
-                        $ slut_report = the_person.change_slut_temp(5)
-
-                    $ the_person.change_love(the_person.get_opinion_score("not wearing anything"))
-                    $ the_person.discover_opinion("not wearing anything")
-                    "You watch [the_person.title] as she walks away completely naked, then get back to work yourself."
-
-                "Deny her an orgasm." if the_person.effective_sluttiness() > 60:
-                    mc.name "I'm starting to think there's only one thing that will actually teach you a lesson though..."
-                    "You step close to [the_person.title] and reach a hand around, grabbing onto her ass and squeezing it hard."
-                    the_person.char "Ah... What are you doing?"
-                    mc.name "Showing a disobedient slut why she should follow the rules."
-                    "The closer you can bring [the_person.possessive_title] to orgasm without allowing her to the more effective this will be."
-                    call fuck_person(the_person) from _call_fuck_person_6
-                    $ the_report = _return
-                    if the_report.get("girl orgasms") > 0:
-                        #You made her cum, she gets even more disobedient
-                        the_person.char "Oh wow... I need to ignore this uniform thing more often. That felt amazing."
-                        mc.name "Please, I need you to at least try and follow the rules [the_person.title]."
-                        the_person.char "Yeah... Sure..."
-                        $ obedience_change = -5
-                        $ the_person.change_love(2)
-
-                    elif the_report.get("end arousal") >= 0.8*the_person.max_arousal or the_report.get("beg finish", 0) > 0: #Get her within 80% of cumming or otherwise get her to beg for it without finishing her
-                        #You got her close but didn't push her over the edge. Full gain.
-                        the_person.char "Ah... damn it [the_person.mc_title], I was so close!"
-                        mc.name "If you were in uniform I would have let you cum, but I can't reward you unless you're following the rules. Understood?"
-                        "[the_person.title] bites her lip and nods. Her face is flush and she's still breathing deeply."
-                        $ obedience_change = 10
-
-                    else:
-                        #You probably just got a blowjob or something. partial gain.
-                        the_person.char "Wait, that's it?"
-                        mc.name "If you were in uniform maybe we could have had some more fun, but I can't reward you unless you're following the rules. Understood?"
-                        "[the_person.title] sighs and pouts."
-                        the_person.char "Yes sir."
-                        $obedience_change = 5
-
-                    $ the_person.change_obedience(obedience_change)
-                    $ the_person.review_outfit()
-                    "You leave [the_person.title] to get cleaned up and get back to work."
+            the_person.char "It won't happen again, I'll go get changed right now."
+            mc.name "I'm sorry, but that's not good enough. I'm going to have to write you up for this."
+            $ the_person.add_infraction(Infraction.out_of_uniform_factory())
+            mc.name "I can't be making rules exceptions just for you. Go get changed and get back to work, we can deal with this later."
+            "[the_person.title] huffs and walks off."
+            # menu:
+            #     "Lecture her.":
+            #         "You shake your head, disappointed."
+            #         mc.name "You should know better than this [the_person.title], I honestly thought you were smarter."
+            #         the_person.char "I'll make sure it doesn't happen again."
+            #         mc.name "Make sure you do. If you aren't able to fit into the corporate culture here I'll have to find someone to replace you."
+            #         $ the_person.draw_person(emotion="sad")
+            #         the_person.char "Understood. I'm sorry."
+            #         $ the_person.change_obedience(1)
+            #         $ the_person.change_happiness(-2)
+            #         "[the_person.title] walks off."
+            #
+            #     "Reduce her pay. -$[pay_percent]/day":
+            #         mc.name "This is honestly unacceptable [the_person.title]. You knew what the uniform policy was and chose to violate it anyway."
+            #         the_person.char "It won't happen again, I'll go get changed right now."
+            #         mc.name "I'm sorry, but that's not good enough. I'm going to have to reduce your pay until your behaviour improves."
+            #         $ the_person.draw_person(emotion="angry")
+            #         $ the_person.change_obedience(5)
+            #         $ the_person.change_happiness(-10)
+            #         $ the_person.salary += -pay_percent
+            #         $ mc.log_event("[the_person.title] -$[pay_percent]/day Salary","float_text_green")
+            #         the_person.char "What? Come on [the_person.mc_title], that's bullshit!"
+            #         mc.name "I can't be making rules exceptions just for you. Go get changed and get back to work, we can talk about this later."
+            #         "[the_person.title] huffs and walks off."
+            #
+            #     "Tell her to work naked instead." if the_person.effective_sluttiness() > 40 and reduced_coverage_uniform_policy.is_active():
+            #         "You shake your head, disappointed."
+            #         mc.name "Well if you don't want to wear your uniform, I guess you're just going to be wearing nothing at all."
+            #         if the_person.effective_sluttiness(["bare_pussy","bare_tits"]) > 60 - (10 * the_person.get_opinion_score("not wearing anything")): #triggers easier if the person likes getting naked.
+            #             the_person.char "Ugh, fine."
+            #             if the_person.outfit.slut_requirement < 40:
+            #                 "[the_person.title] starts to strip down right in front of you, pulling off one piece of clothing at a time."
+            #             else:
+            #                 "[the_person.title] starts to pull off what little clothing she was wearing."
+            #
+            #             python:
+            #                 for clothing in the_person.outfit.get_upper_ordered():
+            #                     the_person.draw_animated_removal(clothing)
+            #                     renpy.say("","") #Make the player click through as she strips
+            #                 for clothing in the_person.outfit.get_lower_ordered():
+            #                     the_person.draw_animated_removal(clothing)
+            #                     renpy.say("","")
+            #
+            #             $ the_person.update_outfit_taboos()
+            #
+            #             the_person.char "There, can I get back to work now?"
+            #             mc.name "Yes. Maybe you'll think next time before you violate company policy."
+            #             $ the_person.change_obedience(5)
+            #             $ the_person.change_happiness(-5)
+            #             $ slut_report = the_person.change_slut_temp(3)
+            #
+            #         else:
+            #             the_person.char "Very funny [the_person.mc_title]. I promise I'll get changed as soon as I can."
+            #             mc.name "I'm not joking [the_person.title]. You can put your uniform back on in a few hours; until then you'll be working naked."
+            #             if the_person.get_opinion_score("not wearing anything") > 0:
+            #                 the_person.char "What? Are you really going to make me do that?"
+            #                 mc.name "I am. You're welcome to check your contract - the latest uniform changes, which you signed off on by the way, made it official company policy."
+            #                 "[the_person.possessive_title] is flustered for a moment."
+            #                 the_person.char "I... If you say I have to."
+            #                 "She turns and heads to the washroom. You follow and wait outside until she's changed out of her clothing."
+            #             else:
+            #                 $ the_person.draw_person(emotion = "angry")
+            #                 the_person.char "You can't make me do that!"
+            #                 mc.name "Actually I can. You're welcome to check your contract - the latest uniform changes everyone signed off on made it offical company policy."
+            #                 "[the_person.possessive_title] stammers for a moment."
+            #                 the_person.char "Ugh! Fine!"
+            #                 $ clear_scene()
+            #                 "She storms off to the washroom. You wait outside until she's changed."
+            #                 the_person.char "This is humiliating."
+            #             python:
+            #                 for clothing in the_person.outfit.get_upper_ordered():
+            #                     the_person.outfit.remove_clothing(clothing)
+            #                 for clothing in the_person.outfit.get_lower_ordered():
+            #                     the_person.outfit.remove_clothing(clothing)
+            #             $ the_person.draw_person(emotion = "angry")
+            #             $ the_person.update_outfit_taboos()
+            #             "She steps out into the hallway again, completely naked."
+            #             mc.name "Well maybe you'll think next time before you violate company policy."
+            #
+            #             if the_person.get_opinion_score("not wearing anything") <= 0:
+            #                 "[the_person.possessive_title] glares at you."
+            #                 $ the_person.change_happiness(-10)
+            #
+            #             else:
+            #                 "[the_person.possessive_title] seems embarrassed and looks away from you."
+            #             the_person.char "Can I get back to work now?"
+            #             mc.name "Get going."
+            #
+            #             $ the_person.change_obedience(10)
+            #             $ slut_report = the_person.change_slut_temp(5)
+            #
+            #         $ the_person.change_love(the_person.get_opinion_score("not wearing anything"))
+            #         $ the_person.discover_opinion("not wearing anything")
+            #         "You watch [the_person.title] as she walks away completely naked, then get back to work yourself."
+            #
+            #     "Deny her an orgasm." if the_person.effective_sluttiness() > 60:
+            #         mc.name "I'm starting to think there's only one thing that will actually teach you a lesson though..."
+            #         "You step close to [the_person.title] and reach a hand around, grabbing onto her ass and squeezing it hard."
+            #         the_person.char "Ah... What are you doing?"
+            #         mc.name "Showing a disobedient slut why she should follow the rules."
+            #         "The closer you can bring [the_person.possessive_title] to orgasm without allowing her to the more effective this will be."
+            #         call fuck_person(the_person) from _call_fuck_person_6
+            #         $ the_report = _return
+            #         if the_report.get("girl orgasms") > 0:
+            #             #You made her cum, she gets even more disobedient
+            #             the_person.char "Oh wow... I need to ignore this uniform thing more often. That felt amazing."
+            #             mc.name "Please, I need you to at least try and follow the rules [the_person.title]."
+            #             the_person.char "Yeah... Sure..."
+            #             $ obedience_change = -5
+            #             $ the_person.change_love(2)
+            #
+            #         elif the_report.get("end arousal") >= 0.8*the_person.max_arousal or the_report.get("beg finish", 0) > 0: #Get her within 80% of cumming or otherwise get her to beg for it without finishing her
+            #             #You got her close but didn't push her over the edge. Full gain.
+            #             the_person.char "Ah... damn it [the_person.mc_title], I was so close!"
+            #             mc.name "If you were in uniform I would have let you cum, but I can't reward you unless you're following the rules. Understood?"
+            #             "[the_person.title] bites her lip and nods. Her face is flush and she's still breathing deeply."
+            #             $ obedience_change = 10
+            #
+            #         else:
+            #             #You probably just got a blowjob or something. partial gain.
+            #             the_person.char "Wait, that's it?"
+            #             mc.name "If you were in uniform maybe we could have had some more fun, but I can't reward you unless you're following the rules. Understood?"
+            #             "[the_person.title] sighs and pouts."
+            #             the_person.char "Yes sir."
+            #             $obedience_change = 5
+            #
+            #         $ the_person.change_obedience(obedience_change)
+            #         $ the_person.review_outfit()
+            #         "You leave [the_person.title] to get cleaned up and get back to work."
 
     $ clear_scene()
     return
@@ -976,6 +981,17 @@ label lab_accident_crisis_label():
     "She turns her palm up to you. It's covered in the same coloured liquid, and there's a small cut."
     the_person.char "I'm not sure what the uptake is like with this new design. I think everything will be fine, but would you mind hanging around for a few minutes?"
     $the_person.give_serum(copy.copy(the_serum))
+    if office_punishment.is_active():
+        menu:
+            "Punish her for the mistake.":
+                mc.name "I'll stay, but I'm going to have to write you up for this."
+                $ the_person.add_infraction(Infraction.careless_accident_factory())
+                "She shrugs and nods."
+
+            "Let it go.":
+                mc.name "I'll hang around, but I'm sure you'll be fine."
+    else:
+        mc.name "I'll hang around, but I'm sure you'll be fine."
     "It doesn't seem like [the_person.possessive_title] is having any unexpected affects from the dose of serum, so you return to your work."
     return
 
@@ -1020,6 +1036,17 @@ label production_accident_crisis_label():
     "She turns her palm up to you. It's covered in the same coloured liquid, and there's a small cut."
     the_person.char "I'm not sure what the uptake is like with this new design. I think everything will be fine, but would you mind hanging around for a few minutes?."
     $the_person.give_serum(copy.copy(the_serum))
+    if office_punishment.is_active():
+        menu:
+            "Punish her for the mistake.":
+                mc.name "I'll stay, but I'm going to have to write you up for this."
+                $ the_person.add_infraction(Infraction.careless_accident_factory())
+                "She shrugs and nods."
+
+            "Let it go.":
+                mc.name "I'll hang around, but I'm sure you'll be fine."
+    else:
+        mc.name "I'll hang around, but I'm sure you'll be fine."
     "It doesn't seem like [the_person.possessive_title] is having any unexpected affects from the dose of serum, so you return to your work."
     return
 
@@ -1953,6 +1980,13 @@ label work_chat_crisis_label:
                         the_person.char "Oh that's so much better... Whew."
                         "[the_person.title] pulls her chair back to her desk and gets back to work, as if nothing out of the ordinary happened."
 
+                    "Punish her for inappropriate behaviour." if office_punishment.is_active():
+                        mc.name "[the_person.title], this isn't appropriate for the office. I'm going to have to write you up for this."
+                        the_person "Oh, I... I'm sorry [the_person.mc_title], I didn't think you would care..."
+                        $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
+                        mc.name "I'm sure you'll have learned your lesson in the future."
+
+
             else:
                 #TODO: She doesn't like the idea of masturbating in front of people. You get back to work.
                 the_person.char "I could really use an orgasm right now to help me relax. It'll have to wait until I get home though."
@@ -2013,10 +2047,27 @@ label work_chat_crisis_label:
                 "You watch as [the_person.title]'s whole body shivers from her orgasm. She holds still for a second, then breathes out and relaxes completely."
                 $ the_person.change_slut_temp(5+the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"))
                 the_person.char "Oh... Oh that's so much better..."
-                mc.name "Well thanks for letting me be part of the show."
-                "She sits up in her chair and smiles."
-                the_person.char "Any time. Now, I really do have work I need to get done."
-                "[the_person.possessive_title] grabs a pen and gets back to work as if nothing out of the ordinary happened."
+                if office_punishment.is_active():
+                    menu:
+                        "Punish her for her inappropriate behaviour.":
+                            mc.name "Good, but I'm still going to have to write you up for this."
+                            the_person "Ha ha, very... Wait, are you serious? You let me do all of... that, just to punish me?"
+                            mc.name "It looked like you really needed it. Sorry, but these are the rules."
+                            $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
+                            "She sits up and her chair and sighs."
+                            the_person "Fine, those are the rules..."
+                        "Let it go.":
+                            mc.name "Well thanks for letting me be part of the show."
+                            "She sits up in her chair and smiles."
+                            the_person.char "Any time. Now, I really do have work I need to get done."
+                            "[the_person.possessive_title] grabs a pen and gets back to work as if nothing out of the ordinary happened."
+
+
+                else:
+                    mc.name "Well thanks for letting me be part of the show."
+                    "She sits up in her chair and smiles."
+                    the_person.char "Any time. Now, I really do have work I need to get done."
+                    "[the_person.possessive_title] grabs a pen and gets back to work as if nothing out of the ordinary happened."
 
 
             else:
@@ -2031,8 +2082,8 @@ label work_chat_crisis_label:
             menu:
                 "Fuck [the_person.title].\n{size=22}Modifiers: +10 Sluttiness, -5 Obedience{/size}":
                     the_person.char "I think I can."
-                    $ the_person.add_situational_slut("seduction_approach",10,"You promised to focus on me.")
-                    $ the_person.add_situational_obedience("seduction_approach",-5,"You promised to focus on me.")
+                    $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
+                    $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
                     $ the_person.change_arousal(10+5*the_person.get_opinion_score("taking control"))
                     $ the_person.discover_opinion("taking control")
                     call fuck_person(the_person,private = False) from _call_fuck_person_9
@@ -2052,6 +2103,14 @@ label work_chat_crisis_label:
                     $ the_person.change_obedience(5)
                     $ the_person.change_happiness(-5)
                     "[the_person.possessive_title] takes her hand off of your dick and pouts a little, but does eventually focus on her work."
+
+                "Punish her for inappropriate behaviour." if office_punishment.is_active():
+                    mc.name "[the_person.title], this isn't appropriate for the office. I'm going to have to write you up for this."
+                    the_person "Oh, I... I'm sorry [the_person.mc_title], I didn't actually mean anything by it."
+                    $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
+                    mc.name "I think we both know you're lying. Let's just move on, alright?"
+                    "She sits back and sighs dramatically."
+                    the_person "Fine, whatever..."
 
         else:
             "You're getting some good work done when [the_person.title] slides her chair next to yours and runs her hands along your thighs."
@@ -2077,6 +2136,15 @@ label work_chat_crisis_label:
                     $ the_person.change_obedience(5)
                     $ the_person.change_happiness(-5)
                     "She looks a little disappointed, but goes back to her work immediately."
+
+                "Punish her for inappropriate behaviour." if office_punishment.is_active():
+                    mc.name "[the_person.title], this isn't appropriate for the office. I'm going to have to write you up for this."
+                    the_person "Oh, I... I'm sorry [the_person.mc_title], I didn't actually mean anything by it."
+                    $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
+                    mc.name "I think we both know you're lying. Let's just move on, alright?"
+                    "She sits back and looks away, avoiding making eye contact."
+                    the_person "Okay, I should be getting back to my work anyways..."
+
     $ clear_scene()
     return
 
@@ -2281,12 +2349,12 @@ label cat_fight_crisis_label():
                         loser.char "You bitch!"
                     elif rand_fight == 1:
                         "[loser.title] circles around [winner.title], then runs forward yelling and screaming. [winner.title] pushes her to the side, then grabs her by the [the_clothing.name] and tries to pull her to the ground."
-                        "The girls struggle until [loser.title]'s [the_clothing.name] comes free and they seperate. [winner.title] drops it to the ground."
+                        "The girls struggle until [loser.title]'s [the_clothing.name] comes free and they separate. [winner.title] drops it to the ground."
                         $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser.char "You'll pay for that, slut!"
                     elif rand_fight == 2:
                         "[winner.title] and [loser.title] collide, screaming profanities at each other."
-                        "You aren't sure exactly what happens, but when they seperate [winner.title] is holding a piece of fabric that use to be [loser.title]'s [the_clothing.name]."
+                        "You aren't sure exactly what happens, but when they separate [winner.title] is holding a piece of fabric that use to be [loser.title]'s [the_clothing.name]."
                         $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser.char "Is that all you've got?"
                     else: #rand_fight == 3
@@ -2394,7 +2462,12 @@ label cat_fight_pick_winner(winner, loser, the_group):
     $ loser.change_obedience(-5)
     mc.name "Enough! [loser.title], I don't want to hear anything about this from you again. Consider this a formal warning."
     loser.char "Wait, but I..."
-    mc.name "That's the end of it, now I want both of you to get back to work. Thank you for bringing this to my attention [winner.title]."
+    if office_punishment.is_active():
+        mc.name "Not enough? Fine, I'll skip the warning. We can discuss your punishment later when you've had time to cool off."
+        $ loser.add_infraction(Infraction.office_disturbance_factory())
+        mc.name "Now get back to work. Thank you for bringing this to my attention [winner.title]."
+    else:
+        mc.name "That's the end of it, now I want both of you to get back to work. Thank you for bringing this to my attention [winner.title]."
     $ the_group.draw_person(winner, emotion = "happy")
     $ winner.change_happiness(5)
     $ winner.change_obedience(5)
@@ -2553,7 +2626,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     $ rd_staff.change_obedience(-5)
                     rd_staff.char "Really? I'm just suppose to take a completely untested drug because it might make you more money? That's fucking ridiculous and we both know it."
                     "[rd_staff.possessive_title] puts the serum down on the lab bench and crosses her arms."
-                    rd_staff.char "Just get out of here and I'll finish the initial testing in a safe enviroment."
+                    rd_staff.char "Just get out of here and I'll finish the initial testing in a safe environment."
                     mc.name "Fine, just make sure you get it done."
                     rd_staff.char "That's what I'm paid for, isn't it?"
                     "You leave [rd_staff.title] to her to work in the lab and return to what you were doing."
@@ -2806,7 +2879,7 @@ label horny_at_work_crisis_label():
         "You're at your desk, trying hard to focus. Unfortunately, [the_person.title]'s nice, large tits keep grabbing your attention."
         "The more you try and ignore them the hornier you get, and it's starting to get in the way of work."
 
-    elif the_cause == "vagina_visisble":
+    elif the_cause == "vagina_visible":
         $ the_person.draw_person(position = "back_peek")
         "You're at your desk, trying hard to focus. Unfortunately, [the_person.title]'s outfit leaves her sweet little pussy on display and it keeps grabbing your attention."
         "The more you try and ignore it the hornier you get, and it's starting to get in the way of your work."
@@ -2941,7 +3014,7 @@ label horny_at_work_crisis_label():
                 $ helpful_person.draw_person(emotion = "happy")
                 "[helpful_person.title] gets up from her desk and comes over, eyes transfixed on your swollen cock."
                 helpful_person.char "Would you like to use me to take care of that?"
-                $ the_group = GroupDisplayManager(helpful_people, primary_speaker = helpful_person)
+                $ the_group = GroupDisplayManager(helpful_people[:], primary_speaker = helpful_person) #Note we are copying the list of helpful people so it can be modified seperate from the people inside of the group.
                 $ clear_scene()
                 $ the_group.draw_group(emotion = "happy")
                 if len(helpful_people) > 1: #More than one person, so describe them!
@@ -3103,6 +3176,14 @@ label horny_at_work_crisis_label():
                         $ clear_scene()
                         "She blushes and turns around, leaving quickly. You pull up some porn on your phone and get comfortable, jerking yourself off until you cum."
                         "When you're finished you clean up and get back to work, your mind now crystal clear."
+
+                    "Punish her for inappropriate behaviour." if office_punishment.is_active():
+                        mc.name "[the_person.title], this isn't appropriate. I'm going to have to write you up."
+                        your_follower "I... Oh, I'm sorry [your_follower.mc_title], I don't know what I was thinking..."
+                        $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
+                        "She blushes and turns around, leaving quickly. You pull up some porn on your phone and get comfortable, jerking yourself off until you cum."
+                        "When you're finished you clean up and get back to work, your mind now crystal clear."
+
                 $ mc.change_location(old_location)
                 $ mc.location.show_background()
 
@@ -3178,11 +3259,8 @@ label horny_at_work_crisis_label():
                         else:
                             "You smile and turn your chair to face her. You unzip your pants and grab onto your hard cock, stroking it slowly."
 
-                        $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True) #If that fails we need to strip off her top, because she might have a dress style thing on blocking it.
-                        while the_item is not None:
-                            $ the_group.draw_animated_removal(the_person, the_clothing = the_item)
-                            "[the_person.title] strips off her [the_item.name] while you watch."
-                            $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
+                        $ strip_list = the_person.outfit.get_full_strip_list(strip_feet = False)
+                        $ generalised_strip_description(the_person, strip_list, group_display = the_group)
                         "When [the_person.possessive_title] is finished stripping down she puts her hands on her hips and watches you jerk off."
 
                         $ the_person.discover_opinion("not wearing anything")

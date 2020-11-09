@@ -515,8 +515,8 @@ label blackmail_person(the_person):
 label transform_affair(the_person):
     # If a girl leaves her SO for crisis reasons call this, which transforms her affair you had into a boyfriend-girlfriend relationship.
     if affair_role in the_person.special_role: # Technically we can use this to immediately jump to girlfrined with someone who is in a relationship as well.
-        $ the_person.special_role.remove(affair_role)
-    $ the_person.special_role.append(girlfriend_role)
+        $ the_person.remove_role(affair_role)
+    $ the_person.add_role(girlfriend_role)
     $ the_person.relationship = "Single" #Technically they aren't "single", but the MC has special roles for their girlfriend.
     $ the_person.SO_name = None #Clear the name of their ex so that it doesn't get used in
     #TODO: Maybe add a crisis that is created to introduce you to the idea that they're now broken up, or maybe handle that in an individual event.
@@ -557,7 +557,7 @@ label caught_affair_cheating_label(the_other_girl, the_girlfriend):
         $ the_girlfriend.draw_person(emotion = "sad")
         mc.name "It's not important, okay? Just let it go."
         the_girlfriend.char "I don't think I can... I thought I could do this with you, but I obviously care more about you than you care about me."
-        $ the_girlfriend.special_role.remove(affair_role)
+        $ the_girlfriend.remove_role(affair_role)
         the_girlfriend.char "Just... Let's just go back to being friends and pretend this never happened."
         "She shakes her head mournfully and walks away."
     else:
