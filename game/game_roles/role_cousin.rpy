@@ -181,6 +181,7 @@ label cousin_house_phase_two_label(the_person):
     "[the_person.possessive_title] shrugs and turns her full attention back to her TV show."
     $ cousin_at_house_phase_three_action = Action("Cousin changes schedule", cousin_house_phase_three_requirement, "cousin_house_phase_three_label", args = cousin, requirement_args = day+renpy.random.randint(2,5))
     $ mc.business.mandatory_crises_list.append(cousin_at_house_phase_three_action) #In a couple of days change her schedule so she starts stealing from Lily.
+    $ clear_scene()
     return
 
 label cousin_house_phase_three_label(the_person):

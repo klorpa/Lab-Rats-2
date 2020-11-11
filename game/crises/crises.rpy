@@ -2182,7 +2182,7 @@ label cat_fight_crisis_label():
 
 
     person_one.char "Excuse me, [person_one.mc_title]?"
-    $ the_group.draw_group(person_one, emotion = "angry")
+    $ the_gropu.draw_group(emotion = "angry")
     "You feel a tap on your back while you're working. [person_one.title] and [person_two.title] are glaring at each other while they wait to get your attention."
     person_one.char "I was just in the break room and saw [person_two.title] digging around in the fridge looking for other people's lunches."
     $ the_group.draw_group(person_two, emotion = "angry")

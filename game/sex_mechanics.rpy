@@ -60,14 +60,14 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         else: #If you aren't in a relationship with them only half their Love applies.
             $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/2), "I really like you, let's see where this goes!")
 
+    $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
     if the_person.happiness <= 95:
-        $ happiness_effect = __builtin__.round((100 - the_person.happiness)/5.0)
+
         if the_person.happiness <= 75:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so unhappy, I just don't want to do anything!")
         else:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm just not in the mood right now.")
     elif the_person.happiness >= 105:
-        $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
         if the_person.happiness >= 125:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so happy, I'm up for anything!")
         else:

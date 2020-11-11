@@ -149,7 +149,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
                         mc.name "For being such a good son."
                         the_person.char "Oh, well that's easy then."
                         "[the_person.possessive_title] stands up and leans in to give you a kiss on the cheek."
-                        mc.name "On the lips, [the_person.mc_title]. Please?"
+                        mc.name "On the lips, [the_person.title]. Please?"
                         the_person.char "You've always been so affectionate. Not like other boys at all, you know. Fine."
                         $ kissing.call_taboo_break(the_person, None, None) #We can reuse the kissing taboo break scene for improved dialogue and description.
                         "After a moment she pulls back and looks away from you, blushing."

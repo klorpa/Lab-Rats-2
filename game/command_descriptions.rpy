@@ -552,7 +552,7 @@ label demand_strip_naked_label(the_person):
             "Leave them on.":
                 mc.name "You can leave them on."
 
-    call naked_strip_description(The_person, remove_shoes = removes_shoes) from _call_naked_strip_description
+    call naked_strip_description(the_person, remove_shoes = removes_shoes) from _call_naked_strip_description
 
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))): # She's shy
         the_person.char "What would you like me to do now?"
@@ -576,7 +576,7 @@ label demand_strip_naked_label(the_person):
         "You enjoy the view until you're satisfied."
         mc.name "Okay, turn around again."
         $ the_person.draw_person()
-        theperson.char "Is there anything else, [the_person.mc_title]?"
+        the_person.char "Is there anything else, [the_person.mc_title]?"
 
     menu:
         "Let her get dressed.":

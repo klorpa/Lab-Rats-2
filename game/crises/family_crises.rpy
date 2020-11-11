@@ -109,11 +109,8 @@ label mom_outfit_help_crisis_label():
     else: #She's slutty enough that she doesn't care if you watch or not.
         the_person.char "Just give me one second to get dressed [the_person.mc_title]."
         "[the_person.possessive_title] starts to strip down in front of you."
-        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        while strip_choice is not None:
-            $ the_person.draw_animated_removal(strip_choice)
-            "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
-            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+        $ strip_list = the_person.outfit.get_full_strip_list()
+        $ generalised_strip_description(the_person, strip_list)
 
         "Once she's stripped naked she grabs her new outfit and starts to put it on."
         if the_person.update_outfit_taboos(): #Some taboo was broken.
@@ -216,11 +213,8 @@ label mom_outfit_help_crisis_label():
     else: #She's slutty enough that she doesn't care if you watch or not.
         the_person.char "It'll just take me a second to get changed."
         "[the_person.possessive_title] starts to strip down in front of you."
-        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        while strip_choice is not None:
-            $ the_person.draw_animated_removal(strip_choice)
-            "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
-            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+        $ strip_list = the_person.outfit.get_full_strip_list()
+        $ generalised_strip_description(the_person, strip_list)
         "Once she's stripped naked she grabs another outfit and starts to put it on."
 
     $ the_person.apply_outfit(second_outfit, update_taboo = True)
@@ -315,11 +309,8 @@ label mom_outfit_help_crisis_label():
                 else: #She's slutty enough that she doesn't care if you watch or not.
                     the_person.char "It'll just take a moment for me to slip into this."
                     "[the_person.possessive_title] starts to strip down in front of you."
-                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                    while strip_choice is not None:
-                        $ the_person.draw_animated_removal(strip_choice)
-                        "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
-                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+                    $ strip_list = the_person.outfit.get_full_strip_list()
+                    $ generalised_strip_description(the_person, strip_list)
                     "Once she's stripped naked she grabs another outfit and starts to put it on."
 
                 $ the_person.apply_outfit(third_outfit, update_taboo = True)
