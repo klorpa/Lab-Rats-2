@@ -700,9 +700,6 @@ label introvert_cum_pullout(the_person):
             the_person.char "Yeah? Fucking do it! Cum for me [the_person.mc_title]!"
 
 
-        #TODO: Add a check that lets a cum crazed girl offer to let you take a condom off to cum in her
-        # "Do you want to get me pregnant?"
-
     else:
         if the_person.wants_creampie():
             if the_person.event_triggers_dict.get("preg_knows", False): #She's already knocked up, so who cares!

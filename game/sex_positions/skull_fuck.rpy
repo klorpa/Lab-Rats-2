@@ -89,7 +89,7 @@ label scene_skull_fuck_3(the_girl, the_location, the_object):
 
     "You slow down and enjoy every inch of [the_girl.possessive_title]'s tight throat."
     "You keep one hand firm on the back of her head and move the other down to her throat, wrapping your fingers around it."
-    "You can feelt it bulge as you slide your full length inside of her."
+    "You can feel it bulge as you slide your full length inside of her."
     "She sputters as you throat her. Her spit bubbles around your shaft and drips down her chin, dropping onto her tits below."
     mc.name "That's it, gag on it you cock slut!"
     "You massage her throat with your hand and can feel the pressure on your own cock."

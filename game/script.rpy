@@ -24,15 +24,15 @@ init -2 python:
     if not renpy.mobile: #Mobile platforms do not support animation, so we only want to try to import it if we're going to use it.
         import shader
 
-    test_zip = False # Debug setting. Won't work on your system, unless you pack all of the position images into appropriately named zip files.
+    test_zip = True # Debug setting. If set to False won't work on your system, unless you pack all of the position images into appropriately named zip files.
 
-    if renpy.mobile or test_zip:
-        global mobile_zip_dict
-        mobile_zip_dict = {}
-        for position in ["stand2", "stand3", "stand4", "stand5", "walking_away", "back_peek", "sitting", "kissing", "doggy", "missionary", "blowjob", "against_wall", "standing_doggy", "kneeling1", "cowgirl"]:
-            file_path = "images/character_images/" + position + ".zip"
-            renpy_file = renpy.file(file_path)
-            mobile_zip_dict[position] = zipfile.ZipFile(renpy_file, "r") #Cache all of the zip files so we have a single static pointer to them.
+    # if renpy.mobile or test_zip:
+    global mobile_zip_dict
+    mobile_zip_dict = {}
+    for position in ["stand2", "stand3", "stand4", "stand5", "walking_away", "back_peek", "sitting", "kissing", "doggy", "missionary", "blowjob", "against_wall", "standing_doggy", "kneeling1", "cowgirl"]:
+        file_path = "images/character_images/" + position + ".zip"
+        renpy_file = renpy.file(file_path)
+        mobile_zip_dict[position] = zipfile.ZipFile(renpy_file, "a") #Cache all of the zip files so we have a single static pointer to them.
 
     #config.use_cpickle = False #Set to True for more useful save failure info
 
@@ -41,7 +41,7 @@ init -2 python:
     def take_animation_screenshot(): #Called on every interact beginning, if animation_draw_requested is True it makes the screenshot and starts a new thread to display the image.
         # This approach is needed because draw.screenshot is fast, but must be done in the main thread. Rendering is slower, but can be threaded. This lets us get the best of both worlds.
         global animation_draw_requested #This might have some race conditions if character images are drawn very quickly, but I doubt it will be something to worry about.
-        log_message("General" + " | CLBK | " + str(time.time()))
+        #log_message("General" + " | CLBK | " + str(time.time()))
 
         for draw_layer in draw_layers: #If multiple draws are prepared in a single interaction we want to screenshot all of them.
             if animation_draw_requested[draw_layer]:
@@ -156,39 +156,40 @@ init -2 python:
     add_draw_layer("back_1")
     add_draw_layer("back_2")
 
-    build.archive("stand2", "renpy")
-    build.archive("stand3", "renpy")
-    build.archive("stand4", "renpy")
-    build.archive("stand5", "renpy")
-    build.archive("walking_away", "renpy")
-    build.archive("back_peek", "renpy")
-    build.archive("sitting", "renpy")
-    build.archive("kissing", "renpy")
-    build.archive("doggy", "renpy")
-    build.archive("missionary", "renpy")
-    build.archive("blowjob", "renpy")
-    build.archive("against_wall", "renpy")
-    build.archive("standing_doggy", "renpy")
-    build.archive("kneeling1", "renpy")
-    build.archive("cowgirl", "renpy")
+    # All versions of LR2 now us a .zip based image storage structure, no need for Renpy archives at all any more.
+    # build.archive("stand2", "renpy")
+    # build.archive("stand3", "renpy")
+    # build.archive("stand4", "renpy")
+    # build.archive("stand5", "renpy")
+    # build.archive("walking_away", "renpy")
+    # build.archive("back_peek", "renpy")
+    # build.archive("sitting", "renpy")
+    # build.archive("kissing", "renpy")
+    # build.archive("doggy", "renpy")
+    # build.archive("missionary", "renpy")
+    # build.archive("blowjob", "renpy")
+    # build.archive("against_wall", "renpy")
+    # build.archive("standing_doggy", "renpy")
+    # build.archive("kneeling1", "renpy")
+    # build.archive("cowgirl", "renpy")
+    #
+    # build.classify("game/images/character_images/**stand2**.png", "stand2") #Package the individual images into archives for the PC versions
+    # build.classify("game/images/character_images/**stand3**.png", "stand3")
+    # build.classify("game/images/character_images/**stand4**.png", "stand4")
+    # build.classify("game/images/character_images/**stand5**.png", "stand5")
+    # build.classify("game/images/character_images/**walking_away**.png", "walking_away")
+    # build.classify("game/images/character_images/**back_peek**.png", "back_peek")
+    # build.classify("game/images/character_images/**sitting**.png", "sitting")
+    # build.classify("game/images/character_images/**kissing**.png", "kissing")
+    # build.classify("game/images/character_images/**doggy**.png", "doggy")
+    # build.classify("game/images/character_images/**missionary**.png", "missionary")
+    # build.classify("game/images/character_images/**blowjob**.png", "blowjob")
+    # build.classify("game/images/character_images/**against_wall**.png", "against_wall")
+    # build.classify("game/images/character_images/**standing_doggy**.png", "standing_doggy")
+    # build.classify("game/images/character_images/**kneeling1**.png", "kneeling1")
+    # build.classify("game/images/character_images/**cowgirl**.png", "cowgirl")
 
-    build.classify("game/images/character_images/**stand2**.png", "stand2") #Package the individual images into archives for the PC versions
-    build.classify("game/images/character_images/**stand3**.png", "stand3")
-    build.classify("game/images/character_images/**stand4**.png", "stand4")
-    build.classify("game/images/character_images/**stand5**.png", "stand5")
-    build.classify("game/images/character_images/**walking_away**.png", "walking_away")
-    build.classify("game/images/character_images/**back_peek**.png", "back_peek")
-    build.classify("game/images/character_images/**sitting**.png", "sitting")
-    build.classify("game/images/character_images/**kissing**.png", "kissing")
-    build.classify("game/images/character_images/**doggy**.png", "doggy")
-    build.classify("game/images/character_images/**missionary**.png", "missionary")
-    build.classify("game/images/character_images/**blowjob**.png", "blowjob")
-    build.classify("game/images/character_images/**against_wall**.png", "against_wall")
-    build.classify("game/images/character_images/**standing_doggy**.png", "standing_doggy")
-    build.classify("game/images/character_images/**kneeling1**.png", "kneeling1")
-    build.classify("game/images/character_images/**cowgirl**.png", "cowgirl")
-
-    build.classify("game/images/character_images/**stand2**.png", None) #On android these are already packaged into a zip file, so the standalone images are not needed.
+    build.classify("game/images/character_images/**stand2**.png", None) # unarchived images for the different positiosn are not needed, they are all included in .zip files.
     build.classify("game/images/character_images/**stand3**.png", None)
     build.classify("game/images/character_images/**stand4**.png", None)
     build.classify("game/images/character_images/**stand5**.png", None)
@@ -204,7 +205,7 @@ init -2 python:
     build.classify("game/images/character_images/**kneeling1**.png", None)
     build.classify("game/images/character_images/**cowgirl**.png", None)
 
-    build.classify("game/images/character_images/**.zip", "android")
+    build.classify("game/images/character_images/**.zip", "all")
 
 
     # build.classify("game/images/character_images/**_Face_10**.png", None) # Bad render, don't add it to any of the builds
@@ -258,7 +259,8 @@ init -2 python:
         else:
             return "{image=gui/heart/Grey_Steady.png}"
 
-    def get_red_heart(sluttiness): #A recursive function, feet it a sluttiness and it will return a string of all red heart images for it. Hearts that are entirely empty are left out.
+    def get_red_heart(sluttiness): #A recursive function, feed it a sluttiness and it will return a string of all red heart images for it. Hearts that are entirely empty are left out.
+        #TODO: Expand this to let you ask for a minimum number of empty hearts.
         the_final_string = ""
         if sluttiness >= 20:
             the_final_string += "{image=gui/heart/red_heart.png}"
@@ -672,6 +674,11 @@ init -2 python:
             for policy in self.active_policy_list:
                 policy.on_turn()
 
+        def run_move(self):
+            for policy in self.active_policy_list:
+                policy.on_move()
+
+
 
         def run_day(self): #Run at the end of the day.
             #Pay everyone for the day
@@ -1080,7 +1087,7 @@ init -2 python:
             the_person.set_work(None)
             the_person.remove_role(employee_role, remove_linked = remove_linked) #Some events only shuffle employees around, leaving employee related roles in place. For those, set remove_linked to True
 
-            #TODO: We should support roles having an on_remove function, so we can make this style of removal generic
+            #Roles can have an on_remove function, but these have special events that we want to make sure are triggered properly.
             if the_person == self.head_researcher:
                 renpy.call("fire_head_researcher", the_person) #Call the label we use for firing the person as a role action. This should trigger it any time you fire or move your head researcher.
 
@@ -2262,6 +2269,10 @@ init -2 python:
             if emotion is None:
                 emotion = self.get_emotion()
 
+            forced_special_modifier = self.outfit.get_forced_modifier()
+            if forced_special_modifier is not None:
+                special_modifier = forced_special_modifier # Overrides all other things, supports people with ball gags always having an open mouth (mechanically, not emotionally)
+
             x_size = position_size_dict.get(position)[0]
             y_size = position_size_dict.get(position)[1]
 
@@ -2361,6 +2372,7 @@ init -2 python:
             the_surface = the_surface.subsurface((0,0,(x_size/x_scale),(y_size/y_scale))) # Take a subsurface of the surface screenshotted, so that we only save what is strictly nessesary.
 
             log_message(self.name + " | ACP1 | " + str(time.time()))
+            #TODO: Check if we can use display.pgrender.load_image(file, filename) to load the surface data without needing to screenshot it somehow.
             renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform. #TODO: Retest how long this takes with the trimmed surface
             static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
             surface_file.close()
@@ -2720,9 +2732,9 @@ init -2 python:
         def set_outfit(self,new_outfit):
             if new_outfit is not None:
                 self.planned_outfit = new_outfit.get_copy() #Get a copy to return to when we are done.
-                self.apply_outfit(new_outfit) # #We're handed a properly formatted copy already, use it to wear right away.
+                self.apply_outfit(new_outfit)
 
-        def set_uniform(self,uniform, wear_now):
+        def set_uniform(self,uniform, wear_now = False):
             if uniform is not None:
                 self.planned_uniform = uniform.get_copy()
                 if wear_now:
@@ -2765,7 +2777,7 @@ init -2 python:
             else:
                 return False
 
-        def apply_serum_study(self, add_to_log = True): #Called when the person is studied by the MC. Raises mastery level of all traits used in active serums by 0.1
+        def apply_serum_study(self, add_to_log = True): #Called when the person is studied by the MC. Raises mastery level of all traits used in active serums by 0.2
             studied_something = False
             for serum in self.serum_effects:
                 for trait in serum.traits:
@@ -3063,19 +3075,25 @@ init -2 python:
             slut_require = outfit.slut_requirement
             if as_underwear:
                 slut_require = outfit.get_underwear_slut_score()
-                #TODO: lingerie checks here
 
             elif as_overwear:
                 slut_require = outfit.get_overwear_slut_score()
 
             if (outfit.get_bra() or outfit.get_panties()) and not as_overwear: #Girls who like lingerie judge outfits with lingerie as less slutty than normal
                 lingerie_bonus = 0
-                if outfit.get_bra() and outfit.get_bra().slut_value > 1: #We consider underwear with an innate sluttiness of 2 or higher "lingerie" rather than just underwear.
+                if outfit.get_bra() and outfit.get_bra().slut_value > 2: #We consider underwear with an innate sluttiness of 3 or higher "lingerie" rather than just underwear.
                     lingerie_bonus += self.get_opinion_score("lingerie")
-                if outfit.get_panties() and outfit.get_panties().slut_value > 1:
+                if outfit.get_panties() and outfit.get_panties().slut_value > 2:
                     lingerie_bonus += self.get_opinion_score("lingerie")
                 lingerie_bonus = __builtin__.int(lingerie_bonus*2) # Up to an 8 point swing in either direction
                 slut_require += -lingerie_bonus #Treated as less slutty if she likes it, more slutty if she dislikes lingerie
+
+            # Considers the outfit less slutty if she likes showing her tits and ass and that's what it would do.
+            if outfit.vagina_visible() or (outfit.wearing_panties() and not outfit.panties_covered()):
+                slut_require += -2*self.get_opinion_score("showing her ass")
+
+            if outfit.tits_visible() or (outfit.wearing_bra() and not outfit.bra_covered()):
+                slut_require += -2*self.get_opinion_score("showing her tits")
 
 
             if slut_require > (self.effective_sluttiness(taboo_modifier) + temp_sluttiness_boost): #Arousal is important for judging potential changes to her outfit while being stripped down during sex.
@@ -3123,7 +3141,7 @@ init -2 python:
             if persistent.pregnancy_pref == 0:
                 no_condom_threshold += 10 #If pregnancy content is being ignored we return to the baseline of 60
             elif the_person.on_birth_control: #If there is pregnancy content then a girl is less likely to want a condom when using BC, much more likely to want it when not using BC.
-                no_condom_threshold += 20
+                no_condom_threshold -= 20
 
             return no_condom_threshold
 
@@ -3982,9 +4000,15 @@ init -2 python:
             self.facial_style = facial_style #The style of face the person has, currently creatively named "Face_1", "Face_2", "Face_3", etc..
             self.emotion_set = ["default","happy","sad","angry","orgasm"]
             self.positions_set = ["stand2","stand3","stand4","stand5","walking_away","kissing","missionary","blowjob","against_wall","back_peek","sitting","kneeling1","standing_doggy","cowgirl"] #The set of images we are going to draw emotions for. These are positions that look towards the camera
-            self.special_modifiers = {"blowjob":["blowjob"],"kissing":["kissing"]} #Special modifiers that are sometimes applied to expressions, but not always. ie. for blowjobs that may be either in normal crouching mode or blowjob mode.
+            self.special_modifiers = {"kissing":["kissing"]} #Special modifiers that are sometimes applied to expressions, but not always. ie. for blowjobs that may be either in normal crouching mode or blowjob mode.
             self.ignore_position_set = ["doggy","walking_away","standing_doggy"] #The set of positions that we are not goign to draw emotions for. These look away from the camera TODO: This should reference the Position class somehow.
             self.position_dict = {}
+            for position in self.positions_set: #All positions support the blowjob special modifier now.
+                if position in self.special_modifiers.keys():
+                    self.special_modifiers[position].extend(["blowjob"])
+                else:
+                    self.special_modifiers[position] = ["blowjob"]
+
             for position in self.positions_set+self.ignore_position_set:
                 self.position_dict[position] = {}
 
@@ -4018,20 +4042,20 @@ init -2 python:
             if eye_colour is None:
                 eye_colour = [0.8,0.8,0.8,1] #grey by default.
 
-            if renpy.mobile or test_zip: #On mobile platforms we use .zip files to hold all of the individual images to bypass the andorid file limit. This results in significantly slower animation (for reasons currently unknown), but android douesn't animate anyways.
+            # if renpy.mobile or test_zip: #On mobile platforms we use .zip files to hold all of the individual images to bypass the andorid file limit. This results in significantly slower animation (for reasons currently unknown), but android douesn't animate anyways.
 
-                base_name = self.position_dict[position][emotion]
-                base_image = VrenZipImage(position, base_name)
+            base_name = self.position_dict[position][emotion]
+            base_image = VrenZipImage(position, base_name)
 
-                mask_name = self.position_dict[position][emotion].replace("_" + self.skin_colour,"_Pattern_1")
-                mask_image = VrenZipImage(position, mask_name)
+            mask_name = self.position_dict[position][emotion].replace("_" + self.skin_colour,"_Pattern_1")
+            mask_image = VrenZipImage(position, mask_name)
 
-            else:
-                base_name = "character_images/" + self.position_dict[position][emotion]
-                base_image = Image(base_name)
-
-                mask_name = base_name.replace("_" + self.skin_colour,"_Pattern_1") # Match the naming scheme used for the eye patterns.
-                mask_image = Image(mask_name)
+            # else:
+            #     base_name = "character_images/" + self.position_dict[position][emotion]
+            #     base_image = Image(base_name)
+            #
+            #     mask_name = base_name.replace("_" + self.skin_colour,"_Pattern_1") # Match the naming scheme used for the eye patterns.
+            #     mask_image = Image(mask_name)
 
 
 
@@ -4583,7 +4607,7 @@ init -2 python:
 
 
     class Policy(renpy.store.object): # An upgrade that can be purchased by the character for their business.
-        def __init__(self,name,desc,requirement,cost, toggleable = False, on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_day_function = None, dependant_policies = None):
+        def __init__(self,name,desc,requirement,cost, toggleable = False, on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_move_function = None, on_day_function = None, dependant_policies = None):
             self.name = name #A short name for the policy.
             self.desc = desc #A text description of the policy.
             self.requirement = requirement #a function that is run to see if the PC can purchase this policy.
@@ -4600,7 +4624,8 @@ init -2 python:
             self.on_buy_function = on_buy_function #A function to be called when purchased
             self.on_apply_function = on_apply_function
             self.on_remove_function = on_remove_function
-            self.on_turn_function = on_turn_function
+            self.on_turn_function = on_turn_function #These functions are applied to anyone with the Employee role. Policies that affect people with specific sub-roles
+            self.on_move_function = on_move_function
             self.on_day_function = on_day_function
 
             if dependant_policies is None:
@@ -4687,6 +4712,11 @@ init -2 python:
         def on_turn(self):
             if self.on_turn_function is not None:
                 self.on_turn_function(**self.extra_arguments)
+            return
+
+        def on_move(self):
+            if self.on_move_function is not None:
+                self.on_move_function(**self.extra_arguments)
             return
 
         def on_day(self):
@@ -4794,6 +4824,7 @@ init -2 python:
             self._constrain_regions[self.proper_name] = value
 
         constrain_regions = property(get_constrain_regions, set_constrain_regions, None, "Clothing half off regions")
+
         #Slots are
 
         ##Feet##
@@ -4943,7 +4974,7 @@ init -2 python:
 
             return image_name
 
-        def generate_raw_image(self, body_type, tit_size, position): #Returns the raw ZipFileImage or IMage, instead of the displayable (used for generating region masks)
+        def generate_raw_image(self, body_type, tit_size, position): #Returns the raw ZipFileImage or Image, instead of the displayable (used for generating region masks)
             if not self.body_dependant:
                 body_type = "standard_body"
             image_set = self.position_sets.get(position)
@@ -4978,6 +5009,8 @@ init -2 python:
 
                 if regions_constrained is None:
                     regions_constrained = []
+                # else:
+                #     print("Constrained regions: " + str(regions_constrained))
 
 
                 converted_mask_image = None
@@ -5129,7 +5162,7 @@ init -2 python:
         crop_offset_dict = property(get_crop_offset_dict, None, None, "Offset dictionary")
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False,
-            opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = None, crop_offset_dict = None):
+            opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = None, crop_offset_dict = None, modifier_lock = None):
 
             self.name = name
             if display_name is None:
@@ -5171,6 +5204,8 @@ init -2 python:
             self.whiteness_adjustment = whiteness_adjustment
             self.contrast_adjustment = contrast_adjustment
 
+            self.modifier_lock = modifier_lock #If set to something other than None this facial accessory adds the modifier to all positions if possible.
+
 
         def generate_item_displayable(self, position, face_type, emotion, special_modifiers = None, lighting = None):
             if not self.is_extension:
@@ -5207,57 +5242,35 @@ init -2 python:
         def __init__(self,accessory_name,position):
             self.images = {}
             self.position_name = position
-            if renpy.android:
-                self.supported_faces = ["Face_1","Face_2","Face_3","Face_4","Face_6","Face_7","Face_8"] # Limited number of faces are supported on android due to file size limitations.
-            else:
-                self.supported_faces = ["Face_1","Face_2","Face_3","Face_4","Face_5","Face_6","Face_7","Face_8","Face_9","Face_11","Face_12","Face_13","Face_14"]
+            self.supported_faces = ["Face_1","Face_2","Face_3","Face_4","Face_5","Face_6","Face_7","Face_8","Face_9","Face_11","Face_12","Face_13","Face_14"]
             self.supported_emotions = ["default","sad","happy","angry","orgasm"]
-            self.special_modifiers = {"blowjob":"blowjob","kissing":"kissing"}
+            self.special_modifiers = {self.position_name:"blowjob","kissing":"kissing"} #As of v0.35 all positions support the blowjob modifier so we can have good looking gags and a wider variety of facial expressions.
 
             for face in self.supported_faces:
                 for emotion in self.supported_emotions:
                     #Add the image string to the dict. We do not use Image obects directly because it greatly slows down the game (character objects become huge.)
-                    #self.images[face + "_" + emotion] = "character_images/" + accessory_name + "_" + position + "_" + face + "_" + emotion + ".png" # Save the file string so we can generate a proper image from it easily later.
-
                     self.images[face + "_" + emotion] = accessory_name + "_" + position + "_" + face + "_" + emotion + ".png" # Save the file string so we can generate a proper image from it easily later.
-
                     if position in self.special_modifiers:
-                        #self.images[face + "_" + emotion + "_" + self.special_modifiers[position]] = "character_images/" + accessory_name + "_" + position + "_" + face + "_" + emotion + "_" + self.special_modifiers[position] + ".png"
-
                         self.images[face + "_" + emotion + "_" + self.special_modifiers[position]] = accessory_name + "_" + position + "_" + face + "_" + emotion + "_" + self.special_modifiers[position] + ".png"
                         #There is a special modifier, we need to add that version as well.
 
         def get_image(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
-            #TODO: Check to see what the performance impact of having to define this repeatedly is. We could init it at the start and then repeatedly access it if we neeeded to.
+            global mobile_zip_dict
+            file = mobile_zip_dict[self.position_name]
+            if special_modifier is not None:
+                if index_string+"_"+special_modifier in file.namelist():
+                    index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
 
-            if renpy.mobile or test_zip:
-                global mobile_zip_dict
-                file = mobile_zip_dict[self.position_name]
-                if special_modifier is not None:
-                    if index_string+"_"+special_modifier in file.namelist():
-                        index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
-
-                the_image = VrenZipImage(self.position_name, self.images[index_string])
-                return the_image
-            else:
-                if special_modifier is not None:
-                    if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
-                        index_string += "_" + special_modifier
-                return Image("character_images/" + self.images[index_string]) #We have made an index string, use it to get the full filepath for the image used in this position.
-
+            the_image = VrenZipImage(self.position_name, self.images[index_string])
+            return the_image
         def get_image_name(self, face, emotion, special_modifier = None):
             index_string = face + "_" + emotion
-            if renpy.mobile or test_zip:
-                global mobile_zip_dict
-                file = mobile_zip_dict[self.position_name]
-                if special_modifier is not None:
-                    if index_string+"_"+special_modifier in file.namelist():
-                        index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
-            else:
-                if special_modifier is not None:
-                    if renpy.loadable("character_images/" + self.images[index_string + "_" + special_modifier]):
-                        index_string += "_" + special_modifier
+            global mobile_zip_dict
+            file = mobile_zip_dict[self.position_name]
+            if special_modifier is not None:
+                if index_string+"_"+special_modifier in file.namelist():
+                    index_string += "_" + special_modifier #We only want to try and load special modifier images if they exist. Otherwise we use the unmodified image to avoid a crash. This lets us omit images we do not plan on actually using, such as glasses not needing blowjob poses.
 
             return self.images[index_string]
 
@@ -5289,11 +5302,7 @@ init -2 python:
 
         def get_image(self, body_type, breast_size = "AA" ): #Generates a proper Image object from the file path strings we have stored previously. Prevents object bloat by storing large objects repeatedly for everyone.
             index_string = body_type + "_" + breast_size
-
-            if renpy.mobile or test_zip:
-                return_image = VrenZipImage(self.position_name, self.images[index_string])
-            else:
-                return_image = Image("character_images/" + self.images[index_string])
+            return_image = VrenZipImage(self.position_name, self.images[index_string])
 
             if return_image:
                 return return_image
@@ -5303,7 +5312,6 @@ init -2 python:
         def get_image_name(self, body_type, breast_size = "AA" ): #Generates a proper Image object from the file path strings we have stored previously. Prevents object bloat by storing large objects repeatedly for everyone.
             index_string = body_type + "_" + breast_size
             return self.images[index_string]
-            #return "character_images/" + self.images[index_string]
 
     class VrenAnimation(renpy.store.object):
         def __init__(self, name, shader, tex_1_regions, innate_animation_strength = 1.0, region_specific_weights = None):
@@ -5355,10 +5363,14 @@ init -2 python:
                 copy_outfit.feet.append(feet.get_copy())
 
             for lower in self.lower_body:
-                copy_outfit.lower_body.append(lower.get_copy())
+                if not lower.is_extension:
+                    copy_outfit.lower_body.append(lower.get_copy())
 
             for upper in self.upper_body:
-                copy_outfit.upper_body.append(upper.get_copy())
+                upper_copy = upper.get_copy()
+                copy_outfit.upper_body.append(upper_copy)
+                if upper.has_extension:
+                    copy_outfit.lower_body.append(upper_copy.has_extension)
 
             for accessory in self.accessories:
                 copy_outfit.accessories.append(accessory.get_copy())
@@ -5387,9 +5399,9 @@ init -2 python:
                 hide_layers = []
 
             all_items = self.generate_clothing_list(body_type, tit_size, position) #First generate a list of the clothing objects
-            ordered_displayables = []
 
             currently_constrained_regions = []
+            ordered_displayables = []
             for item in reversed(all_items): #To properly constrain items we need to figure out how they look from the outside in, even though we eventually draw from the inside out
                 if type(item) is Facial_Accessory:
                     if item.layer not in hide_layers:
@@ -5424,6 +5436,7 @@ init -2 python:
             top_items = [] #Things drawn on top of the middle item
             all_items = self.generate_clothing_list(body_type, tit_size, position)
 
+
             for item in all_items:
                 currently_constrained_regions = []
                 if type(item) is Facial_Accessory:
@@ -5434,6 +5447,8 @@ init -2 python:
                         for region in item.constrain_regions:
                             if item.half_off and region in item.constrain_regions:
                                 pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
+                            elif item.has_extension and item.has_extension.half_off and region in item.has_extension.half_off_regions:
+                                pass # If the extension for an item (a dress bottom, for example) is half off and hiding something that section is not contrained.
                             else:
                                 currently_constrained_regions.append(region)
 
@@ -5447,6 +5462,13 @@ init -2 python:
                         else:
                             top_items.append(item_check)
             return (bottom_items,middle_item,top_items)
+
+        def get_forced_modifier(self): #Returns, if one exists, a forced modifier caused by one of the facial accessories (Currently used to support ball gags)
+            forced_special_modifier = None
+            for item in self.accessories:
+                if isinstance(item, Facial_Accessory) and item.modifier_lock is not None:
+                    forced_special_modifier = item.modifier_lock #TODO: Decide what to do if multiple accessories add a forced modifier. Probably limit outfits so only 1 can contribute a modifier
+            return forced_special_modifier
 
         def generate_clothing_list(self, body_type = None, tit_size = None, position = None): #Returns a properly ordered list of clothing. If used to draw them they would be displayed correctly.
             # I don't believe position is needed for anything here.
@@ -5720,19 +5742,19 @@ init -2 python:
 
         def is_item_unanchored(self, the_clothing, half_off_instead = False): #Returns true if the clothing item passed is unanchored, ie. could be logically taken off.
             if the_clothing in self.upper_body:
-                if the_clothing in self.get_upper_unanchored():
+                if the_clothing in self.get_upper_unanchored(half_off_instead):
                     return True
                 else:
                     return False
 
             elif the_clothing in self.lower_body:
-                if the_clothing in self.get_lower_unanchored():
+                if the_clothing in self.get_lower_unanchored(half_off_instead):
                     return True
                 else:
                     return False
 
             elif the_clothing in self.feet:
-                if the_clothing in self.get_foot_unanchored():
+                if the_clothing in self.get_foot_unanchored(half_off_instead):
                     return True
                 else:
                     return False
@@ -6288,6 +6310,7 @@ init -2 python:
             if picked_underwear is None:
                 return default_outfit.get_copy() #If we weren't able to find any underwear we can't make an outfit with our selection. Return the default outfit to make sure we don't crash.
 
+            # Note: I'm not sure hwo this will work with dresses and extensions.
             for upper in picked_overwear.upper_body:
                 picked_underwear.upper_body.append(upper.get_copy())
 
@@ -6658,11 +6681,11 @@ init -2 python:
             willingness_string = ""
             tooltip_string = ""
 
-            girl_expected_arousal = str(int(self.girl_arousal * (1 + 0.1 * mc.sex_skills[self.skill_tag]))) #Estimate what they'll gain based on both of your skills to make the predictions as accurate as possible.
-            guy_expected_arousal = str(int(self.guy_arousal * (1 + 0.1 * the_person.sex_skills[self.skill_tag])))
+            # girl_expected_arousal = str(int(self.girl_arousal * (1 + 0.1 * mc.sex_skills[self.skill_tag]))) #Estimate what they'll gain based on both of your skills to make the predictions as accurate as possible.
+            # guy_expected_arousal = str(int(self.guy_arousal * (1 + 0.1 * the_person.sex_skills[self.skill_tag])))
 
-            energy_string = "\n{color=#3C3CFF}" + str(self.guy_energy) + "{/color}/{color=#F0A8C0}" + str(self.girl_energy) + "{/color} {image=gui/extra_images/energy_token.png}"
-            arousal_string =  ", {color=#3C3CFF}" + guy_expected_arousal + "{/color}/{color=#F0A8C0}" + girl_expected_arousal + "{/color} {image=gui/extra_images/arousal_token.png}"
+            # energy_string = build_energy_string(the_person)
+            # arousal_string = build_arousal_string(the_person)
 
             disable = False
 
@@ -6707,28 +6730,36 @@ init -2 python:
             if not self.check_clothing(the_person):
                 disable = True
                 willingness_string += "\nObstructed by clothing"
-                #return self.name + "\n{size=22}"+ willingness_string + "\nObstructed by Clothing{/size}" +energy_string + arousal_string + " (disabled)"
             elif mc.recently_orgasmed and self.requires_hard:
                 disable = True
                 willingness_string += "\nRecently orgasmed"
             elif mc.energy < self.guy_energy and the_person.energy < self.girl_energy:
                 disable = True
                 willingness_string += "\nYou're both too tired"
-                #return self.name + "\n{size=22}"+ willingness_string + "\nYou're both too tired{/size}" +energy_string + arousal_string + " (disabled)"
             elif mc.energy < self.guy_energy:
                 disable = True
                 willingness_string += "\nYou're too tired"
-                #return self.name + "\n{size=22}"+ willingness_string + "\nYou're too tired{/size}" +energy_string + arousal_string + " (disabled)"
             elif the_person.energy < self.girl_energy:
                 disable = True
                 willingness_string += "\nShe's too tired"
-                #return self.name + "\n{size=22}"+ willingness_string + "\nShe's too tired{/size}" +energy_string + arousal_string + " (disabled)"
             #else:
 
             if disable:
                 return taboo_break_string + self.name + taboo_break_string + "\n{size=22}"+ willingness_string + "{/size}" + " (disabled)" #Don't show the arousal and energy string if it's disabled to prevent overrun
             else:
-                return taboo_break_string + self.name + taboo_break_string  + "\n{size=22}" + willingness_string + energy_string + arousal_string + "{/size}" + tooltip_string
+                return taboo_break_string + self.name + taboo_break_string  + "\n{size=22}" + willingness_string + "\n" + self.build_energy_arousal_line(the_person) + "{/size}" + tooltip_string
+
+        def build_energy_string(self, the_person):
+            return "{color=#3C3CFF}" + str(self.guy_energy) + "{/color}/{color=#F0A8C0}" + str(self.girl_energy) + "{/color} {image=gui/extra_images/energy_token.png}"
+
+        def build_arousal_string(self, the_person):
+            girl_expected_arousal = str(int(self.girl_arousal * (1 + 0.1 * mc.sex_skills[self.skill_tag]))) #Estimate what they'll gain based on both of your skills to make the predictions as accurate as possible.
+            guy_expected_arousal = str(int(self.guy_arousal * (1 + 0.1 * the_person.sex_skills[self.skill_tag])))
+            return "{color=#3C3CFF}" + guy_expected_arousal + "{/color}/{color=#F0A8C0}" + girl_expected_arousal + "{/color} {image=gui/extra_images/arousal_token.png}"
+
+        def build_energy_arousal_line(self, the_person):
+            return "{size=22}" + self.build_energy_string(the_person) + " | " + self.build_arousal_string(the_person) + "{/size}"
+
 
     ##Initialization of requirement functions go down here. Can also be moved to init -1 eventually##
 
@@ -7588,7 +7619,7 @@ screen person_info_ui(the_person, display_layer = "solo"): #Used to display stat
                         text "       - " + role.role_name style "menu_text_style" size 14
 
             vbox:
-                if the_person.arousal > 0:
+                if the_person.arousal >= 20:
                     textbutton "Arousal: [the_person.arousal]/[the_person.max_arousal] (+" + get_red_heart(__builtin__.int(the_person.arousal/4)) + ") {image=gui/extra_images/arousal_token.png}":
                         ysize 24
                         text_style "menu_text_style"
@@ -7802,11 +7833,28 @@ screen person_info_detailed(the_person):
                 ysize 450
                 vbox:
                     text "Currently Affected By:" style "menu_text_style" size 22
-                    if not the_person.serum_effects:
+                    if the_person.serum_effects:
+                        default selected_serum = None
+                        for serum in the_person.serum_effects:
+                            if serum == selected_serum:
+                                textbutton serum.name + " : " + str(serum.duration - serum.duration_counter) + " Turns Left":
+                                    action [SetScreenVariable("selected_serum", None), Hide("serum_tooltip")]
+                                    style "textbutton_style"
+                                    text_style "textbutton_text_style"
+                                    text_size 12
+                                    background "#888888"
+                            else:
+                                textbutton serum.name + " : " + str(serum.duration - serum.duration_counter) + " Turns Left":
+                                    action SetScreenVariable("selected_serum", serum)
+                                    hovered [SetScreenVariable("selected_serum", None), Show("serum_tooltip", None, serum, 0.65)]
+                                    unhovered Hide("serum_tooltip")
+                                    style "textbutton_style"
+                                    text_style "textbutton_text_style"
+                                    text_size 12
+
+                    else:
                         text "No active serums." style "menu_text_style"
 
-                    for serum in the_person.serum_effects:
-                        text serum.name + " : " + str(serum.duration - serum.duration_counter) + " Turns Left" style "menu_text_style"
                     null height 20
 
 
@@ -7875,7 +7923,7 @@ screen person_info_detailed(the_person):
             align [0.5,0.5]
             auto "gui/button/choice_%s_background.png"
             focus_mask "gui/button/choice_idle_background.png"
-            action Hide("person_info_detailed")
+            action [Hide("serum_tooltip"), Hide("person_info_detailed")]
         textbutton "Return" align [0.5,0.5] text_style "return_button_style"
 
 
@@ -8236,8 +8284,22 @@ screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_name
                     else:
                         text "Serums in Inventory" style "menu_text_style" size 25
 
+                    default selected_serum = None
                     for design in an_inventory.serums_held:
-                        textbutton design[0].name + ": " + str(design[1]) + " Doses" style "textbutton_style" text_style "textbutton_text_style" action NullAction() sensitive True hovered Show("serum_tooltip",None,design[0]) unhovered Hide("serum_tooltip")
+                        if design == selected_serum:
+                            textbutton design[0].name + ": " + str(design[1]) + " Doses":
+                                style "textbutton_style" text_style "textbutton_text_style"
+                                action [SetScreenVariable("selected_serum", None), Hide("serum_tooltip")]
+                                sensitive True
+                                #hovered Show("serum_tooltip",None,design[0])
+                                background "#666666"
+                        else:
+                            textbutton design[0].name + ": " + str(design[1]) + " Doses":
+                                style "textbutton_style" text_style "textbutton_text_style"
+                                action SetScreenVariable("selected_serum", design)
+                                sensitive True
+                                hovered [SetScreenVariable("selected_serum", None), Show("serum_tooltip",None,design[0])]
+                                unhovered Hide("serum_tooltip")
                 $ count += 1
 
     frame:
@@ -8482,11 +8544,12 @@ screen review_designs_screen():
             align [0.5,0.5]
             auto "gui/button/choice_%s_background.png"
             focus_mask "gui/button/choice_idle_background.png"
-            action [Hide("serum_tooltip"), Return()]
+            action Return()
         textbutton "Return" align [0.5,0.5] style "return_button_style" text_style "return_button_style"
 
 
 screen serum_tooltip(the_serum, set_x_align = 0.9, set_y_align = 0.1):
+    zorder 105 #Serum tooltips are a high order so they may be properly layered onto others when needed to show extra info.
     frame:
         background "#888888"
 
@@ -8884,6 +8947,8 @@ screen serum_inventory_select_ui(the_inventory): #Used to let the player select 
         yalign 0.05
         anchor (0.0,0.0)
         vbox:
+            spacing 10
+            default selected_serum = None
             text "Serum Available" size 22 style "menu_text_style"
             for serum in the_inventory.serums_held:
                 button:
@@ -8892,7 +8957,7 @@ screen serum_inventory_select_ui(the_inventory): #Used to let the player select 
                     ysize 80
                     action [Hide("serum_tooltip"),Return(serum[0])]
                     hovered Show("serum_tooltip",None,serum[0])
-                    unhovered Hide("serum_tooltip")
+                    #unhovered Hide("serum_tooltip")
                     text serum[0].name + " - " + str(serum[1]) + " Doses" style "menu_text_style" size 18 xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
 
     frame:
@@ -8904,7 +8969,7 @@ screen serum_inventory_select_ui(the_inventory): #Used to let the player select 
             align [0.5,0.5]
             auto "gui/button/choice_%s_background.png"
             focus_mask "gui/button/choice_idle_background.png"
-            action Return("None")
+            action [Hide("serum_tooltip"), Return("None")]
         textbutton "Return" align [0.5,0.5] text_style "return_button_style"
 
 #LIKELY NOT NEEDED
@@ -9063,6 +9128,9 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                                     $ apply_method = catagories_mapping[catagory_selected][2]
                                     $ cloth_list_length = len(catagories_mapping[catagory_selected][0])
                                     for cloth in catagories_mapping[catagory_selected][0]:
+                                        $ is_sensitive = valid_check(starting_outfit, cloth) and cloth.layer in valid_layers
+                                        if cloth.has_extension and cloth.has_extension.layer not in valid_layers:
+                                            $ is_sensitive = False
                                         textbutton cloth.name:
                                             style "textbutton_style"
                                             text_style "textbutton_text_style"
@@ -9074,7 +9142,7 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                                                 hover_background "#444444"
                                             insensitive_background "#444444"
                                             xfill True
-                                            sensitive valid_check(starting_outfit, cloth) and cloth.layer in valid_layers
+                                            sensitive is_sensitive
                                             action [SetScreenVariable("selected_clothing", cloth), SetScreenVariable("selected_colour", "colour")]
                                             hovered Function(apply_method, demo_outfit, cloth)
                                             unhovered Function(demo_outfit.remove_clothing, cloth)
@@ -9219,35 +9287,47 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
 
                                 text "Transparency: " style "menu_text_style"
                                 hbox:
-                                    spacing 20
-                                    button:
-                                        if current_a == 1.0:
-                                            background "#4f7ad6"
-                                        else:
-                                            background "#1a45a1"
-                                        text "Normal" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                        xysize (120, 40)
-                                        action SetScreenVariable("current_a", 1.0)
-
-                                    button:
-                                        if current_a == 0.95:
-                                            background "#4f7ad6"
-                                        else:
-                                            background "#1a45a1"
-                                        text "Sheer" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                        xysize (120, 40)
-                                        action SetScreenVariable("current_a", 0.95)
-
-                                    button:
-                                        if current_a == 0.8:
-                                            background "#4f7ad6"
-                                        else:
-                                            background "#1a45a1"
-                                        text "Translucent" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                        xysize (120, 40)
-                                        action SetScreenVariable("current_a", 0.8)
-
-                                                        #[SetField(cloth,"colour",[current_r,current_g,current_b,current_a]), Function(apply_method, demo_outfit, cloth)]
+                                    spacing 5
+                                    for trans in ['1.0', '0.95', '0.9', '0.8', '0.75', '0.66', '0.5', '0.33', '0.25']:
+                                        $ trans_name = str(int(float(trans)*100)) + "%"
+                                        button:
+                                            if current_a == float(trans):
+                                                background "#4f7ad6"
+                                            else:
+                                                background "#1a45a1"
+                                            text trans_name style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
+                                            xysize (60, 40)
+                                            action SetScreenVariable("current_a", float(trans))
+                                # hbox:
+                                #     spacing 20
+                                #     button:
+                                #         if current_a == 1.0:
+                                #             background "#4f7ad6"
+                                #         else:
+                                #             background "#1a45a1"
+                                #         text "Normal" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
+                                #         xysize (120, 40)
+                                #         action SetScreenVariable("current_a", 1.0)
+                                #
+                                #     button:
+                                #         if current_a == 0.95:
+                                #             background "#4f7ad6"
+                                #         else:
+                                #             background "#1a45a1"
+                                #         text "Sheer" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
+                                #         xysize (120, 40)
+                                #         action SetScreenVariable("current_a", 0.95)
+                                #
+                                #     button:
+                                #         if current_a == 0.8:
+                                #             background "#4f7ad6"
+                                #         else:
+                                #             background "#1a45a1"
+                                #         text "Translucent" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
+                                #         xysize (120, 40)
+                                #         action SetScreenVariable("current_a", 0.8)
+                                #
+                                #                         #[SetField(cloth,"colour",[current_r,current_g,current_b,current_a]), Function(apply_method, demo_outfit, cloth)]
 
                                 hbox:
                                     spacing 5
@@ -10263,7 +10343,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.34.2 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.35.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -11615,6 +11695,8 @@ label advance_time:
                         elif the_crisis[2] == "on_enter":
                             people.on_room_enter_event_list.append(limited_time_event)
 
+    $ mc.business.run_move() # In each phase it runs people->MC->Business. Policy effects are run as part of the business, and so can overwrite/alter things an employee has done (like wear their uniform)
+
 
     $ mc.location.show_background()
     if mandatory_advance_time: #If a crisis has told us to advance time after it we do so.
@@ -11709,6 +11791,8 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         mom_bedroom = Room("your mom's bedroom", "Mom's Bedroom",[], standard_bedroom_backgrounds[:],[],[],[],False,[2,4], lighting_conditions = standard_indoor_lighting)
         kitchen = Room("kitchen", "Kitchen",[],standard_kitchen_backgrounds[:],[],[],[],False,[3,4], lighting_conditions = standard_indoor_lighting)
 
+        home_bathroom = Room("bathroom", "Bathroom", [], home_bathroom_background, [], [], [], False, [0,0], visible = False) #Note: Only used by special events. Not connected to the main map
+
 
         ##PC's Work##
         lobby = Room(business_name + " lobby",business_name + " Lobby",[],standard_office_backgrounds[:],[],[],[],False,[11,3], tutorial_label = "lobby_tutorial_intro", lighting_conditions = standard_indoor_lighting)
@@ -11776,37 +11860,15 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         list_of_places.append(university)
         list_of_places.append(strip_club)
 
-        # hall.link_locations_two_way(bedroom)
-        # hall.link_locations_two_way(kitchen)
-        # hall.link_locations_two_way(lily_bedroom)
-        # hall.link_locations_two_way(mom_bedroom)
-        #
-        # downtown.link_locations_two_way(hall)
-        # downtown.link_locations_two_way(lobby)
-        # downtown.link_locations_two_way(mall)
-        # downtown.link_locations_two_way(aunt_apartment)
-        # downtown.link_locations_two_way(university)
-        # downtown.link_locations_two_way(strip_club)
-        #
-        # aunt_apartment.link_locations_two_way(aunt_bedroom)
-        # aunt_apartment.link_locations_two_way(cousin_bedroom)
-        #
-        # lobby.link_locations_two_way(office)
-        # lobby.link_locations_two_way(rd_division)
-        # lobby.link_locations_two_way(m_division)
-        # lobby.link_locations_two_way(p_division)
-        #
-        # mall.link_locations_two_way(office_store)
-        # mall.link_locations_two_way(clothing_store)
-        # mall.link_locations_two_way(sex_store)
-        # mall.link_locations_two_way(home_store)
-        # mall.link_locations_two_way(gym)
-
         for room in [bedroom, lily_bedroom, mom_bedroom, aunt_bedroom, cousin_bedroom]:
             room.add_object(make_wall())
             room.add_object(make_floor())
             room.add_object(make_bed())
             room.add_object(make_window())
+
+        home_bathroom.add_object(make_wall())
+        home_bathroom.add_object(Object("shower door", ["Lean"], sluttiness_modifier = 5, obedience_modifier = 5))
+        home_bathroom.add_object(make_floor())
 
         kitchen.add_object(make_wall())
         kitchen.add_object(make_floor())

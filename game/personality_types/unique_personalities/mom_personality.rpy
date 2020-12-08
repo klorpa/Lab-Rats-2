@@ -175,7 +175,7 @@ label mom_sex_responses_anal(the_person):
             "She pants happily."
 
         else:
-            the_personchar "Oh my god, I'm starting to feel like I might... actually cum!"
+            the_person.char "Oh my god, I'm starting to feel like I might... actually cum!"
             "She gasps and pants happily as you anal her."
     return
 
@@ -510,7 +510,7 @@ label mom_cum_pullout(the_person):
     if mc.condom:
         if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
             if the_person.event_triggers_dict.get("preg_knows", False):
-                the_person.char "Do you want to take off that condom? You already got mommy pregnant, I don't mind."
+                the_person.char "Do you want to take off that condom? You already got mommy pregnant..."
 
             elif the_person.on_birth_control:
                 the_person.char "Do you... want to take the condom off, [the_person.mc_title]?"

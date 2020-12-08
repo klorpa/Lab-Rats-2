@@ -25,8 +25,8 @@ init -2 python:
         return
 
     def employee_on_day(the_person):
-        if the_person.event_triggers_dict.get("forced_uniform", None):
-            the_person.event_triggers_dict["forced_uniform"] = None #TODO: Add a way to have special uniforms hang around for future events.
+        if the_person.event_triggers_dict.get("forced_uniform", False) and day%7 == 6: #Reset uniforms over the weekend.
+            the_person.event_triggers_dict["forced_uniform"] = None #TODO: Add a way to have special uniforms hang around for a specific amount of time.
         return
 
 
@@ -500,11 +500,10 @@ label employee_unpaid_serum_test_label(the_person):
     return
 
 label employee_punishment_hub(the_person):
-    #TODO: Decide if we need intro dialogue.
     python:
         infraction_list = []
         for infraction in the_person.infractions:
-            infraction_list.append([infraction.name + "\n{size=16}Severity " + str(infraction.severity) + ", Valid for " + str(infraction.days_valid) + " days{/size} (tooltip)" + infraction.desc, infraction])
+            infraction_list.append([infraction.name + "\n{size=16}Severity " + str(infraction.severity) + ", Valid for " + str(infraction.days_valid - infraction.days_existed) + " days{/size} (tooltip)" + infraction.desc, infraction])
 
         infraction_list.append(["Return", "Return"])
 

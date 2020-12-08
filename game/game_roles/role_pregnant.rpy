@@ -20,6 +20,7 @@ init -1 python:
         return True
 
     def become_pregnant(the_person): # Called when a girl is knocked up. Establishes all of the nessesary bits of info.
+        the_person.event_triggers_dict["immaculate_conception"] = the_person.has_taboo("vaginal_sex") #TODO: Add this, and a path where she doesn't think it's yours: and (the_person.relationship = "Single" and (the_person.effective_sluttiness() < 40 or the_person.love > 40)) or the_person.love > 80: #Doesn't even know how it happend!
         the_person.event_triggers_dict["preg_accident"] = the_person.on_birth_control # If a girl is on birth control the pregnancy is an accident.
         the_person.event_triggers_dict["preg_start_date"] = day
         the_person.event_triggers_dict["preg_tits_date"] = day + 21 + renpy.random.randint(0,7)
@@ -58,10 +59,8 @@ init -1 python:
 
 
 label pregnant_announce(the_person):
-     #It's been a long time since this event was added. She's suprised to see you.
-    #if the_person.event_triggers_dict.get("preg_accident", False):
-        #It was an accident.
     $ the_person.event_triggers_dict["preg_knows"] = True #Set here and in the larger tits, represents the person knowing they're pregnant so they don't ask for condoms ect.
+    $ was_immaculate = the_person.event_triggers_dict("immaculate_conception", False) # In case you manage to get someone pregnant without even fucking them!
     $ was_accident = the_person.event_triggers_dict.get("preg_accident", False)
     "[the_person.title] walks over to you as soon as she sees you."
     if mc.location.get_person_count() > 1:
@@ -71,7 +70,10 @@ label pregnant_announce(the_person):
     if day - the_person.event_triggers_dict.get("preg_start_date", 0) > 30:
         return # If you don't ever check in with her for 30 days you probably don't care and we don't need to show this event.
 
-    if was_accident:
+    if was_immaculate:
+        the_person.char "So, I have some news. This is really surprising, even to me..."
+        mc.name "What's up? Is everything alright?"
+    elif was_accident:
         the_person.char "So I have some news. This might be a little suprising."
         mc.name "What's up? Is everything okay?"
     else:
@@ -80,7 +82,11 @@ label pregnant_announce(the_person):
 
 
     if girlfriend_role in the_person.special_role:
-        if was_accident:
+        if was_immaculate:
+            the_person "I know this might sound crazy but... I'm pregnant!"
+            the_person "I don't know when it happened, or how, since we haven't even had sex, but I definitely am."
+            the_person "Maybe some of your cum dripped between my legs? Or it was on my hands when I touched myself? It doesn't really matter."
+        elif was_accident:
             the_person.char "Well, you know that we haven't exactly been careful with condoms lately, since I'm on birth control..."
             the_person.char "I'm not sure exactly when it happened, but it looks like you... managed to get me pregnant anyways."
         else:
@@ -92,9 +98,14 @@ label pregnant_announce(the_person):
         "You hug [the_person.title], and she squeezes you back. After a long moment she breaks the hug."
         the_person.char "That's all for now, I don't need you to do anything. I'm just so happy to be able to share this with you!"
 
-    elif affair_role in the_person.special_role:
+    elif affair_role in the_person.special_role: #Note: Requires her to be in a relationship, so there's no "immaculate conception" chance. She'll just think it's his.
         $ so_title = SO_relationship_to_title(the_person.relationship)
-        if was_accident:
+        if was_immaculate:
+            the_person "So I know this is going to sound crazy, but I'm pregnant."
+            the_person "I don't think it's [so_title]'s, the dates just don't line up."
+            the_person "Maybe I got some of your cum on my hand and touched myself, or maybe it dripped down between my legs."
+            the_person "Either way, I'm knocked up and I think it's yours."
+        elif was_accident:
             the_person.char "Well... We haven't been using condoms since I'm taking birth control, but..."
             the_person.char "It looks like you managed to knock me up anyways."
         else:
@@ -103,7 +114,7 @@ label pregnant_announce(the_person):
         "She bites her lip and shrugs."
         the_person.char "What do you want me to tell my [so_title]? I could tell him it's his, but I don't know if he'll believe it."
         the_person.char "It's been a long time since I let him have sex with me."
-        menu:
+        menu: #TODO: We should add disabled slugs. Might need to make these into actions in that case.
             "Leave your [so_title]." if the_person.love + 10 > leave_SO_love_calculation(the_person):
                 mc.name "I think it's time you left him so we can be together. There's no point in hiding this any longer."
                 "[the_person.title] seems nervous, but after thinking about it for a moment she nods."
@@ -114,6 +125,7 @@ label pregnant_announce(the_person):
                 mc.name "Just tell him it's his. If he doesn't believe it we can deal with that later."
                 "[the_person.title] nods nervously."
                 the_person.char "Okay, that's what I'll do."
+                #TODO: Have an event based on this, more likely to spawn the higher her Love (as a inverse substitute for her Love for him)
 
             "Let him fuck you." if the_person.effective_sluttiness() >= 50 or the_person.obedience >= 140 or the_person.get_opinion_score("creampies") > 0:
                 #She won't fuck her SO unless she's slutty or obeident enough to do it despite her love for you (or if she just loves getting creampied)
@@ -124,7 +136,11 @@ label pregnant_announce(the_person):
         the_person.char "That's all, I suppose. I'll keep you updated on how things are going."
 
     elif the_person.is_family(): #TODO: Expand this into full events for each family member. This is a placeholder until then
-        if was_accident:
+        if was_immaculate:
+            the_person "There's no easy way to explain this, so I'll just say it. I'm pregnant."
+            the_person "I don't know how it could have even happened. I haven't had sex in so long!"
+            the_person "It's not important now though, what is important is that I'm going to have a baby!"
+        elif was_accident:
             the_person.char "I... Well, I'm pregnant, [the_person.mc_title]."
             the_person.char "I don't know how it happened. I've been very careful with my birth control since we've been having sex."
         else:
@@ -138,14 +154,20 @@ label pregnant_announce(the_person):
 
     elif the_person.relationship != "Single": # You aren't having a formal affair, but she's in a relationship. More of a "one night stand" kind of thing.
         $ so_title = SO_relationship_to_title(the_person.relationship)
-        if was_accident:
+        if was_immaculate:
+            the_person "Well I wanted you to know that... I'm pregnant. It's probably not yours, since we've never had sex."
+            the_person "You don't think your cum might have ended up in my by... accident, do you?"
+            mc.name "Nothing's impossible, I suppose."
+            the_person "I was worried you'd say that... What do you think I should do?"
+
+        elif was_accident:
             the_person.char "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
             the_person.char "I took a test, and I'm pregnant. You got me pregnant."
+            the_person.char "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
         else:
             the_person.char "I wasn't on any sort of birth control when we fooled around and you came inside me."
             the_person.char "It must have been the right time of the month, because I'm pregnant."
-
-        the_person.char "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
+            the_person.char "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
         menu:
             "Leave him for me." if the_person.love > leave_SO_love_calculation(the_person):
                 mc.name "Just leave him. I'll take responsability for what happened, I'm ready to commit to a relationship with you [the_person.title]."
@@ -164,7 +186,12 @@ label pregnant_announce(the_person):
                 the_person.char "I guess that's what I'll have to do. Anyways, you don't need to do anything. I just thought you should know."
 
     else: #She's single, a true one night stand kind of encounter.
-        if was_accident:
+        if was_immaculate:
+            the_person "I know this is going to come out of the blue, but... I'm pregnant."
+            the_person "I know we haven't had sex, but I can't even think of anyone else I've been close to other than you."
+            the_person "Maybe... I got some of your cum inside me by accident? Like it dripped between my legs? I don't know."
+            the_person "What I do know is that I'm pregannt, and I think it's yours."
+        elif was_accident:
             the_person.char "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
             the_person.char "I took a test, and I'm pregnant. You got me pregnant."
         else:

@@ -204,7 +204,7 @@ label cousin_cum_condom(the_person):
     if the_person.on_birth_control:
         the_person.char "Oooh, wow, that's a lot of cum. Don't you wish that it was inside my tight, wet pussy instead of that sad little condom?"
         "She scoffs."
-        the_person.char "Maybe next time, nerd."
+        the_person.char "Dream on, nerd."
 
     elif the_person.wants_creampie():
         the_person.char "Oh, I can actually feel it through the condom."

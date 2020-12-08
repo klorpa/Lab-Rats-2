@@ -124,6 +124,7 @@ init -2 python:
 ###COUSIN ACTION LABELS###
 label cousin_intro_phase_one_label():
     #Your cousin bursts into your room at the end of the day frustrated with Lily and how little personal space she has.
+    $ mc.location.show_background()
     $ cousin.draw_person(emotion = "angry")
     "Without warning your bedroom door is opened and [cousin.possessive_title] walks in. She closes the door behind her and looks awkwardly at you."
     mc.name "Hey..."
@@ -314,9 +315,12 @@ label cousin_blackmail_list(the_person):
             mc.name "I want to see you strip for me."
             if the_person.effective_sluttiness() >= 15:
                 "[the_person.possessive_title] doesn't say anything for a second."
-                the_person.char "Fine. Sit down and pay attention. I'm only doing this once."
+                the_person.char "Fine. Sit down and pay attention. I'm not doing this for fun."
                 if the_person.effective_sluttiness("underwear_nudity") <= 20:
                     #She only wants to show you her underwear.
+                    "She starts to move, then pauses to glare at you."
+                    the_person.char "And I'm not taking off my underwear. Got it?"
+                    mc.name "Whatever, just make sure you put on a good show for me."
                     if the_person.outfit.wearing_bra(): #If she's wearing a bra strip down to it.
                         while the_person.outfit.bra_covered():
                             $ the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
@@ -325,7 +329,8 @@ label cousin_blackmail_list(the_person):
                     else: #She's not wearing a bra and doesn't want you to see her tits.
                         "[the_person.title] seems nervous and plays with her shirt." #TODO: Check that she is wearing a shirt
                         mc.name "What's wrong?"
-                        the_person.char "I don't have a bra on... I can't take this off."
+                        "She scoffs and looks away."
+                        the_person.char "Nothing. I just... don't have a bra on... I can't take this off."
                         mc.name "Come on, you know the deal."
                         the_person.char "Nope. Not doing it. Be happy with what you're getting."
 
@@ -348,13 +353,13 @@ label cousin_blackmail_list(the_person):
                     $ the_person.draw_person(position = "back_peek")
                     $ the_person.update_outfit_taboos()
                     the_person.char "Finished yet? I bet you're about to cream your fucking pants looking at this."
+                    #TODO: Add a strip-show-and-masturbate event that we can pass people into.
                     "You take a second to enjoy the view."
                     mc.name "Alright, that'll do."
                     the_person.char "Finally..."
                     "[the_person.possessive_title] gets dressed again."
                     $ the_person.update_outfit_taboos()
                     $ the_person.apply_outfit(the_person.planned_outfit)
-                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -396,7 +401,6 @@ label cousin_blackmail_list(the_person):
                     "Once you've gotten your fill, [the_person.title] gets dressed again."
                     $ the_person.update_outfit_taboos()
                     $ the_person.apply_outfit(the_person.planned_outfit)
-                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 

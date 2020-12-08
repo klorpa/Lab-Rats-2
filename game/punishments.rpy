@@ -347,8 +347,8 @@ label punishment_spank(the_person, the_infraction):
                 else:
                     "You grab the hem of [the_person.title]'s [top_clothing.display_name] and pull it up around her waist."
 
-                $ the_person.draw_animated_removal(top_clothing, half_off_instead = True)
-                if not the_person.wearing_panties():
+                $ the_person.draw_animated_removal(top_clothing, position = "standing_doggy", half_off_instead = True)
+                if not the_person.outfit.wearing_panties():
                     mc.name "No panties today, I see."
 
                 $ the_person.update_outfit_taboos()
@@ -392,7 +392,7 @@ label spank_description(the_person, the_infraction):
             "You keep smacking her butt, putting more force behind your blow each time."
             if not_cushioned: #Ass gets red, she gets sore.
                 "Her exposed ass jiggles with each hit, and quickly starts to turn red."
-                the_person "Ah... Am I almost done [the_person.title]?"
+                the_person "Ah... Am I almost done [the_person.mc_title]?"
 
                 if the_person.get_opinion_score("being submissive") > 0: #She likes it and is getting turned on.
                     "You spank her again, and she moans."
@@ -548,7 +548,7 @@ label punishment_underwear_only(the_person, the_infraction):
         $ slut_change += the_person.get_opinion_score("not wearing anything")
     $ the_person.change_slut_temp(slut_change)
 
-    mc.name "I expect you to stay in your new uniform for the rest of the day. Any deviation from it and there will be further punishments."
+    mc.name "I expect you to stay in your new uniform for the rest of the week. Any deviation from it and there will be further punishments."
     mc.name "Understood?"
     the_person "Yes, [the_person.mc_title]."
     mc.name "Good. We're done here."
@@ -694,7 +694,7 @@ label punishment_strip_and_spank(the_person, the_infraction):
 
 label punishment_office_nudity(the_person, the_infraction):
     mc.name "I have decided on a suitable punishment for your violation of company rules."
-    mc.name "You're going to spend the rest of the day working while nude."
+    mc.name "You're going to spend the rest of the week working while nude."
     if not (the_person.outfit.tits_available() and the_person.outfit.vagina_available() and the_person.outfit.tits_visible() and the_person.outfit.vagina_available()): #Something to strip
         mc.name "Let's start by having you strip down."
         call strip_naked_command_helper(the_person, the_infraction) from _call_strip_naked_command_helper_1
@@ -707,10 +707,10 @@ label punishment_office_nudity(the_person, the_infraction):
             mc.name "Hands down, there's no point hiding anything from me now."
             "She frowns, but follows your instructions. She lowers her hands to her sides, letting you get a good view of her body."
 
-        mc.name "Good. Now I want you to consider this your uniform for the rest of the day."
+        mc.name "Good. Now I want you to consider this your uniform for the rest of the week."
 
     else:
-        mc.name "You're already un-dressed for the occasion, consider this your uniform for the rest of the day."
+        mc.name "You're already un-dressed for the occasion, consider this your uniform for the rest of the week."
 
     $ the_person.event_triggers_dict["forced_uniform"] = the_person.outfit.get_copy()
     $ slut_change = 0
@@ -990,13 +990,13 @@ label punishment_forced_punishment_outfit(the_person, the_infraction):
     else:
         the_person "What is it going to be, [the_person.mc_title]?"
 
-    mc.name "I've put together a special outfit for you. It will be your outfit for the rest of the day."
+    mc.name "I've put together a special outfit for you. It will be your outfit for the rest of the week."
     call outfit_master_manager() from _call_outfit_master_manager_9
     $ the_outfit = _return
     if the_outfit is None:
         "You consider what to dress [the_person.possessive_title] for a moment, then shrug."
         mc.name "On second thought, I think wearing nothing at all suits a disobedient slut like you."
-        mc.name "Consider this your uniform for the rest of the day. Do you understand?"
+        mc.name "Consider this your uniform for the rest of the week. Do you understand?"
         $ the_person.set_uniform(the_person.outfit, wear_now = True)
 
     else:

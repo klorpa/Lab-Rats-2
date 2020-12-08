@@ -190,6 +190,10 @@ init -1:
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         panties_list.append(cute_panties)
 
+        kitty_panties = Clothing("Kitty Panties", 1, True, True, "Kitty_Panties", False, True, 1, tucked = True, display_name = "panties", whiteness_adjustment = 0.1,
+            can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
+        panties_list.append(kitty_panties)
+
         lace_panties = Clothing("Lace Panties", 1, True, True, "Lace_Panties", False, True, 2, tucked = True, whiteness_adjustment = 0.2, supported_patterns = {"Two Toned":"Pattern_1"},  display_name = "panties",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         panties_list.append(lace_panties)
@@ -202,7 +206,7 @@ init -1:
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         panties_list.append(tiny_lace_panties)
 
-        thin_panties = Clothing("Thin Panties", 1, True, True, "Thin_Panties", False, True, 1, tucked = True, whiteness_adjustment = -0.1, contrast_adjustment = 1.3, supported_patterns = {"Two Toned":"Pattern_1"},  display_name = "panties",
+        thin_panties = Clothing("Thin Panties", 1, True, True, "Thin_Panties", False, True, 1, tucked = True, contrast_adjustment = 1.25, supported_patterns = {"Two Toned":"Pattern_1"},  display_name = "panties",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         panties_list.append(thin_panties)
 
@@ -210,7 +214,7 @@ init -1:
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         panties_list.append(thong)
 
-        tiny_g_string = Clothing("G String", 1, True, True, "Tiny_G_String", False, True, 4, tucked = True,  display_name = "g-string",
+        tiny_g_string = Clothing("G String", 1, True, True, "Tiny_G_String", False, True, 4, tucked = True, whiteness_adjustment = -0.1, display_name = "g-string",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         panties_list.append(tiny_g_string)
 
@@ -267,6 +271,10 @@ init -1:
         teddy = Clothing("Teddy", 1, True, True, "Teddy", True, True, 4, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = "teddy",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
         bra_list.append(teddy)
+
+        kitty_babydoll = Clothing("Kitty Babydoll", 1, True, True, "Kitty_Babydoll", True, True, 4, whiteness_adjustment = 0.1, display_name = "babydoll",
+            can_be_half_off = True, half_off_regions = [stomach_region, breast_region], half_off_gives_access = True, half_off_reveals = True)
+        bra_list.append(kitty_babydoll)
 
         cincher = Clothing("Cincher", 1, False, False, "Cincher", True, False, 5, supported_patterns = {"Two Toned":"Pattern_1"}, display_name = "corset")
         bra_list.append(cincher)
@@ -358,94 +366,108 @@ init -1:
         #TODO: Check if the extension or the main piece should have the whiteness adjusments etc.
         dress_list = []
 
-        sweater_dress_bottom = Clothing("sweater dress bottom", 2, True, False, "Sweater_Dress", False, False, 0, is_extension = True, display_name = "dress bottom",
+        pinafore_bottom = Clothing("pinafore dress bottom", 2, True, False, "Pinafore_bot", False, False, 0, is_extension = True, display_name = "dress bottom",
+            can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
+        pinafore = Clothing("pinafore", 3, False, False, "Pinafore", True, False, 0, has_extension = pinafore_bottom, display_name = "pinafore",
+            can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
+            constrain_regions = [torso_region, stomach_region, skirt_region])
+        dress_list.append(pinafore)
+
+        sweater_dress_bottom = Clothing("sweater dress bottom", 2, True, False, "Sweater_Dress_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
         sweater_dress = Clothing("sweater dress", 2, True, True, "Sweater_Dress", True, False, 0, has_extension = sweater_dress_bottom, whiteness_adjustment = 0.2, contrast_adjustment = 1.2, supported_patterns = {"Two Toned":"Pattern_1", "Hearts":"Pattern_2"}, display_name = "dress",
             constrain_regions = [torso_region, stomach_region, upper_arm_region, lower_arm_region, skirt_region])
         dress_list.append(sweater_dress)
 
-        two_part_dress_bottom = Clothing("two part dress bottom", 2, True, False, "Two_Piece_Dress", False, False, 0, is_extension = True, display_name = "dress bottom",
+        summer_dress_bottom = Clothing("summer dress bottom", 2, True, False, "Summer_Dress_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
+            can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
+        summer_dress = Clothing("summer dress", 2, True, False, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress",
+            can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
+            constrain_regions = [torso_region, stomach_region, skirt_region])
+        dress_list.append(summer_dress)
+
+        frilly_dress_bottom = Clothing("frilly dress bottom", 2, True, False, "Frilly_Dress_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
+            can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
+        frilly_dress = Clothing("frilly dress", 2, True, False, "Frilly_Dress", True, False, 2, has_extension = frilly_dress_bottom, display_name = "dress",
+            can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region, upper_arm_region], half_off_gives_access = True, half_off_reveals = True,
+            constrain_regions = [torso_region, stomach_region, skirt_region, upper_arm_region])
+        dress_list.append(frilly_dress)
+
+        two_part_dress_bottom = Clothing("two part dress bottom", 2, True, False, "Two_Piece_Dress_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
         two_part_dress = Clothing("two part dress", 2, True, True, "Two_Piece_Dress", True, False, 6, has_extension = two_part_dress_bottom, display_name = "dress",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(two_part_dress)
 
-        thin_dress_bottom = Clothing("thin dress bottom", 2, True, False, "Thin_Dress", False, False, 0, is_extension = True, display_name = "dress bottom",
+        thin_dress_bottom = Clothing("thin dress bottom", 2, True, False, "Thin_Dress_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region, upper_arm_region, lower_arm_region], half_off_gives_access = True, half_off_reveals = True)
         thin_dress = Clothing("thin dress", 2, True, True, "Thin_Dress", True, False, 4, has_extension = thin_dress_bottom, whiteness_adjustment = 0.3, contrast_adjustment = 1.15, display_name = "dress",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_ignore_regions = [stomach_region, upper_arm_region, lower_arm_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, skirt_region])
         dress_list.append(thin_dress)
 
-        summer_dress_bottom = Clothing("summer dress bottom", 2, True, False, "Summer_Dress", False, False, 0, is_extension = True, display_name = "dress bottom",
-            can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
-        summer_dress = Clothing("summer dress", 2, True, False, "Summer_Dress", True, True, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress",
-            can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
-            constrain_regions = [torso_region, stomach_region, skirt_region])
-        dress_list.append(summer_dress)
-
-        virgin_killer_bottom = Clothing("virgin killer bottom", 2, True, False, "Virgin_Killer", False, False, 0, is_extension = True, display_name = "dress bottom",
+        virgin_killer_bottom = Clothing("virgin killer bottom", 3, True, False, "Virgin_Killer_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
         virgin_killer = Clothing("Virgin Killer", 2, True, True, "Virgin_Killer", True, False, 5, has_extension = virgin_killer_bottom, display_name = "dress",
             can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(virgin_killer)
 
-        evening_dress_bottom = Clothing("evening dress bottom", 2, True, False, "Evening_Dress", False, False, 0, is_extension = True, display_name = "dress bottom",
+        evening_dress_bottom = Clothing("evening dress bottom", 2, True, False, "Evening_Dress_Bot", False, False, 0, is_extension = True, display_name = "dress bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
         evening_dress = Clothing("evening dress", 2, True, True, "Evening_Dress", True, False, 2, has_extension = evening_dress_bottom, whiteness_adjustment = 0.4, display_name = "dress",
             can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(evening_dress)
 
-        leotard_bottom = Clothing("Leotard bottom", 1, True, True, "Leotard", False, True, 0, is_extension = True, display_name = "leotard crotch",
+        leotard_bottom = Clothing("Leotard bottom", 1, True, True, "Leotard_Bot", False, True, 0, is_extension = True, display_name = "leotard crotch",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         leotard = Clothing("Leotard", 2, True, True, "Leotard", True, False, 5, has_extension = leotard_bottom, tucked = True, display_name = "leotard",
             constrain_regions = [torso_region, stomach_region, pelvis_region, upper_arm_region, lower_arm_region])
         dress_list.append(leotard)
 
-        nightgown_dress_bottom = Clothing("Nightgown bottom", 2, False, False, "Nightgown", False, True, 0, is_extension = True, display_name = "nightgown bottom",
+        nightgown_dress_bottom = Clothing("Nightgown bottom", 2, False, False, "Nightgown_Bot", False, True, 0, is_extension = True, display_name = "nightgown bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
         nightgown_dress = Clothing("Nightgown", 2, False, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "nightgown",
             can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(nightgown_dress)
 
-        bath_robe_bottom = Clothing("Bathrobe bottom", 2, False, False, "Bath_Robe", False, False, 0, is_extension = True, display_name = "rob bottom",
+        bath_robe_bottom = Clothing("Bathrobe bottom", 2, False, False, "Bath_Robe_Bot", False, False, 0, is_extension = True, display_name = "rob bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [lower_arm_region, stomach_region], half_off_gives_access = True, half_off_reveals = True)
         bath_robe = Clothing("Bathrobe", 2, False, True, "Bath_Robe", True, True, 1, has_extension = bath_robe_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "robe",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_ignore_regions = [upper_arm_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, skirt_region])
         dress_list.append(bath_robe)
 
-        lacy_one_piece_underwear_bottom = Clothing("lacy one piece bottom", 1, True, True, "Lacy_One_Piece_Underwear", False, True, 0, is_extension = True, display_name = "underwear crotch",
+        lacy_one_piece_underwear_bottom = Clothing("lacy one piece bottom", 1, True, True, "Lacy_One_Piece_Underwear_Bot", False, True, 0, is_extension = True, display_name = "underwear crotch",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         lacy_one_piece_underwear = Clothing("lacy one piece", 1, True, True, "Lacy_One_Piece_Underwear", True, True, 4, tucked = True, has_extension = lacy_one_piece_underwear_bottom, whiteness_adjustment = 0.2, display_name = "underwear",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_gives_access = True, half_off_reveals = True)
         dress_list.append(lacy_one_piece_underwear)
 
-        lingerie_one_piece_bottom = Clothing("lingerie one piece bottom", 1, True, True, "Lingerie_One_Piece", False, True, 0, is_extension = True, display_name = "underwear crotch",
+        lingerie_one_piece_bottom = Clothing("lingerie one piece bottom", 1, True, True, "Lingerie_One_Piece_Bot", False, True, 0, is_extension = True, display_name = "underwear crotch",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         lingerie_one_piece = Clothing("lingerie one piece", 1, True, True, "Lingerie_One_Piece", True, True, 8, tucked = True, has_extension = lingerie_one_piece_bottom, supported_patterns = {"Flowers":"Pattern_1"}, display_name = "underwear",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, pelvis_region])
         dress_list.append(lingerie_one_piece)
 
-        bodysuit_underwear_bottom = Clothing("bodysuit underwear bottom", 1, True, True, "Bodysuit_Underwear", False, True, 0, is_extension = True, display_name = "bodysuit crotch",
+        bodysuit_underwear_bottom = Clothing("bodysuit underwear bottom", 1, True, True, "Bodysuit_Underwear_Bot", False, True, 0, is_extension = True, display_name = "bodysuit crotch",
             can_be_half_off = True, half_off_regions = [vagina_region], half_off_gives_access = True, half_off_reveals = True)
         bodysuit_underwear = Clothing("bodysuit underwear", 1, True, True, "Bodysuit_Underwear", True, True, 6, tucked = True, has_extension = bodysuit_underwear_bottom, whiteness_adjustment = 0.2, display_name = "bodysuit",
             constrain_regions = [torso_region, upper_arm_region, lower_arm_region, stomach_region, pelvis_region])
         dress_list.append(bodysuit_underwear)
 
-        towel_bottom = Clothing("Towel bottom", 1, True, True, "Towel", False, False, 0, is_extension = True, display_name = "towel bottom",
+        towel_bottom = Clothing("Towel bottom", 1, True, True, "Towel_Bot", False, False, 0, is_extension = True, display_name = "towel bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region], half_off_gives_access = True, half_off_reveals = True)
         towel = Clothing("Towel", 1, True, True, "Towel", True, False, 1, has_extension = towel_bottom, display_name = "towel",
             can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, skirt_region])
         # dress_list.append(towel) #Not a standard dress item, so not on the list.
 
-        apron_bottom = Clothing("Apron", 3, False, False, "Apron", False, False, 0, is_extension = True,
+        apron_bottom = Clothing("Apron", 3, False, False, "Apron_Bot", False, False, 0, is_extension = True,
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region], half_off_gives_access = True, half_off_reveals = True, display_name = "arpon bottom")
         apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1, display_name = "apron",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_gives_access = True, half_off_reveals = True,
@@ -479,6 +501,11 @@ init -1:
             can_be_half_off = True, half_off_regions = [breast_region, stomach_region, pelvis_region, upper_leg_region], half_off_ignore_regions = [upper_arm_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region])
         shirts_list.append(long_tshirt)
+
+        frilly_longsleeve_shirt = Clothing("frilly longsleeve shirt", 2, True, True, "Frilly_Longsleeve_Shirt", True, False, 0, display_name = "shirt",
+            can_be_half_off = True, half_off_regions = [breast_region, stomach_region, pelvis_region], half_off_ignore_regions = [upper_arm_region, lower_arm_region], half_off_gives_access = True, half_off_reveals = True,
+            constrain_regions = [torso_region, stomach_region, upper_arm_region, lower_arm_region])
+        shirts_list.append(frilly_longsleeve_shirt)
 
         sweater = Clothing("Sweater", 2, True, True, "Sweater", True, False, 1, whiteness_adjustment = 0.1, display_name = "sweater",
             can_be_half_off = True, half_off_regions = [breast_region, stomach_region], half_off_ignore_regions = [upper_arm_region, lower_arm_region], half_off_gives_access = True, half_off_reveals = True,
@@ -647,7 +674,8 @@ init -1:
         head_towel = Clothing("Head Towel", 2, False, False, "Head_Towel", False, False, 0, body_dependant = False, display_name = "head towel")
         # earings_list.append(head_towel) #TEMPORARY FOR TESTING
 
-
+        ball_gag = Facial_Accessory("Ball Gag", 2, False, False, "Ball_Gag", False, False, 15, display_name = "Gag", modifier_lock = "blowjob") #TODO: Get the ball gag text modifier working
+        #earings_list.append(ball_gag) #TEMPORARY FOR TESTING
 
 
         #TODO: Add a makeup section
@@ -677,6 +705,9 @@ init -1:
 
         bead_bracelet = Clothing("Bead Bracelet", 2, False, False, "Bead_Bracelet", False, False, 0, display_name = "bracelet")
         bracelet_list.append(bead_bracelet)
+
+        colourful_bracelets = Clothing("Colourful Bracelets", 2, False, False, "Colourful_Bracelets", False, False, 0, display_name = "bracelets")
+        bracelet_list.append(colourful_bracelets)
 
         forearm_gloves = Clothing("Forearm Gloves", 2, False, False, "Forearm_Gloves", False, False, 2, supported_patterns = {"Two Tone":"Pattern_1"}, display_name = "gloves")
         bracelet_list.append(forearm_gloves)

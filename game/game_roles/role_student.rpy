@@ -804,7 +804,7 @@ label student_masturbate_label(the_person):
                     "[the_person.possessive_title] hurries back into her clothing, then sits down."
 
 
-            "Masturbate with her.\nRequires: 50 Sluttiness (disabled)" if the_person.effective_sluttiness() < 30:
+            "Masturbate with her.\nRequires: 30 Sluttiness (disabled)" if the_person.effective_sluttiness() < 30:
                 pass
 
     call study_normally(the_person, public = False) from _call_study_normally_2

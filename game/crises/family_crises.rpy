@@ -12,7 +12,7 @@ init 1 python:
 label mom_outfit_help_crisis_label():
     $ the_person = mom
     # Your mom asks for help planning an outfit for the next day. As a bonus you get to watch her strip down between outfits (peek/don't peek decision given, she doesn't care at high sluttiness)
-    if not mom in mc.location.people:
+    if not mc.location.has_person(mom):
         #She's in a different room, shh calls you in.
         the_person.char "[the_person.mc_title], can you help me with something for a moment?"
         "You hear [the_person.possessive_title] call for you from her bedroom."
@@ -397,7 +397,7 @@ label mom_lingerie_surprise_label():
 init 1 python:
     def mom_selfie_requirement():
         if not mc_at_home() and not (time_of_day == 0 or time_of_day == 4): #She always sents you text while you're not at home for the middle part of the day
-            if not mom in mc.location.people: #Obviously don't do it if she's right there with you.
+            if not mc.location.has_person(mom): #Obviously don't do it if she's right there with you.
                 if mom.love >= 15:
                     return True
         return False
@@ -1493,6 +1493,8 @@ label girl_shower_leave(the_person):
     return
 
 label girl_shower_enter(the_person, suprised):
+    $ mc.change_location(home_bathroom)
+    $ home_bathroom.show_background()
     $ the_person.apply_outfit(Outfit("Nude"))
     #$ the_person.outfit = Outfit("Nude") changed v0.24.1
     $ the_person.draw_person(position = "back_peek")
@@ -1549,8 +1551,6 @@ label girl_shower_enter(the_person, suprised):
                 $ the_person.change_slut_temp(3 + the_person.get_opinion_score("showing her ass"))
                 "She steps out of the shower and grabs a towel."
                 $ the_person.apply_outfit(towel_outfit)
-                # $ the_person.outfit = Outfit("Towel") changed v0.24.1
-                # $ the_person.outfit.add_dress(towel.get_copy())
 
             # elif the_person.effective_sluttiness() <= 60: #TODO: Add a "hot dog" position and make it a starting position for this.
             #     "She wiggles her butt and strokes your tip against her cheeks."
@@ -1571,12 +1571,6 @@ label girl_shower_enter(the_person, suprised):
                 $ the_person.change_slut_temp(2)
                 menu:
                     "Fuck her.":
-                        $ bathroom = Room("bathroom", "Bathroom", [], home_bathroom_background, [], [], [], False, [0,0], visible = False)
-                        $ bathroom.show_background()
-                        $ bathroom.add_object(make_wall())
-                        $ bathroom.add_object(Object("shower door", ["Lean"], sluttiness_modifier = 5, obedience_modifier = 5))
-                        $ bathroom.add_object(make_floor())
-                        $ mc.change_location(bathroom)
                         call fuck_person(the_person, skip_intro = True) from _call_fuck_person_1
                         $ the_report = _return
 
@@ -1594,7 +1588,6 @@ label girl_shower_enter(the_person, suprised):
 
                         $ clear_scene()
                         "She leaves the room and you finish your shower alone, feeling refreshed by the water."
-                        $ mc.change_location(bedroom)
 
                     "Just have a shower.":
                         mc.name "Maybe some other time, I've got to hurry up though."
@@ -1608,6 +1601,8 @@ label girl_shower_enter(the_person, suprised):
         "Join her in the shower.\nRequires: 120 Obedience (disabled)" if the_person.obedience < 120:
             pass
 
+
+    $ mc.change_location(bedroom)
     return
 
 #TODO: mall crisis requiprements.

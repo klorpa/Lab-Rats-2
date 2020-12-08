@@ -152,7 +152,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
             $ option_list = []
             python:
                 if position_choice is not None:
-                    option_list.append(["Keep " + position_choice.verbing + " her.","Continue"]) #Note: you're prevented from continuing if the energy cost would be too high by the pre-round checks.
+                    option_list.append(["Keep " + position_choice.verbing + " her.\n" + position_choice.build_energy_arousal_line(the_person),"Continue"]) #Note: you're prevented from continuing if the energy cost would be too high by the pre-round checks.
                     option_list.append(["Pause and strip her down.","Strip"])
 
                     if not position_locked:
@@ -177,6 +177,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         # Now that a round_choice has been picked we can do something.
         if round_choice == "Change" or round_choice == "Continue":
             if round_choice == "Change": # If we are changing we first select and transition/intro the position, then run a round of sex. If we are continuing we ignroe all of that
+                $ mc.condom = False # If we're changing position we want to be able to re-check if we need a condom.
                 if start_position is None: #The first time we get here,
                     call pick_position(the_person, ignore_taboo = ignore_taboo) from _call_pick_position
                     $ position_choice = _return
@@ -269,7 +270,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
 
         elif isinstance(round_choice, Position): #The only non-strings on the list are positions we are changing to
-            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness_1
+            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo, skip_condom = True) from _call_check_position_willingness_1
             if _return:
                 $ round_choice.redraw_scene(the_person)
                 if the_person.has_taboo(round_choice.associated_taboo) and not ignore_taboo:
@@ -302,6 +303,8 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                         $ the_person.change_obedience(2)
                         if "beg finished" in report_log:
                             $ report_log["beg finish"] += 1
+                        else:
+                            $ report_log["beg finish"] = 0
                         $ finished = False
 
                     "Stop and leave.":
@@ -325,7 +328,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
     # Teardown the sex modifiers
     $ the_person.clear_situational_slut("love_modifier")
-    $ the_person.clear_situational_slut("happiness_effect")
+    $ the_person.clear_situational_slut("happiness_modifier")
     $ the_person.clear_situational_slut("cheating")
     $ the_person.clear_situational_slut("taboo_sex")
     $ the_person.clear_situational_slut("sex_object")
@@ -433,7 +436,7 @@ label pick_object(the_person, the_position, forced_object = None):
     $ the_person.add_situational_obedience("sex_object",picked_object.obedience_modifier, the_position.verbing + " on a " + picked_object.name)
     return picked_object
 
-label check_position_willingness(the_person, the_position, ignore_taboo = False): #Returns if the person is willing to do this position or not, and charges the appropriate happiness hit if they needed obedience to be willing.
+label check_position_willingness(the_person, the_position, ignore_taboo = False, skip_condom = False): #Returns if the person is willing to do this position or not, and charges the appropriate happiness hit if they needed obedience to be willing.
     $ willing = True
     $ the_taboo = the_position.associated_taboo
     if ignore_taboo:
@@ -470,7 +473,8 @@ label check_position_willingness(the_person, the_position, ignore_taboo = False)
         $ the_person.call_dialogue("sex_angry_reject")
         $ willing = False
 
-    if willing and the_position.skill_tag == "Vaginal" and not mc.condom: #We might need a condom, which means she might say no. TODO: Add an option to pull _off_ a condom while having sex.
+    if willing and the_position.skill_tag == "Vaginal" and not mc.condom and not skip_condom: #We might need a condom, which means she might say no. TODO: Add an option to pull _off_ a condom while having sex.
+        # skip_condom is should be used any time you're transitioning - it's a fluid change and not enough of a difference for them to have a moment to stop you.
         call condom_ask(the_person) from _call_condom_ask
         $ willing = _return
 
@@ -781,7 +785,7 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
             if is_private:
                 $ willing_if_ordered = the_person.effective_sluttiness() + obedience_modifier >= strip_requirement
             else:
-                $ willing_if_ordered = the_person.judge_outfit(test_outfit, temp_sluttiness_boost = obedeince_modifier, use_taboos = True)
+                $ willing_if_ordered = the_person.judge_outfit(test_outfit, temp_sluttiness_boost = obedience_modifier, use_taboos = True)
 
             if willing_if_ordered:
                 $ the_person.call_dialogue("strip_obedience_accept", the_clothing = strip_choice, strip_type = strip_type)

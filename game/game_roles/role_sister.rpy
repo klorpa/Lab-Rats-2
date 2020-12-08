@@ -27,7 +27,7 @@ init -2 python:
 
     def sister_strip_intro_requirement(the_person): #Note that this only ever triggers once, so we don't need to worry if it will retrigger at any point.
         if time_of_day == 4 and mc.location == bedroom:
-            if the_person.sluttiness >= 30 and mc.business.event_triggers_dict.get("sister_serum_test_count") and mc.business.event_triggers_dict.get("sister_serum_test_count") >= 4:
+            if the_person.sluttiness >= 30 and mc.business.event_triggers_dict.get("sister_serum_test_count",0) >= 4:
                 return True
         return False
 

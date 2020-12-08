@@ -306,7 +306,7 @@ label demand_strip_tits_label(the_person):
         "[the_person.title] brings her hands up to cover her breasts."
         the_person.char "Are we done?"
         mc.name "I want to get a look first, and I can't see anything if you're hiding everything like this."
-        "She nods and moves her hands to her side again. She blushes and looks away as you oggle her tits."
+        "She nods and moves her hands to her side again. She blushes and looks away as you ogle her tits."
         $ the_person.change_slut_temp(1+ the_person.get_opinion_score("showing her tits"))
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("showing her tits"))
         "When you've seen enough you give her an approving nod. She sighs and moves towards her clothes."
@@ -470,7 +470,7 @@ label demand_strip_underwear_label(the_person):
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("lingerie"))): # She's shy
         the_person.char "Um... So what do we do now?"
         mc.name "Just relax and let me take a look. You look cute."
-        "She nods and puts her hands behind her back. She blushes and looks away self-conciously as you oggle her."
+        "She nods and puts her hands behind her back. She blushes and looks away self-conciously as you ogle her."
         $ the_person.change_slut_temp( 1+ the_person.get_opinion_score("lingerie"))
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("lingerie"))
         mc.name "Let me see what it looks like from behind."

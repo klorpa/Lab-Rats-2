@@ -326,7 +326,7 @@ label scene_deepthroat_3(the_girl, the_location, the_object):
                                                     "[the_girl.possessive_title]'s body doesn't stop reacting to you and your cock. Her tongue licks lazily at the base of your shaft and she keeps moaning softly."
                                                     "Satisfied, you take your hand off of [the_girl.title]'s head. She doesn't move and keeps sucking on you in her oxygen deprived stupor."
                                                     mc.name "That's enough [the_girl.title], you've done enough."
-                                                    "You put your hand under her chin and pull her back. She leaves yoru cock with a satisfying, wet pop followed by a huge gasp for air."
+                                                    "You put your hand under her chin and pull her back. She leaves your cock with a satisfying, wet pop followed by a huge gasp for air."
                                                     "It takes a few long moments until [the_girl.title] shakes her head and comes to her senses."
                                                     the_girl.char "I... Oh my god... How long was I... Ah... Ah..."
                                                     $ the_girl.change_arousal(the_girl.get_opinion_score("being submissive"))
@@ -409,9 +409,11 @@ label outro_deepthroat(the_girl, the_location, the_object):
             mc.name "Fuck, I'm about to cum! I'm going to fill that cute mouth of yours up!"
             "You keep your hand on the back of [the_girl.title]'s head to make it clear you want her to keep sucking. She keeps throating you until you tense up and start to pump your load out into her mouth."
             if the_girl.sluttiness > 70:
-                "[the_girl.title] doesn't even flinch as you shoot your hot cum across the back of her throat. She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
+                "[the_girl.title] doesn't even flinch as you shoot your hot cum across the back of her throat."
+                "She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
             else:
-                "[the_girl.title] stops when you shoot your first blast of hot cum across the back of her throat. She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
+                "[the_girl.title] stops when you shoot your first blast of hot cum across the back of her throat."
+                "She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
 
             $ the_girl.cum_in_mouth()
             $ deepthroat.redraw_scene(the_girl)
@@ -474,7 +476,7 @@ label transition_deepthroat_skull_fuck(the_girl, the_location, the_object):
     return
 
 label transition_default_deepthroat(the_girl, the_location, the_object):
-    "[the_girl.title] gets ready in front of you, on her knees with her mouth open. You place a hand on the back of her head and pull her towards you, slidding your cock down her throat."
+    "[the_girl.title] gets ready in front of you, on her knees with her mouth open. You place a hand on the back of her head and pull her towards you, sliding your cock down her throat."
     "After giving her a second to get use to your size you start to guide her back and forth, keeping yourself buried nice and deep in her mouth."
     return
 

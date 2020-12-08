@@ -32,7 +32,7 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
             menu_tooltip = "Company policy here is so complicated it's nearly impossible to go a day without violating some minor rule. If you were paranoid, you might think it was written that way on purpose...")
 
         employee_role = Role("Employee", [employee_paid_serum_test, employee_unpaid_serum_test, employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action, employee_punishment, employee_generate_infraction],
-            on_turn = employee_on_turn, on_move = employee_on_move, on_day = employee_on_day)
+            on_turn = employee_on_turn, on_day = employee_on_day)
 
         #EMPLOYEE BUSYWORK ACTIONS#
         employee_busywork_role = Role("Office Busywork", [], hidden = True) #TODO: Add some other actions to this role

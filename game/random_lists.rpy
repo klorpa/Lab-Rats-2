@@ -139,6 +139,9 @@ init -2:
         list_of_names.append("Stephine")
         list_of_names.append("Sydney")
         list_of_names.append("Amai")
+        list_of_names.append("Edith")
+        list_of_names.append("Alina")
+        list_of_names.append("Jae")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -244,6 +247,9 @@ init -2:
         list_of_last_names.append("Sladek")
         list_of_last_names.append("Liu")
         list_of_last_names.append("Carbonara")
+        list_of_last_names.append("Anne")
+        list_of_last_names.append("Li")
+        list_of_last_names.append("West")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -981,7 +987,7 @@ init 1 python:
         mom.set_schedule(kitchen, times = [3])
 
         mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
-        mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
+        mc.business.mandatory_morning_crises_list.append(mom_weekly_pay_action)
 
         mom_promotion_one_crisis = Action("mom promotion one crisis", mom_work_promotion_one_requirement, "mom_work_promotion_one")
         mom.on_talk_event_list.append(mom_promotion_one_crisis)

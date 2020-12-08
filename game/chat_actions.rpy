@@ -474,7 +474,7 @@ label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful f
                 $ the_person.discover_opinion(opinion_learned)
                 "You listen while [the_person.possessive_title] talks and discover that she [opinion_string] [opinion_learned]."
 
-            $ the_person.change_love(love_gain - prediction_difference)
+            $ the_person.change_love(love_gain - prediction_difference, max_modified_to = 20)
 
         else:
             "You and [the_person.possessive_title] chat for a while. You don't feel like you've learned much about her, but you both enjoyed talking."

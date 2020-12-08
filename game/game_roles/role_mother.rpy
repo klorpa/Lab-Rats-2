@@ -1,7 +1,7 @@
 ﻿init -2 python:
     #MOM ACTION REQUIREMENTS
     def mom_weekly_pay_requirement(the_person):
-        if time_of_day == 4 and day%7 == 4: #It is the end of the day on friday
+        if day%7 == 5: #It is the end of the day on friday
             return True
         return False
 
@@ -67,7 +67,7 @@
 label mom_weekly_pay_label(the_person):
     #todo: at some point demand to take over the house, adds extra "house rules" options
     $ bedroom.show_background()
-    "You're getting ready for bed when [the_person.possessive_title] calls from downstairs."
+    "You're just getting out of bed when [the_person.possessive_title] calls from downstairs."
     the_person.char "[the_person.mc_title], could we talk for a moment?"
     mc.name "Sure, down in a second."
     $ kitchen.show_background()
@@ -126,7 +126,7 @@ label mom_weekly_pay_label(the_person):
 
 
     $ mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom]) # Reload the event for next week.
-    $ mc.business.mandatory_crises_list.append(mom_weekly_pay_action)
+    $ mc.business.mandatory_morning_crises_list.append(mom_weekly_pay_action)
     return
 
 label mom_low_sluttiness_weekly_pay(the_person):
@@ -264,7 +264,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
                 "You pull out your wallet and count out her cash while [the_person.possessive_title] gets onto her knees in front of you."
                 $ mc.business.funds += -300
                 $ the_person.draw_person(position = "blowjob")
-                the_person.char "Remember, not a word to anyone else though. Okay>"
+                the_person.char "Remember, not a word to anyone else though. Okay?"
                 mc.name "Of course, this is just between you and me."
                 $ the_person.break_taboo("sucking_cock")
 

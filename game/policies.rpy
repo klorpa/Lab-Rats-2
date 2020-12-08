@@ -32,7 +32,10 @@ init 1300 python:
         cost = 500,
         toggleable = True,
         requirement = strict_uniform_policy_requirement,
-        on_remove_function = reset_invalid_uniforms)
+        on_remove_function = reset_invalid_uniforms,
+        on_move_function = uniform_disobedience_on_move,
+        extra_arguments = {"uniform_disobedience_priority":0}) #Uniform disobedience is only run once, regardless of how many policies are running. The highest priority uniform function is run.
+
 
     uniform_policies_list.append(strict_uniform_policy)
 
@@ -48,7 +51,9 @@ init 1300 python:
         toggleable = True,
         requirement = relaxed_uniform_policy_requirement,
         on_remove_function = reset_invalid_uniforms,
-        dependant_policies = strict_uniform_policy)
+        on_move_function = uniform_disobedience_on_move,
+        dependant_policies = strict_uniform_policy,
+        extra_arguments = {"uniform_disobedience_priority":1})
 
     uniform_policies_list.append(relaxed_uniform_policy)
 
@@ -64,7 +69,9 @@ init 1300 python:
         toggleable = True,
         requirement = casual_uniform_policy_requirement,
         on_remove_function = reset_invalid_uniforms,
-        dependant_policies = relaxed_uniform_policy)
+        on_move_function = uniform_disobedience_on_move,
+        dependant_policies = relaxed_uniform_policy,
+        extra_arguments = {"uniform_disobedience_priority":2})
 
     uniform_policies_list.append(casual_uniform_policy)
 
@@ -80,7 +87,9 @@ init 1300 python:
         toggleable = True,
         requirement = reduced_coverage_uniform_policy_requirment,
         on_remove_function = reset_invalid_uniforms,
-        dependant_policies = casual_uniform_policy)
+        on_move_function = uniform_disobedience_on_move,
+        dependant_policies = casual_uniform_policy,
+        extra_arguments = {"uniform_disobedience_priority":3})
 
     uniform_policies_list.append(reduced_coverage_uniform_policy)
 
@@ -96,7 +105,9 @@ init 1300 python:
         toggleable = True,
         requirement = minimal_coverage_uniform_policy_requirement,
         on_remove_function = reset_invalid_uniforms,
-        dependant_policies = reduced_coverage_uniform_policy)
+        on_move_function = uniform_disobedience_on_move,
+        dependant_policies = reduced_coverage_uniform_policy,
+        extra_arguments = {"uniform_disobedience_priority":4})
 
     uniform_policies_list.append(minimal_coverage_uniform_policy)
 
@@ -112,7 +123,9 @@ init 1300 python:
         toggleable = True,
         requirement = corporate_enforced_nudity_requirement,
         on_remove_function = reset_invalid_uniforms,
-        dependant_policies = minimal_coverage_uniform_policy)
+        on_move_function = uniform_disobedience_on_move,
+        dependant_policies = minimal_coverage_uniform_policy,
+        extra_arguments = {"uniform_disobedience_priority":5})
 
     uniform_policies_list.append(corporate_enforced_nudity_policy)
 
@@ -128,7 +141,9 @@ init 1300 python:
         toggleable = True,
         requirement = maximal_arousal_uniform_policy_requirement,
         on_remove_function = reset_invalid_uniforms,
-        dependant_policies = corporate_enforced_nudity_policy)
+        on_move_function = uniform_disobedience_on_move,
+        dependant_policies = corporate_enforced_nudity_policy,
+        extra_arguments = {"uniform_disobedience_priority":6})
 
     uniform_policies_list.append(maximal_arousal_uniform_policy)
 

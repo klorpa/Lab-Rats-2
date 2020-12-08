@@ -774,7 +774,8 @@ label aunt_share_drinks_label(the_person):
                     call change_location(aunt_bedroom) from _call_change_location_1 #Changbe our location so that the background is correct,
                     the_person.char "Okay, so here's what I have to work with. Tell me what you think."
                     "She opens her wardrobe and stands back, giving you room to look around."
-                    call screen outfit_creator(Outfit("New Outfit"))
+                    call outfit_master_manager() from _call_outfit_master_manager_10
+                    #call screen outfit_creator(Outfit("New Outfit"))
                     if _return:
                         $ created_outfit = _return
                         "You pull out a few pieces of clothing and lay them out on [the_person.possessive_title]'s bed."
@@ -1050,11 +1051,47 @@ label aunt_share_drinks_label(the_person):
                     "[the_person.possessive_title] slides closer to you on the couch and places her hand on your thigh while you chat."
                     "Inch by inch it moves up your leg until it brushes against the tip of your soft cock. She rubs it gently through your pants, coaxing it to life."
                     the_person.char "I... I know we shouldn't, but nobody needs to know. Right?"
+                    if the_person.has_taboo("vaginal_sex") or the_person.has_taboo("anal_sex"):
+                        the_person "We won't take it too far, I just really need this..."
                     menu:
-                        "Fuck her.":
+                        "Fool around.":
                             call fuck_person(the_person) from _call_fuck_person_22
-                            "[the_person.possessive_title] is exhausted when you're finished fooling around. She lies back on the couch and quickly falls asleep."
-                            "You get yourself tidied up, move the dirty glasses of wine to the kitchen, and get ready to leave."
+                            $ the_report = _return
+                            "[the_person.possessive_title] lies down on the couch when you're finished."
+                            if the_report.get("girl orgasms",0) > 0 and the_report.get("guy orgasms", 0) > 0:
+                                the_person "That was great [the_person.mc_title], I feel like I'm floating."
+                                "She looks up at you and giggles."
+                                $ the_person.change_happiness(5)
+                                the_person "And making you cum felt so good, I've still got it! I'm not too old yet! Haha..."
+                                "She puts her head down and sighs happily."
+
+                            elif the_report.get("girl orgasms",0) > 0:
+                                the_person "Oh wow, you really know what you're doing [the_person.mc_title], I feel like I'm floating."
+                                "She looks up at you and giggles."
+                                the_person "Next time I'm going to make you cum too, I want to show you that I've still got it!"
+                                mc.name "So there's going to be a next time?"
+                                the_person "I hope so! That was everything I needed."
+                                "She puts her head down and sighs happily."
+
+                            elif the_report.get("guy orgasms", 0) > 0:
+                                $ the_person.change_happiness(5)
+                                the_person "Ah... It's good to know I can still make a young man cum his brains out."
+                                "She looks up at you and giggles."
+                                the_person "Maybe next time I can give you some pointers on what girls like. Teach you something to impress a girlfriend."
+                                mc.name "So there's going to be a next time?"
+                                the_person "If you want there to be. I have years of experience I need to pass on to the next generation."
+                                "She puts her head down and sighs happily."
+
+
+                            else:
+                                the_person "We should, uh... It's probably a good idea we stop. I think I've had too much wine, I'm not thinking straight."
+                                "She looks up at you and smiles."
+                                the_person "But that was all very flattering. I'm sorry if I made you uncomfortable..."
+                                mc.name "No, I was having a good time too."
+                                the_person "It's kind of nice, still being wanted like that... Even if we shouldn't be doing this..."
+                                "She puts her head back down and sighs."
+                            "You move to the bathroom to get yourself cleaned up, and when you come back [the_person.title] is fast asleep."
+
 
                         "Turn her down.":
                             mc.name "I don't think that's a good idea right now [the_person.title]. You're in no state to make that kind of decision."
@@ -1070,7 +1107,7 @@ label aunt_share_drinks_label(the_person):
                 $ the_person.clear_situational_slut("Drunk")
 
             else:
-                the_person.char "Oh, I really shouldn't. You can ask your mom some time, wine makes me go silly."
+                the_person.char "Oh, I really shouldn't. Too much wine makes me go silly."
                 $ the_person.draw_person()
                 "[the_person.title] waits until you've finished your glass of wine, then escorts you to the door."
                 mc.name "See you soon [the_person.title]."
@@ -1127,11 +1164,14 @@ label family_games_night_setup(the_mom, the_aunt): # Triggered as a mandatory cr
             the_aunt.set_schedule(the_aunt.home, [2], [4])
 
 
-        mc.business.event_triggers_dict["family_games_drink"] = 0
-        mc.business.event_triggers_dict["family_games_cards"] = 0
-        mc.business.event_triggers_dict["family_games_fun"] = 0
-        mc.business.event_triggers_dict["family_games_cash"] = 0
-        mc.business.event_triggers_dict["family_games_strip"] = 0
+        if not mc.business.event_triggers_dict.get("family_games_setup_complete", False):
+            mc.business.event_triggers_dict["family_games_drink"] = 0
+            mc.business.event_triggers_dict["family_games_cards"] = 0
+            mc.business.event_triggers_dict["family_games_fun"] = 0
+            mc.business.event_triggers_dict["family_games_cash"] = 0
+            mc.business.event_triggers_dict["family_games_strip"] = 0
+            mc.business.event_triggers_dict["family_games_setup_complete"] = True
+
         init_family_games_night() #Re-add the event for next week.
     return
 
@@ -1139,7 +1179,6 @@ init -1 python:
     def init_family_games_night():
         family_games_night_setup_action = Action("Family games night setup", family_games_night_setup_requirement, "family_games_night_setup", args = [mom, aunt])
         mc.business.mandatory_crises_list.append(family_games_night_setup_action)
-
 
         family_games_night_action = Action("Family games night", family_games_night_requirement, "family_games_night_start", args = [aunt], requirement_args = [aunt])
         family_games_night_LTE = Limited_Time_Action(family_games_night_action, 2)
@@ -1152,6 +1191,14 @@ label family_games_night_start(the_aunt, the_mom): # Triggered as an on enter ev
     $ the_group = GroupDisplayManager([the_mom, the_aunt], the_mom)
     $ the_group.draw_group(position = "sitting", emotion = "happy")
     $ first_time = mc.business.event_triggers_dict.get("family_games_cards",0) == 0
+
+    # Ensure neither of them have shown up with outfits too slutty for the other to consider appropriate.
+    $ highest_slut = the_aunt.effective_sluttiness()
+    if the_mom.effective_sluttiness() > highest_slut:
+        $ highest_slut = the_mom.effective_sluttiness()
+    $ the_aunt.apply_outfit(the_aunt.wardrobe.get_random_appropriate_outfit(sluttiness_limit = highest_slut, guarantee_output = True))
+    $ the_mom.apply_outfit(the_mom.wardrobe.get_random_appropriate_outfit(sluttiness_limit = highest_slut, guarantee_output = True))
+
     "[the_mom.title] and [the_aunt.title] are sitting on the couch, chatting happily to each other when you enter the living room."
     if first_time:
         the_mom.char "Welcome home [the_mom.mc_title]. [the_aunt.title] is here to visit for the evening."
