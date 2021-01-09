@@ -93,7 +93,7 @@ label employee_freeuse_fuck(the_person):
     $ the_person.clear_situational_slut("freeuse")
     $ the_report = _return
     if the_person.event_triggers_dict.get("freeuse orgasms", 0) > 0:
-        $ the_person.event_triggers_dict["freeuse prgasms"] += the_report.get("girl orgasms", 0)
+        $ the_person.event_triggers_dict["freeuse orgasms"] += the_report.get("girl orgasms", 0)
     else:
-        $ the_person.event_triggers_dict["freeuse prgasms"] = the_report.get("girl orgasms", 0)
+        $ the_person.event_triggers_dict["freeuse orgasms"] = the_report.get("girl orgasms", 0)
     return

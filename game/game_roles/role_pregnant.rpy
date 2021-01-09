@@ -60,8 +60,9 @@ init -1 python:
 
 label pregnant_announce(the_person):
     $ the_person.event_triggers_dict["preg_knows"] = True #Set here and in the larger tits, represents the person knowing they're pregnant so they don't ask for condoms ect.
-    $ was_immaculate = the_person.event_triggers_dict("immaculate_conception", False) # In case you manage to get someone pregnant without even fucking them!
+    $ was_immaculate = the_person.event_triggers_dict.get("immaculate_conception", False) # In case you manage to get someone pregnant without even fucking them!
     $ was_accident = the_person.event_triggers_dict.get("preg_accident", False)
+    $ the_person.draw_person()
     "[the_person.title] walks over to you as soon as she sees you."
     if mc.location.get_person_count() > 1:
         the_person.char "Could I talk to you for a second [the_person.mc_title]? It's important."
@@ -212,7 +213,7 @@ label pregnant_announce(the_person):
             "Thanks for telling me.":
                 mc.name "Thank you for telling me. Let me know how things are progressing."
                 the_person.char "Okay, I will."
-
+    $ clear_scene()
     return
 
 label pregnant_tits_start(the_person):
@@ -242,7 +243,7 @@ label pregnant_tits_announce(start_day, the_person):
             mc.name "I think you've got a little longer before it's obvious. For now you can just let all the other girls be jealous of your big tits."
             "She smiles and lets her tits drop out of her hands. They bounce a few times before coming to a stop."
 
-    else: #She's a little embarassed about it
+    else: #She's a little embarrassed about it
         the_person.char "Hey [the_person.mc_title], I have a question."
         mc.name "Okay, what is it?"
         the_person.char "Can you tell that my boobs are bigger? They're starting to swell up and I'm nervous people are going to figure out I'm pregnant."

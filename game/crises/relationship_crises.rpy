@@ -696,13 +696,13 @@ label friends_help_friends_be_sluts_label():
                             "They turn and leave the room together."
 
 
-                else: #She wants to suck your dick, but is embarassed about it.
+                else: #She wants to suck your dick, but is embarrassed about it.
                     $ the_group.draw_group()
                     "You're thinking about taking a break and stretching your legs when you see [person_one.title] and [person_two.title] through your office door."
                     "They're talking quietly with each other, occasionally glancing in your direction. When [person_two.title] sees you watching she looks away quickly."
                     "[person_one.title] stands up and grabs her friend's hand, pulling her out of her chair. They walk over to you together."
                     person_one.char "[person_one.mc_title], could me and [person_two.title] talk to you privately for a moment?"
-                    if person_two.effective_sluttiness("sucking_cock") < 50: #She's embarassed, but wants to do it
+                    if person_two.effective_sluttiness("sucking_cock") < 50: #She's embarrassed, but wants to do it
                         $ the_group.draw_person(person_two)
                         person_two.char "It's nothing important, it could probably wait until later. In fact, never mind at all."
                         $ the_group.draw_person(person_one)

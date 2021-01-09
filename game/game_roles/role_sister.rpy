@@ -417,7 +417,7 @@ label sister_instathot_label_solo(the_person):
             the_person.char "Uh huh? Let me see it!"
             call outfit_master_manager() from _call_outfit_master_manager_1
             $ the_suggested_outfit = _return
-            if the_suggested_outfit == "No Return":
+            if the_suggested_outfit is None:
                 mc.name "On second thought, I don't think I have anything better than what you're wearing."
                 the_person.char "Well, let's get started with this then!"
 

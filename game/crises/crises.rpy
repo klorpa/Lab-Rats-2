@@ -2027,17 +2027,17 @@ label cat_fight_crisis_label():
     $ the_group.draw_group(emotion = "angry")
     "You feel a tap on your back while you're working. [person_one.title] and [person_two.title] are glaring at each other while they wait to get your attention."
     person_one.char "I was just in the break room and saw [person_two.title] digging around in the fridge looking for other people's lunches."
-    $ the_group.draw_group(person_two, emotion = "angry")
+    $ the_group.draw_person(person_two, emotion = "angry")
     person_two.char "That's a lie and you know it! I was looking for my own lunch and you're just trying to get me in trouble!"
     "[person_two.title] looks at you and pleads."
     person_two.char "You have to believe me, [person_one.title] is making all of this up! That's just the kind of thing she would do, too."
-    $ the_group.draw_group(person_one, emotion = "angry")
+    $ the_group.draw_person(person_one, emotion = "angry")
     if person_two.effective_sluttiness() > 50:
         person_one.char "Jesus, why don't you just suck his cock and get it over with. That's how you normally convince people, right?"
     else:
         person_one.char "Oh boo hoo, you got caught and now you're going to get in trouble. Jesus, is this what you're always like?"
     "[person_two.title] spins to glare at [person_one.title]."
-    $ the_group.draw_group(person_two, emotion = "angry")
+    $ the_group.draw_person(person_two, emotion = "angry")
     if person_one.effective_sluttiness() > 50:
         person_two.char "At least I'm not slave to some guys dick like you are. You're such a worthless slut."
     else:
@@ -2057,7 +2057,7 @@ label cat_fight_crisis_label():
         "Stop the argument, side with no one.":
             #Obedience boost to both, happinss drop to both. At high sluttiness have them "kiss and make up"
             mc.name "Enough! I can't be the arbitrator for every single conflict we have in this office. You two are going to have to figure this out between yourselves."
-            $ the_group.draw_group(person_one, emotion = "angry")
+            $ the_group.draw_person(person_one, emotion = "angry")
             person_one.char "But sir..."
             if person_one.effective_sluttiness() > 40 and person_two.effective_sluttiness() > 40:
                 mc.name "I said nough. Clearly you need help sorting this out."
@@ -2065,21 +2065,21 @@ label cat_fight_crisis_label():
                 mc.name "The two of you are part of a larger team. I need you to work together."
                 "You bring the girls hands together and wrap yours around both of theirs."
                 person_one.char "Sorry sir, you're right."
-                $ the_group.draw_group(person_two, emotion = "angry")
+                $ the_group.draw_person(person_two, emotion = "angry")
                 person_two.char "You're right, I'm sorry sir. And I'm sorry [person_one.title]."
                 "You bring your hands back, leaving [person_one.title] and [person_two.title] holding hands. They look away from each other sheepishly."
                 mc.name "Good to hear. Now kiss and make up, then you can get back to work."
                 "The girls glance at you, then at each other. After a moment of hesitation [person_two.title] leans forward and kisses [person_one.title] on the lips."
                 "You watch for a moment as your two employees kiss next to your desk. What starts out as a gentle peck turns into a deep, heavy kiss."
-                $ the_group.draw_group(person_one)
+                $ the_group.draw_person(person_one)
                 "[person_one.title] breaks the kiss and steps back, blushing and panting softly."
                 $ person_one.change_obedience(5)
                 $ slut_report = person_one.change_slut_temp(10)
                 person_one.name "I should... I should get back to work. Sorry for causing any trouble."
-                $ the_group.draw_group(person_one, position = "walking_away")
+                $ the_group.draw_person(person_one, position = "walking_away")
                 "[person_two.title] watches [person_one.title] leave, eyes lingering on her ass as she walks away."
                 mc.name "Go on, you should get back to work too."
-                $ the_group.draw_group(person_two)
+                $ the_group.draw_person(person_two)
                 $ person_two.change_obedience(5)
                 $ slut_report = person_two.change_slut_temp(10)
                 "You give [person_two.title] a light slap on the butt to pull her attention back to you. She nods quickly and heads the other way."
@@ -2091,7 +2091,7 @@ label cat_fight_crisis_label():
                 $ person_one.change_happiness(-5)
                 $ person_one.change_obedience(+5)
                 person_one.char "No sir, I think we will be alright."
-                $ the_group.draw_group(person_two, emotion = "sad")
+                $ the_group.draw_person(person_two, emotion = "sad")
                 $ person_two.change_happiness(-5)
                 $ person_two.change_obedience(+5)
                 person_two.char "Understood sir, there won't be any more problems."
@@ -2172,7 +2172,7 @@ label cat_fight_crisis_label():
                     "She smooths her hair back and gets back to work. You decide to do the same."
 
             else: #both >= 40
-                #Girls start pulling clothing off of eachother on purpose until one is naked enough to be very embarassed, then they give up.
+                #Girls start pulling clothing off of eachother on purpose until one is naked enough to be very embarrassed, then they give up.
                 $ the_group.draw_person(winner, emotion = "angry")
                 winner.char "Hear that? We're going to have to sort this out, right here. Right now."
                 "[winner.title] takes a step towards [loser.title], invading her personal space."

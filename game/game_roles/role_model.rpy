@@ -58,7 +58,7 @@ label model_photography_list_label(the_person):
             if the_person.effective_sluttiness() < 20 and the_person.relationship != "Single":
                 the_person.char "Nothing too crazy though, okay? I don't want my boyfriend to freak out when he hears about this."
             else:
-                the_person.char "Sex sells, right, so it should be something skimpy. Did you have somethign in mind?"
+                the_person.char "Sex sells, right, so it should be something skimpy. Did you have something in mind?"
                 "She seems excited to see what you have in mind."
 
             call outfit_master_manager(slut_limit = the_person.sluttiness, show_overwear = False, show_underwear = False) from _call_outfit_master_manager_7

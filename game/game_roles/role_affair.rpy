@@ -114,7 +114,13 @@ label fuck_date_label(the_person):
     $ mc.location.show_background()
     "You go inside. The only light in the house comes from a room with its door ajar. When you swing it open you see [the_person.title] waiting."
     $ the_person.add_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!") # Bonus to sluttiness since you're in an affair and this is blatently a date to get fucked on.
+    call fuck_date_event(the_person) from _call_fuck_date_event
+    return "Advance Time"
+
+label fuck_date_event(the_person): #A breakout function so we can call the fuck_date stuff any time you go back to a girls place.
     #Figure out her outfit for this
+    $ so_title = SO_relationship_to_title(the_person.relationship)
+
     if the_person.get_opinion_score("not wearing anything") > the_person.get_opinion_score("lingerie"):
         $ the_person.apply_outfit(Outfit("Nude"), update_taboo = True) #She's wearing nothing at all. nothing at all. nothing at all...
 
@@ -146,7 +152,7 @@ label fuck_date_label(the_person):
     $ girl_came = False
     $ so_called = False
     $ energy_gain_amount = 50 #Drops each round, representing your flagging endurance.
-    while done == False:
+    while not done:
         if the_report.get("girl orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
             $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
             $ the_person.change_slut_temp(1)
@@ -324,7 +330,7 @@ label fuck_date_label(the_person):
                                 the_person.char "All I want is his cock!"
                                 "He gibbers weakly to himself and turns around, leaving the room. Shortly after you hear the engine of his car start up and he drives away."
 
-                                call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True) from _call_fuck_person_36
+                                call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = true) from _call_fuck_person_101
                                 $ the_report = _return
                                 call transform_affair(the_person) from _call_transform_affair_1 #She's no longer with her husband, obviously.
 
@@ -404,7 +410,7 @@ label fuck_date_label(the_person):
                                 the_person.char "Of course everything is fine. I'm just having something to eat before bed. That might be what you're hearing."
                                 "She licks the bottom of your dick and winks at you."
                                 the_person.char "Mhmm, it's delicious. I can't wait to get into bed though, it's been a long day."
-                                the_person.char "I love you too, love you sweetheart."
+                                the_person.char "I love you too, goodnight sweetheart."
                                 "She slides you back into her mouth and holds her phone up to show you as she ends the call."
                                 call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True) from _call_fuck_person_39
                                 $ the_report = _return
@@ -469,7 +475,7 @@ label fuck_date_label(the_person):
                                 the_person.char "Oh fuck, you're crazy [the_person.mc_title]! What if we get caught?"
                                 mc.name "We'll deal with that if it happens. Just relax and enjoy."
 
-                                call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True) from _call_fuck_person_40
+                                call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = true) from _call_fuck_person_102
                                 $ the_report = _return
 
                         #TODO: At this point run a check on her arousal.

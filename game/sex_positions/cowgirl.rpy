@@ -12,7 +12,7 @@
             strip_description = "strip_cowgirl", strip_ask_description = "strip_ask_cowgirl",
             orgasm_description = "orgasm_cowgirl",
             taboo_break_description = "taboo_break_cowgirl",
-            opinion_tags = ["taking control"], record_class = "Vaginal Sex",
+            opinion_tags = ["taking control", "vaginal sex"], record_class = "Vaginal Sex",
             default_animation = blowjob_bob,
             associated_taboo = "vaginal_sex")
 

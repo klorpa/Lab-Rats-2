@@ -1535,6 +1535,7 @@ init -2 python:
         def inappropriate_behaviour_factory(name = "Inappropriate Behaviour", desc = None, severity = 3, days_valid = 7):
             if desc is None:
                 desc = "Actions inappropriate for a workplace setting. Strange how this never applies to the owner..."
+            return Infraction(name, desc, severity, days_valid)
 
         def __init__(self, name, desc, severity, days_valid, days_existed = 0):
             self.name = name #The name of the infraction, as might show up on a menu
@@ -2223,6 +2224,10 @@ init -2 python:
             #self.outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #Put on a new outfit for the day!
 
             self.change_energy(60, add_to_log = False)
+            if self.arousal > (self.max_arousal/2): #TODO: Have this trigger an LTE where girls might be getting off when you walk in.
+                self.arousal = __builtin__.int(self.arousal/2) # If her arousal is high she masturbates at night, generating a small amount of sluttiness
+                self.change_slut_temp(1, add_to_log = False)
+                self.change_happiness(5*the_person.get_opinion_score("masturbating"), add_to_log = False)
 
             #Now we will normalize happiness towards 100 over time. Every 5 points of happiness above or below 100 results in a -+1 per time chunk, rounded towards 0.
             hap_diff = self.happiness - 100
@@ -2720,6 +2725,20 @@ init -2 python:
                 return True
             return False
 
+        def pick_position_comment(self, the_report): #Takes a report and has the person pick the most notable thing out of it. Generally used to then have them comment on it.
+            highest_slut_position = None
+            highest_slut_opinion = 0
+            for position in the_report.get("positions_used", []):
+                slut_opinion = position.slut_requirement
+                if position.opinion_tags is not None:
+                    for opinion_tag in position.opinion_tags:
+                        slut_opinion += 5*self.get_opinion_score(opinion_tag)
+                if highest_slut_position is None or slut_opinion > highest_slut_opinion:
+                    highest_slut_position = position
+                    highest_slut_opinion = slut_opinion
+
+            return highest_slut_position
+
 
         def add_outfit(self,the_outfit, outfit_type = "full"):
             if outfit_type == "under":
@@ -3144,6 +3163,15 @@ init -2 python:
                 no_condom_threshold -= 20
 
             return no_condom_threshold
+
+        def wants_condom(self, situational_modifier = 0, use_taboos = True):
+            taboo_modifier = 0
+            if use_taboos and self.effective_sluttiness("condomless_sex") >= self.get_no_condom_threshold(situational_modifier = situational_modifier):
+                return True
+            elif self.effective_sluttiness() >= self.get_no_condom_threshold(situational_modifier = situational_modifier):
+                return True
+            else:
+                return False
 
         def has_family_taboo(self): #A check to see if we should use an incest taboo modifier.
             if self.get_opinion_score("incest") > 0: #If she thinks incest is hot she doesn't have an incest taboo modifier. Maybe she should, but it should just be reduced? For now this is fine.
@@ -3577,7 +3605,7 @@ init -2 python:
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
             "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high", "flirt_response_girlfriend", "flirt_response_affair",
             "cum_face", "cum_mouth", "cum_pullout", "cum_condom", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
-            "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "introduction",
+            "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "sex_review" ,"introduction",
             "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
             "condomless_sex_taboo_break", "underwear_nudity_taboo_break", "bare_tits_taboo_break", "bare_pussy_taboo_break",
             "facial_cum_taboo_break", "mouth_cum_taboo_break", "body_cum_taboo_break", "creampie_taboo_break", "anal_creampie_taboo_break"]
@@ -4959,6 +4987,26 @@ init -2 python:
 
         def get_layer(self,body_type,tit_size):
             return self.layer
+
+        def generate_stat_slug(self): #Generates a string of text/tokens representing what layer this clothing item is/covers
+            cloth_info = ""
+            if self.layer == 3:
+                cloth_info += "{image=gui/extra_images/overwear_token.png}"
+            if self.layer == 2:
+                cloth_info += "{image=gui/extra_images/clothing_token.png}"
+            if self.layer == 1:
+                cloth_info += "{image=gui/extra_images/underwear_token.png}"
+
+            if self.has_extension: #Display a second token if the clothing item is a different part (split coverage into top and bottom?)
+                if self.has_extension.layer == 3:
+                    cloth_info += "|{image=gui/extra_images/overwear_token.png}"
+                if self.has_extension.layer == 2:
+                    cloth_info += "|{image=gui/extra_images/clothing_token.png}"
+                if self.has_extension.layer == 1:
+                    cloth_info += "|{image=gui/extra_images/underwear_token.png}"
+
+            cloth_info += "+" +str(self.slut_value) + "{image=gui/heart/red_heart.png}"
+            return cloth_info
 
         def generate_item_image_name(self, body_type, tit_size, position):
             if not self.body_dependant:
@@ -7765,9 +7813,9 @@ screen person_info_detailed(the_person):
                         else:
                             if the_person.event_triggers_dict.get("birth_control_status"):
                                 #text "Taking Birth Control: Yes" style "menu_text_style"
-                                text "Birth Control: Yes {size=12}(Known " + str(the_person.event_triggers_dict.get("birth_control_known_day")-day) + " days ago){/size}" style "menu_text_style" size 16
+                                text "Birth Control: Yes {size=12}(Known " + str(day - the_person.event_triggers_dict.get("birth_control_known_day")) + " days ago){/size}" style "menu_text_style" size 16
                             else:
-                                text "Birth Control: No {size=12}(Known " + str(the_person.event_triggers_dict.get("birth_control_known_day")-day) + " days ago){/size}" style "menu_text_style" size 16
+                                text "Birth Control: No {size=12}(Known " + str(day - the_person.event_triggers_dict.get("birth_control_known_day")) + " days ago){/size}" style "menu_text_style" size 16
                         #text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style" #TODO less specific info
 
             frame:
@@ -9034,7 +9082,7 @@ init -2 python:
         renpy.save_persistent()
 
 
-screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completely blank outfit instance for a new outfit, or an already existing instance to load an old one.\
+screen outfit_creator(starting_outfit, outfit_type = "full", slut_limit = None): ##Pass a completely blank outfit instance for a new outfit, or an already existing instance to load an old one.\
     add "Paper_Background.png"
     modal True
     zorder 100
@@ -9127,25 +9175,41 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                                     $ valid_check = catagories_mapping[catagory_selected][1]
                                     $ apply_method = catagories_mapping[catagory_selected][2]
                                     $ cloth_list_length = len(catagories_mapping[catagory_selected][0])
-                                    for cloth in catagories_mapping[catagory_selected][0]:
+                                    $ sorted_list = sorted(catagories_mapping[catagory_selected][0], key = lambda x: x.layer)
+                                    $ sorted_list.sort(key = lambda x: x.slut_value)
+                                    for cloth in sorted_list:
                                         $ is_sensitive = valid_check(starting_outfit, cloth) and cloth.layer in valid_layers
                                         if cloth.has_extension and cloth.has_extension.layer not in valid_layers:
                                             $ is_sensitive = False
-                                        textbutton cloth.name:
-                                            style "textbutton_style"
-                                            text_style "textbutton_text_style"
-                                            if valid_check(starting_outfit, cloth):
-                                                background "#1a45a1"
-                                                hover_background "#3a65c1"
-                                            else:
-                                                background "#444444"
-                                                hover_background "#444444"
-                                            insensitive_background "#444444"
-                                            xfill True
-                                            sensitive is_sensitive
-                                            action [SetScreenVariable("selected_clothing", cloth), SetScreenVariable("selected_colour", "colour")]
-                                            hovered Function(apply_method, demo_outfit, cloth)
-                                            unhovered Function(demo_outfit.remove_clothing, cloth)
+                                        $ cloth_name = cloth.name.title()
+                                        $ cloth_info = cloth.generate_stat_slug()
+
+                                        frame:
+                                            xsize 580
+                                            ysize 50
+                                            background "#00000000"
+                                            textbutton cloth.name.title():
+                                                xalign 0.0
+                                                ysize 50
+                                                style "textbutton_style"
+                                                text_style "textbutton_text_style"
+                                                if valid_check(starting_outfit, cloth):
+                                                    background "#1a45a1"
+                                                    hover_background "#3a65c1"
+                                                else:
+                                                    background "#444444"
+                                                    hover_background "#444444"
+                                                insensitive_background "#444444"
+                                                xfill True
+                                                sensitive is_sensitive
+                                                action [SetScreenVariable("selected_clothing", cloth), SetScreenVariable("selected_colour", "colour")]
+                                                hovered Function(apply_method, demo_outfit, cloth)
+                                                unhovered Function(demo_outfit.remove_clothing, cloth)
+                                            text cloth_info:
+                                                style "textbutton_text_style"
+                                                xalign 0.95
+                                                yalign 1.0
+                                                text_align 1.0
 
                     frame:
                         #THIS IS WHERE SELECTED ITEM OPTIONS ARE SHOWN
@@ -9154,7 +9218,7 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                         vbox:
                             spacing 10
                             if selected_clothing is not None:
-                                text selected_clothing.name + ", +" + __builtin__.str(selected_clothing.slut_value) + " Slut Requirement" style "textbutton_text_style"
+                                text selected_clothing.name + ", " + selected_clothing.generate_stat_slug() style "textbutton_text_style"
                                 if __builtin__.type(selected_clothing) is Clothing: #Only clothing items have patterns, facial accessories do not (currently).
                                     hbox:
                                         spacing 5
@@ -9298,36 +9362,6 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                                             text trans_name style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
                                             xysize (60, 40)
                                             action SetScreenVariable("current_a", float(trans))
-                                # hbox:
-                                #     spacing 20
-                                #     button:
-                                #         if current_a == 1.0:
-                                #             background "#4f7ad6"
-                                #         else:
-                                #             background "#1a45a1"
-                                #         text "Normal" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                #         xysize (120, 40)
-                                #         action SetScreenVariable("current_a", 1.0)
-                                #
-                                #     button:
-                                #         if current_a == 0.95:
-                                #             background "#4f7ad6"
-                                #         else:
-                                #             background "#1a45a1"
-                                #         text "Sheer" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                #         xysize (120, 40)
-                                #         action SetScreenVariable("current_a", 0.95)
-                                #
-                                #     button:
-                                #         if current_a == 0.8:
-                                #             background "#4f7ad6"
-                                #         else:
-                                #             background "#1a45a1"
-                                #         text "Translucent" style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                #         xysize (120, 40)
-                                #         action SetScreenVariable("current_a", 0.8)
-                                #
-                                #                         #[SetField(cloth,"colour",[current_r,current_g,current_b,current_a]), Function(apply_method, demo_outfit, cloth)]
 
                                 hbox:
                                     spacing 5
@@ -9386,7 +9420,7 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                             scrollbars "vertical"
                             mousewheel True
                             vbox:
-                                spacing 5 #TODO: Add a viewport here too.
+                                spacing 5
                                 for cloth in starting_outfit.upper_body + starting_outfit.lower_body + starting_outfit.feet + starting_outfit.accessories:
                                     if not cloth.is_extension: #Don't list extensions for removal.
                                         button:
@@ -9404,17 +9438,22 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                 vbox:
                     yalign 0.0
                     text "Outfit Stats" style "menu_text_style" size 20
-                    text "Sluttiness (Full Outfit) : " + str(demo_outfit.slut_requirement) style "menu_text_style"
-                    if demo_outfit.is_suitable_underwear_set():
-                        text "Sluttiness (Underwear): " + str(demo_outfit.get_underwear_slut_score()) style "menu_text_style"
-                    else:
-                        text "Sluttiness (Underwear): Invalid" style "menu_text_style"
 
-                    if demo_outfit.is_suitable_overwear_set():
-                        text "Sluttiness (Overwear): " + str(demo_outfit.get_overwear_slut_score()) style "menu_text_style"
-                    else:
-                        text "Sluttiness (Overwear): Invalid" style "menu_text_style"
-                    text "Tits Visible: " + str(demo_outfit.tits_visible()) style "menu_text_style"
+                    if outfit_type == "full":
+                        text "Sluttiness (Full Outfit) : " + str(demo_outfit.slut_requirement) + "{image=gui/heart/red_heart.png}"style "menu_text_style"
+
+                    if outfit_type == "under":
+                        if demo_outfit.is_suitable_underwear_set():
+                            text "Sluttiness (As Underwear): " + str(demo_outfit.get_underwear_slut_score()) + "{image=gui/heart/red_heart.png}" style "menu_text_style"
+                        else:
+                            text "Sluttiness (As Underwear): Invalid" style "menu_text_style"
+
+                    elif outfit_type == "over":
+                        if demo_outfit.is_suitable_overwear_set():
+                            text "Sluttiness (As Overwear): " + str(demo_outfit.get_overwear_slut_score()) + "{image=gui/heart/red_heart.png}" style "menu_text_style"
+                        else:
+                            text "Sluttiness (As Overwear): Invalid" style "menu_text_style"
+                    text "Tits Visible: " + str(demo_outfit.tits_visible()) style "menu_text_style" #TODO: Show what effects these are having on the outfit.
                     text "Tits Usable: " + str(demo_outfit.tits_available()) style "menu_text_style"
                     text "Wearing a Bra: " + str(demo_outfit.wearing_bra()) style "menu_text_style"
                     text "Bra Covered: " + str(demo_outfit.bra_covered()) style "menu_text_style"
@@ -9428,7 +9467,20 @@ screen outfit_creator(starting_outfit, outfit_type = "full"): ##Pass a completel
                         xalign 0.5
                         xanchor 0.5
                         spacing 50
-                        textbutton "Save Outfit" action Return(starting_outfit.get_copy()) style "textbutton_style" text_style "textbutton_text_style" text_text_align 0.5 text_xalign 0.5 xysize (155,80)
+                        $ save_button_name = "Save Outfit"
+                        if slut_limit is not None:
+                            $ save_button_name += "\nLimit: " + str(slut_limit) + "{image=gui/heart/red_heart.png}"
+                        $ slut_to_use = starting_outfit.slut_requirement
+                        if outfit_type == "under":
+                            $ slut_to_use = starting_outfit.get_underwear_slut_score()
+                        elif outfit_type == "over":
+                            $ slut_to_use = starting_outfit.get_overwear_slut_score()
+
+                        textbutton save_button_name:
+                            action Return(starting_outfit.get_copy())
+                            style "textbutton_style"
+                            text_style "textbutton_text_style" text_text_align 0.5 text_xalign 0.5 xysize (155,80)
+                            sensitive slut_limit is None or slut_to_use <= slut_limit
                         textbutton "Abandon Design" action Return("Not_New") style "textbutton_style" text_style "textbutton_text_style" text_text_align 0.5 text_xalign 0.5 xysize (185,80)
 
         frame:
@@ -9635,7 +9687,7 @@ screen outfit_select_manager(slut_limit = 999, show_outfits = True, show_overwea
                                             $ the_copied_outfit = outfit.get_copy() #We make a copy to add to the wardrobe if this is selected. Otherwise continues same as "Modify"
                                             textbutton "Duplicate":
                                                 action [Function(catagory_info[5], mc.designed_wardrobe, the_copied_outfit), Return(["duplicate",the_copied_outfit])]
-                                                sensitive (catagory_info[3](outfit) <= slut_limit)
+                                                #sensitive (catagory_info[3](outfit) <= slut_limit)
                                                 hovered SetScreenVariable("preview_outfit", outfit.get_copy())
                                                 unhovered SetScreenVariable("preview_outfit", None)
                                                 style "textbutton_style"
@@ -9646,7 +9698,7 @@ screen outfit_select_manager(slut_limit = 999, show_outfits = True, show_overwea
                                         if show_delete:
                                             textbutton "Delete":
                                                 action Function(mc.designed_wardrobe.remove_outfit, outfit)
-                                                sensitive (catagory_info[3](outfit) <= slut_limit)
+                                                #sensitive (catagory_info[3](outfit) <= slut_limit)
                                                 hovered SetScreenVariable("preview_outfit", outfit.get_copy())
                                                 unhovered SetScreenVariable("preview_outfit", None)
                                                 style "textbutton_style"
@@ -9658,6 +9710,10 @@ screen outfit_select_manager(slut_limit = 999, show_outfits = True, show_overwea
 
                                 null height 25
 
+        if slut_limit != 999:
+            frame:
+                background "#888888"
+                text "Slut Limit: " + str(slut_limit) + "{image=gui/heart/red_heart.png}" style "textbutton_text_style" text_align 0.0
     frame:
         background None
         anchor [0.5,0.5]
@@ -10343,7 +10399,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.35.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.36.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -10731,20 +10787,20 @@ label outfit_master_manager(*args, **kwargs): #WIP new outfit manager that centr
 
     $ outfit_type = None
     $ outfit = None
+    $ slut_limit = kwargs.get("slut_limit", None)
     if _return == "new_full":
         $ outfit_type = "full"
-        call screen outfit_creator(Outfit("New Outfit"), outfit_type = outfit_type)
+        call screen outfit_creator(Outfit("New Outfit"), outfit_type = outfit_type, slut_limit = slut_limit)
         $ outfit = _return
-
 
     elif _return == "new_over":
         $ outfit_type = "over"
-        call screen outfit_creator(Outfit("New Overwear Set"), outfit_type = outfit_type)
+        call screen outfit_creator(Outfit("New Overwear Set"), outfit_type = outfit_type, slut_limit = slut_limit)
         $ outfit = _return
 
     elif _return == "new_under":
         $ outfit_type = "under"
-        call screen outfit_creator(Outfit("New Underwear Set"), outfit_type = outfit_type)
+        call screen outfit_creator(Outfit("New Underwear Set"), outfit_type = outfit_type, slut_limit = slut_limit)
         $ outfit = _return
 
 
@@ -10770,7 +10826,7 @@ label outfit_master_manager(*args, **kwargs): #WIP new outfit manager that centr
 
         $ mc.designed_wardrobe.remove_outfit(outfit) # Remove it so we can re-add it later. Note that "dupicate" has already copied an outfit and added it so we can re-use this code.
 
-        call screen outfit_creator(outfit, outfit_type = outfit_type)
+        call screen outfit_creator(outfit, outfit_type = outfit_type, slut_limit = slut_limit)
         $ outfit = _return
 
     if not outfit == "Not_New":
@@ -11657,7 +11713,7 @@ label advance_time:
                 mc.business.mandatory_morning_crises_list.remove(crisis) #Clean up the list.
 
 
-        if renpy.random.randint(0,100) < 5: # We run morning crises 5% of all mornings
+        if renpy.random.randint(0,100) < 15: # We run morning crises 5% of all mornings
             python:
                 possible_morning_crises = []
                 for crisis in morning_crisis_list:
@@ -11679,7 +11735,7 @@ label advance_time:
             people.run_move(place)
 
             if people.title is not None: #We don't assign events to people we haven't met.
-                if renpy.random.randint(0,100) < 10: #Only assign one to 10% of people, to cut down on the number of people we're checking.
+                if renpy.random.randint(0,100) < 15: #Only assign one to 15% of people, to cut down on the number of people we're checking.
                     possible_crisis_list = []
                     for crisis in limited_time_event_pool:
                         if crisis[0].is_action_enabled(people): #Get the first element of the weighted tuple, the action.

@@ -77,7 +77,7 @@ init -15 python:
                     the_image = renpy.display.pgrender.load_image(sio, self.filename)
                     return the_image
 
-                except zipfile.BadZipfile: #See: https://github.com/pfnet/pfio/issues/104
+                except (zipfile.BadZipfile, RuntimeError): #Not my fault! See: https://github.com/pfnet/pfio/issues/104
                     e = sys.exc_info()[1]
                     log_message("ERR " + str(tries) + ": "  + str(e))
                     tries += 1

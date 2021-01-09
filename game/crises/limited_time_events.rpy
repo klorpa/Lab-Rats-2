@@ -614,11 +614,11 @@ label sleeping_walk_in_label(the_person): #TODO: This event is currently for Mom
                             the_person "I'm sure that'll do it. Okay?"
                             mc.name "Okay, thanks for the help [the_person.title]."
                             "She smiles sleepily at you, and seems to be asleep by the time you make it to the door."
-                            $ the_person.on_room_enter_event_list.append(Limited_Time_Action(sleeping_walk_in, sleeping_walk_in.event_duration)) #readd the LTE since she's still asleep. Note that we can't have stat effects for this, otherwise it's infinitely farmable
+                            $ the_person.on_room_enter_event_list.append(Limited_Time_Action(sleeping_walk_in, sleeping_walk_in.event_duration)) #re-add the LTE since she's still asleep. Note that we can't have stat effects for this, otherwise it's infinitely farmable
                             $ mc.change_location(hall)
                         else:
                             $ the_person.change_love(2)
-                            the_person "You still come right to your mommy when you can't sleep that's so sweet."
+                            the_person "You still come right to your mommy when you can't sleep. That's so sweet."
                             "She gives you a gentle kiss on the forehead."
                             the_person "Of course you can stay. Let's get some rest."
                             #TODO: Break some of this out to a "sleep with Mom" event
@@ -658,7 +658,8 @@ label sleeping_walk_in_label(the_person): #TODO: This event is currently for Mom
                     call nightime_grope(the_person) from _call_nightime_grope #Break this out into a seperate function so we can loop easily. Returns True if our action woke her up
                     $ awake = _return
                     $ clear_scene()
-                    $ the_person.on_room_enter_event_list.append(Limited_Time_Action(sleeping_walk_in, sleeping_walk_in.event_duration)) #Readd LTE.
+                    if not awake:
+                        $ the_person.on_room_enter_event_list.append(Limited_Time_Action(sleeping_walk_in, sleeping_walk_in.event_duration)) #Readd LTE.
                     $ mc.change_location(hall)
 
 
@@ -669,6 +670,7 @@ label sleeping_walk_in_label(the_person): #TODO: This event is currently for Mom
             $ mc.change_location(hall) #Make sure to change our location so we aren't immediately inside again.
 
     $ old_location.lighting_conditions = old_lighting
+    $ clear_scene()
     return
 
 label nightime_grope(the_person, masturbating = False):
@@ -1184,7 +1186,7 @@ label nightime_grope(the_person, masturbating = False):
             $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.7)
             "You can't hold still for long. You start to move your hips, fucking [the_person.title] while trying to avoid any other movements that might wake her up."
             if renpy.random.randint(0,100) < 50 - 5*the_person.get_opinion_score("vaginal sex"):
-                "You're so lost in the feeling of fucking [the_eprson.possessive_title] that you almost don't notice when her eyes flutter open."
+                "You're so lost in the feeling of fucking [the_person.possessive_title] that you almost don't notice when her eyes flutter open."
                 the_person "... Hmm... Ah... [the_person.mc_title]?"
                 if the_person.effective_sluttiness("vaginal_sex") + 5*(the_person.get_opinion_score("being submissive") + the_person.get_opinion_score("vaginal sex")) >= 60 and not the_person.has_taboo("vaginal_sex"):
                     "She takes a moment to comprehend what's happening, then rests her head back on her pillow and moans."
@@ -1710,7 +1712,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
     $ the_person.change_energy(-25, add_to_log = False)
     $ the_person.draw_person(position = "sitting")
     "You approach [the_person.title] from behind while she is sitting at her desk."
-    if the_person.effective_sluttiness() < 40: #She was masturbating, but is embarassed about it.
+    if the_person.effective_sluttiness() < 40: #She was masturbating, but is embarrassed about it.
         mc.name "[the_person.title], I..."
         the_person.char "Ah!"
         "She yelps and nearly falls out of her chair. When she turns around her cheeks are flush and her breathing is quick."

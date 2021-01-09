@@ -506,6 +506,8 @@ label introvert_flirt_response_high(the_person):
                     "You step close and put your arms around her waist. She closes her eyes, sighs happily, and waits for you to kiss her."
                 "You lean forward and press your lips against hers. [the_person.possessive_title] responds, leaning her body against yours."
                 call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_57
+                $ the_report = _return
+                $ the_person.call_dialogue("sex_review", the_report = the_report)
 
             "Just flirt.":
                 mc.name "So if it wasn't for the audience I'd have you naked by now? That's good to know."
@@ -534,6 +536,8 @@ label introvert_flirt_response_high(the_person):
                 else:
                     "You wrap your hands around [the_person.title]'s waist and pull her close to kiss her. She returns the kiss immediately, pressing her body against yours."
                 call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_58
+                $ the_report = _return
+                $ the_person.call_dialogue("sex_review", the_report = the_report)
 
             "Just flirt.":
                 $ the_person.draw_person()
@@ -561,6 +565,8 @@ label introvert_flirt_response_girlfriend(the_person):
                     "You lead her away, and after a few minutes of searching you find a place for you and [the_person.title] to be alone."
                     "You put your arm around her waist and pull her close. She presses her body against you eagerly as you kiss her."
                     call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_81
+                    $ the_report = _return
+                    $ the_person.call_dialogue("sex_review", the_report = the_report)
 
                 "Just flirt.":
                     mc.name "Well then I'll have to get you alone and see what you have planned."
@@ -575,6 +581,8 @@ label introvert_flirt_response_girlfriend(the_person):
                     mc.name "Why wait until later? You aren't that shy, are you?"
                     "You put your arm around her waist and pull her close. She closes her eyes and leans against you as you kiss her."
                     call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_82
+                    $ the_report = _return
+                    $ the_person.call_dialogue("sex_review", the_report = the_report)
 
                 "Just flirt.":
                     mc.name "Well when we're alone I'll make sure you feel just as lucky. I've got a few ideas how to do that..."
@@ -589,6 +597,8 @@ label introvert_flirt_response_girlfriend(the_person):
             "Make out.":
                 "You lean in and kiss her more sensually. She sighs and relaxes, her body pressing against yours."
                 call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_83
+                $ the_report = _return
+                $ the_person.call_dialogue("sex_review", the_report = the_report)
 
             "Just flirt.":
                 "You lower your hand and rub [the_person.title]'s ass."
@@ -614,6 +624,8 @@ label introvert_flirt_response_affair(the_person):
                     "You put your arm around her waist and pull her into a deep, sensual kiss."
                     "She presses her body against you, grinding her hips against your leg."
                     call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_84
+                    $ the_report = _return
+                    $ the_person.call_dialogue("sex_review", the_report = the_report)
 
                 "Just flirt.":
                     "You put your arm around [the_person.possessive_title] and rest your hand on her ass."
@@ -636,6 +648,8 @@ label introvert_flirt_response_affair(the_person):
                 mc.name "Good. Just relax and leave everything to me."
                 "You circle around her and grab her tits, bouncing them a couple times. [the_person.title] leans back against you."
                 call fuck_person(the_person, private = True, start_position = standing_grope, skip_intro = True) from _call_fuck_person_85
+                $ the_report = _return
+                $ the_person.call_dialogue("sex_review", the_report = the_report)
             "Just flirt.":
                 mc.name "Tempting, but I don't have the time right now."
                 the_person.char "Aw, that's a shame. Well, if you do have the time you know where to find me."
@@ -921,7 +935,58 @@ label introvert_work_enter_greeting(the_person):
     return
 
 label introvert_date_seduction(the_person):
-    if the_person.relationship == "Single":
+    if the_person.has_role(girlfriend_role): #Sluttiness gates what she's willing to talk about
+        the_person "That was a fun time, so..."
+        "She places her hand on your arm and caresses it."
+        if the_person.effective_sluttiness(["vaginal_sex", "condomless_sex"]) > 60 and the_person.wants_creampie() and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") >= 0 and the_person.get_opinion_score("creampies") >= 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
+            if the_person.get_opinion_score("creampies") > 0: #No condoms, loves creampies, she's basically asking you to knock her up. So... have her ask you to knock her up!
+                the_person "Do you want to come over to my place, bend me over, and put load after load inside my unprotected pussy?"
+                the_person "I think I want you to get me pregnant tonight."
+            else:
+                the_person "Do you want to come over to my place and fuck me all night? No protection needed, I like the risk."
+        elif the_person.effective_sluttiness(["vaginal_sex", "condomless_sex"]) > 60 and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") > 0:
+            the_person "Do you want to come over to my place and fuck me all night long? No condoms allowed."
+        elif the_person.effective_sluttiness(["vaginal_sex"]) > 50 and the_person.get_opinion_score("vaginal sex") > 0:
+            the_person "Do you want to come over and fuck my tight pussy, all night long?"
+        elif the_person.effective_sluttiness(["anal_sex"]) > 60 and the_person.get_opinion_score("anal sex") > 0:
+            the_person "Do you want to come home with me and feel my ass around your cock all night long?"
+        elif the_person.effective_sluttiness(["sucking_cock"]) > 40 and the_person.get_opinion_score("sucking cock") > 0:
+            the_person "Do you want to come home with me so I can gag on your cock all night long?"
+        elif the_person.effective_sluttiness() > 40 and the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "Do you want to come home with me and spend all night glazing me with your hot cum?"
+        elif the_person.effective_sluttiness(["touching_body"]) > 40 and the_person.get_opinion_score("giving tit fucks") > 0 and the_person.has_large_tits():
+            the_person "Do you want to come over to my place and put that big cock of yours between my tits?"
+        else: #She's not very slutty, so she leaves the invitation open to interpretation
+            the_person "Do you want to come over to my place? My bed is going to feel real empty without you in it."
+
+    elif the_person.has_role(affair_role): #We know she's slutty and in this for the sex, so no sluttiness gates for her answers
+        $ so_title = SO_relationship_to_title(the_person.relationship)
+        the_person "My [so_title] isn't home tonight, you know..."
+        "She holds onto your arm, stroking it gently."
+        if the_person.wants_creampie() and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") >= 0 and the_person.get_opinion_score("creampies") >= 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
+            if the_person.get_opinion_score("creampies") > 0: #No condoms, loves creampies, she's basically asking you to knock her up. So... have her ask you to knock her up!
+                the_person "Do you want to come over to my place, bend me over, and put load after load inside my unprotected pussy?"
+                the_person "I think I want to get pregnant tonight."
+            else:
+                the_person "Do you want to come over to my place and fuck me all night? No protection needed."
+        elif the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") > 0:
+            the_person "Do you want to come over to my place and fuck me all night long? No condoms allowed."
+        elif the_person.get_opinion_score("vaginal sex") > 0:
+            the_person "Do you want to come over and fuck my tight pussy, all night long?"
+        elif the_person.get_opinion_score("anal sex") > 0:
+            the_person "Do you want to come home with me and feel my ass around your cock all night long?"
+        elif the_person.get_opinion_score("sucking cock") > 0:
+            the_person "Do you want to come home with me so I can gag on your cock all night long?"
+        elif the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "Do you want to come home with me and spend all night glazing me with your hot cum?"
+        elif the_person.get_opinion_score("giving tit fucks") > 0 and the_person.has_large_tits():
+            the_person "Do you want to come over to my place and put that big cock of yours between my tits?"
+        elif the_person.get_opinion_score("cheating on men") > 0:
+            the_person "Do you want to come home with me? We can do all the slutty things I tell my [so_title] I don't like to do."
+            the_person "The truth is I just don't like doing them with him."
+        else:
+            the_person "Do you want to come over to my place and use the bed he decided to leave empty?"
+    elif the_person.relationship == "Single":
         if the_person.sluttiness > the_person.love:
             if the_person.sluttiness > 40:
                 the_person.char "I want you to come home with me. Want to come?"
@@ -962,7 +1027,7 @@ label introvert_sex_end_early(the_person):
             if the_person.arousal > 60:
                 the_person.char "Fuck, I was hoping you'd make me cum."
             else:
-                "[the_person.title] stays silent but seems dissapointed that you're finishing up early."
+                "[the_person.title] stays silent but seems disappointed that you're finishing up early."
 
     else:
         if the_person.love > 40:
@@ -989,6 +1054,119 @@ label introvert_sex_take_control (the_person):
 label introvert_sex_beg_finish(the_person):
     "[the_person.title] grabs your arm and moans desperately."
     the_person.char "No, please I'm so close to cumming! I... I need you to keep going!"
+    return
+
+label introvert_sex_review(the_person, the_report):
+    $ used_obedience = the_report.get("obedience_used", False) #True if a girl only tried a position because you ordered her to.
+    $ comment_position = the_person.pick_position_comment(the_report)
+
+    if comment_position is None:
+        return #You didn't actually do anything, no need to comment.
+
+    #She's worried about her SO finding out because it was in public
+    if the_report.get("was_public", False) and the_person.relationship != "Single" and the_person.get_opinion_score("cheating on men") <= 0: #It was public and she cares.
+        $ so_title = SO_relationship_to_title(the_person.relationship)
+        if the_person.has_role(affair_role): #Dialogue about her being into it, but you can't do this in case she gets caught.
+            the_person "That was fun, but next time we need to somewhere private."
+            the_person "Don't want my [so_title] finding out, alright?"
+
+        elif used_obedience:
+            the_person "Fuck... I hope nobody tells my [so_title]. This is going to be hard to explain."
+            "She glances around nervously."
+            mc.name "Relax [the_person.title], nobody's going to say a word to him. I promise."
+            "[the_person.possessive_title] seems unconvinced, but nods anyways."
+
+        else:
+            the_person "Fuck, everyone was watching... This is going to be hard to explain if someone tells my [so_title]."
+            mc.name "Relax, I'll make sure nobody says a word to him. You trust me, right?"
+            "She nods, but seems unconvinced."
+
+    #She's single, but worried that you did in public.
+    elif the_report.get("was_public", False) and (the_person.effective_sluttiness()+10*the_person.get_opinion_score("public sex") < comment_position.slut_cap):
+        if used_obedience:
+            the_person "Shit, people were watching us... Why couldn't we go somewhere private?"
+            "She glances around, suddenly nervously."
+            mc.name "Relax [the_person.title]. Nobody cares what we're doing."
+            "[the_person.possessive_title] nods, but seems unconvinced."
+
+        else:
+            the_person "Shit, everyone was watching... I got carried away, I wasn't even thinking about them."
+            mc.name "Relax [the_person.title]. Nobody cares what we're doing."
+            "[the_person.possessive_title] shrugs and seems unconvinced."
+
+    #No special conditions, just respond based on how orgasmed and how slutty the position was.
+    elif the_report.get("girl orgasms", 0) > 0 and the_report.get("guy orgasms", 0) > 0: #You both came
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position cap, it was tame
+            the_person "Heh, that was a fun warm up. Go get some rest and we can take it even furthur next time."
+            the_person "You must be able to think of better things to do to me, right?"
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "Ah, that was fun... I'm done, I need to sit down and catch my breath."
+            "She gives you a dopey smile, still dazed by her orgasm."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "We're done then, right? Good..."
+            "She seems relieved, but her face is still flush with blood from her climax."
+            mc.name "The cute and innocent act doesn't work when you were just begging me to make you cum."
+            "[the_person.possessive_title] scowls and looks away, but she can't exactly argue with you."
+
+        else: # She's suprised she even tried that.
+            the_person "Fuck... I just got so carried away, I can't believe we did that!"
+            "She still seems dazed by her orgasm."
+
+    elif the_report.get("girl orgasms", 0) > 0: #Only she came
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
+            the_person "Tired already? Aww, I had so many more things I wanted to try."
+            "She sighs happily."
+            the_person "Oh well, there's always next time."
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "All done? Next time I'll make you cum first, so it's fair."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "We're done? I thought you were going to... try and finish."
+            mc.name "Some other time. Making you cum was enough for me right now."
+            the_person "Oh... I... Thank you?"
+
+        else: # She's suprised she even tried that.
+            the_person "Fuck, I didn't know I could cum that hard! I need a break, my head is still spinning!"
+
+    elif the_report.get("guy orgasms", 0) > 0: #Only you came
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
+            the_person "That's really all you wanted to do? Next time I want to try something more... intense."
+            the_person "I promise it'll make you cum even harder."
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "I guess we're all done then, right? I'm glad I was able to get you off."
+            the_person "Maybe next time you can help me finish too?"
+            mc.name "Yeah, of course."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "...Are we done?"
+            mc.name "Yeah, we're done for now."
+
+        else:  # She's suprised she even tried that.
+            the_person "Fuck, I didn't think we were going to go that far. I got carried away, I guess."
+            "She looks away, suddenly embarrassed by what she's done."
+
+    else: #Nobody came.
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
+            the_person "Are you seriously tired already? Well that's disappointing."
+            the_person "Don't hold back next time, alright? I want to watch you cum."
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "Too tired? Aw come on [the_person.mc_title], I wanted to have some more fun."
+            "She pouts, obviously disappointed."
+            the_person "Whatever, I guess we'll have to pick this up some other time."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "That's it? All that and you aren't even going to finish?"
+            mc.name "Were you looking forward to making me cum?"
+            the_person "No, I just... I don't know what I was expecting."
+            the_person "Never mind. It doesn't matter."
+
+        else:  # She's suprised she even tried that.
+            the_person "Yeah, you're right. This went too far, we should stop while we can."
     return
 
 ## Role Specific Section ##

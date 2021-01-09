@@ -140,7 +140,7 @@ label demand_touch_label(the_person):
         $ extra_people_count = mc.location.get_person_count() - 1
         $ the_person.discover_opinion("public sex")
         if the_person.effective_sluttiness("touching_body") < (10 - (the_person.get_opinion_score("public sex" * 5))) and the_person.obedience < 140:
-            #She's very embarassed and _demands_ to go somewhere else
+            #She's very embarrassed and _demands_ to go somewhere else
             "[the_person.possessive_title] grabs your hands and glances around nervously."
             the_person.char "[the_person.mc_title], there are people around! If you want me to do this, we need to go somewhere else."
             "She has a fierce look in her eye, like this might be the limit of her obedience."
@@ -164,7 +164,7 @@ label demand_touch_label(the_person):
                     return
 
         elif the_person.effective_sluttiness("touching_body") < (30 - (the_person.get_opinion_score("public sex" * 5))):
-            #She's embarassed by it and demands to go somewhere else.
+            #She's embarrassed by it and demands to go somewhere else.
             "[the_person.possessive_title] looks around nervously."
             the_person.char "[the_person.mc_title], there are other people looking. Could we please find somewhere private?"
             menu:
@@ -204,6 +204,8 @@ label demand_touch_label(the_person):
 
 
     call fuck_person(the_person, private = should_be_private, start_position = standing_grope, start_object = None, skip_intro = True) from _call_fuck_person_44
+    $ the_report = _return
+    $ the_person.call_dialogue("sex_review", the_report = the_report)
     $ the_person.review_outfit()
     return
 
@@ -346,7 +348,7 @@ label underwear_strip_description(the_person):
     return
 
 init -2 python:
-    def generalised_strip_description(the_person, strip_list, half_off_instead = False, group_display = None, other_people = None): #This acts as a generic strip function that can be used in any scene. Hand over a list of clothing items to strip and this narrates it.
+    def generalised_strip_description(the_person, strip_list, half_off_instead = False, group_display = None, other_people = None, position = None): #This acts as a generic strip function that can be used in any scene. Hand over a list of clothing items to strip and this narrates it.
     # if group_display is a GroupDisplayManager we draw using that. Other_people should be a list of [people, strip_list], each has one piece of their strip list removed. Only the_person is narrated.
     # Other people should be a list of [people, strip_list] items. If there are other people in the list it
     # Note: half_off_instead assumes you are handing over a valid half_off list. Not sure what happens if you don't do that.
@@ -361,7 +363,7 @@ init -2 python:
         loop_count = 0 #Used to keep all of the other people on the same track as the main stripper
         for item in strip_list:
             if group_display is not None:
-                group_display.draw_animated_removal(the_person, the_clothing = item, half_off_instead = half_off_instead)
+                group_display.draw_animated_removal(the_person, the_clothing = item, half_off_instead = half_off_instead, position = position)
                 if other_people is not None:
                     for person_tuple in other_people:
                         another_person = person_tuple[0]
@@ -371,39 +373,77 @@ init -2 python:
                         elif len(another_strip_list) > loop_count: #Otherwise just remove the piece of clothing we should this loop (and don't try and remove anything if we're past our last index.
                             group_display.draw_animated_removal(another_person, False, the_clothing = another_strip_list[loop_count], half_off_instead = half_off_instead)
             else:
-                the_person.draw_animated_removal(item)
+                the_person.draw_animated_removal(item, half_off_instead = half_off_instead, position = position)
 
-            #TODO: Add variants of all of this if you're half-offing things. Should probably introduce a set of directional descriptions linked to clothing items (ie pull a shirt "up", panties "down", vest "away") with varients for half-off
+            #TODO: Add the ability to half-off some things, full-off others.
             if the_person.outfit.tits_available() and not test_outfit.tits_available(): #Tits are fully out
                 if the_person.has_large_tits():
-                    renpy.say("", the_person.title + " pulls off her " + item.display_name + ", letting her tits spill out.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " pulls her " + item.display_name + " out of the way, letting her tits spill out.")
+                    else:
+                        renpy.say("", the_person.title + " pulls off her " + item.display_name + ", letting her tits spill out.")
                 else:
-                    renpy.say("", the_person.title + " takes off her " + item.display_name + " and sets her tits free.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " pulsl her " + item.display_name + " aside and sets her tits free.")
+                    else:
+                        renpy.say("", the_person.title + " takes off her " + item.display_name + " and sets her tits free.")
             elif the_person.outfit.tits_visible() and not test_outfit.tits_visible(): #Tits aren't out for use, but her clothing let's you get a good look.
                 if the_person.has_large_tits():
-                    renpy.say("", the_person.title + " pulls off her " + item.display_name + ", and now you're able to get a good look at the big tits she had hidden away.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " pulls her " + item.display_name + " aside, letting you get an eye full of the big tits she had hidden away.")
+                    else:
+                        renpy.say("", the_person.title + " pulls off her " + item.display_name + ", and now you're able to get a good look at the big tits she had hidden away.")
                 else:
-                    renpy.say("", the_person.title + " removes her " + item.display_name + ", and now you're able to see the cute tits she had hidden away.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " pulls her " + item.display_name + " to the side, giving you a look at her cute little tits.")
+                    else:
+                        renpy.say("", the_person.title + " removes her " + item.display_name + ", and now you're able to see the cute tits she had hidden away.")
             elif the_person.outfit.vagina_available() and not test_outfit.vagina_available(): #Pussy is out in the open
                 if item.underwear:
-                    renpy.say("", the_person.title + " slips off her " + item.display_name + ", peeling it away from her pussy.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " slips her " + item.display_name + " to the side, so it doesn't cover her pussy.")
+                    else:
+                        renpy.say("", the_person.title + " slips off her " + item.display_name + ", peeling it away from her pussy.")
                 else:
-                    renpy.say("", the_person.title + " takes off her " + item.display_name + " and reveals her pussy underneath.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " pulls her " + item.display_name + " to the side, getting it out of the way of her pussy.")
+                    else:
+                        renpy.say("", the_person.title + " takes off her " + item.display_name + " and reveals her pussy underneath.")
             elif the_person.outfit.vagina_visible() and not test_outfit.vagina_visible(): #Pussy can be seen, but not touched yet
-                renpy.say("", the_person.title + " takes off her " + item.display_name + ", letting you see her pussy.")
+                if half_off_instead:
+                    renpy.say("", the_person.title + " moves her " + item.display_name + ", letting you see her pussy.")
+                else:
+                    renpy.say("", the_person.title + " takes off her " + item.display_name + ", letting you see her pussy.")
+
             #TODO: Decide if we want to also comment on her stripping to her underwear.
             else:
                 rand = renpy.random.randint(0,3) #Add some random varients so it's not always the same.
                 if rand == 0:
-                    renpy.say("", the_person.title + " strips out of her " + item.display_name + ".")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " slides her " + item.display_name + " away.")
+                    else:
+                        renpy.say("", the_person.title + " strips out of her " + item.display_name + ".")
                 elif rand == 1:
-                    renpy.say("", the_person.title + " takes off her " + item.display_name + ".")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " moves her " + item.display_name + ".")
+                    else:
+                        renpy.say("", the_person.title + " takes off her " + item.display_name + ".")
                 elif rand == 2:
-                    renpy.say("", the_person.title + " slips her " + item.display_name + " off.")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " shifts her " + item.display_name + " so it's not in the way.")
+                    else:
+                        renpy.say("", the_person.title + " slips her " + item.display_name + " off.")
                 else:
-                    renpy.say("", the_person.title + " pulls off her " + item.display_name + ".")
+                    if half_off_instead:
+                        renpy.say("", the_person.title + " pulls her " + item.display_name + " out of the way.")
+                    else:
+                        renpy.say("", the_person.title + " pulls off her " + item.display_name + ".")
 
-            test_outfit.remove_clothing(item) #Update our test outfit.
+
+            if half_off_instead:
+                test_outfit.half_off_clothing(item)
+            else:
+                test_outfit.remove_clothing(item) #Update our test outfit.
             loop_count += 1
             if group_display is not None: #This is needed to ensure the animation times for the clothing fadeout are reset. Not ideal for a speedy draw, but it'll do for now.
                 clear_scene()
@@ -552,7 +592,7 @@ label demand_strip_naked_label(the_person):
             "Leave them on.":
                 mc.name "You can leave them on."
 
-    call naked_strip_description(the_person, remove_shoes = removes_shoes) from _call_naked_strip_description
+    call naked_strip_description(the_person, remove_shoes = remove_shoes) from _call_naked_strip_description
 
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))): # She's shy
         the_person.char "What would you like me to do now?"
@@ -647,7 +687,7 @@ label suck_demand_label(the_person):
             "You sigh and enjoy the feeling of her warm, wet blowjob."
             mc.name "That's a good girl..."
             call fuck_person(the_person, private = private, start_position = deepthroat, skip_intro = True) from _call_fuck_person_87
-            #TODO: Some end of sex stuff if we want it
+
 
         "Grab her head and fuck her mouth.":
             "You place your hands on either side of [the_person.possessive_title]'s head. She cocks her head and looks up at you."
@@ -671,7 +711,8 @@ label suck_demand_label(the_person):
                 "[the_person.title] squirms and gags reflexively, but she seems to be trying her best to stay still as you fuck her face."
 
             call fuck_person(the_person, private = private, start_position = skull_fuck, skip_intro = True) from _call_fuck_person_88
-            # TODO: End of sex stuff if we want it
 
+    $ the_report = _return
+    $ the_person.call_dialogue("sex_review", the_report = the_report)
     $ the_person.review_outfit()
     return

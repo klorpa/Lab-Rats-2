@@ -83,6 +83,8 @@ label grope_waist(the_person):
         menu:
             "Skip the foreplay.":
                 call fuck_person(the_person) from _call_fuck_person
+                $ the_report = _return
+                $ the_person.call_dialogue("sex_review", the_report = the_report)
                 $ the_person.review_outfit()
                 return False
 

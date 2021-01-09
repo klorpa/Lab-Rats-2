@@ -5,6 +5,8 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         $ report_log = defaultdict(int) #Holds information about the encounter: what positiosn were tried, how many rounds it went, who came and how many times, etc. Defaultdict sets values to 0 if they don't exist when accessed
         $ report_log["positions_used"] = [] #This is a list, not an int.
 
+    $ creampie_counter = the_person.sex_record.get("Vaginal Creampies",0)
+
     $ finished = False #When True we exit the main loop (or never enter it, if we can't find anything to do)
     $ position_choice = None
     $ object_choice = None
@@ -42,6 +44,10 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         else:
             $ the_person.add_situational_slut("public_sex", the_person.get_opinion_score("public sex") * 5, "There are people watching!")
 
+    $ report_log["was_public"] = not private
+
+
+
     #Love modifiers. Always applies if negative, but only adds a bonus if you are in private.
     if the_person.love < 0:
         $ the_person.add_situational_slut("love_modifier", the_person.love, "I hate you, get away from me!")
@@ -62,7 +68,6 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
     $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
     if the_person.happiness <= 95:
-
         if the_person.happiness <= 75:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so unhappy, I just don't want to do anything!")
         else:
@@ -95,6 +100,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
             if position_choice is None and (first_round or not position_locked):
                 call girl_choose_position(the_person, ignore_taboo = ignore_taboo) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
                 $ position_choice = _return #Can be none, if no option was available for her to take.
+
             if position_choice is not None:
                 if initial_position != position_choice:
                    $ object_choice = None
@@ -191,7 +197,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                     call pick_object(the_person, position_choice, forced_object = start_object) from _call_pick_object_1
                     $ object_choice = _return
 
-                if position_choice and object_choice:
+                if position_choice and object_choice and not position_locked:
                     call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness
                     if not _return: #If she wasn't willing for whatever reason (too slutty a position, not willing to wear a condom) we clear our settings and try again.
                         $ position_choice = None
@@ -288,7 +294,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
         elif round_choice == "Leave":
             $ finished = True # Unless something stops us the encounter is over and we can end
-            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience and the_person.energy >= 30: #She's disobedient and will take control of the encounter. disobed disobd
+            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience and the_person.energy >= 30 and report_log.get("girl orgasms", 0) == 0: #She's disobedient and will take control of the encounter. disobed
                 $ the_person.call_dialogue("sex_take_control")
                 $ the_person.change_obedience(-3)
                 $ girl_in_charge = True
@@ -301,10 +307,10 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 menu:
                     "Give her what she wants.":
                         $ the_person.change_obedience(2)
-                        if "beg finished" in report_log:
+                        if "beg finished" in report_log.keys():
                             $ report_log["beg finish"] += 1
                         else:
-                            $ report_log["beg finish"] = 0
+                            $ report_log["beg finish"] = 1
                         $ finished = False
 
                     "Stop and leave.":
@@ -332,6 +338,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
     $ the_person.clear_situational_slut("cheating")
     $ the_person.clear_situational_slut("taboo_sex")
     $ the_person.clear_situational_slut("sex_object")
+    $ the_person.clear_situational_slut("public_sex")
     $ the_person.clear_situational_obedience("sex_object")
 
     $ report_log["end arousal"] = the_person.arousal
@@ -450,15 +457,23 @@ label check_position_willingness(the_person, the_position, ignore_taboo = False,
 
     elif the_person.effective_sluttiness(the_taboo) + (the_person.obedience-100) >= the_position.slut_requirement:
         # She's willing to be commanded to do it. Reduce her happiness by the difference (increase arousal if she likes being submissive)
-        $ happiness_drop = the_person.effective_sluttiness(the_position.associated_taboo) - the_position.slut_requirement #Our initial conditions mean this is a negative number
-        $ the_person.change_arousal(the_person.get_opinion_score("being submissive")*2)
-        $ the_person.discover_opinion("being submissive")
-        $ the_person.change_happiness(happiness_drop)
-        if the_person.has_taboo(the_taboo):
-            pass #If there is a taboo being broken we have special taboo break dialogue called from the position.
-        else:
-            $ the_person.call_dialogue("sex_obedience_accept")
-        $ willing = True
+        "[the_person.possessive_title] doesn't seem enthusiastic, but a little forceful encouragement would probably convince her."
+        menu:
+            "Order her.":
+                mc.name "[the_person.title], this is going to happen."
+                $ happiness_drop = the_person.effective_sluttiness(the_position.associated_taboo) - the_position.slut_requirement #Our initial conditions mean this is a negative number
+                $ the_person.change_arousal(the_person.get_opinion_score("being submissive")*2)
+                $ the_person.discover_opinion("being submissive")
+                $ the_person.change_happiness(happiness_drop)
+                if the_person.has_taboo(the_taboo):
+                    pass #If there is a taboo being broken we have special taboo break dialogue called from the position. TODO: We should have obedience specific taboo breaks (with variants for how much she dislikes it)
+                else:
+                    $ the_person.call_dialogue("sex_obedience_accept")
+                $ report_log["used_obedience"] = True
+                $ willing = True
+            "Try something else.":
+                mc.name "Let's try something else that you might be more comfortable with."
+                $ willing = False
 
     elif the_person.effective_sluttiness(the_taboo) > the_position.slut_requirement/2:
         # She's not willing to do it, but gives you a soft reject.
@@ -583,6 +598,10 @@ label sex_description(the_person, the_position, the_object, private = True, repo
         $ mc.reset_arousal()
         $ mc.recently_orgasmed = True
         $ report_log["guy orgasms"] += 1
+        if the_person.sex_record.get("Vaginal Creampies", 0) > creampie_counter:
+            $ report_log["creampies"] += the_person.sex_record.get("Vaginal Creampies", 0) - creampie_counter #The positions determine how you can finish, so we need to go directly off of the character record.
+            $ creampie_counter = the_person.sex_record.get("Vaginal Creampies", 0)
+
 
     if not private:
         call watcher_check(the_person, the_position, the_object, report_log) from _call_watcher_check
@@ -677,8 +696,6 @@ label condom_ask(the_person):
                 else:
                     if the_person.on_birth_control:
                         the_person.char "Okay. I'm on birth control, so it should be fine."
-                    # if the_person.has_taboo("creampie"):
-                    #     the_person.char "Just make sure to pull out if you're going to cum, okay?"
                     else:
                         the_person.char "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
 

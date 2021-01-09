@@ -311,7 +311,7 @@ label nora_research_cash(the_person):
         mc.name "Go on, you always have interesting ideas for me."
         the_person.char "In my studies I have found that people with extreme personalities, mindsets, backgrounds, or beliefs can offer insights into new serum traits."
         the_person.char "I will provide you with a detailed questionnaire. Have an intersting person fill it out, or interview them and fill it out yourself, and bring it back to me."
-        the_person.char "If I find any hints pointing towards an trait I will share the research with you. I improve my research, and you may discover useful applications for your business."
+        the_person.char "If I find any hints pointing towards a trait I will share the research with you. I improve my research, and you may discover useful applications for your business."
         mc.name "That sounds like a good deal for both of us."
         the_person.char "My thoughts exactly, I'm glad you agree."
         "You say goodbye to [the_person.possessive_title] and split up. She sends your final payment and her research questionnaire soon after."

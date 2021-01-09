@@ -158,7 +158,7 @@ label mom_outfit_help_crisis_label():
 
 
     #Strip choices for the second peek section
-    if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 35 or caught: #She really doesn't want you to see anything
+    if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 30 or caught: #She really doesn't want you to see anything
         the_person.char "Okay, I just need to get changed again."
         $ clear_scene()
         "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
@@ -218,7 +218,6 @@ label mom_outfit_help_crisis_label():
         "Once she's stripped naked she grabs another outfit and starts to put it on."
 
     $ the_person.apply_outfit(second_outfit, update_taboo = True)
-    #$ the_person.outfit = second_outfit changed v0.24.1
     $ the_person.draw_person()
 
     the_person.char "Alright, there we go! Now, do you think this is better or worse than what I was just wearing?"
@@ -242,7 +241,7 @@ label mom_outfit_help_crisis_label():
             mc.name "They both look good, but I think I have another idea for something you could wear..."
             "You go to [the_person.possessive_title]'s closet and start to put together an outfit of your own for her."
             $ clear_scene()
-            call outfit_master_manager(slut_limit = the_person.sluttiness + 10) from _call_outfit_master_manager_2
+            call outfit_master_manager(slut_limit = the_person.sluttiness + 10, show_underwear = False) from _call_outfit_master_manager_2
             $ third_outfit = _return
             $ the_person.draw_person()
 
@@ -251,11 +250,11 @@ label mom_outfit_help_crisis_label():
                 mc.name "Sorry Mom, I thought I had an idea but I guess I was wrong."
                 the_person.char "That's fine [the_person.mc_title]. I think I'm going to go with the first one anyway."
                 $ the_person.change_happiness(5)
+
             else:
                 "You lay the outfit out for [the_person.possessive_title]. She looks it over and nods."
                 the_person.char "I'll try it on, but I think I like it!"
-
-                if the_person.sluttiness + the_person.love < 35 or caught: #She really doesn't want you to see anything
+                if the_person.effective_sluttiness() + the_person.love < 30 or caught: #She really doesn't want you to see anything
                     $ clear_scene()
                     "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
                     the_person.char "Okay, come back!"
@@ -768,7 +767,7 @@ label mom_morning_surprise_label():
         $ the_person.draw_person(position = "blowjob") #TODO: We need a handjob pose.
         "[the_person.possessive_title] is sitting on the side of your bed. The covers have been pulled down and she has your morning wood in her hand. She strokes it slowly as she speaks."
         if the_person.has_taboo("touching_penis"):
-            the_person.char "Good morning, don't be embarassed. I saw your... morning wood, and wanted to help you take care of it."
+            the_person.char "Good morning, don't be embarrassed. I saw your... morning wood, and wanted to help you take care of it."
             "She looks away, blushing intensely."
             the_person.char "If you want me to stop, just tell me. We never need to talk about this again, okay!"
             the_person.char "Actually, I should just go. This is a mistake. What am I doing?"
@@ -1053,7 +1052,7 @@ init 1 python:
     morning_crisis_list.append([lily_morning_encounter_crisis, 5])
 
 label lily_morning_encounter_label():
-    # You run into Lily early in the morning as she's going to get some fresh laundry. At low sluttiness she is embarassed, at high she is completely naked.
+    # You run into Lily early in the morning as she's going to get some fresh laundry. At low sluttiness she is embarrassed, at high she is completely naked.
     $ the_person = lily
     if the_person.effective_sluttiness() >= 60:
         $ the_person.apply_outfit(Outfit("Nude"))
@@ -1071,7 +1070,7 @@ label lily_morning_encounter_label():
 
 
     if the_person.effective_sluttiness("underwear_nudity") < 10:
-        #She's startled and embarassed.
+        #She's startled and embarrassed.
         "[the_person.title] closes her door behind her, then notices you. She gives a startled yell."
         the_person.char "Ah! [the_person.mc_title], what are you doing here?"
         "She tries to cover herself with her hands and fumbles with her door handle."

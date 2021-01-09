@@ -377,7 +377,7 @@ label spank_description(the_person, the_infraction):
                 the_person "Is that all? I thought this would go on longer..."
                 $ the_person.outfit.restore_all_clothing()
                 $ the_person.draw_person()
-                "She seems dissapointed as she stands up straight."
+                "She seems disappointed as she stands up straight."
             else:
                 the_person "Are we done?"
                 $ the_person.outfit.restore_all_clothing()

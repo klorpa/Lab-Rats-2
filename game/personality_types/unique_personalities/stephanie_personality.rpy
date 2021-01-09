@@ -85,13 +85,13 @@ label stephanie_improved_serum_unlock(the_person):
     the_person.char "All of the testing that I've been doing so far focuses on not getting people killed, which is important, but I really need to know more about what subjective effects there are."
     the_person.char "I want to take a dose of serum myself and have you record the effects. You can ask me a few questions, gauge how much it affects me."
     mc.name "Do you think that's a good idea?"
-    the_person.char "Nora would never let me do it, but that's why I work for you now and not for her. Come on [the_person.mc_title], this is chance to do real, proper science!"
+    the_person.char "[nora.title] would never let me do it, but that's why I work for you now and not for her. Come on [the_person.mc_title], this is chance to do real, proper science!"
     return
 
 label stephanie_sex_strip(the_person):
     if the_person.sluttiness < 20:
         if the_person.arousal < 50:
-            the_person.char "Ugh I've started to dress like Nora. Let me take some of this off."
+            the_person.char "Ugh I've started to dress like [nora.title]. Let me take some of this off."
         else:
             the_person.char "Is it getting warm in here? I need to take something off."
 

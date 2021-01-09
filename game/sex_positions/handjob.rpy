@@ -2,8 +2,8 @@ init:
     python:
         handjob = Position(name = "Handjob", slut_requirement = 15, slut_cap = 40, requires_hard = False, requires_large_tits = False,
             position_tag = "stand3", requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
-            girl_arousal = 5, girl_energy = 15,
-            guy_arousal = 10, guy_energy = 5,
+            girl_arousal = 5, girl_energy = 10,
+            guy_arousal = 10, guy_energy = 2,
             connections = [],
             intro = "intro_handjob",
             scenes = ["scene_handjob_1","scene_handjob_2","scene_handjob_3"],
