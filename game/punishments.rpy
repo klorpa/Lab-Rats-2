@@ -368,7 +368,7 @@ label spank_description(the_person, the_infraction):
         the_person "Ah... That really stings..."
     else: #Not too bad.
         "Her clothing absorbs some of the blow, but you still make good contact and set her ass jiggling for a moment."
-        the_person.char "Ah..."
+        the_person "Ah..."
 
     menu:
         "Go easy on her.":

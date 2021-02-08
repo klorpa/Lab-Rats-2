@@ -12,18 +12,25 @@ init -2 python:
             return False
         return True
 
+    def employee_freeuse_report_requirement(the_person):
+        if not mc.business.is_open_for_business():
+            return False
+        elif not mc.is_at_work():
+            return False
+        return True
+
 label employee_freeuse_remove_label(the_person):
     python:
         the_person.remove_role(employee_freeuse_role)
         if the_person.has_role(employee_role):
-            busywork_report_action = Action("Freeuse report crisis", employee_freeuse_report_requirement, "employee_freeuse_report_label", args = the_person, requirement_args = the_person)
-            mc.business.mandatory_crises_list.append(busywork_report_action)
+            freeuse_report_action = Action("Freeuse report crisis", employee_freeuse_report_requirement, "employee_freeuse_report_label", args = the_person, requirement_args = the_person)
+            mc.business.mandatory_crises_list.append(freeuse_report_action)
     return
 
 label employee_freeuse_report_label(the_person):
     $ the_person.draw_person()
     "[the_person.title] catches your attention while you are working."
-    the_person "Do you have a moment [the_person.title]?"
+    the_person "Do you have a moment [the_person.mc_title]?"
     mc.name "Sure, what do you need?"
     the_person "I wanted to let you know that I've finished my week of punishment."
     mc.name "Good, I hope you've learned your lesson."

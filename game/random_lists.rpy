@@ -146,6 +146,7 @@ init -2:
         list_of_names.append("Kayla")
         list_of_names.append("Tia")
         list_of_names.append("Mimi")
+        list_of_names.append("Evelyn")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -258,6 +259,7 @@ init -2:
         list_of_last_names.append("Derry")
         list_of_last_names.append("Ling")
         list_of_last_names.append("Bjornson")
+        list_of_last_names.append("Lin")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -454,6 +456,7 @@ init -2:
             for a_tit_tuple in list_of_tits:
                 if the_tits == a_tit_tuple[0]:
                     return list_of_tits.index(a_tit_tuple) #Ranges from 0 (AA) to 9 (FF).
+            return 0
 
 
         list_of_clothing_colours = []
@@ -595,6 +598,7 @@ init -2:
         font_list.append("Crimson-Bold.ttf")
         font_list.append("HKVenetian-Regular.otf")
         font_list.append("HKVenetian-Italic.otf")
+        font_list.append("AAntiCorona-L3Ax3.ttf")
 
 
 
@@ -979,6 +983,7 @@ init 1 python:
         lily.on_room_enter_event_list.append(instathot_intro_action)
 
         lily.home.add_person(lily)
+        mc.phone.register_number(lily)
 
         ### MOM ###
         mom_wardrobe = wardrobe_from_xml("Mom_Wardrobe")
@@ -993,6 +998,7 @@ init 1 python:
 
         mom.add_role(mother_role)
         mom.set_schedule(kitchen, times = [3])
+        mom.set_work(mom_offices, work_times = [1,2])
 
         mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
         mc.business.mandatory_morning_crises_list.append(mom_weekly_pay_action)
@@ -1001,6 +1007,7 @@ init 1 python:
         mom.on_talk_event_list.append(mom_promotion_one_crisis)
 
         mom.home.add_person(mom)
+        mc.phone.register_number(mom)
 
         ### AUNT ###
         aunt_wardrobe = wardrobe_from_xml("Aunt_Wardrobe")

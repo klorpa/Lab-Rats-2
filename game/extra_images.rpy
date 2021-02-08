@@ -47,6 +47,8 @@ init -1:
         standard_office_backgrounds = [office_background_dark, office_background, office_background, office_background, office_background_dark]
         standard_campus_backgrounds = [campus_background_dark, campus_background, campus_background, campus_background, campus_background_dark]
 
+        standard_bar_backgrounds = [bar_background, bar_background, bar_background, bar_background, bar_background]
+
         #lighting_format = [[r,g,b],[r,g,b],[r,g,b],[r,g,b],[r,g,b]]
         standard_indoor_lighting = [[0.91,0.91,0.95],[0.98,0.98,0.98],[0.98,0.98,0.98],[0.98,0.98,0.98],[0.91,0.91,0.95]]
         standard_outdoor_lighting = [[0.7,0.7,0.8],[1,1,1],[1,1,1],[1,1,1],[0.7,0.7,0.8]]

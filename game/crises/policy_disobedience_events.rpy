@@ -14,7 +14,7 @@ init -1 python:
             return
 
         for person in mc.business.get_employee_list():
-            if person.should_wear_uniform() and person.outfit == person.planned_uniform and person.planned_uniform != person.planned_outfit: #If she's already out of uniform she won't generate another.
+            if person.should_wear_uniform() and person.is_wearing_uniform(): #If she's already out of uniform she won't generate another.
                 disobedience_chance = 0
                 if not person.judge_outfit(person.planned_uniform):
                     disobedience_chance = person.planned_uniform.slut_requirement - (person.effective_sluttiness() + (person.obedience - 100)) #Girls who find the outfit too slutty might disobey, scaled by their obedience
@@ -32,7 +32,7 @@ init -1 python:
         return
 
     def uniform_disobedience_requirement(the_person):
-        if the_person.should_wear_uniform() and the_person.planned_uniform is the_person.planned_outfit: #ie. they should be in uniform, but they've decided their "uniform" is their normal outfit because of the event above.
+        if the_person.should_wear_uniform() and the_person.planned_uniform == the_person.planned_outfit: #ie. they should be in uniform, but they've decided their "uniform" is their normal outfit because of the event above.
             return True
         return False
 

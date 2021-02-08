@@ -60,36 +60,18 @@ init -15 python:
                     else:
                         log_message("Warning: Personality \"" + personality.personality_type_prefix + "\" is using it's default entry for dialogue type \"" + ending + "\"")
 
-    class VrenZipImage(renpy.display.im.ImageBase): #TODO: Move this to a more obvious file. Probably something to do along with a bunch of other refactoring.
-        def __init__(self, position, filename, mtime=0, **properties):
-            super(VrenZipImage, self).__init__(position, filename, mtime, **properties)
-            self.position = position
-            self.filename = filename
+    def add_test_text_message():
+        mc.phone.add_new_message(mom, test_text_action)
+        mc.phone.add_new_message(lily, test_text_action)
 
-        def load(self):
-            tries = 0
-            max_tries = 5
-            while tries < max_tries:
-                global mobile_zip_dict
-                try:
-                    data = mobile_zip_dict[self.position].read(self.filename)
-                    sio = io.BytesIO(data)
-                    the_image = renpy.display.pgrender.load_image(sio, self.filename)
-                    return the_image
+label text_message_style_test(): #For now we need to both set the text_conversation person as well as the text font. We need to figure out a way to apply it dynamically.
+    mom "This is the normal person style!"
+    $ mc.having_text_conversation = mom
+    mom "...And this is the text message style!"
 
-                except (zipfile.BadZipfile, RuntimeError): #Not my fault! See: https://github.com/pfnet/pfio/issues/104
-                    e = sys.exc_info()[1]
-                    log_message("ERR " + str(tries) + ": "  + str(e))
-                    tries += 1
-                    if tries >= max_tries:
-                        renpy.notify("Unsuccessful Recovery: " + self.position + ", Item: " + self.filename)
-                        return renpy.display.pgrender.surface((2, 2), True)
-
-                    else:
-                        file_name = mobile_zip_dict[self.position].filename
-                        mobile_zip_dict[self.position].close()
-                        mobile_zip_dict[self.position] = zipfile.ZipFile(file_name, "a") #May have to convert to a renpy_file first, but I dthink Zipfile will have alreayd done that
-
+    $ mc.having_text_conversation = None #The only tricky thing is we need to directly manage this now.
+    mom "And now we should be back to normal!"
+    return
 
 
 label person_select_debug:

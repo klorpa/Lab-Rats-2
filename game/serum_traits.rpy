@@ -85,11 +85,13 @@ init -1:
         def slutty_caffeine_trait_on_apply(the_person, add_to_log):
             the_person.change_max_energy(20, add_to_log)
             the_person.change_energy(20, add_to_log)
-            the_person.change_slut_temp(15)
+            the_person.change_slut_temp(15, add_to_log)
+            the_person.change_slut_core(15, add_to_log)
 
         def slutty_caffeine_trait_on_remove(the_person, add_to_log):
             the_person.change_max_energy(-20, add_to_log)
-            the_person.change_slut_temp(-15)
+            the_person.change_slut_temp(-15, add_to_log)
+            the_person.change_slut_core(-15, add_to_log)
 
         ## love_potion_functions ##
         def love_potion_on_apply(the_person, add_to_log):
@@ -770,8 +772,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
                 research_needed = 800)
 
         slutty_caffeine_trait = SerumTrait(name = "Libido Stimulants",
-            desc = "Carefull engineering allows for the traditional side effects of stimulants to be redirected to the parasympathetic nervous system, causing an immediate spike in arousal as well as general levels.",
-            positive_slug = " +$25 Value, +20 Max Energy, +10 Sluttiness",
+            desc = "Careful engineering allows for the traditional side effects of stimulants to be redirected to the parasympathetic nervous system, causing an immediate spike in arousal as well as general energy levels.",
+            positive_slug = " +$25 Value, +20 Max Energy, +15 Sluttiness",
             negative_slug = "+150 Serum Research",
             value_added = 25,
             research_added = 150,

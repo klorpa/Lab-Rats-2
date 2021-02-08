@@ -15,7 +15,7 @@ init 1300 python:
 
 
     #### UNIFORM POLICY SECTION ####
-    def reset_invalid_uniforms(): #Called by all uniform policies to clear newly inappropriate planned uniforms.
+    def reset_invalid_uniforms(uniform_disobedience_priority): #Called by all uniform policies to clear newly inappropriate planned uniforms.
         slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits()
         for employee in mc.business.get_employee_list():
             if employee.planned_uniform:

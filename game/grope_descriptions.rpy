@@ -37,11 +37,11 @@ label grope_waist(the_person):
 
     elif the_person.effective_sluttiness(["touching_body", "vaginal_sex"]) < 80: # Comfortable enough to let you keep going.
         if the_person.effective_sluttiness("touching_body") < 15:
-            the_person.char "I... Uh..."
+            the_person "I... Uh..."
             "You squeeze her hip and smile."
             mc.name "Is something wrong?"
             "She hesitates for a moment, then shakes her head."
-            the_person.char "Uh, no. Nothing's wrong [the_person.mc_title]."
+            the_person "Uh, no. Nothing's wrong [the_person.mc_title]."
             $ the_person.change_slut_temp(2)
             $ the_person.change_love(-1)
             # Uncomfortable
@@ -61,7 +61,7 @@ label grope_waist(the_person):
                 return False
 
     else: #Sluttiness 80 or higher, wants to fuck right away.
-        the_person.char "Oh god, you're already getting me horny..."
+        the_person "Oh god, you're already getting me horny..."
         if (the_person.outfit.vagina_available() or the_person.outfit.can_half_off_to_vagina()) and (not the_person.has_taboo("vaginal_sex") or not the_person.has_taboo("anal_sex")):
             $ strip_list = the_person.outfit.get_half_off_to_vagina_list()
             if strip_list:
@@ -69,16 +69,16 @@ label grope_waist(the_person):
                 $ the_person.draw_animated_removal(strip_list, half_off_instead = True)
                 $ the_person.update_outfit_taboos()
                 "[the_person.possessive_title] pulls her [strip_description] out of the way and spreads her legs."
-                the_person.char "Come on, do you want to fuck me?"
+                the_person "Come on, do you want to fuck me?"
             else:
                 "She spreads her legs, emphasising the easy availability of her pussy."
-                the_person.char "Do you want to fuck me?"
+                the_person "Do you want to fuck me?"
 
             $ strip_list = None #Clear the list to save memory
 
         else:
             "She leans into you and grinds her crotch against your thigh."
-            the_person.char "We both know where this is going, what are we waiting for?"
+            the_person "We both know where this is going, what are we waiting for?"
 
         menu:
             "Skip the foreplay.":
@@ -106,31 +106,31 @@ label grope_ass(the_person):
 
     if the_person.effective_sluttiness("touching_body") < 15:
         "She yelps and steps towards you as your hand moves onto her ass."
-        the_person.char "[the_person.mc_title]! Could you please not just grab my ass when we're talking?!"
+        the_person "[the_person.mc_title]! Could you please not just grab my ass when we're talking?!"
         $ the_person.change_love(-1)
         mc.name "Of course, I'm so sorry [the_person.title]. It won't happen again."
-        the_person.char "Okay then. Thank you."
+        the_person "Okay then. Thank you."
         return False
 
     else:
         if the_person.effective_sluttiness("touching_body") < 20:
             "[the_person.title] squirms a little bit as you run your hand over her ass, trying to move away without making a scene."
-            the_person.char "Uh... [the_person.mc_title]. Do you mind?"
+            the_person "Uh... [the_person.mc_title]. Do you mind?"
             mc.name "Is something wrong?"
             "You grab a handful of her ass and squeeze, making her yelp quietly."
-            the_person.char "Ah! You're hand is on my..."
+            the_person "Ah! You're hand is on my..."
             $ the_person.change_arousal(5 + mc.sex_skills["Foreplay"])
             $ the_person.change_slut_temp(2)
             $ the_person.change_love(-1)
             "You squeeze again, and this time she just takes a deep breath."
-            the_person.char "Never... Never mind. Sorry, what were we talking about?"
+            the_person "Never... Never mind. Sorry, what were we talking about?"
             "She seems uncomfortable, but doesn't actively try and stop you from massaging her butt."
         else:
             "As you run your hand over her ass you feel [the_person.title] instinctively press her hips back against it."
             "You grab a handful and squeeze, making her close her eyes and sigh happily."
             $ the_person.change_arousal(5 + mc.sex_skills["Foreplay"])
             mc.name "Is everything okay?"
-            the_person.char "Uh, yeah... Everything is fine. Sorry, what was I saying?"
+            the_person "Uh, yeah... Everything is fine. Sorry, what was I saying?"
             "She starts talking again, unbothered by your butt massage."
 
         menu:
@@ -154,21 +154,21 @@ label grope_tits(the_person):
 
     if the_person.effective_sluttiness("touching_body") < 20:
         #Refuses.
-        the_person.char "Hey!"
+        the_person "Hey!"
         "She slaps your hand away and glares at you."
         $ the_person.change_love(-1)
-        the_person.char "I'm trying to talk to you, could you focus please?"
+        the_person "I'm trying to talk to you, could you focus please?"
         mc.name "Right, sorry about that."
         return False
 
     else:
         if the_person.effective_sluttiness("touching_body") < 25:
             #Uncomfortable
-            the_person.char "Oh, I..."
+            the_person "Oh, I..."
             $ the_person.change_love(-1)
             "[the_person.title] seems unsure of what to do. You smile and prompt her."
             mc.name "Don't mind me, what were you saying?"
-            the_person.char "Right, I um... Sorry, I'm having a little trouble concentrating with you..."
+            the_person "Right, I um... Sorry, I'm having a little trouble concentrating with you..."
             if the_person.outfit.tits_visible():
                 "She trails off awkwardly. You can see her nipples hardening in response to your touch."
             else:
@@ -188,10 +188,10 @@ label grope_tits(the_person):
                 $ the_person.call_dialogue("touching_body_taboo_break")
                 $ the_person.break_taboo("touching_body")
             else:
-                the_person.char "Oh... Oh [the_person.mc_title]..."
+                the_person "Oh... Oh [the_person.mc_title]..."
                 "She closes her eyes and takes a deep breath."
                 $ the_person.change_arousal(5 + mc.sex_skills["Foreplay"])
-                the_person.char "Sorry, you're making it really hard to concentrate right now."
+                the_person "Sorry, you're making it really hard to concentrate right now."
             menu:
                 "Keep going.":
                     mc.name "We can keep talking later, I think there's something more important to take care of."

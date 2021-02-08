@@ -94,6 +94,7 @@ init -1:
         lower_arm_region = Clothing("Lower arm region", 1, False, False, "Lower_Arm_Region_Weight", False, False, 0)
         hand_region = Clothing("Hand region", 1, False, False, "Hand_Region_Weight", False, False, 0)
 
+        #NOTE: The autocropt scripts seem to trim a trailing "_", which catches both the end of weight -> weigh and region -> regio. Something to note and fix next time we image things.
         skirt_region = Clothing("Skirt region", 1, False, False, "Skirt_Region_Weight", False, False, 0) # A "Region" that includes everything between the characters legs from hips to about a little above knee level.
         wet_nipple_region = Clothing("Wet nipple region", 1, False, False, "Wet_Nipple_Region", True, False, 0)
         vagina_region = Clothing("Vagina region", 1, False, False, "Vagina_Region", False, False, 0) # TODO: Add this in once images are prepared..

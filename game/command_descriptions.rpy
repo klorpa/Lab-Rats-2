@@ -6,10 +6,10 @@ label serum_demand_label(the_person):
     #TODO: Make this dialogue personality based.
     mc.name "[the_person.title], you're going to drink this for me."
     "You pull out a vial of serum and present it to [the_person.title]."
-    the_person.char "What is it for, is it important?"
+    the_person "What is it for, is it important?"
     mc.name "Of course it is, I wouldn't ask you to if it wasn't."
     "[the_person.title] hesitates for a second, then nods obediently."
-    the_person.char "Okay, if that's what you need me to do."
+    the_person "Okay, if that's what you need me to do."
     call give_serum(the_person) from _call_give_serum_17
     #TODO: Add a post-serum bit of dialogue as well.
     return
@@ -75,7 +75,7 @@ label wardrobe_change_label(the_person):
             $ the_person.draw_person()
             if the_person.update_outfit_taboos():
                 "[the_person.title] seems nervous wearing her new outfit in front of you, but quickly warms up to it."
-            the_person.char "Is this better?"
+            the_person "Is this better?"
     return
 
 label change_titles_person(the_person):
@@ -111,17 +111,17 @@ label demand_touch_label(the_person):
     if the_person.obedience > 140:
         "[the_person.possessive_title] nods obediently."
     else:
-        the_person.char "I... Okay. What are you going to do?"
+        the_person "I... Okay. What are you going to do?"
         mc.name "Don't worry, you'll understand soon."
         "[the_person.possessive_title] seems nervous, but follows your instructions for now."
 
     "You step closer to her and place your hands on her shoulders, rubbing them gently."
     "You slide your hands lower, down her sides and behind her back. You cup her ass with both hands and squeeze."
     if the_person.effective_sluttiness("touching_body") < 0:
-        the_person.char "Hey, I..."
+        the_person "Hey, I..."
         mc.name "I said silent, didn't I?"
         if the_person.obedience > 140:
-            the_person.char "I... I'm sorry."
+            the_person "I... I'm sorry."
         else:
             "[the_person.possessive_title]'s body is tense as you touch her."
         $ the_person.change_love(-1)
@@ -142,7 +142,7 @@ label demand_touch_label(the_person):
         if the_person.effective_sluttiness("touching_body") < (10 - (the_person.get_opinion_score("public sex" * 5))) and the_person.obedience < 140:
             #She's very embarrassed and _demands_ to go somewhere else
             "[the_person.possessive_title] grabs your hands and glances around nervously."
-            the_person.char "[the_person.mc_title], there are people around! If you want me to do this, we need to go somewhere else."
+            the_person "[the_person.mc_title], there are people around! If you want me to do this, we need to go somewhere else."
             "She has a fierce look in her eye, like this might be the limit of her obedience."
             menu:
                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
@@ -154,19 +154,19 @@ label demand_touch_label(the_person):
 
                 "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
                     mc.name "We're going to stay right here."
-                    the_person.char "I... No, I'm not going to let you do this!"
+                    the_person "I... No, I'm not going to let you do this!"
                     "She pushes your hands away from her and steps back, glaring at you."
                     "After a moment [the_person.title] seems almost as shocked by her actions as you are. She glances around, then looks down at the ground, as if embarrassed."
                     $ the_person.change_happiness(-5)
                     $ the_person.change_love(-2)
                     $ the_person.change_obedience(-2)
-                    the_person.char "I'm sorry, I just can't do it."
+                    the_person "I'm sorry, I just can't do it."
                     return
 
         elif the_person.effective_sluttiness("touching_body") < (30 - (the_person.get_opinion_score("public sex" * 5))):
             #She's embarrassed by it and demands to go somewhere else.
             "[the_person.possessive_title] looks around nervously."
-            the_person.char "[the_person.mc_title], there are other people looking. Could we please find somewhere private?"
+            the_person "[the_person.mc_title], there are other people looking. Could we please find somewhere private?"
             menu:
                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
                     mc.name "Alright, come with me."
@@ -177,7 +177,7 @@ label demand_touch_label(the_person):
 
                 "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
                     mc.name "We're going to stay right here."
-                    the_person.char "But people are watching, and..."
+                    the_person "But people are watching, and..."
                     mc.name "I don't care if they're watching."
                     $ the_person.change_arousal(5 * the_person.get_opinion_score("being submissive"))
                     $ the_person.change_love(-1 + the_person.get_opinion_score("being submissive"))
@@ -264,7 +264,7 @@ label demand_strip_tits_label(the_person):
         $ the_person.discover_opinion("showing her tits")
         if mc.location.get_person_count() > 1: #We're in public, so she's shy.
             "[the_person.possessive_title] looks around nervously, then back at you."
-            the_person.char "But... Here? Can we go somewhere without other people around first?"
+            the_person "But... Here? Can we go somewhere without other people around first?"
             menu:
                 "Find somewhere private.":
                     mc.name "Fine, if that's what you need."
@@ -296,7 +296,7 @@ label demand_strip_tits_label(the_person):
     else:
         # She doesn't have any problem showing off her tits, so she doesn't care if she's in public or not.
         $ the_person.discover_opinion("showing her tits")
-        the_person.char "Oh, is that all?"
+        the_person "Oh, is that all?"
         if mc.location.get_person_count() > 1:
             "[the_person.possessive_title] doesn't seem to care about the other people around and starts to pull off her [first_item.display_name] right away."
         else:
@@ -306,34 +306,34 @@ label demand_strip_tits_label(the_person):
 
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("showing her tits"))): # She's shy
         "[the_person.title] brings her hands up to cover her breasts."
-        the_person.char "Are we done?"
+        the_person "Are we done?"
         mc.name "I want to get a look first, and I can't see anything if you're hiding everything like this."
         "She nods and moves her hands to her side again. She blushes and looks away as you ogle her tits."
         $ the_person.change_slut_temp(1+ the_person.get_opinion_score("showing her tits"))
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("showing her tits"))
         "When you've seen enough you give her an approving nod. She sighs and moves towards her clothes."
-        the_person.char "Can get dressed now?"
+        the_person "Can get dressed now?"
     else: # She's into it
         $ the_person.draw_person(the_animation = blowjob_bob) #TODO Make sure this effect looks right
         "[the_person.title] places her hands behind her and bounces on her feet, jiggling her tits for your amusement."
         "When you've seen enough you nod approvingly. [the_person.possessive_title] smiles happily."
-        the_person.char "So you want me to get dressed again?"
+        the_person "So you want me to get dressed again?"
 
     menu:
         "Let her get dressed.":
             mc.name "Yeah, you can."
             "You watch her put her clothes back on, covering up her tits."
-            $ the_person.apply_outfit(the_person.planned_outfit)
+            $ the_person.apply_outfit()
             $ the_person.draw_person()
 
         "Keep your tits out.":
             mc.name "I think you look good with your tits out. Stay like this for a while, okay?"
             if the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("showing her tits"))):
-                the_person.char "I... Okay, if that's what you want [the_person.mc_title]."
+                the_person "I... Okay, if that's what you want [the_person.mc_title]."
                 $ the_person.change_slut_temp(1)
                 $ the_person.change_happiness(-2)
             else:
-                the_person.char "Okay, if that's what you want me to do [the_person.mc_title]."
+                the_person "Okay, if that's what you want me to do [the_person.mc_title]."
     return
 
 label top_strip_description(the_person, strip_list):
@@ -459,22 +459,22 @@ label naked_strip_description(the_person, remove_shoes = False): #This has been 
 label demand_strip_underwear_label(the_person):
     mc.name "You're going to strip into your underwear for me."
     if not the_person.outfit.wearing_panties() or not the_person.outfit.wearing_bra():
-        the_person.char "I can't do that [the_person.mc_title]."
+        the_person "I can't do that [the_person.mc_title]."
         mc.name "Yes you can, you..."
         "She interrupts you."
         if not the_person.outfit.wearing_panties() and not the_person.outfit.wearing_bra():
-            the_person.char "No, I can't show you my underwear because... I'm not wearing any."
+            the_person "No, I can't show you my underwear because... I'm not wearing any."
         elif not the_person.outfit.wearing_panties():
-            the_person.char "No, I can't show you my underwear because... I'm not wearing any panties."
+            the_person "No, I can't show you my underwear because... I'm not wearing any panties."
         else:
-            the_person.char "No, I can't show you my underwear because... I'm not wearing a bra in the first place."
+            the_person "No, I can't show you my underwear because... I'm not wearing a bra in the first place."
         mc.name "Well, that's as good a reason as any."
         return
 
     if mc.location.get_person_count() > 1: #You aren't alone.
         if the_person.effective_sluttiness("underwear_nudity") < (40 - (5*the_person.get_opinion_score("lingerie"))): #She's shy and wants to go somewhere private
             "[the_person.possessive_title] looks around nervously, then back at you."
-            the_person.char "But... Here? Can we go somewhere without other people around first?"
+            the_person "But... Here? Can we go somewhere without other people around first?"
             menu:
                 "Find somewhere private.":
                     mc.name "Fine, if that's what you need."
@@ -502,13 +502,13 @@ label demand_strip_underwear_label(the_person):
             "[the_person.possessive_title] seems uncomfortable, but she nods obediently and starts to pull off her clothes."
 
         else: #She's into it.
-            the_person.char "Okay, whatever you want [the_person.mc_title]."
+            the_person "Okay, whatever you want [the_person.mc_title]."
             "She starts to strip down for you."
 
         call underwear_strip_description(the_person) from _call_underwear_strip_description_1
 
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("lingerie"))): # She's shy
-        the_person.char "Um... So what do we do now?"
+        the_person "Um... So what do we do now?"
         mc.name "Just relax and let me take a look. You look cute."
         "She nods and puts her hands behind her back. She blushes and looks away self-conciously as you ogle her."
         $ the_person.change_slut_temp( 1+ the_person.get_opinion_score("lingerie"))
@@ -517,42 +517,42 @@ label demand_strip_underwear_label(the_person):
         $ the_person.draw_person(position = "back_peek")
         "[the_person.title] spins around obediently."
         "You enjoy the view for a little while longer. [the_person.possessive_title] seems anxious to cover up again."
-        the_person.char "Can I get dressed now?"
+        the_person "Can I get dressed now?"
         $ the_person.draw_person()
 
 
     else:
         "[the_person.title] immediately puts her hands behind her back and pushes her chest forward, accentuating her tits."
-        the_person.char "So, what do you think? Does my underwear look good?"
+        the_person "So, what do you think? Does my underwear look good?"
         mc.name "I does, you look cute."
         "She smiles and gives you a spin, letting you take a look at her from behind."
         $ the_person.draw_person(position = "back_peek")
         "You enjoy the view for a little while longer, then nod approvingly to [the_person.possessive_title]."
         $ the_person.draw_person()
-        the_person.char "Would you like me to get dressed again?"
+        the_person "Would you like me to get dressed again?"
 
     menu:
         "Let her get dressed.":
             mc.name "Yeah, you can."
             "You watch her put her clothes back on."
-            $ the_person.apply_outfit(the_person.planned_outfit)
+            $ the_person.apply_outfit()
             $ the_person.draw_person()
 
         "Stay in your underwear.":
             mc.name "Your underwear is too cute to hide it away, you should should stay in it for a while."
             if the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("lingerie"))):
-                the_person.char "I... Okay, if that's what you want [the_person.mc_title]."
+                the_person "I... Okay, if that's what you want [the_person.mc_title]."
                 $ the_person.change_slut_temp(1)
                 $ the_person.change_happiness(-2)
             else:
-                the_person.char "Okay, if that's what you want me to do [the_person.mc_title]."
+                the_person "Okay, if that's what you want me to do [the_person.mc_title]."
     return
 
 label demand_strip_naked_label(the_person):
     if mc.location.get_person_count() > 1: #Other people are around
         if the_person.effective_sluttiness(["bare_tits","bare_pussy"]) < (80 - (5*the_person.get_opinion_score("not wearing anything"))): #She's shy and wants to go somewhere private
             "[the_person.possessive_title] looks around nervously, then back at you."
-            the_person.char "But... Here? I don't want to get naked in front of other people."
+            the_person "But... Here? I don't want to get naked in front of other people."
             menu:
                 "Find somewhere private.":
                     mc.name "Fine, if that's what you need."
@@ -576,7 +576,7 @@ label demand_strip_naked_label(the_person):
 
 
         else:
-            the_person.char "Okay, whatever you want [the_person.mc_title]."
+            the_person "Okay, whatever you want [the_person.mc_title]."
             "She starts to strip down for you."
 
     $ remove_shoes = False
@@ -595,44 +595,44 @@ label demand_strip_naked_label(the_person):
     call naked_strip_description(the_person, remove_shoes = remove_shoes) from _call_naked_strip_description
 
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))): # She's shy
-        the_person.char "What would you like me to do now?"
+        the_person "What would you like me to do now?"
         "She instinctively puts her hands behind her back while she waits for your instructions."
         mc.name "Give me a spin, I want to see your ass."
         "She blushes, but nods and turns around."
         $ the_person.draw_person(position = "back_peek")
         "[the_person.possessive_title] waits patiently until you signal for her to turn around again."
         $ the_person.draw_person()
-        the_person.char "Are we finished? Is that all?"
+        the_person "Are we finished? Is that all?"
 
     else:
         "[the_person.title] puts her hands behind her back and pushes her chest forward, accentuating her tits."
         "She waits silently for you to tell her what to do. You notice her nipples harden as you watch her."
         mc.name "Do you like this?"
         #TODO: THis should probably include dialogue based on their being naked opinions.
-        the_person.char "If I'm doing it for you I do."
+        the_person "If I'm doing it for you I do."
         mc.name "Good. Turn around, I want to see your ass."
         "She nods happily and turns around, wiggling her butt for you."
         $ the_person.draw_person(position = "back_peek")
         "You enjoy the view until you're satisfied."
         mc.name "Okay, turn around again."
         $ the_person.draw_person()
-        the_person.char "Is there anything else, [the_person.mc_title]?"
+        the_person "Is there anything else, [the_person.mc_title]?"
 
     menu:
         "Let her get dressed.":
             mc.name "I've seen enough. You can get dressed."
             "You watch her as she gets dressed again."
-            $ the_person.apply_outfit(the_person.planned_outfit)
+            $ the_person.apply_outfit()
             $ the_person.draw_person()
 
         "Keep her naked.":
             mc.name "Your body is way too nice looking to hide away. Stay like this for a while."
             if the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))):
-                the_person.char "I... Okay, if that's what you want [the_person.mc_title]."
+                the_person "I... Okay, if that's what you want [the_person.mc_title]."
                 $ the_person.change_slut_temp(1)
                 $ the_person.change_happiness(-2)
             else:
-                the_person.char "Okay, if that's what you want me to do [the_person.mc_title]."
+                the_person "Okay, if that's what you want me to do [the_person.mc_title]."
                 "[the_person.title] doesn't seem to mind."
     return
 
@@ -653,7 +653,7 @@ label suck_demand_label(the_person):
     "You unzip your pants and pull your cock free, already hardening with excitement."
     mc.name "Get on your knees. You're going to suck my cock."
     if the_person.effective_sluttiness("sucking_cock") + (the_person.get_opinion_score("being submissive") * 10) >= 60: #She would do it anyways and doesn't even think it's strange. Note: We require you to already have broken the blowjob taboo to get here as well.
-        the_person.char "Right away [the_person.mc_title]."
+        the_person "Right away [the_person.mc_title]."
         $ the_person.draw_person(position = "blowjob")
         "She drops to her knees immediately, spreading her legs and planting her hands on the ground between them."
 
@@ -662,7 +662,7 @@ label suck_demand_label(the_person):
             "[the_person.possessive_title] hesitates, but starts to move before you have to command her again."
         else:
             "[the_person.possessive_title] hesitates, glancing around."
-            the_person.char "I... Right here? Wouldn't you like to find somewhere private so we can..."
+            the_person "I... Right here? Wouldn't you like to find somewhere private so we can..."
             mc.name "Right here. Get on your knees and get my cock in your mouth before I run out of patience."
         $ the_person.draw_person(position = "blowjob")
         "She drops to her knees, putting her hands on her thighs and moving her face to cock level."
@@ -670,12 +670,12 @@ label suck_demand_label(the_person):
     else:
         if private:
             "[the_person.possessive_title] hesitates, shaking her head."
-            the_person.char "I can't do that, I..."
+            the_person "I can't do that, I..."
             mc.name "I wasn't asking you a question. On your knees, now. The longer you take the more stress I'm going to need relieved."
             "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."
         else:
             "[the_person.possessive_title] looks around, almost paniced."
-            the_person.char "I can't... We can't do that here! People would see me, I would..."
+            the_person "I can't... We can't do that here! People would see me, I would..."
             mc.name "I've already got my cock out, and I'm not putting it back in my pants until it's been down your throat."
             mc.name "On your knees. Now."
             "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."

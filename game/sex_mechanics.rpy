@@ -1,4 +1,4 @@
-label fuck_person(the_person, private = True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, self_strip = True, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False):
+label fuck_person(the_person, private = True, start_position = None, start_object = None, skip_intro = False, girl_in_charge = False, self_strip = True, hide_leave = False, position_locked = False, report_log = None, affair_ask_after = True, ignore_taboo = False, skip_condom = False):
     # When called fuck_person starts a sex scene with someone. Sets up the encounter, mainly with situational modifiers.
     show screen person_info_ui(the_person)
     if report_log is None:
@@ -111,10 +111,10 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
 
             if report_log.get("girl orgasms", 0) > 0 and the_person.love < 10 and the_person.obedience < 110: #She's cum and doesn't care about you finishing.
-                the_person.char "Whew, that felt great. Thanks for the good time [the_person.mc_title]!"
+                the_person "Whew, that felt great. Thanks for the good time [the_person.mc_title]!"
                 $ round_choice = "Girl Leave"
             elif report_log.get("guy orgasms", 0) > 0 and report_log.get("girl orgasms", 0) > 0: #Both parties have been satisfied
-                the_person.char "Whew, that felt amazing. It's good to know it was as good for you as it was for me."
+                the_person "Whew, that felt amazing. It's good to know it was as good for you as it was for me."
                 $ round_choice = "Girl Leave"
             elif position_choice is None: #There's no position we can take
                 "[the_person.title] can't think of anything more to do with you."
@@ -251,7 +251,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 elif position_choice.girl_energy > the_person.energy:
                     #TODO: Add some differentiated dialgoue depending on the position.
                     #TODO: Add "no energy" transitions where you keep fucking her anyways. (double TODO: Add a way of "breaking" her like this)
-                    the_person.char "I'm exhausted [the_person.mc_title], I can't keep this up..."
+                    the_person "I'm exhausted [the_person.mc_title], I can't keep this up..."
                     $ position_choice = None
                 else: #Nothing major has happened that requires us to change positions, we can have girls take over, strip
                     if self_strip:
@@ -320,7 +320,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 $ the_person.change_obedience(-5)
                 $ the_person.change_happiness(-10)
                 $ the_person.change_love(-3)
-                the_person.char "But you promised..."
+                the_person "But you promised..."
                 #TODO: Add some personality specific dialgoue for this
 
             else: # You end the encounter and nothing special happens.
@@ -653,15 +653,15 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
 label condom_ask(the_person):
     $ condom_threshold = the_person.get_no_condom_threshold()
     if pregnant_role in the_person.special_role and the_person.event_triggers_dict.get("preg_knows", False):
-        the_person.char "We don't need to worry about using a condom any more. You can't get me {i}more{/i} pregnant."
+        the_person "We don't need to worry about using a condom any more. You can't get me {i}more{/i} pregnant."
 
     elif the_person.effective_sluttiness("condomless_sex") < condom_threshold:
         # they demand you put on a condom.
         #TODO: Make this dialogue personality based
         if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies"):
-            the_person.char "I hate do say it, but I need you to put a condom on for me."
+            the_person "I hate do say it, but I need you to put a condom on for me."
         else:
-            the_person.char "Do you have a condom? You're going to have to put one on."
+            the_person "Do you have a condom? You're going to have to put one on."
 
         menu:
             "Put on a condom.":
@@ -676,13 +676,13 @@ label condom_ask(the_person):
     elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness("condomless_sex") < condom_threshold + 20 or the_person.has_taboo("condomless_sex"):
         # They suggest you put on a condom.
         if the_person.on_birth_control:
-            the_person.char "Do you think you should put on a condom? I'm on birth control, but it might be a good idea to be sure."
+            the_person "Do you think you should put on a condom? I'm on birth control, but it might be a good idea to be sure."
             $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             $ the_person.discover_opinion("creampies")
-            the_person.char "I think you should put on a condom. If you do you won't have to pull out when you cum."
+            the_person "I think you should put on a condom. If you do you won't have to pull out when you cum."
         else:
-            the_person.char "Do you think you should put a condom on? Maybe it's a good idea."
+            the_person "Do you think you should put a condom on? Maybe it's a good idea."
         menu:
             "Put on a condom.":
                 $ mc.condom = True
@@ -695,26 +695,26 @@ label condom_ask(the_person):
                     $ the_person.call_dialogue("condomless_sex_taboo_break")
                 else:
                     if the_person.on_birth_control:
-                        the_person.char "Okay. I'm on birth control, so it should be fine."
+                        the_person "Okay. I'm on birth control, so it should be fine."
                     else:
-                        the_person.char "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
+                        the_person "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
 
 
     else:
         # They ask you _not_ to put on a condom.
         if the_person.get_opinion_score("creampies") > 0:
             if the_person.on_birth_control:
-                the_person.char "Don't put on a condom. I'm on the pill and I want to feel you pump your load inside me."
+                the_person "Don't put on a condom. I'm on the pill and I want to feel you pump your load inside me."
             else:
-                the_person.char "Please don't put on a condom. I want you to feel you as you fuck me, even if you get me pregnant."
+                the_person "Please don't put on a condom. I want you to feel you as you fuck me, even if you get me pregnant."
             $ the_person.discover_opinion("creampies")
         else:
-            the_person.char "You don't need a condom, I want to feel every single thing you do to me."
+            the_person "You don't need a condom, I want to feel every single thing you do to me."
         menu:
             "Put on a condom.":
                 $ mc.condom = True
                 mc.name "Sorry, but I still think a condom is a good idea."
-                the_person.char "Fine, just make it quick please!"
+                the_person "Fine, just make it quick please!"
                 "[the_person.title] watches impatiently while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
 
             "Fuck her raw.":
@@ -858,7 +858,7 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
 
 
             if arousal_change > 0:
-                the_person.char "Oh my god..."
+                the_person "Oh my god..."
                 $ the_person.change_arousal(arousal_change)
                 if the_person.arousal > the_person.max_arousal:
                     "[the_person.possessive_title] moans and shivers, seemingly on the edge of an orgasm."
@@ -911,8 +911,8 @@ label girl_strip_event(the_person, the_position, the_object):
 
 label affair_check(the_person, report_log): #Report log is handed over so we can make reference to the specific scene if we want.
     $ so_title = SO_relationship_to_title(the_person.relationship)
-    the_person.char "[the_person.mc_title], you make me feel ways my [so_title] never does. I feel alive! Excited! Aroused..."
-    the_person.char "We both have feeling for each other, right? Maybe we can see each other some more. My [so_title] doesn't need to know. He'll never find out."
+    the_person "[the_person.mc_title], you make me feel ways my [so_title] never does. I feel alive! Excited! Aroused..."
+    the_person "We both have feeling for each other, right? Maybe we can see each other some more. My [so_title] doesn't need to know. He'll never find out."
     $ the_person.discover_opinion("cheating on men")
     menu:
         "Have an affair with [the_person.title].":

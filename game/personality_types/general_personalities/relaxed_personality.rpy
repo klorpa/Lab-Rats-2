@@ -243,7 +243,9 @@ label relaxed_clothing_reject(the_person):
     return
 
 label relaxed_clothing_review(the_person):
-    if the_person.obedience > 130:
+    if the_person.should_wear_uniform():
+        the_person "Oh, one second! I need to get back in uniform!"
+    elif the_person.obedience > 130:
         the_person.char "I'm sorry [the_person.mc_title], you shouldn't have to see me like this. I'll go and get cleaned up so I'm presentable again."
     else:
         if the_person.sluttiness > 40:
@@ -410,7 +412,7 @@ label relaxed_flirt_response(the_person):
     return
 
 label relaxed_flirt_response_low(the_person):
-    if the_person.outfit == the_person.planned_uniform:
+    if the_person.is_wearing_uniform():
         if the_person.judge_outfit(the_person.outfit):
             #She's in uniform and likes how it looks.
             the_person.char "Thanks [the_person.mc_title]. I like these uniforms too. Did you design them yourself?"
@@ -457,7 +459,7 @@ label relaxed_flirt_response_low(the_person):
     return
 
 label relaxed_flirt_response_mid(the_person):
-    if the_person.outfit == the_person.planned_uniform:
+    if the_person.is_wearing_uniform():
         if the_person.judge_outfit(the_person.outfit):
             the_person.char "No suprise there, since you're the one who designed this uniform."
             if the_person.outfit.tits_visible():
@@ -924,7 +926,7 @@ label relaxed_sex_watch(the_person, the_sex_person, the_position):
         $ change_report = the_person.change_slut_temp(1)
         "[the_person.title] averts her gaze, but keeps glancing over while you and [the_sex_person.name] [the_position.verb]."
 
-    elif the_person.sluttiness > the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
+    elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person.char "Oh my god that's... Wow that looks...Hot."
         $ change_report = the_person.change_slut_temp(2)

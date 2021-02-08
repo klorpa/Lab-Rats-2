@@ -123,7 +123,7 @@ label employee_complement_work(the_person):
 
     $ the_person.change_love(1)
     $ the_person.change_happiness(mc.charisma)
-    the_person.char "Thanks [the_person.mc_title], it means a lot to hear that from you!"
+    the_person "Thanks [the_person.mc_title], it means a lot to hear that from you!"
     return
 
 label insult_recent_work(the_person):
@@ -134,9 +134,9 @@ label insult_recent_work(the_person):
         mc.name "Honestly [the_person.title], I've been disappointed with your work lately and I really need you to try a little harder. You're letting the whole team down."
     if the_person.obedience >= 120:
         "She seems shocked for a second, then nods."
-        the_person.char "I'm sorry. I'll try harder."
+        the_person "I'm sorry. I'll try harder."
     else:
-        the_person.char "What? I... I've been doing my best."
+        the_person "What? I... I've been doing my best."
         mc.name "Well I'll need your best to be a little better if you want to justify what I'm paying you."
         $ the_person.draw_person(position = "sitting", emotion = "sad")
         "She scowls, but nods and doesn't object any more."
@@ -161,7 +161,7 @@ label employee_pay_cash_bonus(the_person):
                 $ change_amount = 0
             $ the_person.change_happiness(change_amount)
             "[the_person.title] looks visibly disapointed."
-            the_person.char "Right, of course."
+            the_person "Right, of course."
 
         "Give her a days wages. -$[the_person.salary]" if mc.business.funds >= the_person.salary:
             mc.name "Here you go, treat yourself to something nice tonight."
@@ -170,7 +170,7 @@ label employee_pay_cash_bonus(the_person):
             $ mc.business.funds -= the_person.salary
             $ the_person.change_happiness(change_amount)
             "[the_person.title] takes the bills from you and smiles."
-            the_person.char "Thank you sir."
+            the_person "Thank you sir."
 
 
         "Give her a weeks wages. -$[weeks_wages]" if mc.business.funds >= weeks_wages:
@@ -182,7 +182,7 @@ label employee_pay_cash_bonus(the_person):
             $ the_person.change_obedience(change_amount)
             $ mc.business.funds -= weeks_wages
             "[the_person.title] takes the bills, then smiles broadly at you."
-            the_person.char "That's very generous of you sir, thank you."
+            the_person "That's very generous of you sir, thank you."
 
         "Give her a months wages. -$[months_wages]" if mc.business.funds >= months_wages:
             mc.name "Here, you're a key part of the team and you deserved to be rewarded as such."
@@ -194,7 +194,7 @@ label employee_pay_cash_bonus(the_person):
             $ mc.business.funds -= months_wages
             "[the_person.title] takes the bills, momentarily stunned by the amount."
             if the_person.effective_sluttiness() > 40 and the_person.happiness > 100:
-                the_person.char "Wow... this is amazing sir. I'm sure there's something I can do to pay you back, right?"
+                the_person "Wow... this is amazing sir. I'm sure there's something I can do to pay you back, right?"
                 "She steps close to you and runs a finger down your chest."
                 $ the_person.add_situational_slut("situation", 10, "He's given me such a generous bonus, I should repay the favour!")
                 call fuck_person(the_person) from _call_fuck_person_3
@@ -202,7 +202,7 @@ label employee_pay_cash_bonus(the_person):
                 $ the_person.clear_situational_slut("situation")
                 $ the_person.review_outfit()
             else:
-                the_person.char "Wow... this is amazing sir. I'll do everything I can for you and the company!"
+                the_person "Wow... this is amazing sir. I'll do everything I can for you and the company!"
 
     return
 
@@ -211,9 +211,9 @@ label employee_performance_review(the_person):
     #Bring them into the office. (Set the background appropriately)
     mc.name "[the_person.title], I'd like to have a talk with you about your recent performance here at [mc.business.name]. Can you step inside my office for a moment?"
     if the_person.obedience > 100:
-        the_person.char "Oh, of course sir."
+        the_person "Oh, of course sir."
     else:
-        the_person.char "Uh, I guess. so."
+        the_person "Uh, I guess. so."
 
     $ office.show_background()
     $ mc.location.move_person(the_person, office)
@@ -225,23 +225,23 @@ label employee_performance_review(the_person):
     if the_person.get_job_happiness_score() > 0:
         #She's happy enough with the job to stay here
         if the_person.salary > the_person.calculate_base_salary() + 15: #She's very overpaid
-            the_person.char "It's a fantastic position and I'm lucky to have it! There aren't very many places that would be able to pay me as well as I am here."
+            the_person "It's a fantastic position and I'm lucky to have it! There aren't very many places that would be able to pay me as well as I am here."
         elif the_person.salary > the_person.calculate_base_salary() + 3: #She's reasonably over paid.
-            the_person.char "It's a great job. The pay is great and the work is interesting."
+            the_person "It's a great job. The pay is great and the work is interesting."
         elif the_person.salary > the_person.calculate_base_salary() - 3: #She's reasonably paid.
-            the_person.char "I really like my job. I feel like I can come in every day and do an honest day's work."
+            the_person "I really like my job. I feel like I can come in every day and do an honest day's work."
         else:
-            the_person.char "The pay isn't the greatest, but the work environment really makes up for it. It's a joy to be working here."
+            the_person "The pay isn't the greatest, but the work environment really makes up for it. It's a joy to be working here."
 
     else: #She's thinking about quitting.
         if the_person.salary > the_person.calculate_base_salary() + 15: #She's very overpaid
-            the_person.char "The pay is amazing, but the work environment here is just terrible. I honestly don't know how much longer I can take it."
+            the_person "The pay is amazing, but the work environment here is just terrible. I honestly don't know how much longer I can take it."
         elif the_person.salary > the_person.calculate_base_salary() + 3: #She's reasonably over paid.
-            the_person.char "I know you're paying me very well, but the work here is terrible. I hope you have some plans to make things better."
+            the_person "I know you're paying me very well, but the work here is terrible. I hope you have some plans to make things better."
         elif the_person.salary > the_person.calculate_base_salary() - 3: #She's reasonably paid.
-            the_person.char "Things could be better. I'd like it if the conditions here at work were improved a little bit, or I could be paid a little bit more."
+            the_person "Things could be better. I'd like it if the conditions here at work were improved a little bit, or I could be paid a little bit more."
         else:
-            the_person.char "I don't really have anything positive to say. The pay isn't great and it isn't exactly the most pleasant work environment."
+            the_person "I don't really have anything positive to say. The pay isn't great and it isn't exactly the most pleasant work environment."
 
     "You nod and take some notes while you think of how you want to respond."
     #TODO: Here is where characters, especially those with moderate sluttiness and who are over paid, might try and win your favour. Is this the right place for it?
@@ -259,7 +259,7 @@ label employee_performance_review(the_person):
                     $ the_person.change_happiness(10+mc.charisma)
                     $ the_person.change_obedience(3+mc.charisma)
                     $ the_person.draw_person(position = "sitting", emotion = "happy")
-                    the_person.char "That sounds amazing! Thank you sir, I promise I won't let you down!"
+                    the_person "That sounds amazing! Thank you sir, I promise I won't let you down!"
                     mc.name "Good to hear it."
 
                 "Reward her sexually." if the_person.effective_sluttiness() >= 40: #At high sluttiness you can make her cum to make her even happier with her job.
@@ -268,7 +268,7 @@ label employee_performance_review(the_person):
                     mc.name "I'd like to do something for you to help you relax. How does that sound for a bonus?"
                     $ the_person.add_situational_slut("seduction_approach", 15, "It's all about me!")
                     $ the_person.add_situational_obedience("seduction_approach", -20, "It's all about me!")
-                    the_person.char "Oh [the_person.mc_title], that sounds like a great idea..."
+                    the_person "Oh [the_person.mc_title], that sounds like a great idea..."
                     call fuck_person(the_person,private = True) from _call_fuck_person_11
                     $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
@@ -277,15 +277,16 @@ label employee_performance_review(the_person):
                         $ the_person.change_happiness(20)
                         $ the_person.change_slut_temp(5)
                         $ the_person.change_love(2)
-                        the_person.char "Oh [the_person.mc_title], that was wonderful! I couldn't have asked for a better performance bonus!"
-                    elif the_report.get("girl orgasms", 0) == 0: #She didn't cum, but neither did you so maybe you were just both tired
-                        $ the_person.change_happiness(5)
-                        $ the_person.change_slut_temp(2)
-                        the_person.char "Well, that was a good time [the_person.mc_title]. It's a lot more fun than a normal performance bonus, that's for sure!"
-                    else: # You "rewarded" her by cumming and leaving her unsatisfied. Not particularly impressive.
+                        the_person "Oh [the_person.mc_title], that was wonderful! I couldn't have asked for a better performance bonus!"
+                    elif the_report.get("guy orgasms", 0) > 0: # You "rewarded" her by cumming and leaving her unsatisfied. Not particularly impressive.
                         $ the_person.change_happiness(-5)
                         $ the_person.change_obedience(-2)
-                        the_person.char "It's not much of a bonus if you're the only one who gets to cum. Maybe next time a cash bonus would be better, okay?"
+                        the_person "It's not much of a bonus if you're the only one who gets to cum. Maybe next time a cash bonus would be better, okay?"
+                    else: #She didn't cum, but neither did you so maybe you were just both tired
+                        $ the_person.change_happiness(5)
+                        $ the_person.change_slut_temp(2)
+                        the_person "Well, that was a good time [the_person.mc_title]. It's a lot more fun than a normal performance bonus, that's for sure!"
+
                     $ the_person.review_outfit()
 
         "Punish her for poor performance.":
@@ -302,16 +303,16 @@ label employee_performance_review(the_person):
                     $ the_person.change_obedience(-(8-mc.charisma))
                     if the_person.get_job_happiness_score() > 0:
                         $ the_person.draw_person(position = "sitting", emotion = "sad")
-                        the_person.char "I... I understand."
+                        the_person "I... I understand."
                     elif the_person.get_job_happiness_score() > -25:
                         $ the_person.draw_person(position = "sitting", emotion = "angry")
-                        the_person.char "What? I... I don't know what to say!"
+                        the_person "What? I... I don't know what to say!"
                         mc.name "Like I said, I'm sorry but it has to be done."
                     else: #She's so unhappy with her job she quits.
                         $ the_person.draw_person(position = "sitting", emotion = "angry")
-                        the_person.char "What? I... I can't believe that [the_person.mc_title], why would you ever think I would stay here for less money?"
+                        the_person "What? I... I can't believe that [the_person.mc_title], why would you ever think I would stay here for less money?"
                         mc.name "Like I said, I'm sorry but it has to be done."
-                        the_person.char "Well you know what, I think I'm just going to find somewhere else to work. I quit."
+                        the_person "Well you know what, I think I'm just going to find somewhere else to work. I quit."
                         $ clear_scene()
                         "[the_person.title] stands up and storms out."
                         $ mc.business.remove_employee(the_person)
@@ -323,18 +324,18 @@ label employee_performance_review(the_person):
                     mc.name "I've been running the numbers and I think we'd be better off without you. Unless you can convince me otherwise I'm going to have to let you go."
                     if the_person.get_job_happiness_score() > -10:
                         if the_person.effective_sluttiness() < 20:
-                            the_person.char "No sir, I really need this job. What if I took a pay cut? Would that be enough?"
+                            the_person "No sir, I really need this job. What if I took a pay cut? Would that be enough?"
                             menu:
                                 "Cut her pay. (-$[cut_amount]/day)":
                                     mc.name "If you're willing to take a pay cut I think I can keep you around and see if your performance improves."
                                     $ the_person.change_salary(-cut_amount)
                                     $ the_person.change_happiness(10)
                                     $ the_person.change_obedience(5)
-                                    the_person.char "Thank you sir! Thank you so much!"
+                                    the_person "Thank you sir! Thank you so much!"
 
                                 "Fire her.":
                                     mc.name "I'm sorry, but that wouldn't be enough."
-                                    the_person.char "I understand. I'll clear out my desk."
+                                    the_person "I understand. I'll clear out my desk."
                                     $ the_person.change_happiness(-10)
                                     $ the_person.change_obedience(-5)
                                     $ mc.business.remove_employee(the_person)
@@ -535,9 +536,9 @@ label employee_performance_review(the_person):
                                     $ the_person.change_happiness(-5)
                                     mc.name "Okay [the_person.title], I'll keep you around for a little while longer, but you're going to need to shape up unless you want this to be a regular occurrence."
                                     if the_person.effective_sluttiness() < 50:
-                                        the_person.char "I'll do my best sir, I promise."
+                                        the_person "I'll do my best sir, I promise."
                                     else:
-                                        the_person.char "Would that really be such a bad thing?"
+                                        the_person "Would that really be such a bad thing?"
 
 
                                 "Make her blow you.\nRequires: [blowjob_token] (disabled)" if the_person.effective_sluttiness() < 45:
@@ -640,9 +641,9 @@ label employee_performance_review(the_person):
                                     $ the_person.change_happiness(-5)
                                     mc.name "Okay [the_person.title], I'll keep you around for a little while longer, but you're going to need to shape up unless you want this to be a regular occurrence."
                                     if the_person.effective_sluttiness() < 50:
-                                        the_person.char "I'll do my best sir, I promise."
+                                        the_person "I'll do my best sir, I promise."
                                     else:
-                                        the_person.char "Would that really be such a bad thing?"
+                                        the_person "Would that really be such a bad thing?"
 
 
                                 "Fuck her.\nRequires: [fuck_token] (disabled)" if the_person.effective_sluttiness() < 60:
@@ -659,7 +660,7 @@ label employee_performance_review(the_person):
 
                     else:
                         $ the_person.draw_person(position = "sitting", emotion = "angry")
-                        the_person.char "What? You want me to beg to stay at this shitty job? If you don't want me here I think it's best I just move on. I quit!"
+                        the_person "What? You want me to beg to stay at this shitty job? If you don't want me here I think it's best I just move on. I quit!"
                         $ clear_scene()
                         "[the_person.title] stands up and storms out."
                         $ mc.business.remove_employee(the_person)
@@ -674,7 +675,7 @@ label employee_performance_review(the_person):
                     $ opinion_modifier = the_person.get_opinion_score("being submissive")*5
                     $ the_person.add_situational_slut("seduction_approach", -5+opinion_modifier, "I'm just being used...")
                     $ the_person.add_situational_obedience("seduction_approach", 15+opinion_modifier, "I'm being punished")
-                    the_person.char "I... if you think this is what I need, sir."
+                    the_person "I... if you think this is what I need, sir."
                     call fuck_person(the_person,private = True) from _call_fuck_person_13
                     $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
@@ -682,21 +683,21 @@ label employee_performance_review(the_person):
                     if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
                         $ the_person.change_happiness(5)
                         $ the_person.change_obedience(-10)
-                        the_person.char "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't suppose to cum?"
+                        the_person "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't suppose to cum?"
                         "[the_person.title] seems smug about her orgasmic victory."
 
                     elif the_report.get("end arousal", 0) >= 80:
                         $ the_person.change_happiness(5)
                         $ the_person.change_slut_temp(5)
                         $ the_person.change_obedience(5)
-                        the_person.char "Oh my god [the_person.mc_title], you got me so close... Can't you just finish me off, real quick?"
+                        the_person "Oh my god [the_person.mc_title], you got me so close... Can't you just finish me off, real quick?"
                         mc.name "Do a better job and I'll let you cum next time. Understood?"
                         "[the_person.title] nods meekly."
                     else:
                         $ the_person.change_happiness(-5)
                         $ the_person.change_obedience(10)
                         mc.name "That felt great [the_person.title], I suppose if your performance doesn't improve you'll still be useful as a toy."
-                        the_person.char "I... Yes sir, I suppose I would be."
+                        the_person "I... Yes sir, I suppose I would be."
 
                     $ the_person.review_outfit()
 
@@ -716,7 +717,7 @@ label employee_performance_review(the_person):
             mc.name "Well, I think you're doing a perfectly adequate job around here [the_person.title]. If you keep up the good work I don't think we will have any issues."
             $ the_person.change_obedience(1)
             $ the_person.change_happiness(2)
-            the_person.char "Thank you, I'll do my best."
+            the_person "Thank you, I'll do my best."
 
     "You stand up and open the door for [the_person.title] at the end of her performance review."
     $ clear_scene()
@@ -733,7 +734,7 @@ label move_employee_label(the_person):
                 $ clear_scene()
                 return
 
-    the_person.char "Where would you like me then?"
+    the_person "Where would you like me then?"
     $ mc.business.remove_employee(the_person, remove_linked = False)
     $ the_person.add_role(employee_role) #Remove_employee strips them of their workplace roles. We want to make sure we add it back.
     #TODO: All of the moving employees around should probably be its own function, which would let us set up an employee schedule where they work in different sections if we wanted.
@@ -773,7 +774,7 @@ label move_employee_label(the_person):
             $ mc.business.h_div.add_person(the_person)
             $ the_person.set_work(mc.business.h_div)
 
-    the_person.char "I'll move over there right away!"
+    the_person "I'll move over there right away!"
     return
 
 label employee_paid_serum_test_label(the_person):
