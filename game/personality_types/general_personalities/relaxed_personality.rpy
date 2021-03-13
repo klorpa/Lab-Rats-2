@@ -16,7 +16,8 @@ init 1300:
         common_sexy_likes = ["missionary style sex", "kissing", "masturbating", "being submissive", "drinking cum", "cum facials"],
         common_dislikes = ["Mondays", "pants", "the colour yellow", "research work", "work uniforms"],
         common_sexy_dislikes = ["taking control", "doggy style sex", "showing her tits", "showing her ass", "bareback sex", "creampies"],
-        titles_function = relaxed_titles, possessive_titles_function = relaxed_possessive_titles, player_titles_function = relaxed_player_titles)
+        titles_function = relaxed_titles, possessive_titles_function = relaxed_possessive_titles, player_titles_function = relaxed_player_titles,
+        insta_chance = 50, dikdok_chance = 10)
 
         list_of_personalities.append(relaxed_personality)
 
@@ -712,6 +713,33 @@ label relaxed_flirt_response_affair(the_person):
                 mc.name "But you should know, the next time I get you alone I'm going to pay you back for all this teasing."
                 the_person.char "Yeah? Well now you've got me excited!"
                 "You give her butt a hard slap and let her go."
+    return
+
+label relaxed_flirt_response_text(the_person):
+    mc.name "Hey [the_person.title], I was just thinking of you. I've been doing that a lot lately."
+    "There's a brief pause, then she texts back."
+    if the_person.has_role(affair_role):
+        the_person "I've been thinking about you too. I hope we can be together soon."
+        mc.name "Me too. I'm sure it won't be long."
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "Aww, that's so sweet. I've been thinking about you too, I hope I can see you soon."
+        mc.name "Me too. I'm sure it won't be long."
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "You have? Well, I suppose I have that effect on people."
+        else:
+            the_person "You have? That's nice of you to say, I guess."
+            the_person "So... what's up?"
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Oh yeah? What kind of dirty things have you been thinking about me doing?"
+            the_person "You can tell me, I won't mind."
+        else:
+            the_person "Aww, that's so sweet. I've been thinking about you too, honestly."
+            the_person "I'd like to spend more time with you. Just hit me up."
     return
 
 label relaxed_cum_face(the_person):

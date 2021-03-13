@@ -22,4 +22,5 @@ init 1300:
         common_sexy_likes = ["doggy style sex", "bareback sex", "not wearing anything", "skimpy outfits"],
         common_dislikes = ["pants", "conservative outfits", "hiking"],
         common_sexy_dislikes = ["anal sex", "being fingered", "taking control"],
-        titles_function = alexia_titles, possessive_titles_function = alexia_possessive_titles, player_titles_function = alexia_player_titles)
+        titles_function = alexia_titles, possessive_titles_function = alexia_possessive_titles, player_titles_function = alexia_player_titles,
+        insta_chance = 40, dikdok_chance = 20)

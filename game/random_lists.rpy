@@ -632,6 +632,10 @@ init -2:
             else:
                 list_of_titles.append(personality_titles)
 
+            if the_person.sluttiness > 20:
+                if the_person.obedience > 140:
+                    list_of_titles.append("Slave")
+
 
             if the_person.sluttiness > 60:
                 list_of_titles.append("Slut")
@@ -648,17 +652,21 @@ init -2:
                     list_of_titles.append("Breeding Material")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
-                if the_person.sex_record.get("Cum Facials", 0) > 0 or the_person.sex_record.get("Cum in Mouth", 0) > 0 or the_person.sex_record.get("Cum Covered", 0) > 0:
+                if the_person.sex_record.get("Cum Facials", 0) > 5 or the_person.sex_record.get("Cum in Mouth", 0) > 5 or the_person.sex_record.get("Cum Covered", 0) > 5:
                     list_of_titles.append("Cumslut")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("bareback sex")*5 + the_person.get_opinion_score("creampies")*5)):
-                if the_person.sex_record.get("Vaginal Creampies", 0) > 0 or the_person.sex_record.get("Anal Creampies", 0) > 0:
+                if the_person.sex_record.get("Vaginal Creampies", 0) > 5 or the_person.sex_record.get("Anal Creampies", 0) > 5:
                     list_of_titles.append("Cumdump")
 
 
 
             if the_person.love >= 60 and girlfriend_role in the_person.special_role:
                 list_of_titles.append("Love")
+
+            if the_person.love < 0:
+                list_of_titles.append("Cunt")
+                list_of_titles.append("Bitch")
 
 
 
@@ -685,10 +693,16 @@ init -2:
             if the_person.love > 10:
                 list_of_possessive_titles.append("Your friend")
 
-            if the_person.obedience > 150 and the_person.sluttiness > 60:
-                list_of_possessive_titles.append("Your dedicated cocksleeve")
+            if the_person.obedience > 150:
+                list_of_possessive_titles.append("Your slave")
+                if the_person.sluttiness > 60:
+                    list_of_possessive_titles.append("Your dedicated cocksleeve")
+
 
             if the_person.sluttiness > 60:
+                if the_person.int == 0 and the_person.has_large_tits():
+                    list_of_possessive_titles.append("Your airhead bimbo")
+
 
                 if the_person.love > 50:
                     list_of_possessive_titles.append("Your personal slut")
@@ -707,10 +721,10 @@ init -2:
                     list_of_possessive_titles.append("Your breeder")
 
             if the_person.sluttiness > (70 - (the_person.get_opinion_score("drinking cum")*5 + the_person.get_opinion_score("creampies")*5 + the_person.get_opinion_score("cum facials")*5 + the_person.get_opinion_score("being covered in cum")*5)):
-                if the_person.sex_record.get("Cum Facials", 0) > 0 or the_person.sex_record.get("Cum in Mouth", 0) > 0 or the_person.sex_record.get("Cum Covered", 0) > 0:
+                if the_person.sex_record.get("Cum Facials", 0) > 5 or the_person.sex_record.get("Cum in Mouth", 0) > 5 or the_person.sex_record.get("Cum Covered", 0) > 5:
                     list_of_possessive_titles.append("Your cumslut")
 
-                if the_person.sex_record.get("Vaginal Creampies", 0) > 0 or the_person.sex_record.get("Anal Creampies", 0) > 0:
+                if the_person.sex_record.get("Vaginal Creampies", 0) > 5 or the_person.sex_record.get("Anal Creampies", 0) > 5:
                     list_of_possessive_titles.append("Your cumdump")
 
 

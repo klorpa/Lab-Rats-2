@@ -35,7 +35,8 @@ init 1300:
         common_sexy_likes = ["taking control", "being submissive", "bareback sex", "creampies"],
         common_dislikes = ["production work", "sports"],
         common_sexy_dislikes = ["anal sex", "drinking cum", "sex standing up"],
-        titles_function = mom_titles, possessive_titles_function = mom_possessive_titles, player_titles_function = mom_player_titles)
+        titles_function = mom_titles, possessive_titles_function = mom_possessive_titles, player_titles_function = mom_player_titles,
+        insta_chance = 0, dikdok_chance = 0)
 
 ### DIALOGUE ###
 label mom_greetings(the_person):
@@ -481,6 +482,34 @@ label mom_flirt_response_high(the_person):
             the_person "Well I don't find it very funny when other people are around. It's embarrassing."
             mc.name "I'm sorry, I'll wait until we're alone next time."
             the_person "I'm not even sure if you should be making comments like that to me alone, but... It's fine."
+    return
+
+label mom_flirt_response_text(the_person):
+    mc.name "Hey [the_person.title], I just wanted to check in and say hi. How's it going?"
+    "There's a brief pause, then she text back."
+    if the_person.has_role(affair_role):
+        the_person "You're sweet [the_person.mc_title]. I'm having a good day."
+        the_person "It will be even better tonight when I get to see you though. I already miss you."
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "You're sweet [the_person.mc_title]. I'm having a good day."
+        the_person "It's even better when I hear from you though!"
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "You're so sweet checking in on your mother. I'm having a good day."
+            the_person "I hope I'll see you later tonight. I don't like it when you spend all night at work."
+        else:
+            the_person "You're so sweet checking in on your mother. I'm having a good day."
+            the_person "Are you doing well? I hope you haven't been working too hard."
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "You're so sweet to check in on me. I'm doing well, but I'm feeling a little lonely."
+            the_person "I hope we can spend some mother-son time together soon."
+        else:
+            the_person "You're so sweet to check in on me. I'm doing well, but I miss seeing you more often."
+            the_person "Try to come home at a reasonable hour tonight. You're working yourself to the bone."
     return
 
 label mom_cum_face(the_person):

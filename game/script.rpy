@@ -55,6 +55,7 @@ init -2 python:
                     reference_draw_number = draw_package[1]
 
                     the_render = prepared_animation_render[draw_layer].get(the_person.character_number, None) #TODO: Change how we are stashing things in prepared_animation_render
+                    del prepared_animation_render[draw_layer][the_person.character_number] #Clear the render, we don't need to track it any more. Without this image renders build up over the course of the day, consuming massive amounts of memory.
 
                     if reference_draw_number == the_person.draw_number[draw_layer]+global_draw_number[draw_layer] and the_render is not None: #Only make draws taht are current. If eitehr the personal or global draw number has increased we do not need to draw this.
                         if isinstance(the_render, list): #It's a removal draw (Which makes prepared_animation_render a list of renders, the first (old) one should be drawn on top and faded out.
@@ -108,12 +109,12 @@ init -2 python:
     def text_message_history_callback(history_entry): #Manages taking the history entry and slotting it into the appropriate list
         if hasattr(store,"mc"): #Make sure the main character has been instantiated
             if mc.having_text_conversation: #This is set to a Person when talking via text, to allow us to log the interation correctly.
-                if history_entry != "": #Record the entry, we'll figure out in the history display section if it's messages from us or a Person.
+                if history_entry.who is not None and not mc.text_conversation_paused: #Record the dialogue, we'll figure out in the history display section if it's messages from us or a Person.
                     mc.phone.add_message(mc.having_text_conversation, history_entry)
                 else:
                     pass #Nothing to do. We don't record narration.
 
-    def text_message_say_callback(who, *args, **kwargs): #Manually sets the style of anything sent as part of a text conversation
+    def text_message_say_callback(who, *args, **kwargs): #Manually sets the style of anything sent as part of a text conversation #NOTE: No longer used or hooked up once the proper phone UI was added
         if hasattr(store,"mc"):
             if mc.having_text_conversation:
                 kwargs["what_color"] = "#19e9f7" #We need to define these explicitly so they are not overridden by the characters defaults.
@@ -121,7 +122,7 @@ init -2 python:
         return args, kwargs
 
     config.history_callbacks.append(text_message_history_callback) #Ensures conversations had via text are recorded properly
-    config.say_arguments_callback = text_message_say_callback #Recolours and re-fonts say statements made while having a text conversation
+    # config.say_arguments_callback = text_message_say_callback #Recolours and re-fonts say statements made while having a text conversation #NOTE: NOt needed now that we properly store messages into the phone and display them from a custom screen.
 
     config.predict_screen_statements = True
     config.predict_statements = 50
@@ -1626,6 +1627,8 @@ init -2 python:
             self.known_home_locations = [] #When the MC learns a character's home location the room reference should be added here. They can then get to it from the map.
 
             self.having_text_conversation = None #Set to a Person when dialogue should be taking place on the phone. Logs dialogue (but not narration) as appropriate.
+            self.text_conversation_paused = False #Shows the say window as normal for all dialogue with the phone display underneath if having_text_conversation is set to a Person
+
             self.phone = Text_Message_Manager()
 
             self.listener_system = Listener_Management_System() #A listener manager to let us enroll to events and update goals when they are triggered.
@@ -1822,6 +1825,32 @@ init -2 python:
             while len(self.log_items) > self.log_max_size:
                 self.log_items.pop() #Pop off extra items until we are down to size.
 
+        def start_text_convo(self, the_person): #Triggers all the appropriate variables so say entries will go into the phone text log.
+            self.having_text_conversation = the_person
+            self.text_conversation_paused = False
+
+            # renpy.show_screen("text_message_log", the_person)
+            return
+
+        def end_text_convo(self): #Resets all triggers from texting someone, so say messages are displayed properly again, ect.
+            self.having_text_conversation = None
+            self.text_conversation_paused = False
+
+            # renpy.hide_screen("text_message_log")
+            return
+
+        def pause_text_convo(self): #Keeps the phone UI and display up, but your dialogue and dialogue from any girl other than the one you're texting will display as normal and not be logged.
+            self.text_conversation_paused = True #TODO: We no longer need to give characters a specific phone font, because it all goes right into the phone log itself. Otherwise this breaks the MC dialogue.
+            return
+
+        def resume_text_convo(self): #Start hiding the phone UI again. Use after you have paused a text convo
+            self.text_conversation_paused = False
+            return
+
+        def log_text_message(self, the_person, the_message):
+            #TODO: Allow you to insert arbitrary messages by building history entries here! Use this for a narrator sytle "[Sent a picture]"!
+            return
+
 
     class Person(renpy.store.object): #Everything that needs to be known about a person.
         global_character_number = 0 #This is increased for each character that is created.
@@ -1832,7 +1861,8 @@ init -2 python:
             face_style = "Face_1",
             special_role = None,
             title = None, possessive_title = None, mc_title = None,
-            relationship = None, SO_name = None, kids = None, base_outfit = None):
+            relationship = None, SO_name = None, kids = None, base_outfit = None,
+            generate_insta = False, generate_dikdok = False, generate_onlyfans = False):
 
             ## Personality stuff, name, ect. Non-physical stuff.
             self.name = name
@@ -2074,8 +2104,17 @@ init -2 python:
             self.apply_outfit(self.planned_outfit)
 
 
+            ## Internet things ##
+            if generate_insta: #NOTE: By default all of these are not visible to the player.
+                self.special_role.append(instapic_role)
+            if generate_dikdok:
+                self.special_role.append(dikdok_role)
+            if generate_onlyfans:
+                self.special_role.append(onlyfans_role)
+
             ## Conversation things##
             self.sexed_count = 0
+
 
         def generate_home(self, set_home_time = True): #Creates a home location for this person and adds it to the master list of locations so their turns are processed.
             if self.home is None:
@@ -2342,6 +2381,8 @@ init -2 python:
 
 
             the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
+            if the_displayable is None:
+                renpy.notify("NONE IMAGE ERROR!")
 
 
 
@@ -3680,8 +3721,8 @@ init -2 python:
     class Personality(): #How the character responds to various actions
         def __init__(self, personality_type_prefix, default_prefix = None,
             common_likes = None, common_dislikes = None, common_sexy_likes = None, common_sexy_dislikes = None,
-            titles_function = None, possessive_titles_function = None, player_titles_function = None):
-
+            titles_function = None, possessive_titles_function = None, player_titles_function = None,
+            insta_chance = 0, dikdok_chance = 0):
 
             self.personality_type_prefix = personality_type_prefix
             self.default_prefix = default_prefix
@@ -3690,6 +3731,10 @@ init -2 python:
             self.possessive_titles_function = possessive_titles_function
             self.player_titles_function = player_titles_function
 
+            self.insta_chance = insta_chance
+            self.dikdok_chance = dikdok_chance
+            #NOTE: Girls never generate with Onlyfans naturally
+
             #These are the labels we will be trying to get our dialogue. If the labels do not exist we will get their defaults instead. A default should _always_ exist, if it does not our debug check will produce an error.
             self.response_label_ending = ["greetings",
             "sex_responses_foreplay", "sex_responses_oral", "sex_responses_vaginal", "sex_responses_anal",
@@ -3697,7 +3742,7 @@ init -2 python:
             "clothing_accept", "clothing_reject", "clothing_review",
             "strip_reject", "strip_obedience_accept", "grope_body_reject", "sex_accept", "sex_obedience_accept", "sex_gentle_reject", "sex_angry_reject",
             "seduction_response", "seduction_accept_crowded", "seduction_accept_alone", "seduction_refuse",
-            "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high", "flirt_response_girlfriend", "flirt_response_affair",
+            "flirt_response", "flirt_response_low", "flirt_response_mid", "flirt_response_high", "flirt_response_girlfriend", "flirt_response_affair", "flirt_response_text",
             "cum_face", "cum_mouth", "cum_pullout", "cum_condom", "cum_vagina", "cum_anal", "suprised_exclaim", "talk_busy",
             "improved_serum_unlock", "sex_strip", "sex_watch", "being_watched", "work_enter_greeting", "date_seduction", "sex_end_early", "sex_take_control", "sex_beg_finish", "sex_review" ,"introduction",
             "kissing_taboo_break", "touching_body_taboo_break", "touching_penis_taboo_break", "touching_vagina_taboo_break", "sucking_cock_taboo_break", "licking_pussy_taboo_break", "vaginal_sex_taboo_break", "anal_sex_taboo_break",
@@ -3801,10 +3846,26 @@ init -2 python:
         hair_colour = None, hair_style = None, pubes_colour = None, pubes_style = None, skin = None, eyes = None, job = None,
         personality = None, custom_font = None, name_color = None, dial_color = None, starting_wardrobe = None, stat_array = None, skill_array = None, sex_array = None,
         start_sluttiness = None, start_obedience = None, start_happiness = None, start_love = None, start_home = None,
-        title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None, base_outfit = None):
+        title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None, base_outfit = None,
+        generate_insta = None, generate_dikdok = None, generate_onlyfans = None):
 
         if personality is None:
             personality = get_random_personality()
+
+        if generate_insta is None:
+            if renpy.random.randint(0,100) < personality.insta_chance:
+                generate_insta = True
+            else:
+                generate_insta = False
+
+        if generate_dikdok is None:
+            if renpy.random.randint(0,100) < personality.dikdok_chance:
+                generate_dikdok = True
+            else:
+                generate_dikdok = False
+
+        if generate_onlyfans is None:
+            generate_onlyfans = False
 
 
         if name is None:
@@ -3964,7 +4025,8 @@ init -2 python:
             font = my_custom_font, name_color = name_color , dialogue_color = dial_color,
             face_style = face_style,
             title = title, possessive_title = possessive_title, mc_title = mc_title,
-            relationship = relationship, kids = kids, SO_name = SO_name, base_outfit = base_outfit)
+            relationship = relationship, kids = kids, SO_name = SO_name, base_outfit = base_outfit,
+            generate_insta = generate_insta, generate_dikdok = generate_dikdok, generate_onlyfans = generate_onlyfans)
 
     class GroupDisplayManager(renpy.store.object):
         default_shift_amount = 0.15
@@ -4358,9 +4420,10 @@ init -2 python:
 
 
     # Aaaand immediately after creating this class I've decided it's not wanted. All I expect it to do for now is to act as a per-character message log.
-    class Text_Message_Manager(): #Manages text conversations you've had with other girls
+    class Text_Message_Manager(): #Manages text conversations you've had with other girls. Also stores information for other phone related stuff
         def __init__(self): #TODO: Add support for manufacturing a message history.
             self.message_history = {} # A dict that stores entries of Person:[HistoryEntry,HistoryEntry...] representing your recorded conversation with this girl.
+            self.current_message = None # Set to a tuple of [who, what] when someone texts you, allowing for it to be displayed immediately (instead of after the statement is passed into history). Should be
             #TODO: Then figure out how we are gong to store pictures, videos, allow custom avatar pics, ect. We could either store them as .pngs, or store all the required parameters (including outfit).
 
         def register_number(self, the_person): #Now just used to keep track of who's number we know
@@ -4371,6 +4434,19 @@ init -2 python:
             self.register_number(the_person)
             self.message_history[the_person].append(history_entry)
 
+        def add_non_convo_message(self, the_person, the_message): #Allows you to add an entry to the log without it having to appear as dialogue.
+            new_entry = renpy.character.HistoryEntry() #TODO: Check if this results in double entries (it might be grabbed by the history callback immediately)
+            new_entry.who = the_person.title
+            new_entry.what = the_message
+            self.add_message(the_person, new_entry)
+
+
+        def add_system_message(self, the_person, the_message): #Adds a history entry that does not have a "who" variable set. Use to add phone messages like "[SENT A PICTURE]".
+            new_entry = renpy.character.HistoryEntry()
+            new_entry.who = None
+            new_entry.what = the_message
+            self.add_message(the_person, new_entry)
+
         def get_person_list(self):
             return self.message_history.keys()
 
@@ -4379,6 +4455,13 @@ init -2 python:
                 return True
             else:
                 return False
+
+        def get_message_list(self, the_person):
+            if self.has_number(the_person):
+                return self.message_history[the_person]
+            else:
+                return []
+
 
     #     def add_new_message(self, the_person, the_action):
     #         if the_person not in self.pending_messages:
@@ -4476,6 +4559,9 @@ init -2 python:
                 return True
             else:
                 return False
+
+        def get_person_list(self):
+            return self.people
 
         def get_person_count(self):
             return len(self.people)
@@ -4602,8 +4688,8 @@ init -2 python:
             elif not isinstance(extra_args, list):
                 extra_args = [extra_args]
 
-            renpy.call(self.effect,*(self.args+extra_args))
-            renpy.return_statement()
+            return_value = renpy.call(self.effect,*(self.args+extra_args))
+            renpy.return_statement(return_value) #NOTE: _return may _already_ hold the value of the most recent return, so this might be redundent, or even cause bugs. Need to test. TODO
 
     class Limited_Time_Action(Action): #A wrapper class that holds an action and the amount of time it will be valid. This acts like an action everywhere
         #except it also has a turns_valid value to decide when to get rid of this reference to the underlying action
@@ -4658,6 +4744,7 @@ init -2 python:
         def __init__(self, role_name, actions, hidden = False, on_turn = None, on_move = None, on_day = None):
             self.role_name = role_name
             self.actions = actions # A list of actions that can be taken. These actions are shown when you talk to a person with this role if their requirement is met.
+            # At some point we may want a seperate list of role actions that are available when you text someone.
             self.hidden = hidden #A hidden role is not shown on the "Roles" list
             self.on_turn = on_turn #A function that is run each turn on every person with this Role.
             self.on_move = on_move #A function that is run each move phase on every person with this Role.
@@ -5119,8 +5206,9 @@ init -2 python:
                     and self.layer == other.layer
                     and self.is_extension == other.is_extension
                     and self.colour == other.colour
-                    and self.pattern == other.pattern
-                    and self.colour_pattern == other.colour_pattern):
+                    and hasattr(self, "pattern") and hasattr(other, "pattern") and self.pattern == other.pattern
+                    and hasattr(self, "colour_pattern") and hasattr(other, "colour_pattern") and self.colour_pattern == other.colour_pattern):
+
                     return 0
 
             if self.__hash__() < other.__hash__():
@@ -5816,6 +5904,13 @@ init -2 python:
         def half_off_clothing(self, the_clothing):
             the_clothing.half_off = True
             self.update_slut_requirement()
+
+        def remove_clothing_list(self, the_list, half_off_instead = False):
+            for item in the_list:
+                if half_off_instead:
+                    self.half_off_clothing(item)
+                else:
+                    self.remove_clothing(item)
 
         def restore_all_clothing(self):
             for cloth in self.upper_body + self.lower_body + self.feet + self.accessories:
@@ -10541,6 +10636,13 @@ init -2 python:
     def greyout_transform(d):
         return AlphaBlend(Solid("#fff"), d, Solid("#000"), True)
 
+init -2 style digital_text is text:
+    font "Autobusbold-1ynL.ttf"
+    color "#19e9f7"
+    outlines [(2,"#222222",0,0)]
+    yanchor 0.5
+    yalign 0.5
+
 init -2 style text_message_style is say_dialogue:
     font "Autobusbold-1ynL.ttf"
     color "#19e9f7"
@@ -10600,7 +10702,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.37.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.38.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -10721,7 +10823,7 @@ label tutorial_start:
     $ kitchen.show_background()
     "Three days later..."
     $ mom.draw_person(position = "sitting")
-    "Mom looks over the paperwork you've laid out. Property cost, equipment value, and potential earnings are all listed."
+    "[mom.title] looks over the paperwork you've laid out. Property cost, equipment value, and potential earnings are all listed."
     mom.char "And you've checked all the numbers?"
     mc.name "Three times."
     mom.char "It's just... this is a lot of money [mom.mc_title]. I would need to take a second morgage out on the house."
@@ -10737,7 +10839,7 @@ label tutorial_start:
     $ lily.draw_person()
     "[lily.possessive_title] steps into the doorway and looks at you both."
     $ mom.draw_person(position = "sitting")
-    mom.char "Your brother is starting a business. I'm his first investor."
+    mom.char "Your brother is starting a business. I'm his first +investor."
     $ lily.draw_person(emotion = "happy")
     lily.char "Is that what you've been excited about the last couple days? What're you actually making?"
     mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
@@ -10980,7 +11082,7 @@ init -2 python:
             log_outfit(outfit, outfit_class = "OverwearSets", wardrobe_name = file_name)
 
 
-label outfit_master_manager(*args, **kwargs): #WIP new outfit manager that centralizes exporting, modifying, duplicating, and deleting.
+label outfit_master_manager(*args, **kwargs): #New outfit manager that centralizes exporting, modifying, duplicating, and deleting.
     call screen outfit_select_manager(*args, **kwargs)
 
     if _return == "No Return":
@@ -11106,53 +11208,49 @@ label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS
 
     $ picked_option = _return
     if isinstance(picked_option, Person):
-        # mc.can_skip_time = False
-        if picked_option == "Back":
-            $ renpy.jump("game_loop")
+        $ picked_option.draw_person()
+        $ enabled_talk_events = []
+        python:
+            for possible_talk_event in picked_option.on_talk_event_list:
+                if possible_talk_event.is_action_enabled(picked_option):
+                    enabled_talk_events.append(possible_talk_event)
+        if enabled_talk_events:
+            #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
+            $ talk_action = get_random_from_list(enabled_talk_events)
+            $ talk_action.call_action(picked_option)
+            if talk_action in picked_option.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
+                $ picked_option.on_talk_event_list.remove(talk_action)
+
+
         else:
-            $ picked_option.draw_person()
-            $ enabled_talk_events = []
-            python:
-                for possible_talk_event in picked_option.on_talk_event_list:
-                    if possible_talk_event.is_action_enabled(picked_option):
-                        enabled_talk_events.append(possible_talk_event)
-            if enabled_talk_events:
-                #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
-                $ talk_action = get_random_from_list(enabled_talk_events)
-                $ talk_action.call_action(picked_option)
-                if talk_action in picked_option.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
-                    $ picked_option.on_talk_event_list.remove(talk_action)
-
-
+            if picked_option.title is None:
+                "You decide to approach the stranger and introduce yourself."
             else:
-                if picked_option.title is None:
-                    "You decide to approach the stranger and introduce yourself."
-                else:
-                    "You approach [picked_option.title] and chat for a little bit."
-                    $ picked_option.call_dialogue("greetings")
+                "You approach [picked_option.title] and chat for a little bit."
+                $ picked_option.call_dialogue("greetings")
 
-                if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-concious enough to coment on it.
-                    if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy") and picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
-                        "[picked_option.title] doesn't say anything about it, but seems unconfortable being naked in front of you."
-                        "As you talk she seems to become more comfortable with her own nudity, even if she isn't thrilled by it."
+            if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-concious enough to coment on it.
+                if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy") and picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
+                    "[picked_option.title] doesn't say anything about it, but seems unconfortable being naked in front of you."
+                    "As you talk she seems to become more comfortable with her own nudity, even if she isn't thrilled by it."
 
-                    if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy"):
-                        "[picked_option.title] doesn't say anything about it, but angles her body to try and conceal her bare pussy from you."
-                        "As you talk she seems to become more comfortable, even if she isn't thrilled about it."
+                if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy"):
+                    "[picked_option.title] doesn't say anything about it, but angles her body to try and conceal her bare pussy from you."
+                    "As you talk she seems to become more comfortable, even if she isn't thrilled about it."
 
-                    elif picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
-                        "[picked_option.title] doesn't say anything about it, but brings her arms up to try and conceal her tits."
-                        if picked_option.has_large_tits():
-                            "Her large chest isn't easy to hide, and she quickly realises it's hopeless."
-                        else:
-                            "As you talk she seems to become more comfortable, and eventaully lets her arms drop again."
+                elif picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
+                    "[picked_option.title] doesn't say anything about it, but brings her arms up to try and conceal her tits."
+                    if picked_option.has_large_tits():
+                        "Her large chest isn't easy to hide, and she quickly realises it's hopeless."
+                    else:
+                        "As you talk she seems to become more comfortable, and eventaully lets her arms drop again."
 
-                    elif ((picked_option.outfit.wearing_panties() and not picked_option.outfit.panties_covered()) or (picked_option.outfit.wearing_bra() and not picked_option.outfit.bra_covered())) and picked_option.has_taboo("underwear_nudity"):
-                        "[picked_option.title] doesn't say anything about it, but she tries to cover up her underwear with her hands."
-                        "As you talk she seems to become more comfortable, and eventually she lets her arms drop to her sides."
+                elif ((picked_option.outfit.wearing_panties() and not picked_option.outfit.panties_covered()) or (picked_option.outfit.wearing_bra() and not picked_option.outfit.bra_covered())) and picked_option.has_taboo("underwear_nudity"):
+                    "[picked_option.title] doesn't say anything about it, but she tries to cover up her underwear with her hands."
+                    "As you talk she seems to become more comfortable, and eventually she lets her arms drop to her sides."
 
-                    $ picked_option.update_outfit_taboos()
-                call talk_person(picked_option) from _call_talk_person
+                $ picked_option.update_outfit_taboos()
+            call talk_person(picked_option) from _call_talk_person
 
     elif isinstance(picked_option, Action):
         $ picked_option.call_action()
@@ -11213,7 +11311,7 @@ label change_location(the_place):
 
 label talk_person(the_person):
     $ mc.having_text_conversation = None #Just in case some event hasn't properly reset this.
-    $ the_person.draw_person()
+    # $ the_person.draw_person() #Removed v0.28.1, this was often called when no character change was required. Character draw should be handled by events that lead into this label if required.
     if the_person.title is None:
         call person_introduction(the_person) from _call_person_introduction #If their title is none we assume it is because we have never met them before. We have a special introduction scene for new people.
         #Once that's done we continue to talk to the person.

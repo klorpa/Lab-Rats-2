@@ -153,13 +153,13 @@ init 1 python:
             return True
         return False
 
-    def person_at_home(the_person): #Returns true if the person is at home somewhere.
+    def person_at_home(the_person): #Returns true if the person is at (the MC's) home somewhere.
         if hall.has_person(the_person) or bedroom.has_person(the_person) or lily_bedroom.has_person(the_person) or mom_bedroom.has_person(the_person) or kitchen.has_person(the_person):
             return True
         return False
 
     def person_at_work(the_person): #Returns True if the_person is at whatever location their work location is
-        if the_person.work.has_person(the_person):
+        if the_person.work is not None and the_person.work.has_person(the_person):
             return True
         else:
             return False
@@ -738,7 +738,7 @@ label special_training_crisis_label():
 
     $ the_person = get_random_from_list(mc.business.get_employee_list())
     "You get a text from [the_person.title]."
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     the_person "[the_person.mc_title], I've just gotten word about a training seminar going on right now a few blocks away. I would love to take a trip over and see if there is anything I could learn."
     the_person "There's a sign up fee of $500. If you can cover that, I'll head over right away."
     menu:
@@ -779,7 +779,7 @@ label special_training_crisis_label():
             mc.name "I'm sorry [the_person.title], but there aren't any extra funds in the budget right now."
             the_person "Noted, maybe some other time then."
 
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
 
     return
 
@@ -813,9 +813,9 @@ label lab_accident_crisis_label():
 
     else:
         "Your phone buzzes - it's a text from [the_person.title] on your research team."
-        $ mc.having_text_conversation = the_person
+        $ mc.start_text_convo(the_person)
         the_person "There's been a small accident, can I see you in the lab?"
-        $ mc.having_text_conversation = None
+        $ mc.end_text_convo()
         "You hurry over to your research and development lab to see what the problem is."
         $ the_place.show_background()
 
@@ -870,9 +870,9 @@ label production_accident_crisis_label():
 
     else:
         "Your phone buzzes - it's a text from [the_person.title] on your production team."
-        $ mc.having_text_conversation = the_person
+        $ mc.start_text_convo(the_person)
         the_person "There's been a small accident, can I see you in the lab?"
-        $ mc.having_text_conversation = None
+        $ mc.end_text_convo()
         "You hurry over to the production lab to see what the problem is."
         $ the_place.show_background()
 
@@ -1208,11 +1208,17 @@ label home_fuck_crisis_label():
 
     "Some time late in the night, you're awoken by the buzz of your phone getting a text. You roll over and ignore it."
     "A few minutes later it buzzes again, then again. You're forced to wake up and see what is the matter."
-    "[the_person.title] has been texting you. She's sent you several messages, with the last ending:"
 
-    $ mc.having_text_conversation = the_person #TODO: Add other messages that end up in your phone history, but aren't explicitly shown here (and figure out how to add history entries manually)
-    the_person  "I'm here... Should I just knock on the door?"
-    $ mc.having_text_conversation = None
+
+    $ mc.phone.add_non_convo_message(the_person, "Hey, are you awake?")
+    $ mc.phone.add_non_convo_message(the_person, "I want to see you tonight. Can I come over?")
+    $ mc.phone.add_non_convo_message(the_person, "I really need to fuck! Want to fuck me?")
+    $ mc.phone.add_non_convo_message(the_person, "Oh my god, never mind. I shouldn't have sent that. I'm drunk.")
+    $ mc.phone.add_non_convo_message(the_person, "I'm going to come over so I can apologise.")
+    "[the_person.title] has been texting you. She's sent you several messages, with the last ending:"
+    $ mc.start_text_convo(the_person)
+    the_person "I'm here... Should I just knock on the door?"
+    $ mc.end_text_convo()
 
     "You drag yourself out of bed and stumble out to the front hall. You move to a window and peek out at your front door."
     $ the_person.draw_person(emotion = "happy") #TODO: Create a set of late night outfits that she can be wearing.
@@ -2356,7 +2362,7 @@ label research_reminder_crisis_label():
             if not trait.researched and trait.tier == mc.business.research_tier:
                 researched_all_at_level = False
                 break
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     if researched_all_at_level:
         the_person "[the_person.mc_title], I appreciate all the free time you're giving me here in the lab, but I think my talents would be better used if you put me to work."
         the_person "I've followed up on all the immediate research leads we had. I think we should start thinking about some more dramatic options."
@@ -2364,7 +2370,7 @@ label research_reminder_crisis_label():
     else: #We have more to research at this level. Let them just keep chugging along.
         the_person "[the_person.mc_title], I appreciate all the free time you're giving me here in the lab, but I think my talents would be better used if you put me to work."
         the_person "I've got some promising leads, stop by when you have a chance and let me know what you want me to work on."
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
     return
 
 

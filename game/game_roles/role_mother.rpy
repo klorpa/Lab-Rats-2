@@ -254,7 +254,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
             pass
     return
 
-label mom_high_sluttiness_weekly_pay(the_person):
+label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these over to use Actions instead of just being a menu.
     menu:
         "Strip for me. -$100" if mc.business.funds >= 100:
             if mc.business.event_triggers_dict.get("Mom_Strip", 0) >= 1:
@@ -397,6 +397,20 @@ label mom_high_sluttiness_weekly_pay(the_person):
         "Stop your birth control. -$150 (disabled)" if mc.business.funds < 150 and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0  and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
             pass
 
+        #TODO: Enable this and tie it into Lily's new Instapic story chunk
+        # "Let [lily.title] get a boob job. -$500" if mc.business.funds >= 200 and lily.event_triggers_dict.get("insta_boobjob_wanted", False): #TODO: Implement this!
+        #     mc.name "This will be some easy money for you. I want you to let [lily.title] have some cosmetic surgery done."
+        #     mc.name "I'll pay you $500 if you just tell her you're okay with it. You don't need to do anythin else."
+        #     the_person "Cosmetic surgery? What does she want to have changed? She's a beautiful young woman!"
+        #     menu:
+        #         "She wants breast implants.":
+        #             mc.name "She wants to have breast implants put in."
+        #
+        #             pass
+        #
+        #         "She wants bigger tits.":
+        #             mc.name "She's tired of her tiny tits and she wants some bigger ones."
+        #             pass
 
         "Nothing this week.":
             mc.name "Sorry Mom, but I'm tight on cash right now as well. Maybe next week, okay?"
@@ -448,7 +462,7 @@ label mom_make_house_changes(the_person):
     #     "You can't wear anything that would keep your tits and pussy from me.":
     #         pass
     #
-    #     # TODO: The disipline options are only available after Lily's started her insta-pic account and is posting stuff and you turn her in. If Mom is too slutty she says she doesn't care.
+    #     # TODO: The disipline options are only available after Lily's started her InstaPic account and is posting stuff and you turn her in. If Mom is too slutty she says she doesn't care.
     #     # TODO: Add other "bad" things you can use as leverage against Lily.
     #     "I want to be in charge of Lily's discipline.": #Only after she's done somethign "bad", let's you punish her somehow, or just unlocks other things in this menu?
     #         # The whole Lily section might be better broken out into her role. with this as the enabling action. Definitely one of the paths to breaking them both and having your incest harem.
@@ -1508,12 +1522,12 @@ label mom_weekly_pay_lily_question(the_person):
                 mc.name "I don't know, maybe she didn't want you to think she's doing it just because we need money."
                 the_person "Well, I'll let her tell me when she's ready. I'm just happy to know it's nothing to worry about."
 
-        "Tell her about Insta-pic.":
+        "Tell her about InstaPic.":
             mc.name "Well, I think she's picked up a part time job."
             the_person "Oh, why haven't I heard about this?"
-            mc.name "It's not exactly a traditional job. She's been putting picture up on Insta-pic."
-            the_person "Insta-pic? Isn't that an internet thing? I don't understand."
-            mc.name "[lily.title] puts up pictures showing off clothing, and Insta-pic pays her for the ad traffic she generates."
+            mc.name "It's not exactly a traditional job. She's been putting picture up on InstaPic."
+            the_person "InstaPic? Isn't that an internet thing? I don't understand."
+            mc.name "[lily.title] puts up pictures showing off clothing, and InstaPic pays her for the ad traffic she generates."
             the_person "So it's like modeling, but she can do it from home?"
             mc.name "I guess so, yeah. She's just worried that you wouldn't approve."
             the_person "Why wouldn't I? Models can be very successful. And there are no photographers or agents to take advantage of her."

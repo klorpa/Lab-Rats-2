@@ -19,4 +19,5 @@ init 1300:
         common_sexy_likes = ["vaginal sex", "skimpy uniforms", "lingerie", "masturbating"],
         common_dislikes = ["heavy metal", "HR work", "marketing work", "sports"],
         common_sexy_dislikes = ["not wearing anything", "not wearing underwear", "being submissive", "creampies"],
-        titles_function = nora_titles, possessive_titles_function = nora_possessive_titles, player_titles_function = nora_player_titles)
+        titles_function = nora_titles, possessive_titles_function = nora_possessive_titles, player_titles_function = nora_player_titles,
+        insta_chance = 0, dikdok_chance = 0)

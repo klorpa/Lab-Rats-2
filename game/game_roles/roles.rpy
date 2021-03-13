@@ -8,6 +8,9 @@ init -1 python:
         else:
             return True
 
+    def always_true(the_person):
+        return True
+
 label instantiate_roles(): #This section instantiates all of the key roles in the game. It is placed here to ensure it is properly created, saved, ect. by Renpy.
     #All of the role labels and requirements are defined in their own file, but their Action representitions are stored here for saving purposes.
     python:
@@ -127,6 +130,8 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         mom_work_bigger_tits_reintro = Action("Talk to her about getting bigger tits.", mom_work_secretary_replacement_bigger_tits_reintro_requirement, "mom_work_secretary_replacement_bigger_tits_reintro",
             menu_tooltip = "Talk to her about improving her natural assets, either with implants or by using some of your serum.", priority = 10)
 
+        mom_debug_test = Action("DEBUG", always_true, "text_message_style_test")
+
         mother_role = Role("Mother", [mother_offer_make_dinner, mom_work_promotion_two_prep_action, mom_work_bigger_tits_reintro])
 
 
@@ -159,6 +164,19 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         student_role = Role("Student", [student_reintro_action, student_study_propose_action])
 
+        ################
+        #INTERNET ROLES#
+        ################
+        #These roles are given to any girl who has an account on the particular site, even if you don't know about it.
+
+
+        instapic_role = Role("On InstaPic", [], hidden = True, on_turn = insta_on_turn, on_day = insta_on_day)
+
+
+        dikdok_role = Role("On Dikdok", [], hidden = True, on_turn = dikdok_on_turn, on_day = dikdok_on_day)
+
+
+        onlyfans_role = Role("On OnlyFanatics", [], hidden = True, on_turn = onlyfans_on_turn, on_day = onlyfans_on_day)
 
 
         ####################

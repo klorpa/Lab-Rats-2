@@ -41,7 +41,8 @@ init 1300:
             common_sexy_likes = ["lingerie", "skimpy outfits", "taking control"],
             common_dislikes = ["working", "hiking", "conservative outfits"],
             common_sexy_dislikes = ["public sex", "masturbating", "being fingered", "cheating on men"],
-            titles_function = aunt_titles, possessive_titles_function = aunt_possessive_titles, player_titles_function = aunt_player_titles)
+            titles_function = aunt_titles, possessive_titles_function = aunt_possessive_titles, player_titles_function = aunt_player_titles,
+            insta_chance = 0, dikdok_chance = 0)
 
 label aunt_sex_beg_finish(the_person):
     "Wait, I really need this [the_person.mc_title]! You're making me feel like a real women, please don't stop! Please!"

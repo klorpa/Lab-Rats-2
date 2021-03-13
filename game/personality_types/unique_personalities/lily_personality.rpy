@@ -24,7 +24,8 @@ init 1300:
         common_sexy_likes = ["lingerie", "masturbating", "being submissive", "doggy style sex"],
         common_dislikes = ["working", "conservative outfits", "research work", "production work"],
         common_sexy_dislikes = ["taking control", "anal sex", "creampies"],
-        titles_function = lily_titles, possessive_titles_function = lily_possessive_titles, player_titles_function = lily_player_titles)
+        titles_function = lily_titles, possessive_titles_function = lily_possessive_titles, player_titles_function = lily_player_titles,
+        insta_chance = 0, dikdok_chance = 0)
 
 ### DIALOGUE ###
 label lily_sex_review(the_person, the_report):
@@ -589,6 +590,33 @@ label lily_flirt_response_high(the_person):
             the_person "Well... I don't really mind, as long as we're just joking around. I just don't want [mom.title] to get upset with us."
             mc.name "Don't worry, I promise she won't find out."
             the_person "Okay, then it's fine. I actually kind of like hearing I look pretty."
+    return
+
+label lily_flirt_response_text(the_person):
+    mc.name "Hey [the_person.title], how's it going? Thought I'd check in and say hi."
+    "There's a brief pause, then she text back."
+    if the_person.has_role(affair_role): #NOTE: In theory neither of these roles are possible, but they might be in the future.
+        the_person "Well hi! Going well, wish I was with you though."
+        the_person "Think you can sneak into my room tonight? We can have some fun as long as Mom doesn't know."
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "Well hi! It's going well, but I wish I was hanging out with you instead."
+        the_person "Come by my room and we can spend some more time together."
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Hey, it's going fine I guess. Nothing exciting going on."
+
+        else:
+            the_person "Hey. It's going fine, I guess. How about you? Doing well?"
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Hey [the_person.mc_title], I'm doing good. A little bored though."
+            the_person "We should hang out, I'm sure could get into some trouble together."
+        else:
+            the_person "Hey [the_person.mc_title], it's going fine. Are you up to anything?"
+            the_person "I'm a little bored, we could hang out or something."
     return
 
 label lily_cum_face(the_person):

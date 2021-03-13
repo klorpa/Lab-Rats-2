@@ -41,7 +41,7 @@ label so_relationship_improve_label():
     if the_person is None:
         return #Something's changed and there is no longer a valid person
 
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     if the_person.relationship == "Single":
         $ the_person.change_happiness(10)
         "You get a notification on your phone."
@@ -85,7 +85,7 @@ label so_relationship_improve_label():
         $ the_person.relationship = "Married"
 
     $ potential_people = []
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
     return
 
 
@@ -147,7 +147,7 @@ label affair_dick_pick_label():
     if the_person is None:
         return
 
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     "You get a text from [the_person.title]."
     the_person "I'm so horny right now. I'm touching myself and thinking about you, [the_person.mc_title]."
     "She sends you a picture, which you immediately open up."
@@ -190,7 +190,7 @@ label affair_dick_pick_label():
                 "There's a long pause, then she texts you back."
                 the_person "Just don't make me wait too long, I need to feel your cock again!"
     $ the_person.apply_outfit(the_person.planned_outfit)
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
     $ clear_scene()
     return
 
@@ -217,7 +217,7 @@ label girlfriend_nudes_label():
     if the_person is None:
         return
 
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     if the_person.effective_sluttiness() < 20:
         "You get a text from [the_person.possessive_title]."
         the_person "Hey [the_person.mc_title]. I was just thinking about you and wanted to say hi."
@@ -280,7 +280,7 @@ label girlfriend_nudes_label():
         $ the_person.update_outfit_taboos()
         $ the_person.apply_outfit(the_person.planned_outfit)
     #TODO: A blojob/deepthroat training video, or an anal stretching video she sends you to show she's "getting ready."
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
     $ clear_scene()
     return
 
@@ -524,35 +524,13 @@ label friends_help_friends_be_sluts_label():
                                 person_one "Well, here are mine. Come on [person_two.title], whip 'em out!"
                             else:
                                 person_one "Of course."
-                                $ strip_list = person_one.outfit.get_half_off_to_tits_list() #TODO: Expand generalised_strip_description to support half_offing clothing.
+                                $ strip_list = person_one.outfit.get_half_off_to_tits_list()
                                 if strip_list:
                                     $ generalised_strip_description(person_one, strip_list, half_off_instead = True, group_display = the_group)
-                                #     $ top_item = strip_list[0]
-                                #     python:
-                                #         for clothing in strip_list: # TODO: Loops like this should probably have some way of stripping only what is required, and half-offing the rest
-                                #             the_group.draw_animated_removal(person_one, the_clothing = clothing, half_off_instead = True)
-                                #             if person_one.outfit.tits_visible(): #Last loop
-                                #                 if person_one.has_large_tits():
-                                #                     renpy.say("", "She jiggles large tits free of her " + clothing.display_name + ", putting them on display for you to judge.")
-                                #                 else:
-                                #                     renpy.say("", "She pulls her " + clothing.display_name + " away and her perky tits spring free, on display for you to judge.")
-                                #             else:
-                                #                 renpy.say("",person_one.title + " pulls her " + clothing.display_name + " up and out of the way.")
 
                                 else: #We need to strip something off completely.
                                     $ strip_list = person_one.outfit.get_tit_strip_list()
                                     $ generalised_strip_description(person_one, strip_list, group_display = the_group)
-                                    # $ top_item = strip_list[0]
-                                    # python:
-                                    #     for clothing in strip_list:
-                                    #         the_group.draw_animated_removal(person_one, the_clothing = clothing)
-                                    #         if person_one.outfit.tits_visible(): #Last loop
-                                    #             if person_one.has_large_tits():
-                                    #                 renpy.say("", "Her tits jiggle free as she strips off her " + clothing.display_name + " and puts it on the break room table.")
-                                    #             else:
-                                    #                 renpy.say("", "She pulls her " + clothing.display_name + " off, letting her perky tits spring free.")
-                                    #         else:
-                                    #             renpy.say("",person_one.title + " pulls her " + clothing.display_name + " off and puts it to the side.")
 
                                 if person_two.outfit.tits_visible():
                                     $ person_one.break_taboo("bare_tits")

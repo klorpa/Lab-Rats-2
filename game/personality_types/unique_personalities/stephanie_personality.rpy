@@ -16,7 +16,8 @@ init 1300:
         common_sexy_likes = ["giving blowjobs", "drinking cum","cheating on men"],
         common_dislikes = ["Mondays", "HR work", "marketing work", "conservative outfits"],
         common_sexy_dislikes = ["anal sex", "being submissive"],
-        titles_function = stephanie_titles, possessive_titles_function = stephanie_possessive_titles, player_titles_function = stephanie_player_titles)
+        titles_function = stephanie_titles, possessive_titles_function = stephanie_possessive_titles, player_titles_function = stephanie_player_titles,
+        insta_chance = 40, dikdok_chance = 20)
 
 ### DIALOGUE ###
 label stephanie_greetings(the_person):

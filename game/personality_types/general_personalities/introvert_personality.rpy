@@ -15,7 +15,8 @@ init 1300:
         common_sexy_likes = ["big dicks", "kissing", "anal sex", "getting head", "giving blowjobs", "masturbating", "anal creampies", "giving tit fucks"],
         common_dislikes = ["skimpy outfits", "skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
         common_sexy_dislikes = ["skimpy outfits", "not wearing underwear", "not wearing anything", "public sex", "lingerie"],
-        titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles)
+        titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles,
+        insta_chance = 20, dikdok_chance = 0)
 
         list_of_personalities.append(introvert_personality)
 
@@ -657,6 +658,38 @@ label introvert_flirt_response_affair(the_person):
             "Just flirt.":
                 mc.name "Tempting, but I don't have the time right now."
                 the_person "Aw, that's a shame. Well, if you do have the time you know where to find me."
+    return
+
+label introvert_flirt_response_text(the_person):
+    mc.name "Hey, you just popped into my head and I wanted to see what you were up to."
+    "There's a brief pause, then she texts back."
+    if the_person.has_role(affair_role):
+        the_person "I miss you too, I want to feel you against me again."
+        the_person "When can we see each other? I hope it isn't going to be too long."
+        mc.name "It won't be long, I promise."
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "Not up to much, thinking about you too. You're just so wonderful."
+        the_person "I hope we can see each other soon, it's been way too long since I got to spend time with you!"
+        mc.name "It won't be long. Promise."
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Not much. So what were you thinking about when you thought of me?"
+            the_person "Something nice, I hope."
+
+        else:
+            the_person "Not much."
+            the_person "So.... what's up with you?"
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Thinking about me, huh?"
+            the_person "Well we both know what that means. I'm flattered though, really."
+
+        else:
+            the_person "Thinking of me, huh? Well, we should get together and hang out."
+            the_person "Let me know when you're free and we can set something up."
     return
 
 

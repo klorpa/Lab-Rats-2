@@ -122,12 +122,12 @@ label movie_date_label(the_person):
 
         "Cancel the date. (tooltip)She won't be happy with you canceling last minute.":
             "You get your phone out and text [the_person.title]."
-            $ mc.having_text_conversation = the_person
+            $ mc.start_text_convo(the_person)
             mc.name "I'm sorry, but something important came up at the last minute. We'll have to reschedule."
             $ the_person.change_love(-5)
             $ the_person.change_happiness(-5)
             the_person "I hope everything is okay. Maybe we can do this some other time then."
-            $ mc.having_text_conversation = None
+            $ mc.end_text_convo()
             return
 
     if mom_date_intercept_requirement(mom, the_person) and renpy.random.randint(0,100) < (25 + mom.love):

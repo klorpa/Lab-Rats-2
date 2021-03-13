@@ -15,7 +15,8 @@ init 1300:
         common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies", "giving tit fucks"],
         common_dislikes = ["the colour red", "marketing work", "flirting"],
         common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "bareback sex", "cum facials"],
-        titles_function = reserved_titles, possessive_titles_function = reserved_possessive_titles, player_titles_function = reserved_player_titles)
+        titles_function = reserved_titles, possessive_titles_function = reserved_possessive_titles, player_titles_function = reserved_player_titles,
+        insta_chance = 0, dikdok_chance = 0)
 
         list_of_personalities.append(reserved_personality)
 
@@ -707,6 +708,37 @@ label reserved_flirt_response_affair(the_person):
                 mc.name "I want to, but I'm going to have to wait until we have more time together for that."
                 "Her hand moves lower down, brushing over your crotch and sending a brief shiver up your spine."
                 the_person "I understand. When we have the chance we'll take our time and really enjoy each other."
+    return
+
+label reserved_flirt_response_text(the_person):
+    mc.name "Hey [the_person.title]. Hope you're doing well."
+    mc.name "I was thinking of you and wanted to talk."
+    "There's a brief pause, then she texts back."
+    if the_person.has_role(affair_role):
+        the_person "If you were here we could do more than just talk."
+        the_person "I hope you don't make me wait too long to see you again."
+        mc.name "It won't be long. Promise."
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "It's sweet of you to think of me. I hope we can see each other soon."
+        the_person "I want to spend more time with you in person. Texting isn't the same."
+        mc.name "It won't be long, I promise."
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Oh? And what did you want to talk about?"
+        else:
+            the_person "Oh, that's nice of you to say."
+            the_person "What did you want to talk to me about."
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Mhmm, what to tell me what sort of dirty things you were thinking about me?"
+            the_person "That would be somthing fun to talk about."
+
+        else:
+            the_person "It's sweet of you to be thinking of me."
+            the_person "I'd love to chat, what would you like to talk about?"
     return
 
 label reserved_cum_face(the_person):

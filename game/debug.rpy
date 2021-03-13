@@ -64,12 +64,59 @@ init -15 python:
         mc.phone.add_new_message(mom, test_text_action)
         mc.phone.add_new_message(lily, test_text_action)
 
-label text_message_style_test(): #For now we need to both set the text_conversation person as well as the text font. We need to figure out a way to apply it dynamically.
-    mom "This is the normal person style!"
-    $ mc.having_text_conversation = mom
-    mom "...And this is the text message style!"
+    def give_all_insta():
+        for place in list_of_places:
+            for person in place.get_person_list():
+                person.add_role(instapic_role)
 
-    $ mc.having_text_conversation = None #The only tricky thing is we need to directly manage this now.
+label test_memory_use():
+    #TODO: Create 10 people
+    #TODO: Draw each of them
+    #TODO: Check total memory usage.
+    python:
+        for x in range(0,10):
+            the_person = create_random_person()
+            the_person.draw_person()
+            renpy.say("TEST", "Talking to person " + str(x) + ": " + the_person.name)
+    $ renpy.profile_memory(0.8, 1028)
+    return
+
+
+label text_message_style_test(the_person = None): #For now we need to both set the text_conversation person as well as the text font. We need to figure out a way to apply it dynamically.
+    mom "This is the normal person style!"
+    $ mc.start_text_convo(the_person)
+    mom "...And this is the text message style!"
+    mom "Here's a much longer conversation!"
+    mom "... It just keeps going!"
+    mom "Oh my god [mom.mc_title], your message log is so large!"
+    mc.name "Now let's see what it looks like when I message you!"
+    mc.name "Ahah! It's working!"
+    mc.name "And now we can display a veeeeeeeeery long mesage to see how well the system handles it. Isn't that impressive?"
+    mc.name "Yeah, of course it is!"
+    mom "So impressive!"
+    "[lily.possessive_title] knocks on your door and opens it up."
+    $ lily.draw_person()
+    mc.name "One second [mom.title], [lily.title] just came into the room."
+    mom "Okay, take your time!"
+    $ mc.phone.add_system_message(mom, mom.title + " set her status to \"Away\".")
+    $ mc.pause_text_convo()
+    mc.name "Hey [lily.title]."
+    lily "Hey [lily.mc_title]. Cool texting system you've got going there."
+    mc.name "Thanks, it works pretty well. Talk to you later, okay?"
+    lily "Okay, talk to you later."
+    $ clear_scene()
+    $ mc.resume_text_convo()
+    mc.name "I'm back. Glad to see this is still working well!."
+    mom "Me too. Now, let's see if it can handle having to make a choice!"
+    menu:
+        "Of course it can!":
+            mc.name "Of course it can [mom.title]!"
+
+        "I have my doubts.":
+            mc.name "I doubt I even made it this far. Oh well."
+    mom "I knew it would work. Good job!"
+    mom "Me too, it's very good. Now let's end the conversation and see if that works properly."
+    $ mc.end_text_convo()
     mom "And now we should be back to normal!"
     return
 

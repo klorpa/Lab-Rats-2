@@ -12,7 +12,8 @@ init 1300:
         common_sexy_likes = ["anal creampies", "doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "bareback sex"],
         common_dislikes = ["Mondays", "the colour pink", "supply work", "conservative outfits", "work uniforms"],
         common_sexy_dislikes = ["being submissive", "being fingered", "missionary style sex", "giving handjobs"],
-        titles_function = wild_titles, possessive_titles_function = wild_possessive_titles, player_titles_function = wild_player_titles)
+        titles_function = wild_titles, possessive_titles_function = wild_possessive_titles, player_titles_function = wild_player_titles,
+        insta_chance = 40, dikdok_chance = 30)
 
         list_of_personalities.append(wild_personality)
 
@@ -689,6 +690,34 @@ label wild_flirt_response_affair(the_person):
                 the_person "Fine, but don't make me wait too long, okay?"
                 the_person "I have needs, and my [so_title] sure as hell isn't fulfilling them."
                 mc.name "I won't make you wait long. I promise."
+    return
+
+label wild_flirt_response_text(the_person):
+    mc.name "Hey [the_person.title], what's up. I'm bored and figured we could chat."
+    "There's a brief pause, then she text back."
+    if the_person.has_role(affair_role):
+        the_person "I'm bored too. I can think of a few things we could do together to stop being bored."
+        the_person "When can we get together?"
+        mc.name "Some time soon. I'll let you know."
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "I'm bored too. We should get together and hang out."
+        the_person "When are you going to take me out on another date? I'm going to have to do it myself at this rate."
+        mc.name "Some time soon. I'll let you know."
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Bored, huh? Well I'm here to entertain."
+        else:
+            the_person "That sucks, being bored is the worst."
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Bored, huh? Well I'm here to entertain you, so what would you like me to do?"
+            the_person "I mean talk about. What would you like to talk about?"
+        else:
+            the_person "Bored and you came to me, huh? It must be really bad."
+            the_person "Alright, let's chat then. What's up with you?"
     return
 
 label wild_cum_face(the_person):

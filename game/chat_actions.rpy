@@ -4,7 +4,7 @@ init -2 python:
 
     def small_talk_requirement(the_person):
         if mc.energy < 15:
-            return "Requires: 15 Energy"
+            return "Requires: 15{image=gui/extra_images/energy_token.png}"
         else:
             return True
 
@@ -12,15 +12,15 @@ init -2 python:
         if the_person.love < 10:
             return "Requires: 10 Love"
         elif mc.energy < 15:
-            return "Requires: 15 Energy"
+            return "Requires: 15{image=gui/extra_images/energy_token.png}"
         else:
             return True
 
     def flirt_requirement(the_person):
         if the_person.love < 10:
-            return "Requires: 10 Love"
+            return "Requires: 10{image=gui/extra_images/energy_token.png}"
         elif mc.energy < 15:
-            return "Requires: 15 Energy"
+            return "Requires: 15{image=gui/extra_images/energy_token.png}"
         else:
             return True
 
@@ -406,7 +406,8 @@ label person_new_mc_title(the_person):
 
     return
 
-label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful for discovering a character's opinions and the first step to building up love.
+label small_talk_person(the_person, apply_energy_cost = True, is_phone = False): #Tier 0. Useful for discovering a character's opinions and the first step to building up love.
+    # if is_phone then most narration or descritions are ignored or replaced. Assume it's on the phone. TODO: Phone conversations should probably be their own full thing.
     if apply_energy_cost: # Useful if you want to reuse this event inside of other events.
         $ mc.change_energy(-15)
     $ smalltalk_opinion = the_person.get_opinion_score("small talk")
@@ -418,12 +419,15 @@ label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful f
 
 
     if smalltalk_chance < successful_smalltalk:
-        if smalltalk_opinion >= 0:
-            $ the_person.draw_person(emotion = "happy")
-            "She seems glad to have a chance to take a break and make small talk with you."
-
+        if is_phone:
+            "There's a short pause, then [the_person.title] texts you back."
         else:
-            "She seems uncomfortable with making small talk, but after a little work you manage to get her talking."
+            if smalltalk_opinion >= 0:
+                $ the_person.draw_person(emotion = "happy")
+                "She seems glad to have a chance to take a break and make small talk with you."
+
+            else:
+                "She seems uncomfortable with making small talk, but after a little work you manage to get her talking."
 
         $ casual_sex_talk = the_person.sluttiness > 50
         $ opinion_learned = the_person.get_random_opinion(include_known = True, include_sexy = casual_sex_talk)
@@ -431,8 +435,12 @@ label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful f
         if not opinion_learned is None:
             $ opinion_state = the_person.get_opinion_topic(opinion_learned)
             $ opinion_string = opinion_score_to_string(opinion_state[0])
+            if is_phone:
+                the_person "Oh, this and that."
+                "The two of you text back and forth between each other for half an hour." #TODO: Either play out that conversation or add some message history to fill it in.
+            else:
+                "The two of you chat pleasantly for half an hour."
 
-            "The two of you chat pleasantly for half an hour."
             the_person "So [the_person.mc_title], I'm curious what you think about about [opinion_learned]. Do you have any opinions on it?"
             $ love_gain = 4
             $ prediction = 0
@@ -471,35 +479,64 @@ label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful f
 
 
             if opinion_state[1]:
-                "You listen while [the_person.possessive_title] talks about how she [opinion_string] [opinion_learned]."
+                if is_phone:
+                    "[the_person.possessive_title] sends you a bunch of texts about how she [opinion_string] [opinion_learned]."
+                else:
+                    "You listen while [the_person.possessive_title] talks about how she [opinion_string] [opinion_learned]."
             else:
                 $ the_person.discover_opinion(opinion_learned)
-                "You listen while [the_person.possessive_title] talks and discover that she [opinion_string] [opinion_learned]."
+                if is_phone:
+                    "[the_person.possessive_title] sends you a bunch of texts, and you learn that she [opinion_string] [opinion_learned]."
+                else:
+                    "You listen while [the_person.possessive_title] talks and discover that she [opinion_string] [opinion_learned]."
 
             $ the_person.change_love(love_gain - prediction_difference, max_modified_to = 20)
 
         else:
-            "You and [the_person.possessive_title] chat for a while. You don't feel like you've learned much about her, but you both enjoyed talking."
+            if is_phone:
+                the_person "Oh, this and that. What about you?"
+                "You and [the_person.possessive_title] text back and forth for a while. You've had a fun conversation, but you don't think you've learned anything new."
+            else:
+                "You and [the_person.possessive_title] chat for a while. You don't feel like you've learned much about her, but you both enjoyed talking."
+
+        if the_person.love > 10 and the_person.has_role(instapic_role) and not the_person.event_triggers_dict.get("insta_known", False):
+            $ the_person.event_triggers_dict["insta_known"] = True
+            the_person "Hey, are you on InstaPic? You should follow me on there, so you can see what I'm up to."
+            if is_phone:
+                "She text you her InstaPic profile name. You'll be able to look up her profile now."
+            else:
+                "She gives you her InstaPic profile name. You'll be able to look up her profile now."
 
         $ smalltalk_bonus = smalltalk_opinion + 1
         $ the_person.change_happiness(smalltalk_bonus)
+
         if smalltalk_opinion >= 0:
             the_person "It was nice chatting [the_person.mc_title], we should do it more often!"
         else:
-            the_person "So uh... I guess that's all I have to say about that..."
-            "[the_person] trails off awkwardly."
+            if is_phone:
+                the_person "I've got to go. Talk to you later."
+            else:
+                the_person "So uh... I guess that's all I have to say about that..."
+                "[the_person] trails off awkwardly."
     else:
         if smalltalk_opinion < 0:
             the_person "Oh, not much."
             $ the_person.change_happiness(smalltalk_opinion)
-            "You try and keep the conversation going, but making small talk with [the_person.title] is like talking to a wall."
+            if is_phone:
+                "You try and spark the conversation with a few more messages, but eventually [the_person.title] just stops responding."
+            else:
+                "You try and keep the conversation going, but making small talk with [the_person.title] is like talking to a wall."
         else:
             the_person "Oh, not much honestly. How about you?"
             $ the_person.change_happiness(smalltalk_opinion)
-            "[the_person.possessive_title] seems happy to chitchat, and you spend a few minutes just hanging out."
-            "You don't feel like you've learned much about her, but least she seems to have enjoyed talking."
+            if is_phone:
+                "You and [the_person.possessive_title] chat for a while. You don't feel like you've learned much about her, but you both enjoyed talking."
+            else:
+                "[the_person.possessive_title] seems happy to chitchat, and you spend a few minutes just hanging out."
+                "You don't feel like you've learned much about her, but least she seems to have enjoyed talking."
 
-    $ the_person.apply_serum_study()
+    if not is_phone:
+        $ the_person.apply_serum_study()
     return
 
 label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO: just have it raise love and not sluttiness.

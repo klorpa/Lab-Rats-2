@@ -330,7 +330,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
                                 the_person "All I want is his cock!"
                                 "He gibbers weakly to himself and turns around, leaving the room. Shortly after you hear the engine of his car start up and he drives away."
 
-                                call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = true) from _call_fuck_person_101
+                                call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = True) from _call_fuck_person_101
                                 $ the_report = _return
                                 call transform_affair(the_person) from _call_transform_affair_1 #She's no longer with her husband, obviously.
 
@@ -475,7 +475,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
                                 the_person "Oh fuck, you're crazy [the_person.mc_title]! What if we get caught?"
                                 mc.name "We'll deal with that if it happens. Just relax and enjoy."
 
-                                call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = true) from _call_fuck_person_102
+                                call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = True) from _call_fuck_person_102
                                 $ the_report = _return
 
                         #TODO: At this point run a check on her arousal.

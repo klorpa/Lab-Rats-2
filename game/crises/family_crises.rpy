@@ -408,7 +408,7 @@ label mom_selfie_label():
     #TODO: have a way of saving and reviewing selfies in the future.
     #TODO: Have a proper weekday/weekend schedule for people and use that to determine when Mom is at home, at work, or out on the town.
     $ the_person = mom
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     $ lowest_stat = mom.sluttiness
     if the_person.love < lowest_stat:
         $ lowest_stat = mom.love
@@ -638,7 +638,7 @@ label mom_selfie_label():
             the_person "Hi [the_person.mc_title], I'm just checking in to make sure you're doing okay. I hope you don't mind your "
 
     "It's so sweet of her to think of you."
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
     $ the_person.apply_outfit(the_person.planned_outfit)
     $ clear_scene()
     return
@@ -1628,7 +1628,7 @@ init 1 python:
 
 label cousin_tease_crisis_label():
     $ the_person = cousin
-    $ mc.having_text_conversation = the_person
+    $ mc.start_text_convo(the_person)
     if the_person.effective_sluttiness("underwear_nudity") < 35: #She'll want money
         "You get a curt text from [the_person.title]."
 
@@ -1862,7 +1862,7 @@ label cousin_tease_crisis_label():
                         "You ignore her and she doesn't message you again."
 
 
-    $ mc.having_text_conversation = None
+    $ mc.end_text_convo()
     $ the_person.apply_outfit() #Return to her planned outfit.
     $ clear_scene()
     return

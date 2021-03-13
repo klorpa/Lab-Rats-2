@@ -104,26 +104,64 @@ style frame:
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
 screen say(who, what, vren_test = None):
-    style_prefix "say"
+    $ show_phone = False #If True the phone is shown. If having a text conversation with "who" then that message is displayed on the phone. The say window has priority on displaying dialogue.
+    $ show_say_window = True #If True the say window is shown. If also showing the phone this will be on top, and is for narration or dialogue with other characters.
 
-    window:
-        id "window"
+    if hasattr(store,"mc"):
+        if mc.having_text_conversation is not None:
+            $ show_phone = True
+            if who is None: #Narration is always shown in the normal say window
+                $ show_say_window = True
+            elif mc.text_conversation_paused: #And dialogue can be shown as normal by setting this to True
+                $ show_say_window = True
+            else: #Otherwise we're talking via text, don't show the menu.
+                $ show_say_window = False
 
-        if vren_test is not None:
-            text vren_test id "what"
+
+
+        #     if show_phone and mc.override_phone:
+        #         $ show_say_window
+        #
+        # if mc.hide_say_window:
+        #     $ show_say_window = False
+        #     $ show_phone = mc.having_text_conversation is not None
+
+
+    if show_phone:
+        if show_say_window:
+            use text_message_log(mc.having_text_conversation) #We're displaying narration or non-texting dialogue, so just display the history
         else:
+            use text_message_log(mc.having_text_conversation, who, what) #Pass it the current message to display it
+
+        window: #NOTE: This whole section is invisible, but is needed to satisfy Ren'py's need to have something with the "what" id.
+            at transform:
+                alpha 0.0
+            xalign 2.5 #Just shove it all off the screen, in case it renders not-invisible at some point
+            id "window"
+            background None
             text what id "what"
+            if who is not None:
+                window:
+                    text who id "who"
 
-        if who is not None:
-            window:
-                style "namebox"
-                text who id "who"
+    if show_say_window:
+        style_prefix "say"
+        window:
+            id "window"
+            if vren_test is not None:
+                text vren_test id "what"
+            else:
+                text what id "what"
 
-    # If there's a side image, display it above the text. Do not display
-    # on the phone variant - there's no room.
-    if not renpy.variant("small"):
-        add SideImage() xalign 0.0 yalign 1.0
+            if who is not None:
+                window:
+                    style "namebox"
+                    text who id "who"
 
+        # If there's a side image, display it above the text. Do not display
+        # on the phone variant - there's no room.
+        if not renpy.variant("small"):
+            add SideImage() xalign 0.0 yalign 1.0
 
 style window is default
 style say_label is default
@@ -450,6 +488,15 @@ screen choice(items):
     style_prefix "choice"
     #We want to have 2 vboxes, seperated so that they are staggered as they go down.
     #if len(items) > 10: #TODO: see if we can have the viewport all the time but only show it as scrollable when there are enough items in it, to simplify this sectio.
+    #TODO Check if the MC is present
+    $ show_phone = False
+    if hasattr(store,"mc"):
+        if mc.having_text_conversation and not mc.text_conversation_paused:
+            $ show_phone = True
+
+    if show_phone: #Underlays the phone display.
+        use text_message_log(mc.having_text_conversation)
+
     viewport:
         scrollbars "vertical"
         mousewheel True
@@ -488,6 +535,7 @@ screen choice(items):
                     textbutton j.caption.replace(" (disabled)", "").replace(" (tooltip)" + the_tooltip,"") sensitive False tooltip the_tooltip
                 else:
                     textbutton j.caption.replace(" (tooltip)" + the_tooltip,"") action j.action tooltip the_tooltip
+
 
 
 ## When this is true, menu captions will be spoken by the narrator. When false,

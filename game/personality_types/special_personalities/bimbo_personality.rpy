@@ -15,7 +15,8 @@ init 1300:
         common_sexy_likes = ["giving blowjobs", "missionary style sex", "being submissive", "skimpy outfits", "showing her tits", "showing her ass", "not wearing anything", "not wearing underwear", "lingerie", "cum facials"],
         common_dislikes = ["working", "research work", "work uniforms", "conservative outfits", "Mondays"],
         common_sexy_dislikes = ["taking control", "masturbating"],
-        titles_function = bimbo_titles, possessive_titles_function = bimbo_possessive_titles, player_titles_function = bimbo_player_titles)
+        titles_function = bimbo_titles, possessive_titles_function = bimbo_possessive_titles, player_titles_function = bimbo_player_titles,
+        insta_chance = 75, dikdok_chance = 25)
 
 ### DIALOGUE ###
 label bimbo_introduction(the_person):
@@ -651,6 +652,35 @@ label bimbo_flirt_response_affair(the_person):
                 mc.name "Well you're right, but I don't have the time right now. You'll have to wait until later, okay?"
                 "She sighs and nods."
                 the_person "Aww... Okay, I guess I can wait a little bit."
+    return
+
+label bimbo_flirt_response_text(the_person):
+    mc.name "Hey [the_person.title], how's it going. Doing anything fun"
+    "There's a brief pause, then she text back."
+    if the_person.has_role(affair_role):
+        the_person "I only have fun with you now [the_person.mc_title], you know that!"
+        the_person "I want to see you and have some more fun. Don't make me wait too long, okay?"
+
+    elif the_person.has_role(girlfriend_role):
+        the_person "I only have fun spending time with you, silly!"
+        the_person "I want to see you again. Don't make me wait too long, okay?"
+
+    elif the_person.love < 40:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "Not right now. It's kind of boring."
+            the_person "I'm sure you'll make my life more interesting though. You always do!"
+
+        else:
+            the_person "Not right now, it's pretty boring."
+            the_person "Oh well, maybe I'll go shopping later. That always makes me feel better!"
+
+    else:
+        if the_person.effective_sluttiness() > the_person.love:
+            the_person "I am now that I'm texting you. I can think of plenty of fun things for us to do ;)"
+
+        else:
+            the_person "I am now that I'm texting you!"
+            the_person "Oh, and maybe I'll go shopping soon. That's always fun!"
     return
 
 label bimbo_cum_face(the_person):

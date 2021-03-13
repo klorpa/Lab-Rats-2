@@ -50,7 +50,8 @@ init 1300:
             common_sexy_likes = ["lingerie","masturbating","taking control","getting head"],
             common_dislikes = ["small talk","flirting","working"],
             common_sexy_dislikes = ["kissing", "giving blowjobs", "bareback sex"],
-            titles_function = cousin_titles, possessive_titles_function = cousin_possessive_titles, player_titles_function = cousin_player_titles)
+            titles_function = cousin_titles, possessive_titles_function = cousin_possessive_titles, player_titles_function = cousin_player_titles,
+            insta_chance = 30, dikdok_chance = 15)
 
 ### DIALOGUE ###
 label cousin_sex_review(the_person, the_report):
