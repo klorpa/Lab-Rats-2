@@ -209,7 +209,7 @@ label scene_doggy_2(the_girl, the_location, the_object):
             the_girl.char "I... I want you to keep going."
             "Fuck her hard anyways.":
                 mc.name "Don't worry, just relax and you'll manage."
-                "You pull hard on her hips and fuck her hard. She yelps in a combination of suprise and pain."
+                "You pull hard on her hips and fuck her hard. She yelps in a combination of surprise and pain."
                 if the_girl.get_opinion_score("being submissive") > 0:
                     $ the_girl.discover_opinion("being submissive")
                     $ the_girl.change_obedience(the_girl.get_opinion_score("being submissive"))
@@ -244,43 +244,47 @@ label outro_doggy(the_girl, the_location, the_object):
     $ the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Ah, I'm going to cum!"
     $ the_girl.call_dialogue("cum_pullout")
-    menu:
-        "Cum inside of her.":
-            if mc.condom:
-                "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps as you dump your load into her, barely contained by your condom."
-                $ the_girl.call_dialogue("cum_condom")
-                "You wait until your orgasm has passed completely, then pull out and sit back. The condom is ballooned and sagging with the weight of your seed."
-                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
-                    $ the_girl.discover_opinion("drinking cum")
-                    "[the_girl.possessive_title] turns around and reaches for your cock. With delicate fingers she slides the condom off of you."
-                    the_girl.char "It would be a shame to waste all of this, right?"
-                    "She winks and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
-                    $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
-                else:
-                    "[the_girl.possessive_title] turns around and reaches for your cock. She removes the condom and ties the end in a knot."
-                    the_girl.char "Look at all that cum. Well done."
-                "You sigh contentedly and enjoy the post-orgasm feeling of relaxation."
+    $ climax_controller = ClimaxController(["Cum inside of her.", "pussy"],["Cum on her ass.", "body"])
+    $ the_choice = climax_controller.show_climax_menu()
+    if the_choice == "Cum inside her.":
+        if mc.condom:
+            "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps as you dump your load into her, barely contained by your condom."
+            $ the_girl.call_dialogue("cum_condom")
+            $ climax_controller.do_clarity_release(the_girl)
+            "You wait until your orgasm has passed completely, then pull out and sit back. The condom is ballooned and sagging with the weight of your seed."
+            if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
+                $ the_girl.discover_opinion("drinking cum")
+                "[the_girl.possessive_title] turns around and reaches for your cock. With delicate fingers she slides the condom off of you."
+                the_girl.char "It would be a shame to waste all of this, right?"
+                "She winks and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
+                $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
             else:
-                "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps softly in time with each new shot of hot semen inside of her."
-                $ the_girl.cum_in_vagina()
-                $ doggy.redraw_scene(the_girl)
-                $ the_girl.call_dialogue("cum_vagina")
-                "You wait until your orgasm has passed completely, then pull out and sit back. Your cum starts to drip out of [the_girl.title]'s slit almost immediately."
-
-        "Cum on her ass.":
-            if mc.condom:
-                "You pull out of [the_girl.title] at the last moment. You whip your condom off and stroke your cock as you blow your load over her ass."
-                "She holds still for you as you cover her with your warm sperm."
-            else:
-                "You pull out of [the_girl.title] at the last moment, stroking your shaft as you blow your load over her ass. She holds still for you as you cover her with your sperm."
-            $ the_girl.cum_on_ass()
+                "[the_girl.possessive_title] turns around and reaches for your cock. She removes the condom and ties the end in a knot."
+                the_girl.char "Look at all that cum. Well done."
+            "You sigh contentedly and enjoy the post-orgasm feeling of relaxation."
+        else:
+            "You pull back on [the_girl.possessive_title]'s hips and drive your cock deep inside of her as you cum. She gasps softly in time with each new shot of hot semen inside of her."
+            $ the_girl.cum_in_vagina()
             $ doggy.redraw_scene(the_girl)
-            if the_girl.effective_sluttiness() > 120:
-                the_girl.char "What a waste, you should have put that inside of me."
-                "She reaches back and runs a finger through the puddles of cum you've put on her, then licks her finger clean."
-            else:
-                the_girl.char "Oh wow, there's so much of it..."
-            "You sit back and sigh contentedly, enjoying the sight of [the_girl.title] covered in your semen."
+            $ the_girl.call_dialogue("cum_vagina")
+            $ climax_controller.do_clarity_release(the_girl)
+            "You wait until your orgasm has passed completely, then pull out and sit back. Your cum starts to drip out of [the_girl.title]'s slit almost immediately."
+
+    elif the_choice == "Cum on her ass.":
+        if mc.condom:
+            "You pull out of [the_girl.title] at the last moment. You whip your condom off and stroke your cock as you blow your load over her ass."
+            "She holds still for you as you cover her with your warm sperm."
+        else:
+            "You pull out of [the_girl.title] at the last moment, stroking your shaft as you blow your load over her ass. She holds still for you as you cover her with your sperm."
+        $ the_girl.cum_on_ass()
+        $ doggy.redraw_scene(the_girl)
+        $ climax_controller.do_clarity_release(the_girl)
+        if the_girl.effective_sluttiness() > 120:
+            the_girl.char "What a waste, you should have put that inside of me."
+            "She reaches back and runs a finger through the puddles of cum you've put on her, then licks her finger clean."
+        else:
+            the_girl.char "Oh wow, there's so much of it..."
+        "You sit back and sigh contentedly, enjoying the sight of [the_girl.title] covered in your semen."
     return
 
 label transition_doggy_doggy_anal(the_girl, the_location, the_object):
@@ -305,7 +309,7 @@ label transition_doggy_doggy_anal(the_girl, the_location, the_object):
 
             else:
                 the_girl.char "Oh fuck! FUCK!"
-                "She yells out in suprise and pain. You bottom out and hold still, giving her a second to get use to your size."
+                "She yells out in surprise and pain. You bottom out and hold still, giving her a second to get use to your size."
                 the_girl.char "Fuck... I hate that part..."
                 mc.name "It's just like ripping off a bandaid. You'll get use to it."
                 "You wait a moment, then start to move again. Using her pussy juices as lube you've soon got a good rhythm going."

@@ -84,14 +84,17 @@ label pregnant_announce(the_person):
 
     if girlfriend_role in the_person.special_role:
         if was_immaculate:
+            $ mc.change_locked_clarity(100)
             the_person "I know this might sound crazy but... I'm pregnant!"
             the_person "I don't know when it happened, or how, since we haven't even had sex, but I definitely am."
             the_person "Maybe some of your cum dripped between my legs? Or it was on my hands when I touched myself? It doesn't really matter."
         elif was_accident:
             the_person "Well, you know that we haven't exactly been careful with condoms lately, since I'm on birth control..."
+            $ mc.change_locked_clarity(100)
             the_person "I'm not sure exactly when it happened, but it looks like you... managed to get me pregnant anyways."
         else:
             the_person "Obviously you know we haven't been using any protection lately when we've been having sex and..."
+            $ mc.change_locked_clarity(100)
             the_person "Well, you finally fucked a baby into me!"
         "She takes your hands and smiles."
         the_person "Isn't that exciting?! I wanted to tell you as soon as I found out, but I thought you should hear it in person!"
@@ -102,15 +105,18 @@ label pregnant_announce(the_person):
     elif affair_role in the_person.special_role: #Note: Requires her to be in a relationship, so there's no "immaculate conception" chance. She'll just think it's his.
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if was_immaculate:
+            $ mc.change_locked_clarity(100)
             the_person "So I know this is going to sound crazy, but I'm pregnant."
             the_person "I don't think it's [so_title]'s, the dates just don't line up."
             the_person "Maybe I got some of your cum on my hand and touched myself, or maybe it dripped down between my legs."
             the_person "Either way, I'm knocked up and I think it's yours."
         elif was_accident:
             the_person "Well... We haven't been using condoms since I'm taking birth control, but..."
+            $ mc.change_locked_clarity(100)
             the_person "It looks like you managed to knock me up anyways."
         else:
             the_person "I'm not on any sort of birth control, and we haven't been using condoms..."
+            $ mc.change_locked_clarity(100)
             the_person "It looks like one of those creampies stuck and you knocked me up."
         "She bites her lip and shrugs."
         the_person "What do you want me to tell my [so_title]? I could tell him it's his, but I don't know if he'll believe it."
@@ -138,14 +144,17 @@ label pregnant_announce(the_person):
 
     elif the_person.is_family(): #TODO: Expand this into full events for each family member. This is a placeholder until then
         if was_immaculate:
+            $ mc.change_locked_clarity(100)
             the_person "There's no easy way to explain this, so I'll just say it. I'm pregnant."
             the_person "I don't know how it could have even happened. I haven't had sex in so long!"
             the_person "It's not important now though, what is important is that I'm going to have a baby!"
         elif was_accident:
+            $ mc.change_locked_clarity(100)
             the_person "I... Well, I'm pregnant, [the_person.mc_title]."
             the_person "I don't know how it happened. I've been very careful with my birth control since we've been having sex."
         else:
             the_person "We've been being pretty risky, since I'm not on my birth control and you like cumming inside me so much."
+            $ mc.change_locked_clarity(100)
             the_person "I took a test and it looks like you finally knocked me up. I'm going to have your baby."
 
         the_person "You don't need to do anything special, I'm going to take care of everything for us. I just wanted you to know."
@@ -156,17 +165,20 @@ label pregnant_announce(the_person):
     elif the_person.relationship != "Single": # You aren't having a formal affair, but she's in a relationship. More of a "one night stand" kind of thing.
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if was_immaculate:
+            $ mc.change_locked_clarity(100)
             the_person "Well I wanted you to know that... I'm pregnant. It's probably not yours, since we've never had sex."
-            the_person "You don't think your cum might have ended up in my by... accident, do you?"
+            the_person "You don't think your cum might have ended up in me by... accident, do you?"
             mc.name "Nothing's impossible, I suppose."
             the_person "I was worried you'd say that... What do you think I should do?"
 
         elif was_accident:
             the_person "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
+            $ mc.change_locked_clarity(100)
             the_person "I took a test, and I'm pregnant. You got me pregnant."
             the_person "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
         else:
             the_person "I wasn't on any sort of birth control when we fooled around and you came inside me."
+            $ mc.change_locked_clarity(100)
             the_person "It must have been the right time of the month, because I'm pregnant."
             the_person "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
         menu:
@@ -188,16 +200,19 @@ label pregnant_announce(the_person):
 
     else: #She's single, a true one night stand kind of encounter.
         if was_immaculate:
+            $ mc.change_locked_clarity(100)
             the_person "I know this is going to come out of the blue, but... I'm pregnant."
             the_person "I know we haven't had sex, but I can't even think of anyone else I've been close to other than you."
             the_person "Maybe... I got some of your cum inside me by accident? Like it dripped between my legs? I don't know."
             the_person "What I do know is that I'm pregannt, and I think it's yours."
         elif was_accident:
             the_person "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
+            $ mc.change_locked_clarity(100)
             the_person "I took a test, and I'm pregnant. You got me pregnant."
         else:
             the_person "I wasn't on any sort of birth control when we fooled around. It felt so good when you came inside me, but..."
             "She sighs and shrugs."
+            $ mc.change_locked_clarity(100)
             the_person "It must have been the right time of the month, because I'm pregnant."
         the_person "You don't need to do anything, I knew the risks when we had sex. I just thought you should know."
         menu:
@@ -233,6 +248,7 @@ label pregnant_tits_announce(start_day, the_person):
     if the_person.effective_sluttiness() + (the_person.get_opinion_score("showing her tits")*10) > 50: #She's happy to show off her new tits
         the_person "Hey [the_person.mc_title]. I was looking in the mirror this morning and I noticed something."
         "She cups her tits and jiggles them."
+        $ mc.change_locked_clarity(50)
         if the_person.get_opinion_score("creampies") > 0 and the_person.get_opinion_score("being submissive") > 0:
             the_person "My tits are starting to swell. It feels like my body is tranforming into a sluttier version of me."
             the_person "Soon everyone is going to know that I was a desperate cumslut who got bred. Ah..."
@@ -247,6 +263,7 @@ label pregnant_tits_announce(start_day, the_person):
         the_person "Hey [the_person.mc_title], I have a question."
         mc.name "Okay, what is it?"
         the_person "Can you tell that my boobs are bigger? They're starting to swell up and I'm nervous people are going to figure out I'm pregnant."
+        $ mc.change_locked_clarity(30)
         "She moves her arms and gives you a clear look at her chest. Her tits do look bigger than they were before."
         mc.name "They're definitely larger, but I don't think you need to worry about it. I'm sure all the other girls will be jealous of your great rack."
         the_person "That's good to hear. Thanks [the_person.mc_title]."
@@ -280,12 +297,14 @@ label pregnant_transform_announce(start_day, the_person):
     if the_person.event_triggers_dict.get("preg_start_date", day) - day <= 75:
         # Unusually short pregnancy.
         the_person "Hey [the_person.mc_title]. I know this might be a little suprising, but obviously things..."
+        $ mc.change_locked_clarity(50)
         "She runs her hand over her belly, accentuating the new and prominent curves that have formed."
         the_person "... are moving pretty fast. My doctor tells me everything is fine, I'm just ahead of the curve."
 
     else:
         # Normal length pregnancy
         the_person "Hey [the_person.mc_title]. So, I'm past the point of just having a little baby bump..."
+        $ mc.change_locked_clarity(50)
         "She turns and runs a hand over her belly, accentuating the new and prominent curves that have formed there."
 
     the_person "My boobs are starting to swell with milk too. It's a little embarrassing but..."
@@ -378,9 +397,11 @@ label tits_shrink_announcement_one(day_shrunk, the_person):
         return # If it's been a week sincei t's happened just move on and don't comment on it.
 
     the_person "Hey [the_person.mc_title]."
+    $ mc.change_locked_clarity(20)
     "[the_person.possessive_title] sighs and looks down at her chest. She cups a boob and rubs it gently."
     the_person "It looks like my milk is starting to dry up. I'm going to miss having my tits that big..."
     if the_person.get_opinion_score("creampies") > 0 or the_person.get_opinion_score("bareback sex"):
+        $ mc.change_locked_clarity(50)
         the_person "If you really wanted to keep them around you could always get me pregnant again."
         "She bites her lip and eyes your crotch, obviously fantasising."
         mc.name "What a good little slut, being so eager to get bred again just so I can have some bigger tits to play with."
@@ -397,12 +418,14 @@ label tits_shrink_announcement_two(day_shrunk, the_person):
         return # If it's been a week sincei t's happened just move on and don't comment on it.
 
     the_person "Hey [the_person.mc_title]."
+    $ mc.change_locked_clarity(10)
     "[the_person.possessive_title] sighs and looks down down at her chest. She cups one of her boobs and rubs it gently."
-    the_person "My chest is back to it's old size. I had gotten so use to them when I was pregnant that these feel tiny now."
+    the_person "My chest is back to its old size. I had gotten so use to them when I was pregnant that these feel tiny now."
     mc.name "That's a pretty easy problem to solve. I'll just have to get you pregnant again."
     if the_person.get_opinion_score("creampies") > 0 or the_person.get_opinion_score("bareback sex"):
         $ the_person.change_arousal(10)
         "[the_person.title] moans and nods happily."
+        $ mc.change_locked_clarity(30)
         the_person "Yes please, I want that so badly... Whenever you want to do it."
     else:
         the_person "That was a lot of work to go through just for some bigger tits. Maybe I'll get a boobjob though..."

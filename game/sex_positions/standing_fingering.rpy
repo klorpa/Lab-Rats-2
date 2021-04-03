@@ -106,10 +106,16 @@ label scene_standing_finger_2(the_girl, the_location, the_object):
 label outro_standing_finger(the_girl, the_location, the_object):
     if the_girl.arousal >= 100:
         "Feeling [the_girl.title] cum around your fingers pushes you over the edge. You feel your cock spasm in your underwear as a wave of pleasure washes over you."
+        $ climax_controller = ClimaxController(["Cum in your pants.", "air"])
+        $ the_choice = climax_controller.show_climax_menu()
+        $ climax_controller.do_clarity_release(the_girl)
         "It takes both of you a moment to recover from your orgasms."
     else:
         "Feeling [the_girl.title]'s hot, tight pussy squeezing your fingers is enough to push you that little bit further, past the point of no return."
-        "You grasp her tightly with your free hand as you cum, shoving your fingers deep into her cunt and making her gasp in suprise."
+        $ climax_controller = ClimaxController(["Cum in your pants.", "air"])
+        $ the_choice = climax_controller.show_climax_menu()
+        $ climax_controller.do_clarity_release(the_girl)
+        "You grasp her tightly with your free hand as you cum, shoving your fingers deep into her cunt and making her gasp in surprise."
         "When you've recovered you recover you slide them out."
         the_girl.char "Did you just... Cum?"
         mc.name "Yeah."

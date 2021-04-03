@@ -118,7 +118,7 @@ label nora_intro_label(the_steph):
     "[the_nora.title] looks up from her notes."
     $ the_nora.draw_person(position = "sitting")
     the_nora "Do I know? Of course! I haven't just been twiddling my thumbs since you two left!"
-    the_nora "The problem is that all of my research is suppose to be kept within the university now. No sharing with outside organisations."
+    the_nora "The problem is that all of my research is supposed to be kept within the university now. No sharing with outside organisations."
     the_nora "I wish I could help, but it's my job at risk."
     mc.name "Come on [the_nora.title], we're counting on you here."
     $ the_steph.draw_person(position = "sitting")
@@ -147,7 +147,7 @@ label nora_intro_label(the_steph):
     $ the_steph.draw_person()
     "When you get back to the office [the_steph.title] has a new file detailing an untested serum trait."
     the_steph "Without [the_nora.title]'s research notes all we'll be able to do is put this trait into a serum and manufacture it."
-    the_steph "You'll need to test a serum containing this trait on someone to raise it's mastery level."
+    the_steph "You'll need to test a serum containing this trait on someone to raise its mastery level."
     the_steph "We should bring it up to at least mastery level 2 before we go back to [the_nora.title]."
 
     mc.name "Understood. I'll be back once the testing is done."
@@ -367,7 +367,7 @@ label nora_special_research(the_person):
 
     elif nora_role in the_subject.special_role and the_subject.core_sluttiness > 75 and nora_reward_nora_trait not in list_of_traits:
         the_person "Well I suppose your out-of-the-box thinking is why I appreciate your scientific input, [the_person.mc_title]."
-        the_person "I ran your report on myself, and much to my suprise I think there may be something here for us both to study."
+        the_person "I ran your report on myself, and much to my surprise I think there may be something here for us both to study."
         the_person "My own sexual drive seems to be linked quite heavily to the intelligence of the person I am talking to."
         the_person "It may be possible to develop a serum that replicates this in another person, with the effect being more pronounced the larger the intelligence difference."
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
@@ -412,7 +412,7 @@ label nora_special_research(the_person):
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_high_slut_trait)
 
-    elif the_subject.int >= 7 and the_subjectisma >= 7 and the_subject.focus >= 7 and nora_reward_genius_trait not in list_of_traits:
+    elif the_subject.int >= 7 and the_subject.charisma >= 7 and the_subject.focus >= 7 and nora_reward_genius_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "Your subject was extremely competent, scoring near perfectly across the board on all intellectual tests."
         the_person "Replicating the capabilities of this amazing mind may be impossible with modern science, but it may be possible to approximate it for short periods of time."

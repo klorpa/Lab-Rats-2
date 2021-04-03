@@ -240,7 +240,6 @@ label person_new_title(the_person): #She wants a new title or to give you a new 
         the_person "[the_person.mc_title], do you think [the_person.title] is getting a little old? I think something new might be fun!"
         menu:
             "Change what you call her":
-                #TODO: present the player with a list. TODO: Refactor the event above to be a generic way of presenting a list, w/ the dialogue separated.
                 call new_title_menu(the_person) from _call_new_title_menu_1
                 $ title_choice = _return
                 if not (title_choice == "Back" or the_person.create_formatted_title(title_choice) == the_person.title):
@@ -329,7 +328,6 @@ label person_new_mc_title(the_person):
         the_person "I was just thinking that I've called you [the_person.mc_title] for a pretty long time. If you're getting tired of it I could call you something else."
         menu:
             "Change what she calls you.":
-                #TODO: present the player with a list. TODO: Refactor the event above to be a generic way of presenting a list, w/ the dialogue separated.
                 call new_mc_title_menu(the_person) from _call_new_mc_title_menu_1
                 $ title_choice = _return
                 if not (title_choice == "Back" or title_choice == the_person.mc_title):
@@ -384,7 +382,7 @@ label person_new_mc_title(the_person):
                     mc.name "I don't think either of those sound better than [the_person.mc_title]. Let's stick with that for now."
                     "[the_person.title] rolls her eyes."
                     $ the_person.change_happiness(-5)
-                    the_person "Fine, if you don't like chnage I can't make you."
+                    the_person "Fine, if you don't like change I can't make you."
 
     else: #She doesn't listen to you, so she just picks one and demands that you use it, or becomes unhappy.
         $ new_title = get_random_from_list(get_player_titles(the_person))
@@ -517,7 +515,7 @@ label small_talk_person(the_person, apply_energy_cost = True, is_phone = False):
                 the_person "I've got to go. Talk to you later."
             else:
                 the_person "So uh... I guess that's all I have to say about that..."
-                "[the_person] trails off awkwardly."
+                "[the_person.title] trails off awkwardly."
     else:
         if smalltalk_opinion < 0:
             the_person "Oh, not much."
@@ -574,6 +572,7 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
         # High Love
         mc.name "[the_person.title], your outfit is driving me crazy. What are my chances of getting you out of it?"
         $ the_person.call_dialogue("flirt_response_high")
+
 
     $ the_person.review_outfit() #In case we had sex, she sorts out her outfit.
 
@@ -657,7 +656,7 @@ label movie_date_plan_label(the_person):
         $ is_tuesday = False
 
 
-    if sister_role in the_person.special_role:
+    if the_person.has_role(sister_role):
         mc.name "Hey, I was wondering if you'd like to see a movie with me some time? You know, spend a little more time together as brother-sister."
         the_person "It's been like, a year since I went to the movies with you. I think it was when my date ghosted me and you swept in and saved the night by coming with me."
         the_person "I can't quite remember what we saw though..."
@@ -668,7 +667,7 @@ label movie_date_plan_label(the_person):
         else:
             the_person "How about Tuesday night? I tickets are half price."
 
-    elif mother_role in the_person.special_role:
+    elif the_person.has_role(mother_role):
         mc.name "Hey [the_person.title], would you like to come to the movies with me? I want to spend some more time together, mother and son."
         the_person "Aww, you're precious sweetheart. I would love to go to the movies with you."
         the_person "Remember how me and you use to watch movies together every weekend? I felt like our relationship was so close because of that."
@@ -678,7 +677,7 @@ label movie_date_plan_label(the_person):
         else:
             the_person "Would you be free Tuesday night?"
 
-    elif aunt_role in the_person.special_role:
+    elif the_person.has_role(aunt_role):
         mc.name "[the_person.title], would you like to come see a movie with me? I think it would just be nice to spend some more time together."
         the_person "You know, I haven't been out much since I left my ex, so a movie sounds like a real good time."
         if is_tuesday:
@@ -686,7 +685,7 @@ label movie_date_plan_label(the_person):
         else:
             the_person "How about Tuesday night? I don't have anything going on then."
 
-    elif cousin_role in the_person.special_role:
+    elif the_person.special_role(cousin_role):
         mc.name "Hey, do you want to come see a movie with me and spend some time together?"
         the_person "Fine, but no telling people we're related, okay? I don't want anyone to think I might be a dweeb like you."
         "She gives you a wink."
@@ -926,7 +925,6 @@ label serum_give_label(the_person):
 label grope_person(the_person):
     # Note: the descirptions of the actual stages are stored in grope_descriptions.rpy to keep things organised.
     $ mc.change_energy(-5)
-    #TODO: Have arousal be more permanent than it is right now. ie. more events should impact it.
     $ the_person.event_triggers_dict["last_groped"] = (day, time_of_day)
     call grope_shoulder(the_person) from _call_grope_shoulder
     if _return:

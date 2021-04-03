@@ -100,6 +100,7 @@ label ask_be_girlfriend_label(the_person):
                     $ the_person.draw_person(emotion = "happy")
                     $ the_person.add_role(affair_role)
                     $ the_person.change_slut_temp(2)
+                    $ mc.change_locked_clarity(10)
                     "She leans forward and kisses you, putting an arm around your waist and pulling you close. When she breaks the kiss she looks deep into your eyes."
                     the_person "Well then, you know where to find me."
 
@@ -165,12 +166,12 @@ label ask_be_girlfriend_label(the_person):
         $ the_person.change_love(5)
         if the_person.age > 40:
             the_person "Oh I'm so happy to hear you say that! I was worried about our age difference, but I don't want that to stop us!"
-            "She puts her arms around you and pulls you close."
 
         else:
             the_person "Oh my god, I'm so happy! Yes, I want you to be your girlfriend!"
-            "She puts her arms around you and pulls you close."
-        "She kisses you, and you kiss her back."
+        "She puts her arms around you and pulls you close."
+        $ mc.change_locked_clarity(10)
+        "She kisses you, and you kiss her back just as happily."
         $ the_person.add_role(girlfriend_role)
 
     return
@@ -250,24 +251,26 @@ label ask_get_boobjob_label(the_person):
         "Pay for her boobjob.\nRequires: $7000 (disabled)" if mc.business.funds < 7000:
             pass
 
-        "Have her pay for it." if the_person.obedience >= self_pay_requirement and girlfriend_role in the_person.special_role:
+        "Have her pay for it." if the_person.obedience >= self_pay_requirement and the_person.has_role(girlfriend_role):
             mc.name "Yeah, go see someone for me and get some implants. I want some nice big tits to play with"
             if the_person.get_opinion_score("being submissive") > 0:
+                $ mc.change_locked_clarity(10)
                 "She nods happily."
             else:
                 "She hesitates, as if waiting for you to offer to pay, then nods dutifully."
                 $ the_person.change_happiness(-5)
 
-        "Have her pay for it.\nRequires: [self_pay_requirement] Obedience (disabled)" if the_person.obedience >= self_pay_requirement and girlfriend_role in the_person.special_role:
+        "Have her pay for it.\nRequires: [self_pay_requirement] Obedience (disabled)" if the_person.obedience >= self_pay_requirement and the_person.has_role(girlfriend_role):
             pass
 
-        "Have her [so_title] pay for it." if the_person.obedience >= so_obedience_requirement and affair_role in the_person.special_role:
+        "Have her [so_title] pay for it." if the_person.obedience >= so_obedience_requirement and the_person.has_role(affair_role):
             mc.name "Yeah, go see someone and get some implants put in. You can get your [so_title] to pay for them, right?"
             the_person "I don't know, what do I tell him?"
+            $ mc.change_locked_clarity(10)
             mc.name "What every man wants to hear: \"Honey, I want to get some bigger tits!\"."
             mc.name "He'll be jumping at the opportunity to pay. Trust me."
 
-        "Have her [so_title] pay for it.\nRequires: [so_obedience_requirement] (disabled)"if the_person.obedience < so_obedience_requirement and affair_role in the_person.special_role:
+        "Have her [so_title] pay for it.\nRequires: [so_obedience_requirement] (disabled)"if the_person.obedience < so_obedience_requirement and the_person.has_role(affair_role):
             pass
 
         "Never mind.":
@@ -279,6 +282,7 @@ label ask_get_boobjob_label(the_person):
     if the_person.get_opinion_score("showing her tits") > 0:
         $ the_person.change_happiness(10)
         $ the_person.change_obedience(1)
+        $ mc.change_locked_clarity(10)
         the_person "Alright, I'll do it! Thank you [the_person.mc_title], I've always thought girls with bigger boobs looked hotter."
 
 
@@ -289,6 +293,7 @@ label ask_get_boobjob_label(the_person):
 
     else:
         $ the_person.change_obedience(2)
+        $ mc.change_locked_clarity(5)
         the_person "Okay [the_person.mc_title], if you want it I'll do it for you."
 
     the_person "I'll get it scheduled, if we're lucky I'll be able to have it done in a few days."
@@ -310,10 +315,12 @@ label girlfriend_got_boobjob_label(the_person):
 label girlfriend_boob_brag_label(the_person): #TODO: Decide if we need a little alt-dialogue for the affair side of things.
     the_person "Hey [the_person.mc_title], what do you think?"
     if the_person.get_opinion_score("showing her tits") < 0:
+        $ mc.change_locked_clarity(20)
         "She puts her arms behind her, revealing her newly enlarged chest."
         the_person "These feel so... excessive. It feels like everyone is staring at them all the time now."
         $ the_person.change_slut_temp(-1 + the_person.get_opinion_score("showing her tits"))
     else:
+        $ mc.change_locked_clarity(20)
         "She pushes her chest out towards you, shaking her tits just a little."
         the_person "I hope you like them, maybe we can have some fun with them later."
         $ the_person.change_slut_temp(2)

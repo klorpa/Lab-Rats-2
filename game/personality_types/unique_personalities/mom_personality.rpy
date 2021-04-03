@@ -342,7 +342,7 @@ label mom_seduction_refuse(the_person):
         the_person "Oh my god, what are you saying sweetheart! I'm your mother, we certainly couldn't do anything... physical!"
 
     elif the_person.sluttiness < 50:
-        the_person "I'm sorry sweetheart, but we really shouldn't be doing anything together any more. It's just... not the way we're suppose to act."
+        the_person "I'm sorry sweetheart, but we really shouldn't be doing anything together any more. It's just... not the way we're supposed to act."
 
     else:
         the_person "I'm sorry sweety, I know how much you like to spend time with me, but now isn't a good time for me. I'll make it up to you though, I promise."
@@ -368,6 +368,7 @@ label mom_flirt_response_low(the_person):
     the_person "Aww, thank you [the_person.mc_title]. I'm really not wearing anything special though."
     mc.name "Well you're looking good, that's all I know."
     the_person "You're so sweet. Come here!"
+    $ mc.change_locked_clarity(5)
     "[the_person.possessive_title] opens her arms up and gives you a warm, motherly hug."
 
     return
@@ -380,6 +381,7 @@ label mom_flirt_response_mid(the_person):
         mc.name "That doesn't make me blind. I'm just telling you what I see [the_person.title], it's suppose to be a compliment."
         "She sighs and smiles."
         the_person "Well then thank you for the compliment. Come here."
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] gives you a quick, motherly hug."
         the_person "You're always so good to me. I love you."
         mc.name "I love you too [the_person.title]."
@@ -390,6 +392,7 @@ label mom_flirt_response_mid(the_person):
         mc.name "If you did you've put it in all the right places. Turn around for me."
         "[the_person.possessive_title] raises an eyebrow and hesitates, then shrugs and turns around for you."
         $ the_person.draw_person(position = "back_peek")
+        $ mc.change_locked_clarity(10)
         the_person "Like this?"
         mc.name "Just like that. Look, have great hips and a fantastic ass. You should be showing them off more."
         $ the_person.draw_person()
@@ -404,6 +407,7 @@ label mom_flirt_response_high(the_person):
             the_person "You should be thinking about women your own age. Isn't there anyone else you think is pretty?"
             mc.name "You're the most beautiful woman I know [the_person.title]. No matter how much I try I can't get you out of my head."
             the_person "Aww... I suppose I can't be too angry at you then. Come here."
+            $ mc.change_locked_clarity(5)
             "She opens her arms up and pulls you into a hug. After a quick squeeze she steps back to arms length and smiles, looking into your eyes."
             the_person "No matter what you're always going to be my amazing little boy."
             menu:
@@ -422,6 +426,7 @@ label mom_flirt_response_high(the_person):
                     mc.name "And you'll always be my beautiful, loving mom."
                     "[the_person.possessive_title] smiles warmly and hugs you again. This time you let your hands slide down her back and rest them on her ass."
                     the_person "You shouldn't... Oh what's the harm. Go ahead, give it a squeeze."
+                    $ mc.change_locked_clarity(10)
                     "You grab [the_person.possessive_title]'s ass and massage it gently. She sighs softly into your ear as you play with her."
                     the_person "Okay... That's enough for now. I don't want you getting too excited."
                     mc.name "Okay [the_person.title]."
@@ -510,6 +515,54 @@ label mom_flirt_response_text(the_person):
         else:
             the_person "You're so sweet to check in on me. I'm doing well, but I miss seeing you more often."
             the_person "Try to come home at a reasonable hour tonight. You're working yourself to the bone."
+    return
+
+label mom_condom_demand(the_person):
+    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0:
+        the_person "Oh [the_person.mc_title], you need to put on a condom before we can do anything."
+        the_person "You might get carried away without one, and we can't have that happen."
+    else:
+        the_person "[the_person.mc_title], do you have a condom? You're going to need to put one on."
+        the_person "If you don't have one we could do something else."
+    return
+
+label mom_condom_ask(the_person):
+    if the_person.on_birth_control:
+        the_person "Now [the_person.mc_title], I'm birth control. We really should still use protection though."
+        the_person "Do you have a condom with you? I hope you're always prepared."
+        $ the_person.update_birth_control_knowledge()
+    elif the_person.get_opinion_score("creampies") > 0:
+        the_person "Do you have a condom to put on? I don't want you to have to pull out when you finish."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "You should really put on a condom [the_person.mc_name]."
+        the_person "I trust you, but it's so easy for accidents to happen when we're... distracted."
+    return
+
+label mom_condom_bareback_ask(the_person):
+    if the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            the_person "You don't need to use any protection [the_person.mc_title]. I'm on birth control."
+            the_person "That means you can cum right inside my pussy if you want. I'd like it very much if you did."
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "You don't need to use any protection [the_person.mc_title]."
+            the_person "I would love it if you came inside me, even with the risks."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "You don't need any protection with me [the_person.mc_title]."
+        the_person "I want you to have the best time possible, even if it's a little risky..."
+    return
+
+label mom_condom_bareback_demand(the_person):
+    #Just likes raw sex
+    if the_person.on_birth_control:
+        the_person "Don't bother with that. I'm on birth control, so we don't need to worry."
+        the_person "I want you to fuck me [the_person.mc_title], and I want you to do it raw!"
+        $ the_person.update_birth_control_knowledge()
+    else:
+        the_person "Don't bother with that, I want you just the way you are."
+        the_person "Go ahead [the_person.mc_title], put it inside of me!"
     return
 
 label mom_cum_face(the_person):
@@ -722,7 +775,7 @@ label mom_being_watched(the_person, the_watcher, the_position):
 
     elif the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness >= the_position.slut_cap:
         #She's into it and encouraged by the slut watching her.
-        the_person "Oh [the_person.mc_title], I know it's be wrong but being with you just feels so right!"
+        the_person "Oh [the_person.mc_title], I know it's wrong but being with you just feels so right!"
         $ the_person.change_arousal(1)
         "[the_person.possessive_title] seems turned on by [the_watcher.title] watching you and her [the_position.verb]."
 
@@ -785,11 +838,13 @@ label mom_date_seduction(the_person):
     if the_person.sluttiness > the_person.love:
         if the_person.sluttiness > 40:
             "When you get home your mother takes your hand and starts to lead you through the house."
+            $ mc.change_locked_clarity(20)
             the_person "You've shown me such a good time tonight. Come with me and I think I can show you a few things too."
         else:
             "When you get home your mother takes your hand and holds it in hers."
             the_person "You were a perfect gentleman tonight sweety. I think you've earned this."
             "She leans forward and kisses you on the lips. She lingers there for a couple of seconds before pulling back and sighing."
+            $ mc.change_locked_clarity(10)
             the_person "Would you... like to come to my room and share a quick drink before I get to bed? Maybe you could tuck me in too."
     else:
         if the_person.love > 40:
@@ -797,10 +852,12 @@ label mom_date_seduction(the_person):
             "When you get home your mother takes your hand and holds it in both of hers."
             the_person "I had such a wonderful time tonight. You make me feel so young and alive."
             "She leans in and kisses you on the cheek. She lingers there for a second, her breath warm on our ear."
+            $ mc.change_locked_clarity(20)
             the_person "Would you like to share a drink in my room before we head to bed? "
         else:
             the_person "Sweetheart..."
             "When you get home your mother gets your attention. She leans over and kisses you on the cheek."
+            $ mc.change_locked_clarity(10)
             the_person "You've been a wonderful date. Would you like to share a drink with me before we head to bed?"
     return
 
@@ -850,7 +907,7 @@ label mom_sex_review(the_person, the_report):
             "[the_person.possessive_title] blushes and looks away from you."
             the_person "It was... nice. You're very good at that, I'm not sure I want to know where you learned it."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Oh my... I'm sorry sweetheart, I shouldn't have let that get so serious."
             the_person "I don't know what came over me, I just stopped thinking straight and wanted more! I..."
             "She stops herself and takes a deep breath."
@@ -874,7 +931,7 @@ label mom_sex_review(the_person, the_report):
             the_person "Oh [the_person.mc_title], I didn't realise you were being thoughtful, not selfish. I feel a little silly now..."
             the_person "It felt amazing. Thank you."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Oh, that's all? I mean, you're right... we should stop. We've taken this too far already."
             the_person "It felt nice wonderful, but I should have stopped you earlier."
             the_person "I think I need to catch my breath after that. Ah..."
@@ -895,7 +952,7 @@ label mom_sex_review(the_person, the_report):
         elif used_obedience: #She only did it because she was commanded
             the_person "[the_person.possessive_title] sighs, obviously relieved that you're finished."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "I hope you enjoyed yourself [the_person.mc_title]."
             mc.name "Yeah, that was great [the_person.title]."
             the_person "Good, but... we shouldn't take things so far in the future, okay?"
@@ -915,7 +972,7 @@ label mom_sex_review(the_person, the_report):
             the_person "We shouldn't be doing this anyways, so it's probably for the best."
             "[the_person.possessive_title] seems relieved that you're stopping."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Oh what am I thinking! Of course we should stop, this has gone too far already."
             the_person "I'm sorry [the_person.mc_title], it's my job to be the responsible one and set boundaries."
             # the_person "You're right, we should probably stop. I just go so carried away, I wouldn't normally do something like this..."
@@ -985,7 +1042,7 @@ label mom_touching_penis_taboo_break(the_person):
         mc.name "And I love you too. There's nothing wrong about a mother who wants to make sure her son is taken care of."
         "She looks at your hard cock and stares at it for a moment."
         the_person "You don't think this is wrong? I'm your mother... I shouldn't be touching you like this."
-        mc.name "I don't think it's anyones business but our own how we show our love for each other."
+        mc.name "I don't think it's anyone's business but our own how we show our love for each other."
         "She thinks for a long moment, eyes still locked on your dick."
         the_person "Okay, but only because I love you [the_person.mc_title]."
         "[the_person.possessive_title] looks you in the eyes again and laughs self-conciously."

@@ -154,6 +154,7 @@ label aunt_intro_phase_two_label():
     $ the_group.set_primary(aunt)
     aunt "[mom.name]!"
     $ the_group.draw_group()
+    $ mc.change_locked_clarity(10)
     "[aunt.title] lets out an excited, high pitched yell and rushes forward to hug [mom.possessive_title]."
     aunt "Thank you so much for taking us in. It means the world to me and [cousin.title]."
     $ the_group.draw_person(mom)
@@ -166,6 +167,7 @@ label aunt_intro_phase_two_label():
     aunt "She's thrilled, really. Now who are these two little rascals I see?"
     "[aunt.possessive_title] steps into the house and throws her arms wide, pulling you and your sister in to a hug."
     aunt "I mean, it must be [mc.name] and [lily.title], but you're both so much bigger than I remember!"
+    $ mc.change_locked_clarity(10)
     "She hugs you both tight and then lets go. [aunt.title] looks at you in particular and laughs."
     aunt "I remember when you were just a little baby, and now you're a full grown man. Oh no, I'm showing my age, aren't I. Hahaha."
     "She laughs and turns back to grab her things. [cousin.title] sighs loudly outside and rolls her eyes."
@@ -239,6 +241,7 @@ label aunt_intro_phase_three_label():
     mc.name "I'll see if I have some spare time in my schedule and come to you if I do."
     $ aunt.draw_person(position = "sitting", emotion = "happy")
     $ aunt.change_happiness(8)
+    $ mc.change_locked_clarity(5)
     "[aunt.possessive_title] sits on the side of your bed, puts a hand on your leg, and squeezes it gently."
     aunt "I'm so lucky to have such a wonderful nephew, you know that? If only I had married a man like you instead of..."
     aunt "Well, never mind that. Thank you."
@@ -292,6 +295,7 @@ label aunt_intro_moving_apartment_label(the_person):
         mc.name "You're welcome..."
         "A few minutes later [aunt.title] pulls up in a rented pickup truck. You load up the back with furniture and boxes, then get in the passenger seat."
         $ aunt.draw_person(position = "sitting")
+        $ mc.change_locked_clarity(5)
         aunt "Okay, let's get going! I don't know what I'd do without a big strong man like you to lift things for me. I'd be helpless!"
         $ aunt.change_love(1)
         $ downtown.show_background()
@@ -305,9 +309,10 @@ label aunt_intro_moving_apartment_label(the_person):
         $ aunt.change_love(3)
         $ aunt.change_happiness(5)
         $ aunt.draw_person(emotion = "happy")
+        $ mc.change_locked_clarity(5)
         aunt "You're my hero [aunt.mc_title]. Come see me if you have any more spare time and we can move the rest of this over."
         "She breaks the hug and smiles."
-        aunt "Now I'm going to go see if I can use your mothers shower!"
+        aunt "Now I'm going to go see if I can use your mother's shower!"
         $ clear_scene()
 
 
@@ -317,7 +322,8 @@ label aunt_intro_moving_apartment_label(the_person):
         "You and [aunt.title] head to the garage and look over the stuff that still needs to be moved."
         aunt "I think we can move my things over today. If I need something I can always borrow it from your mother."
         aunt "She always hated when I borrowed her clothes when we were younger. She said I stretched out her tops."
-        aunt "I think she was just jealous I got the nice tits."
+        $ mc.change_locked_clarity(10)
+        aunt "I think she was just jealous I got the nicer tits."
         "[aunt.possessive_title] laughs and blushes."
         $ aunt.change_slut_temp(1)
         aunt "Sorry, I shouldn't be talking about your mom's chest like that. It's different when you're sisters, you know?"
@@ -342,6 +348,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 mc.name "We're both adults, it's no big deal."
                 "[aunt.possessive_title] shrugs, opens the box, and starts to sort through it. She hands you a pile of colourful panties."
                 aunt "Okay, put these in that drawer on the left..."
+                $ mc.change_locked_clarity(5)
                 "You slide the garments into their drawer. Next [aunt.title] hands you a stack of lacey bras and small thongs."
                 aunt "This goes to the side... and then... Oh my."
                 "She closes the box and looks away, blushing."
@@ -349,6 +356,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 mc.name "Come on, we're almost done."
                 $ aunt.change_slut_temp(1)
                 aunt "Don't tell my sister about this."
+                $ mc.change_locked_clarity(10)
                 "[aunt.title] pulls out the last few pieces of underwear from the box: a collection of g-strings and nippleless bras."
                 mc.name "Is that all? I thought you had something to be embarrassed about."
                 "You pick the tiniest g-string and hold it up against your waist. [aunt.title] laughs and snatches it from your hands."
@@ -407,6 +415,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 "She's not the boss of you. You wait a couple of minutes then start snooping around."
                 "Most of the boxes are clearly labeled, but you find one that just says \"Keep Out!\" on the side."
                 "You open the box and find it filled with all of [cousin.title]'s underwear, all black, purple, or blue."
+                $ mc.change_locked_clarity(10)
                 "You dig deeper, past the large cupped bras she needs for her big tits. She has a handful of g-strings, fishnet stockings, and a garter belt near the bottom."
                 "You think you feel something rigid at the bottom, but your search is interrupted by the front door lock clicking open."
                 "You rush to get [cousin.possessive_title]'s underwear back in order. You slam the box shut and sit down on her bed, trying to look nonchalant."
@@ -420,6 +429,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 $ cousin.change_slut_temp(2)
                 cousin "Whatever. It's not like you'll ever get to see me in it. I bet you'd like to though. I bet you're weird like that."
                 "[cousin.title] gives you a strange, mischievous smile."
+                $ mc.change_locked_clarity(10)
                 cousin "Do you want to see me try some of it on? I won't tell anyone."
                 menu:
                     "Yes.":
@@ -455,13 +465,6 @@ label aunt_intro_moving_apartment_label(the_person):
     elif aunt.event_triggers_dict.get("moving_apartment") == 3:
         #You help them move their kitcehn stuff in. Your aunt gets dirty/sweaty and wants to chance now that her clothes are here. She asks you to wait around whlie hse takes a shower, then
         #the landlord shows up and needs some documents from her, so you have to come into her bathroom and get a chance to see her naked/just in her underwear or something.
-        #mc.name "Okay, I'm going to get a drink and catch my breath."
-        #$ clear_scene()
-        #"She smiles at you and nods. You sit down on her new couch in the living room and relax for a bit."
-        #"A minute later [aunt.title]'s phone rings. You catch half of the conversation from the living room."
-        #aunt "Hello? Yes, that's me. I'm actually in the building right now, I can come to the office right away. Okay. See you soon."
-        #"[aunt.possessive_title] comes out and heads for the door."
-        #6aunt "I just need to dip down to the
 
         "You head to the garage and look at the small pile of boxes left."
         aunt "I think it's just the kitchen stuff left. Let's get this packed in the car and we'll have everything moved over!"
@@ -475,6 +478,7 @@ label aunt_intro_moving_apartment_label(the_person):
         mc.name "That sounds good to me. I'm starving."
         $ aunt.change_love(1)
         aunt "I'm sure you are, you've been doing all the heavy lifting for me! You're my big strong man, coming in to rescue me."
+        $ mc.change_locked_clarity(5)
         "She gives you a hug, then grabs her phone and finds a local pizza place that delivers. She places your order."
         aunt "They said it may take a little while. All this hard work got me all sweaty. I'm going to go take a shower. Back in a bit!"
         $ clear_scene()
@@ -507,6 +511,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 #$ aunt.outfit = default_wardrobe.get_outfit_with_name("Nude 1") changed v0.24.1
                 $ aunt.draw_person(position = "back_peek")
                 $ aunt.change_slut_temp(2)
+                $ mc.change_locked_clarity(10)
                 aunt "It's right over there. Just grab it and go."
                 "She nods her head towards her purse. You hurry inside, grab it, then retreat. You pull the cash out of her wallet and give it to the pizza guy."
                 $ clear_scene()
@@ -623,6 +628,7 @@ label aunt_share_drink_intro_label(the_person):
     mc.name "It's good to see you too [the_person.title]."
     the_person "We really should get together more often. I miss seeing my cute little nephew!"
     the_person "Come by in the afternoon some time, you can join me for a glass of wine and we can chat."
+    $ mc.change_locked_clarity(5)
     "She gives you a kiss on the cheek and smiles at you."
     $ the_person.change_happiness(1)
     the_person "Anyway, I'm sure you have other stuff you wanted to talk about!"
@@ -707,9 +713,12 @@ label aunt_share_drinks_label(the_person):
                             "Seizing the opportunity, you kneel down in front of [the_person.possessive_title]."
                             if the_person.outfit.tits_available():
                                 "Her nicely shaped breasts are already there for the taking. You move slowly and cup them in your hands."
+                                $ mc.change_locked_clarity(15)
                             else:
                                 $ the_clothing = the_person.outfit.get_upper_top_layer()
                                 "You move slowly and cup her nicely shaped breasts, feeling them through her [the_clothing.name]."
+                                $ mc.change_locked_clarity(10)
+
                             the_person "Mmm..."
                             "[the_person.possessive_title] moans softly and tilts her head to the side."
                             $ the_person.change_slut_temp(2)
@@ -722,10 +731,12 @@ label aunt_share_drinks_label(the_person):
                             "Seizing the opportunity, you kneel down in front of [the_person.possessive_title]."
                             if the_person.outfit.vagina_available():
                                 "Her pussy is out on display for you, there for the taking. You move slowly and slide your hand along her inner thigh, working upward."
+                                $ mc.change_locked_clarity(15)
                             else:
                                 $ the_clothing = the_person.outfit.get_lower_top_layer()
                                 "You move slowly, sliding your hand along her inner thigh and working upward."
                                 "When you reach her waist, you slide your hand inside of her [the_clothing.name]."
+                                $ mc.change_locked_clarity(10)
 
                             if mc.sex_skills["Foreplay"] >= 3:
                                 the_person "Mmm..."
@@ -760,6 +771,7 @@ label aunt_share_drinks_label(the_person):
                     the_person "Oh my god, what have I even been saying? It's this wine [the_person.mc_title], I told you it makes me do crazy things."
                     the_person "Just... don't tell my sister that I told you any of that. You can keep a secret, right?"
                     mc.name "Of course, it's just between us."
+                    $ mc.change_locked_clarity(10)
                     the_person "That's a good boy. Now I think I should stop drinking this wine while I still can. It was nice talking, come by any time and we can do it again."
                     "She walks you to the door and you say goodbye."
 
@@ -780,7 +792,7 @@ label aunt_share_drinks_label(the_person):
                         $ created_outfit = _return
                         "You pull out a few pieces of clothing and lay them out on [the_person.possessive_title]'s bed."
                         "She looks at the outfit you've laid out for her and seems to think for a second."
-                        if created_outfit.slut_requirement <= the_person.sluttiness: #She likes it enough to try it on.
+                        if the_person.judge_outfit(created_outfit): #She likes it enough to try it on.
                             if created_outfit.vagina_visible():
                                 the_person "Oh, wow. My pussy would just be out there, for everyone to see..."
                                 "She sounds more excited than worried."
@@ -804,11 +816,12 @@ label aunt_share_drinks_label(the_person):
                             the_person "I didn't think so. Just don't tell my sister."
                             $ strip_list = the_person.outfit.get_full_strip_list()
                             $ generalised_strip_description(the_person, strip_list)
-
+                            $ mc.change_locked_clarity(10)
                             "Once she's stripped out of her clothing, [the_person.possessive_title] puts on the outfit you've made for her."
                             $ the_person.apply_outfit(created_outfit, update_taboo = True)
                             #$ the_person.outfit = created_outfit.get_copy() changed v0.24.1
                             $ the_person.draw_person()
+                            $ mc.change_locked_clarity(10)
 
                             if created_outfit.slut_requirement <= the_person.sluttiness-20:
                                 #She would like it normally and doesn't find it slutty.
@@ -891,6 +904,7 @@ label aunt_share_drinks_label(the_person):
                     call change_location(aunt_bedroom) from _call_change_location_2 #Changbe our location so that the background is correct,
                     the_person "Okay, so I have a few things I want your opinion on. You just tell me what looks good and what I should keep around."
                     "She starts to strip down, then pauses and looks at you."
+                    $ mc.change_locked_clarity(10)
                     the_person "Don't tell my sister I'm doing this with you. We're both adults, but I don't think she'd understand."
                     "She rolls her eyes and keeps going."
                     $ the_person.change_slut_temp(1)
@@ -903,6 +917,7 @@ label aunt_share_drinks_label(the_person):
                     $ the_person.apply_outfit(lingerie, update_taboo = True)
                     #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
+                    $ mc.change_locked_clarity(10)
                     "She slips on her new set of underwear."
                     the_person "Okay, what do you think? Keep or toss?"
                     $ the_person.draw_person(position="back_peek")
@@ -926,6 +941,7 @@ label aunt_share_drinks_label(the_person):
                     $ the_person.apply_outfit(lingerie, update_taboo = True)
                     #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
+                    $ mc.change_locked_clarity(10)
                     "She slips on the next set of lingerie."
                     the_person "What about this one? Keep or toss?"
                     $ the_person.draw_person(position="back_peek")
@@ -949,6 +965,7 @@ label aunt_share_drinks_label(the_person):
                     $ the_person.apply_outfit(lingerie, update_taboo = True)
                     #$ the_person.outfit = lingerie.get_copy() changed v0.24.1
                     $ the_person.draw_person()
+                    $ mc.change_locked_clarity(10)
                     "She slips on the last set of underwear she has to show you."
                     $ the_person.draw_person(position="back_peek")
                     the_person "Well?"
@@ -984,14 +1001,17 @@ label aunt_share_drinks_label(the_person):
                         the_person "You don't mind if I get a little more comfortable, do you?"
                         $ strip_choice = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
                         $ the_person.draw_animated_removal(strip_choice)
+                        $ mc.change_locked_clarity(10)
                         "Before you can answer she peels off her [strip_choice.name] and drops it onto the couch."
                         mc.name "No, go right ahead."
                         if the_person.outfit.remove_random_lower(do_not_remove = True):
                             $ strip_choice = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                             $ the_person.draw_animated_removal(strip_choice)
+                            $ mc.change_locked_clarity(5)
                             "She takes off her [strip_choice.name] next and throws it onto the couch too."
                     the_person "[the_person.mc_title], can I ask you a question? Do you think I'm still attractive?"
                     $ the_person.draw_person(position = "back_peek")
+                    $ mc.change_locked_clarity(10)
                     "She spins around in front of you, showing you her butt."
                     the_person "I mean, would you be attracted to me if I wasn't your aunt?"
                     menu:
@@ -1002,6 +1022,7 @@ label aunt_share_drinks_label(the_person):
                             the_person "Oh? Okay then, I'll play your game, you dirty boy."
                             $ strip_choice = the_person.outfit.remove_random_any(exclude_feet = True, do_not_remove = True)
                             $ the_person.draw_animated_removal(strip_choice, position = "back_peek")
+                            $ mc.change_locked_clarity(10)
                             "She keeps her back to you and takes off her [strip_choice.name]."
                             the_person "Do you like watching me strip down for you? Do you think I'm hot?"
                             mc.name "Yeah, I think you're hot."
@@ -1012,6 +1033,7 @@ label aunt_share_drinks_label(the_person):
                         "Compliment her.":
                             mc.name "Of course you're attractive [the_person.title], look at you! You've got a hot ass and a killer rack."
                             the_person "Oh [the_person.mc_title], you know just what I wanted to hear..."
+                            $ mc.change_locked_clarity(5)
                             "She wiggles her ass just for you."
                             the_person "You don't think I'm too old? I feel like I'm past my prime."
                             mc.name "You're beautiful, you have an amazing body, and you have the experience to know what to do with it."
@@ -1020,6 +1042,7 @@ label aunt_share_drinks_label(the_person):
                             $ the_person.change_love(1)
                             $ the_person.draw_person()
                             if the_person.outfit.tits_available():
+                                $ mc.change_locked_clarity(10)
                                 "She turns back around and leans over to give you a hug on the couch. Her tits dangle down in front of you, tempting you."
                             else:
                                 "She turns back around and leans over to give you a hug on the couch."
@@ -1037,6 +1060,7 @@ label aunt_share_drinks_label(the_person):
                             mc.name "You've got experience, but you need to put it to work."
                             $ the_person.change_obedience(2)
                             $ the_person.change_slut_temp(3)
+                            $ mc.change_locked_clarity(10)
                             "She seems to think long and hard about this for a few seconds."
                             the_person "I guess I understand. Thank you for being honest with me."
 
@@ -1049,6 +1073,7 @@ label aunt_share_drinks_label(the_person):
 
                 else:
                     "[the_person.possessive_title] slides closer to you on the couch and places her hand on your thigh while you chat."
+                    $ mc.change_locked_clarity(10)
                     "Inch by inch it moves up your leg until it brushes against the tip of your soft cock. She rubs it gently through your pants, coaxing it to life."
                     the_person "I... I know we shouldn't, but nobody needs to know. Right?"
                     if the_person.has_taboo("vaginal_sex") or the_person.has_taboo("anal_sex"):
@@ -1419,7 +1444,7 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
         $ the_group.redraw_person(the_aunt)
         the_aunt "Wait, what are we playing for?"
         $ the_group.redraw_person(the_mom)
-        the_mom "It's just suppose to be a friendly game. We don't need to play for anything."
+        the_mom "It's just supposed to be a friendly game. We don't need to play for anything."
         $ the_group.redraw_person(the_aunt)
         the_aunt "Come on, we use to play for cash all the time. Let's make it interesting."
         $ the_group.redraw_person(the_mom)
@@ -1487,8 +1512,9 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
                 the_mom "[the_mom.mc_title], I would never..."
                 "She's interupted by her sister."
                 $ the_group.redraw_person(the_aunt)
+                $ mc.change_locked_clarity(5)
                 the_aunt "Yeah, I have."
-                "[the_mom.title] turns to [the_aunt.possessive_title], looking suprised."
+                "[the_mom.title] turns to [the_aunt.possessive_title], looking surprised."
                 $ the_group.redraw_person(the_mom)
                 the_mom "You have? When?"
                 "[the_aunt.title] giggles and shrugs."
@@ -1506,12 +1532,14 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
                 the_aunt "That's why you try and win! Don't be such a stick in the mud, it'll be fun!"
                 "[the_mom.possessive_title] considers it for a long moment, then sighs and srugs."
                 $ the_group.redraw_person(the_mom)
+                $ mc.change_locked_clarity(10)
                 the_mom "Fine, but I don't want anyone taking this further than they're comfortable with. Okay?"
                 $ the_group.redraw_person(the_aunt)
                 the_aunt "Of course. Okay, let's play!"
             else:
                 mc.name "Let's play strip euchre again, that was interesting last time."
                 $ the_group.redraw_person(the_aunt)
+                $ mc.change_locked_clarity(5)
                 the_aunt "Alright, strip euchre it is. Let's play!"
 
             call family_games_night_strip(the_mom, the_aunt, the_sister, partner) from _call_family_games_night_strip
@@ -1760,6 +1788,7 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                         mc.name "Sounds fair to me."
                         $ the_group.draw_person(opponent_b, False)
                         $ the_group.draw_person(opponent_a)
+                        $ mc.change_locked_clarity(10)
                         "The girls slide their chairs back from the kitchen table and stand up next to each other."
                         opponent_a "Okay, so how do we do this?"
                         $ the_group.redraw_person(opponent_b)
@@ -1767,6 +1796,7 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                         $ the_group.draw_person(opponent_b, the_animation = tit_bob, animation_effect_strength = 0.6)
                         "[opponent_b.title] takes the lead, swaying her hips and holding her hands high and out of the way."
                         $ the_group.draw_person(opponent_a, the_animation = tit_bob, animation_effect_strength = 0.6)
+                        $ mc.change_locked_clarity(10)
                         "After watching for a second [opponent_a.title] starts to follow along."
                         mc.name "Turn around ladies, let's get a full view of things."
                         opponent_a "Oh my god, this is so embarrassing..."
@@ -1780,6 +1810,7 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                         $ the_group.redraw_person(opponent_b)
                         opponent_b "Like this?"
                         $ the_group.draw_person(opponent_b, position = "standing_doggy", the_animation = ass_bob, animation_effect_strength = 0.6)
+                        $ mc.change_locked_clarity(20)
                         "[opponent_b.possessive_title] puts her hand on the kitchen counter and bends forward. She spreads her legs and twerks her ass for you."
                         $ the_group.redraw_person(opponent_a)
                         opponent_a "Oh my god, where did you learn to do that?"
@@ -1881,6 +1912,7 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                     "You slip a thumb under your underwear waistband and start to pull them down."
                     "All of the girls watch with keen attention as your hard cock finally slips free of your boxers."
                     #TODO: Maybe only have this dialogue trigger the first time.
+                    $ mc.change_locked_clarity(10)
                     the_aunt "You have a nice looking cock [the_aunt.mc_title]." #TODO: Add a way to keep track of how much the various family members know about _each others_ taboos.
                     $ the_group.redraw_person(the_mom)
                     the_mom "[the_aunt.title]!"
@@ -1889,16 +1921,18 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                     "[the_sister.possessive_title] shrinks down in her chair, as if trying to hide from the conversation entirely."
                     $ the_group.redraw_person(the_aunt)
                     "[the_aunt.possessive_title] just shrugs."
-                    the_aunt "What? It's true, and men just don't get complemented enough these days."
+                    the_aunt "What? It's true, and men just don't get complimented enough these days."
                     the_aunt "It's good for his mental health to hear stuff like this."
                     $ the_group.redraw_person(the_mom)
                     the_mom "You shouldn't be commenting on my son's... penis. Especially not in front of me!"
                     mc.name "What's wrong with my penis [the_mom.title]?"
+                    $ mc.change_locked_clarity(10)
                     the_mom "Oh! Nothing is wrong with it sweetheart, it's very attractive."
                     $ the_group.redraw_person(the_aunt)
                     the_aunt "And a great size."
                     $ the_group.redraw_person(the_mom)
                     the_mom "[the_aunt.title], please... It is a very impressive size [the_mom.mc_title]."
+                    $ mc.change_locked_clarity(10)
                     "Her gaze lingers on your cock for an extra second before clears her throat and looks away."
                     the_mom "Now... Can you please sit down so we can continue the game?"
                     mc.name "Yeah, of course."
@@ -2030,4 +2064,5 @@ init -1 python:
         #TODO: See about streamlining that by rolling it all into a single strip based description thing (we're doing a lot of strip dialogue lately)
 
         person.update_outfit_taboos() #Make sure we update all taboos, in case two were broken at once.
+        mc.change_locked_clarity(10)
         return #TODO: Have this return something special so we can tell if any of the girls should comment.

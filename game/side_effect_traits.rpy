@@ -49,6 +49,13 @@ init -1:
         def slow_release_sedative_on_turn(the_person, add_to_log):
             the_person.change_energy(-10)
 
+        ## Toxic functions ##
+        def toxic_on_apply(the_person, add_to_log):
+            the_person.serum_tolerance += -1
+
+        def toxic_on_remove(teh_person, add_to_log):
+            the_person.serum_tolerance += 1
+
 label instantiate_side_effect_traits(): #Creates all of the default LR2 serum trait objects.
     python:
         depressant_side_effect = SerumTrait(name = "Depressant",
@@ -139,6 +146,15 @@ label instantiate_side_effect_traits(): #Creates all of the default LR2 serum tr
             on_turn = slow_release_sedative_on_turn,
             is_side_effect = True)
 
+        toxic_side_effect = SerumTrait(name = "Toxic",
+            desc = "Mildly toxic interactions make this serum dangerous to mix with other medications at any dose. Reduces serum tolerance for the duration.",
+            positive_slug = "None",
+            negative_slug = "-1 Serum Tolerance, -$5 value",
+            value_added = -5,
+            on_apply = toxic_on_apply,
+            on_remove = toxic_on_remove,
+            is_side_effect = True)
+
         list_of_side_effects.append(depressant_side_effect)
         list_of_side_effects.append(bad_reputation)
         list_of_side_effects.append(unpleasant_taste_side_effect)
@@ -150,5 +166,6 @@ label instantiate_side_effect_traits(): #Creates all of the default LR2 serum tr
         list_of_side_effects.append(mood_swings)
         list_of_side_effects.append(sedative)
         list_of_side_effects.append(slow_release_sedative)
+        list_of_side_effects.append(toxic_side_effect)
 
     return

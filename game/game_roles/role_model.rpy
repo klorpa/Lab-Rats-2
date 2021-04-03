@@ -43,6 +43,7 @@ label model_photography_list_label(the_person):
     else:
         the_person "How do I look? Do you think I should wear something else for this?"
         $ the_person.draw_person(position = "back_peek")
+        $ mc.change_locked_clarity(5)
         "She gives you a quick spin."
         the_person "I want to make sure I show my best side for the business."
 
@@ -169,7 +170,7 @@ label model_photography_list_label(the_person):
     the_person "What do you think [the_person.mc_title]? Should I get this ad made up and sent out?"
     menu:
         "Pay for the ad space. -$300" if mc.business.funds >=300:
-            mc.name "The picutres look good, get to work and get that pushed out as soon as possible."
+            mc.name "The pictures look good, get to work and get that pushed out as soon as possible."
             the_person "You got it!"
             $ mc.business.funds += -300
             $ mc.business.add_sales_multiplier("Ad Campaign", ad_multiplier)
@@ -192,6 +193,7 @@ label photo_be_playful(the_person):
     mc.name "Be playful. Give the camera a smile and just have fun with it."
     $ the_person.draw_person(position = "stand3", emotion = "happy")
     "She gives you a few more poses and seems to be enjoying herself."
+    $ mc.change_locked_clarity(5)
     $ the_person.draw_person(position = "stand5", emotion = "happy")
 
     $ slut_willingness = the_person.effective_sluttiness() + (5*the_person.get_opinion_score("skimpy uniforms"))
@@ -220,6 +222,7 @@ label photo_be_sexy(the_person):
         $ the_person.draw_person(position = "back_peek", emotion = "happy")
         "[the_person.possessive_title] spins around, peeking over her shoulder."
         the_person "Like this? Get a good shot of my butt, that's the kind of shot you probably want."
+        $ mc.change_locked_clarity(10)
         "She wiggles her ass for the camera."
 
     else:
@@ -228,6 +231,7 @@ label photo_be_sexy(the_person):
         mc.name "Trust me, just give it a try. Turn around and shake your ass, that'll be sexy."
         $ the_person.draw_person(position = "back_peek", emotion = "happy")
         $ the_person.change_obedience(1)
+        $ mc.change_locked_clarity(5)
         "She timidly wiggles her butt for the camera."
 
     $ slut_willingness = the_person.effective_sluttiness()
@@ -292,6 +296,7 @@ label photo_flash(the_person):
         "She takes a deep breath, then presses on and starts to take off her [first_item.name]."
 
     $ the_person.draw_animated_removal(first_item)
+    $ mc.change_locked_clarity(10)
     if not person.outfit.panties_covered():
         "When she drops it she's wearing only her underwear."
     else:
@@ -303,12 +308,15 @@ label photo_flash(the_person):
 
     if the_person.judge_outfit(the_person.outfit):
         the_person "Time for you to get those shots [the_person.mc_title]!"
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(position = "stand3", emotion = "happy")
         "[the_person.title] gives you a few different poses in her underwear."
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(position = "stand4", emotion = "happy")
 
     else:
         the_person "Take those pictures before I have second thoughts..."
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(position = "stand3")
         "[the_person.title] switches quickly between a few different poses, obviously a little uncomfortable with her state of undress."
         $ the_person.draw_person(position = "stand4")
@@ -355,12 +363,14 @@ label photo_naked(the_person):
         "[the_person.title] drops her underwear to the side and turns to face you."
         the_person "There! How do I look? Good?"
         $ the_person.draw_person(position = "back_peek")
+        $ mc.change_locked_clarity(15)
         "She winks at you and gives you a quick spin, showing off her ass."
 
     else:
         "[the_person.title] seems unsure of what to do now that she's completely naked."
         the_person "Oh my god [the_person.mc_title], my heart is pounding... I feel so vulnerable like this."
         mc.name "You look great [the_person.title], just give me a little spin and relax. Let me do all the hard work, you just have to look pretty."
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(position = "back_peek")
         if the_person.relationship != "Single":
             $ SO_title = SO_relationship_to_title(the_person.relationship)
@@ -421,6 +431,7 @@ label photo_naked(the_person):
 label photo_touch(the_person):
     $ the_person.event_triggers_dict["camera_touch"] = True
     if the_person.effective_sluttiness() >= 45:
+        $ mc.change_locked_clarity(10)
         "[the_person.title] doesn't hesistate at all. She takes a step back and leans against the wall, spreading her legs slightly."
     else:
         the_person "Touch myself? What do you... what do you mean [the_person.mc_title]? I couldn't... do that in front of you."
@@ -442,12 +453,14 @@ label photo_touch(the_person):
             $ the_person.discover_opinion("cheating on men")
             "[the_person.possessive_title] seems filled with a sudden resolve. She takes a deep breath and turns back towards the camera."
             the_person "You're right. Fuck him if he isn't happy about it."
+            $ mc.change_locked_clarity(10)
             "She leans back against the wall and spreads her legs slightly."
 
         else:
             the_person "Yeah... Of course I do. You're right."
             "She takes a deep breath shakes her arms out, like an athlete about to perform. Her cute tits jiggle as she moves."
             the_person "You can do this. Just relax [the_person.title], you can do this."
+            $ mc.change_locked_clarity(5)
             "She leans back against the wall and spreads her legs slightly."
 
     "[the_person.possessive_title] slowly runs her hand up her inner thigh. You can hear her breath catch in her throat as she comes closer to the top."
@@ -456,6 +469,7 @@ label photo_touch(the_person):
     mc.name "That's great, now a little higher."
     "Her hand slides all the way up and her fingers glide gently over her slit."
     the_person "Ah..."
+    $ mc.change_locked_clarity(10)
     "She hesitates for a second, then slips her middle finger into herself with a soft, throaty moan."
     "You take a few steps closer and take some more pictures."
     "[the_person.title]'s other hand comes up subconciously and cradles a breast as she starts to slowly finger herself."
@@ -476,13 +490,15 @@ label photo_touch(the_person):
         "Take photos as she climaxes.":
             the_person "Ah... Hah..."
             "[the_person.possessive_title] turns her head away from the camera and closes her eyes to focus on the task at hand."
+            $ mc.change_locked_clarity(10)
             "She moves both hands down to her pussy, fingering herself with one and rubbing her clit with the other."
             the_person "Do... oh god, do you want me to go all the way?"
-            mc.name "Yes, I do. We'll get some great photos out of this."
+            mc.name "Yes, I do. I'm going to get some great pictures as it happens."
             "She moans louder and tilts her head back."
             the_person "I'm... going to cum! Fuck!"
             $ the_person.change_slut_temp(3)
             $ the_person.change_happiness(5)
+            $ mc.change_locked_clarity(10)
             "She gasps and tenses up, both hands moving as fast as she can make them."
             "Then the tension melts away and she slumps a little against the wall. She sighs and opens her eyes."
             the_person "Did you get that?"
@@ -500,6 +516,7 @@ label photo_blowjob(the_person):
     if the_person.effective_sluttiness("sucking_cock") >= 55 and not the_person.has_taboo("sucking_cock"):
         "You step towards her and [the_person.title] kneels down."
         the_person "Make sure I'm in focus."
+        $ mc.change_locked_clarity(10)
         "She reaches for your pants and unzips your fly."
 
     else:
@@ -515,12 +532,14 @@ label photo_blowjob(the_person):
             mc.name "We can make sure he never sees these ads. I need you, [the_person.title]."
             "Her expression softens. Finally she sighs and uncrosses her arms."
             the_person "I... I can't believe I'm going to do this. Make sure to get plenty of good shots, make this worth it."
+            $ mc.change_locked_clarity(10)
             "She kneels down in front of you and unzips your fly for you."
 
         else:
             "She takes unsteady step forward, then pauses."
             the_person "I don't know [the_person.mc_title]..."
             mc.name "It's for the company [the_person.title], don't let me down now."
+            $ mc.change_locked_clarity(5)
             "After a moment of hesitation she comes closer and kneels down. She reaches out and undoes your fly."
 
 
@@ -532,6 +551,7 @@ label photo_blowjob(the_person):
         the_person "Mmm, that's what I like to see."
     else:
         the_person "Sweet Jesus..."
+    $ mc.change_locked_clarity(10)
     $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
     "She licks at the tip a couple of times, then slips it into her mouth."
     $ the_person.break_taboo("sucking_cock")
@@ -553,12 +573,17 @@ label photo_blowjob(the_person):
             mc.name "I'm going to cum, get ready!"
             $ the_person.draw_person(position = "blowjob")
             "You pull your cock out of [the_person.possessive_title]'s mouth and stroke it off with your left hand, working the camera with your right."
+            $ climax_controller = ClimaxController(["Cum on her face.","face"])
+            $ climax_controller.show_climax_menu()
+            $ mc.change_locked_clarity(10)
             "She looks up at you as you cum, blowing your hot load over her face. You struggle to keep the camera pointed in the right direction."
             $ the_person.cum_on_face()
             $ the_person.draw_person(position = "blowjob")
             $ the_person.change_slut_temp(the_person.get_opinion_score("being covered in cum"))
             $ the_person.discover_opinion("being covered in cum")
+            $ climax_controller.do_clarity_release(the_person)
             "It takes you a couple long seconds to recover from your orgasm."
+            $ mc.change_locked_clarity(10)
             "When you're able to you recenter the camera and take a few pictures of [the_person.title]'s cum splattered face."
             the_person "How do I look?"
             mc.name "Beautiful. Smile for the camera!"
@@ -585,79 +610,128 @@ label photo_sex(the_person):
         "[the_person.title] nods excitedly."
 
     $ the_person.draw_person(position = "missionary")
+    $ mc.change_locked_clarity(10)
     "She lies down and you get on your knees. You pull her close to you, legs to either side with her pussy in line with your hard cock."
     if the_person.has_taboo("vaginal_sex"):
         $ the_person.call_dialogue("vaginal_sex_taboo_break")
         $ the_person.break_taboo("vaginal_sex")
     $ mc.condom = False #Just in case we didn't maintain it properly or something
     call condom_ask(the_person) from _call_condom_ask_2
-    if not _return: #We don't have an easy case to fail out to here, so we just "pretend" you have a second chance to do the right thing with some stat penalties.
+    if not _return and not mc.condom: #We don't have an easy case to fail out to here, so we just "pretend" you have a second chance to do the right thing with some stat penalties.
+        mc.name "But we need these shots [the_person.title]. The whole business is going to suffer without them."
+        $ mc.change_locked_clarity(20)
+        "You tap your shaft against her pussy lips, eliciting a soft whimper."
+        mc.name "You don't want everyone to suffer because of you, do you? You're better than that."
         $ the_person.change_happiness(-5)
         $ the_person.change_obedience(-2)
-        mc.name "But we need these shots [the_person.title]."
-        the_person "Then you {i}need{/i} to put on a condom. I'm not going to ask again. Do it or I'm done here."
-        "You sigh and put the camera to the side, pulling a condom over your cock as quickly as you can manage."
-        $ mc.condom = True
+        the_person "I... I..."
+        if the_person.wants_creampie():
+            "All resistance drains from her and she starts to rub her hips against you eagerly."
+            the_person "Fine, okay, you can fuck me raw. These pictues need to be perfect though, so..."
+            the_person "You can even cum inside me, if you think you need to."
+        else:
+            "All resistance drains from her and she starts to rub her hips against you eagerly."
+            the_person "Fine, okay, you cna fuck me raw. Just... Be careful, okay? You need to pull out."
+            the_person "The pictures will look best with me covered in cum anyways, right?"
+        mc.name "You're a team player [the_person.title]. One of the best."
+
+    $ mc.change_locked_clarity(50)
     "You pull on [the_person.title]'s hips and thrust forward. Her pussy is warm and wet, inviting you in."
     $ the_person.call_dialogue("sex_responses_vaginal")
     "You thrust as best you can from a kneeling position, your hands busy with the camera."
+    $ mc.change_locked_clarity(50)
     "You take pictures of [the_person.possessive_title]'s face as you fuck her and her cunt as you slide in and out."
     if the_person.relationship != "Single" and the_person.effective_sluttiness() > 65:
         "You hear [the_person.title] mumble to herself."
         the_person "I'm sorry sweetheart, but this feels so good..."
 
+    $ mc.change_locked_clarity(50)
     "You lay into her, fucking her until you feel your orgasm approaching."
     $ the_person.change_slut_temp(5)
+    mc.name "Fuck, here I cum!"
+    $ the_girl.call_dialogue("cum_pullout")
+
     $ came_inside_mod = 0
-    menu:
-        "Cum on [the_person.title].":
-            $ the_person.change_slut_temp(the_person.get_opinion_score("being covered in cum"))
-            $ the_person.discover_opinion("being covered in cum")
-            if mc.condom:
-                "You pull out of [the_person.title]'s tight pussy. You whip the condom off with your left hand, then start to stroke yourself to completion."
+    $ climax_controller = ClimaxController(["Pull out and cum.", "body"],["Cum inside her.", "pussy"])
+    $ the_choice = climax_controller.show_climax_menu()
+    if the_choice == "Pull out and cum.":
+        $ the_person.change_slut_temp(the_person.get_opinion_score("being covered in cum"))
+        $ the_person.discover_opinion("being covered in cum")
+        if mc.condom:
+            "You pull out of [the_person.title]'s tight pussy. You whip the condom off with your left hand, then start to stroke yourself to completion."
 
-            else:
-                "You pull out of [the_person.title]'s tight pussy and grab it with your left hand, stroking yourself to completion."
+        else:
+            "You pull out of [the_person.title]'s tight pussy and grab it with your left hand, stroking yourself to completion."
 
-            "You fire your load out over her, struggling to keep the camera pointed in the right direction."
-            $ the_person.cum_on_stomach()
-            $ the_person.draw_person(position = "missionary")
-            "She gasps softly as she is spattered with your hot cum. For a few seconds you're both quiet as you catch your breath."
+        $ mc.change_locked_clarity(20)
+        "You fire your load out over her, struggling to keep the camera pointed in the right direction."
+        $ the_person.cum_on_stomach()
+        $ the_person.draw_person(position = "missionary")
+        $ climax_controller.do_clarity_release(the_person)
+        "She gasps softly as she is spattered with your hot cum. For a few seconds you're both quiet as you catch your breath."
 
-        "Creampie her." if not mc.condom:
+    elif the_choice == "Cum inside her.":
+        if mc.condom:
+            "You pull on [the_person.title]'s hips one handed and thrust as deep as you can into her."
+            $ climax_controller.do_clarity_release(the_person)
+            $ the_person.call_dialogue("cum_condom")
+            "When you're sure you're finished you pull yourself out of [the_person.title]'s warm pussy. The condom is ballooned at the tip with your seed."
+            menu:
+                "Pour it on her.":
+                    mc.name "One last picture to get..."
+                    the_person "What? What more is there to do?"
+                    "You ignore her and carefully slide the cum filled condom off of your dick into the palm of your hand."
+                    mc.name "Smile for the camera."
+                    "[the_person.possessive_title] gasps when you lean forward and dump the contents of the condom over her face."
+                    $ the_person.cum_on_face(add_to_record = False)
+                    $ the_person.draw_person(position = "missionary")
+                    if the_person.get_opinion_score("being covered in cum") > 0:
+                        the_person "Oh my god, ah..."
+                        $ the_person.change_slut_temp(2 + the_person.get_opinion_score("being covered in cum"))
+                        $ mc.discover_opinion("being covered in cum")
+                    else:
+                        the_person "Oh my god, [the_person.mc_title]..."
+
+                    $ mc.change_locked_clarity(10)
+                    "You make sure to get some close up shots of [the_person.title]'s face covered in your cum."
+                    $ came_inside_mod = 5
+
+                "Just get some pictures.":
+                    "You make sure to get some shots of [the_person.title]'s blushing face and dripping wet pussy."
+
+        else:
             $ the_person.change_slut_temp(the_person.get_opinion_score("creampies"))
             $ the_person.discover_opinion("creampies")
             "You pull on [the_person.title]'s hips one handed and thrust as deep as you can into her."
             $ the_person.cum_in_vagina()
+            $ climax_controller.do_clarity_release(the_person)
             "You stay tight against her while you pump your hot load deep inside of her pussy. She closes her eyes and moans."
+            $ mc.change_locked_clarity(10)
             "For a few seconds you're both quiet, panting for breath. You make sure to get some pictures as you pull out and your cum drips out of her cunt."
-            if the_person.relationship != "Single":
-                if the_person.effective_sluttiness() < 90 - (the_person.get_opinion_score("cheating on men") * 10):
-                    the_person "I'm so sorry... I'm so sorry sweetheart."
-                else:
-                    $ SO_title = SO_relationship_to_title(the_person.relationship)
-                    the_person "I hope my [SO_title] doesn't mind if I get pregnant. I'll just say it's his I guess."
-
-            else:
-                the_person "Fuck, that was intense."
-
+            $ the_person.call_dialogue("cum_vagina")
             $ came_inside_mod = 10
 
-        "Creampie her. (disabled)" if mc.condom:
-            pass
+    elif the_choice == :
+        "You pull on [the_person.title]'s hips one handed and thrust as deep as you can into her."
+
+
 
     mc.name "I think I got all the pictures I'll need."
-    the_person "I would hope so. Hell of a time to realise the lens cap was on."
+    the_person "I would hope so. This would be a hell of a time to realise the lens cap was on."
     $ mc.condom = False
     $ the_person.review_outfit()
     return the_person.outfit.slut_requirement + 15 + (5* the_person.sex_skills["Vaginal"]) + came_inside_mod
 
 label photo_strip_naked(the_person): #A helper label that strips a girl until her top and bottom are available for whatever you want to use them fore
     #Possible alternative: just strip until tits and vagina are usable.
-    while the_person.outfit.get_upper_top_layer() is not None or the_person.outfit.get_lower_top_layer() is not None: #Strip until the top and bottom are empty, ie not None.
-        $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
-        $ the_person.draw_animated_removal(the_item)
-        "" #Just so they can click through and see each thing removed.
+    $ strip_list = the_person.outfit.get_full_strip_list()
+    $ generalised_strip_description(the_person, strip_list)
+    $ mc.change_locked_clarity(20)
+
+    # while the_person.outfit.get_upper_top_layer() is not None or the_person.outfit.get_lower_top_layer() is not None: #Strip until the top and bottom are empty, ie not None.
+    #     $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
+    #     $ the_person.draw_animated_removal(the_item)
+    #     "" #Just so they can click through and see each thing removed.
     return
 
 label ad_expire(the_amount):

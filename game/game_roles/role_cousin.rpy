@@ -38,6 +38,8 @@ init -2 python:
     def stripclub_show_requirement():
         if time_of_day in [0,1,2]:
             return "Too early for the performance to start."
+        elif mc.business.funds < 20:
+            return "Not enough cash."
         else:
             return True
 
@@ -212,7 +214,6 @@ label cousin_blackmail_intro_label(the_person):
     the_person "[lily.possessive_title] is so scatterbrained she would never notice anything was missing."
     "[the_person.title] takes a few panicked steps towards you."
     the_person "You can't tell my mom. She would never let me leave the house."
-    #TODO: add a "blackmail level" event variable that is increased by this.
     menu:
         "Blackmail her.":
             mc.name "Fine, I'll stay quiet. If you do something for me."
@@ -283,8 +284,8 @@ label cousin_blackmail_list(the_person):
                 else:
                     "[the_person.title] pulls out a small wad of bills."
                 the_person "Fine."
-                $ mc.business.funds += 100
                 "She pulls out a $100 bill and hands it over to you. You take the money and slip it into your wallet."
+            $ mc.business.funds += 100
             $ the_person.change_love(-1)
             $ the_person.change_obedience(3)
             $ the_person.event_triggers_dict["last_blackmailed"] = day
@@ -350,6 +351,7 @@ label cousin_blackmail_list(the_person):
                         "Once [the_person.possessive_title] has stripped down to her underwear, she turns around to let you look at her ass."
                     else:
                         "Once [the_person.possessive_title] has stripped down as far as she's willing, she turns around to let you look at her ass."
+                    $ mc.change_locked_clarity(20)
                     $ the_person.draw_person(position = "back_peek")
                     $ the_person.update_outfit_taboos()
                     the_person "Finished yet? I bet you're about to cream your fucking pants looking at this."
@@ -393,9 +395,11 @@ label cousin_blackmail_list(the_person):
                         the_person "Sad you don't get to see my tight, wet pussy [the_person.mc_title]?"
                         the_person "Deal with it. Go cry to mommy if it matters that much to you."
 
+                    $ mc.change_locked_clarity(20)
                     "Once [the_person.possessive_title] has stripped down, she turns around to let you get a look at her ass."
                     $ the_person.draw_person(position  = "back_peek")
                     the_person "Look all you want... I bet you're creaming your pants thinking about touching me."
+                    $ mc.change_locked_clarity(10)
                     "She wiggles her butt in your direction. Her tits swing back and forth with the same movement."
                     the_person "Well keep dreaming. I'm not that fucking desperate."
                     "Once you've gotten your fill, [the_person.title] gets dressed again."
@@ -421,25 +425,31 @@ label cousin_blackmail_list(the_person):
 
                     while not the_person.outfit.vagina_visible():
                         $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
-                        $ the_person.draw_animated_removal(the_item)
-                        if the_person.outfit.vagina_visible():
+                        $ test_outfit = the_person.outfit.get_copy() #Use a copy so we can check for the effects before actually removing and drawing it.
+                        $ test_outfit.remove_clothing(the_item)
+                        if test_outfit.vagina_visible():
                             if the_person.has_taboo("bare_pussy"):
                                 "[the_person.title] pauses and takes a deep breath."
                                 mc.name "What's the hold up?"
                                 the_person "Nothing! I though you would have chickened out by now, but whatever."
                                 $ the_person.break_taboo("bare_pussy")
+                            $ the_person.draw_animated_removal(the_item)
                             "[the_person.possessive_title] peels off her [the_item.name], slowly revealing her cute little pussy."
                         else:
+                            $ the_person.draw_animated_removal(the_item)
                             "[the_person.possessive_title] takes off her [the_item.name]."
+
 
                     the_person "There, are you satisfied?"
                     $ the_person.draw_person(position = "back_peek")
+                    $ mc.change_locked_clarity(20)
                     "She spins on the spot, letting you get a look at her ass."
                     #TODO: keep a record of how many times you've (fucked, been sucked by, etc.) the person so she can comment on that.
                     mc.name "I'm not sure this is enough [the_person.title]. I think you need to convince me."
                     "[the_person.possessive_title] sighs dramatically."
                     $ the_person.draw_person()
                     the_person "Please [the_person.mc_title], please don't tell my mom what a bad girl I've been."
+                    $ mc.change_locked_clarity(20)
                     the_person "I'm here, with my big fucking tits and my tight fucking cunt out just for you. Please don't say anything."
                     "She gives you an overly dramatic pout."
                     mc.name "Fine, that'll do."
@@ -586,13 +596,16 @@ label cousin_blackmail_ask_label(the_person):
         mc.name "You know you can trust me. What have you been doing?"
         "She hesitates, torn between her love for you and her desire for privacy. She finally breaks down."
         the_person "I have a new job."
+        the_person "..."
+        $ mc.change_locked_clarity(5)
         the_person "At a strip club."
         mc.name "What?"
         the_person "I got a job at a strip club. I didn't tell my mom because she would flip out."
         the_person "I didn't tell you because you're my cousin, and I didn't want you to think I was a freak."
-        the_person "Can you please just not tell her? I make a lot of money. I could give you a cut to stay quiet."
+        the_person "Can you please just not tell her? I make a lot of money. I'll give you a cut to stay quiet."
         mc.name "I would really hate to let your mom down though..."
         "She sighs and nods her head."
+        $ mc.change_locked_clarity(5)
         the_person "Yeah, yeah, I know what else you want. I'll let you touch me sometimes, if you promise to keep your mouth shut."
         mc.name "I think that might be enough."
         $ the_person.event_triggers_dict["blackmail_level"] = 2
@@ -608,6 +621,8 @@ label cousin_blackmail_ask_label(the_person):
         mc.name "Well, I want to know. What have you been doing?"
         "She hesitates, fighting against her own obedience to you, then breaks down."
         the_person "I have a new job."
+        the_person "..."
+        $ mc.change_locked_clarity(5)
         the_person "At a strip club."
         mc.name "What?"
         the_person "I got a job at a strip club, and I don't want my mom to know, okay?"
@@ -616,6 +631,7 @@ label cousin_blackmail_ask_label(the_person):
         "She sighs dramatically."
         the_person "Yeah, yeah. I see where this is going. I'll give you a cut."
         mc.name "And?"
+        $ mc.change_locked_clarity(5)
         the_person "And... I'll let you touch me sometimes, if you promise to stay quiet."
         mc.name "I think that might be enough."
         $ the_person.event_triggers_dict["blackmail_level"] = 2
@@ -713,6 +729,7 @@ label cousin_blackmail_level_2_confront_label(the_person):
     mc.name "And?"
     the_person "And? What \"and\"? could you want?"
     mc.name "That whole strip show is just a massive tease. I'm feeling a little unsatisfied."
+    $ mc.change_locked_clarity(5)
     the_person "God, you fucking perv. Fine, if you can keep quiet I might also let you... touch me. Deal?"
     mc.name "I think that might be enough."
     $ the_person.event_triggers_dict["blackmail_level"] = 2
@@ -736,13 +753,14 @@ label cousin_boobjob_ask_label(the_person):
         "She gives you a wide, fake smile."
         mc.name "That's not a good sign. What do you want?"
         the_person "Want? Why would I want anything?"
-        the_person "Maybe I just want to spend time with my pervy, blackmailer of a cousin. Is that so weird?"
+        the_person "Maybe I just want to spend time with my pervy blackmailing cousin. Is that so weird?"
         mc.name "Come on, spit it out."
         $ the_person.draw_person()
 
     else:
         the_person "Hey, I'm glad you're here, I wanted to ask you about something."
 
+    $ mc.change_locked_clarity(5)
     the_person "I need money for a boob job."
     mc.name "Why do you need a boob job, and why should I be paying for it?"
     the_person "Come on, you know where I work. Girls with bigger tits get tipped more."
@@ -829,6 +847,7 @@ label cousin_boobjob_ask_label(the_person):
                 mc.name "What can you do? I've got the money, I just don't see a reason to give it to you."
                 the_person "You don't see a reason to get me some big, juicy tits?"
                 "She leans close to you, standing on the tips of her toes to whisper sensually into your ear."
+                $ mc.change_locked_clarity(10)
                 the_person "Maybe I can show you why... Would that be enough? If your slutty, stripper cousin helped get you off, would that be enough to convince you?"
                 menu:
                     "Pay for it and fuck her. -$5000":
@@ -955,6 +974,7 @@ label cousin_new_boobs_brag_label(the_person):
     #She brags about her new boobs and offers to let you see/touch them if she's slutty enough.
     $ the_person.draw_person()
     the_person "Hey [the_person.mc_title]. Do you notice anything different?"
+    $ mc.change_locked_clarity(10)
     if the_person.love < 10:
         "[the_person.possessive_title] seems unusually happy to see you. She puts her arms behind her back and sways her shoulders."
     else:
@@ -984,11 +1004,13 @@ label cousin_new_boobs_brag_label(the_person):
     mc.name "You've got the idea."
 
     if the_person.outfit.tits_visible(): #They're already out, she can't exactly charge you to see them.
+        $ mc.change_locked_clarity(10)
         "She looks down at her chest and shakes her tits a little, obviously for her own enjoyment and not yours."
         "After a moment watching them jiggle she looks at you."
         the_person "Did you need anything else?"
 
     else:
+        $ mc.change_locked_clarity(5)
         if mc.location.get_person_count() > 1: #More than just her here.
             the_person "So... Do you want to see them? We can go find somewhere quiet."
         else:
@@ -1002,15 +1024,14 @@ label cousin_new_boobs_brag_label(the_person):
                 else:
                     "[the_person.possessive_title] starts to strip down in front of you."
 
-                $ old_outfit = the_person.outfit.get_copy()
-                python:
-                    while not the_person.outfit.tits_visible():
-                        the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-                        if the_item is None:
-                            break
-                        the_person.draw_animated_removal(the_item)
-                        renpy.say("","") #Hold the game until the player interacts
+                if the_person.outfit.can_half_off_to_tits():
+                    $ strip_list = the_person.outfit.get_half_off_to_tits_list()
+                    $ generalised_strip_description(the_person, strip_list, half_off_instead = True)
+                else:
+                    $ strip_list = the_person.outfit.get_tit_strip_list()
+                    $ generalised_strip_description(the_person, strip_list)
 
+                $ mc.change_locked_clarity(10)
                 if the_person.has_taboo("bare_tits"):
                     mc.name "I can't believe I had to pay for you to get bigger tits before I even got to see them."
                     $ the_person.break_taboo("bare_tits")
@@ -1018,15 +1039,16 @@ label cousin_new_boobs_brag_label(the_person):
 
                 if the_person.effective_sluttiness("touching_body") > 50:
                     the_person "There you go. Go on, give them a feel. They feel almost exactly like the real thing."
+                    $ mc.change_locked_clarity(10)
                     "You hold [the_person.title]'s new, larger breasts in your hands. They feel a little firmer than natural tits, but they're pleasant nonetheless."
                     "After you've had a chance to fondle them, she reaches for her top."
                     $ the_person.break_taboo("touching_body")
                 else:
                     the_person "There you go. Good, right? These girls are going to bring in so much more at the club."
+                    $ mc.change_locked_clarity(10)
                     "She looks down at her own chest and gives it a shake, setting her tits jiggling. When they settle down, she reaches for her top again."
 
                 $ the_person.apply_outfit(old_outfit, ignore_base = True)
-                # the_person.outfit = old_outfit changed v0.24.1
                 $ the_person.draw_person()
 
             "Not right now.":
@@ -1062,8 +1084,6 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         the_person "Hey [the_person.mc_title], your serum thing didn't do anything for me."
         the_person "I'm going to need some cash so I can go to an actual doctor to do this for me. Come talk to me."
 
-
-
     elif rank_tits(the_person.tits) < rank_tits(starting_tits):
         "You get an angry text from [the_person.title]."
         $ the_person.change_happiness(-10)
@@ -1072,10 +1092,10 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         the_person "What the fuck, your serum thing made my tits smaller, not bigger!"
         the_person "I'm going to need to see an actual doctor now, these things aren't going to make me any money!"
         the_person "Come talk to me, I need cash for my boob job."
-        #YOu actually made her tits smaller
+        #You actually made her tits smaller
 
     elif rank_tits(the_person.tits) - rank_tits(starting_tits) == 1:
-        # One level bigger which she's kind of ahppy with but wanted more.
+        # One level bigger which she's kind of happy with but wanted more.
         "You get a text from [the_person.title]."
         $ the_person.change_obedience(2)
         the_person "Hey, I think your serum thing stopped working. My boobs seem a little bigger, but I was hoping for more."
@@ -1088,17 +1108,15 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         $ the_person.change_love(1)
         the_person "I can't believe it, but your freaky serum stuff actually worked! My tits are way bigger now!"
         "There's a pause, then she sends you a picture."
-        $ old_outfit = the_person.outfit.get_copy()
-        #She'll show you her tits.
-        while not the_person.outfit.tits_visible():
-            $ the_person.outfit.remove_random_upper(top_layer_first = True)
+        $ the_person.outfit.strip_to_tits()
 
         $ the_person.draw_person(emotion = "happy")
         $ the_person.break_taboo("bare_tits")
         "It's a selfie of her in the bathroom, tits on display for you."
         the_person "You've saved me a ton of cash, so I thought you might enjoy that."
+        $ the_person.apply_outfit()
         $ clear_scene()
-        return #Note: we're returning without adding the boobjob ask again event, which means we can consider this "done" at this point.
+        return #NOTE: we're returning without adding the boobjob ask again event, which means we can consider this "done" at this point.
 
     $ cousin_role.actions.append(cousin_talk_boobjob_again_action)
     return
@@ -1112,9 +1130,9 @@ label stripclub_dance():
     #-> Lap dance scene may just turn into sex.
     $ pose_list = ["walking_away","back_peek","standing_doggy","stand2","stand3","stand4","stand5"] #A list to let us randomly get some poses so each dance is a little different. #  Removed until we fix this with the clipping
 
-
-
-    "You take a seat near the edge of the stage and wait for the next performer."
+    "You decide to stay a while and enjoy a show. You stop by the bar to satisfy the drink minimum, then find a seat near the edge of the stage."
+    $ mc.business.funds += -20
+    "You nurse your beer while you wait for the next performer."
 
     $ the_person = get_random_from_list(list(set(stripclub_strippers) & set(mc.location.people))) #Create a list of strippers who are present, then pick a random person.
     if the_person is None:
@@ -1171,19 +1189,25 @@ label stripclub_dance():
     call stripshow_strip(the_person) from _call_stripshow_strip_1
     if the_person.has_large_tits():
         if the_person.outfit.tits_available():
+            $ mc.change_locked_clarity(15)
             "As the music builds, [performer_title]'s dance becomes more energetic. Her big tits bounce and jiggle in rhythm with her movements."
         else:
+            $ mc.change_locked_clarity(10)
             "As the music builds, [performer_title]'s dance becomes more energetic. Her big tits bounce and jiggle, looking almost desperate to escape."
     else:
+        $ mc.change_locked_clarity(5)
         "As the music builds, [performer_title]'s dance becomes more energetic. She runs her hands over her tight body, accentuating her curves."
     call stripshow_strip(the_person) from _call_stripshow_strip_2
     $ the_person.draw_person(position = get_random_from_list(pose_list), the_animation = blowjob_bob, animation_effect_strength = 0.7)
+    $ mc.change_locked_clarity(5)
     "Her music hits its crescendo and her dancing does the same. [performer_title] holds onto the pole in the middle of the stage and spins herself around it."
     call stripshow_strip(the_person) from _call_stripshow_strip_3
     $ the_person.draw_person(position = "doggy", the_animation = ass_bob, animation_effect_strength = 0.8)
     if the_person.outfit.vagina_visible():
+        $ mc.change_locked_clarity(15)
         "As the song comes to an end, the dancer lowers herself to all fours, showing off her ass and pussy to the crowd."
     else:
+        $ mc.change_locked_clarity(10)
         "As the song comes to an end, the dancer lowers herself to all fours. She spreads her legs and works her hips, jiggling her ass for the crowd's amusement."
 
     $ the_person.draw_person()
@@ -1207,8 +1231,10 @@ label stripshow_strip(the_person):
 
             if random_item:
                 $ the_person.draw_animated_removal(random_item)
+                $ mc.change_locked_clarity(10)
                 "She smiles at you and starts to peel off her [random_item.display_name]."
             else:
+                $ mc.change_locked_clarity(5)
                 "She smiles and wiggles her hips for you."
 
         "Throw some cash. -$20 (disabled)" if mc.business.funds < 20:
@@ -1225,6 +1251,7 @@ label stripshow_strip(the_person):
 
                 if random_item:
                     "She takes the money and starts to slowly strip off her [random_item.display_name]."
+                    $ mc.change_locked_clarity(5)
                     $ the_person.draw_animated_removal(random_item)
                 else:
                     "She takes the money and holds onto it while she continues to move her body to the music."

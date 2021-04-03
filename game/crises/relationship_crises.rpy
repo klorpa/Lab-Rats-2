@@ -6,7 +6,7 @@ init 1 python:
         for place in list_of_places:
             for a_person in place.people:
                 if (a_person.love > 10 or employee_role in a_person.special_role) and not a_person.title is None and not a_person.relationship == "Married":
-                    if not affair_role in a_person.special_role and not girlfriend_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                    if not (affair_role in a_person.special_role or girlfriend_role in a_person.special_role or mother_role in a_person.special_role or sister_role in a_person.special_role or cousin_role in a_person.special_role or aunt_role in a_person.special_role):
                     # You have at least one person you know who is in a relationship. People you're having an affair never have it get better.
                     # Your also family never forms relationships, because we do that through direct story stuff.
                         return True
@@ -16,7 +16,7 @@ init 1 python:
         for place in list_of_places:
             for a_person in place.people:
                 if (a_person.love > 10 or employee_role in a_person.special_role) and not a_person.title is None and not a_person.relationship == "Single":
-                    if not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                    if not (mother_role in a_person.special_role or sister_role in a_person.special_role or cousin_role in a_person.special_role or aunt_role in a_person.special_role):
                     # We only change thse relationships in events. If we can find anyone who meets the requirements the event can proceed.
                         return True
         return False
@@ -33,7 +33,7 @@ label so_relationship_improve_label():
         for place in list_of_places:
             for a_person in place.people:
                 if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
-                    if not affair_role in a_person.special_role and not girlfriend_role in a_person.special_role and not mother_role in a_person.special_role and not sister_role in a_person.special_role and not cousin_role in a_person.special_role and not aunt_role in a_person.special_role:
+                    if not (affair_role in a_person.special_role or girlfriend_role in a_person.special_role or mother_role in a_person.special_role or sister_role in a_person.special_role or cousin_role in a_person.special_role or aunt_role in a_person.special_role):
                         if a_person is not emily and a_person is not christina: #Cludge to stop them from getting in relationships. TODO: Add a flag to stop people from changing their relationship status.
                             potential_people.append(a_person)
 
@@ -153,6 +153,7 @@ label affair_dick_pick_label():
     "She sends you a picture, which you immediately open up."
     $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit(), update_taboo = True)
     $ the_person.draw_person(position = "missionary")
+    $ mc.change_locked_clarity(20)
     "[the_person.possessive_title] is lying face up in her bed, one hand cradling a breast while the other fingers her wet pussy."
     menu:
         "Send her a dick pic back.":
@@ -169,6 +170,7 @@ label affair_dick_pick_label():
             $ the_person.change_obedience(1)
             mc.name "Good, then be a good slut and cum your brains out for me."
             "After another short pause she messages you again."
+            $ mc.change_locked_clarity(20)
             the_person "I just came so hard. You're so bad for me [the_person.mc_title]. Hope to see you soon."
 
 
@@ -180,7 +182,8 @@ label affair_dick_pick_label():
                 $ the_person.change_slut_temp(2)
                 $ the_person.change_obedience(2)
                 "There's a long pause, then she texts back."
-                the_person "That is what I am. Your horny bitch, desperate for your cock!"
+                the_person "That's what I am. Your horny bitch, desperate for your cock!"
+                $ mc.change_locked_clarity(20)
                 the_person "Fuck, I just came so hard!"
 
             else:
@@ -188,6 +191,7 @@ label affair_dick_pick_label():
                 $ the_person.change_obedience(2)
                 $ the_person.change_love(-1)
                 "There's a long pause, then she texts you back."
+                $ mc.change_locked_clarity(10)
                 the_person "Just don't make me wait too long, I need to feel your cock again!"
     $ the_person.apply_outfit(the_person.planned_outfit)
     $ mc.end_text_convo()
@@ -228,6 +232,7 @@ label girlfriend_nudes_label():
         "You get a text from [the_person.possessive_title], followed shortly after by a video."
         the_person "Hey [the_person.mc_title]. I was playing around a little and hope this brightens your day."
         $ the_person.draw_person(position = "doggy", the_animation = missionary_bob)
+        $ mc.change_locked_clarity(10)
         "You open up the video and see [the_person.title] on her bed, ass towards the camera. She's working her hips and shaking her ass for you."
         if the_person.age >= 35:
             the_person "You kids call this twerking, right? I think it's pretty hot."
@@ -241,6 +246,7 @@ label girlfriend_nudes_label():
         the_person "Here's a little gift for you, hope you like it!"
         "You open the video."
         $ the_person.draw_person(position = "stand5", the_animation = blowjob_bob, animation_effect_strength = 0.8)
+        $ mc.change_locked_clarity(10)
         "It's [the_person.title] in her room in front of a mirror. She smiles and waves at you, then bounces her tits up and down."
         $ tit_strip_list = the_person.outfit.get_tit_strip_list(visible_enough = True)
         if tit_strip_list: #She has something to strip to show off her tits more
@@ -253,6 +259,7 @@ label girlfriend_nudes_label():
                         renpy.say("", "She at the camera and shakes them for you.")
                     else:
                         renpy.say("","")
+            $ mc.change_locked_clarity(20)
             if the_person.has_large_tits():
                 "Tits out, she dances a little more for you, then blows a kiss and waves goodbye. Her breasts dangle directly in front of the camera as she turns it off."
             else:
@@ -268,13 +275,16 @@ label girlfriend_nudes_label():
         the_person "Thinking of you, wish you were here!"
         "You open up the video."
         $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.5)
+        $ mc.change_locked_clarity(10)
         "[the_person.title] is lying naked in bed, one hand already between her legs."
         "She smiles at the camera and starts to finger herself, slowly at first but quickly picking up speed."
         "After a moment she reaches out of frame for a bringing a shiny chrome vibrator."
+        $ mc.change_locked_clarity(10)
         "She maintains eye contact with the camera as she licks it, then sucks on it a little bit, before sliding it between her legs."
         $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.75)
         "[the_person.possessive_title] arches her back as the vibrator touches her clit."
         "Before long her thighs are quivering. You watch as [the_person.title] drives herself to orgasm with her vibrator."
+        $ mc.change_locked_clarity(20)
         "Her legs clamp down on her own hand as she cums. After a moment she relaxes, leaving the vibrator running on the bed."
         "She looks into the camera again and sighs happily, then reaches forward and ends the video."
         $ the_person.update_outfit_taboos()
@@ -366,6 +376,7 @@ label friends_help_friends_be_sluts_label():
                     $ the_group.draw_person(person_two)
                     person_two "[person_one.title]! I'm sorry [person_two.mc_title], I know this isn't what we should be doing here."
                     mc.name "Why would I care? You're taking a break and relaxing the way you want to."
+                    $ mc.change_locked_clarity(5)
                     "The moans from the phone grow louder. You notice [person_one.possessive_title] has turned her attention back to the screen."
                     mc.name "[person_one.title] seems to have the right idea."
                     $ the_group.draw_person(person_one)
@@ -377,6 +388,7 @@ label friends_help_friends_be_sluts_label():
                     mc.name "Once you're done your break I expect to see you both back at work."
                     $ person_two.change_slut_temp(3)
                     $ person_two.change_obedience(2)
+                    $ mc.change_locked_clarity(5)
                     "You leave the room, and a few seconds later you can hear them resume watching porn together."
 
 
@@ -399,11 +411,13 @@ label friends_help_friends_be_sluts_label():
                     $ person_one.change_love(1)
                     $ person_two.change_slut_temp(3+person_two.get_opinion_score("public sex"))
                     $ person_two.change_love(1)
+                    $ mc.change_locked_clarity(10)
                     "After a few minutes the video ends and you've discovered a few things about [person_one.title]'s sexual preferences."
                     $ the_group.draw_person(person_two)
                     person_two "You're right [person_one.title], that was hot. Can you send that to me for later?"
                     $ the_group.draw_person(person_one)
                     person_one "Sure thing. We should be getting to work before [person_one.mc_title] gets too distracted though."
+                    $ mc.change_locked_clarity(5)
                     "Her eyes drift conspicuously down your body to the noticeable bulge in your pants."
                     $ the_group.draw_person(person_two)
                     person_two "Uh, right. Talk to you later [person_two.mc_title]."
@@ -431,6 +445,7 @@ label friends_help_friends_be_sluts_label():
                     $ the_group.draw_person(person_one)
                     person_one "Oh come on, so are you. Wouldn't you like to be at home right now with a vibe pressed up against your clit?"
                     $ the_group.draw_person(person_two)
+                    $ mc.change_locked_clarity(10)
                     "[person_two.title] laughes and shrugs, then suddenly tenses up and starts to blush when she notices you at the door."
                     person_two "Uh, hello [person_two.mc_title]. I was just... Uhh..."
                     $ the_group.draw_person(person_one)
@@ -438,6 +453,7 @@ label friends_help_friends_be_sluts_label():
                     $ the_group.draw_person(person_two)
                     person_two "Shut up, [person_two.mc_title] doesn't want to hear about this."
                     $ the_group.draw_person(person_one)
+                    $ mc.change_locked_clarity(10)
                     person_one "Sure he does, men love to hear about slutty, horny women. Right [person_one.mc_title]?"
                     $ the_group.draw_person(person_two)
                     person_two "I'm so sorry [person_two.mc_title], she doesn't know what she's saying."
@@ -448,6 +464,7 @@ label friends_help_friends_be_sluts_label():
                     person_two "Uh... See you around."
                     "They head for the door. [person_one.title] pauses and waits for [person_two.title] to pass her."
                     $ the_group.draw_person(person_one, position = "back_peek")
+                    $ mc.change_locked_clarity(10)
                     "She looks at you and winks, then gives her friend a hard slap on the ass."
                     person_one "After you!"
                     $ the_group.set_primary(person_two)
@@ -468,6 +485,7 @@ label friends_help_friends_be_sluts_label():
                         $ the_group.draw_person(person_two)
                         person_two "But they're so nice and big, I'd kill to have them like that. I bet they're nice and soft, too."
                         $ the_group.draw_person(person_one)
+                        $ mc.change_locked_clarity(10)
                         person_one "Want to give them a feel? I... Oh, hey [person_one.mc_title]."
 
                     else:
@@ -476,7 +494,9 @@ label friends_help_friends_be_sluts_label():
                         $ the_group.draw_person(person_two)
                         person_two "They're big, but yours look perkier. I know lots of guys who are into that."
                         $ the_group.draw_person(person_one)
+                        $ mc.change_locked_clarity(10)
                         person_one "I still just want to grab yours by the handful and... Oh, hey [person_one.mc_title]."
+
                     "[person_one.possessive_title] notices you at the door."
                     $ the_group.draw_person(person_two)
                     person_two "Ah, hi... We were just getting back to work, right [person_one.title]?"
@@ -485,6 +505,7 @@ label friends_help_friends_be_sluts_label():
                     mc.name "Settle what?"
                     person_one "[person_two.title] won't admit she's got the better tits of the two of us. Talk some sense into her for me."
                     $ the_group.draw_person(person_two)
+                    $ mc.change_locked_clarity(10)
                     person_two "Oh god, what are you getting us into."
                     menu:
                         "[person_one.title] has nicer tits.": #She's already slutty, but gets a love boost
@@ -535,6 +556,7 @@ label friends_help_friends_be_sluts_label():
                                 if person_two.outfit.tits_visible():
                                     $ person_one.break_taboo("bare_tits")
                                     person_one "There, what do you think now [person_one.mc_title]?"
+                            $ mc.change_locked_clarity(10)
 
 
 
@@ -590,28 +612,6 @@ label friends_help_friends_be_sluts_label():
 
 
                                 $ generalised_strip_description(person_two, strip_list, half_off_instead = half_off_instead, group_display = the_group)
-                                    # if half_off_instead:
-                                    #     for clothing in strip_list: # TODO: Loops like this should probably have some way of stripping only what is required, and half-offing the rest
-                                    #         the_group.draw_animated_removal(person_one, the_clothing = clothing, half_off_instead = True)
-                                    #         if person_one.outfit.tits_visible(): #Last loop
-                                    #             if person_one.has_large_tits():
-                                    #                 renpy.say("", "Her breasts drop free as she pulls her " + clothing.display_name + " up, jiggling briefly.")
-                                    #             else:
-                                    #                 renpy.say("", "She pulls her " + clothing.display_name + " up, letting her well shaped breasts jump free.")
-                                    #         else:
-                                    #             renpy.say("",person_one.title + " pulls her " + clothing.display_name + " up and out of the way.")
-                                    #
-                                    # else: #We need to strip something off completely.
-                                    #     strip_list = person_one.outfit.get_tit_strip_list()
-                                    #     for clothing in strip_list:
-                                    #         the_group.draw_animated_removal(person_one, the_clothing = clothing)
-                                    #         if person_one.outfit.tits_visible(): #Last loop
-                                    #             if person_one.has_large_tits():
-                                    #                 renpy.say("", "Her breasts drop free as she pulls her " + clothing.display_name + " off. They jiggle briefly before coming to a stop.")
-                                    #             else:
-                                    #                 renpy.say("", "She pulls her " + clothing.display_name + " off, and her well shaped breasts jump free as soon as possible.")
-                                    #         else:
-                                    #             renpy.say("",person_one.title + " pulls her " + clothing.display_name + " off and puts it to the side.")
 
                                 if person_two.get_opinion_score("showing her tits") > 0:
                                     "When she has her tits out she crosses her arms in front of her in a small attempt to preserve her modesty."
@@ -628,6 +628,8 @@ label friends_help_friends_be_sluts_label():
 
                                 $ person_one.break_taboo("bare_tits")
                                 person_two "Hey, go easy on them! Well then [person_two.mc_title], who's your pick? Me or [person_one.title]?"
+
+                            $ mc.change_locked_clarity(10)
                             menu:
                                 "[person_one.title] has nicer tits.": #She's already slutty, but gets a love boost
                                     "You take a moment to consider both of their naked racks, then nod towards [person_one.title]."
@@ -702,6 +704,7 @@ label friends_help_friends_be_sluts_label():
                         else:
                             person_two "[person_one.title] really liked sucking your cock and wants to do it again, but was too scared to ask."
                         $ the_group.draw_person(person_two)
+                        $ mc.change_locked_clarity(20)
                         if person_two.get_opinion_score("giving blowjobs") < 0:
                             $ person_two.discover_opinion("giving blowjobs")
                             person_two "I actually don't like giving blowjobs, but [person_one.title] says it's an important skill for a woman to have."
@@ -716,6 +719,7 @@ label friends_help_friends_be_sluts_label():
                         "[person_one.title] closes the door, then stands behind [person_two.title]."
                         mc.name "So, what can I help you two with?"
                         person_two "I was talking to [person_one.title] and we started talking about your cock..."
+                        $ mc.change_locked_clarity(20)
                         if person_two.sex_record.get("Blowjobs", 0) > 0:
                             person_two "It brought back some good memories, so I was hoping you'd let me suck you off."
                         else:

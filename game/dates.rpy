@@ -137,7 +137,8 @@ label movie_date_label(the_person):
             return "Advance Time"
 
     "You get ready and text [the_person.title] confirming the time and place. A little while later you meet her outside the theater."
-    #TODO: Add a bit of dialogue to their text history for this.
+    $ mc.phone.add_non_convo_message(the_person, "On my way to the theater. See you soon?")
+    $ mc.phone.add_non_convo_message(the_person, "Almost there, I'll meet you outside.", as_mc = True)
     $ the_person.draw_person()
     the_person "Hey, good to see you!"
     the_person "I'm ready to go in, what do you want to see?"
@@ -221,7 +222,8 @@ label movie_date_label(the_person):
 
     if likes_movie: #She's enjoying the movie. Good for love gain, and you may be able to feel her up while she's enjoying the movie.
         "Halfway through the movie it's clear that [the_person.title] is having a great time. She's leaning forward in her seat, eyes fixed firmly on the screen."
-        "As the movie approaches it's climax she reaches her hand down and finds yours to hold."
+        $ mc.change_locked_clarity(10)
+        "As the movie approaches its climax she reaches her hand down and finds yours to hold."
         "When it's finished you leave the theater together, still holding hands."
         $ the_person.draw_person()
         mc.name "So, did you like the movie?"
@@ -229,22 +231,26 @@ label movie_date_label(the_person):
         $ the_person.change_love(10, max_modified_to = 80)
 
     else: #She's bored. Bad for love gain, but good for getting her to fool around. She may start to feel you up to disctract herself.
-        "Halfway through the movie it's beocming clear that [the_person.title] isn't enthralled by it."
+        "Halfway through the movie it's becoming clear that [the_person.title] isn't enthralled by it."
         if (the_person.sluttiness - the_person.get_opinion_score("public sex") * 5) > 50 and (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0) and not the_person.has_family_taboo():
+            $ mc.change_locked_clarity(10)
             "While you're watching you feel her rest her hand on your thigh. She squeezes it gently and slides her hand up higher and higher while whispering into your ear."
             the_person "I'm bored. You don't mind if I make this a little more intresting, do you?"
             "You take a quick look around. The theater you're in is mostly empty, and nobody is in the same row as you."
             menu:
                 "Go ahead.":
                     mc.name "I'm certainly not going to stop you."
+                    $ mc.change_locked_clarity(10)
                     "Her hand slides up to your waist and undoes the button to your pants. You get a jolt of pleasure as her fingers slide onto your hardening cock."
                     "[the_person.title] stays sitting in her seat, eyes fixed on the movie screen as she begins to fondle your dick."
                     "As you get hard she starts to stroke you off. Her hand is warm and soft, and the risk of being caught only enhances the experience."
+                    $ mc.change_locked_clarity(10)
                     "After a few minutes [the_person.possessive_title] brings her hand to her mouth, licks it, and then goes back go jerking you off with her slick hand."
 
                     if (the_person.sluttiness - the_person.get_opinion_score("public sex") * 5) > 65 and (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0) and not the_person.has_family_taboo():
                         "You're enjoying the feeling of her wet hand sliding up and down your cock when she stops. You're about to say something when she slides off of her movie seat and kneels down in the isle."
                         $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", lighting = [0.5, 0.5, 0.5])
+                        $ mc.change_locked_clarity(20)
                         "Without a word she slides your hard dick into her mouth and starts to suck on it. You struggle to hold back your moans as she blows you."
                         "You rest a hand on the top of her head and keep a lookout in the theater, but nobody seems to have noticed."
                         "She comes up for air slides up your body, whispering into your ear."
@@ -269,14 +275,53 @@ label movie_date_label(the_person):
 
                             "Cum right here.":
                                 mc.name "I want you to finish me here."
+                                $ mc.change_locked_clarity(20)
                                 "She purrs in your ear and slides back down to her knees again. Her warm mouth wraps itself around your shaft and she starts to blow you again."
                                 "It doesn't take long for her to bring you to the edge of your orgasm."
-                                "You clutch at the movie seat arm rests and supress a grunt as you climax, blowing your hot load into [the_person.title]'s mouth and down her throat."
-                                $ the_person.cum_in_mouth()
-                                "She waits until you're finished, then pulls off your cock, wipes her lips on the back of her hand, and sits down next to you."
-                                $ the_person.change_slut_temp(3)
-                                the_person "Thank you, that was fun."
-                                "She takes your hand and holds it. You lean back, thoroughly spent, and zone out for the rest of the movie."
+                                $ climax_controller = ClimaxController(["Cum in her mouth.","mouth"],["Cum down her throat.","throat"])
+                                $ the_choice = climax_controller.show_climax_menu()
+                                if the_choice == "Cum in her mouth.":
+                                    $ climax_controller.do_clarity_release()
+                                    "You clutch at the movie seat arm rests and suppress a grunt as you climax, blowing your hot load into [the_person.title]'s mouth."
+                                    $ the_person.cum_in_mouth()
+                                    $ the_person.draw_person(position = "sitting")
+                                    "She waits until you're finished, then pulls off your cock, wipes her lips on the back of her hand, and sits down next to you."
+                                    $ the_person.change_slut_temp(3)
+                                    the_person "Thank you. That was fun."
+                                    "She takes your hand and holds it. You lean back, thoroughly spent, and zone out for the rest of the movie."
+                                elif the_choice == "Cum down her throat.":
+                                    "You grab onto [the_person.title]'s head and pull her as deep as you can get her onto your cock."
+                                    if the_person.get_opinion_score("being submissive") > 0 or the_person.get_opinion_score("drinking cum") > 0:
+                                        "She gags and twitches, but shifts to let you bury yourself entirely in her throat."
+                                        $ climax_controller.do_clarity_release()
+                                        "You cum, pumping your load out in big, hot pulses right into her stomach. In the dim theater light you can see her flutter with each new deposit."
+                                        $ the_person.cum_in_mouth()
+                                        "When you're entirely spent you let go of [the_person.possessive_title]'s head and sit back with a sigh."
+                                        $ the_person.change_slut_temp(3 + the_person.get_opinion_score("being submissive") + the_person.get_opinion_score("drinking cum"))
+                                        $ the_person.discover_opinion("being submissive")
+                                        $ the_person.discover_opinion("drinking cum")
+                                        "[the_person.title] doesn't move for another few long seconds. You feel her throat constrict a few times as she swallows the last of your cum first."
+                                        $ the_person.draw_person(position = "sitting")
+                                        "She finally slides off of your dick and sits back down in her seat. She takes your hand and holds it tight in hers."
+                                        the_person "Thank you [the_person.mc_title]. That was fun."
+
+                                    else:
+                                        "She gags and tries to pull back, but you hold your dick deep down her throat as you cum."
+                                        $ climax_controller.do_clarity_release()
+                                        "You pump your load out in big hot pulses. She twitches with each new deposit of semen, barely keeping herself in control."
+                                        $ the_person.cum_in_mouth()
+                                        $ the_person.draw_person(position = "kneeling1", emotion = "angry")
+                                        "When you're entirely spent you let go of [the_person.possessive_title]'s head and sit back with a sigh."
+                                        $ the_person.change_love(-2)
+                                        $ the_person.change_slut_temp(2)
+                                        $ the_person.change_obedience(1)
+                                        "She pulls off your dick and gasps for breath. When she's recovered she glares up at you."
+                                        mc.name "Sorry, I got carried away."
+                                        $ the_person.draw_person(position = "sitting")
+                                        "[the_person.title] slides back into her chair beside you."
+                                        the_person "Yeah. A little. At least it wasn't boring..."
+                                        "You lean back and zone out for the rest of the movie, feeling thoroughly spent."
+
 
                 "Tell her to knock it off.":
                     mc.name "I just want to watch a movie together. Can you at least try and pay attention?"
@@ -304,12 +349,14 @@ label movie_date_label(the_person):
     $ the_person.change_happiness(10)
 
     if the_person.has_role(sister_role) or the_person.has_role(mother_role): #You live at home with those two, so it would be weird to kiss them goodnight.
+        $ mc.change_locked_clarity(5)
         "She leans towards you and gives you a quick kiss."
         the_person "Let's head home then."
 
 
     else:
         if renpy.random.randint(0,100) < the_person.sluttiness + the_person.love + (mc.charisma * 10): #She invites you home with her. TODO: This, and other date things, should depend on if she's in a relationship. Break it out into a function
+            $ mc.change_locked_clarity(5)
             "She leans towards you and gives you a quick kiss."
             $ the_person.call_dialogue("date_seduction")
             menu:
@@ -489,16 +536,17 @@ label dinner_date_label(the_person):
 #TODO: Add a "date_take_home_family", where you take her back to your house, because she's your Mom or sister.
 
 label date_take_home_her_place(the_person, date_type = None): #Your date went well and you go back to her place. This event starts off when you enter the door.
-    #TODO: See about combinding this with the fuck_date from the paramour. That's basically a "date" where you just show up and fuck her. At the very least this should trigger some of the same thigns if they're in a relationship.
     #date_type can be passed through to identify what type of date it was to trigger different dialogue
     $ mc.change_location(the_person.home)
     $ mc.location.show_background()
+    $ relationship_slut_modifier = 0
+    if the_person.relationship != "Single":
+        $ relationship_slut_modifier = 10*the_person.get_opinion_score("cheating on men")
 
     if the_person.has_role(affair_role):
-        call fuck_date_event(the_person) from _call_fuck_date_event_1 #You're having an affair, leads to all of the normal affair stuff like being caught. #TODO: Make sure the date seduction dialogue leads into this properly.
+        call fuck_date_event(the_person) from _call_fuck_date_event_1 #You're having an affair, leads to all of the normal affair stuff like being caught.
 
-        #TODO: Refactor this huge conditional. It's hard to read
-    elif (the_person.effective_sluttiness(["vaginal_sex", "sucking_cock"]) >= 70 and the_person.relationship == "Single") or (the_person.effective_sluttiness(["vaginal_sex", "sucking_cock"]) >= 70-(10*the_person.get_opinion_score("cheating on men")) and the_person.relationship != "Single"): #TODO: Figure out what triggers we want for this
+    elif the_person.effective_sluttiness(["vaginal_sex", "sucking_cock"]) + relationship_slut_modifier >= 70:
         "You're barely in the door before [the_person.title] has her hands all over you."
         $ her_hallway = Room(the_person.name +"'s front hall", the_person.name +"'s front hall", [], standard_house_backgrounds[:],[],[],[],False,[3,3], visible = False, lighting_conditions = standard_indoor_lighting)
         $ her_hallway.add_object(Object("Front Door", ["Lean"], sluttiness_modifier = 10, obedience_modifier = 5))
@@ -507,6 +555,7 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
         $ mc.change_location(her_hallway)
         $ mc.location.show_background()
         the_person "Fuck, I can't wait any longer [the_person.mc_title]! I've been thinking about this all night long!"
+        $ mc.change_locked_clarity(20)
         "She puts her arms around you and kisses your neck, grinding her body against you."
         mc.name "Don't you want to go to your bedroom first?"
         the_person "I can't wait! I want you right here, right now!"
@@ -560,7 +609,8 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
         the_person "Everything's fine, just get in here!"
         "Her voice is coming from the other side of a partially opened door. You nudge it open and step inside."
         $ the_person.draw_person(position = "sitting")
-        "It's a bedroom, and [the_person.possessive_title] is sitting at the foot of the bed."
+        $ mc.change_locked_clarity(15)
+        "It's the master bedroom, and [the_person.possessive_title] is sitting at the foot of the bed."
         the_person "I thought we might be more comfortable in here. I got changed for you, too."
         $ the_person.draw_person()
         "She stands up and steps closer to you, leaning in for a kiss."
@@ -592,6 +642,7 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
         "She pours you a drink and leads you around her place. The tour ends with the two of you sitting on the couch in the living room."
         $ the_person.draw_person(position = "sitting")
         the_person "Well, what would you like to do now?"
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] leans closer to you and puts her hand on your thigh. It's obvious what she wants, but she's waiting for you to make the first move."
         menu:
             "Kiss her.":

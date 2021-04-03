@@ -110,7 +110,7 @@ label cousin_sex_review(the_person, the_report):
             mc.name "Yeah, you're a natural slut."
             "[the_person.possessive_title] scowls at you, but doesn't have a snappy comeback for that."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Fuck, I can't believe I let that go so far..."
             the_person "I hope you enjoyed it, because that's the last time that's happening!"
 
@@ -128,7 +128,7 @@ label cousin_sex_review(the_person, the_report):
             "She shrugs."
             the_person "Whatever, it's not like I care."
 
-        else: # She's suprised she even tried that.\
+        else: # She's surprised she even tried that.\
             the_person "Fuck, did you plan to make me cum like that? I didn't think you had it in you..."
             the_person "You got lucky this time, next time I'm not going to make it so easy for you."
 
@@ -144,7 +144,7 @@ label cousin_sex_review(the_person, the_report):
         elif used_obedience: #She only did it because she was commanded
             the_person "Good, glad we're done with that."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Fuck, I can't believe I let you do that."
             the_person "I'm way too nice to you, you fucking perv. You just make me feel so sorry for you."
 
@@ -163,7 +163,7 @@ label cousin_sex_review(the_person, the_report):
             mc.name "Yeah, we're done for now."
             the_person "\"For now\"? Ha! As if."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Fuck, you're right... I mean, did you really think I was going to let you keep going?"
             the_person "I was just teasing you, obviously..."
             "She doesn't sound to sure of herself."
@@ -174,6 +174,7 @@ label cousin_flirt_response_low(the_person):
     "[the_person.possessive_title] seems caught off guard by the compliment."
     the_person "Uh, wow. Thanks, I guess. It's not like it's anything special."
     mc.name "Well it turns out you can look cute without even trying."
+    $ mc.change_locked_clarity(5)
     "She laughs and rolls her eyes."
     the_person "You're weird, you know that?"
     return
@@ -182,6 +183,7 @@ label cousin_flirt_response_mid(the_person):
     if the_person.effective_sluttiness("underwear_nudity") < 20: #Not very slutty, so it must be high love.
         the_person "Oh my god, can you stop perving on me for, like, two seconds?"
         mc.name "What? Don't you want to know when you're looking good?"
+        $ mc.change_locked_clarity(10)
         "She sighs and rolls her eyes."
         the_person "Whatever, it's fine I guess. Thanks."
     else:
@@ -189,6 +191,7 @@ label cousin_flirt_response_mid(the_person):
         "She runs her hands down her hips, outlining the shape of her body."
         the_person "That's so wrong, but you know that. I bet you're getting turned on, just from looking at me."
         $ the_person.draw_person(position = "back_peek")
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] turns around and leans forward, sticking her butt towards you and wiggling it."
         the_person "Is this what you wanted to see?"
         mc.name "It's a good start."
@@ -202,6 +205,7 @@ label cousin_flirt_response_high(the_person):
         if the_person.effective_sluttiness() > (25 - the_person.get_opinion_score("incest")*5): # High sluttiness flirt
             the_person "Oh I'm sorry, am I turning you on with my big, juicy tits?"
             $ the_person.draw_person(the_animation = blowjob_bob)
+            $ mc.change_locked_clarity(15)
             "[the_person.possessive_title] grabs her boobs and bounces them up and down for you."
             mc.name "I mean... Yeah."
             "She smiles and squeezes down on her own breasts."
@@ -232,6 +236,7 @@ label cousin_flirt_response_high(the_person):
             the_person "How likely am I to strip for my cousin? Pretty close to zero."
             mc.name "So you're saying there's a chance?"
             the_person "Oh my god, you're the worst. It's kind of fun knowing I have this effect on you."
+            $ mc.change_locked_clarity(10)
             "She sways her hips side to side, accentuating her curves."
             the_person "But no, I don't think you have much of a chance."
 
@@ -260,6 +265,7 @@ label cousin_flirt_response_high(the_person):
                 "Just flirt.":
                     mc.name "Come on, you're really going to make me wait?"
                     $ the_person.draw_person(the_animation = blowjob_bob)
+                    $ mc.change_locked_clarity(15)
                     "[the_person.possessive_title] smiles mischeviously and grabs her tits, jiggling them in front of your face."
                     the_person "Yeah, I am. Be a patient boy and maybe you'll get to see these later."
                     "She winks and lets go of her tits. It takes a second before they stop jiggling completely."
@@ -272,6 +278,7 @@ label cousin_flirt_response_high(the_person):
             mc.name "Relax, I'm just joking around."
             the_person "Uh huh? So you're telling me you don't want to play with my big, juicy tits?"
             $ the_person.draw_person(the_animation = blowjob_bob)
+            $ mc.change_locked_clarity(15)
             "She grabs her tits and jiggles them in front of your face."
             mc.name "Well... I wouldn't say no."
             the_person "Yeah, that's what I thought. So let's try not to get in trouble, okay?"
@@ -659,7 +666,7 @@ label cousin_creampie_taboo_break(the_person):
             the_person "Ugh, whatever. Congratulations, you managed to cum in a girls pussy. You aren't a complete failure of the human race."
 
         else:
-            the_person "Because I'm not on the pill, you idiot. I thought you were suppose to be the smart one in the family."
+            the_person "Because I'm not on the pill, you idiot. I thought you were supposed to be the smart one in the family."
             $ the_person.update_birth_control_knowledge()
             the_person "Unless this was your plan the whole time..."
 

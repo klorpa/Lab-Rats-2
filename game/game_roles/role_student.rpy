@@ -134,6 +134,7 @@ label student_reintro(the_person): #Called when you turned down the student in t
             $ the_person.draw_person(emotion = "happy")
             the_person "Yes! My parents are paying the current guy $200 a session, I'm sure they would pay you even more if my grades start to improve."
             the_person "Here, I'll put my phone number into your phone. If you're on campus let me know and I'll drop everything."
+            $ mc.phone.register_number(the_person)
             "You hand her your phone and wait for her to put in her number."
             the_person "There. Thank you so much [the_person.mc_title]!"
             mc.name "My pleasure, I just want to see you do well in your class."
@@ -145,17 +146,6 @@ label student_reintro(the_person): #Called when you turned down the student in t
             "She sighs and shrugs."
             the_person "Yeah, me too. Thanks for asking, at least."
     return
-
-# No longer needed, all of the girls actions are specific to her (ie. role actions) instead of being available from the location.
-# label student_study_meetup(the_person): #The university action, in case she's not around but should be.
-#     "You text [the_person.title] and let her know you're on campus and have some spare time."
-#     the_person "I'll go get a study room right now. See you in the library!"
-#     "You make your way to the library and find [the_person.possessive_title] in a private study room. She already has her textbooks out and ready to go."
-#     the_person.draw_person(position = "sitting")
-#     the_person "Hey!"
-#     "You take a seat on the same side of the table as her."
-#     call student_study_university(the_person)
-#     return
 
 label student_study_propose(the_person):
     if the_person in the_person.home.people: #ie. she's at home and the event has triggered.
@@ -367,7 +357,7 @@ label student_study_home(the_person):
     if current_marks > 80:
             mc.name "Fantastic! A little more work and you'll be the best in your class!"
             the_person "Thanks, you've really helped everything come together!"
-            "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
+            "Vren" "This section of the game is under construction. In a future version you will have the ability to hire [the_person.title] once her marks are high enough."
     elif current_marks > 50:
         mc.name "That sounds like a pass to me!"
         the_person "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
@@ -536,21 +526,28 @@ label study_normally(the_person, public = True):
                     mc.name "Alright, let's start with your arms."
                     "You cross one arm over your body and pull it towards you, then switch and do the same to the other. [the_person.title] follows your lead."
                     mc.name "Good. Now legs."
+                    $ mc.change_locked_clarity(5)
                     "You step into a deep lunge, then stand up and do the same with your other leg. [the_person.title] mirrors you again."
                     mc.name "Does that feel better?"
                     the_person "Yeah, I guess."
                     mc.name "Now let's stretch out your core. Put your hands on the table, set your legs appart, and bend forward."
+                    $ mc.change_locked_clarity(10)
                     $ the_person.draw_person(position = "standing_doggy")
                     the_person "Uh, like this?"
                     menu:
                         "Hold that pose.":
                             mc.name "Perfect. Now just hold that for a few seconds."
                             if the_person.effective_sluttiness() < 15:
-                                the_person "I feel silly stikcing my butt in the air like this."
-                                mc.name "Don't worry about that, it's just the two of us here. Nobody out in the library is looking."
+                                $ mc.change_locked_clarity(5)
+                                the_person "I feel silly sticking my butt in the air like this."
+                                if public:
+                                    mc.name "Don't worry about that, it's just the two of us here. Nobody out in the library is looking."
+                                else:
+                                    mc.name "Don't worry about that, it's just the two of us here. We'll hear your mom if she was about to come in."
                             else:
                                 the_person "Hey, you aren't doing this just to stare at my butt, are you?"
                                 mc.name "Me? Of course not! It is a perk though."
+                                $ mc.change_locked_clarity(10)
                                 "[the_person.possessive_title] laughs and wiggles her hips."
 
                             $ the_person.draw_person()
@@ -561,6 +558,7 @@ label study_normally(the_person, public = True):
 
                         "\"Help\" her push a little further.":
                             mc.name "You can push your hips out a little further. Here."
+                            $ mc.change_locked_clarity(15)
                             "You step close behind her and place your hands on her hips. You pull back gently helping her stretch while also pushing her butt against your crotch."
                             the_person "Ooh, I can really feel that..."
                             $ the_person.change_slut_temp(3, 25)
@@ -578,6 +576,7 @@ label study_normally(the_person, public = True):
                     if the_person.event_triggers_dict.get("student_massaged", 0):
                         "You slide your chair back and stand up."
                         mc.name "You've been doing a really good job so far [the_person.title]. Let me massage your shoulders, it should help you relax."
+                        $ mc.change_locked_clarity(10)
                         "You step behind her and place your hands on her shoulders."
                         the_person "Oh, you don't need to do that [the_person.mc_title]."
                         mc.name "Studying like this can be suprisingly stressful. I promise this will help improve your marks in the long run."
@@ -588,6 +587,7 @@ label study_normally(the_person, public = True):
                         "You slide your chair back and stand up."
                         mc.name "You've been doing a really good job so far [the_person.title]. Here, let me give you another massage and help you relax."
                         the_person "Oh, that does sound nice."
+                        $ mc.change_locked_clarity(10)
                         "You step behind her, put your hands on her shoulders, and rub them gently."
 
 
@@ -607,6 +607,7 @@ label study_normally(the_person, public = True):
                             "You work your massage down [the_person.title]'s arms, then to the front of her chest."
                             if the_person.has_taboo("touching_body"):
                                 the_person "Hey, you're... getting a little low there."
+                                $ mc.change_locked_clarity(15)
                                 "You slide your hands onto her breasts and rub them slowly."
                                 mc.name "I'm just trying to make sure you're nice and relaxed. Doesn't it feel good?"
                                 the_person "Yeah, but... I... Ah..."
@@ -615,6 +616,7 @@ label study_normally(the_person, public = True):
                                 "[the_person.possessive_title] relaxes her body and turns herself over to you completely."
                                 $ the_person.break_taboo("touching_body")
                             else:
+                                $ mc.change_locked_clarity(15)
                                 "[the_person.title] sighs happily when you slide your hands onto her tits. You feel her body relax under your touch."
 
                             $ the_person.change_slut_temp(2)
@@ -686,6 +688,7 @@ label student_masturbate_label(the_person):
         $ clear_scene()
         "You stand up and leave [the_person.possessive_title]'s room. You close her door and lean on the frame."
         #TODO: Chance her mom walks by and asks what's going on.
+        $ mc.change_locked_clarity(10)
         "You listen at the door, and hear [the_person.title]'s chair creaking as she moves. After a few minutes you hear a faint gasp."
         $ the_person.draw_person()
         "The bedroom door opens. Her face is beet red."
@@ -700,17 +703,14 @@ label student_masturbate_label(the_person):
     else:
         # She just starts going at it.
         the_person "I guess I'll just... get to it then."
-        $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
-        while the_item is not None and not the_person.outfit.vagina_available():
-            $ the_person.draw_animated_removal(the_item)
-            "[the_person.title] strips off her [the_item.name] and throws it on her bed."
-            $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+        if the_person.outfit.can_half_off_to_vagina():
+            $ strip_list = the_person.get_half_off_to_vagina_list()
+            $ generalised_strip_description(the_person, strip_list, half_off_instead = True, position = "sitting")
+        else:
+            $ strip_list = the_person.get_vagina_strip_list()
+            $ generalised_strip_description(the_person, strip_list, position = "sitting")
 
-        $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True) #Just in case she's got a dress or something.
-        while the_item is not None and not the_person.outfit.vagina_available():
-            $ the_person.draw_animated_removal(the_item)
-            "[the_person.title] strips off her [the_item.name] and throws it on her bed."
-            $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
+        $ mc.change_locked_clarity(15)
 
         $ the_person.update_outfit_taboos()
         $ the_person.draw_person(position = "sitting")
@@ -720,6 +720,7 @@ label student_masturbate_label(the_person):
             "Watch her masturbate.":
                 mc.name "Just relax and enjoy yourself. Once you finish we can get to studying."
                 the_person "Right. I'll just be a moment."
+                $ mc.change_locked_clarity(10)
                 "She closes her eyes and start to run her index finger up and down her slit."
                 the_person "Mmm..."
                 #TODO: Add the ability to take pictures in a future update.
@@ -727,10 +728,12 @@ label student_masturbate_label(the_person):
                 the_person "Oh yeah... That's it..."
                 "She rubs her clit with her thumb while fingering herself."
                 the_person "I think... I think I'm going to get there soon..."
+                $ mc.change_locked_clarity(10)
                 "She grips at the side of her chair and takes a deep breath. She starts to hammer her fingers in and out of herself."
                 the_person "Oh fuck, there it is! Oh... Oh!"
                 $ the_person.change_slut_temp(3)
                 $ the_person.change_obedience(1)
+                $ mc.change_locked_clarity(10)
                 "[the_person.title] keeps her fingers moving for a few more seconds, then slows down and stops. She takes a deep sigh and slides them out of her wet cunt."
                 the_person "You know, I {i}do{/i} feel very relaxed now."
                 "She opens her eyes, then blushes and looks away, as if suddenly shy."
@@ -754,6 +757,7 @@ label student_masturbate_label(the_person):
                 mc.name "Let me help out with that."
                 "You unzip your pants and pull out your hard cock. You give it a few gentle strokes as [the_person.possessive_title] watches."
                 the_person "What... Do you want to do?"
+                $ mc.change_locked_clarity(10)
                 "You slide one hand onto [the_person.title]'s thigh and caress it, while jerking yourself off with the other."
                 mc.name "I thought I would join in, that way you don't have to feel self concious. If we're both trying to get off we could always..."
                 "You move your hand and rub her inner thigh, dangerously close to her pussy."
@@ -761,6 +765,7 @@ label student_masturbate_label(the_person):
                 "[the_person.title] bites her lip and hesitates, then nods nervously."
                 the_person "Okay, I guess that would be fun."
                 $ the_person.break_taboo("touching_vagina") #TODO: Some taboo break dialogue.
+                $ mc.change_locked_clarity(10)
                 "You seal the deal by sliding your hand onto her cunt, brushing her clit with your thumb. She gasps and leans back in her chair."
                 $ the_person.change_arousal(10)
                 mc.name "Does that feel good?"
@@ -768,12 +773,14 @@ label student_masturbate_label(the_person):
                 the_person "Mmhm."
                 mc.name "Good. Now stand up for me."
                 $ the_person.draw_person()
+                $ mc.change_locked_clarity(10)
                 "[the_person.title] stands up, and you do the same. You keep one hand between her legs, rubbing her pussy while you talk to her."
                 mc.name "I'm going to make sure you get off, and then we'll get some studying done. Does that sound nice?"
                 "Your hand on her wet pussy tells you the answer, but she murmers out a response anyways."
                 the_person "Yes, it does... Mmm."
                 $ the_person.draw_person(position = "walking_away")
                 "You step behind [the_person.possessive_title] and wrap your other arm around her torso to hold her close, your hard cock rubbing against her thigh."
+                $ mc.change_locked_clarity(10)
                 "She gasps and leans against you when you slide a couple of fingers into her cunt."
                 call fuck_person(the_person, private = True, start_position = standing_finger, skip_intro = True) from _call_fuck_person_86
                 $ the_report = _return
@@ -813,6 +820,7 @@ label student_masturbate_label(the_person):
 label student_pick_reward(the_person, punishment):
     #TODO: First time dialogue variation
     if (the_person.effective_sluttiness() >= 80 or the_person.get_opinion_score("giving blowjobs")) and punishment != "student_punish_suck" > 0:
+        $ mc.change_locked_clarity(10)
         the_person "If I get a question right I want you to get your cock out and let me suck you off."
         mc.name "That's all you want?"
         the_person "Is there something wrong with it? I..."
@@ -822,6 +830,7 @@ label student_pick_reward(the_person, punishment):
         return "student_punish_suck"
 
     elif (the_person.effective_sluttiness() >= 65 or the_person.get_opinion_score("being submissive") > 0) and punishment != "student_punish_spank":
+        $ mc.change_locked_clarity(10)
         the_person "If I get any questions right I want you to bend me over and spank me."
         mc.name "That... sounds more like a punishment to me."
         "[the_person.possessive_title] blushes and looks away."
@@ -830,6 +839,7 @@ label student_pick_reward(the_person, punishment):
         the_person "Thank you [the_person.mc_title]."
         return "student_punish_spank"
     elif (the_person.effective_sluttiness() >= 50 or the_person.get_opinion_score("not wearing anything") > 0) and punishment != "student_punish_strip":
+        $ mc.change_locked_clarity(5)
         the_person "If I get any questions right I want to take something off. That way I can be more relaxed."
         mc.name "Alright, if that's what you want."
         return "student_punish_strip"
@@ -866,6 +876,7 @@ label student_pick_punishment(the_person):
                 the_person "Like, anything I want?"
                 mc.name "Something major. I'm not going to let you get away with pulling off a sock."
 
+                $ mc.change_locked_clarity(10)
                 if wants_to_fail:
                     the_person "Well obviously. Don't worry [the_person.mc_title], I'll give you a show."
                 else:
@@ -874,9 +885,10 @@ label student_pick_punishment(the_person):
 
             else:
                 mc.name "You're going to be stripping for me. For each question you get wrong you'll have to strip something off."
+                $ mc.change_locked_clarity(10)
                 if wants_to_fail:
                     the_person "Alright, I'll make sure to put on a good show for you."
-                    mc.name "You know you're suppose to try and get the questions right, right?"
+                    mc.name "You know you're supposed to try and get the questions right, right?"
                     the_person "Uh, yeah, obviously. But if I have to strip down I might as well make it intersting."
                 else:
                     the_person "Sure, whatever. I'm going to get all of the question right this time, so it doesn't even matter."
@@ -895,17 +907,20 @@ label student_pick_punishment(the_person):
                 mc.name "We're going to try something new today."
                 mc.name "Each time you get a question wrong you're going to bend over and I'm going to spank you."
                 if wants_to_fail:
+                    $ mc.change_locked_clarity(10)
                     the_person "Oh, I like it. Punish me for being a naughty schoolgirl and not doing her homework."
                     "She bites her lip and smiles."
-                    mc.name "You know you aren't suppose to be enjoying this, right?"
+                    mc.name "You know you aren't supposed to be enjoying this, right?"
                     the_person "But there's no harm in it if I do."
                 else:
                     the_person "Isn't that a little old fashion?"
                     mc.name "I think an old fashion touch is just what you need."
+                    $ mc.change_locked_clarity(10)
                     the_person "Fine, as long as you don't hit me too hard. I feel pretty confident, so I don't think it'll even matter."
                 $ the_person.event_triggers_dict["student_spank"] = 1
 
             else:
+                $ mc.change_locked_clarity(10)
                 if wants_to_fail:
                     the_person "So I'm your naughty schoolgirl again? Alright, I'll play your game [the_person.mc_title]."
                     mc.name "It's not a game, it's a teaching tool."
@@ -926,18 +941,21 @@ label student_pick_punishment(the_person):
                 mc.name "I want to try something more extreme today. This should give you all the motivation you need."
                 mc.name "Each time you get a question wrong you're going to spend two minutes sucking me off."
                 if wants_to_fail:
+                    $ mc.change_locked_clarity(15)
                     the_person "Sucking your cock. I get to... I mean I have to suck your cock if I get something wrong?"
                     the_person "I'll keep that in mind, and I'll have to try my very, very best."
                 else:
                     the_person "You mean I have to give you a blowjob each time?"
                     mc.name "We'll start gentle, but if that doesn't help you focus I'll need to bump up the intensity."
                     the_person "Oh, wow... I mean, it's not even going to mater. I'm totally prepared, I'm going to crush this."
+                    $ mc.change_locked_clarity(15)
                     the_person "So sure, bring it on."
 
                 $ the_person.event_triggers_dict["student_suck"] = 1
 
             else:
                 mc.name "Each time you get a question wrong you're going to have to spend two minutes sucking my cock."
+                $ mc.change_locked_clarity(15)
                 if wants_to_fail:
                     the_person "Just two minutes? I'll have to do my best to make sure you cum."
                     mc.name "You should be trying to get the questions right."
@@ -1093,7 +1111,7 @@ label student_punish_question(the_person, wants_to_fail = False):
             "You look through her answer, and spot a critical error."
             mc.name "Not quite right [the_person.title]. You've got a mistake here that's thrown your answer off."
             if question_is_hard:
-                the_person "Ugh, that question was so hard! How am I ever suppose to remember all of this?"
+                the_person "Ugh, that question was so hard! How am I ever supposed to remember all of this?"
 
             else:
                 the_person "Really? Aww, I thought I had that one right."
@@ -1134,11 +1152,14 @@ label student_punish_strip(the_person, was_failure, wants_to_fail, successes = 0
         if was_failure:
             mc.name "Well, you know what you need to do."
             $ the_person.draw_animated_removal(the_item)
+            $ mc.change_locked_clarity(10)
             "[the_person.possessive_title] nods and stands up. She grabs her the [the_item.display_name] and pulls it off."
 
 
         else:
             the_person "Let me just take this off..."
+            $ the_person.draw_animated_removal(the_item)
+            $ mc.change_locked_clarity(10)
             "She strips off her [the_item.display_name] and throws it onto her bed before sitting back down."
 
         #TODO: Have some tits-now-free style checks. Generalise that?
@@ -1153,6 +1174,7 @@ label student_punish_strip(the_person, was_failure, wants_to_fail, successes = 0
         "She laughs and shrugs."
         the_person "Do you really want that? You don't seem to mind."
         mc.name "I'll just have to think up a more interesting punishment I suppose. Come on, back to work."
+        #TODO: There obviously needs to be more punishment here.
 
     return
 
@@ -1201,6 +1223,7 @@ label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0
         $ the_person.update_outfit_taboos()
 
         $ the_person.draw_person(position = "standing_doggy")
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] bends over and puts her hands on her desk, eyes straight ahead."
         "You stand up from your chair and move behind her. You place one hand on her hips to hold her in place."
 
@@ -1217,9 +1240,11 @@ label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0
         if the_person.get_opinion_score("showing her ass") > 0 or the_person.get_opinion_score("being submissive") > 0 or wants_to_fail:
             $ the_person.discover_opinion("showing her ass")
             $ the_person.discover_opinion("being submissive")
+            $ mc.change_locked_clarity(10)
             the_person "Okay. Can you take them off for me, please?"
 
         else:
+            $ mc.change_locked_clarity(10)
             if the_item.slut_value >= 4:
                 the_person "You're joking, right? Look at them, they're tiny!"
             else:
@@ -1227,6 +1252,7 @@ label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0
             mc.name "This is part of your punishment, you'll just have to suck it up."
 
         $ the_person.draw_animated_removal(the_item, position = "standing_doggy") #TODO: When we have the ability to pull things half off do that here.
+        $ mc.change_locked_clarity(10)
         "You hook your thumb around the waistband of her [the_item.display_name] and pull them down to her ankles."
         $ the_person.update_outfit_taboos()
 
@@ -1237,6 +1263,7 @@ label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0
             mc.name "Well done. It's time for reward then. Stand up and bend over."
 
         $ the_person.draw_person(position = "standing_doggy")
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] bends over and puts her hands on her desk, eyes straight ahead."
         "You stand up from your chair and move behind her. You place one hand on her hips to hold her in place."
 
@@ -1263,18 +1290,22 @@ label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0
     else:
         the_person "Ow!"
 
+    $ mc.change_locked_clarity(10)
     "You give her ass a moment to stop jiggling, then pull your arm back and slap it again."
     "You repeat the process a few more times until you think she has been appropriately disciplined."
     if round_count == 1: #TODO: Butt description and dialogue.
         "[the_person.possessive_title] sits back down when you're finished with her."
 
     elif round_count == 2:
+        $ mc.change_locked_clarity(5)
         "[the_person.possessive_title] stands up and rubs her sore butt when you're finished with her. Both cheeks are starting to turn red." #TODO Add support for skin turning red (and add slapping asses, tits, faces, pussies)
 
     elif round_count == 3:
+        $ mc.change_locked_clarity(10)
         "[the_person.title]'s ass is red when you're finished spanking her. She has to take a deep breath before she sits back down."
 
     else: #count == 4
+        $ mc.change_locked_clarity(20)
         "[the_person.possessive_title]'s ass is beet red when you're finished with her. She whimpers softly as she sits down."
         #TODO: Should there be some sort of bonus if you get here?
 
@@ -1296,10 +1327,12 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
         else:
             mc.name "Here you go. You've got two minutes, then you'll need to stop and we're moving on to the next question."
             "[the_person.title] smiles and nods."
+        $ mc.change_locked_clarity(15)
         "She pushes her chair back and gets onto her knees. You push your chair back to give her space, then set a timer on your phone."
         $ the_person.break_taboo("sucking_cock")
         $ the_person.draw_person(position = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.4)
         "[the_person.possessive_title] reaches out and strokes your shaft, then leans forward and licks at the tip gently."
+        $ mc.change_locked_clarity(25)
         "You lean back and enjoy the sensation of her tongue sliding over the bottom of your shaft and the tip of your dick."
         "Before you know it your phone beeps, signaling the end of the two minutes."
         $ the_person.draw_person(position = "sitting")
@@ -1321,16 +1354,19 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
         $ the_person.draw_person(position = "blowjob")
         "[the_person.possessive_title] gets onto her kness again."
         mc.name "Let's pick up the intensity, alright?"
+        $ mc.change_locked_clarity(10)
         "She nods and leans forward. You set a timer on your phone as she opens her mouth and slides your tip inside."
         $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.65)
         "This time she doesn't stop there. She slides you deeper in her mouth, running her lips along the length of your shaft."
         "After a moment to adjust she starts to bob her head up and down your length."
+        $ mc.change_locked_clarity(25)
         "You rest a hand on the back of [the_person.possessive_title]'s head and lean back, content to just enjoy your blowjob."
         "You're interrupted by your phone beeping the end of her two minutes."
         if was_failure:
             "[the_person.title] pops off your cock and wipes the last lines of spit from her lips."
             "Without a word she sits back down on her chair."
         else:
+            $ mc.change_locked_clarity(5)
             "[the_person.title] gives you a few last enthusiastic strokes with her mouth, then pops off."
             "She is smiling as she sits back down."
         $ the_person.draw_person(position = "sitting")
@@ -1343,12 +1379,15 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
         "[the_person.title] knows the routine by now. She gets onto her knees in front of you, ready to take your cock in her mouth."
         mc.name "Take a deep breath, because this time you aren't getting any breaks."
         "She nods and takes a few breaths, eyes fixed on the hard dick in front of her."
+        $ mc.change_locked_clarity(20)
         "When she's ready she leans in and slides you into her mouth. You place a hand on her head and encourage her to slide all the way down."
         "You feel the tip of your cock tap the back of her throat. She shuffles uncomfortably, fighting her gag instinct."
         $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.8)
         "She starts to move her head up and down, but you use your hand to stop her from coming too far off of your cock."
+        $ mc.change_locked_clarity(20)
         "You enjoy your deepthroat session. As you pass the minute mark [the_person.title] starts to try and pull off."
         mc.name "Not yet, you've got some more time to go."
+        $ mc.change_locked_clarity(20)
         "She squeezes her eyes shut and struggles on as her eyes start to water from the effort. Her warm throat feels amazing wrapped around your shaft."
         "[the_person.possessive_title] starts to squirm again, now because she is desperate for a fresh breath of air."
         "You pull your phone out with one hand and count down the last few seconds of the timer."
@@ -1362,13 +1401,14 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
             the_person "Thank you [the_person.mc_title]..."
             "She finally gets up and sits back down in her chair."
 
-        "It's hard to let [the_person.title] go with your raging hardon, but you stroke yourself off to try and satisfy yourself."
+        "It's hard to let [the_person.title] go with your raging hardon, but you have to follow the rules too if you expect to keep her obedient."
 
     else:
         if was_failure:
             mc.name "Not a single question corrct. [the_person.possessive_title], I know you're better than that."
             the_person "I'm sorry [the_person.mc_title]..."
             mc.name "Well, I don't have much of a choice now. On your knees."
+            mc.name "This may be tough on you, but I know you'll take this lesson to heart and improve."
         else:
             mc.name "Every question correct. Are you ready for your reward?"
             "She nods happily."
@@ -1376,30 +1416,37 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
         $ the_person.draw_person(position = "blowjob")
         "[the_person.title] slides off of her chair and kneels down in front of you."
         mc.name "Take a deep breath. There isn't going to be a timer this time, I'm just going to fuck your face until I cum."
+        $ mc.change_locked_clarity(15)
         "She nods and opens her mouth, offering it to you."
         "You place your hands on either side of her head and lean her towards you. She wraps her lips around your cock as you bring it close."
         $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 1.0)
+        $ mc.change_locked_clarity(25)
         "You don't waste any time. As soon as you're cock is in her mouth you slam it down to the base. [the_person.title] gags, throwing her arms out to her side."
+        $ mc.change_locked_clarity(25)
         "You slam [the_person.possessive_title]'s head up and down, forcing her to facefuck you."
+        $ mc.change_locked_clarity(25)
         "She struggles to keep up, gagging a little bit with each thrust and trailing spit down her chin and onto her chest."
         "You're already so worked up that it doesn't take long before you feel your climax approaching."
-        menu:
-            "Cum down her throat":
-                mc.name "Fuck, here I cum!"
-                "You wrap one arm around [the_person.title]'s head, holding it in the crook of your elbow."
-                "You use the leverage to force yourself as deep as possible as you cum. She gags and struggles instinctively as you dump your load down her throat."
-                $ the_person.cum_in_mouth()
-                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.2)
-                "When you are finished you let go and lean back in your chair. [the_person.title] rockets back, gasping for fresh air."
-                "She's a mess after your face fuck. Her eyes are watering, her cheeks are red, and she's still trying to swallow down the last of your cum between pants."
+        $ climax_controller = ClimaxController(["Cum down her throat.","throat"],["Cum on her face.","face"])
+        $ the_choice = climax_controller.show_climax_menu()
+        if the_choice == "Cum down her throat.":
+            mc.name "Fuck, here I cum!"
+            "You wrap one arm around [the_person.title]'s head, holding it in the crook of your elbow."
+            $ climax_controller.do_clarity_release(the_person)
+            "You use the leverage to force yourself as deep as possible as you cum. She gags and struggles instinctively as you dump your load down her throat."
+            $ the_person.cum_in_mouth()
+            $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.2)
+            "When you are finished you let go and lean back in your chair. [the_person.title] rockets back, gasping for fresh air."
+            "She's a mess after your face fuck. Her eyes are watering, her cheeks are red, and she's still trying to swallow down the last of your cum between panting breaths."
 
-            "Cum on her face":
-                "You thrust yourself down her throat one last time, then pull [the_person.title]s head back with both hands."
-                "Your cock spasms, firing it's first pulse of cum over her eye and forehead. She gasps desperately for her first breath of fresh air"
-                $ the_person.cum_on_face()
-                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.2)
-                "You grunt as you fire your second and third strings of cum onto [the_person.possessive_title]'s face, coating it thoroughly."
-                "When you're finished [the_person.title] is a mess. Cheeks red, eyes watering, and face plastered with a thick load of semen."
+        elif the_choice == "Cum on her face.":
+            "You thrust yourself down her throat one last time, then pull [the_person.title]s head back with both hands."
+            $ climax_controller.do_clarity_release(the_person)
+            "Your cock spasms, firing its first pulse of cum over her eye and forehead. She gasps desperately for her first breath of fresh air"
+            $ the_person.cum_on_face()
+            $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.2)
+            "You grunt as you fire your second and third strings of cum onto [the_person.possessive_title]'s face, coating it thoroughly."
+            "When you're finished [the_person.title] is a mess. Cheeks red, eyes watering, and face plastered with a thick load of semen."
 
         if was_failure:
             mc.name "I hope that teaches you a lesson [the_person.title]. I expect you to do better next time."
@@ -1423,6 +1470,7 @@ label student_mom_intro(the_person):
     "You ring the doorbell to [emily.title]'s house and wait. A moment later you hear footsteps and the door opens."
     $ the_person.draw_person()
     $ the_person.set_title("???")
+    $ mc.change_locked_clarity(10)
     the_person "Hello. Can I help you?"
     mc.name "I'm here to turor [emily.title]. Is she in?"
     if emily in emily.home.people:

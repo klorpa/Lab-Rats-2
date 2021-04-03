@@ -88,36 +88,38 @@ label scene_tit_fuck_3(the_girl, the_location, the_object):
 
 
 label outro_tit_fuck(the_girl, the_location, the_object):
-
     "Her warm, soft tits wrapped around your sensitive cock drive you closer and closer to climax with each stroke up and down."
     the_girl.char "You're so tense, are you going to cum?"
     "You nod and she speeds up."
     the_girl.char "Cum for me [the_girl.mc_title], cum for me!"
-    menu:
-        "Cum between her tits.":
-            "You close your eyes and focus on the sensation of [the_girl.possessive_title]'s warm, soft breasts massaging your cock."
-            "Your orgasm builds to a peak and you grunt, blasting your load up between [the_girl.title]'s tits and out the top of her cleavage."
-            $ blocker = the_girl.outfit.get_upper_top_layer()
-            if blocker: #There's something on her top
-                "Your cum splatters down over [the_girl.title]'s [blocker.name]. She gasps as the warm liquid covers her and drips back down between her tits."
-            else:
-                "Your cum splatters down over the top of [the_girl.title]'s tits. She gasps as the warm liquid covers her and drips back down between her tits."
+    $ climax_controller = ClimaxController(["Cum between her tits.", "air"],["Cum on her face.","face"])
+    $ the_choice = climax_controller.show_climax_menu()
+    if the_choice == "Cum between her tits.":
+        "You close your eyes and focus on the sensation of [the_girl.possessive_title]'s warm, soft breasts massaging your cock."
+        "Your orgasm builds to a peak and you grunt, blasting your load up between [the_girl.title]'s tits and out the top of her cleavage."
+        $ blocker = the_girl.outfit.get_upper_top_layer()
+        if blocker: #There's something on her top
+            "Your cum splatters down over [the_girl.title]'s [blocker.name]. She gasps as the warm liquid covers her and drips back down between her tits."
+        else:
+            "Your cum splatters down over the top of [the_girl.title]'s tits. She gasps as the warm liquid covers her and drips back down between her tits."
 
-            $ the_person.cum_on_tits()
-            $ tit_fuck.redraw_scene(the_girl)
 
-        "Cum on her face.":
-            "You close your eyes and focus on the sensation of [the_girl.possessive_title]'s warm, soft breasts massaging your cock."
-            "As your orgasm builds to it's peak you step back, sliding your cock out from her cleavage and take it up in your own hand."
-            if the_girl.effective_sluttiness() > 40 or the_girl.get_opinion_score("cum facials") > 0:
-                "[the_girl.title] understands immediately what is about to happens and tilts her head up, giving you a clear target."
-                "You stroke yourself to completion and blast your load over her face, throwing thick ropes of cum her lips and nose and eyes."
-            else:
-                the_girl.char "What's wrong? I...!"
-                "You grunt and climax, blasting thick ropes of cum over [the_girl.title]'s surprised face. She jerks back, then waits until you're finished."
-            $ the_girl.cum_on_face()
-            $ tit_fuck.redraw_scene(the_girl)
+        $ the_person.cum_on_tits()
+        $ tit_fuck.redraw_scene(the_girl)
 
+    elif the_choice == "Cum on her face.":
+        "You close your eyes and focus on the sensation of [the_girl.possessive_title]'s warm, soft breasts massaging your cock."
+        "As your orgasm builds to its peak you step back, sliding your cock out from her cleavage and take it up in your own hand."
+        if the_girl.effective_sluttiness() > 40 or the_girl.get_opinion_score("cum facials") > 0:
+            "[the_girl.title] understands immediately what is about to happens and tilts her head up, giving you a clear target."
+            "You stroke yourself to completion and blast your load over her face, throwing thick ropes of cum her lips and nose and eyes."
+        else:
+            the_girl.char "What's wrong? I...!"
+            "You grunt and climax, blasting thick ropes of cum over [the_girl.title]'s surprised face. She jerks back, then waits until you're finished."
+        $ the_girl.cum_on_face()
+        $ tit_fuck.redraw_scene(the_girl)
+
+    $ climax_controller.do_clarity_release(the_girl)
     the_girl.char "Ah... Wow..."
     return
 

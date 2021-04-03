@@ -85,9 +85,15 @@ label scene_standing_grope_3(the_girl, the_location, the_object):
 label outro_standing_grope(the_girl, the_location, the_object):
     if the_girl.arousal >= 100:
         "Hearing [the_girl.title] cum in your arms pushes you over the edge. You feel your cock spasm in your underwear as a wave of pleasure washes over you."
+        $ climax_controller = ClimaxController(["Cum in your pants.", "air"])
+        $ the_choice = climax_controller.show_climax_menu()
+        $ climax_controller.do_clarity_release(the_girl)
         "It takes both of you a moment to recover from your orgasms."
     else:
         "Feeling [the_girl.title]'s body under your hands is enough to push you that little bit further, past the point of no return."
+        $ climax_controller = ClimaxController(["Cum in your pants.", "air"])
+        $ the_choice = climax_controller.show_climax_menu()
+        $ climax_controller.do_clarity_release(the_girl)
         "You grasp her tightly as you cum, pumping your load out into your pants."
         the_girl.char "Did you just... Cum?"
         mc.name "Yeah."

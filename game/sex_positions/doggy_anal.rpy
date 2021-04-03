@@ -125,47 +125,46 @@ label outro_doggy_anal(the_girl, the_location, the_object):
     "You pass the point of no return and speed up, slamming your cock into her with each thrust."
     $ the_girl.call_dialogue("sex_responses_anal")
     mc.name "Fuck, here I cum!"
-
-    menu:
-        "Cum inside of her.":
-            "You push yourself balls deep into [the_girl.title]'s ass and dump your load."
-            #This is where the "cum in me" section would go instead
-            #the_girl.char "Ah! Ah!"
-            "You hold yourself inside of her until your climax has passed, then pull out slowly and sit back."
-            "She is left on her hands and knees, trying to catch her breath, as your cum drips out of her gaping asshole."
-            $ the_girl.cum_in_ass()
-            $ doggy_anal.redraw_scene(the_girl)
-            if the_girl.get_opinion_score("anal creampies") > 0:
-                # If she's into both...
-                $ the_girl.discover_opinion("anal creampies")
-                the_girl.char "Oh fuck... I'm so full cum. Put it back in me."
-                mc.name "What?"
-                the_girl.char "Your cock, put it back in me... Just a little bit more, please!"
-                "She lowers her shoulders to the [the_object.name] and wiggles ass at you. You slide the tip of your still-hard dick into her asshole."
-                the_girl.char "Ah..."
-                "Your semen gives you the lubrication you need to slide into her smoothly and easily. She shivers with pleasure as you push yourself in balls deep."
-                the_girl.char "Just... hold it there. Mphfhhh."
-                "She bites her lip, closes her eyes, and moans."
-                "Eventually your dick starts to soften and you pull out."
-
-
-            else:
-                the_girl.char "Wow, that was intense. I hope you didn't stretch me out too badly."
+    $ climax_controller = ClimaxController(["Cum inside of her.", "anal"],["Cum on her ass.", "body"])
+    $ the_choice = climax_controller.show_climax_menu()
+    if the_choice == "Cum inside of her.":
+        "You push yourself balls deep into [the_girl.title]'s ass and dump your load."
+        $ climax_controller.do_clarity_release(the_girl)
+        "You hold yourself inside of her until your climax has passed, then pull out slowly and sit back."
+        "She is left on her hands and knees, trying to catch her breath, as your cum drips out of her gaping asshole."
+        $ the_girl.cum_in_ass()
+        $ doggy_anal.redraw_scene(the_girl)
+        if the_girl.get_opinion_score("anal creampies") > 0:
+            # If she's into both...
+            $ the_girl.discover_opinion("anal creampies")
+            the_girl.char "Oh fuck... I'm so full cum. Put it back in me."
+            mc.name "What?"
+            the_girl.char "Your cock, put it back in me... Just a little bit more, please!"
+            "She lowers her shoulders to the [the_object.name] and wiggles ass at you. You slide the tip of your still-hard dick into her asshole."
+            the_girl.char "Ah..."
+            "Your semen gives you the lubrication you need to slide into her smoothly and easily. She shivers with pleasure as you push yourself in balls deep."
+            the_girl.char "Just... hold it there. Mphfhhh."
+            "She bites her lip, closes her eyes, and moans."
+            "Eventually your dick starts to soften and you pull out."
 
 
-        "Cum on her ass.":
-            "You pull out of [the_girl.possessive_title]'s asshole, leaving it gaping while you stroke yourself to completion."
-            if the_girl.sex_skills["Anal"] > 2:
-                "She sighs in relief as you pull out."
-                the_girl.char "Oh thank god..."
+        else:
+            the_girl.char "Wow, that was intense. I hope you didn't stretch me out too badly."
 
-            "You grunt and climax, shooting your hot cum out onto [the_girl.title]'s back and ass."
-            $ the_girl.cum_on_ass()
-            $ doggy_anal.redraw_scene(the_girl)
-            if the_girl.sluttiness > 120:
-                the_girl.char "Aw, I feel so empty now. You should have filled my ass with your cum instead."
-            else:
-                the_girl.char "Mmm, it's so warm."
+    if the_choice == "Cum on her ass.":
+        "You pull out of [the_girl.possessive_title]'s asshole, leaving it gaping while you stroke yourself to completion."
+        if the_girl.sex_skills["Anal"] <= 2:
+            "She sighs in relief as you pull out."
+            the_girl.char "Oh thank god..."
+
+        "You grunt and climax, shooting your hot cum out onto [the_girl.title]'s back and ass."
+        $ the_girl.cum_on_ass()
+        $ doggy_anal.redraw_scene(the_girl)
+        $ climax_controller.do_clarity_release(the_girl)
+        if the_girl.effective_sluttiness() > 120:
+            the_girl.char "Aw, I feel so empty now. You should have filled my ass with your cum instead."
+        else:
+            the_girl.char "Mmm, it's so warm."
     return
 
 label transition_doggy_anal_doggy(the_girl, the_location, the_object):

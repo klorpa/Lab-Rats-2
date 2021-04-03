@@ -1,6 +1,6 @@
 ##Standard standing images taken at 1920x420 regardless of item size, so they can be tiled.
 
-init -1:
+init 0:
     define mannequin_average = Image("mannequin_average.png") #Define the mannequin image we use for preview in all of the option selects.
 
     ## COLOUR DEFINES ##

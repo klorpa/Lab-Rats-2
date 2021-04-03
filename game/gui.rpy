@@ -55,7 +55,7 @@ define gui.interface_text_color = '#ffffff'
 ## Fonts and Font Sizes ########################################################
 
 ## The font used for in-game text.
-define gui.default_font = "boon-500.otf"
+define gui.default_font = "fonts/boon-500.otf"
 
 ## The font used for character names.
 define gui.name_font = "DejaVuSans.ttf"

@@ -207,39 +207,44 @@ label outro_missionary(the_girl, the_location, the_object):
     "You get to hear every little gasp and moan from [the_girl.title] as you're pressed up against her. Combined with the feeling of fucking her pussy it's not long before you're pushed past the point of no return."
     mc.name "I'm going to cum!"
     $ the_girl.call_dialogue("cum_pullout")
-    menu:
-        "Cum inside of her.":
-            "You use your full weight to push your cock deep inside of [the_girl.possessive_title]'s cunt as you climax. She gasps and claws lightly at your back as you pump your seed into her."
+    $ climax_controller = ClimaxController(["Cum inside of her.", "pussy"],["Cum on her chest.","body"])
+    $ the_choice = climax_controller.show_climax_menu()
 
-            if mc.condom:
-                $ the_girl.call_dialogue("cum_condom")
-                "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."
-                "Your condom is ballooned with your seed, hanging off your cock to one side."
-                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.effective_sluttiness() > 50:
-                    $ the_girl.discover_opinion("drinking cum")
-                    "[the_girl.possessive_title] reaches over for your cock. With delicate fingers she slides the condom off of you, pinching it off do your cum doesn't spill out."
-                    the_girl.char "It would be a shame to waste all of this, right?"
-                    "She smiles and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
-                    $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
-                else:
-                    "[the_girl.possessive_title] reaches over for your cock, removes the condom, and ties the end in a knot for you."
-                    the_girl.char "Look at all that cum. Well done."
+    if the_choice == "Cum inside of her.":
+        "You use your full weight to push your cock deep inside of [the_girl.possessive_title]'s cunt as you climax. She gasps and claws lightly at your back as you pump your seed into her."
 
-            else:
-                $ the_girl.call_dialogue("cum_vagina")
-                $ the_girl.cum_in_vagina()
-                $ missionary.redraw_scene(the_girl)
+        if mc.condom:
+            $ the_girl.call_dialogue("cum_condom")
+            $ climax_controller.do_clarity_release(the_girl)
             "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."
-
-        "Cum on her chest.":
-            $ the_girl.cum_on_stomach()
-            $ missionary.redraw_scene(the_girl)
-            if mc.condom:
-                "You pull out at the last moment and grab your cock. You whip off your condom and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
+            "Your condom is ballooned with your seed, hanging off your cock to one side."
+            if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.effective_sluttiness() > 50:
+                $ the_girl.discover_opinion("drinking cum")
+                "[the_girl.possessive_title] reaches over for your cock. With delicate fingers she slides the condom off of you, pinching it off do your cum doesn't spill out."
+                the_girl.char "It would be a shame to waste all of this, right?"
+                "She smiles and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
+                $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
             else:
-                "You pull out at the last moment and grab your cock. You kneel and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
-            the_girl.char "Ah... Good job... Ah..."
-            "You sit back and sigh contentedly, enjoying the sight of [the_girl.possessive_title]'s body covered in your semen."
+                "[the_girl.possessive_title] reaches over for your cock, removes the condom, and ties the end in a knot for you."
+                the_girl.char "Look at all that cum. Well done."
+
+        else:
+            $ climax_controller.do_clarity_release(the_girl)
+            $ the_girl.call_dialogue("cum_vagina")
+            $ the_girl.cum_in_vagina()
+            $ missionary.redraw_scene(the_girl)
+        "You take a moment to catch your breath, then roll off of [the_girl.possessive_title] and lie beside her."
+
+    elif the_choice == "Cum on her chest.":
+        $ the_girl.cum_on_stomach()
+        $ missionary.redraw_scene(the_girl)
+        if mc.condom:
+            "You pull out at the last moment and grab your cock. You whip off your condom and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
+        else:
+            "You pull out at the last moment and grab your cock. You kneel and stroke yourself off, blowing your load over [the_girl.title]'s stomach."
+        $ climax_controller.do_clarity_release(the_girl)
+        the_girl.char "Ah... Good job... Ah..."
+        "You sit back and sigh contentedly, enjoying the sight of [the_girl.possessive_title]'s body covered in your semen."
     return
 
 label transition_missionary_piledriver(the_girl, the_location, the_object):

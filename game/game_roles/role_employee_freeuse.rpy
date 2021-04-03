@@ -40,11 +40,13 @@ label employee_freeuse_report_label(the_person):
         the_person "I don't want my punishment to end."
         mc.name "Sorry? I don't think I quite heard you."
         "[the_person.possessive_title] looks up at you, a sudden hunger in her eyes."
-        the_person "I don't want you to stop fucking me! I like it, no, I love it!"
+        $ mc.change_locked_clarity(10)
+        the_person "I don't want you to stop fucking me! I like it. No, I love it!"
         the_person "When you just grab me and take me, like I'm just a fuck toy!"
         "She closes her eyes and moans."
         the_person "It makes me so wet, and I always cum so hard on your dick!"
         the_person "So don't stop my punishment, or I'll just have to keep breaking rules until you do this to me again."
+        $ mc.change_locked_clarity(10)
         the_person "Please, [the_person.mc_title], can you keep punishing me?"
         menu:
             "Extend her punishment indefinitely.":
@@ -57,6 +59,7 @@ label employee_freeuse_report_label(the_person):
                 $ the_person.change_obedience(5)
                 "She nods eagerly."
                 the_person "I am, oh god I'm so happy [the_person.mc_title]!"
+                $ mc.change_locked_clarity(5)
                 the_person "Do you want to fuck, right now?"
                 menu:
                     "Use her right now.":

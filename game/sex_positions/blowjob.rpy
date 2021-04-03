@@ -120,7 +120,7 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                     $ the_girl.discover_opinion("giving blowjobs")
                     "She rubs her cheek against your wet shaft."
                     if the_girl.get_opinion_score("drinking cum") > 0:
-                        the_girl.char "Now just relax and enjoy. I want you cum right into my mouth, okay?"
+                        the_girl.char "Now just relax and enjoy. I want you to cum right into my mouth, okay?"
                         $ the_girl.discover_opinion("drinking cum")
                     else:
                         the_girl.char "Now just relax and enjoy, I'll take care of everything."
@@ -189,7 +189,7 @@ label scene_blowjob_2(the_girl, the_location, the_object):
                     "[the_girl.title] keeps on licking your cock. You enjoy the feeling for a while, but you're glad when she finally opens her mouth and starts to blow you again."
                 else:
                     "[the_girl.title] keeps on licking your cock. Her tongue hits all the right places and sends shivers up your spine."
-                    "You're almost disapointed when she opens her mouth wide and starts to blow you again."
+                    "You're almost disappointed when she opens her mouth wide and starts to blow you again."
             $ blowjob.current_modifier = "blowjob"
             $ blowjob.redraw_scene(the_girl)
 
@@ -221,7 +221,7 @@ label scene_blowjob_2(the_girl, the_location, the_object):
                 "She sighs and slips your cock back into her mouth."
 
             else:
-                "You grab hold of your dick with one hand and bounce it against [the_girl.title]'s face. She gasps in suprise."
+                "You grab hold of your dick with one hand and bounce it against [the_girl.title]'s face. She gasps in surprise."
                 if the_girl.sex_skills["Foreplay"] > 3:
                     the_girl.char "Filthy cocksucker, huh? Is that what you want me to be?"
                     "She leans forward and rubs her cheek against your wet cock, nuzzling it like a cat."
@@ -247,50 +247,57 @@ label outro_blowjob(the_girl, the_location, the_object):
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     "Little by little the soft, warm mouth of [the_girl.title] brings you closer to orgasm. One last pass across her velvet tongue is enough to push you past the point of no return."
-    menu:
-        "Cum on her face.":
-            mc.name "Fuck, here I come!"
-            "You take a step back, pulling your cock out of [the_girl.possessive_title]'s mouth with a satisfyingly wet pop, and take aim at her face."
-            $ blowjob.current_modifier = None
+    $ climax_controller = ClimaxController(["Cum on her face.","face"],["Cum in her mouth.","mouth"])
+    $ the_choice = climax_controller.show_climax_menu()
+    if the_choice == "Cum on her face.":
+        mc.name "Fuck, here I come!"
+        "You take a step back, pulling your cock out of [the_girl.possessive_title]'s mouth with a satisfyingly wet pop, and take aim at her face."
+        $ blowjob.current_modifier = None
+        $ blowjob.redraw_scene(the_girl)
+        if the_girl.effective_sluttiness() > 80:
+            "[the_girl.title] sticks out her tongue for you and holds still, eager to take your hot load."
+            $ the_girl.cum_on_face()
             $ blowjob.redraw_scene(the_girl)
-            if the_girl.effective_sluttiness() > 80:
-                "[the_girl.title] sticks out her tongue for you and holds still, eager to take your hot load."
-                $ the_girl.cum_on_face()
-                $ blowjob.redraw_scene(the_girl)
-                "You let out a shuddering moan as you cum, pumping your sperm onto [the_girl.possessive_title]'s face and into her open mouth. She makes sure to wait until you're completely finished."
-            elif the_girl.effective_sluttiness() > 60:
-                "[the_girl.title] closes her eyes and waits patiently for you to cum."
-                $ the_girl.cum_on_face()
-                $ blowjob.redraw_scene(the_girl)
-                "You let out a shuddering moan as you cum, pumping your sperm onto [the_girl.possessive_title]'s face. She waits until she's sure you're finished, then opens one eye and looks up at you."
-            else:
-                "[the_girl.title] closes her eyes and turns away, presenting her cheek to you as you finally climax."
-                $ the_girl.cum_on_face()
-                $ blowjob.redraw_scene(the_girl)
-                "You let out a shuddering moan as you cum, pumping your sperm onto [the_girl.possessive_title]'s face. She flinches as the first splash of warm liquid lands on her cheek, but doesn't pull away entirely."
-            "You take a deep breath to steady yourself once you've finised orgasming. [the_girl.title] looks up at you from her knees, face covered in your semen."
-            $ the_girl.call_dialogue("cum_face")
+            "You let out a shuddering moan as you cum, pumping your sperm onto [the_girl.possessive_title]'s face and into her open mouth. She makes sure to wait until you're completely finished."
+        elif the_girl.effective_sluttiness() > 60:
+            "[the_girl.title] closes her eyes and waits patiently for you to cum."
+            $ the_girl.cum_on_face()
+            $ blowjob.redraw_scene(the_girl)
+            "You let out a shuddering moan as you cum, pumping your sperm onto [the_girl.possessive_title]'s face. She waits until she's sure you're finished, then opens one eye and looks up at you."
+        else:
+            "[the_girl.title] closes her eyes and turns away, presenting her cheek to you as you finally climax."
+            $ the_girl.cum_on_face()
+            $ blowjob.redraw_scene(the_girl)
+            "You let out a shuddering moan as you cum, pumping your sperm onto [the_girl.possessive_title]'s face. She flinches as the first splash of warm liquid lands on her cheek, but doesn't pull away entirely."
+        $ climax_controller.do_clarity_release(the_girl)
+        "You take a deep breath to steady yourself once you've finised orgasming. [the_girl.title] looks up at you from her knees, face covered in your semen."
+        $ the_girl.call_dialogue("cum_face")
 
-        "Cum in her mouth.":
-            $ blowjob.current_modifier = "blowjob"
-            $ blowjob.redraw_scene(the_girl)
-            mc.name "Fuck, I'm about to cum!"
-            "You keep a hand on the back of [the_girl.title]'s head to make it clear you want her to keep sucking. She keeps blowing you until you tense up and start to pump your load out into her mouth."
-            if the_girl.effective_sluttiness() > 70:
-                "[the_girl.possessive_title] doesn't even flinch as you shoot your hot cum across the back of her throat. She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
-            else:
-                "[the_girl.possessive_title] stops when you shoot your first blast of hot cum across the back of her throat. She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen. Once you've finished she slides off and looks up to show you a mouth full of sperm."
+    elif the_choice == "Cum in her mouth.":
+        $ blowjob.current_modifier = "blowjob"
+        $ blowjob.redraw_scene(the_girl)
+        mc.name "Fuck, I'm about to cum!"
+        "You keep a hand on the back of [the_girl.title]'s head to make it clear you want her to keep sucking. She keeps blowing you until you tense up and start to pump your load out into her mouth."
+        if the_girl.effective_sluttiness() > 70:
+            "[the_girl.possessive_title] doesn't even flinch as you shoot your hot cum across the back of her throat."
+            "She keeps bobbing her head up and down until you've let out every last drop, then slides back carefully and looks up with a mouth full of sperm."
+        else:
+            "[the_girl.possessive_title] stops when you shoot your first blast of hot cum across the back of her throat. She pulls back, leaving just the tip of your cock in her mouth as you fill it up with semen."
+            "Once you've finished she slides off and looks up to show you a mouth full of sperm."
 
-            $ the_girl.cum_in_mouth()
-            $ blowjob.redraw_scene(the_girl)
-            if the_girl.effective_sluttiness() > 80:
-                "Once you've had a good long look at your work [the_girl.title] closes her mouth and swallows loudly. It takes a few big gulps to get every last drop of your cum down, but when she opens up again it's all gone."
-            else:
-                "Once you've had a good long look at your work [the_girl.title] leans over to the side and lets your cum dribble out slowly onto the ground. She straightens up and wipes her lips with the back of her hand."
+        $ the_girl.cum_in_mouth()
+        $ blowjob.redraw_scene(the_girl)
+        $ climax_controller.do_clarity_release(the_girl)
+        if the_girl.effective_sluttiness() > 80:
+            "Once you've had a good long look at your work [the_girl.title] closes her mouth and swallows loudly."
+            "It takes a few big gulps to get every last drop of your cum down, but when she opens up again it's all gone."
+        else:
+            "Once you've had a good long look at your work [the_girl.title] leans over to the side and lets your cum dribble out slowly onto the ground."
+            "She straightens up and wipes her lips with the back of her hand."
 
-            $ blowjob.current_modifier = None
-            $ blowjob.redraw_scene(the_girl)
-            $ the_girl.call_dialogue("cum_mouth")
+        $ blowjob.current_modifier = None
+        $ blowjob.redraw_scene(the_girl)
+        $ the_girl.call_dialogue("cum_mouth")
     return
 
 label transition_blowjob_deepthroat(the_girl, the_location, the_object):

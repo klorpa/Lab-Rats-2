@@ -402,6 +402,7 @@ label introvert_flirt_response_low(the_person):
             "[the_person.possessive_title] blushes and looks away, suddenly shy."
             the_person "Thanks, it's just the company uniform though. It's not like I picked it out or anything..."
             mc.name "You're making the uniform look good, not the other way around."
+            $ mc.change_locked_clarity(5)
             "[the_person.title] looks back at you and smiles."
             the_person "Thank you."
         else:
@@ -410,11 +411,13 @@ label introvert_flirt_response_low(the_person):
                 the_person "Thanks... Do you think we could get uniforms that covered a little more?"
                 the_person "I'm not complaining! I'm just a little shy..."
                 mc.name "You don't have anything to be shy about. You have a beautiful body, and it would be a shame to cover it up."
+                $ mc.change_locked_clarity(5)
                 "[the_person.possessive_title] nods and looks away shyly."
 
             elif the_person.outfit.tits_visible():
                 # Her tits are out
                 "[the_person.possessive_title] blushes and tries to hide her breasts."
+                $ mc.change_locked_clarity(5)
                 the_person "Thanks. I don't know if I'll ever get use to having my... boobs out."
                 if the_person.has_large_tits():
                     the_person "I'm normally so worried about keeping them hidden, I don't like the attention."
@@ -424,6 +427,7 @@ label introvert_flirt_response_low(the_person):
             elif the_person.outfit.underwear_visible():
                 # Her underwear is visible.
                 "[the_person.possessive_title] blushes."
+                $ mc.change_locked_clarity(5)
                 the_person "Thanks. I feel strange walking around half naked in front of other people."
                 mc.name "I know the uniform is a little unconventional, but you look fantastic in it."
                 "She nods and gives you a faint smile."
@@ -433,11 +437,13 @@ label introvert_flirt_response_low(the_person):
                 "[the_person.possessive_title] blushes."
                 the_person "I would never normally wear something like this..."
                 mc.name "You don't need to worry, you look fantastic in your uniform."
+                $ mc.change_locked_clarity(5)
                 "She nods and gives a faint smile."
                 the_person "Thanks."
 
     else:
         #She's in her own outfit.
+        $ mc.change_locked_clarity(5)
         "[the_person.possessive_title] blushes and smiles."
         the_person "Thanks. I didn't think anyone even paid attention to what I wear."
         mc.name "Well now you know that I do."
@@ -452,12 +458,14 @@ label introvert_flirt_response_mid(the_person):
             mc.name "It's alright, you just need to be more confident. Come on, give me a spin"
             "She hesitates for a moment, then smiles meekly and nods."
             $ the_person.draw_person(position = "back_peek")
+            $ mc.change_locked_clarity(10)
             the_person "Like this?"
             $ the_person.draw_person()
             mc.name "That was perfect. We'll have to keep working on your confidence."
             the_person "Okay, I'll try."
         else:
             "[the_person.possessive_title] blushes and tries to cover herself up with her hands."
+            $ mc.change_locked_clarity(10)
             if the_person.outfit.vagina_visible():
                 the_person "Sorry! I know these are our uniforms, but I feel so naked!"
             elif the_person.outfit.tits_visible():
@@ -476,6 +484,7 @@ label introvert_flirt_response_mid(the_person):
             the_person "Maybe you're right..."
             mc.name "Let's try right now. Give me a spin and show off a little."
             "She hesitates for a moment, then smiles meekly and nods."
+            $ mc.change_locked_clarity(10)
             $ the_person.draw_person(position = "back_peek")
             the_person "Okay. Like this?"
             "[the_person.title] turns around, wiggles her butt for a second, then completes the spin and faces you again."
@@ -485,6 +494,7 @@ label introvert_flirt_response_mid(the_person):
 
         else:
             the_person "Oh, really? Well, thanks! People don't normally complimint me. Do you really think I look cute?"
+            $ mc.change_locked_clarity(10)
             $ the_person.draw_person(position = "back_peek")
             "[the_person.possessive_title] turns around, letting you get a look at her full outfit."
             $ the_person.draw_person()
@@ -529,6 +539,7 @@ label introvert_flirt_response_high(the_person):
             the_person "Do you want to find out?"
             if the_person.has_large_tits(): #Bounces her tits for you
                 $ the_person.draw_person(the_animation = blowjob_bob)
+                $ mc.change_locked_clarity(15)
                 "She grabs her tits and jiggles them for you, beckoning you closer."
         menu:
             "Kiss her.":
@@ -608,6 +619,7 @@ label introvert_flirt_response_girlfriend(the_person):
             "Just flirt.":
                 "You lower your hand and rub [the_person.title]'s ass."
                 mc.name "Of course you're special. You're smart, pretty, and..."
+                $ mc.change_locked_clarity(10)
                 "You squeeze her butt, making her laugh and press herself against you."
                 mc.name "You have a great ass."
                 the_person "Haha, well thank you. You're pretty cool too."
@@ -633,6 +645,7 @@ label introvert_flirt_response_affair(the_person):
                     $ the_person.call_dialogue("sex_review", the_report = the_report)
 
                 "Just flirt.":
+                    $ mc.change_locked_clarity(10)
                     "You put your arm around [the_person.possessive_title] and rest your hand on her ass."
                     mc.name "I wish I could, but I don't have the time right now."
                     "She bites her lip and nods."
@@ -692,6 +705,56 @@ label introvert_flirt_response_text(the_person):
             the_person "Let me know when you're free and we can set something up."
     return
 
+label introvert_condom_demand(the_person):
+    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0:
+        the_person "Put on a condom first. I can't trust myself if you aren't wearing one."
+    else:
+        the_person "You need to put on a condom, alright?"
+    return
+
+label introvert_condom_ask(the_person):
+    if the_person.on_birth_control:
+        the_person "You should probably put on a condom, right?"
+        the_person "I'm on the pill, but it would be safer if we didn't risk it..."
+        $ the_person.update_birth_control_knowledge()
+    elif the_person.get_opinion_score("creampies") > 0:
+        the_person "Can you put on a condom? If you do you won't have to pull out. I'd really like that."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "Can I trust you to pull out before you cum? If you promise to be careful you can fuck me raw..."
+    return
+
+label introvert_condom_bareback_ask(the_person):
+    if the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            the_person "Come on, I'm on birth control. There's nothing to worry about."
+            the_person "You should just cum inside of me, okay?"
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "Forget the condom [the_person.mc_title], I don't want that thing in the way."
+            the_person "Just fuck me and cum in me. It's real simple."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "Forgot the condom, we don't need that thing."
+    return
+
+label introvert_condom_bareback_demand(the_person):
+    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0: #Just likes raw sex
+        if the_person.on_birth_control:
+            the_person "Screw that, this is why I'm on birth control."
+            the_person "If you're going to fuck me you're going to do it raw and cum inside me!"
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "Screw that, I want to feel you raw [the_person.mc_title]!"
+            the_person "If you're fucking me you're going to do it raw. Pull out if you're really worried about getting me pregnant."
+    else:
+        if the_person.on_birth_control:
+            the_person "I'm on the pill, so you can take me bareback. Throw that condom away."
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "Don't bother [the_person.mc_title], I want you to take me bareback today."
+            the_person "If you really care just pull out when you cum. Now hurry up!"
+    return
 
 label introvert_cum_face(the_person):
     if the_person.obedience > 130:
@@ -857,7 +920,7 @@ label introvert_cum_anal(the_person):
         the_person "Ah!"
     return
 
-label introvert_suprised_exclaim(the_person):
+label introvert_surprised_exclaim(the_person):
     $rando = renpy.random.choice(["Fuck!","Shit!","Oh fuck!","Dicks!", "Fuck me!","Ah! Oh fuck!", "Ah!", "Holy shit!", "Fucking shit!", "God fucking dammit!", "Son of a bitch!", "Mother fucker!"])
     the_person "[rando]"
     return
@@ -975,6 +1038,7 @@ label introvert_date_seduction(the_person):
     if the_person.has_role(girlfriend_role): #Sluttiness gates what she's willing to talk about
         the_person "That was a fun time, so..."
         "She places her hand on your arm and caresses it."
+        $ mc.change_locked_clarity(30)
         if the_person.effective_sluttiness(["vaginal_sex", "condomless_sex"]) > 60 and the_person.wants_creampie() and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") >= 0 and the_person.get_opinion_score("creampies") >= 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
             if the_person.get_opinion_score("creampies") > 0: #No condoms, loves creampies, she's basically asking you to knock her up. So... have her ask you to knock her up!
                 the_person "Do you want to come over to my place, bend me over, and put load after load inside my unprotected pussy?"
@@ -1000,6 +1064,7 @@ label introvert_date_seduction(the_person):
         $ so_title = SO_relationship_to_title(the_person.relationship)
         the_person "My [so_title] isn't home tonight, you know..."
         "She holds onto your arm, stroking it gently."
+        $ mc.change_locked_clarity(40)
         if the_person.wants_creampie() and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") >= 0 and the_person.get_opinion_score("creampies") >= 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
             if the_person.get_opinion_score("creampies") > 0: #No condoms, loves creampies, she's basically asking you to knock her up. So... have her ask you to knock her up!
                 the_person "Do you want to come over to my place, bend me over, and put load after load inside my unprotected pussy?"
@@ -1023,8 +1088,10 @@ label introvert_date_seduction(the_person):
             the_person "The truth is I just don't like doing them with him."
         else:
             the_person "Do you want to come over to my place and use the bed he decided to leave empty?"
+
     elif the_person.relationship == "Single":
         if the_person.sluttiness > the_person.love:
+            $ mc.change_locked_clarity(20)
             if the_person.sluttiness > 40:
                 the_person "I want you to come home with me. Want to come?"
             else:
@@ -1032,24 +1099,30 @@ label introvert_date_seduction(the_person):
         else:
             if the_person.love > 40:
                 "[the_person.title] stays close to you, before touching your arm to get your attention."
+                $ mc.change_locked_clarity(20)
                 the_person "I had a really good time. I... was wondering if you wanted to come home with me..."
             else:
                 "[the_person.title] wrings her hands together nerviously, as if working up the courage to speak."
+                $ mc.change_locked_clarity(20)
                 the_person "I like you, and I want you to come home with me so I don't have to say goodbye. Do you... want to?"
     else:
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if the_person.sluttiness > the_person.love:
             if the_person.sluttiness > 40:
+                $ mc.change_locked_clarity(20)
                 the_person "My [so_title] isn't around. Do you want to come home with me?"
             else:
+                $ mc.change_locked_clarity(20)
                 the_person "I know my [so_title] wouldn't like this, but do you want to come home with me? He won't be around."
         else:
             if the_person.love > 40:
                 "[the_person.title] stays close to you, before touching your arm to get your attention."
+                $ mc.change_locked_clarity(20)
                 the_person "My [so_title] is never around. Do you want to come home with me? I would be happy if you did..."
             else:
                 "[the_person.title] wrings her hands together nerviously, as if working up the courage to speak."
                 the_person "I really like you. I have a [so_title], but I want to spend more time with you too."
+                $ mc.change_locked_clarity(20)
                 the_person "Do you... want to come home with me? He won't be around."
     return
 
@@ -1147,7 +1220,7 @@ label introvert_sex_review(the_person, the_report):
             mc.name "The cute and innocent act doesn't work when you were just begging me to make you cum."
             "[the_person.possessive_title] scowls and looks away, but she can't exactly argue with you."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Fuck... I just got so carried away, I can't believe we did that!"
             "She still seems dazed by her orgasm."
 
@@ -1165,7 +1238,7 @@ label introvert_sex_review(the_person, the_report):
             mc.name "Some other time. Making you cum was enough for me right now."
             the_person "Oh... I... Thank you?"
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Fuck, I didn't know I could cum that hard! I need a break, my head is still spinning!"
 
     elif the_report.get("guy orgasms", 0) > 0: #Only you came
@@ -1182,7 +1255,7 @@ label introvert_sex_review(the_person, the_report):
             the_person "...Are we done?"
             mc.name "Yeah, we're done for now."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Fuck, I didn't think we were going to go that far. I got carried away, I guess."
             "She looks away, suddenly embarrassed by what she's done."
 
@@ -1202,7 +1275,7 @@ label introvert_sex_review(the_person, the_report):
             the_person "No, I just... I don't know what I was expecting."
             the_person "Never mind. It doesn't matter."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Yeah, you're right. This went too far, we should stop while we can."
     return
 
@@ -1553,11 +1626,11 @@ label introvert_creampie_taboo_break(the_person):
 
         elif the_person.relationship != "Single":
             $ so_title = SO_relationship_to_title(the_person.relationship)
-            the_person "Wait, did you actually just cum... You were suppose to pull out!"
+            the_person "Wait, did you actually just cum... You were supposed to pull out!"
             the_person "Fuck... Don't make a habit of it, okay? My [so_title] would be so sad if he knew someone got to cum inside me."
 
         elif the_person.get_opinion_score("creampies") < 0:
-            the_person "Wait, did you actually just cum... You were suppose to pull out."
+            the_person "Wait, did you actually just cum... You were supposed to pull out."
             the_person "Don't make a habit of it, okay? You made such a mess inside me."
 
         else:

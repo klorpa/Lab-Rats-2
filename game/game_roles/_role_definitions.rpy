@@ -12,9 +12,10 @@ init -1 python:
         return True
 
 label instantiate_roles(): #This section instantiates all of the key roles in the game. It is placed here to ensure it is properly created, saved, ect. by Renpy.
+    #If this is in an init block each Role is reinstantiated on startup, meaning role references become confused.
     #All of the role labels and requirements are defined in their own file, but their Action representitions are stored here for saving purposes.
+    #EMPLOYEE ACTIONS#
     python:
-        #EMPLOYEE ACTIONS#
         move_employee_action = Action("Move her to a new division", move_employee_requirement, "move_employee_label",
             menu_tooltip = "Move her to a new division, where her skills might be put to better use.")
         employee_complement_action = Action("Compliment her work.", employee_complement_requirement, "employee_complement_work",
@@ -225,9 +226,8 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         prostitute_role = Role("Prostitute", [prostitute_action])
 
 
-
         pregnant_role = Role("Pregnant", [], hidden = True)
-    return
+return
 
 
 
@@ -459,6 +459,7 @@ label pay_strip_scene(the_person):
                                     $ the_person.change_obedience(-1)
                                     $ the_person.change_slut_temp(1)
                                     $ the_person.draw_animated_removal(tease_item, position = picked_pose)
+                                    $ mc.change_locked_clarity(10)
                                     "[the_person.title] takes it, puts it to the side, and starts to slide her [tease_item.name] off."
                                     if the_person.update_outfit_taboos():
                                         "She seems momentarily uneasy about undressing, but shakes the feeling quickly and returns her attention to you."
@@ -472,6 +473,7 @@ label pay_strip_scene(the_person):
 
                         else:
                             $ the_person.draw_animated_removal(tease_item, position = picked_pose)
+                            $ mc.change_locked_clarity(10)
                             "You watch as [the_person.title] grabs their [tease_item.name] and pulls it off."
                     else:
                         #She has nothing to strip off or she's as slutty as she's willing to get
@@ -546,6 +548,7 @@ label pay_strip_scene(the_person):
                     $ the_person.change_obedience(2)
                     $ the_person.change_slut_temp(1)
                     $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
+                    $ mc.change_locked_clarity(10)
                     "Nevertheless, she keeps the money and pulls off her [the_clothing.display_name]."
                 elif strip_willingness < 20:
                     "You pull some cash out from your wallet and hand it over to [the_person.title]. She puts it to the side and grabs her [the_clothing.display_name]."
@@ -553,8 +556,10 @@ label pay_strip_scene(the_person):
                     $ the_person.change_obedience(1)
                     $ the_person.change_slut_temp(1)
                     $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
+                    $ mc.change_locked_clarity(10)
                     "You nod and [the_person.title] pulls off the piece of clothing, throwing it to the side."
                 else:
+                    $ mc.change_locked_clarity(10)
                     "You're still pulling out cash as [the_person.title] strips off her [the_clothing.display_name] and chucks it to the side."
                     $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
                     the_person "Thank you!"
@@ -563,6 +568,7 @@ label pay_strip_scene(the_person):
             else: #She'll only do it for free if she's becoming less slutty (ie taking off lingerie, bondage gear, etc.) or if she's very slutty anyways.
                 the_person "Is that all? Well, I think that's easy."
                 $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
+                $ mc.change_locked_clarity(10)
                 "[the_person.title] strips off her [the_clothing.display_name] for free, leaving it on the ground at her feet."
     return
 

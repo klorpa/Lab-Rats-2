@@ -110,7 +110,7 @@ label scene_kissing_1(the_girl, the_location, the_object):
                 $ kissing.current_modifier = "kissing"
                 $ kissing.redraw_scene(the_girl)
                 "You put your arms around [the_girl.possessive_title] and pull her against you. Press your lips to hers and give her a long, passionate kiss."
-                "She seems taken by suprise at first, but after a few moments returns the kiss. Bit by bit she begins to open her lips and lets your tongue inside her mouth."
+                "She seems taken by surprise at first, but after a few moments returns the kiss. Bit by bit she begins to open her lips and lets your tongue inside her mouth."
                 if the_girl.get_opinion_score("kissing") > 0:
                     $ the_girl.discover_opinion("kissing")
                     "[the_girl.title] presses her body against yours. She trembles and moans quietly as you make out."
@@ -205,16 +205,19 @@ label outro_kissing(the_girl, the_location, the_object):
     #"Girl" "Oh god, my snoot. You booped me crazy."
     $ kissing.current_modifier = "kissing"
     $ kissing.redraw_scene(the_girl)
-    "[the_girl.title]'s tongue feels like satin against your lips, it's touch sends shivers up and down your spine."
+    "[the_girl.title]'s tongue feels like satin against your lips, its touch sends shivers up and down your spine."
     if the_girl.arousal > 100:
         "Watching her cum has gotten you more excited than you thought you would be. You're grinding your hips against hers now, rubbing your erection against her through your pants."
     elif the_girl.arousal > 40:
         "Her soft moans and eager movement make you even more excited. You're grinding your own hips against hers now, rubbing your erection against her through your pants."
     else:
         "You're grinding your own hips against hers now, rubbing your erection against her through your pants."
+    $ climax_controller = ClimaxController(["Cum your pants.", "air"])
+    $ the_choice = climax_controller.show_climax_menu()
     "You finally let out a low moan and hold [the_girl.possessive_title] close. A shiver runs up your spine as your climax, shooting your load out into your underwear."
     $ kissing.current_modifier = None
     $ kissing.redraw_scene(the_girl)
+    $ climax_controller.do_clarity_release(the_girl)
     "It takes a moment for you to recover from your orgasm. Once you're able to you step back and smooth out your shirt, the crotch of your pants uncomfortably wet now."
     return
 

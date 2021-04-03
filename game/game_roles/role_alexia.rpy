@@ -231,7 +231,7 @@ label alexia_intro_phase_two_label(the_person):
         alexia.set_schedule(downtown, times = [1,2,3]) #She spends her time downtown "working".
 
         alexia_hire_action = Action("Hire " + alexia.title + " to work in sales.", alexia_hire_requirement, "alexia_hire_label")
-        the_person.get_role_reference_by_name("Alexia").actions.append(alexia_hire_action)
+        the_person.get_role_reference(alexia_role).actions.append(alexia_hire_action) #NOTE: I think we can actually just modify the Role here, but we'll be double-sure.
     call advance_time from _call_advance_time_18
     return
 
@@ -270,7 +270,7 @@ label alexia_hire_label(the_person):
 
         mc.business.add_employee_marketing(the_person)
         the_person.set_work(mc.business.m_div)
-        the_person.get_role_reference_by_name("Alexia").actions.remove(alexia_hire_action) #Remove the hire action because this story event has played itself out.
+        the_person.get_role_reference(alexia_role).actions.remove(alexia_hire_action) #Remove the hire action because this story event has played itself out.
 
         ad_suggest_event = Action("Ad Suggestion", alexia_ad_suggest_requirement, "alexia_ad_suggest_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(7,12)])
         mc.business.mandatory_crises_list.append(ad_suggest_event)
@@ -287,6 +287,7 @@ label alexia_ad_suggest_label(the_person):
     "You nod and listen, noticing now that she has a business card sized piece of paper."
     the_person "I put together this mockup, super rough, to show you. I think it would really help boost sales."
     "She hands over her example business card. It has [mc.business.name] written in bold across the top and [the_person.title] posing with a vial of serum."
+    $ mc.change_locked_clarity(5)
     the_person "What do you think? I put myself in as a place holder, so we would just need to hire a model to be eye candy."
     "You look it over and think for a minute."
     mc.name "I think this is a great idea and you've done great work here."
@@ -366,12 +367,15 @@ label alexia_photography_intro_label(the_person):
 
     the_person "Here you go [the_person.mc_title]. How do you want to do this?"
     mc.name "Let's start with some basic shots of you. Just act natural and look into the camera."
+    $ mc.change_locked_clarity(5)
     $ the_person.draw_person(position = "stand4")
     "You frame up [the_person.title] and take a few pictures."
     the_person "How's that?"
     mc.name "Good. Try another pose."
+    $ mc.change_locked_clarity(5)
     $ the_person.draw_person(position = "stand5")
     mc.name "Perfect. Now try turning around."
+    $ mc.change_locked_clarity(5)
     $ the_person.draw_person(position = "back_peek")
     "You snap pictures as she poses."
     menu:
@@ -379,6 +383,7 @@ label alexia_photography_intro_label(the_person):
             mc.name "Bend forward just a little bit for me. Let's show off your butt."
             the_person "Really? Do you think that's important?"
             mc.name "Sex sells. It may not be what we go with, but I want to have options."
+            $ mc.change_locked_clarity(10)
             $ the_person.change_slut_temp(2)
             $ the_person.change_obedience(1)
             "She rolls her eyes and bends forward, perking up her ass and showing it off to the camera. You take a couple more pictures."

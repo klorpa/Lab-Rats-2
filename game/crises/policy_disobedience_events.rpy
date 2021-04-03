@@ -71,7 +71,7 @@ label uniform_disobedience_event(planned_uniform, the_person):
     elif planned_uniform.tits_visible():
         if the_person.obedience < 120:
             the_person "I just can't wear it [the_person.mc_title], it's demeaning!"
-            the_person "If I wear your uniform I would have my tits out, all day long! How am I suppose to focus like that?"
+            the_person "If I wear your uniform I would have my tits out, all day long! How am I supposed to focus like that?"
         else:
             the_person "I'm sorry [the_person.mc_title], I know I should be waring it, but..."
             the_person "It's just so revealing! If I could wear a bra, or anything, to keep me a little covered I would be more comfortable."
@@ -125,7 +125,7 @@ label uniform_disobedience_event(planned_uniform, the_person):
 
             $ strip_list = the_person.outfit.get_full_strip_list(strip_feet = True, strip_accessories = True)
             $ generalised_strip_description(the_person, strip_list)
-
+            $ mc.change_locked_clarity(10)
             "Once stripped down [the_person.possessive_title] puts on her uniform."
             $ the_person.set_uniform(planned_uniform, wear_now = True)
             $ the_person.draw_person()

@@ -147,6 +147,11 @@ init -2:
         list_of_names.append("Tia")
         list_of_names.append("Mimi")
         list_of_names.append("Evelyn")
+        list_of_names.append("Leah")
+        list_of_names.append("Katya")
+        list_of_names.append("Kathryn")
+        list_of_names.append("Bronwyn")
+        list_of_names.append("Tilly")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -260,6 +265,11 @@ init -2:
         list_of_last_names.append("Ling")
         list_of_last_names.append("Bjornson")
         list_of_last_names.append("Lin")
+        list_of_last_names.append("Jaye")
+        list_of_last_names.append("Bowing")
+        list_of_last_names.append("Llandry")
+        list_of_last_names.append("Selkirk")
+        list_of_last_names.append("James")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -589,16 +599,16 @@ init -2:
             return get_random_from_list(sexy_opinions_list)
 
         font_list = []
-        font_list.append("Avara.ttf")
-        font_list.append("GlacialIndifference-Regular.otf")
-        font_list.append("FantasqueSansMono-Regular.ttf")
-        font_list.append("TruenoRg.otf")
-        font_list.append("TruenoBd.otf")
-        font_list.append("Crimson-Roman.ttf")
-        font_list.append("Crimson-Bold.ttf")
-        font_list.append("HKVenetian-Regular.otf")
-        font_list.append("HKVenetian-Italic.otf")
-        font_list.append("AAntiCorona-L3Ax3.ttf")
+        font_list.append("fonts/Avara.ttf")
+        font_list.append("fonts/GlacialIndifference-Regular.otf")
+        font_list.append("fonts/FantasqueSansMono-Regular.ttf")
+        font_list.append("fonts/TruenoRg.otf")
+        font_list.append("fonts/TruenoBd.otf")
+        font_list.append("fonts/Crimson-Roman.ttf")
+        font_list.append("fonts/Crimson-Bold.ttf")
+        font_list.append("fonts/HKVenetian-Regular.otf")
+        font_list.append("fonts/HKVenetian-Italic.otf")
+        font_list.append("fonts/AAntiCorona-L3Ax3.ttf")
 
 
 
@@ -882,6 +892,12 @@ init 1 python:
         person_sativa = create_random_person(name = "Sativa", last_name = "Menendez", body_type = "curvy_body", face_style = "Face_7", height = 0.90, skin = "tan", eyes = "green", tits = "FF", hair_colour = "black", hair_style = bobbed_hair,
             personality = wild_personality, stat_array = [3,1,4], skill_array = [2,2,1,1,5], sex_array = [4,3,2,1])
         list_of_unique_characters.append(person_sativa)
+
+        #nuoyi_wardrobe = wardrobe_from_xml("Nuoyi_Wardrobe") #NOTE: Patron did not want a specific wardrobe, she'll draw her wardrobe randomly as normal.
+        person_nuyoi = create_random_person(name = "Nuoyi", last_name = "Pan", body_type = "thin_body", height = 0.96, skin = "white", eyes = "dark blue", tits = "FF", hair_colour = "black", hair_style = long_hair,
+            personality = wild_personality, stat_array = [4,3,1], skill_array = [5,2,2,1,1], sex_array = [1,3,4,2])
+
+        list_of_unique_characters.append(person_nuyoi)
 
 
         ### STEPHANIE ###

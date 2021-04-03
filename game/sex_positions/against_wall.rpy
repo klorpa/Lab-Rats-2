@@ -235,42 +235,45 @@ label outro_against_wall(the_girl, the_location, the_object):
     $ the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Fuck, I'm going to cum!"
     $ the_girl.call_dialogue("cum_pullout")
-    menu:
-        "Cum inside of her.":
-            if mc.condom:
-                "You push forward as you climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She pants quitly as you pulse your hot cum into the condom you're wearing."
-                $ the_girl.call_dialogue("cum_condom")
-                "Once your climax has passed you step back and pull your cock out from [the_girl.title]. Your condom is ballooned out, filled with your seed."
-                if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.effective_sluttiness() > 50:
-                    $ the_girl.discover_opinion("drinking cum")
-                    "[the_girl.possessive_title] reaches for your cock. With delicate fingers she slides the condom off of you."
-                    the_girl.char "It would be a shame to waste all of this, right?"
-                    "She smiles and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
-                    $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
-                else:
-                    "[the_girl.possessive_title] reaches for your cock, removes the condom, and ties the end in a knot."
-                    the_girl.char "Look at all that cum. Well done."
+    $ climax_controller = ClimaxController(["Cum inside of her","pussy"],["Cum on her stomach.","body"])
+    $ the_choice = climax_controller.show_climax_menu()
+    if the_choice == "Cum inside of her.":
+        if mc.condom:
+            "You push forward as you climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She pants quitly as you pulse your hot cum into the condom you're wearing."
+            $ the_girl.call_dialogue("cum_condom")
+            $ climax_controller.do_clarity_release(the_girl)
+            "Once your climax has passed you step back and pull your cock out from [the_girl.title]. Your condom is ballooned out, filled with your seed."
+            if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.effective_sluttiness() > 50:
+                $ the_girl.discover_opinion("drinking cum")
+                "[the_girl.possessive_title] reaches for your cock. With delicate fingers she slides the condom off of you."
+                the_girl.char "It would be a shame to waste all of this, right?"
+                "She smiles and brings the condom to her mouth. She tips the bottom up and drains it into her mouth."
+                $ the_girl.change_slut_temp(the_girl.get_opinion_score("drinking cum"))
             else:
-                "You push forward as you finally climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She gasps softly each time your dick pulses and shoots hot cum into her."
-                $ the_girl.call_dialogue("cum_vagina")
-                $ the_girl.cum_in_vagina()
-                $ against_wall.redraw_scene(the_girl)
-                "You wait until your orgasm has passed, then step back and sigh happily. [the_girl.title] stays leaning against the [the_object.name] for a few seconds as your semen drips down her leg."
-
-
-        "Cum on her stomach.":
-            $ the_girl.cum_on_stomach()
+                "[the_girl.possessive_title] reaches for your cock, removes the condom, and ties the end in a knot."
+                the_girl.char "Look at all that cum. Well done."
+        else:
+            "You push forward as you finally climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She gasps softly each time your dick pulses and shoots hot cum into her."
+            $ the_girl.call_dialogue("cum_vagina")
+            $ the_girl.cum_in_vagina()
             $ against_wall.redraw_scene(the_girl)
-            if mc.condom:
-                "You pull out of [the_girl.possessive_title] at the last moment and step back. You whip your condom off and blow your load over her stomach while she watches."
-            else:
-                "You pull out of [the_girl.possessive_title] at the last moment and step back. You stroke yourself off and blow your load over her stomach while she watches."
-            if the_girl.effective_sluttiness() > 120:
-                the_girl.char "What a waste, that would have felt so much better inside of me..."
-                "She reaches down and runs a finger through the puddles of cum you've put on her, then licks her finger clean and winks at you."
-            else:
-                the_girl.char "Oh wow, there's so much of it. It feels so warm..."
-            "You sigh contentedly and relax for a moment, enjoying the sight of [the_girl.title] covered in your semen."
+            "You wait until your orgasm has passed, then step back and sigh happily. [the_girl.title] stays leaning against the [the_object.name] for a few seconds as your semen drips down her leg."
+
+    elif the_choice == "Cum on her stomach.":
+        $ the_girl.cum_on_stomach()
+        $ against_wall.redraw_scene(the_girl)
+        if mc.condom:
+            "You pull out of [the_girl.possessive_title] at the last moment and step back. You whip your condom off and blow your load over her stomach while she watches."
+        else:
+            "You pull out of [the_girl.possessive_title] at the last moment and step back. You stroke yourself off and blow your load over her stomach while she watches."
+
+        $ climax_controller.do_clarity_release(the_girl)
+        if the_girl.effective_sluttiness() > 120:
+            the_girl.char "What a waste, that would have felt so much better inside of me..."
+            "She reaches down and runs a finger through the puddles of cum you've put on her, then licks her finger clean and winks at you."
+        else:
+            the_girl.char "Oh wow, there's so much of it. It feels so warm..."
+        "You sigh contentedly and relax for a moment, enjoying the sight of [the_girl.title] covered in your semen."
     return
 
 label transition_default_against_wall(the_girl, the_location, the_object):
@@ -306,6 +309,6 @@ label orgasm_against_wall(the_girl, the_location, the_object):
     "[the_girl.possessive_title] closes her eyes and gasps suddenly. Her hands wrap around you and claw at pull hard against your back."
     $ the_girl.call_dialogue("climax_responses_vaginal")
     "You push her up against the [the_object.name] and keep fucking her through her orgasm."
-    "After a couple of seconds [the_girl.title] opens her eyes again and takes a couple of deep breathes. You slow down your pace and give her a chance to recover."
+    "After a couple of seconds [the_girl.title] opens her eyes again and takes a couple of deep breaths. You slow down your pace and give her a chance to recover."
     the_girl.char "Keep... keep going and see if you can make me to cum again!"
     return

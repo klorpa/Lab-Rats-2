@@ -565,14 +565,15 @@ label sex_description(the_person, the_position, the_object, private = True, repo
         $ his_arousal_change += -2 # Condoms don't feel as good.
 
     $ mc.change_arousal(his_arousal_change)
+    $ mc.change_locked_clarity(the_position.guy_arousal * the_person.sex_skills[the_position.skill_tag]) #NOTE: This let's you end up with 0 clarity gain. Is that what we want?
     if mc.recently_orgasmed and mc.arousal >= 10:
         $ mc.recently_orgasmed = False
         "Your cock stiffens again, coaxed back to life by [the_person.title]."
 
 
     # Change their energy as well.
-    $ the_person.change_energy(-the_position.girl_energy)
-    $ mc.change_energy(-the_position.guy_energy)
+    $ the_person.change_energy(-the_position.girl_energy, add_to_log = False) #NOTE: Don't show the energy cost to avoid energy notice spam. The energy cost is already displayed to the player.
+    $ mc.change_energy(-the_position.guy_energy, add_to_log = False)
 
     # If someone orgasms describe that.
     if the_person.arousal >= the_person.max_arousal:
@@ -589,18 +590,43 @@ label sex_description(the_person, the_position, the_object, private = True, repo
         $ report_log["girl orgasms"] += 1
 
 
-    if mc.arousal >= mc.max_arousal:
-        $ the_position.call_outro(the_person, mc.location, the_object)
-        if the_person.effective_sluttiness(the_position.associated_taboo) < the_position.slut_requirement: # bonus obedience if she if she had to be ordered to do this position ("I guess I really am just doing this for him...")
-            $ the_person.change_obedience(5 + the_person.get_opinion_score("being submissive"))
+    if mc.arousal >= 80: #NOTE: use to be mc.max_arousal, this number is now the threshold for being forced to cum.
+        $ is_cumming = False
+        if mc.arousal < mc.max_arousal: #TODO: Different dialogue based on your focus might make sense here.
+            menu:
+                "Try and cum early.":
+                    if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal):
+                        $ is_cumming = True
+                        "You focus as hard as you can and feel yourself grow closer and closer to climax."
+                    else:
+                        "You focus as hard as you can, but you're unable to push yourself over the edge."
+
+                "Keep going!":
+                    pass
         else:
-            $ the_person.change_obedience(3)
-        $ mc.reset_arousal()
-        $ mc.recently_orgasmed = True
-        $ report_log["guy orgasms"] += 1
-        if the_person.sex_record.get("Vaginal Creampies", 0) > creampie_counter:
-            $ report_log["creampies"] += the_person.sex_record.get("Vaginal Creampies", 0) - creampie_counter #The positions determine how you can finish, so we need to go directly off of the character record.
-            $ creampie_counter = the_person.sex_record.get("Vaginal Creampies", 0)
+            menu:
+                "Try to hold back.":
+                    if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal): #Note: arousal is > max_arousal, so that's focus - some number, ie it's harder and harder as your arousal increases.
+                        "You focus yourself and stave off your climax for a little longer."
+                    else:
+                        "You focus as hard as you can, but there's nothing you can do at this point!"
+                        $ is_cumming = True
+
+                "Cum!":
+                    pass
+
+        if is_cumming:
+            $ the_position.call_outro(the_person, mc.location, the_object)
+            if the_person.effective_sluttiness(the_position.associated_taboo) < the_position.slut_requirement: # bonus obedience if she if she had to be ordered to do this position ("I guess I really am just doing this for him...")
+                $ the_person.change_obedience(5 + the_person.get_opinion_score("being submissive"))
+            else:
+                $ the_person.change_obedience(3)
+            $ mc.reset_arousal()
+            $ mc.recently_orgasmed = True
+            $ report_log["guy orgasms"] += 1
+            if the_person.sex_record.get("Vaginal Creampies", 0) > creampie_counter:
+                $ report_log["creampies"] += the_person.sex_record.get("Vaginal Creampies", 0) - creampie_counter #The positions determine how you can finish, so we need to go directly off of the character record.
+                $ creampie_counter = the_person.sex_record.get("Vaginal Creampies", 0)
 
 
     if not private:
@@ -655,14 +681,8 @@ label condom_ask(the_person):
     if pregnant_role in the_person.special_role and the_person.event_triggers_dict.get("preg_knows", False):
         the_person "We don't need to worry about using a condom any more. You can't get me {i}more{/i} pregnant."
 
-    elif the_person.effective_sluttiness("condomless_sex") < condom_threshold:
-        # they demand you put on a condom.
-        #TODO: Make this dialogue personality based
-        if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies"):
-            the_person "I hate do say it, but I need you to put a condom on for me."
-        else:
-            the_person "Do you have a condom? You're going to have to put one on."
-
+    elif the_person.effective_sluttiness("condomless_sex") < condom_threshold: # they demand you put on a condom.
+        $ the_person.call_dialogue("condom_demand")
         menu:
             "Put on a condom.":
                 $ mc.condom = True
@@ -670,19 +690,11 @@ label condom_ask(the_person):
 
             "Refuse and do something else.":
                 "[the_person.title] doesn't seem like she's going to change her mind."
-                mc.name "If it's that important to you let's just do something else."
+                mc.name "I don't have one on me. Guess we'll have to do it some other way."
                 return False
 
-    elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness("condomless_sex") < condom_threshold + 20 or the_person.has_taboo("condomless_sex"):
-        # They suggest you put on a condom.
-        if the_person.on_birth_control:
-            the_person "Do you think you should put on a condom? I'm on birth control, but it might be a good idea to be sure."
-            $ the_person.update_birth_control_knowledge()
-        elif the_person.get_opinion_score("creampies") > 0:
-            $ the_person.discover_opinion("creampies")
-            the_person "I think you should put on a condom. If you do you won't have to pull out when you cum."
-        else:
-            the_person "Do you think you should put a condom on? Maybe it's a good idea."
+    elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness("condomless_sex") < condom_threshold + 20 or the_person.has_taboo("condomless_sex"): # They suggest you put on a condom.
+        $ the_person.call_dialogue("condom_ask")
         menu:
             "Put on a condom.":
                 $ mc.condom = True
@@ -700,25 +712,48 @@ label condom_ask(the_person):
                         the_person "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
 
 
-    else:
-        # They ask you _not_ to put on a condom.
-        if the_person.get_opinion_score("creampies") > 0:
-            if the_person.on_birth_control:
-                the_person "Don't put on a condom. I'm on the pill and I want to feel you pump your load inside me."
-            else:
-                the_person "Please don't put on a condom. I want you to feel you as you fuck me, even if you get me pregnant."
-            $ the_person.discover_opinion("creampies")
-        else:
-            the_person "You don't need a condom, I want to feel every single thing you do to me."
-        menu:
-            "Put on a condom.":
-                $ mc.condom = True
-                mc.name "Sorry, but I still think a condom is a good idea."
-                the_person "Fine, just make it quick please!"
-                "[the_person.title] watches impatiently while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
+    else: #Slutty enough that she doesn't even care about a condom.
+        if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0:
+            menu:
+                "Put on a condom.":
+                    mc.name "One sec, let me just get a condom on..."
+                    $ the_person.call_dialogue("condom_bareback_demand") #TODO: Write this. Girl demands you fuck her bareback, or she'll force you to do soemthing else. High Obedience will let you ignore her and wear one anyways.
+                    menu:
+                        "Fuck her raw.":
+                            mc.name "Alright, as long as you know what you're getting into..."
+                            "You abandon your plans to put on a condom and get ready to take [the_person.possessive_title] raw."
 
-            "Fuck her raw.":
-                mc.name "No arguments here."
+                        "Refuse and do something else.":
+                            "[the_person.possessive_title] seems like she's made up her cock-hungry mind, and you doubt you would be able to change it."
+                            mc.name "We can't risk it [the_person.title]. We'll have to do something else."
+                            return False
+
+                        "Put on a condom anyways.\nRequires: 120 Obedience (disabled)" if the_person.obedience < 120:
+                            pass
+
+                        "Put on a condom anyways." if the_person.obedience >= 120:
+                            mc.name "I can't risk it [the_person.title], no matter how desperate you are for raw cock."
+                            "You pull out a condom from your wallet, tear open the package, and start to unroll it down your dick."
+                            mc.name "So you have a choice. You can have my cock inside you like this, or you can have no cock at all."
+                            "She whimpers like a sad puppy, but you know there's only once choice she would ever make."
+                            the_person "...Fine, just put it inside me already!"
+
+                "Fuck her raw.":
+                    "You ignore any thoughts about putting on a condom and get ready to take [the_person.possessive_title] raw."
+
+        else:
+            $ the_person.call_dialogue("condom_bareback_ask")
+            menu:
+                "Put on a condom.":
+                    $ mc.condom = True
+                    mc.name "Sorry, but I still think a condom is a good idea."
+                    the_person "Fine, just make it quick please!"
+                    "[the_person.title] watches impatiently while you pull a condom out of your wallet, tear open the package, and unroll it down your dick."
+
+                "Fuck her raw.":
+                    mc.name "No arguments here."
+
+
 
     if mc.condom:
         "Sex with a condom on doesn't feel as good, for you or for her."
@@ -763,9 +798,9 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
         $ ass_revealed = False
         if (the_person.outfit.bra_covered() and the_person.outfit.panties_covered()) and not (test_outfit.bra_covered() and test_outfit.panties_covered()):
             $ underwear_revealed = True
-        if not the_person.outfit.tits_visible() and test_outfit.tits_visible():
+        if (not the_person.outfit.tits_visible()) and test_outfit.tits_visible():
             $ boobs_revealed = True
-        if not the_person.outfit.vagina_visible() and test_outfit.vagina_visible():
+        if (not the_person.outfit.vagina_visible()) and test_outfit.vagina_visible():
             $ ass_revealed = True
 
         $ willing_to_strip = False
@@ -844,6 +879,7 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
                 $ the_person.discover_opinion("not wearing anything")
                 if underwear_revealed:
                     $ the_person.break_taboo("underwear_nudity")
+
             if boobs_revealed:
                 $ arousal_change += the_person.get_opinion_score("showing her tits") * 3
                 $ the_person.discover_opinion("showing her tits")

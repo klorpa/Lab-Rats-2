@@ -115,7 +115,9 @@ label demand_touch_label(the_person):
         mc.name "Don't worry, you'll understand soon."
         "[the_person.possessive_title] seems nervous, but follows your instructions for now."
 
+
     "You step closer to her and place your hands on her shoulders, rubbing them gently."
+    $ mc.change_locked_clarity(10)
     "You slide your hands lower, down her sides and behind her back. You cup her ass with both hands and squeeze."
     if the_person.effective_sluttiness("touching_body") < 0:
         the_person "Hey, I..."
@@ -129,6 +131,7 @@ label demand_touch_label(the_person):
         "[the_person.title] places her hands in front of her and waits passively as you grope her ass."
 
 
+    $ mc.change_locked_clarity(10)
     if the_person.has_large_tits():
         "You take your hand off her ass and walk behind her. You cup one of her heavy breasts in one hand, moving the other down between her thighs."
     else:
@@ -308,6 +311,7 @@ label demand_strip_tits_label(the_person):
         "[the_person.title] brings her hands up to cover her breasts."
         the_person "Are we done?"
         mc.name "I want to get a look first, and I can't see anything if you're hiding everything like this."
+        $ mc.change_locked_clarity(10)
         "She nods and moves her hands to her side again. She blushes and looks away as you ogle her tits."
         $ the_person.change_slut_temp(1+ the_person.get_opinion_score("showing her tits"))
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("showing her tits"))
@@ -315,6 +319,7 @@ label demand_strip_tits_label(the_person):
         the_person "Can get dressed now?"
     else: # She's into it
         $ the_person.draw_person(the_animation = blowjob_bob) #TODO Make sure this effect looks right
+        $ mc.change_locked_clarity(20)
         "[the_person.title] places her hands behind her and bounces on her feet, jiggling her tits for your amusement."
         "When you've seen enough you nod approvingly. [the_person.possessive_title] smiles happily."
         the_person "So you want me to get dressed again?"
@@ -510,6 +515,7 @@ label demand_strip_underwear_label(the_person):
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("lingerie"))): # She's shy
         the_person "Um... So what do we do now?"
         mc.name "Just relax and let me take a look. You look cute."
+        $ mc.change_locked_clarity(10)
         "She nods and puts her hands behind her back. She blushes and looks away self-conciously as you ogle her."
         $ the_person.change_slut_temp( 1+ the_person.get_opinion_score("lingerie"))
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("lingerie"))
@@ -525,6 +531,7 @@ label demand_strip_underwear_label(the_person):
         "[the_person.title] immediately puts her hands behind her back and pushes her chest forward, accentuating her tits."
         the_person "So, what do you think? Does my underwear look good?"
         mc.name "I does, you look cute."
+        $ mc.change_locked_clarity(15)
         "She smiles and gives you a spin, letting you take a look at her from behind."
         $ the_person.draw_person(position = "back_peek")
         "You enjoy the view for a little while longer, then nod approvingly to [the_person.possessive_title]."
@@ -597,6 +604,7 @@ label demand_strip_naked_label(the_person):
     if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))): # She's shy
         the_person "What would you like me to do now?"
         "She instinctively puts her hands behind her back while she waits for your instructions."
+        $ mc.change_locked_clarity(20)
         mc.name "Give me a spin, I want to see your ass."
         "She blushes, but nods and turns around."
         $ the_person.draw_person(position = "back_peek")
@@ -605,12 +613,14 @@ label demand_strip_naked_label(the_person):
         the_person "Are we finished? Is that all?"
 
     else:
+        $ mc.change_locked_clarity(20)
         "[the_person.title] puts her hands behind her back and pushes her chest forward, accentuating her tits."
         "She waits silently for you to tell her what to do. You notice her nipples harden as you watch her."
         mc.name "Do you like this?"
         #TODO: THis should probably include dialogue based on their being naked opinions.
         the_person "If I'm doing it for you I do."
         mc.name "Good. Turn around, I want to see your ass."
+        $ mc.change_locked_clarity(20)
         "She nods happily and turns around, wiggling her butt for you."
         $ the_person.draw_person(position = "back_peek")
         "You enjoy the view until you're satisfied."
@@ -655,6 +665,7 @@ label suck_demand_label(the_person):
     if the_person.effective_sluttiness("sucking_cock") + (the_person.get_opinion_score("being submissive") * 10) >= 60: #She would do it anyways and doesn't even think it's strange. Note: We require you to already have broken the blowjob taboo to get here as well.
         the_person "Right away [the_person.mc_title]."
         $ the_person.draw_person(position = "blowjob")
+        $ mc.change_locked_clarity(20)
         "She drops to her knees immediately, spreading her legs and planting her hands on the ground between them."
 
     elif the_person.effective_sluttiness("sucking_cock") + (the_person.get_opinion_score("being submissive") * 10) >= 40:
@@ -665,6 +676,7 @@ label suck_demand_label(the_person):
             the_person "I... Right here? Wouldn't you like to find somewhere private so we can..."
             mc.name "Right here. Get on your knees and get my cock in your mouth before I run out of patience."
         $ the_person.draw_person(position = "blowjob")
+        $ mc.change_locked_clarity(10)
         "She drops to her knees, putting her hands on her thighs and moving her face to cock level."
 
     else:
@@ -672,13 +684,13 @@ label suck_demand_label(the_person):
             "[the_person.possessive_title] hesitates, shaking her head."
             the_person "I can't do that, I..."
             mc.name "I wasn't asking you a question. On your knees, now. The longer you take the more stress I'm going to need relieved."
-            "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."
         else:
             "[the_person.possessive_title] looks around, almost paniced."
             the_person "I can't... We can't do that here! People would see me, I would..."
             mc.name "I've already got my cock out, and I'm not putting it back in my pants until it's been down your throat."
             mc.name "On your knees. Now."
-            "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."
+        $ mc.change_locked_clarity(10)
+        "She seems on the verge of refusing, but drops slowly to her knees to put her face at cock level."
 
     $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.3)
     "[the_person.title] licks the tip of your cock, then slides it tenderly into her mouth."
@@ -695,10 +707,12 @@ label suck_demand_label(the_person):
             "You hold her head in place as you shove your hips forward."
             if the_person.sex_skills["Oral"] >= 4: #She throats you like a pro
                 "[the_person.title] instinctively kneels a little lower and tilts her head up, giving your cock a clear path down her throat."
+                $ mc.change_locked_clarity(30)
                 "Her eyes flutter briefly as you bottom out, balls rubbing against her chin. You can feel her quiver as she tries to suppress her gag reflex."
 
             else: #Gags
                 "[the_person.title] instinctively tries to jerk away, but clamp down and don't let her move."
+                $ mc.change_locked_clarity(20)
                 "Her eyes open wide as you force your cock clear down her throat. She gags hard, blowing spit out where her lips meet the base of your shaft."
                 mc.name "I think you still need a little more practice. Let's see what we can do about that..."
 

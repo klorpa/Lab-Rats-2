@@ -411,8 +411,9 @@ label reserved_flirt_response_low(the_person):
             # She's in uniform and likes how it looks.
             the_person "Thank you [the_person.mc_title]. I think these are nice uniforms as well."
             mc.name "It helps having such an attractive employees to wear it."
+            $ mc.change_locked_clarity(5)
             "[the_person.possessive_title] smiles."
-            the_person "Well, thank you. I appreciate the complement."
+            the_person "Well, thank you. I appreciate the compliment."
         else:
             #She's in uniform, but she thinks it's a little too slutty.
             if the_person.outfit.vagina_visible():
@@ -420,15 +421,18 @@ label reserved_flirt_response_low(the_person):
                 the_person "It's not much of an outfit at all though."
                 the_person "I understand it's the company uniform, but it would be nice to have a little more coverage."
                 mc.name "It will take some getting use to, but I think it would be a shame to cover up your wonderful figure."
+                $ mc.change_locked_clarity(5)
                 "[the_person.possessive_title] doesn't seem so sure, but she smiles and nods anyways."
 
             elif the_person.outfit.tits_visible():
                 # Her tits are out
                 if the_person.has_large_tits():
                     the_person "Thank you, but I can tell this uniform was designed by a man."
+                    $ mc.change_locked_clarity(5)
                     the_person "Larger chested women, like myself, appreciate a little more support in their outfits."
                 else:
                     the_person "Thank you, but I do hope you'll consider a uniform with a proper top in the future."
+                    $ mc.change_locked_clarity(5)
                     the_person "It still doesn't feel natural having my... breasts so visible."
                 mc.name "I understand it's a little uncomfortable, but I'm sure you'll get use to it."
                 the_person "Yes, given enough time I'm sure I will."
@@ -437,6 +441,7 @@ label reserved_flirt_response_low(the_person):
                 # Her underwear is visible.
                 the_person "Thank you. I always feel a touch self-concious when I put it on. I wish it kept me a little more covered."
                 mc.name "I know it can take some getting use to, but you look fantastic in it. You're a perfect fit for it."
+                $ mc.change_locked_clarity(5)
                 "[the_person.possessive_title] doesn't seem so sure, but she smiles and nods anyways."
 
             else:
@@ -444,6 +449,7 @@ label reserved_flirt_response_low(the_person):
                 "[the_person.possessive_title] smiles warmly."
                 the_person "Thank you, although I don't think I would ever wear this if it wasn't company policy."
                 mc.name "Well you look fantastic in it either way. Maybe you should rethink your normal wardrobe."
+                $ mc.change_locked_clarity(5)
                 the_person "I'll think about it."
 
     else:
@@ -451,6 +457,7 @@ label reserved_flirt_response_low(the_person):
         "[the_person.possessive_title] seems caught off guard by the compliment."
         the_person "Oh, thank you! I'm not wearing anything special, it's just one of my normal outfits."
         mc.name "Well, you make it look good."
+        $ mc.change_locked_clarity(5)
         "She smiles and laughs self-conciously."
         the_person "Oh stop."
     return
@@ -460,10 +467,12 @@ label reserved_flirt_response_mid(the_person):
         if the_person.judge_outfit(the_person.outfit):
             if the_person.outfit.tits_visible():
                 the_person "What it shows off most are my breasts. I'm not complaining though. Between you and me, I kind of like it."
+                $ mc.change_locked_clarity(10)
                 "She winks and shakes her shoulders, jiggling her tits for you."
             else:
                 the_person "With my body and your fashion taste, how could I look bad? These uniforms are very flattering."
                 mc.name "It's easy to make a beautiful model look wonderful."
+                $ mc.change_locked_clarity(10)
                 if the_person.effective_sluttiness() > 20:
                     $ the_person.draw_person(position = "back_peek")
                     the_person "It makes my butt look pretty good too. I don't think that was an accident."
@@ -486,6 +495,7 @@ label reserved_flirt_response_mid(the_person):
 
             the_person "I don't mind it so much if it's just me and you, but when there are other people around I wish it kept me a little more covered."
             mc.name "It may take some time to adjust, but with enough time you'll be perfectly comfortable in it."
+            $ mc.change_locked_clarity(10)
             "She smiles and nods."
             the_person "You're right, of course. If you think it's the best option for the company I trust you."
     else:
@@ -495,6 +505,7 @@ label reserved_flirt_response_mid(the_person):
             mc.name "I'm sure they're all thinking the same thing."
             "She rolls her eyes and laughs softly."
             the_person "Maybe they are, but it's still embarrassing."
+            $ mc.change_locked_clarity(10)
             the_person "You'll have better luck if you save your flattery for when we're alone."
             mc.name "I'll keep that in mind."
 
@@ -503,6 +514,7 @@ label reserved_flirt_response_mid(the_person):
             the_person "Thank you [the_person.mc_title]. I'm glad you like it... And me."
             the_person "What do you think of it from the back? It's hard for me to get a good look."
             $ the_person.draw_person(position = "back_peek")
+            $ mc.change_locked_clarity(10)
             "She turns and bends over a little bit, accentuating her butt."
             if not the_person.outfit.wearing_panties() and not the_person.outfit.vagina_visible(): #Not wearing underwear, but you cna't see so she coments on it.
                 the_person "My panties were always leaving unpleasant lines, so I had to stop wearing them. I hope you can't tell."
@@ -517,6 +529,7 @@ label reserved_flirt_response_high(the_person):
     if mc.location.get_person_count() > 1 and the_person.effective_sluttiness() < (25 - (5*the_person.get_opinion_score("public_sex"))): # There are other people here, if she's not slutty she asks if you want to find somewhere quiet
         the_person "[the_person.mc_title], there are people around."
         "She bites her lip and leans close to you, whispering in your ear."
+        $ mc.change_locked_clarity(15)
         the_person "But if we were alone, maybe we could figure something out..."
         menu:
             "Find someplace quiet.":
@@ -551,6 +564,7 @@ label reserved_flirt_response_high(the_person):
 
         else:  #You're not alone, but she doesn't care.
             the_person "Well I wouldn't want you to go crazy. You'll just have to do something to get me out of this outfit then..."
+            $ mc.change_locked_clarity(15)
             if the_person.has_large_tits(): #Bounces her tits for you
                 $ the_person.draw_person(the_animation = blowjob_bob)
                 "[the_person.possessive_title] bites her lip sensually and grabs her boobs, jiggling them for you."
@@ -606,6 +620,7 @@ label reserved_flirt_response_girlfriend(the_person):
 
                 "Just flirt.":
                     mc.name "Aw, you're going to make me wait? That's so cruel."
+                    $ mc.change_locked_clarity(10)
                     "You reach around and place a hand on [the_person.possessive_title]'s ass, rubbing it gently."
                     "She sighs and bites her lip, then clears her thraot and glances around to see if anyone else noticed."
                     the_person "I'll make sure to make it worth the wait, but let's take it easy while other people are around."
@@ -630,6 +645,7 @@ label reserved_flirt_response_girlfriend(the_person):
                     if the_person.effective_sluttiness("sucking_cock") >= 60 or the_person.get_opinion_score("giving blowjobs") > 0:
                         "She bites her lip and runs her eyes up and down your body."
                         the_person "Mmmm, stop it [the_person.mc_title]. You're going to get me all wet in public."
+                        $ mc.change_locked_clarity(10)
                         "You reach around and place your hand on her ass, rubbing it gently."
                         mc.name "Well we don't want that. I'll keep my thoughts to myself then."
                         "You give her butt one last squeeze, then slide your hand away."
@@ -651,6 +667,7 @@ label reserved_flirt_response_girlfriend(the_person):
                 $ the_person.call_dialogue("sex_review", the_report = the_report)
 
             "Just flirt.":
+                $ mc.change_locked_clarity(10)
                 "You reach around [the_person.title] and place a hand on her ass, rubbing it gently. She sighs and leans her body against you."
                 the_person "Mmm, that's nice... Maybe when we have some more time together we can take this further."
                 mc.name "That sounds like fun. I'm looking forward to it."
@@ -679,6 +696,7 @@ label reserved_flirt_response_affair(the_person):
 
                 "Just flirt.":
                     mc.name "Well that would just be cruel of me..."
+                    $ mc.change_locked_clarity(10)
                     "You put your arm around [the_person.possessive_title] and rest your hand on her ass."
                     mc.name "...If I got you all excited thinking about the next time I'm going to fuck you."
                     "She leans her body against yours for a moment and sighs happily. You give her butt a final slap and let go of her."
@@ -706,6 +724,7 @@ label reserved_flirt_response_affair(the_person):
 
             "Just flirt.":
                 mc.name "I want to, but I'm going to have to wait until we have more time together for that."
+                $ mc.change_locked_clarity(15)
                 "Her hand moves lower down, brushing over your crotch and sending a brief shiver up your spine."
                 the_person "I understand. When we have the chance we'll take our time and really enjoy each other."
     return
@@ -739,6 +758,62 @@ label reserved_flirt_response_text(the_person):
         else:
             the_person "It's sweet of you to be thinking of me."
             the_person "I'd love to chat, what would you like to talk about?"
+    return
+
+label reserved_condom_demand(the_person):
+    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0:
+        the_person "Please put on a condom first. I say silly things when I get excited."
+        the_person "I don't want us making a... mistake."
+    else:
+        the_person "You have a condom with you, right? If not, I have one."
+        the_person "Just slip it on and we can get to it."
+    return
+
+label reserved_condom_ask(the_person):
+    if the_person.on_birth_control:
+        the_person "I'm on the pill, so you don't need to put on a condom unless you want to be very safe."
+        $ the_person.update_birth_control_knowledge()
+    elif the_person.get_opinion_score("creampies") > 0:
+        the_person "Maybe you should put on a condom. Then you can keep fucking me as you cum..."
+        the_person "It's not as nice as the real thing, but it would still be nice."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "It would be smart for you to put on a condom. But if you promise to be careful..."
+        the_person "Maybe we don't need one, just this once."
+    return
+
+label reserved_condom_bareback_ask(the_person):
+    if the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            the_person "Don't bother with a condom [the_person.mc_title]. I'm on the pill, so it's perfectly safe."
+            the_person "You can cum right inside of me, as often as you want."
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "Don't bother with a condom [the_person.mc_title], we don't need it."
+            the_person "I want you to fuck me unprotected and cum inside me, like nature intended."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "You don't need to bother with a condom [the_person.mc_title]."
+        the_person "It feels so much better without one. You agree, right?"
+    return
+
+label reserved_condom_bareback_demand(the_person):
+    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0: #Just likes raw sex
+        if the_person.on_birth_control:
+            the_person "You don't need that, I'm on birth control."
+            the_person "Come on [the_person.mc_title], I want you to cum inside me!"
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "You don't need to don't need to do that, I want you to take me raw."
+            the_person "I don't care if you get me pregnant [the_person.mc_title], I just want you to fuck me already!"
+
+    else:
+        if the_person.on_birth_control:
+            the_person "You don't need to do that [the_person.mc_title], I'm on birth control."
+            the_person "So hurry up and fuck me!"
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "Don't waste our time on that. I don't care about the risks, I want you to fuck me!"
     return
 
 label reserved_cum_face(the_person):
@@ -899,7 +974,7 @@ label reserved_cum_anal(the_person):
         the_person "Oh lord, I hope I'm ready for this!"
     return
 
-label reserved_suprised_exclaim(the_person):
+label reserved_surprised_exclaim(the_person):
     $rando = renpy.random.choice(["Oh my!","Oh, that's not good!", "Whoa!", "Ah!", "My word!", "Oops!", "Bah!", "Dangnabbit!"])
     the_person "[rando]"
     return
@@ -1022,6 +1097,7 @@ label reserved_date_seduction(the_person):
         "[the_person.possessive_title] takes your hand and holds it in hers."
         the_person "I had a wonderful evening [the_person.mc_title]."
         "She gazes romantically into your eyes."
+        $ mc.change_locked_clarity(30)
         if the_person.effective_sluttiness(["vaginal_sex", "condomless_sex"]) > 60 and the_person.wants_creampie() and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") >= 0 and the_person.get_opinion_score("creampies") >= 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
             if the_person.get_opinion_score("creampies") > 0: #No condoms, loves creampies, she's basically asking you to knock her up. So... have her ask you to knock her up!
                 the_person "Come home with me, fuck me, and dump your virile cum inside my unprotected pussy."
@@ -1052,6 +1128,7 @@ label reserved_date_seduction(the_person):
         $ so_title = SO_relationship_to_title(the_person.relationship)
         the_person "My [so_title] is staying at the office over night."
         "She holds onto your arm and leans close, whispering softly into your ear."
+        $ mc.change_locked_clarity(40)
         if the_person.wants_creampie() and the_person.effective_sluttiness() > the_person.get_no_condom_threshold() and the_person.get_opinion_score("bareback sex") >= 0 and the_person.get_opinion_score("creampies") >= 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
             if the_person.get_opinion_score("creampies") > 0: #No condoms, loves creampies, she's basically asking you to knock her up. So... have her ask you to knock her up!
                 the_person "Come home with me. You'll have all night to fill my fertile pussy with your cum. I'm sure by morning you'll have me pregnant."
@@ -1077,8 +1154,10 @@ label reserved_date_seduction(the_person):
             the_person "But you know that I just want to be treated like a dirty fucking whore."
         else:
             the_person "Come home with me. We can spend all night together."
+
     elif the_person.relationship == "Single":
         if the_person.sluttiness > the_person.love:
+            $ mc.change_locked_clarity(20)
             if the_person.sluttiness > 40:
                 the_person "[the_person.mc_title], would you like to come back home with me? I've got some wonderful wine that makes me do crazy things."
             else:
@@ -1092,16 +1171,20 @@ label reserved_date_seduction(the_person):
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if the_person.sluttiness > the_person.love:
             if the_person.sluttiness > 40:
+                $ mc.change_locked_clarity(20)
                 the_person "[the_person.mc_title], would you like to come home with me tonight? My [so_title] is away on business and I'd love to drink some of his wine with you."
             else:
+                $ mc.change_locked_clarity(20)
                 the_person "This was a lot of fun. I shouldn't be out too late, but could I invite you back for a drink? My [so_title] shouldn't be home until much later."
         else:
             if the_person.love > 40:
+                $ mc.change_locked_clarity(20)
                 the_person "You're making me feel the same way I did when I first fell in love... Do you want to come back to my house to share one last drink?"
                 the_person "My [so_title] won't be home until much later. I think he stays at work so late to avoid me."
 
             else:
                 the_person "I had a fantastic night [the_person.mc_title], it's been so long since my [so_title] treated me this way."
+                $ mc.change_locked_clarity(20)
                 the_person "Would you like to share one last glass of wine at my house? My [so_title] is away on business, so I would be home all alone..."
     return
 
@@ -1196,7 +1279,7 @@ label reserved_sex_review(the_person, the_report):
             mc.name "You didn't seem to mind when you were cumming your brains out."
             the_person "I just... I wasn't thinking straight. I have myself under control now."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             "[the_person.possessive_title] looks away, embarrassed by what she's done with you."
             the_person "Oh my... I'm sorry, I think I lost control of myself."
             mc.name "Hey, I'm not complaining. That was a great time."
@@ -1219,7 +1302,7 @@ label reserved_sex_review(the_person, the_report):
             the_person "I just... wasn't myself, that's all. I'm in control again."
             mc.name "If you say so, but I like you when you lose control."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Finished? That's good, I think I need to sit down. My head is still spinning."
             the_person "I didn't think I was going to... climax like that. I wasn't prepared."
             mc.name "Hopefully you will be next time."
@@ -1240,7 +1323,7 @@ label reserved_sex_review(the_person, the_report):
             "She looks away, embarassed by what you've just done."
             mc.name "Yeah, all done for now."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Ah... We're done? Right, of course. Sorry, I don't even know what I'm thinking."
             "She laughs nervously."
             the_person "I just got a little carried away, I'm, ah... I'm fine now."
@@ -1262,7 +1345,7 @@ label reserved_sex_review(the_person, the_report):
             the_person "Finished? I thought you were going to..."
             the_person "Never mind. If you're done that's fine with me."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "You're right, we should stop. I'm getting far too excited, I might do something I regret."
     return
 

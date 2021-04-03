@@ -1,3 +1,167 @@
+label tutorial_start:
+    menu:
+        "I have played Lab Rats 1 Before.":
+            "It has been a year since the end of your summer job at the university lab."
+
+
+
+        "I am new to Lab Rats.":
+            "A year ago you were a chemical engineering student, getting ready to graduate soon and looking for something to do over the summer."
+            "You ended up with a summer job on campus as a lab assistant working with a two person team."
+            "Your lab director, Nora, and her long time lab assistant Stephanie were investigating the properties of a new lab created molecule."
+            "It didn't take long before you discovered it could be used to deliver mind altering agents. You spent the summer creating doses of \"serum\" in secret."
+            "It has been a year since the end of your summer job at the university lab."
+
+    "Your experimentation with the inhibition removing serum was fun, but in the end the effects were temporary."
+    "The end of the summer also meant the end of your access to the serum making supplies."
+    "Little by litle the women slid back into into their previous lives."
+
+    scene
+    $ bedroom.show_background()
+
+    "Four months ago you graduated from university with a degree in chemical engineering."
+    "Since then you have been living at home and sending out resumes. You have had several interviews, but no job offers yet."
+    "Today you have have an interview with a small pharmacutical company. You've gotten up early and dressed in your finest suit."
+    $ hall.show_background()
+    "You head for the front door, eager to get to your interview early."
+    mom.char "[mom.mc_title], are you leaving already?"
+    "[mom.possessive_title]'s voice comes from the kitchen, along with the smell of breakfast."
+    mc.name "Yeah, I want make sure I make it on time."
+    mom.char "You haven't had any breakfast yet. You should eat, I'll drive you if you're running late."
+    "The smell of cooked toast and frying eggs wins you over and you head to the kitchen."
+    $ kitchen.show_background()
+    $ mom.draw_person(emotion = "happy", position = "back_peek")
+    "[mom.possessive_title] is at the stove and looks back at you when you come into the room."
+    mom.char "The food's almost ready. Just take a seat and I'll make you a plate."
+    mc.name "Thanks Mom, I didn't realize how hungry I was. Nerves, I guess."
+    mom.char "Don't worry, I'm sure they'll love you."
+    "She turns back and focuses her attention on her cooking. A few minutes later she presents you with a plate."
+    $ mom.draw_person(emotion = "happy")
+    mom.char "Here you go sweetheart. You look very sharp in your suit, by the way. My little boy is all grown up."
+    "You eat quickly, keeping a sharp eye on the time. When you're done you stand up and move to the front door again."
+    mc.name "Okay, I've got to go if I'm going to catch my bus. I'll talk to you later and let you know how it goes."
+    mom.char "Wait."
+    "Mom follows you to the front door. She straightens your tie and brushes some lint off of your shoulder."
+    mom.char "Oh, I should have ironed this for you."
+    mc.name "It's fine, Mom. Really."
+    mom.char "I know, I know, I'll stop fussing. Good luck sweety."
+    "She wraps her arms around you and gives you a tight hug. You hug her back then hurry out the door."
+    $ clear_scene()
+    $ downtown.show_background()
+    "It takes an hour on public transit then a short walk to find the building. It's a small single level office attached to a slightly larger warehouse style building."
+    "You pull on the door handle. It thunks loudly - locked. You try the other one and get the same result."
+    mc.name "Hello?"
+    "You pull on the locked door again, then take a step back and look around for another enterance you might have missed. You don't see any."
+    "You get your phone out and call the contact number you were given a few days earlier. It goes immediately to a generic voice mail system."
+    "With nothing left to do you give up and turn around. Suddenly there's a click and the front door to the office swings open."
+    "Janitor" "Hey, who's making all that noise?"
+    "A middle aged man is standing at the door wearing grey-brown overalls. He's holding a stack of papers in one hand and a tape gun in the other."
+    mc.name "That was me. I'm supposed to be here for a job interview, do you know where I should be going?"
+    "Janitor" "Well I think you're shit out of luck then. They went belly up yesterday. This place belongs to the bank now."
+    mc.name "What? That can't be right, I was talking to them less than a week ago."
+    "Janitor" "Here, take a look for yourself."
+    "The man, who you assume is a janitor of some sort, hands you one of the sheets of paper he's holding."
+    "It features a picture of the building along with an address matching the one you were given and a large \"FORECLOSED\" label along the top."
+    "The janitor turns around and holds a page up to the front door, then sticks it in place with tape around all four edges."
+    "Janitor" "They must have been neck deep in dept, if that makes you feel better about not working for 'em."
+    "Janitor" "They left all their science stuff behind; must've been worth less than the debt they're ditching."
+    mc.name "So everything's still in there?"
+    "Janitor" "Seems like it. Bank doesn't know where to sell it and didn't want me to warehouse it, so it goes with the property."
+    "You look back at the foreclosure notice and read until you see the listing price."
+    "The rent on the unit is expensive, but an order of magnitude less than what you would have expected a fully stocked lab to be worth."
+    mc.name "Would you mind if I take a quick look around? I promise I won't be long."
+    "The janitor gives you a stern look, judging your character, then nods and opens the door."
+    "Janitor" "I'm just about done tidying this place up so the bank can sell it. If you can be in and out in five minutes you can look around."
+    mc.name "Thank you, I'll be quick."
+    "You step inside the building and take a walk around."
+    "The main office building contains a small lab, much like the one you worked at while you were in university, suitable for research and development tasks."
+    "The connected warehouse space has a basic chemical production line installed. The machines are all off-brand but seem functional."
+    "At the back of the building is a loading dock for shipping and recieving materials."
+    "While you're exploring you hear the janitor yell from across the building."
+    "Janitor" "I need to be heading off. Are ya done in there?"
+    mc.name "Yeah, I'm done. Thanks again."
+    "The janitor locks the door when you leave. You get on a bus heading home and do some research on the way."
+    "You look up the price of some of the pieces of equipment you saw and confirm your suspicion. The bank has no idea how valuable the property really is."
+    scene
+    $ renpy.with_statement(fade)
+    $ kitchen.show_background()
+    "Three days later..."
+    $ mom.draw_person(position = "sitting")
+    "[mom.title] looks over the paperwork you've laid out. Property cost, equipment value, and potential earnings are all listed."
+    mom.char "And you've checked all the numbers?"
+    mc.name "Three times."
+    mom.char "It's just... this is a lot of money [mom.mc_title]. I would need to take a second mortgage out on the house."
+    mc.name "And I'll be able to pay for that. This is the chance of a life time Mom."
+    mom.char "What was it you said you were going to make again?"
+    mc.name "When I was working at the lab last summer we developed some prototype chemical carriers. I think they have huge commercial potential."
+    mc.name "And there's no regulation around them yet, because they're so new. I can start production and be selling them tomorrow."
+    "[mom.possessive_title] leans back in her chair and pinches the brow of her nose."
+    mom.char "Okay, you've convinced me. I'll get in touch with the bank and put a loan on the house."
+    "You jump up and throw your arms around [mom.possessive_title]. She laughs and hugs you back."
+
+    lily.char "What's going on?"
+    $ lily.draw_person()
+    "[lily.possessive_title] steps into the doorway and looks at you both."
+    $ mom.draw_person(position = "sitting")
+    mom.char "Your brother is starting a business. I'm his first +investor."
+    $ lily.draw_person(emotion = "happy")
+    lily.char "Is that what you've been excited about the last couple days? What're you actually making?"
+    mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
+    $ clear_scene()
+    "You leave [mom.possessive_title] and sister in the kitchen to talk retreat to your room for some privacy."
+
+    $ bedroom.show_background()
+    "You can manage the machinery of the lab, but you're going to need help refining the serum design from last year."
+    "You pick up your phone and call [stephanie.title]."
+    stephanie.char "Hello?"
+    mc.name "Stephanie, this is [mc.name]."
+    stephanie.char "[stephanie.mc_title]! Good to hear from you, what's up?"
+    mc.name "I'd like to talk to you about a business offer. Any chance we could meet somewhere?"
+    stephanie.char "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
+    mc.name "Done. Where's convenient for you?"
+    "Stephanie sends you the address of a bar close to the university."
+    scene
+    $ bar_location.show_background()
+    "It takes you an hour to get your pitch prepared and to get over to the bar."
+    "When you arrive [stephanie.title] is sitting at the bar with a drink already. She smiles and raises her glass."
+    $ stephanie.draw_person(position = "sitting", emotion = "happy")
+    stephanie.char "Hey [stephanie.mc_title], it's great to see you!"
+    "She she stands and gives you a hug."
+    stephanie.char "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
+    mc.name "Me too, that's actually part of what I want to talk to you about."
+    "You order a drink for yourself and sit down."
+    "You lay out your idea to [stephanie.title]: the commercial production and distribution of the experimental serum."
+    stephanie.char "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
+    mc.name "Right. Production processes are my bread and butter, but I need your help to figure out what we're actually making."
+    "Stephanie finishes off her drink and flags down the bartender for another."
+    stephanie.char "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
+    mc.name "Correct."
+    stephanie.char "Do have any clients?"
+    mc.name "Not yet. It's hard to have clients without a product."
+    "Stephanie gets her drink and sips it thoughtfully."
+    mc.name "The pay won't be great either, but I can promise..."
+    stephanie.char "I'm in."
+    mc.name "I... what?"
+    stephanie.char "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
+    stephanie.char "I think this is it."
+    "She raises her drink and smiles a huge smile."
+    stephanie.char "A toast: To us, and stupid risks!"
+    mc.name "To us!"
+    "You clink glasses together and drink."
+    stephanie.char "Ah... Okay, so I've got some thoughts already..."
+    "Stephanie grabs a napkin and starts doodling on it. You spend the rest of the night with her, drinking and talking until you have to say goodbye."
+    $ clear_scene()
+    "A week later [mom.possessive_title] has a new mortgage on the house and purchases the lab in your name."
+    "You are the sole shareholder of your own company and [stephanie.title] is first, and so far only, employee. She takes her position as your head researcher."
+    $ mc.business.event_triggers_dict["Tutorial_Section"] = True
+    #$ mc.can_skip_time = False
+    python: #To begin the tutorial we limit where people can travel!
+        for place in list_of_places:
+            place.accessable = False
+    $ lobby.accessable = True
+    return
+
+
 label lobby_tutorial_intro():
     "You arrive at your newly purchased lab building. It's small, out of date, and run down, but it's yours!"
     "You can see [stephanie.title] through the glass front door as you walk up. She turns and waves when you come in."
@@ -29,7 +193,7 @@ label research_tutorial_intro():
     stephanie "Right now I think we'll struggle to get a single property to express itself properly in our serums, but with some experience we can combined a bunch."
     mc.name "Right, I think I understand."
     "[stephanie.title] pulls out a notebook and flips it open, handing it over to you."
-    the_person "These are my first ideas, you should pick something for me to work on right now. If you change your mind you can always come back here and pick a new topic."
+    stephanie "These are my first ideas, you should pick something for me to work on right now. If you change your mind you can always come back here and pick a new topic."
     $ clear_scene()
     call research_select_action_description from _call_research_select_action_description
     $ stephanie.draw_person(emotion = "happy")

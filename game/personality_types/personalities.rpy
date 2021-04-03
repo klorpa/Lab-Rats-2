@@ -24,7 +24,7 @@ init 1299:
     # @_flirt_response - dialogue when you "chat with" and "flirt" with a girl.
     # @_cum_face - dialogue when you cum on a girls face.
     # @_cum_mouth - dialogue when you cum in a girls mouth
-    # @_suprised_exclaim - List of random exclimations used when a character is suprised.
+    # @_surprised_exclaim - List of random exclimations used when a character is surprised.
     # @_talk_busy - dialogue used when you've used "chat with" option too many times
     # @_improved_serum_unlock - dialogue used for the serum unlock head researcher event.
     # @_sex_strip - dialogue used when a girl strips for you (but she's not asking permission).

@@ -78,7 +78,7 @@ label aunt_sex_review(the_person, the_report):
             the_person "Wow, that was... intense. I didn't think you could make me feel like that!"
             "[the_person.possessive_title] seems a little embarrassed, but hides it well."
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Oh my... That was more intense than I was expecting it to be!"
             the_person "I have to admit, I got kind of carried away. I hope I haven't made you uncomfortable [the_person.mc_title]."
             mc.name "No, not at all [the_person.title]."
@@ -102,7 +102,7 @@ label aunt_sex_review(the_person, the_report):
             mc.name "I'm sure you'll repay the favour some day."
             the_person "Ha, well... We'll see, alright?"
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "That's a good idea, I think I need to take a rest too."
             the_person "That got a little more intense than I was planning. I just got caught up in the moment, I guess."
             the_person "I didn't do anything to make you uncomfortable, did I [the_person.mc_title]?"
@@ -126,7 +126,7 @@ label aunt_sex_review(the_person, the_report):
             mc.name "Finished for now, at least. That was nice [the_person.title]."
             the_person "That's good. You're welcome [the_person.mc_title]."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Oh my... that went a little furthur than I was planning, but you obviously enjoyed it!"
             the_person "Next time I should probably try and keep myself a little more in control. I don't think my sister would be very impressed by us."
 
@@ -146,7 +146,7 @@ label aunt_sex_review(the_person, the_report):
             the_person "Me? No, of course not! You were just taking it so seriously, I thought you really needed to... finish."
             the_person "Oh well, I just hope you got what you were hoping for."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Oh lord, of course we should stop. I'm sorry [the_person.mc_title], I got carried away and took this too far."
             the_person "I haven't made you uncomfortable, have I?"
             mc.name "No, of course not. That was fun."
@@ -158,6 +158,7 @@ label aunt_flirt_response_low(the_person):
     the_person "Thank you [the_person.mc_title], that's very kind of you to say."
     the_person "It's nice to know my sense of style isn't too dated."
     mc.name "Not at all, I think it's fantastic."
+    $ mc.change_locked_clarity(5)
     "She smiles and laughs."
     the_person "You better stop there or I'll drag you clothes shopping with me."
     return
@@ -170,12 +171,14 @@ label aunt_flirt_response_mid(the_person):
         "She sighs and rolls her eyes."
         the_person "I... guess it's still nice to hear though. It's been a while since anyone thought I was \"hot\"."
         mc.name "Well I'm happy to tell you that you are very, very hot [the_person.title]."
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] smiles and shrugs."
         the_person "Fine, I'm hot. Just... don't tell your mother you talk to me like this. She would think it's weird."
     else:
         the_person "Thank you! You know, it's been a long time since anyone thought I was \"hot\"."
         the_person "I didn't think it would be my own nephew who thought so, but I'll take what I can get."
         "[the_person.possessive_title] smiles and runs her hands down her hips. She hesitates for a moment, then turns around and pats her ass."
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(position = "back_peek")
         the_person "Do... Do you think my butt still looks good? I know I shouldn't ask you, but... I'm a little self-conicous and I trust you."
         mc.name "Your ass looks fantastic [the_person.title]."
@@ -218,6 +221,7 @@ label aunt_flirt_response_high(the_person):
                     mc.name "How about you just jiggle your tits for me, and that'll be all. I always want to see that."
                     the_person "That's not so bad, right?"
                     $ the_person.draw_person(the_animation = blowjob_bob)
+                    $ mc.change_locked_clarity(15)
                     "[the_person.possessive_title] grabs her own tits and jiggles them up and down, alternating between her left and right boob."
                     "She lets you watch for a few moments, then lets go and laughs self-conciously."
                     the_person "You're such a bad influence on me, you know that?"
@@ -260,6 +264,7 @@ label aunt_flirt_response_high(the_person):
                     the_person "We should still be careful. If my sister found out we talked like this I wouldn't be able to see you any more."
                     the_person "Which would also mean..."
                     $ the_person.draw_person(the_animation = blowjob_bob)
+                    $ mc.change_locked_clarity(15)
                     "She checks that nobody else is looking, then grabs her tits and jiggles them for you."
                     the_person "You wouldn't get to see these any more either. You don't want that, do you?"
                     mc.name "You make a very convincing point..."
@@ -274,6 +279,7 @@ label aunt_flirt_response_high(the_person):
             the_person "You don't want that, do you?"
             mc.name "No, of course not."
             the_person "Good. Just be a little more careful next time."
+            $ mc.change_locked_clarity(5)
             "She places a gentle hand on your shoulder and kisses you on the cheek."
     return
 
@@ -387,10 +393,10 @@ label aunt_touching_body_taboo_break(the_person):
         the_person "[the_person.mc_title], we can't be doing this..."
         mc.name "Why not? You want it too, right?"
         the_person "My sister would never talk to me again if she found out!"
-        the_person "I'm your aunt! I'm suppose to be looking after you, not letting you touch my..."
+        the_person "I'm your aunt! I'm supposed to be looking after you, not letting you touch my..."
         "She looks away and trails off, embarrassed."
         mc.name "We're both adults, we can do what we want. She never needs to know."
-        mc.name "Besides, if I can't figure all this stuff out with you how am I suppose to impress a girl when I meet one?"
+        mc.name "Besides, if I can't figure all this stuff out with you how am I supposed to impress a girl when I meet one?"
         "She hesitates for a long moment, then turns back to you and nods."
         the_person "As long as you understand it's just so you can learn. This isn't... This shouldn't go any further."
         mc.name "Okay [the_person.title]. I understand."
@@ -441,7 +447,7 @@ label aunt_touching_vagina_taboo_break(the_person):
         the_person "I am but... Oh lord, what am I saying?!"
         mc.name "It's okay, you can be honest with me. You trust me, right?"
         the_person "Of course I trust you. Fine, I'm horny."
-        mc.name "Then let me take care of you. It's only us here, it's nobody elses business what we do." #TODO: make sure it really is only them."
+        mc.name "Then let me take care of you. It's only us here, it's nobody's business what we do." #TODO: make sure it really is only them."
         the_person "This is so crazy... Alright, go ahead."
 
     else:

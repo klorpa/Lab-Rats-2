@@ -56,68 +56,68 @@ init -1 python:
         tit_bob = VrenAnimation("Tit Bob", shader.PS_ASSBOUNCE_2D, ["breasts","butt"], innate_animation_strength = 1.0, region_specific_weights = {"breasts":1,"butt":0.2})
 
 
-label draw_tests():
-    "Test starts after this statement proceeds."
-    $ mom.apply_outfit(mom.planned_outfit)
-    $ lily.apply_outfit(lily.planned_outfit)
-    $ the_group = GroupDisplayManager([aunt, mom, lily], mom)
-    python:
-        something_removed = True #Start with this True so that the first loop is always executed.
-        while something_removed:
-            something_removed = False # We end once both girls fail to remove something
-            for the_stripper in [aunt, mom, lily]:
-                next_item = the_stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                if next_item:
-                    something_removed = True
-                    the_group.draw_animated_removal(the_stripper, False, the_clothing = next_item)
-                    #renpy.say(the_stripper.title, "Removing: " + next_item.display_name) #TOOD: Remove this, it's just here for debugging purposes
-
-            print (renpy.get_showing_tags("solo", True))
-            renpy.say("","...")
-    return
-
-label draw_tests_2():
-    "Test starts after this statement proceeds."
-    $ mom.apply_outfit(mom.planned_outfit)
-    $ lily.apply_outfit(lily.planned_outfit)
-    $ the_group = GroupDisplayManager([mom, lily], mom)
-
-    $ something_removed = True
-    while something_removed:
-        $ something_removed = False
-        $ next_item = mom.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        if next_item:
-            $ something_removed = True
-            $ the_group.draw_animated_removal(mom, False, the_clothing = next_item)
-
-        $ next_item = lily.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        if next_item:
-            $ something_removed = True
-            $ the_group.draw_animated_removal(lily, False, the_clothing = next_item)
-
-        "..."
-    return
-
-label zip_test():
-    $ file_path = os.path.abspath(os.path.join(config.basedir, "game"))
-    $ test_image = renpy.display.im.ZipFileImage(file_path + "\images\character_images\stand2.zip","white_stand2_standard_body_DD.png") #TODO: test this
-    $ renpy.show(name = "Test", layer = "solo", what = test_image)
-    "Wait to see if it worked"
-    return
-
-label speed_test():
-    $ log_message("Beginning test.")
-    $ start_time = time.time()
-    $ mom.draw_person(position = "stand2")
-    $ log_message("Person one time: " + str(time.time() - start_time))
-    "..."
-    $ clear_scene()
-
-    $ start_time = time.time()
-    $ lily.draw_person(position = "stand2")
-    $ log_message("Person two time: " + str(time.time() - start_time))
-    "..."
-    $ clear_scene()
-
-    "Test Complete."
-    return
+# label draw_tests():
+#     "Test starts after this statement proceeds."
+#     $ mom.apply_outfit(mom.planned_outfit)
+#     $ lily.apply_outfit(lily.planned_outfit)
+#     $ the_group = GroupDisplayManager([aunt, mom, lily], mom)
+#     python:
+#         something_removed = True #Start with this True so that the first loop is always executed.
+#         while something_removed:
+#             something_removed = False # We end once both girls fail to remove something
+#             for the_stripper in [aunt, mom, lily]:
+#                 next_item = the_stripper.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+#                 if next_item:
+#                     something_removed = True
+#                     the_group.draw_animated_removal(the_stripper, False, the_clothing = next_item)
+#                     #renpy.say(the_stripper.title, "Removing: " + next_item.display_name) #TOOD: Remove this, it's just here for debugging purposes
+#
+#             print (renpy.get_showing_tags("solo", True))
+#             renpy.say("","...")
+#     return
+#
+# label draw_tests_2():
+#     "Test starts after this statement proceeds."
+#     $ mom.apply_outfit(mom.planned_outfit)
+#     $ lily.apply_outfit(lily.planned_outfit)
+#     $ the_group = GroupDisplayManager([mom, lily], mom)
+#
+#     $ something_removed = True
+#     while something_removed:
+#         $ something_removed = False
+#         $ next_item = mom.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+#         if next_item:
+#             $ something_removed = True
+#             $ the_group.draw_animated_removal(mom, False, the_clothing = next_item)
+#
+#         $ next_item = lily.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+#         if next_item:
+#             $ something_removed = True
+#             $ the_group.draw_animated_removal(lily, False, the_clothing = next_item)
+#
+#         "..."
+#     return
+#
+# label zip_test():
+#     $ file_path = os.path.abspath(os.path.join(config.basedir, "game"))
+#     $ test_image = renpy.display.im.ZipFileImage(file_path + "\images\character_images\stand2.zip","white_stand2_standard_body_DD.png") #TODO: test this
+#     $ renpy.show(name = "Test", layer = "solo", what = test_image)
+#     "Wait to see if it worked"
+#     return
+#
+# label speed_test():
+#     $ log_message("Beginning test.")
+#     $ start_time = time.time()
+#     $ mom.draw_person(position = "stand2")
+#     $ log_message("Person one time: " + str(time.time() - start_time))
+#     "..."
+#     $ clear_scene()
+#
+#     $ start_time = time.time()
+#     $ lily.draw_person(position = "stand2")
+#     $ log_message("Person two time: " + str(time.time() - start_time))
+#     "..."
+#     $ clear_scene()
+#
+#     "Test Complete."
+#     return

@@ -88,6 +88,7 @@ label view_dikdok(the_person):
                 $ the_person.draw_person()
                 "[the_person.possessive_title] is standing in front of her bedroom mirror, and showing off her body."
                 the_person "Here's a look at a new set I found recently!"
+                $ mc.change_locked_clarity(10)
                 "She turns around to show off her butt."
                 $ the_person.draw_person(position = "back_peek")
                 the_person "It's cute, right? Hope you liked it!"
@@ -99,8 +100,10 @@ label view_dikdok(the_person):
                 "[the_person.possessive_title] is holding her phone out and filming herself as she jogs down a residental street."
                 the_person "Hey crew, I'm keeping fit and focusing on my health. Come on a run with me!"
                 if the_person.has_large_tits():
+                    $ mc.change_locked_clarity(10)
                     "She keeps the camera focused on herself as she runs, her big tits bouncing in and out of frame as she goes."
                 else:
+                    $ mc.change_locked_clarity(5)
                     "She keeps the camera focused on herself as she runs."
                 $ the_person.apply_outfit()
                 $ clear_scene()
@@ -111,6 +114,7 @@ label view_dikdok(the_person):
                 "[the_person.possessive_title] is on her knees, and still propping up her phone when the video starts."
                 "Music kicks in, and she spins around to point her ass at you."
                 $ the_person.draw_person(position = "doggy", the_animation = ass_bob, animation_effect_strength = 0.4)
+                $ mc.change_locked_clarity(10)
                 "[the_person.title] starts to twerk to the beat, bouncing her hips to jiggle her ass."
                 "As the music picks up she starts to move her hips faster and faster."
                 $ the_person.draw_person(position = "doggy", the_animation = ass_bob, animation_effect_strength = 0.6)
@@ -121,6 +125,7 @@ label view_dikdok(the_person):
                 $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
                 $ the_person.draw_person(position = "kneeling1")
                 the_person "Hey crew, it's me again. Today I'm showing off some lingerie I just bought..."
+                $ mc.change_locked_clarity(15)
                 if the_person.has_large_tits():
                     $ the_person.draw_person(position = "kneeling1", the_animation = tit_bob, animation_effect_strength = 0.5)
                     "She pinches her arms together and jiggles her tits for the camera."
@@ -138,11 +143,13 @@ label view_dikdok(the_person):
             if rand_num == 0: # Short JOI in some lingerie.
                 $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
                 $ the_person.draw_person(position = "kneeling1", the_animation = tit_bob, animation_effect_strength = 0.3)
-                "[the_person.title] is kneeling in front of her phone, looking directly intothe camera."
+                "[the_person.title] is kneeling in front of her phone, looking directly into the camera."
                 the_person "We all know why you're here, so let's get down to it."
+                $ mc.change_locked_clarity(10)
                 "She bites her lip sensually and leans forward a little, accentuating her breasts."
                 the_person "I want you to take your cock out and stroke it for me. Jerk off that nice big cock for me."
                 "She mimes a handjob motion slowly with one hand."
+                $ mc.change_locked_clarity(10)
                 the_person "It's such a nice dick, I want to feel it in my mouth. Does that sound nice? Keep jerking off."
                 "[the_person.possessive_title] licks her lips slowly and pulls teasingly at her underwear."
                 the_person "Oh, looks like we're out of time for today. We'll have to finish this up next time. See you around."
@@ -162,6 +169,7 @@ label view_dikdok(the_person):
                     $ generalised_strip_description(the_person, strip_list, half_off_instead = True)
                 else:
                     $ generalised_strip_description(the_person, strip_list)
+                $ mc.change_locked_clarity(20)
                 the_person "Ooops! I guess you'll just have to report me for being so naughty!"
                 "She bites her lip and winks at the camera."
                 the_person "See you all next time!"
@@ -174,7 +182,8 @@ label view_dikdok(the_person):
                 "She reaches off screen and comes back holding a dildo. She looks into the camera again and pouts innocently."
                 "After a moment of fake hesitation she opens her mouth and starts to suck on the tip."
                 $ the_person.draw_person(position = "kneeling1", the_animation = blowjob_bob, animation_effect_strength = 0.4)
-                "[the_person.possessive_title] sucks on the fake dick, working it furthur and furthur into her mouth in time with the music."
+                "[the_person.possessive_title] sucks on the fake dick, working it furthur and further into her mouth in time with the music."
+                $ mc.change_locked_clarity(20)
                 "Soon she's taken it as deep as she can manage. She flutters her eyes and pulls the toy out, letting the wet toy trail spit down between her cleavage."
                 "She waves goodbye with a free hand, then reaches towards her phone and ends the video."
                 $ the_person.apply_outfit()
@@ -185,6 +194,8 @@ label view_dikdok(the_person):
                 "[the_person.title] is dancing for the camera to some upbeat music."
                 "After a few seconds of dancing she hops into the air and..."
                 $ the_person.outfit.strip_to_underwear()
+                $ the_person.draw_person()
+                $ mc.change_locked_clarity(20)
                 if the_person.outfit.tits_visible() or the_person.outfit.vagina_visible():
                     "... is suddenly naked! She pretends to be embarrassed for a second, then shrugs and goes back to dancing for the camera."
                 else:

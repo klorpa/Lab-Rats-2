@@ -74,6 +74,7 @@ label mom_outfit_help_crisis_label():
                 while strip_choice is not None and not caught:
                     $ the_person.draw_animated_removal(strip_choice)
                     "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
+                    $ mc.change_locked_clarity(5)
                     if renpy.random.randint(0,100) < 10: #you got caught
                         the_person "I'll be done in just a second [the_person.mc_title]..."
                         "Her eyes glance at the mirror you're using to watch her. You try to look away, but your eyes meet."
@@ -111,7 +112,7 @@ label mom_outfit_help_crisis_label():
         "[the_person.possessive_title] starts to strip down in front of you."
         $ strip_list = the_person.outfit.get_full_strip_list()
         $ generalised_strip_description(the_person, strip_list)
-
+        $ mc.change_locked_clarity(10)
         "Once she's stripped naked she grabs her new outfit and starts to put it on."
         if the_person.update_outfit_taboos(): #Some taboo was broken.
             the_person "I should probably have told you to look away, but you don't mind, right?"
@@ -178,6 +179,7 @@ label mom_outfit_help_crisis_label():
                 while strip_choice is not None and not caught:
                     $ the_person.draw_animated_removal(strip_choice)
                     "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
+                    $ mc.change_locked_clarity(5)
                     if renpy.random.randint(0,100) < 10: #you got caught
                         the_person "I'll be done in just a second [the_person.mc_title]..."
                         "Her eyes glance at the mirror you're using to watch her. You try to look away, but your eyes meet."
@@ -215,6 +217,7 @@ label mom_outfit_help_crisis_label():
         "[the_person.possessive_title] starts to strip down in front of you."
         $ strip_list = the_person.outfit.get_full_strip_list()
         $ generalised_strip_description(the_person, strip_list)
+        $ mc.change_locked_clarity(10)
         "Once she's stripped naked she grabs another outfit and starts to put it on."
 
     $ the_person.apply_outfit(second_outfit, update_taboo = True)
@@ -273,6 +276,7 @@ label mom_outfit_help_crisis_label():
                             while strip_choice is not None and not caught:
                                 $ the_person.draw_animated_removal(strip_choice)
                                 "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
+                                $ mc.change_locked_clarity(5)
                                 if renpy.random.randint(0,100) < 10: #you got caught
                                     the_person "I'll be done in just a second [the_person.mc_title]..."
                                     "Her eyes glance at the mirror you're using to watch her. You try to look away, but your eyes meet."
@@ -310,6 +314,7 @@ label mom_outfit_help_crisis_label():
                     "[the_person.possessive_title] starts to strip down in front of you."
                     $ strip_list = the_person.outfit.get_full_strip_list()
                     $ generalised_strip_description(the_person, strip_list)
+                    $ mc.change_locked_clarity(10)
                     "Once she's stripped naked she grabs another outfit and starts to put it on."
 
                 $ the_person.apply_outfit(third_outfit, update_taboo = True)
@@ -347,6 +352,7 @@ label mom_lingerie_surprise_label():
     $ the_person.draw_person(position = "stand4")
     the_person "I'm sorry to wake you up [the_person.mc_title], but I wanted to ask you something."
     "[the_person.possessive_title] is standing by the door, wearing some very revealing lingerie. She walks over to your bed and sits down beside you."
+    $ mc.change_locked_clarity(20)
     $ the_person.draw_person(position = "sitting")
     mc.name "What did you want to ask?"
     the_person "I know you've been busy with work, and I'm very pround, but sometimes I worry you're not having your needs met."
@@ -359,19 +365,22 @@ label mom_lingerie_surprise_label():
             "[the_person.possessive_title] smiles and bounces slightly on your bed."
             if the_person.effective_sluttiness() < 50:
                 the_person "Excellent! Now you just pretend that I'm... your highschool sweetheart, and that we aren't related. Okay?"
+                $ mc.change_locked_clarity(10)
 
             elif the_person.effective_sluttiness() < 80:
                 the_person "Excellent! Don't think of me as your mother, just think of me as a sexy mom from down the street. I'm a real milf, okay?"
+                $ mc.change_locked_clarity(20)
 
             else:
-                the_person "Excellent! Now don't think of me as your mom, just think of me as your private, slutty milf. I'll do wahtever your cock wants me to do, okay?"
+                the_person "Excellent! Now don't think of me as your mom, just think of me as your private, slutty milf. I'll do whatever your cock wants me to do, okay?"
+                $ mc.change_locked_clarity(40)
             "You nod and she slides closer to you on the bed."
 
             $ the_person.add_situational_obedience("crisis_stuff", 25, "I'm doing it for my family.")
             call fuck_person(the_person) from _call_fuck_person_14
             $ the_report = _return
             if the_report.get("girl orgasms", 0):
-                "[the_person.possessive_title] needs a few minutes to lie down when you're finished. Bit by bit her breathing slows down."
+                "[the_person.possessive_title] needs a few minutes to lie down when you're finished. Bit by bit her breathing returns to normal."
                 $ the_person.change_love(5)
                 the_person "Oh [the_person.mc_title], that was magical. I've never felt so close to you before..."
 
@@ -445,6 +454,7 @@ label mom_selfie_label():
             "You get a selfie from [the_person.possessive_title]. She's on her knees, mouth open wide."
             the_person "My mouth is yours to use however you want [the_person.mc_title]."
             the_person "It's my duty to take care of you, so grab and use it whenever you want."
+        $ mc.change_locked_clarity(30)
 
     elif lowest_stat >= 80:
         #Both are high. Sends you slutty selfies and talks about how she wants to fuck you. Sends them from work, etc.
@@ -473,6 +483,8 @@ label mom_selfie_label():
                 the_person "I know it shouldn't, but thinking about you gets me so wet. You've made me a new woman [the_person.mc_title]."
             else:
                 the_person "I'm at work and stuck at my desk but I can't get you out of my head. I'm so wet, I wonder if anyone would notice if I touched myself..."
+
+        $ mc.change_locked_clarity(20)
 
     elif lowest_stat >= 60:
         #Sends you nudes and talks about how she'll help you blow off steam later.
@@ -539,6 +551,8 @@ label mom_selfie_label():
                 the_person "Oh well, at least I know you appreciate it. I need to get back to work, see you at dinner!"
             $ the_person.update_outfit_taboos()
 
+        $ mc.change_locked_clarity(20)
+
     elif lowest_stat >= 40:
         #Sends you teasing pictures (ie. no shirt or something) and talks about how much she loves you.
         $ ran_num = renpy.random.randint(0,2) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
@@ -591,6 +605,8 @@ label mom_selfie_label():
                     the_person "I don't mind you seeing them though, just don't go sharing that video with your friends!"
                     $ the_person.break_taboo("bare_tits")
 
+        $ mc.change_locked_clarity(15)
+
     elif lowest_stat >= 20:
         #Sends you normal texts but talks about wanting to get away to talk to you instead
         $ ran_num = renpy.random.randint(0,4) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
@@ -623,6 +639,7 @@ label mom_selfie_label():
             if not the_person.outfit.wearing_bra() and the_person.has_large_tits():
                 "She doesn't seem to realise, but it's very obvious [the_person.possessive_title] isn't wearing a bra under her top."
                 "Her sizeable breasts heave up and down with each step."
+                $ mc.change_locked_clarity(10)
 
     else:
         #Sends you normal motherly texts.
@@ -655,7 +672,7 @@ init 1 python:
 
 label mom_morning_surprise_label():
     $ the_person = mom
-    if the_person.effective_sluttiness() < 50:
+    if the_person.effective_sluttiness() < 30:
         the_person "[the_person.mc_title], it's time to wake up."
         "You're woken up by the gentle voice of your mother. You struggle to open your eyes and find her sitting on the edge of your bed."
         $ the_person.draw_person(position="sitting")
@@ -675,6 +692,7 @@ label mom_morning_surprise_label():
             the_person "No, it's perfectly natural. I'll give you some privacy."
             $ the_person.change_slut_temp(2)
             "She takes one last glance at you then hurries from the room."
+            $ mc.change_locked_clarity(5)
             $ clear_scene()
             "You get up and ready, hurrying a little to make up for lost time."
         else:
@@ -683,6 +701,7 @@ label mom_morning_surprise_label():
             mc.name "Oh, sorry about that."
             the_person "No, it's perfectly natural and nothing to be embarrassed about."
             $ the_person.change_slut_temp(3)
+            $ mc.change_locked_clarity(5)
             "She stares at it for a short moment before pulling her eyes back up to meet yours."
             the_person "Certainly nothing to be embarrassed, but I think you should take care of it before you leave."
             "[the_person.possessive_title] turns around and starts rifling through your closet."
@@ -695,6 +714,7 @@ label mom_morning_surprise_label():
                     the_person "Anything to help you succeed."
                     $ the_person.draw_person(position = "back_peek")
                     "She wiggles her butt, then turns her attention back to putting together an outfit for you."
+                    $ mc.change_locked_clarity(5)
                     "You keep jerking yourself off, pulling yourself closer and closer to orgasm."
                     "You're getting close when [the_person.possessive_title] turns around and walks back towards your bed with a handful of clothes."
                     the_person "I think you'll look really cute in this. Are you almost done [the_person.mc_title]?"
@@ -703,62 +723,110 @@ label mom_morning_surprise_label():
                             mc.name "I'm so close. Get on your knees Mom."
                             the_person "If... if that's what you need to finish."
                             $ the_person.draw_person(position = "blowjob")
-                            menu:
-                                "Order her to open her mouth." if the_person.obedience >= 140:
-                                    mc.name "Open your mouth Mom."
-                                    the_person "[the_person.mc_title], I don't think..."
-                                    mc.name "I'm so close Mom, open your mouth!"
-                                    "She hesitates for a split second, then closes her eyes and opens her mouth."
-                                    $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
-                                    "Seeing [the_person.possessive_title] presenting herself for you pushes you past the point of no return."
-                                    $ the_person.cum_in_mouth()
-                                    $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
-                                    "You slide forward a little, place the tip of your cock on her bottom lip, and start to fire your load into her mouth."
-                                    "[the_person.possessive_title] stays perfectly still while you cum. When you're done you sit back and sigh."
+                            $ climax_options = []
+                            if the_person.obedience >= 140:
+                                $ climax_options.append(["Order her to open her mouth.","mouth"])
+                            else:
+                                $ climax_options.append(["Order her to open her mouth.\nRequires: 140 Obedience (disabled)", "mouth"])
+
+                            if the_person.has_large_tits():
+                                $ climax_options.append(["Order her to hold up her tits.","tits"])
+
+                            $ climax_options.append(["Cum all over her.", "body"])
+                            $ climax_controller = ClimaxController(*climax_options)
+                            $ the_choice = climax_controller.show_climax_menu()
+                            if the_choice == "Order her to open her mouth.":
+                                mc.name "Open your mouth Mom."
+                                the_person "[the_person.mc_title], I don't think..."
+                                mc.name "I'm so close Mom, open your mouth!"
+                                "She hesitates for a split second, then closes her eyes and opens her mouth."
+                                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
+                                "Seeing [the_person.possessive_title] presenting herself for you pushes you past the point of no return."
+                                $ the_person.cum_in_mouth()
+                                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
+                                "You slide forward a little, place the tip of your cock on her bottom lip, and start to fire your load into her mouth."
+                                $ climax_controller.do_clarity_release(the_person)
+                                "[the_person.possessive_title] stays perfectly still while you cum. When you're done you sit back and sigh."
+                                if the_person.get_opinion_score("drinking cum") > 0:
+                                    "[the_person.title] turns her head away from you, avoiding your eyes as she quietly swallows your cum."
+                                    $ mc.change_locked_clarity(10)
+                                else:
                                     "[the_person.title] turns away and spits your cum out into her hand. She takes a long while to say anything."
-                                    the_person "I don't... That wasn't what we should do [the_person.mc_title]."
-                                    mc.name "You were just being a loving mother and doing what I asked. That was amazing."
-                                    $ the_person.change_obedience(5)
-                                    $ the_person.change_slut_temp(5)
-                                    "I... I don't know. Just don't tell anyone, okay?"
-                                    mc.name "Of course, I promise Mom."
-                                    $ the_person.draw_person()
-                                    "She stands up and heads for the door."
-                                    the_person "Well hurry up at least and get dressed, I don't want you to be late after all that!"
+                                the_person "I don't... That wasn't what we should do [the_person.mc_title]."
+                                mc.name "You were just being a loving mother and doing what I asked. That was amazing."
+                                $ the_person.change_obedience(5)
+                                $ the_person.change_slut_temp(5)
+                                "I... I don't know. Just don't tell anyone, okay?"
+                                mc.name "Of course, I promise [the_person.title]."
+                                $ the_person.draw_person()
+                                "She stands up and heads for the door."
+                                the_person "Well hurry up at least and get dressed, I don't want you to be late after all that!"
 
-                                "Order her to open her mouth.\nRequires: 140 Obedience (disabled)" if the_person.obedience < 140:
-                                    pass
-
-                                "Order her to hold up her tits." if the_person.has_large_tits():
+                            elif the_choice == "Order her to hold up her tits.":
+                                if the_person.outfit.tits_visible():
                                     mc.name "Hold up your tits, I'm going to cum!"
                                     "[the_person.possessive_title] mumbles something but does as she's told. She cups her large breasts in her hands and presents them in front of you."
-                                    "You grunt and climax, firing your load out and right onto [the_person.possessive_title]'s chest."
-                                    $ the_person.cum_on_tits()
-                                    #TODO: have more clothing aware stuff here
-                                    the_person "I... Oh [the_person.mc_title], I don't think I should have let you do that."
-                                    $ the_person.draw_person()
-                                    mc.name "It's okay Mom, you were just being a loving mother and doing what I asked."
-                                    $ the_person.change_obedience(3)
-                                    $ the_person.change_slut_temp(5)
-                                    the_person "Maybe you're right... Now hurry up and get dressed before you're late!"
-                                    # TODO: She should seem a little shocked, but otherwise okay with how things turned out
+                                else:
+                                    mc.name "Quick, get your tits out [the_person.title]!"
+                                    "She seems uncomfortable but is swept along with the urgency of the moment."
+                                    if the_person.outfit.can_half_off_to_tits():
+                                        $ strip_list = the_person.outfit.get_half_off_to_tits_list()
+                                        $ generalised_strip_description(the_person, strip_list, half_off_instead = True, position = "blowjob")
+                                    else:
+                                        $ strip_list = the_person.outfit.get_tit_strip_list()
+                                        $ generalised_strip_description(the_person, strip_list, position = "blowjob")
+                                    $ mc.change_locked_clarity(10)
+                                    "[the_person.possessive_title] scoops up her large breasts and holds them up, presenting them to you just in time."
+
+                                "You grunt and climax, firing your load out and right onto [the_person.possessive_title]'s chest."
+                                $ the_person.cum_on_tits()
+                                $ climax_controller.do_clarity_release(the_person)
+                                the_person "I... Oh [the_person.mc_title], I don't think I should have let you do that."
+                                $ the_person.draw_person()
+                                mc.name "It's okay Mom, you were just being a loving mother and doing what I asked."
+                                $ the_person.change_obedience(3)
+                                $ the_person.change_slut_temp(5)
+                                "She smiles, seemingly proud of the compliment."
+                                the_person "Maybe you're right... Now hurry up and get dressed before you're late!"
+
+                            elif the_choice == "Cum all over her.":
+                                mc.name "Fuck, here I cum! Stay right there!"
+                                "[the_person.title] mumbles something, perhaps a half hearted objection, but turns her head and stays still in front of you."
+                                "You grunt and climax, firing your load in an arc over [the_person.possessive_title]'s body."
+                                $ climax_controller.do_clarity_release(the_person)
+                                "She flinches as the first few drops of cum land on her."
+                                $ the_person.change_obedience(2)
+                                $ the_person.change_slut_temp(2)
+                                the_person "Oh! Oh..."
+                                "You take a few seconds to catch your breath. [the_person.title] starts to hunt down and wipe at the drops of sperm you've sprinkled all over her."
+                                the_person "Maybe that was... going too far."
+                                mc.name "I needed it so badly though [the_person.title]. Thank you."
+                                $ the_person.draw_person()
+                                "She stands up and heads for the door."
+                                the_person "You're welcome. Now hurry up and get dressed. I don't want you to be late after all of that!"
+
 
                         "Order her to get on her kness.\nRequires: 130 Obedience (disabled)" if the_person.obedience < 130:
                             pass
 
                         "Climax.":
                             "Knowing that [the_person.possessive_title] is just a step away watching you stroke your cock and waiting for you to cum pushes you over the edge."
+                            $ climax_controller = ClimaxController(["Cum!","air"])
+                            $ climax_controller.show_climax_menu()
                             "You grunt and climax, firing your load out in an arc. [the_person.title] gasps softly and watches it fly, looks away."
+                            $ climax_controller.do_clarity_release(the_person)
                             the_person "Well done. I'll make sure to clean that up while you're out today."
-                            "She leans over and kisses you on the forehead."
+                            $ mc.change_locked_clarity(5)
+                            "She leans over and kisses you on the forehead while you're still catching your breath."
                             the_person "Now get dressed or you'll be late for work."
                             $ clear_scene()
                             "[the_person.possessive_title] leaves and you get dressed as quickly as you can manage."
 
                 "Ask her to leave.":
-                    mc.name "I think it will take care of itself Mom. Thanks for hte offer but I can pick out my own outfit."
+                    mc.name "I think it will take care of itself Mom. Thanks for the offer but I can pick out my own outfit."
                     the_person "Oh, okay [the_person.mc_title]. Just make sure don't give any of those nice girls you work with a shock when you walk in."
                     $ the_person.draw_person()
+                    $ mc.change_locked_clarity(5)
                     "She turns back to you and gives you a hug and a kiss. Her eyes continue to linger on your crotch."
                     $ clear_scene()
                     "When she leaves you get dressed as quickly as you can, rushing to make up for lost time."
@@ -774,7 +842,7 @@ label mom_morning_surprise_label():
             the_person "If you want me to stop, just tell me. We never need to talk about this again, okay!"
             the_person "Actually, I should just go. This is a mistake. What am I doing?"
             "[the_person.possessive_title] starts to stand up, but you grab her wrist and pull her back. You guide her hand back to your cock."
-            mc.name "It's okay [the_person.title], I was liking it. This is a really nice suprise."
+            mc.name "It's okay [the_person.title], I was liking it. This is a really nice surprise."
             "She nods happily and speeds up her strokes, settling back down on the bed beside you."
             $ the_person.break_taboo("touching_penis")
         else:
@@ -784,24 +852,34 @@ label mom_morning_surprise_label():
         mc.name "Right, of course. Thanks Mom."
         "You lie back, relax, and enjoy the feeling of your mothers hand caressing your hard shaft."
         the_person "Anything for you [the_person.mc_title], I just want to make sure you're happy and successful."
-        "After a few minutes you can feel your orgasm starting to build. Mom rubs your precum over your shaft and keeps stroking."
-        menu:
-            "Order her to take your cum in her mouth." if the_person.obedience >= 130:
-                mc.name "I'm almost there Mom, I need to cum in your mouth."
-                $ the_person.change_obedience(5)
-                "She nods and leans over, stroking your cock faster and faster as she places the tip just inside her mouth."
-                "The soft touch of her lips pushes you over the edge. You gasp and climax, shooting your hot load into [the_person.possessive_title]'s waiting mouth."
-                $ the_person.cum_in_mouth()
+        "After a few minutes you can feel your orgasm starting to build. [the_person.title] rubs your precum over your shaft and keeps stroking."
+        $ climax_options = []
+        if the_person.obedience >= 130:
+            $ climax_options.append(["Order her to take your cum in her mouth.","mouth"])
+        else:
+            $ climax_options.append(["Order her to take your cum in her mouth.\nRequires: 130 Obedience (disabled)","mouth"])
+
+        $ climax_options.append(["Cum!","air"])
+        $ climax_controller = ClimaxController(*climax_options)
+        $ the_choice = climax_controller.show_climax_menu()
+        if the_choice == "Order her to take your cum in her mouth.":
+            mc.name "I'm almost there Mom, I need to cum in your mouth."
+            $ the_person.change_obedience(5)
+            "She nods and leans over, stroking your cock faster and faster as she places the tip just inside her mouth."
+            $ climax_controller.do_clarity_release(the_person)
+            "The soft touch of her lips pushes you over the edge. You gasp and climax, shooting your hot load into [the_person.possessive_title]'s waiting mouth."
+            $ the_person.cum_in_mouth()
+            if the_person.get_opinion_score("drinking cum") > 0:
+                "[the_person.title] pulls back off of your cock slowly. She turns her head away and discretely swallows your cum."
+            else:
                 "[the_person.title] pulls back off your cock slowly. She spits your cum out into her hand and straightens up."
 
-            "Order her to take your cum in her mouth.\nRequires: 130 Obedience (disabled)" if the_person.obedience<130:
-                pass
-
-            "Climax":
-                mc.name "I'm almost there Mom, keep going!"
-                "She nods and strokes your dick as fast as she can manage, pusing you over the edge."
-                "You grunt and fire your hot load into up into the air. It falls back down onto your stomach and [the_person.possessive_title]'s hand."
-                "Mom strokes you slowly for a few seconds, then lets go and places her hand on her lap while you take a second to recover."
+        elif the_choice == "Cum!":
+            mc.name "I'm almost there Mom, keep going!"
+            "She nods and strokes your dick as fast as she can manage, pusing you over the edge."
+            $ climax_controller.do_clarity_release(the_person)
+            "You grunt and fire your hot load into up into the air. It falls back down onto your stomach and [the_person.possessive_title]'s hand."
+            "Mom strokes you slowly for a few seconds, then lets go and places her hand on her lap while you take a second to recover."
 
         the_person "Whew, that was a lot. I hope that leaves you feeling relaxed for the rest of the day."
         "She leans forward and kisses you on the forehead."
@@ -818,6 +896,7 @@ label mom_morning_surprise_label():
         #TODO: image a lying down blowjob pose
         "You're slowly awoken by a strange, pleasant sensation. When you open your eyes it takes a moment to realise you aren't still dreaming."
         $ the_person.draw_person(position = "blowjob")
+        $ mc.change_locked_clarity(20)
         "[the_person.possessive_title] is lying face down between your legs, gently sucking off your morning wood."
         "She notices you waking up and pulls off of your cock to speak."
         if the_person.has_taboo("sucking_cock"):
@@ -831,18 +910,22 @@ label mom_morning_surprise_label():
             the_person "Good morning [the_person.mc_title]. I noticed your alarm hadn't gone off and came in to wake you up..."
             "She licks your shaft absentmindedly."
             the_person "And saw this. I thought this would be a much nicer way of waking you up."
-            mc.name "That feels great Mom."
+            mc.name "That feels great [the_person.title]."
             $ the_person.change_happiness(5)
         "She smiles up at you, then lifts her head and slides your hard dick back into her mouth."
         "You lie back and enjoy the feeling of [the_person.possessive_title] sucking you off."
         $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
+        $ mc.change_locked_clarity(20)
         "For several minutes the room is quiet save for a soft slurping sound each time [the_person.title] slides herself down your shaft."
         "You rest a hand on the back of her head as you feel your orgasm start to build, encouraging her to go faster and deeper."
         mc.name "I'm almost there Mom, keep going!"
         "She mumbles out an unintelligible response and keeps sucking your cock."
+        $ climax_controller = ClimaxController(["Cum in her mouth!","mouth"])
+        $ climax_controller.show_climax_menu()
         "You arch your back and grunt as you climax, firing a shot of cum into [the_person.possessive_title]'s mouth."
         $ the_person.cum_in_mouth()
         $ the_person.draw_person(position = "blowjob")
+        $ climax_controller.do_clarity_release(the_person)
         "She pulls back until the tip of your cock is just inside her lips and holds there, collecting each new spurt of semem until you're completely spent."
         "When you're done she pulls up and off, keeping her lips tight to avoid spilling any onto you."
         menu:
@@ -872,7 +955,7 @@ label mom_morning_surprise_label():
     else:
         # First we need to take her and remove enough clothing that we can get to her vagina, otherwise none of this stuff makes sense.
         # We do that by getting her lowest level pieces of bottom clothing and removing it, then working our way up until we can use her vagina.
-        # This makes sure skirts are kept on (because this is suppose to be a quicky).
+        # This makes sure skirts are kept on (because this is supposed to be a quicky).
         $ bottom_list = the_person.outfit.get_lower_ordered()
         $ removed_something = False
         $ the_index = 0
@@ -882,8 +965,10 @@ label mom_morning_surprise_label():
             $ the_index += 1
         "You're woken up by your bed shifting under you and a sudden weight around your waist."
         $ the_person.draw_person(position = "cowgirl", emotion = "happy")
+        $ mc.change_locked_clarity(25)
         "[the_person.possessive_title] has pulled down your sheets and underwear and is straddling you. The tip of your morning wood is brushing against her pussy."
         the_person "Good morning [the_person.mc_title]. I didn't hear your alarm go off and when I came to check on you I noticed this..."
+        $ mc.change_locked_clarity(5)
         "She grinds her hips back and forth, rubbing your shaft along the lips of her cunt."
         the_person "Would you like me to take care of this for you?"
         menu:
@@ -958,15 +1043,18 @@ label lily_new_underwear_crisis_label():
         "Your bedroom door opens and [the_person.possessive_title] steps in. She's carrying a shopping bag in one hand."
     else:
         "There's a single knock at your bedroom door before it's opened up. [the_person.possessive_title] steps in, carrying a shopping bag in one hand."
+
     $ the_person.draw_person(emotion = "happy")
     if the_underwear.get_underwear_slut_score() < 10:
         the_person "This is a little awkward, but I picked up some new underwear at the mall today but I don't know if I like the way it looks."
         the_person "Would you take a look and let me know what you think?"
     elif the_underwear.get_underwear_slut_score() < 20:
         the_person "I was at the mall today and picked up some new underwear. I know Mom would say it's too skimpy, but I wanted a guys opinion."
+        $ mc.change_locked_clarity(5)
         the_person "Would you let me try it on and tell me what you think?"
     else:
         the_person "I was at the mall today and picked up some lingerie. I was hoping you'd let me model it for you and tell me what you think."
+        $ mc.change_locked_clarity(10)
 
     menu:
         "Take a look at [the_person.title]'s new underwear.":
@@ -990,6 +1078,7 @@ label lily_new_underwear_crisis_label():
                 the_person "Here we go. What do you think?"
             $ the_person.draw_person(emotion="happy", position = "back_peek")
             "She turns around to give you a good look from behind."
+            $ mc.change_locked_clarity(10)
             menu:
                 "She looks beautiful.": #Raises love
                     mc.name "You look beautiful [the_person.title]. You're a heartstopper."
@@ -1058,18 +1147,18 @@ label lily_morning_encounter_label():
     $ the_person = lily
     if the_person.effective_sluttiness() >= 60:
         $ the_person.apply_outfit(Outfit("Nude"))
-        # $ the_person.outfit = default_wardrobe.get_outfit_with_name("Nude 1") #If sh's very slutty she doesn't mind being naked. Chnaged v0.24.1
     else:
         $ the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True))
-        # $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True) # Otherwise get an underwear set she would wear. changed v0.24.1
 
     "You wake up in the morning to your alarm. You get dressed and leave your room to get some breakfast."
     $ the_person.draw_person()
     if the_person.outfit.wearing_panties():
+        $ mc.change_locked_clarity(5)
         "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, wearing nothing but her underwear."
-    else:
-        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completeley naked."
 
+    else:
+        $ mc.change_locked_clarity(10)
+        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completeley naked."
 
     if the_person.effective_sluttiness("underwear_nudity") < 10:
         #She's startled and embarrassed.
@@ -1091,6 +1180,7 @@ label lily_morning_encounter_label():
             "She starts to walk alongside you and doesn't seem to mind being in her underwear."
         else:
             "She starts to walk alongside you and doesn't seem to mind being naked."
+        $ mc.change_locked_clarity(5)
         $ the_person.update_outfit_taboos()
         the_person "I'm just up to get some laundry. I put some in last night."
         "You let [the_person.title] get a step ahead of you so you can look at her ass."
@@ -1115,7 +1205,8 @@ label lily_morning_encounter_label():
                 mc.name "I'll stop gawking when you stop shaking that ass."
                 $ the_person.draw_person(position = "back_peek")
                 the_person "You wish this ass was for you."
-                "She spanks herself lightly and winks at you."
+                $ mc.change_locked_clarity(5)
+                "She taps her butt playfully and winks at you."
                 $ the_person.change_slut_temp(4)
                 $ the_person.change_obedience(2)
 
@@ -1130,10 +1221,13 @@ label lily_morning_encounter_label():
         the_person "I was just going to get some laundry out of the machine."
         if the_person.outfit.wearing_panties():
             "[the_person.possessive_title] thumbs her underwear playfully."
+            $ mc.change_locked_clarity(5)
         else:
             "[the_person.possessive_title] absentmindedly runs her hands over her hips."
+            $ mc.change_locked_clarity(10)
+
         $ the_person.update_outfit_taboos()
-        the_person "I know you like it when I walk around naked but Mom doesn't. At least when I'm doing laundry I have an excuse."
+        the_person "I know you like it when I walk around naked, but Mom doesn't. At least when I'm doing laundry I have an excuse."
         "You join her as she starts to walk down the hall."
         $ the_person.draw_person(position = "walking_away")
         menu:
@@ -1148,6 +1242,7 @@ label lily_morning_encounter_label():
                     "You spank her butt and she moans again. You work your hand down between her legs from behind and run a finger along her slit."
                     the_person "Fuck, please don't get me too wet. I don't want to have to explain that to Mom if she finds us."
                     "You flick your finger over [the_person.possessive_title]'s clit, then slide your hand back and kneed her ass some more."
+                    $ mc.change_locked_clarity(20)
                 $ the_person.change_slut_temp(5)
                 $ the_person.change_love(2)
                 "When you reach the kitchen [the_person.title] reluctantly pulls away from you."
@@ -1165,7 +1260,6 @@ label lily_morning_encounter_label():
                     the_person "You're such a pervert, you know that? Tricking me into this..."
                     "Her hand slides up to your waist, then down under your underwear. She wraps her hand around your shaft and rubs it gently."
                     mc.name "Sure thing [the_person.title], I've really tricked you."
-
                     $ the_person.break_taboo("touching_penis")
                 else:
                     the_person "What are you doing?"
@@ -1176,16 +1270,18 @@ label lily_morning_encounter_label():
                     mc.name "Don't pretend like you don't like it. You're just as horny as I am."
                     the_person "Hey, I'm just doing this for you, okay?"
                     mc.name "Sure thing sis. Keep going."
+
+                $ mc.change_locked_clarity(20)
                 $ the_person.change_slut_temp(3)
                 $ the_person.change_obedience(3)
                 "The two of you walk slowly towards the kitchen as [the_person.possessive_title] fondles your dick."
                 "When you reach the door to the kitchen she reluctantly pulls her hand out of your pants."
 
         mc.name "Maybe we'll follow up on this later."
+        $ mc.change_locked_clarity(5)
         "[the_person.possessive_title]'s face is flush. She nods and heads towards the laundry room. You get to watch her ass shake as she goes."
 
     $ the_person.apply_outfit(the_person.planned_outfit)
-    #$ the_person.outfit = the_person.planned_outfit.get_copy() #Make sure to reset their outfits for the day. changed v0.24.1
     $ clear_scene()
     return
 
@@ -1241,8 +1337,10 @@ label family_morning_breakfast_label():
     if mom_slutty:
         if the_mom.outfit.wearing_panties():
             "[the_mom.possessive_title] is just in her underwear in front of the stove, humming as she scrambles a pan full of eggs."
+            $ mc.change_locked_clarity(5)
         else:
             "[the_mom.possessive_title] is in front of the stove naked, humming as she scrambles a pan full of eggs."
+            $ mc.change_locked_clarity(10)
     else:
         "[the_mom.possessive_title] is at the stove and humming to herself as she scrambles a pan full of eggs."
 
@@ -1254,8 +1352,10 @@ label family_morning_breakfast_label():
     if sis_slutty:
         if the_sister.outfit.wearing_panties():
             "[the_sister.possessive_title] comes into the room just wearing her underwear. She gives a dramatic yawn before sitting down at the kitchen table."
+            $ mc.change_locked_clarity(5)
         else:
             "[the_sister.possessive_title] comes into the room naked. She gives a dramatic yawn before sitting down at the kitchen table."
+            $ mc.change_locked_clarity(10)
     else:
         "[the_sister.possessive_title] comes into the room and gives a dramatic yawn before sitting down at the kitchen table."
 
@@ -1275,6 +1375,7 @@ label family_morning_breakfast_label():
         the_mom "No problem, I'm just happy to spend my morning relaxing with my two favourite people!"
         "You enjoy a relaxing breakfast bonding with your mother and sister. [the_mom.possessive_title] seems particularly happy she gets to spend time with you."
         "Neither [the_sister.title] or [the_mom.possessive_title] seem to think it's strange to relax in their underwear."
+        $ mc.change_locked_clarity(10)
         $ the_sister.change_love(3)
         $ the_sister.change_slut_temp(3)
         $ the_mom.change_love(3)
@@ -1304,6 +1405,7 @@ label family_morning_breakfast_label():
         if the_mom.obedience > 115:
             $ the_mom.draw_person(position = "back_peek")
             the_mom "What do you think [the_mom.mc_title], do you think it's \"weird\" for your mother to want to be comfortable in her own house?"
+            $ mc.change_locked_clarity(5)
             menu:
                 "Side with Mom.":
                     mc.name "I think Mom's right [the_sister.title]. It's nothing we haven't seen before, she's just trying to relax on her days off."
@@ -1327,7 +1429,6 @@ label family_morning_breakfast_label():
                     $ the_sister.draw_person(position = "walking_away")
                     "Your mother leaves to get dressed. [the_sister.possessive_title] ends up serving out breakfast for all three of you."
                     $ the_mom.apply_outfit(the_mom.planned_outfit)
-                    # $ the_mom.outfit = the_mom.planned_outfit.get_copy() changed v0.24.1
                     the_sister "She's been so weird lately. I don't know what's going on with her..."
                     $ the_mom.draw_person(position = "sitting")
                     $ the_sister.change_happiness(5)
@@ -1445,7 +1546,7 @@ label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
                 "You knock on the door a couple of times and wait for a response."
                 if the_person.effective_sluttiness(["bare_tits","bare_pussy"]) > 30:
                     the_person "It's open, come on in!"
-                    call girl_shower_enter(the_person, suprised = False) from _call_girl_shower_enter
+                    call girl_shower_enter(the_person, surprised = False) from _call_girl_shower_enter
                 else:
                     the_person "Just a second!"
                     call girl_shower_leave(the_person) from _call_girl_shower_leave
@@ -1461,7 +1562,8 @@ label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
                     $ the_person.apply_outfit(Outfit("Nude"))
                     #$ the_person.outfit = Outfit("Nude") #changed v0.24.1
                     $ the_person.draw_person(emotion = "angry")
-                    "You open the door. [the_person.possessive_title] is standing naked in the shower. She spins around and yells in suprise."
+                    $ mc.change_locked_clarity(10)
+                    "You open the door. [the_person.possessive_title] is standing naked in the shower. She spins around and yells in surprise."
                     the_person "[the_person.mc_title]! I'm already in here, what are you doing?"
                     mc.name "The door was unlocked, I thought you might have already been finished."
                     the_person "Knock next time, okay? I'll be done in a minute."
@@ -1471,7 +1573,7 @@ label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
                     $ the_person.change_slut_temp(2)
                     call girl_shower_leave(the_person) from _call_girl_shower_leave_2
                 else:
-                    call girl_shower_enter(the_person, suprised = True) from _call_girl_shower_enter_1 #TODO: Decide if we need different dialogue for this (maybe just a "suprised" tag we can pass)
+                    call girl_shower_enter(the_person, surprised = True) from _call_girl_shower_enter_1 #TODO: Decide if we need different dialogue for this (maybe just a "surprised" tag we can pass)
 
         $ the_person.apply_outfit(initial_outfit)
         #$ the_person.outfit = initial_outfit #put her back in her normal outfit after her shower #changed v0.24.1
@@ -1485,6 +1587,7 @@ label girl_shower_leave(the_person):
     $ the_person.apply_outfit(towel_outfit)
     $ the_person.draw_person()
     "The bathroom door opens and [the_person.possessive_title] steps out from the steamy room in a towel."
+    $ mc.change_locked_clarity(5)
     if the_person is mom:
         the_person "There you go [the_person.mc_title], go right ahead."
         "She gives you a quick kiss and steps past you."
@@ -1493,14 +1596,15 @@ label girl_shower_leave(the_person):
         "She steps past you and heads to her room."
     return
 
-label girl_shower_enter(the_person, suprised):
+label girl_shower_enter(the_person, surprised):
     $ mc.change_location(home_bathroom)
     $ home_bathroom.show_background()
     $ the_person.apply_outfit(Outfit("Nude"))
     #$ the_person.outfit = Outfit("Nude") changed v0.24.1
     $ the_person.draw_person(position = "back_peek")
     "You open the door and see [the_person.possessive_title] in the shower."
-    if suprised:
+    $ mc.change_locked_clarity(10)
+    if surprised:
         "She looks up at you, slightly startled, and turns her body away from you."
         the_person "Oh, [the_person.mc_title]!"
         mc.name "I'm just here to have a shower."
@@ -1521,6 +1625,7 @@ label girl_shower_enter(the_person, suprised):
                 $ the_person.change_slut_temp(1)
                 $ the_person.change_obedience(1)
             $ the_person.update_outfit_taboos()
+            $ mc.change_locked_clarity(10)
             "Soon enough she's finished. She steps out and grabs a towel, but leaves the shower running for you."
 
             $ the_person.apply_outfit(towel_outfit)
@@ -1543,19 +1648,21 @@ label girl_shower_enter(the_person, suprised):
 
             "You strip down and get in the shower with [the_person.title]. The space isn't very big, so she puts her back to you."
             "You're left with her ass inches from your crotch, and when she leans over to pick up the shampoo she grinds up against you."
+            $ mc.change_locked_clarity(20)
             $ mc.change_arousal(5)
             the_person "Oops, sorry about that."
             "Your cock, already swollen, hardens in response, and now even stood up the tip brushes against [the_person.possessive_title]'s ass."
             if the_person.effective_sluttiness("touching_body") <= 40:
                 the_person "I think I'm just about done, so you can take care of this..."
                 "She wiggles her butt and strokes your tip against her cheeks."
+                $ mc.change_locked_clarity(10)
                 $ the_person.change_slut_temp(3 + the_person.get_opinion_score("showing her ass"))
                 "She steps out of the shower and grabs a towel."
                 $ the_person.apply_outfit(towel_outfit)
 
-            # elif the_person.effective_sluttiness() <= 60: #TODO: Add a "hot dog" position and make it a starting position for this.
+            # elif the_person.effective_sluttiness() <= 60: #TODO: Add a "thigh fuck" position and use it here
             #     "She wiggles her butt and strokes your tip against her cheeks."
-            #     the_person "Do you need some help with this? How about you just... use my butt?"
+            #     the_person "Do you need some help with this? How about you just... use my thighs?"
             #     $ the_person.draw_person("walking_away")
             #     "She rubs up against you while you talk, stroking your shaft with her wet, slippery ass."
             #     menu:
@@ -1567,6 +1674,7 @@ label girl_shower_enter(the_person, suprised):
             else:
                 the_person "What is this?"
                 "She wiggles her butt and strokes your tip against her cheeks."
+                $ mc.change_locked_clarity(10)
                 the_person "Well we need to take care of this, don't we..."
                 "She turns around and faces you. It might be the hot water, but her face is flush."
                 $ the_person.change_slut_temp(2)
@@ -1576,8 +1684,6 @@ label girl_shower_enter(the_person, suprised):
                         $ the_report = _return
 
                         $ the_person.apply_outfit(towel_outfit)
-                        # $ the_person.outfit = Outfit("Towel") changed v0.24.1
-                        # $ the_person.outfit.add_dress(towel.get_copy())
                         $ the_person.draw_person()
                         "When you're finished [the_person.title] steps out of the shower and grabs a towel. She dries herself off, then wraps herself in it then turns to you."
                         if the_report.get("girl orgasms",0)>0:
@@ -1612,7 +1718,7 @@ label girl_shower_enter(the_person, suprised):
 # label family_shopping_trip(): #TODO: Hook this up as a crisis.
 #     $ the_mom = mom
 #     $ the_sister = lily
-#     #
+#     # #TODO: And actually write it.
 #
 #     $ clear_scene()
 #     call advance_time()
@@ -1656,6 +1762,7 @@ label cousin_tease_crisis_label():
                 $ the_person.draw_person()
                 if the_person.outfit.tits_visible():
                     "She sends you a picture, but her tits are already out and on display."
+                    $ mc.change_locked_clarity(15)
                     the_person "Fuck, delete that. That wasn't one wasn't for you..."
                     mc.name "No, I think I've gotten everything I want already."
                     $ the_person.change_slut_temp(1)
@@ -1663,6 +1770,7 @@ label cousin_tease_crisis_label():
                     "She types, then deletes several messages, but never sends anything else to you."
                 else:
                     "She sends you a picture from her phone, obviously trying to tease you a little."
+                    $ mc.change_locked_clarity(5)
                     menu:
                         "Send [the_person.title] some money.\n-$100" if mc.business.funds >= 100:
                             $ mc.business.funds += -100
@@ -1672,12 +1780,14 @@ label cousin_tease_crisis_label():
                             $ the_person.outfit.strip_to_tits()
                             $ the_person.draw_person(position = "back_peek")
                             "She sends you a picture, with her back turned to the camera."
+                            $ mc.change_locked_clarity(5)
                             the_person "There."
                             mc.name "What the fuck is that, I want to see those tits."
                             the_person "I've already got my cash, so whatever nerd."
                             mc.name "You know I can reverse it within ten minutes, right?"
                             the_person "Fuck. Fine!"
                             $ the_person.draw_person()
+                            $ mc.change_locked_clarity(15)
                             the_person "There. Now go jerk off in the bathroom or whatever it is you want to do with that."
                             $ the_person.change_obedience(-2)
                             $ the_person.change_slut_temp(3)
@@ -1709,13 +1819,14 @@ label cousin_tease_crisis_label():
                                 mc.name "How about this, you send them over and I don't say anything to your mom about you stealing from my sister."
 
                             else: #Level 2
-                                mc.name "How about this, you send them over and I don't say anything to your mom about your after hours job."
+                                mc.name "How about this, you send them over and I don't say anything to your mom about your new job."
 
                             the_person "Oh my god, you little rat. You wouldn't."
                             mc.name "You know I would. Come on, whip those girls out and take some shots for me."
                             $ the_person.outfit.strip_to_tits()
                             $ the_person.draw_person()
                             "There's a pause, then [the_person.title] sends you some shots of herself topless."
+                            $ mc.change_locked_clarity(15)
                             the_person "There. Satisfied?"
                             if the_person.event_triggers_dict.get("blackmail_level",1) == 2:
                                 menu:
@@ -1725,6 +1836,7 @@ label cousin_tease_crisis_label():
                                         "There's another pause, then [the_person.title] sends you a video."
                                         $ the_person.draw_person(position = "kneeling1", emotion = "angry", the_animation = blowjob_bob, animation_effect_strength = 0.8)
                                         "She's kneeling on her bed. She sighs dramatically, then starts to bounce her body, jiggling her tits up and down."
+                                        $ mc.change_locked_clarity(15)
                                         "You watch it through, but feel like she could put some more effort into it."
                                         mc.name "Come on, that was a little pathetic. Smile for me and really give it your all this time."
                                         the_person "You want another video? You're being ridiculous."
@@ -1736,6 +1848,7 @@ label cousin_tease_crisis_label():
                                         else:
                                             "This time [the_person.title] has a nice, fake smile for you."
                                             "She bounces herself a little more vigerously, but there's not much chest for her to shake to shake."
+                                        $ mc.change_locked_clarity(15)
                                         the_person "Are you satisfied now, you little perv?"
 
                                         mc.name "For now. See you around."
@@ -1777,6 +1890,7 @@ label cousin_tease_crisis_label():
         $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.effective_sluttiness()/2, the_person.effective_sluttiness()*2, True))
         $ the_person.draw_person(position = "kneeling1")
         "She's in her bedroom, kneeling on her bed in nothing but some lingerie."
+        $ mc.change_locked_clarity(15)
         if the_person.update_outfit_taboos():
             the_person "I can't believe I'm showing this to a pervert like you, but I got a new outfit."
             the_person "Do you like it?"
@@ -1796,10 +1910,13 @@ label cousin_tease_crisis_label():
                 $ the_person.change_obedience(1)
                 the_person "You lying little shit. I know you love seeing me like this. You're such a pervert."
         the_person "I bet you're about to blow your load just looking at me, right?"
+
         if the_person.has_large_tits():
             the_person "Do you want me to take this off and show you my big, soft tits?"
         else:
             the_person "Do you want me to take this off and play with my tits for you?"
+        $ mc.change_locked_clarity(10)
+
         menu:
             "Yes.":
                 mc.name "Of course I do. Send me some pics."
@@ -1816,6 +1933,7 @@ label cousin_tease_crisis_label():
                             mc.name "All I want in life is to get a look at those huge tits. I need it so badly."
                         else:
                             mc.name "All I want in life is to get a look at your tits. I need it so badly."
+                        $ mc.change_locked_clarity(10)
                         the_person "Close..."
                         mc.name "I'm so turned on, just thinking about your tits. Please [the_person.title], I'm begging you!"
                         $ the_person.change_obedience(-2)
@@ -1838,6 +1956,7 @@ label cousin_tease_crisis_label():
                 the_person "You don't want to see me spread over this bed, naked and waiting for you?"
                 the_person "My poor little pussy just dripping wet, waiting for a big hard cock?"
                 the_person "Just beg for it and it's yours. My tight little cunt is all yours."
+                $ mc.change_locked_clarity(10)
                 menu:
                     "Beg to see her naked.":
                         "You think about it for a moment, then give in."
@@ -1846,6 +1965,7 @@ label cousin_tease_crisis_label():
                         mc.name "All I want in life right now is to see you stripped out."
                         the_person "Close..."
                         mc.name "I'm so turned on just thinking about you. Please, I'm begging you!"
+                        $ mc.change_locked_clarity(10)
                         $ the_person.change_obedience(-4)
                         $ the_person.change_happiness(8)
                         "You wait eagerly for her response."

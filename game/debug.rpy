@@ -81,6 +81,20 @@ label test_memory_use():
     $ renpy.profile_memory(0.8, 1028)
     return
 
+label debug_label():
+    "About to add some clarity..."
+    $ mc.change_locked_clarity(20)
+    "Done. Now let's add a little less."
+    $ mc.change_locked_clarity(10)
+    "Done. And now a lot more!"
+    $ mc.change_locked_clarity(100)
+    "That's a lot of Clarity! Let's release that!"
+    "Ready?"
+    $ mc.convert_locked_clarity(1.0)
+    "Aaaaah!"
+    "All done. Hopefully we haven't given ourselves a seizure with that."
+    return
+
 
 label text_message_style_test(the_person = None): #For now we need to both set the text_conversation person as well as the text font. We need to figure out a way to apply it dynamically.
     mom "This is the normal person style!"

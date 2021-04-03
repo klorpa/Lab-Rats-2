@@ -84,7 +84,7 @@ label lily_sex_review(the_person, the_report):
             mc.name "Did you know you look really cute when you cum?"
             the_person "It was... nice, I guess. Can we just talk about something other than me touching my own brother, please?"
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Oh wow, that was... I can't believe we just did that."
             "She seems dazed by her orgasm as she struggles to put full sentences together."
             the_person "We shouldn't have done that... But it felt really good."
@@ -109,7 +109,7 @@ label lily_sex_review(the_person, the_report):
             "She blushes more intensely, still avoiding making eye contact."
             the_person "Thanks, I guess... Can we talk about something else now?"
 
-        else: # She's suprised she even tried that.
+        else: # She's surprised she even tried that.
             the_person "Oh my god, that was intense! I... don't think we should have done that though."
             mc.name "Why not? Obviously you enjoyed yourself."
             the_person "Yeah, but it's wrong, isn't it? Whatever, it's happened now..."
@@ -132,7 +132,7 @@ label lily_sex_review(the_person, the_report):
             mc.name "Yeah, we're all done for now. Thanks [the_person.title], that felt great."
             the_person "I... Good, I'm glad you liked it."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "We're done? I mean, I hope that felt good for you."
             "She laughs nervously, trying to hide her embarrassment."
             the_person "I think we took things a little too far, though. It got kind of crazy, huh?"
@@ -152,7 +152,7 @@ label lily_sex_review(the_person, the_report):
             "She looks away, suddenly embarrassed."
             the_person "Never mind, it doesn't matter. Let's just talk about something else, this is getting awkward."
 
-        else:  # She's suprised she even tried that.
+        else:  # She's surprised she even tried that.
             the_person "Oh my god, you're totally right. I don't know what I was thinking, agreeing to that..."
             "She laughs nervously, trying to hide her embarrassment."
             the_person "Let's not tell [mom.title] about this, obviously."
@@ -481,6 +481,7 @@ label lily_flirt_response(the_person):
 label lily_flirt_response_low(the_person):
     the_person "Thanks! It's a cute look, right?"
     $ the_person.draw_person(position = "walking_away")
+    $ mc.change_locked_clarity(5)
     "[the_person.possessive_title] gives you a quick spin, showing off her body at the same time as her outfit."
     $ the_person.draw_person()
     if mom.judge_outfit(the_person.outfit, 5, use_taboos = False): # Mom is sluttier or similar
@@ -498,11 +499,13 @@ label lily_flirt_response_mid(the_person):
         the_person "Oh my god, [the_person.mc_title]! Why do you have to say it like that?"
         mc.name "Like what? I'm just telling you that you're looking hot. Isn't that a good thing to hear?"
         the_person "Yeah, but not from my own brother! It's... weird, that's all."
+        $ mc.change_locked_clarity(10)
         the_person "I'm sorry, I shouldn't make such a big deal about it. Thank you."
 
     else:
         the_person "Aw, thanks! I thought I looked really cute in this too."
         $ the_person.draw_person(position = "back_peek")
+        $ mc.change_locked_clarity(10)
         "[the_person.possessive_title] smiles and turns around, peeking over her shoulder to talk to you."
         the_person "How do I look from behind? It's hard to get a good look in the mirror and [mom.title] is always judging what I'm wearing."
         "You take a moment to check out [the_person.possessive_title]'s ass before responding."
@@ -617,6 +620,54 @@ label lily_flirt_response_text(the_person):
         else:
             the_person "Hey [the_person.mc_title], it's going fine. Are you up to anything?"
             the_person "I'm a little bored, we could hang out or something."
+    return
+
+label lily_condom_demand(the_person):
+    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0:
+        the_person "It sucks, but you need to put on a condom first."
+        the_person "You have one on you, right?"
+    else:
+        the_person "Put on a condom first, alright?"
+        the_person "Better hurry, I might have second thoughs if you make me wait too long."
+    return
+
+label lily_condom_ask(the_person):
+    if the_person.on_birth_control:
+        the_person "I'm taking the pill, but you should probably still wear a condom. Right?"
+        $ the_person.update_birth_control_knowledge()
+    elif the_person.get_opinion_score("creampies") > 0:
+        # the_person "If you want to cum inside me you should put on a condom."
+        # the_person "I know it's less fun than fucking raw, but it's still better than pulling out, right?"
+        the_person "Put on a condom, then you don't need to worry about cuming inside me."
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "You should really put on a condom. It would be really bad if you... finished inside of me."
+        the_person "That's the smart thing to do, right?"
+    return
+
+label lily_condom_bareback_ask(the_person):
+    if the_person.get_opinion_score("creampies") > 0:
+        if the_person.on_birth_control:
+            the_person "I'm on the pill, so don't worry about protection."
+            the_person "You can even cum in me, if you want. That would be so hot."
+            $ the_person.update_birth_control_knowledge()
+        else:
+            the_person "Don't worry about protection, I don't care about that any more."
+            the_person "You can even cum inside me, if you want. That would be so hot!"
+        $ the_person.discover_opinion("creampies")
+    else:
+        the_person "Don't worry about protection, I don't care about that any more."
+        the_person "Take me raw, it feels so much better!"
+    return
+
+label lily_condom_bareback_demand(the_person):
+    if the_person.on_birth_control:
+        the_person "Forget it [the_person.mc_title], I'm on the pill."
+        the_person "Get inside me already!"
+        $ the_person.update_birth_control_knowledge()
+    else:
+        the_person "Forget it [the_person.mc_title], you're going to fuck me raw today!"
+        the_person "Come on, hurry up and put it inside me!"
     return
 
 label lily_cum_face(the_person):
@@ -869,7 +920,7 @@ label lily_being_watched(the_person, the_watcher, the_position):
 
     elif the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness >= the_position.slut_cap:
         #She's into it and encouraged by the slut watching her.
-        the_person "Oh [the_person.mc_title], I know it's be wrong but being with you just feels so right!"
+        the_person "Oh [the_person.mc_title], I know it's wrong but being with you just feels so right!"
         $ the_person.change_arousal(1)
         "Your little sister seems turned on by [the_watcher.title] watching you and her [the_position.verb]."
 
@@ -895,11 +946,13 @@ label lily_date_seduction(the_person):
         if the_person.sluttiness > 40:
             the_person "Hey [the_person.mc_title], wait up a sec."
             "[the_person.title] stops you before you open the front door to the house."
+            $ mc.change_locked_clarity(20)
             the_person "I've had a great night, do you want to come back to my room and have some more fun?"
 
         else:
             the_person "Hey [the_person.mc_title], wait up a sec."
             "[the_person.title] stops you before you open the front door to your house."
+            $ mc.change_locked_clarity(10)
             the_person "I, uh... I had a really good night with you. I know it's a little weird, but do you want to come back to my room and just hang out?"
 
     else:
@@ -907,12 +960,14 @@ label lily_date_seduction(the_person):
             "[the_person.title] stops you when you get in the door. She takes your hand in hers and looks into your eyes."
             the_person "I had a great night. It was so nice to be with you and just pretend that we weren't... that we could be together."
             "Her hand tightens around yours."
+            $ mc.change_locked_clarity(20)
             the_person "Do you want to come back to my room and just pretend a little bit longer?"
 
         else:
             "[the_person.title] stops you when you get inside. She takes your hand, then looks away and blushes."
             the_person "I had a fun time [the_person.mc_title], thanks for taking me out."
             "She hesitates for a second before continuing."
+            $ mc.change_locked_clarity(10)
             the_person "If you want to come back to my room and chat for a while I wouldn't say no."
     return
 

@@ -94,6 +94,7 @@ label view_insta(the_person):
                 $ the_person.draw_person(position = "kneeling1", the_animation = None)
             elif rand_num == 2:
                 $ the_person.draw_person(position = "back_peek", the_animation = None)
+            $ mc.change_locked_clarity(10)
             the_person "Wearing something special today: a design sent in by a fan!" (what_style = "text_message_style")
 
 
@@ -103,15 +104,19 @@ label view_insta(the_person):
             $ rand_num = renpy.random.randint(0,3)
             if rand_num == 0:
                 $ the_person.draw_person(position = "stand3", the_animation = None)
+                $ mc.change_locked_clarity(5)
                 the_person "Thought this outfit looked sexy. What do you think?" (what_style = "text_message_style")
             elif rand_num == 1:
                 $ the_person.draw_person(position = "kneeling1", the_animation = None)
+                $ mc.change_locked_clarity(10)
                 the_person "Hey everyone, what do you think of this pose? I think it makes my tits look great!" (what_style = "text_message_style")
             elif rand_num == 2:
                 $ the_person.draw_person(position = "back_peek", the_animation = None)
+                $ mc.change_locked_clarity(5)
                 the_person "Ass was looking great, just had to take a pic!" (what_style = "text_message_style")
             elif rand_num == 3:
                 $ the_person.draw_person(position = "kneeling1", the_animation = None)
+                $ mc.change_locked_clarity(10)
                 the_person "Do I look good down on my knees?" (what_style = "text_message_style")
 
             if the_person.has_role(dikdok_role) and the_person.event_triggers_dict.get("dikdok_generate_video", False):
@@ -119,17 +124,19 @@ label view_insta(the_person):
                 $ the_person.event_triggers_dict["dikdok_known"] = True
 
             elif the_person.has_role(onlyfans_role) and the_person.event_triggers_dict.get("instafans_generate_content", False):
-                the_person "If you like that, subscribe to my OnlyFanatics and see so, sooo much more!" (what_style = "text_message_style")
+                the_person "If you like that, subscribe to my OnlyFanatics and see soooo much more!" (what_style = "text_message_style")
                 $ the_person.event_triggers_dict["onlyfans_known"] = True
 
             $ the_person.apply_outfit() # Reset them to their normal daily wear.
         elif the_person.is_wearing_uniform() and not (the_person.outfit.vagina_visible() or the_person.outfit.tits_visible()):
             $ rand_num = renpy.random.randint(0,1)
             if rand_num == 0:
+                $ mc.change_locked_clarity(5)
                 $ the_person.draw_person(the_animation = None)
                 the_person "Getting dressed for work. I make this uniform work!" (what_style = "text_message_style")
 
             elif rand_num == 1:
+                $ mc.change_locked_clarity(10)
                 $ the_person.draw_person(position = "back_peek", the_animation = None)
                 the_person "I think my boss makes me wear this just because it makes my butt look good. At least he's right!" (what_style = "text_message_style")
 
@@ -316,6 +323,7 @@ label dm_option_underwear_response(the_person):
         $ the_person.outfit.strip_to_underwear(avoid_nudity = True)
         $ the_person.draw_person(the_animation = None)
         $ the_person.apply_outfit() #Redress
+        $ mc.change_locked_clarity(10)
         "There's a short pause, then she sends an image."
         the_person "Enjoy, and remember to leave a nice comment on my profile!" (what_style = "text_message_style")
 
@@ -327,10 +335,13 @@ label dm_option_underwear_response(the_person):
         $ the_person.outfit.strip_to_underwear()
         $ the_person.draw_person(the_animation = None)
         "There's a short pause, then she sends an image."
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(postiion = "back_peek", the_animation = None)
         "...Then another."
+        $ mc.change_locked_clarity(10)
         $ the_person.draw_person(position = "kneeling1", the_animation = None)
         "...And another."
+        $ mc.change_locked_clarity(10)
         if the_person.get_opinion_score("showing her tits") > 0 and not the_person.outfit.tits_visible():
             $ strip_list = the_person.outfit.strip_to_tits()
             if the_person.outfit.can_half_off_to_tits():
@@ -339,6 +350,7 @@ label dm_option_underwear_response(the_person):
             else:
                 $ the_person.outfit.remove_clothing_list(strip_list)
             $ the_person.draw_person(position = "blowjob", the_animation = None)
+            $ mc.change_locked_clarity(15)
             "...And one more. This time, with her tits out!"
             the_person "I got a little carried away, I'm sure you don't mind!" (what_style = "text_message_style")
             the_person "Have fun with those, and let me know if there's anything else I can do for you!" (what_style = "text_message_style")
@@ -408,6 +420,7 @@ label dm_option_topless_response(the_person):
             $ the_person.outfit.remove_clothing_list(strip_list)
         $ the_person.draw_person(the_animation = None)
         $ the_person.apply_outfit()
+        $ mc.change_locked_clarity(15)
         "There's a short pause, then she sends an image."
         the_person "Hope that's everything you hoped it would be! Leave a nice comment on my profile, it helps!" (what_style = "text_message_style")
 
@@ -417,9 +430,11 @@ label dm_option_topless_response(the_person):
         $ the_person.apply_outfit() #She starts from her normal outfit (assigned as normal)
         "There's a short pause, then she sends an image."
         $ the_person.draw_person(the_animation = None)
+        $ mc.change_locked_clarity(10)
         if the_person.should_wear_uniform():
             the_person "Here's what my boss makes me wear..." (what_style = "text_message_style")
         else:
+
             the_person "Here's what everyone else sees..." (what_style = "text_message_style")
         $ strip_list = the_person.outfit.get_tit_strip_list()
         if the_person.outfit.can_half_off_to_tits():
@@ -428,15 +443,18 @@ label dm_option_topless_response(the_person):
         else:
             $ the_person.outfit.remove_clothing_list(strip_list)
             $ the_person.draw_person(the_animation = None)
+        $ mc.change_locked_clarity(15)
         "Another pause, then another picture."
         the_person "And here's what you get to see!" (what_style = "text_message_style")
 
         $ the_person.outfit.restore_all_clothing()
         $ the_person.outfit.strip_to_underwear()
         $ the_person.outfit.strip_to_tits() #Gets her into her underwear, then strips her bra off on top of that.
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(position = "kneeling1", the_animation = None)
         "Pause, then image."
         the_person "Do you think anyone IRL would guess that I'm a little slut for men on the internet?" (what_style = "text_message_style")
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(position = "missionary", the_animation = None)
         "One last picture, this time of her lying down."
         the_person "Just let me know if you want to see more, I love doing these special requests!" (what_style = "text_message_style")
@@ -504,13 +522,14 @@ label dm_option_nude_response(the_person):
         $ the_person.outfit.remove_clothing_list(strip_list)
 
         "There's a short pause, then she sends an image."
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(the_animation = None)
         the_person "From the front..." (what_style = "text_message_style")
         "Another pause, then another image."
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(position = "back_peek", the_animation = None)
         the_person "... and from the back!" (what_style = "text_message_style")
         the_person "Enjoy, and message me any time you have a special request." (what_style = "text_message_style")
-        $ the_person.draw_person(the_animation = None)
         $ the_person.apply_outfit()
 
     else: #Willing and excited
@@ -518,6 +537,7 @@ label dm_option_nude_response(the_person):
         the_person "I love getting requests like this! Of course I can take some shots for you!" (what_style = "text_message_style")
         $ the_person.apply_outfit() #Starts in her normal outfit.
         "There's a short pause, then she sends an image."
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(the_animation = None)
         if the_person.should_wear_uniform():
             the_person "Here's what my boss makes me wear..." (what_style = "text_message_style")
@@ -527,11 +547,14 @@ label dm_option_nude_response(the_person):
         $ the_person.outfit.remove_clothing_list(strip_list)
         "Another pause, then another image."
         $ the_person.draw_person(the_animation = None)
+        $ mc.change_locked_clarity(15)
         the_person "And here's what I'm wearing now, because of you!" (what_style = "text_message_style")
         "Another picture, this one from behind."
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(position = "back_peek", the_animation = None)
         the_person "How does my butt look? Here, let's get you a better view..."
         "Pause. Picture."
+        $ mc.change_locked_clarity(15)
         $ the_person.draw_person(position = "doggy", the_animation = None)
         $ the_person.apply_outfit()
         the_person "I hope you have fun with those, I had fun taking them!"

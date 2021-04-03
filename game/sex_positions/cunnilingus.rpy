@@ -67,8 +67,12 @@ label outro_cunnilingus(the_girl, the_location, the_object): #With low arousal g
     "The taste of [the_girl.possessive_title]'s pussy, the sound of her moans, and the subtle twitches of her body drive you crazy."
     "You touch yourself, stroking your hard cock between your legs while you pleasure her."
     "Finally you've gone too far, pushing yourself to climax."
+    $ climax_controller = ClimaxController(["Cum on the floor.", "air"])
+    $ climax_controller.show_climax_menu()
     "You pull your head back and grunt, jerking your cock and blasting out a load of cum onto the floor in front of [the_girl.title]."
+    $ climax_controller.do_clarity_release(the_girl)
     the_girl.char "Oh my god... That's so hot!"
+    #TODO: There needs to be a cum-licking branch here.
     return
 
 

@@ -152,7 +152,7 @@ label meet_person_label():
     $ the_person.draw_person(position = "walking_away")
     "While you're wandering a woman hurries past you on the sidewalk, jogging for a bus waiting up the street."
     "A few steps ahead of you she stumbles and trips."
-    $ the_person.call_dialogue("suprised_exclaim")
+    $ the_person.call_dialogue("surprised_exclaim")
     "She rushes to get back to her feet, unaware that her wallet has slipped out and is sitting on the sidewalk."
     "You crouch down to pick it up. A discreet check reveals there is a sizeable amount of cash inside."
     menu:
@@ -176,12 +176,13 @@ label meet_person_label():
             $ the_person.set_possessive_title(get_random_possessive_title(the_person))
             the_person "Thank you so much. I'm [the_person.title]."
             call person_introduction(the_person, girl_introduction = False) from _call_person_introduction_1
+            $ mc.change_locked_clarity(5)
             "You shake her hand. You and [the_person.title] chat while she waits for the next bus to come by."
             $ the_person.change_happiness(10)
             $ the_person.change_love(8)
             "When it does she gives you a quick hug."
             the_person "Thank you again, you've saved my whole day. Maybe we'll see each other again."
-            mc.name "I'd like that."
+            mc.name "I'd like that. "
             "She smiles and steps onto the bus, waving briefly from one of the windows."
 
 
