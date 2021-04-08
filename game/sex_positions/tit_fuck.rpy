@@ -12,6 +12,7 @@ init:
             strip_description = "strip_tit_fuck", strip_ask_description = "strip_ask_tit_fuck",
             orgasm_description = "orgasm_tit_fuck",
             taboo_break_description = "taboo_break_tit_fuck",
+            verb = "tit fuck",
             opinion_tags = ["giving tit fucks"], record_class = "Tit Fucks",
             default_animation = tit_bob,
             associated_taboo = "touching_body")

@@ -231,6 +231,14 @@ label wild_clothing_reject(the_person):
     return
 
 label wild_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "I guess I can't walk around covered in cum all day..."
+            "[the_person.title] starts to wipe up the biggest splashes of cum on her."
+        else:
+            the_person "Fuck, I need to clean up all of this cum! Let me know if I've missed any, okay?"
+            "[the_person.title] wipes herself down, cleaning up all of the cum she can find."
+
     if the_person.obedience > 130:
         the_person "Oh man, I'm a mess. I'll be back in a moment, I'm just going to get cleaned up for you."
     else:

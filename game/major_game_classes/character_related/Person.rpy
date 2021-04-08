@@ -360,13 +360,12 @@ init -2 python:
             over_tolerance_count = len(self.serum_effects) - self.serum_tolerance
             if over_tolerance_count > 0:
                 self.change_happiness(over_tolerance_count*5, add_to_log = False)
-                self.add_situational_slut(over_tolerance_count*-5, "over serum tolerance", "My body feels strange...")
-                self.add_situational_obedience(over_tolerance_count*-5, "over serum tolerance", "My body feels strange...")
+                self.add_situational_slut("over serum tolerance", over_tolerance_count*-5, "My body feels strange...")
+                self.add_situational_obedience("over serum tolerance", over_tolerance_count*-5, "My body feels strange...")
             else:
                 self.clear_situational_slut("over serum tolerance")
                 self.clear_situational_obedience("over serum tolerance")
 
-            #Now we want to see if she's unhappy enough to quit. We will tally her "happy points", a negative number means a chance to quit.
             for a_role in self.special_role:
                 a_role.run_turn(self)
 
@@ -1506,6 +1505,26 @@ init -2 python:
             if add_to_log and amount != 0:
                 mc.log_event(log_string, "float_text_red")
 
+        def change_max_arousal(self, amount, add_to_log = True):
+            if amount + self.max_arousal < 20:
+                amount = -(self.max_arousal - 20)
+
+            self.max_arousal += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+
+            if amount > 0:
+                log_string = display_name + ": +" + str(amount) + " Max Arousal"
+            else:
+                log_string = display_name + ": " + str(amount) + " Max Arousal"
+
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_red")
+
+
         def change_novelty(self, amount, add_to_log = True):
             amount = int(__builtin__.round(amount))
 
@@ -1566,6 +1585,25 @@ init -2 python:
                 log_string +=  display_name + ": +" + str(amount) + " Max Energy"
             else:
                 log_string +=  display_name + ": " + str(amount) + " Max Energy"
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
+            return
+
+        def change_sex_skill(self, skill_name, amount, add_to_log = True): #NOTE: We assume we pass a proper skill name here, otherwise we crash out.
+            # ["Foreplay","Oral","Vaginal","Anal"]
+            if amount + self.sex_skills[skill_name] < 0:
+                amount = -self.sex_skills[skill_name] #At most we make it 0. No negative values.
+            self.sex_skills[skill_name] += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+            if amount > 0:
+                log_string +=  display_name + ": +" + str(amount) + " " + skill_name + " Skill"
+            else:
+                log_string +=  display_name + ": " + str(amount) + " " + skill_name + " Skill"
+
             if add_to_log and amount != 0:
                 mc.log_event(log_string, "float_text_yellow")
             return

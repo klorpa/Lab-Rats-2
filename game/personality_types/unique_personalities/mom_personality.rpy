@@ -203,6 +203,14 @@ label mom_clothing_reject(the_person):
     return
 
 label mom_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "I suppose I should wipe this up..."
+            "[the_person.possessive_title] quickly wipes away the most obvious splashes of cum on her body."
+        else:
+            the_person "I need to clean all of your... semen off of me. Let me know if I've missed any."
+            "[the_person.possessive_title] starts to wipe up all of the cum on her."
+
     if the_person.obedience > 130:
         the_person "I'm so sorry [the_person.mc_title], I'm really not looking ladylike right now. Just give me a moment to get dressed..."
     else:

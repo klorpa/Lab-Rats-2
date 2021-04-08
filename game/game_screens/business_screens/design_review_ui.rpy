@@ -7,7 +7,7 @@ screen review_designs_screen():
         yalign 0.1
         background "#888888"
         viewport:
-            #xsize 540
+            xsize 540
             ymaximum 800
             scrollbars "vertical"
             mousewheel True
@@ -26,14 +26,14 @@ screen review_designs_screen():
 
                     else:
                         textbutton serum_name:
-                            action SetScreenVariable("selected_serum",serum_design) hovered [SetScreenVariable("selected_serum", None)] style "textbutton_style" text_style "textbutton_text_style"
+                            action SetScreenVariable("selected_serum",serum_design) style "textbutton_style" text_style "textbutton_text_style"
 
 
 
     if selected_serum:
         use serum_tooltip(selected_serum, given_anchor = (1.0,0.0), given_align = (0.9,0.1)):
             textbutton "Scrap Design":
-                action [Function(mc.business.remove_serum_design,serum_design), SetScreenVariable("selected_serum", None)]
+                action [Function(mc.business.remove_serum_design,selected_serum), SetScreenVariable("selected_serum", None)]
                 style "textbutton_style" text_style "textbutton_text_style" xanchor 0.5 xalign 0.5
 
     frame:

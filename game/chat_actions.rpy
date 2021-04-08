@@ -685,7 +685,7 @@ label movie_date_plan_label(the_person):
         else:
             the_person "How about Tuesday night? I don't have anything going on then."
 
-    elif the_person.special_role(cousin_role):
+    elif the_person.has_role(cousin_role):
         mc.name "Hey, do you want to come see a movie with me and spend some time together?"
         the_person "Fine, but no telling people we're related, okay? I don't want anyone to think I might be a dweeb like you."
         "She gives you a wink."

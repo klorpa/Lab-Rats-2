@@ -800,7 +800,7 @@ label mom_work_promotion_one_before(the_person): # She tells you in the morning 
     the_person "I'll let you know how it goes when I see you later today. Have a good time at work."
     "She steps out of your room, blowing you a kiss as she closes the door behind her."
     $ clear_scene()
-    $ mom_bedroom.move_person(the_person, downtown)
+    $ mom_bedroom.move_person(the_person, mom_offices)
     $ mom_work_promotion_one_report_crisis = Action("mom work promotion one report", mom_work_promotion_one_report_requirement, "mom_work_promotion_one_report", requirement_args = day)
     $ the_person.on_room_enter_event_list.append(mom_work_promotion_one_report_crisis)
     return

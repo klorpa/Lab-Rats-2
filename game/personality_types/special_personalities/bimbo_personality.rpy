@@ -237,6 +237,14 @@ label bimbo_clothing_reject(the_person):
     return
 
 label bimbo_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "I think your cum looks good on me! Too bad I need to clean it up."
+            "[the_person.title] does a quick wipe down, cleaning all of the cum she can find on herself."
+        else:
+            the_person "All of this cum is going to be, like, so hard to clean up! Ugh!"
+            "[the_person.title] does her best to tidy up all of the cum you've splashed across her."
+
     if the_person.should_wear_uniform():
         the_person "Oh! I need to get back into my uniform or I'm going to get in trouble!"
     elif the_person.obedience > 130:

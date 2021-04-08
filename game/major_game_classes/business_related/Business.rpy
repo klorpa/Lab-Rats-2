@@ -330,7 +330,7 @@ init -2 python:
 
                 self.partial_clarity += clarity_produced
                 if self.partial_clarity >= 1.0:
-                    int_clarity = int(self.partial_clarity)
+                    int_clarity = __builtin__.int(self.partial_clarity)
                     self.partial_clarity += -int_clarity
                     mc.add_clarity(int_clarity, add_to_log = False)
                     self.add_counted_message("Idle R&D team produced Clarity")
@@ -358,7 +358,7 @@ init -2 python:
 
         def supply_purchase(self,focus,cha,skill):
             max_supply = __builtin__.round(((3*focus) + (cha) + (2*skill) + 10) * (self.team_effectiveness))/100
-            max_supply = int(max_supply)
+            max_supply = __builtin__.int(max_supply)
             if max_supply + self.supply_count > self.supply_goal:
                 max_supply = self.supply_goal - self.supply_count
                 if max_supply <= 0:
@@ -473,11 +473,11 @@ init -2 python:
         def change_production(self,new_serum,production_line):
             if production_line in self.serum_production_array: #If it already exists, change the serum type and production points stored, but keep the weight for that line (it can be changed later)
                 self.serum_production_array[production_line][0] = new_serum
-                self.serum_production_array[production_line][1] = int(100 - self.get_used_line_weight() + self.serum_production_array[production_line][1]) #Set the production weight to everything we have remaining
+                self.serum_production_array[production_line][1] = __builtin__.int(100 - self.get_used_line_weight() + self.serum_production_array[production_line][1]) #Set the production weight to everything we have remaining
                 self.serum_production_array[production_line][2] = 0 #Set production points stored to 0 for the new serum
                 self.serum_production_array[production_line][3] = -1 #Set autosell to -1, ie. don't auto sell.
             else: #If the production line didn't exist before, add a key for that line.
-                self.serum_production_array[production_line] = [new_serum, int(100 - self.get_used_line_weight()), 0, -1]
+                self.serum_production_array[production_line] = [new_serum, __builtin__.int(100 - self.get_used_line_weight()), 0, -1]
 
         def get_used_line_weight(self):
             used_production = 0
@@ -505,7 +505,7 @@ init -2 python:
             for line in self.serum_production_array:
                 if self.serum_production_array[line][3] >= 0: #There is an auto sell threshold set.
                     if self.inventory.get_serum_count(self.serum_production_array[line][0]) > self.serum_production_array[line][3]:
-                        difference = int(self.inventory.get_serum_count(self.serum_production_array[line][0]) - self.serum_production_array[line][3]) #Check how many serums we need to sell to bring us to the threshold.
+                        difference = __builtin__.int(self.inventory.get_serum_count(self.serum_production_array[line][0]) - self.serum_production_array[line][3]) #Check how many serums we need to sell to bring us to the threshold.
                         self.inventory.change_serum(self.serum_production_array[line][0], -difference) #Remove them from the production inventory.
                         self.sale_inventory.change_serum(self.serum_production_array[line][0], difference) #Add them to the sales inventory.
 
@@ -681,7 +681,7 @@ init -2 python:
                 if should_give_serum:
                     if self.inventory.get_serum_count(the_serum) > 0:
                         self.inventory.change_serum(the_serum,-1)
-                        person.give_serum(copy.copy(the_serum), add_to_log = False)
+                        the_person.give_serum(copy.copy(the_serum), add_to_log = False)
                     else:
                         the_message = "Stockpile out of " + the_serum.name + " to give to staff."
                         self.add_counted_message(the_message)

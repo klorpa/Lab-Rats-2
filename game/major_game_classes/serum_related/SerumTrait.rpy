@@ -56,21 +56,21 @@ init -2 python:
             self.is_side_effect = is_side_effect #If true this trait is a side effect and not counted towards serum max traits and such. It also cannot be added to a serum on purpose.
 
 
-        def run_on_apply(self, the_person, add_to_log = True):
+        def run_on_apply(self, the_person, the_serum, add_to_log = True):
             if self.on_apply is not None:
-                self.on_apply(the_person, add_to_log)
+                self.on_apply(the_person, the_serum, add_to_log)
 
-        def run_on_remove(self, the_person, add_to_log = False):
+        def run_on_remove(self, the_person, the_serum, add_to_log = False):
             if self.on_remove is not None:
-                self.on_remove(the_person, add_to_log)
+                self.on_remove(the_person, the_serum, add_to_log)
 
-        def run_on_turn(self, the_person, add_to_log = False):
+        def run_on_turn(self, the_person, the_serum, add_to_log = False):
             if self.on_turn is not None:
-                self.on_turn(the_person, add_to_log)
+                self.on_turn(the_person, the_serum, add_to_log)
 
-        def run_on_day(self, the_person, add_to_log = False):
+        def run_on_day(self, the_person, the_serum, add_to_log = False):
             if self.on_day is not None:
-                self.on_day(the_person, add_to_log)
+                self.on_day(the_person, the_serum, add_to_log)
 
         def add_research(self, amount):
             self.current_research += amount

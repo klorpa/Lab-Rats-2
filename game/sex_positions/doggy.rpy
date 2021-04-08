@@ -244,7 +244,7 @@ label outro_doggy(the_girl, the_location, the_object):
     $ the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Ah, I'm going to cum!"
     $ the_girl.call_dialogue("cum_pullout")
-    $ climax_controller = ClimaxController(["Cum inside of her.", "pussy"],["Cum on her ass.", "body"])
+    $ climax_controller = ClimaxController(["Cum inside her.", "pussy"],["Cum on her ass.", "body"])
     $ the_choice = climax_controller.show_climax_menu()
     if the_choice == "Cum inside her.":
         if mc.condom:

@@ -244,6 +244,14 @@ label relaxed_clothing_reject(the_person):
     return
 
 label relaxed_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "I'm a mess! I need to get all of this cleaned up now..."
+            "[the_person.title] quickly wipes away all of your cum."
+        else:
+            the_person "My god, it's everywhere! I need to make sure I get all of it..."
+            "[the_person.title] wipes herself down, cleaning off all of the cum she can find."
+
     if the_person.should_wear_uniform():
         the_person "Oh, one second! I need to get back in uniform!"
     elif the_person.obedience > 130:

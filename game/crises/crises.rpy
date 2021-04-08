@@ -1555,9 +1555,9 @@ label invest_rep_visit_label(rep_name):
                 rep_name "I won't waste any more of your time [mc.name], I can say with certainty that my investors are going to be interested in investing in your business."
                 mc.name "I'm glad to hear it."
                 rep_name "I would like to offer you $5000 to help you expand your business. In exchange we'll expect a small part of your ongoing revenue."
-                rep_name "Say... 1% of every sale. How does that sound?"
+                rep_name "Say... 1%% of every sale. How does that sound?"
                 menu:
-                    "Accept $5000 for 1% of all future sales.":
+                    "Accept $5000 for 1%% of all future sales.":
                         "You reach your hand across the table to shake [rep_name]'s hand."
                         mc.name "I think we have a deal. Lets sort out the paperwork."
                         $ mc.business.funds += 5000

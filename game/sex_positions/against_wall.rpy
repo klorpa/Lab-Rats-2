@@ -253,6 +253,7 @@ label outro_against_wall(the_girl, the_location, the_object):
                 "[the_girl.possessive_title] reaches for your cock, removes the condom, and ties the end in a knot."
                 the_girl.char "Look at all that cum. Well done."
         else:
+            $ climax_controller.do_clarity_release(the_girl)
             "You push forward as you finally climax, thrusting your cock as deep inside of [the_girl.possessive_title] as you can manage. She gasps softly each time your dick pulses and shoots hot cum into her."
             $ the_girl.call_dialogue("cum_vagina")
             $ the_girl.cum_in_vagina()

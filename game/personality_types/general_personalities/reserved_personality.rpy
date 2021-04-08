@@ -236,6 +236,13 @@ label reserved_clothing_reject(the_person):
     return
 
 label reserved_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "I suppose I should wipe this up..."
+            "[the_person.title] quickly wipes away the most obvious splashes of cum on her body."
+        else:
+            "[the_person.title] starts to wipe up all of the cum on her, moving slowly and carefully to avoid missing any."
+
     if the_person.should_wear_uniform():
         the_person "One moment [the_person.mc_title], I need to get my uniform sorted out."
     elif the_person.obedience > 130:

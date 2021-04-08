@@ -168,7 +168,7 @@ screen person_info_detailed(the_person):
                             else:
                                 textbutton serum.name + " : " + str(serum.duration - serum.duration_counter) + " Turns Left":
                                     action SetScreenVariable("selected_serum", serum)
-                                    hovered [SetScreenVariable("selected_serum", None), Show("serum_tooltip", None, serum, given_align = (0.0,0.0), given_anchor = (0.4,0.1))]
+                                    hovered [SetScreenVariable("selected_serum", None), Show("serum_tooltip", None, serum, given_align = (0.4,0.1), given_anchor = (0.0,0.0))]
                                     unhovered Hide("serum_tooltip")
                                     style "textbutton_style"
                                     text_style "textbutton_text_style"

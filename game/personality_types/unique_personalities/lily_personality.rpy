@@ -325,6 +325,14 @@ label lily_clothing_reject(the_person):
     return
 
 label lily_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "Look at this mess you've made! Now I have all this cum to clean up..."
+            "[the_person.title] quickly wipes herself down, removing the most obvious splashes of cum."
+        else:
+            the_person "I need to clean this up, let me know if I miss anything."
+            "[the_person.title] wipes herself down, cleaning off all of the cum she can find."
+
     if the_person.obedience > 130:
         the_person "Sorry [the_person.mc_title], I should really get myself dressed properly again! Just a second!"
     else:

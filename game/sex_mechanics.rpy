@@ -613,7 +613,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
                         $ is_cumming = True
 
                 "Cum!":
-                    pass
+                    $ is_cumming = True
 
         if is_cumming:
             $ the_position.call_outro(the_person, mc.location, the_object)

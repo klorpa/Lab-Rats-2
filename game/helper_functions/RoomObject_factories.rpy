@@ -1,10 +1,10 @@
 init -1 python:
     def make_wall(): #Helper functions for creating instances of commonly used objects.
-        the_wall = Object("wall",["Lean"], sluttiness_modifier = 0, obedience_modifier = 5)
+        the_wall = Object("wall",["Lean"], sluttiness_modifier = 0, obedience_modifier = 0) #0/5
         return the_wall
 
     def make_window():
-        the_window = Object("window",["Lean"], sluttiness_modifier = -5, obedience_modifier = 5)
+        the_window = Object("window",["Lean"], sluttiness_modifier = 0, obedience_modifier = 0) #-5/5
         return the_window
 
     def make_chair():
@@ -20,21 +20,21 @@ init -1 python:
         return the_table
 
     def make_bed():
-        the_bed = Object("bed",["Sit","Lay","Low"], sluttiness_modifier = 10, obedience_modifier = 10)
+        the_bed = Object("bed",["Sit","Lay","Low"], sluttiness_modifier = 0, obedience_modifier = 0) #10/10
         return the_bed
 
     def make_couch():
-        the_couch = Object("couch",["Sit","Lay","Low"], sluttiness_modifier = 5, obedience_modifier = -5)
+        the_couch = Object("couch",["Sit","Lay","Low"], sluttiness_modifier = 0, obedience_modifier = 0) #5/-5
         return the_couch
 
     def make_floor():
-        the_floor = Object("floor",["Lay","Kneel"], sluttiness_modifier = -10, obedience_modifier = -10)
+        the_floor = Object("floor",["Lay","Kneel"], sluttiness_modifier = 0, obedience_modifier = 0) #-10/-10
         return the_floor
 
     def make_grass():
-        the_grass = Object("grass",["Lay","Kneel"], sluttiness_modifier = -5, obedience_modifier = -10)
+        the_grass = Object("grass",["Lay","Kneel"], sluttiness_modifier = 0, obedience_modifier = 0) #-5/-10
         return the_grass
 
     def make_stage():
-        the_stage = Object("stripclub stage",["Lay","Sit"], sluttiness_modifier = 5, obedience_modifier = -5)
+        the_stage = Object("stripclub stage",["Lay","Sit"], sluttiness_modifier = 0, obedience_modifier = 0) #5/-5
         return the_stage

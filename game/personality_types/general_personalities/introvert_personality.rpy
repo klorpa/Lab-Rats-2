@@ -214,6 +214,14 @@ label introvert_clothing_reject(the_person):
     return
 
 label introvert_clothing_review(the_person):
+    if the_person.outfit.cum_covered():
+        if (the_person.sluttiness > 40 and the_person.get_opinion_score("being covered in cum") >=0) or the_person.get_opinion_score("being covered in cum") > 0:
+            the_person "I should get this cleaned off..."
+            "[the_person.title] starts to clean your cum off of her."
+        else:
+            the_person "Oh god, I hope nobody notices this..."
+            "[the_person.title] starts to clean up your cum, with some success."
+
     if the_person.should_wear_uniform():
         the_person "I need to get back into my uniform."
     elif the_person.obedience > 130:

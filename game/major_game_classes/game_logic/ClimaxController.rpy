@@ -42,10 +42,10 @@ init -2 python:
             if the_person:
                 multiplier = self.get_climax_multiplier(self.selected_climax_type[1])
                 mc.convert_locked_clarity(multiplier, with_novelty = the_person.novelty)
-                the_person.change_novelty(-2)
+                the_person.change_novelty(-5)
             else:
                 multiplier = self.get_climax_multiplier(self.selected_climax_type[1])
                 mc.convert_locked_clarity(multiplier, with_novelty = mc.masturbation_novelty)
-                mc.masturbation_novelty += -2
+                mc.masturbation_novelty += -5
                 if mc.masturbation_novelty < 50:
                     mc.masturbation_novelty = 50

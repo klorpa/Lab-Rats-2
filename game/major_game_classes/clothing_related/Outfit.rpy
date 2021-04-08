@@ -313,13 +313,13 @@ init -2 python:
             return sorted(self.feet, key=lambda clothing: clothing.layer)
 
         def get_upper_visible(self):
-            return get_visible_list(self.upper_body)
+            return self.get_visible_list(self.upper_body)
 
         def get_lower_visible(self):
-            return get_visible_list(self.lower_body)
+            return self.get_visible_list(self.lower_body)
 
         def get_feet_visible(self):
-            return get_visible_list(self.feet)
+            return self.get_visible_list(self.feet)
 
         def remove_random_any(self, top_layer_first = False, exclude_upper = False, exclude_lower = False, exclude_feet = False, do_not_remove = False):
             #Picks a random upper, lower, or feet object to remove. Is guaranteed to remove something if possible, or return None if nothing on the person is removable (They're probably naked).
@@ -840,4 +840,10 @@ init -2 python:
 
             else:
                 return return_list
-        #TODO: Update existing crises to make use of these centralised functions instead of handeling stripping as a special case each time.
+
+        def cum_covered(self): #Returns True if the person has some cum clothing item as part of their outfit. #TODO: Also have this check layer/visibility, so girls can be creampied but just put panties back on and have nobody notice.
+            if self.has_clothing(ass_cum) or self.has_clothing(tits_cum) or self.has_clothing(stomach_cum) or self.has_clothing(face_cum):
+                #NOTE: Does not include "internal" cum:  creampie_cum and mouth_cum
+                return True
+
+            return False

@@ -2,133 +2,133 @@
 init -1:
     python:
         ## suggestion_drugs_functions ##
-        def suggestion_drugs_on_apply(the_person, add_to_log):
+        def suggestion_drugs_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(10, add_to_log)
 
-        def suggestion_drugs_on_remove(the_person, add_to_log):
+        def suggestion_drugs_on_remove(the_person, the_serum, add_to_log):
             the_person.remove_suggest_effect(10)
 
         ## high_concentration_drug_functions ##
-        def high_con_drugs_on_apply(the_person, add_to_log):
+        def high_con_drugs_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(25, add_to_log)
 
-        def high_con_drugs_on_remove(the_person, add_to_log):
+        def high_con_drugs_on_remove(the_person, the_serum, add_to_log):
             the_person.remove_suggest_effect(25)
 
-        def high_con_drugs_on_turn(the_person, add_to_log):
+        def high_con_drugs_on_turn(the_person, the_serum, add_to_log):
             the_person.change_happiness(-2, add_to_log)
 
         ## sedatives_trait_functions ##
-        def sedatives_trait_on_apply(the_person, add_to_log):
+        def sedatives_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.change_obedience(10, add_to_log)
             the_person.change_cha(-1, add_to_log)
             the_person.change_focus(-1, add_to_log)
             the_person.change_int(-1, add_to_log)
 
-        def sedatives_trait_on_remove(the_person, add_to_log):
+        def sedatives_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.change_obedience(-10, add_to_log)
             the_person.change_cha(1, add_to_log)
             the_person.change_focus(1, add_to_log)
             the_person.change_int(1, add_to_log)
 
         ## obedience_enhancer_functions ##
-        def obedience_enhancer_on_apply(the_person, add_to_log):
+        def obedience_enhancer_on_apply(the_person, the_serum, add_to_log):
             the_person.change_obedience(10, add_to_log)
 
-        def obedience_enhancer_on_remove(the_person, add_to_log):
+        def obedience_enhancer_on_remove(the_person, the_serum, add_to_log):
             the_person.change_obedience(-10, add_to_log)
 
         ## large_obedience_enhancer_functions ##
-        def large_obedience_enhancer_on_apply(the_person, add_to_log):
+        def large_obedience_enhancer_on_apply(the_person, the_serum, add_to_log):
             the_person.change_obedience(20, add_to_log)
 
-        def large_obedience_enhancer_on_remove(the_person, add_to_log):
+        def large_obedience_enhancer_on_remove(the_person, the_serum, add_to_log):
             the_person.change_obedience(-20, add_to_log)
 
-        def large_obedience_enhancer_on_turn(the_person, add_to_log):
-            the_person.change_slut_temp(-2, add_to_log)
+        def large_obedience_enhancer_on_turn(the_person, the_serum, add_to_log):
+            the_person.change_slut_temp(-1, add_to_log)
             if the_person.sluttiness < the_person.core_sluttiness:
                 if renpy.random.randint(0,100) < 10:
-                    the_person.change_slut_core(-2, add_to_log, fire_event = False) #If this brings her into negative relative sluttiness she might lose core sluttiness as well.
+                    the_person.change_slut_core(-1, add_to_log, fire_event = False) #If this brings her into negative relative sluttiness she might lose core sluttiness as well.
 
         ## aphrodisiac_functions ##
-        def aphrodisiac_on_apply(the_person, add_to_log):
+        def aphrodisiac_on_apply(the_person, the_serum, add_to_log):
             the_person.change_slut_core(15, add_to_log, fire_event = False)
             the_person.change_slut_temp(15, add_to_log)
 
-        def aphrodisiac_on_remove(the_person, add_to_log):
+        def aphrodisiac_on_remove(the_person, the_serum, add_to_log):
             the_person.change_slut_core(-15, add_to_log, fire_event = False)
             the_person.change_slut_temp(-15, add_to_log)
 
-        def aphrodisiac_on_turn(the_person, add_to_log):
-            the_person.change_obedience(-2, add_to_log)
+        def aphrodisiac_on_turn(the_person, the_serum, add_to_log):
+            the_person.change_obedience(-1, add_to_log)
 
         ## caffeine_trait functions##
-        def caffeine_trait_on_apply(the_person, add_to_log):
+        def caffeine_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.change_max_energy(20, add_to_log)
             the_person.change_energy(20, add_to_log)
             the_person.change_obedience(-15, add_to_log)
 
-        def caffeine_trait_on_remove(the_person, add_to_log):
+        def caffeine_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.change_max_energy(-20, add_to_log)
             the_person.change_obedience(15, add_to_log)
 
         ## refined_caffeine_trait functions ##
-        def refined_caffeine_trait_on_apply(the_person, add_to_log):
+        def refined_caffeine_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.change_max_energy(20, add_to_log)
             the_person.change_energy(20, add_to_log)
 
-        def refined_caffeine_trait_on_remove(the_person, add_to_log):
+        def refined_caffeine_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.change_max_energy(-20, add_to_log)
 
         ## slutty_caffeine_trait functions ##
-        def slutty_caffeine_trait_on_apply(the_person, add_to_log):
+        def slutty_caffeine_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.change_max_energy(20, add_to_log)
             the_person.change_energy(20, add_to_log)
             the_person.change_slut_temp(15, add_to_log)
             the_person.change_slut_core(15, add_to_log)
 
-        def slutty_caffeine_trait_on_remove(the_person, add_to_log):
+        def slutty_caffeine_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.change_max_energy(-20, add_to_log)
             the_person.change_slut_temp(-15, add_to_log)
             the_person.change_slut_core(-15, add_to_log)
 
         ## love_potion_functions ##
-        def love_potion_on_apply(the_person, add_to_log):
+        def love_potion_on_apply(the_person, the_serum, add_to_log):
             the_person.change_love(20, add_to_log)
 
-        def love_potion_on_remove(the_person, add_to_log):
+        def love_potion_on_remove(the_person, the_serum, add_to_log):
             the_person.change_love(-20, add_to_log)
 
 
         ## off_label_drugs_functions ##
-        def off_label_drugs_on_apply(the_person, add_to_log):
+        def off_label_drugs_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(30, add_to_log)
 
-        def off_label_drugs_on_remove(the_person, add_to_log):
+        def off_label_drugs_on_remove(the_person, the_serum, add_to_log):
             the_person.remove_suggest_effect(30 )
 
         ## mood_enhancer_functions ##
-        def mood_enhancer_on_turn(the_person, add_to_log):
-            the_person.change_happiness(5, add_to_log)
-            the_person.change_obedience(-2, add_to_log)
+        def mood_enhancer_on_turn(the_person, the_serum, add_to_log):
+            the_person.change_happiness(10, add_to_log)
+            the_person.change_obedience(-1, add_to_log)
 
         ## blood_brain_pen_functions ##
-        def blood_brain_pen_on_apply(the_person, add_to_log):
+        def blood_brain_pen_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(50, add_to_log)
 
-        def blood_brain_pen_on_remove(the_person, add_to_log):
+        def blood_brain_pen_on_remove(the_person, the_serum, add_to_log):
             the_person.remove_suggest_effect(50)
 
         ## breast_enhancement_functions ##
-        def breast_enhancement_on_turn(the_person, add_to_log):
+        def breast_enhancement_on_turn(the_person, the_serum, add_to_log):
             if renpy.random.randint(0,100) < 25:
                 new_tits = get_larger_tits(the_person.tits)
                 if new_tits != the_person.tits: #Double check we don't already have them to avoid increasing breast weight infinitely
                     the_person.tits = new_tits
                     the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts recieve a boost in region weight because they're natural.
 
-        def breast_reduction_on_turn(the_person, add_to_log):
+        def breast_reduction_on_turn(the_person, the_serum, add_to_log):
             if renpy.random.randint(0,100) < 25:
                 new_tits = get_smaller_tits(the_person.tits)
                 if new_tits != the_person.tits:
@@ -136,39 +136,39 @@ init -1:
                     the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts recieve a boost in region weight because they're natural.
 
         ## focus_enhancement_functions ##
-        def focus_enhancement_on_apply(the_person, add_to_log):
+        def focus_enhancement_on_apply(the_person, the_serum, add_to_log):
             the_person.change_focus(2, add_to_log)
 
-        def focus_enhancement_on_remove(the_person, add_to_log):
+        def focus_enhancement_on_remove(the_person, the_serum, add_to_log):
             the_person.change_focus(-2, add_to_log)
 
         ## int_enhancement_functions ##
-        def int_enhancement_on_apply(the_person, add_to_log):
+        def int_enhancement_on_apply(the_person, the_serum, add_to_log):
             the_person.change_int(2, add_to_log)
 
-        def int_enhancement_on_remove(the_person, add_to_log):
+        def int_enhancement_on_remove(the_person, the_serum, add_to_log):
             the_person.change_int(-2, add_to_log)
 
         ## cha_enhancement_functions ##
-        def cha_enhancement_on_apply(the_person, add_to_log):
+        def cha_enhancement_on_apply(the_person, the_serum, add_to_log):
             the_person.change_cha(2, add_to_log)
 
-        def cha_enhancement_on_remove(the_person, add_to_log):
+        def cha_enhancement_on_remove(the_person, the_serum, add_to_log):
             the_person.change_cha(-2, add_to_log)
 
         ## happiness_tick_functions ##
-        def happiness_tick_on_turn(the_person, add_to_log):
-            the_person.change_happiness(3, add_to_log)
+        def happiness_tick_on_turn(the_person, the_serum, add_to_log):
+            the_person.change_happiness(5, add_to_log)
 
         ## mind_control_agent_functions ##
-        def mind_control_agent_on_apply(the_person, add_to_log):
+        def mind_control_agent_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(70, add_to_log)
 
-        def mind_control_agent_on_remove(the_person, add_to_log):
+        def mind_control_agent_on_remove(the_person, the_serum, add_to_log):
             the_person.remove_suggest_effect(70)
 
         ## permanent_bimbo_functions ##
-        def permanent_bimbo_on_apply(the_person, add_to_log):
+        def permanent_bimbo_on_apply(the_person, the_serum, add_to_log):
             the_person.change_slut_core(10, add_to_log, fire_event = True)
             the_person.change_slut_temp(10, add_to_log)
             the_person.change_obedience(10, add_to_log)
@@ -185,7 +185,7 @@ init -1:
                 mc.log_event(display_name + ": Personality changed. Now: Bimbo", "float_text_pink")
 
         ## Pregnancy related serum trait functions ##
-        def fertility_enhancement_on_apply(the_person, add_to_log):
+        def fertility_enhancement_on_apply(the_person, the_serum, add_to_log):
             the_person.fertility_percent += 20
             display_name = the_person.create_formatted_title("???")
             if the_person.title:
@@ -193,10 +193,10 @@ init -1:
             if add_to_log:
                 mc.log_event(the_person.title + ": +20 Fertility", "float_text_red")
 
-        def fertility_enhancement_on_remove(the_person, add_to_log):
+        def fertility_enhancement_on_remove(the_person, the_serum, add_to_log):
             the_person.fertility_percent += -20
 
-        def fertility_suppression_on_apply(the_person, add_to_log):
+        def fertility_suppression_on_apply(the_person, the_serum, add_to_log):
             the_person.fertility_percent += -20
             display_name = the_person.create_formatted_title("???")
             if the_person.title:
@@ -204,10 +204,10 @@ init -1:
             if add_to_log:
                 mc.log_event(the_person.title + ": -20 Fertility", "float_text_red")
 
-        def fertility_suppression_on_remove(the_person, add_to_log):
+        def fertility_suppression_on_remove(the_person, the_serum, add_to_log):
             the_person.fertility_percent += +20
 
-        def birth_control_suppression_on_apply(the_person, add_to_log):
+        def birth_control_suppression_on_apply(the_person, the_serum, add_to_log):
             the_person.bc_penalty += 40
             display_name = the_person.create_formatted_title("???")
             if the_person.title:
@@ -215,10 +215,76 @@ init -1:
             if add_to_log:
                 mc.log_event(display_name + ": Birth control effectiveness reduced by 40%", "float_text_grey")
 
-        def birth_control_suppression_on_remove(the_person, add_to_log):
+        def birth_control_suppression_on_remove(the_person, the_serum, add_to_log):
             the_person.bc_penalty += -40
 
-        def lactation_hormones_on_apply(the_person, add_to_log):
+        def simple_aphrodesiac_on_apply(the_person, the_serum, add_to_log):
+            change_amount = 30 - the_person.sluttiness
+            if change_amount > 10:
+                change_amount = 10
+            elif change_amount < 0:
+                change_amount = 0
+
+            the_person.change_slut_temp(change_amount, add_to_log)
+            the_person.change_slut_core(change_amount, add_to_log, fire_event = False)
+            the_serum.effects_dict["simple_aphrodesiac_amount"] = change_amount
+
+            the_person.change_max_energy(-20, add_to_log)
+
+        def simple_aphrodesiac_on_remove(the_person, the_serum, add_to_log):
+            change_amount = the_serum.effects_dict.get("simple_aphrodesiac_amount", 10)
+            the_person.change_slut_temp(-change_amount, add_to_log)
+            the_person.change_slut_core(-change_amount, add_to_log, fire_event = False)
+
+            the_person.change_max_energy(20, add_to_log)
+
+        def climax_limiter_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_max_arousal(40, add_to_log)
+
+        def climax_limiter_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_max_arousal(-40, add_to_log)
+
+        def climax_enhancer_on_apply(the_person, the_serum, add_to_log):
+            change_amount = -20
+            if the_person.max_arousal - 20 < 0:
+                change_amount = the_person.max_arousal - 20
+            the_serum.effects_dict["climax_enhancer_amount"] = change_amount
+            the_person.change_max_arousal(change_amount, add_to_log)
+
+        def climax_enhancer_on_remove(the_person, the_serum, add_to_log):
+            change_amount = the_serum.effects_dict.get("climax_enhancer_amount", -20)
+            the_person.change_max_arousal(-change_amount, add_to_log)
+
+        def climax_enhancer_on_turn(the_person, the_serum, add_to_log):
+            the_person.change_happiness(-5, add_to_log)
+
+        ## Sex skill enhancements ##
+
+        def foreplay_enhancer_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Foreplay", 2, add_to_log)
+
+        def foreplay_enhancer_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Foreplay", -2, add_to_log)
+
+        def oral_enhancer_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Oral", 2, add_to_log)
+
+        def oral_enhancer_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Oral", -2, add_to_log)
+
+        def vaginal_enhancer_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Vaginal", 2, add_to_log)
+
+        def vaginal_enhancer_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Vaginal", -2, add_to_log)
+
+        def anal_enhancer_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Anal", 2, add_to_log)
+
+        def anal_enhancer_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_sex_skill("Anal", -2, add_to_log)
+
+        def lactation_hormones_on_apply(the_person, the_serum, add_to_log):
             the_person.lactation_sources += 1
             display_name = the_person.create_formatted_title("???")
             if the_person.title:
@@ -232,98 +298,98 @@ init -1:
         def lactation_hormones_on_remove(the_person,add_to_log):
             the_person.lactation_sources += -1
 
-        def massive_pregnancy_accelerator_on_turn(the_person, add_to_log):
+        def massive_pregnancy_accelerator_on_turn(the_person, the_serum, add_to_log):
             the_person.event_triggers_dict["preg_tits_date"] = the_person.event_triggers_dict.get("preg_tits_date", day) - 1
             the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) - 1
             the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) - 1
 
-        def pregnancy_accelerator_on_day(the_person, add_to_log):
+        def pregnancy_accelerator_on_day(the_person, the_serum, add_to_log):
             the_person.event_triggers_dict["preg_tits_date"] = the_person.event_triggers_dict.get("preg_tits_date", day) - 1
             the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) - 1
             the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) - 1
 
-        def pregnancy_decellerator_on_day(the_person, add_to_log):
+        def pregnancy_decellerator_on_day(the_person, the_serum, add_to_log):
             the_person.event_triggers_dict["preg_tits_date"] = the_person.event_triggers_dict.get("preg_tits_date", day) + 1
             the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) + 1
             the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) + 1
 
         ## nora_serum_up_trait ##
-        def nora_suggest_up_on_apply(the_person, add_to_log):
+        def nora_suggest_up_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(50, add_to_log)
 
-        def nora_suggest_up_on_remove(the_person, add_to_log):
+        def nora_suggest_up_on_remove(the_person, the_serum, add_to_log):
             the_person.remove_suggest_effect(50)
 
-        def nora_nightmares_on_day(the_person, add_to_log):
+        def nora_nightmares_on_day(the_person, the_serum, add_to_log):
             the_person.change_happiness(-15, add_to_log)
 
-        def nora_obedience_swing_on_turn(the_person, add_to_log):
+        def nora_obedience_swing_on_turn(the_person, the_serum, add_to_log):
             change_amount = renpy.random.randint(-15,15)
             the_person.change_obedience(change_amount)
 
-        def nora_sluttiness_boost_on_apply(the_person, add_to_log):
+        def nora_sluttiness_boost_on_apply(the_person, the_serum, add_to_log):
             the_person.change_slut_core(20, add_to_log, fire_event = False)
             the_person.change_slut_temp(20, add_to_log)
 
-        def nora_sluttiness_boost_on_remove(the_person, add_to_log):
+        def nora_sluttiness_boost_on_remove(the_person, the_serum, add_to_log):
             the_person.change_slut_core(-20, add_to_log, fire_event = False)
             the_person.change_slut_temp(-20, add_to_log)
 
 
         ## nora_special_unlock_taits
-        def nora_reward_mother_trait_on_turn(the_person, add_to_log):
+        def nora_reward_mother_trait_on_turn(the_person, the_serum, add_to_log):
             amount_change = __builtin__.round((the_person.sluttiness - the_person.love)/10)
             if amount_change > 0:
                 the_person.change_love(amount_change, add_to_log)
 
 
-        def nora_reward_sister_trait_on_day(the_person, add_to_log):
+        def nora_reward_sister_trait_on_day(the_person, the_serum, add_to_log):
             amount_change = __builtin__.round((the_person.obedience - 100)/10)
             if amount_change > 0:
                 the_person.change_slut_temp(amount_change, add_to_log)
-                the_person.change_slut_core(amount_change, add_to_log)
+                the_person.change_slut_core(amount_change, add_to_log, fire_event = False)
 
-        def nora_reward_cousin_trait_on_day(the_person, add_to_log):
+        def nora_reward_cousin_trait_on_day(the_person, the_serum, add_to_log):
             amount_change = __builtin__.round((the_person.love)/-5)
             if amount_change > 0:
-                the_person.change_slut_core(amount_change, add_to_log)
+                the_person.change_slut_core(amount_change, add_to_log, fire_event = False)
 
-        def nora_reward_nora_trait_on_apply(the_person, add_to_log):
+        def nora_reward_nora_trait_on_apply(the_person, the_serum, add_to_log):
             amount = 5 * mc.int
             the_person.change_slut_temp(amount, add_to_log)
-            the_person.change_slut_core(amount, add_to_log)
+            the_person.change_slut_core(amount, add_to_log, fire_event = False)
             the_person.change_obedience(amount, add_to_log)
 
-        def nora_reward_nora_trait_on_remove(the_person, add_to_log):
+        def nora_reward_nora_trait_on_remove(the_person, the_serum, add_to_log):
             amount = 5 * mc.int
             the_person.change_slut_temp(-amount, add_to_log)
             the_person.change_slut_core(-amount, add_to_log)
             the_person.change_obedience(-amount, add_to_log)
 
-        def nora_reward_high_love_trait_on_turn(the_person, add_to_log):
+        def nora_reward_high_love_trait_on_turn(the_person, the_serum, add_to_log):
             if the_person.core_sluttiness > the_person.love:
-                the_person.change_slut_core(-1, add_to_log)
+                the_person.change_slut_core(-1, add_to_log, fire_event = False)
                 the_person.change_love(1, add_to_log)
 
-        def nora_reward_low_love_trait_on_apply(the_person, add_to_log):
+        def nora_reward_low_love_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.change_love(-50, add_to_log)
 
-        def nora_reward_low_love_trait_on_remove(the_person, add_to_log):
+        def nora_reward_low_love_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.change_love(50, add_to_log)
 
-        def nora_reward_high_obedience_trait_on_turn(the_person, add_to_log):
+        def nora_reward_high_obedience_trait_on_turn(the_person, the_serum, add_to_log):
             amount = __builtin__.round((the_person.obedience-100)/5)
             the_person.change_happiness(amount, add_to_log)
 
-        def nora_reward_high_slut_trait_on_apply(the_person, add_to_log):
+        def nora_reward_high_slut_trait_on_apply(the_person, the_serum, add_to_log):
             amount = the_person.sluttiness - the_person.core_sluttiness
             if amount > 5:
                 amount = 5
             if amount > 0:
                 the_person.change_slut_temp(-amount)
-                the_person.change_slut_core(amount, add_to_log)
+                the_person.change_slut_core(amount, add_to_log, fire_event = False)
 
-        def nora_reward_genius_trait_on_apply(the_person, add_to_log):
+        def nora_reward_genius_trait_on_apply(the_person, the_serum, add_to_log):
             if (the_person.charisma < 5):
                 the_person.charisma = 5
             if (the_person.int < 5):
@@ -331,7 +397,7 @@ init -1:
             if (the_person.focus < 5):
                 the_person.focus = 5
 
-        def nora_reward_hucow_trait_on_apply(the_person, add_to_log): #TODO Hook this up so it's possible to recieve this.
+        def nora_reward_hucow_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.bc_penalty += 75
             the_person.fertility_percent += 70
             the_person.lactation_sources += 3
@@ -352,7 +418,7 @@ init -1:
                 if the_person in mc.location.people: #If you're here applying this trait in person it causes her to exclaim.
                     renpy.say(display_name,"Oh my god my tits feel... bigger!")
 
-        def nora_reward_hucow_trait_on_remove(the_person, add_to_log):
+        def nora_reward_hucow_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.bc_penalty += -75
             the_person.fertility_percent += -70
             the_person.lactation_sources += -3
@@ -396,7 +462,6 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         #################
         # Tier 0 traits produce almost no effect on the person taking them, or produce an effect with a significant downside. They are available for research from the start of the game.
 
-        #TODO: Basic serum production technique. Adds starting serum slots, traits, etc.
         primitive_serum_prod = SerumTrait(name = "Primitive Serum Production",
             desc = "The fundamental serum creation technique. The special carrier molecule can deliver one other serum trait with pinpoint accuracy.",
             positive_slug = "1 Trait Slot, 3 Turn Duration, $2 Value",
@@ -497,9 +562,35 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_added = 50,
             base_side_effect_chance = 30,
             on_apply = birth_control_suppression_on_apply,
-            on_remove = birth_control_suppression_on_apply,
+            on_remove = birth_control_suppression_on_remove,
             research_needed = 100,
             clarity_cost = 30)
+
+        simple_aphrodesiac = SerumTrait(name = "Inhibition Suppression",
+            desc = "Direct delivery of alchoholic molecules to the subjects brain produces notabely reduced inhibitions. Side effects are common, but always include drowsiness.",
+            positive_slug = "+$15 Value, +10 Sluttiness (Max 30)",
+            negative_slug = "-20 Energy, +50 Serum Research",
+            value_added = 15,
+            research_added = 50,
+            base_side_effect_chance = 50,
+            on_apply = simple_aphrodesiac_on_apply,
+            on_remove = simple_aphrodesiac_on_remove,
+            research_needed = 75,
+            clarity_cost = 25)
+
+        foreplay_enhancer = SerumTrait(name = "Tactile Stimulator",
+            desc = "Tunes the subjects nerves, especially those in the extremities, to higher levels of precision. Increases a girls Foreplay skill for the duration.",
+            positive_slug = "+$10 Value, +2 Foreplay Skill",
+            negative_slug = "+50 Serum Research",
+            value_added = 10,
+            research_added = 50,
+            base_side_effect_chance = 20,
+            on_apply = foreplay_enhancer_on_apply,
+            on_remove = foreplay_enhancer_on_remove,
+            requires = [basic_med_app],
+            tier = 0,
+            research_needed = 100,
+            clarity_cost = 50)
 
 
         #################
@@ -541,7 +632,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         large_obedience_enhancer = SerumTrait(name = "Experimental Obedience Treatment.",
             desc = "The combination of several only recently released compounds should produce a larger increase in obedience. Unfortunately the effect leaves the recipient rather stuck up and stuffy.",
             positive_slug = "+$20 Value, +20 Obedience",
-            negative_slug = "-2 Sluttiness/Turn, +75 Serum Research",
+            negative_slug = "-1 Sluttiness/Turn, +75 Serum Research",
             value_added = 20,
             research_added = 75,
             base_side_effect_chance = 20,
@@ -569,7 +660,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         aphrodisiac = SerumTrait(name = "Distilled Aprodisac",
             desc = "Careful distilation can concentrate the active ingredient from common aprodisiacs, producing a sudden spike in sluttiness when consumed. The sexual frustration linked to this effect tends to make the recipient less obedient over time as well.",
             positive_slug = "+$20 Value, +15 Sluttiness",
-            negative_slug = "-2 Obedience/Turn, +60 Serum Research",
+            negative_slug = "-1 Obedience/Turn, +60 Serum Research",
             value_added = 20,
             research_added = 60,
             base_side_effect_chance = 20,
@@ -624,8 +715,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         mood_enhancer = SerumTrait(name = "Mood Enhancer",
             desc = "Standard antidepressants provide a general improvement in mood. The most common side effect is a lack of respect for authority figures, brought on by the chemical endorphin rush.",
-            positive_slug = "+$20 Value, +5 Happiness/Turn",
-            negative_slug = "-2 Obedience/Turn, +75 Serum Research",
+            positive_slug = "+$20 Value, +10 Happiness/Turn",
+            negative_slug = "-1 Obedience/Turn, +75 Serum Research",
             value_added = 20,
             research_added = 75,
             base_side_effect_chance = 15,
@@ -676,6 +767,34 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 1,
             research_needed = 250,
             clarity_cost = 200)
+
+        oral_enhancer = SerumTrait(name = "Gag Suppressant",
+            desc = "Targets and suppresses the natural gag reflex of the subject. This has little practical benefit, other than making it significantly easier for the subject to perform oral sex.",
+            positive_slug = "+$15 Value, +2 Oral Skill",
+            negative_slug = "+150 Serum Research",
+            value_added = 15,
+            research_added = 150,
+            base_side_effect_chance = 50,
+            on_apply = oral_enhancer_on_apply,
+            on_remove = oral_enhancer_on_remove,
+            requires = [basic_med_app],
+            tier = 1,
+            research_needed = 300,
+            clarity_cost = 750)
+
+        climax_limiter = SerumTrait(name = "Pleasure Center Depressant",
+            desc = "Makes it much harder for a subject to orgasm, while still allowing them to feel the full effects of being highly aroused. Some subjects may take drastic steps to achieve orgasm.",
+            positive_slug = "+$15 Value, +40 Max Arousal",
+            negative_slug = "+100 Serum Research",
+            value_added = 15,
+            research_added = 100,
+            base_side_effect_chance = 35,
+            on_apply = climax_limiter_on_apply,
+            on_remove = climax_limiter_on_remove,
+            requires = [basic_med_app],
+            tier = 1,
+            research_needed = 200,
+            clarity_cost = 500)
 
     #################
         # Tier 2 Traits #
@@ -797,7 +916,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         happiness_tick = SerumTrait(name = "Slow Release Dopamine",
             desc = "By slowly flooding the users dopamine receptors they can be put into a long lasting sense of optimism",
-            positive_slug = "+$25 Value, +3 Happiness/Turn",
+            positive_slug = "+$25 Value, +5 Happiness/Turn",
             negative_slug = "+100 Serum Research",
             value_added = 25,
             research_added = 100,
@@ -861,6 +980,49 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             research_needed = 600,
             clarity_cost = 750)
+
+        vaginal_enhancer = SerumTrait(name = "Natural Lubrication Stimulation",
+            desc = "Kicks the subject's natural lubrication production into overdrive. Improved lubrication allows for more vigorous activities without discomfort.",
+            positive_slug = "+20 Value, +2 Vaginal Skill",
+            negative_slug = "+300 Serum Research",
+            value_added = 20,
+            research_added = 300,
+            base_side_effect_chance = 60,
+            on_apply = vaginal_enhancer_on_apply,
+            on_remove = vaginal_enhancer_on_remove,
+            requires = [basic_med_app],
+            tier = 2,
+            research_needed = 700,
+            clarity_cost = 1000)
+
+        anal_enhancer = SerumTrait(name = "Sphinctor Elasticity Promotor",
+            desc = "Triggers a release of chemicals in the subject that increase muscle elasticity dramatically.",
+            positive_slug = "+20 Value, +2 Anal Skill",
+            negative_slug = "+300 Serum Research",
+            value_added = 20,
+            research_added = 300,
+            base_side_effect_chance = 60,
+            on_apply = anal_enhancer_on_apply,
+            on_remove = anal_enhancer_on_remove,
+            requires = [basic_med_app],
+            tier = 2,
+            research_needed = 700,
+            clarity_cost = 1000)
+
+        climax_enhancer = SerumTrait(name = "Pleasure Center Stimulator",
+            desc = "Changes the baseline of pleasure chemicals in the subjects brain. This has the effect of making it much easier for physical stimulation to trigger an orgasm in the subject. Comes with a large risk of side effects, and disturbs the subjects natural sense of enjoyment.",
+            positive_slug = "+25 Value, -20 Max Arousal (Min 20)",
+            negative_slug = "-5 Happiness/Turn, +350 Serum Research",
+            value_added = 25,
+            research_added = 350,
+            base_side_effect_chance = 100,
+            on_apply = climax_enhancer_on_apply,
+            on_remove = climax_enhancer_on_remove,
+            on_turn = climax_enhancer_on_turn,
+            requires = [mood_enhancer, aphrodisiac],
+            tier = 2,
+            research_needed = 1000,
+            clarity_cost = 1600)
 
     #################
         # Tier 3 Traits #
@@ -926,6 +1088,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 3,
             research_needed = 1400,
             clarity_cost = 1800)
+
+
 
     ### SPECIAL TRAITS ###
 
@@ -1135,6 +1299,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(high_con_drugs)
         list_of_traits.append(sedatives_trait)
         list_of_traits.append(caffeine_trait)
+        list_of_traits.append(simple_aphrodesiac)
+        list_of_traits.append(foreplay_enhancer)
 
     # Tier 1
         list_of_traits.append(improved_serum_prod)
@@ -1150,7 +1316,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(birth_control_suppression)
         list_of_traits.append(fertility_enhancement_trait)
         list_of_traits.append(fertility_suppression_trait)
-
+        list_of_traits.append(oral_enhancer)
+        list_of_traits.append(climax_limiter)
 
     # Tier 2
         list_of_traits.append(advanced_serum_prod)
@@ -1166,6 +1333,9 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(pregnancy_accelerator_trait)
         list_of_traits.append(pregnancy_decelerator_trait)
         list_of_traits.append(lactation_hormones)
+        list_of_traits.append(vaginal_enhancer)
+        list_of_traits.append(anal_enhancer)
+        list_of_traits.append(climax_enhancer)
 
     # Tier 3
         list_of_traits.append(futuristic_serum_prod)

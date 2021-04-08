@@ -1,7 +1,7 @@
 init 0 python:
     ## Organisation Policies ##
-    organisation_policies_list = []
 
+    organisation_policies_list = []
 
     def increase_max_employee_size(amount):
         mc.business.max_employee_count += amount
@@ -190,3 +190,71 @@ init 0 python:
         toggleable = True,
         requirement = theoretical_research_policy_requirement)
     organisation_policies_list.append(independent_experimentation)
+
+    def office_conduct_guidelines_requirement():
+        return True
+
+    def office_conduct_guidelines_on_day():
+        if mc.business.is_work_day():
+            for an_employee in mc.business.get_employee_list():
+                if an_employee.sluttiness < 20:
+                    an_employee.change_slut_temp(1, add_to_log = False)
+                    mc.business.change_team_effectiveness(-1)
+
+    office_conduct_guidelines = Policy(name = "Office Conduct Guidelines",
+        desc = "Set and distribute guidelines for staff behaviour. Daily emails will remind them to be \"pleasant, open, and receptive to all things.\". Increases all staff Sluttiness by 1 per day, to a maximum of 20. Reduces business effiency by 1 per employee affected.",
+        cost = 700,
+        toggleable = True,
+        requirement = office_conduct_guidelines_requirement,
+        on_day_function = office_conduct_guidelines_on_day)
+    organisation_policies_list.append(office_conduct_guidelines)
+
+    def mandatory_staff_reading_requirement():
+        if office_conduct_guidelines.is_active():
+            return True
+        else:
+            return False
+
+    def mandatory_staff_reading_on_day():
+        if mc.business.is_work_day():
+            for an_employee in mc.business.get_employee_list():
+                if an_employee.sluttiness <= 20:
+                    an_employee.change_happiness(-5, add_to_log = False)
+
+                if an_employee.sluttiness < 40:
+                    an_employee.change_slut_temp(1, add_to_log = False)
+                    mc.business.change_team_effectiveness(-1)
+
+    mandatory_staff_reading = Policy(name = "Mandatory Staff Reading",
+        desc = "Distribute copies of \"Your Place in the Work Place\" - a guidebook for women, written in the 60's by a womanizing executive. Increases all staff Sluttiness by an additional 1 per day, to a maximum of 40. Reduces business efficency by 1 per employee affected, and reduces happiness of women with Sluttiness 20 or lower by 5 per day.",
+        cost = 1500,
+        toggleable = True,
+        requirement = mandatory_staff_reading_requirement,
+        on_day_function = mandatory_staff_reading_on_day,
+        dependant_policies = office_conduct_guidelines)
+    organisation_policies_list.append(mandatory_staff_reading)
+
+    def superliminal_office_messaging_requirement():
+        if mandatory_staff_reading.is_active():
+            return True
+        else:
+            return False
+
+    def superliminal_office_messaging_on_day():
+        if mc.business.is_work_day():
+            for an_employee in mc.business.get_employee_list():
+                if an_employee.sluttiness <= 20:
+                    an_employee.change_happiness(-10)
+                    mc.business.change_team_effectiveness(-3)
+                elif an_employee.sluttiness < 60:
+                    mc.business.change_team_effectiveness(-1)
+                an_employee.change_slut_temp(1, add_to_log = False)
+
+    superliminal_office_messaging = Policy(name = "superliminal Messaging",
+        desc = "Fill the office with overtly sexual content. Distribute pinup girl calendars, provide access to a company porn account, hang nude posters. Increases staff Sluttiness by 1 per day, to a maximum of 60. Reduces business efficency by 1 per girl affected, or by 3 if her Sluttiness is 20 or lower. Reduces happiness of women with Sluttiness 20 or lower by 10 per day.",
+        cost = 7500,
+        toggleable = True,
+        requirement = superliminal_office_messaging_requirement,
+        on_day_function = superliminal_office_messaging_on_day,
+        dependant_policies = mandatory_staff_reading)
+    organisation_policies_list.append(superliminal_office_messaging)

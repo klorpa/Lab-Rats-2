@@ -187,15 +187,15 @@ label instapic_comment_loop(the_person, posted_today = False):
 
     return
 
-label comment_description(type, the_person):
+label comment_description(comment_type, the_person):
     $ the_person.event_triggers_dict["insta_commented_day"] = day
-    if type == "nice":
+    if comment_type == "nice":
         mc.name "Looking good!" (what_style = "text_message_style")
         $ the_person.change_happiness(2, add_to_log = False)
-    elif type == "mean":
+    elif comment_type == "mean":
         mc.name "You should wear something else. That outfit looks terrible!" (what_style = "text_message_style")
         $ the_person.change_happiness(-2, add_to_log = False)
-    elif type == "sexy":
+    elif comment_type == "sexy":
         mc.name "Stunning! Wish I could see you naked!" (what_style = "text_message_style")
         $ her_slut = the_person.effective_sluttiness() + 5*(the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"))
         if her_slut < 20: #Dislikes it
@@ -322,9 +322,9 @@ label dm_option_underwear_response(the_person):
         $ strip_list = the_person.outfit.get_underwear_strip_list()
         $ the_person.outfit.strip_to_underwear(avoid_nudity = True)
         $ the_person.draw_person(the_animation = None)
-        $ the_person.apply_outfit() #Redress
         $ mc.change_locked_clarity(10)
         "There's a short pause, then she sends an image."
+        $ the_person.apply_outfit() #Redress
         the_person "Enjoy, and remember to leave a nice comment on my profile!" (what_style = "text_message_style")
 
     else:
@@ -415,14 +415,15 @@ label dm_option_topless_response(the_person):
         $ strip_list = the_person.outfit.get_tit_strip_list()
         if the_person.outfit.can_half_off_to_tits():
             $ strip_list = the_person.outfit.get_half_off_to_tits_list()
-            $ the_person.outfit.remove_clothing_list(strip_list, half_off_instead)
+            $ the_person.outfit.remove_clothing_list(strip_list, half_off_instead = True)
         else:
             $ the_person.outfit.remove_clothing_list(strip_list)
         $ the_person.draw_person(the_animation = None)
-        $ the_person.apply_outfit()
+
         $ mc.change_locked_clarity(15)
         "There's a short pause, then she sends an image."
         the_person "Hope that's everything you hoped it would be! Leave a nice comment on my profile, it helps!" (what_style = "text_message_style")
+        $ the_person.apply_outfit()
 
     else: #Does it happily
         $ the_choice = True
@@ -439,7 +440,7 @@ label dm_option_topless_response(the_person):
         $ strip_list = the_person.outfit.get_tit_strip_list()
         if the_person.outfit.can_half_off_to_tits():
             $ strip_list = the_person.outfit.get_half_off_to_tits_list()
-            $ the_person.outfit.remove_clothing_list(strip_list, half_off_instead)
+            $ the_person.outfit.remove_clothing_list(strip_list, half_off_instead = True)
         else:
             $ the_person.outfit.remove_clothing_list(strip_list)
             $ the_person.draw_person(the_animation = None)
@@ -556,8 +557,8 @@ label dm_option_nude_response(the_person):
         "Pause. Picture."
         $ mc.change_locked_clarity(15)
         $ the_person.draw_person(position = "doggy", the_animation = None)
-        $ the_person.apply_outfit()
         the_person "I hope you have fun with those, I had fun taking them!"
+        $ the_person.apply_outfit()
 
     if the_choice:
         the_person "Oh, and if you liked that, check out my OnlyFanatics page. I'm sure you'll love it!" (what_style = "text_message_style")

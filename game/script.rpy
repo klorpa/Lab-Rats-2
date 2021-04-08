@@ -130,7 +130,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.39.0 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "v0.39.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -543,6 +543,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
     call instantiate_serum_traits() from _call_instantiate_serum_traits #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has labels that can be externally added and called here.
     call instantiate_side_effect_traits() from _call_instantiate_side_effect_traits
     call instantiate_roles()
+    call instantiate_business_policies()
 
     python:
 
