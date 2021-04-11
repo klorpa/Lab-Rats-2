@@ -168,7 +168,7 @@ init 0 python:
 
     def research_journal_subscription_on_day():
         if mc.business.is_work_day():
-            mc.businss.funds += -30
+            mc.business.funds += -30
 
     research_journal_subscription = Policy(name = "Research Journal Subscription",
         desc = "Ensuring your research team has access to all of the latest research isn't cheap, but it is important if you want to push your own progress further and faster. Converts an additional 5% of idle Research Points into Clarity when your R&D team is idle. Costs $30 a day to maintain your subscription.",
@@ -250,7 +250,7 @@ init 0 python:
                     mc.business.change_team_effectiveness(-1)
                 an_employee.change_slut_temp(1, add_to_log = False)
 
-    superliminal_office_messaging = Policy(name = "superliminal Messaging",
+    superliminal_office_messaging = Policy(name = "Superliminal Messaging",
         desc = "Fill the office with overtly sexual content. Distribute pinup girl calendars, provide access to a company porn account, hang nude posters. Increases staff Sluttiness by 1 per day, to a maximum of 60. Reduces business efficency by 1 per girl affected, or by 3 if her Sluttiness is 20 or lower. Reduces happiness of women with Sluttiness 20 or lower by 10 per day.",
         cost = 7500,
         toggleable = True,

@@ -151,7 +151,7 @@ label outro_doggy_anal(the_girl, the_location, the_object):
         else:
             the_girl.char "Wow, that was intense. I hope you didn't stretch me out too badly."
 
-    if the_choice == "Cum on her ass.":
+    elif the_choice == "Cum on her ass.":
         "You pull out of [the_girl.possessive_title]'s asshole, leaving it gaping while you stroke yourself to completion."
         if the_girl.sex_skills["Anal"] <= 2:
             "She sighs in relief as you pull out."

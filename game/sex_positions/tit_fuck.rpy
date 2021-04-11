@@ -97,6 +97,7 @@ label outro_tit_fuck(the_girl, the_location, the_object):
     $ the_choice = climax_controller.show_climax_menu()
     if the_choice == "Cum between her tits.":
         "You close your eyes and focus on the sensation of [the_girl.possessive_title]'s warm, soft breasts massaging your cock."
+        $ climax_controller.do_clarity_release(the_girl)
         "Your orgasm builds to a peak and you grunt, blasting your load up between [the_girl.title]'s tits and out the top of her cleavage."
         $ blocker = the_girl.outfit.get_upper_top_layer()
         if blocker: #There's something on her top
@@ -113,14 +114,15 @@ label outro_tit_fuck(the_girl, the_location, the_object):
         "As your orgasm builds to its peak you step back, sliding your cock out from her cleavage and take it up in your own hand."
         if the_girl.effective_sluttiness() > 40 or the_girl.get_opinion_score("cum facials") > 0:
             "[the_girl.title] understands immediately what is about to happens and tilts her head up, giving you a clear target."
+            $ climax_controller.do_clarity_release(the_girl)
             "You stroke yourself to completion and blast your load over her face, throwing thick ropes of cum her lips and nose and eyes."
         else:
             the_girl.char "What's wrong? I...!"
+            $ climax_controller.do_clarity_release(the_girl)
             "You grunt and climax, blasting thick ropes of cum over [the_girl.title]'s surprised face. She jerks back, then waits until you're finished."
         $ the_girl.cum_on_face()
         $ tit_fuck.redraw_scene(the_girl)
 
-    $ climax_controller.do_clarity_release(the_girl)
     the_girl.char "Ah... Wow..."
     return
 

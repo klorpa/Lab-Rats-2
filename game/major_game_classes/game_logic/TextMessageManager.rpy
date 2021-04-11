@@ -5,13 +5,13 @@ init -2 python:
             self.current_message = None # Set to a tuple of [who, what] when someone texts you, allowing for it to be displayed immediately (instead of after the statement is passed into history). Should be
             #TODO: Then figure out how we are gong to store pictures, videos, allow custom avatar pics, ect. We could either store them as .pngs, or store all the required parameters (including outfit).
 
-        def register_number(self, the_person): #Now just used to keep track of who's number we know
+        def register_number(self, the_person): #Keeps track of who has messaged us in the past.
             if not self.has_number(the_person):
                 self.message_history[the_person] = []
                 self.add_system_message(the_person, "Added [the_person.title] to contacts.")
 
         def add_message(self, the_person, history_entry):
-            self.register_number(the_person)
+            self.register_number(the_person) #In theory every person that gets to this point is already registered when the conversation started, but this catches crashes.
             self.message_history[the_person].append(history_entry)
 
         def add_non_convo_message(self, the_person, the_message, as_mc = False): #Allows you to add an entry to the log without it having to appear as dialogue.

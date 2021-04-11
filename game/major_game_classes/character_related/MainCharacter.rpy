@@ -317,6 +317,7 @@ init -2 python:
                 self.log_items.pop() #Pop off extra items until we are down to size.
 
         def start_text_convo(self, the_person): #Triggers all the appropriate variables so say entries will go into the phone text log.
+            self.phone.register_number(the_person)
             self.having_text_conversation = the_person
             self.text_conversation_paused = False
 
