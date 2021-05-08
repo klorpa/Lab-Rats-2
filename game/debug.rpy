@@ -31,14 +31,8 @@ init -15 python:
     from datetime import datetime
     import traceback
 
-    # def log_image(the_image_stream):
-    #     file_path = os.path.abspath(os.path.join(config.basedir, "game"))
-    #     file_name = os.path.join(file_path,"DEBUG_IMAGE_LOG.txt")
-    #     opened_file = os.open(file_name,os.O_WRONLY|os.O_APPEND|os.O_CREAT) #Open the log, create it if it doesn't exist already.
-    #
-    #     string_to_write = "TIME: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ":\n" + the_image_stream.getbuffer() + "\n"
-    #     os.write(opened_file, string_to_write)
-    #     os.close(opened_file) #Close everything
+    def run_unit_tests():
+        unittest.main(module = renpy.store, argv = ['first-arg-is-ignored'], exit = False)
 
     def log_message(the_message):
         if not config.developer:
@@ -68,6 +62,7 @@ init -15 python:
         for place in list_of_places:
             for person in place.get_person_list():
                 person.add_role(instapic_role)
+
 
 label test_memory_use():
     #TODO: Create 10 people

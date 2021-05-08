@@ -204,6 +204,7 @@ label strip_skull_fuck(the_girl, the_clothing, the_location, the_object):
     return
 
 label strip_ask_skull_fuck(the_girl, the_clothing, the_location, the_object):
+    $ return_value = True
     "[the_girl.title] taps on your thigh and tries to move her head back."
     menu:
         "Ignore her.": #You're really in control here.
@@ -225,9 +226,10 @@ label strip_ask_skull_fuck(the_girl, the_clothing, the_location, the_object):
                     mc.name "No, I like how you look with it on."
                     the_girl.char "Well then, what are you waiting for?"
                     "She opens her mouth wide and you slam your dick back down her throat."
+                    $ return_value = False
             $ skull_fuck.current_modifier = "blowjob"
             $ skull_fuck.redraw_scene(the_girl)
-    return
+    return return_value
 
 label orgasm_skull_fuck(the_girl, the_location, the_object):
     "You're happily fucking [the_girl.possessive_title]'s warm, wet throat when you notice her closer her eyes."

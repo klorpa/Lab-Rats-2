@@ -143,7 +143,6 @@ label supplies_work_action_description:
 label market_work_action_description:
     $ mc.business.player_market()
     call advance_time from _call_advance_time_4
-
     return
 
 label production_work_action_description:
@@ -229,7 +228,6 @@ label hire_someone(new_person, add_to_location = False): # Breaks out some of th
     python:
         new_person.event_triggers_dict["employed_since"] = day
         mc.business.listener_system.fire_event("new_hire", the_person = new_person)
-        new_person.add_role(employee_role)
         for other_employee in mc.business.get_employee_list():
             town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
 
@@ -377,7 +375,7 @@ label head_researcher_select_description:
     return
 
 label pick_company_model_description:
-    call screen employee_overview(person_select = True)
+    call screen employee_overview(white_list = mc.business.market_team,person_select = True)
     $ new_model = _return
     if new_model is not None:
         $ mc.business.company_model = new_model

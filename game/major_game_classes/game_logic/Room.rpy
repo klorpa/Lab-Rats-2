@@ -1,19 +1,51 @@
 init -2 python:
     class Room(renpy.store.object): #Contains people and objects.
-        def __init__(self,name,formalName,connections,background_image,objects,people,actions,public,map_pos,
+        def __init__(self, name = None, formal_name = None, connections = None, background_image= None, objects = None, people = None, actions = None, public = False, map_pos = None,
             tutorial_label = None, visible = True, hide_in_known_house_map = True, lighting_conditions = None):
 
+            if name is None:
+                self.name = "Unnamed Room"
+            else:
+                self.name = name
+                
+            if formal_name is None:
+                self.formal_name = name
+            else:
+                self.formal_name = formal_name
 
-            self.name = name
-            self.formalName = formalName
-            self.connections = connections
-            self.background_image = background_image #If a string this is used at all points in the day. If it is a list each entry corrisponds to the background for a different part of the day
-            self.objects = objects
-            self.objects.append(Object("stand",["Stand"], sluttiness_modifier = 0, obedience_modifier = -5)) #Add a standing position that you can always use.
-            self.people = people
-            self.actions = actions #A list of Action objects
+            if connections is None:
+                self.connections = []
+            else:
+                self.connections = connections
+
+            if background_image is None:
+                self.background_image = "Outside_Background.png"
+            else:
+                self.background_image = background_image #If a string this is used at all points in the day. If it is a list each entry corrisponds to the background for a different part of the day
+
+            if objects is None:
+                self.objects = []
+            else:
+                self.objects = objects
+            self.objects.append(Object("stand",["Stand"], sluttiness_modifier = 0, obedience_modifier = 0)) #Add a standing position that you can always use.
+
+            if people is None:
+                self.people = []
+            else:
+                self.people = people
+
+            if actions is None:
+                self.actions = []
+            else:
+                self.actions = actions #A list of Action objects
+
             self.public = public #If True, random people can wander here.
-            self.map_pos = map_pos #A tuple of two int values giving the hex co-ords, starting in the top left. Using this guarantees locations will always tessalate.
+
+            if map_pos is None:
+                self.map_pos = [-1,-1] #off screen
+            else:
+                self.map_pos = map_pos #A tuple of two int values giving the hex co-ords, starting in the top left. Using this guarantees locations will always tessalate.
+
             self.visible = visible #If true this location is shown on the map. If false it is not on the main map and will need some other way to access it.
             self.hide_in_known_house_map = hide_in_known_house_map #If true this location is hidden in the house map, usually because their house is shown on the main map.
 

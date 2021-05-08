@@ -674,7 +674,7 @@ label sister_instathot_special_pictures(the_person, is_topless_shoot = True):
             half_off_instead = False
             if the_person.outfit.can_half_off_to_tits():
                 half_off_instead = True
-                strip_list = the_person.get_half_off_to_tits_list()
+                strip_list = the_person.outfit.get_half_off_to_tits_list()
             generalised_strip_description(the_person, strip_list, half_off_instead = half_off_instead)
         else:
             strip_list = the_person.outfit.get_full_strip_list()

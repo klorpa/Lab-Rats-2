@@ -235,7 +235,7 @@ label outro_against_wall(the_girl, the_location, the_object):
     $ the_girl.call_dialogue("sex_responses_vaginal")
     mc.name "Fuck, I'm going to cum!"
     $ the_girl.call_dialogue("cum_pullout")
-    $ climax_controller = ClimaxController(["Cum inside of her","pussy"],["Cum on her stomach.","body"])
+    $ climax_controller = ClimaxController(["Cum inside of her.","pussy"],["Cum on her stomach.","body"])
     $ the_choice = climax_controller.show_climax_menu()
     if the_choice == "Cum inside of her.":
         if mc.condom:
@@ -295,6 +295,7 @@ label strip_ask_against_wall(the_girl, the_clothing, the_location, the_object):
             mc.name "Take it off for me."
             $ the_girl.draw_animated_removal(the_clothing, position = against_wall.position_tag)
             "You slow the pace of your thrusts down while [the_girl.possessive_title] strips out of her [the_clothing.name]. When she drops it beside her you settle back into your rhythm."
+            return True
 
         "Leave it on.":
             mc.name "No, I like how you look with it on."
@@ -304,6 +305,7 @@ label strip_ask_against_wall(the_girl, the_clothing, the_location, the_object):
             else:
                 the_girl.char "Yeah? Do I look like a good little slut in it? Because that's what I feel like right now!"
                 "You fuck her a little faster and she moans loudly."
+            return False
     return
 
 label orgasm_against_wall(the_girl, the_location, the_object):

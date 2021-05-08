@@ -800,128 +800,6 @@ label dinner_date_plan_label(the_person):
             "She gives you a warm smile."
     return
 
-label serum_give_label(the_person):
-    $ sneak_serum_chance = 70 + (mc.int*5) - (the_person.focus*5)  #% chance that you will successfully give serum to someone sneaklily. Less focused people are easier to fool.
-    $ ask_serum_chance = 10*mc.charisma + 5*the_person.int #The more charismatic you are and the more intellectually curious they are the better the chance of success
-    $ demand_serum_chance = mc.charisma * (the_person.obedience - 90) #The more charismatic you are and the more obedient they are the more likely this is to succeed.
-
-    if sneak_serum_chance < 0:
-        $ sneak_serum_chance = 0
-    elif sneak_serum_chance > 100:
-        $ sneak_serum_chance = 100
-
-    if ask_serum_chance < 0:
-        $ ask_serum_chance = 0
-    elif ask_serum_chance > 100:
-        $ ask_serum_chance = 100
-
-    if mc.business.get_employee_title(the_person) == "None":
-        $demand_serum_chance += -35 #if she doesn't work for you there is a much lower chance she will listen to your demand (unless you are very charismatic or she is highly obedient.)
-    if demand_serum_chance < 0:
-        $ demand_serum_chance = 0
-    elif demand_serum_chance > 100:
-        $ demand_serum_chance = 100
-
-    $ pay_serum_cost = the_person.salary * 5
-    $ rand_chance = renpy.random.randint(0,100)
-
-    menu:
-        "Give it to her stealthily.\n{size=22}Success Chance: [sneak_serum_chance]%%{/size}": #TODO: Have this modified by something so there are interesting gameplay decisions
-            "You chat with [the_person.title] for a couple of minutes. Waiting to find a chance to deliver a dose of serum."
-            if rand_chance < sneak_serum_chance:
-                #Success
-                "You're able to distract [the_person.title] and have a chance to give her a dose of serum."
-                call give_serum(the_person) from _call_give_serum
-
-            else:
-                #Caught!
-                "You finally distract [the_person.title] and have a chance to give her a dose of serum."
-                the_person "Hey, what's that?"
-                "You nearly jump as [the_person.title] points down at the small vial of serum you have clutched in your hand."
-                $ avoid_chance = renpy.random.randint(0,10)
-                if avoid_chance < mc.charisma:
-                    if mc.business.get_employee_title(the_person) == "None":
-                        mc.name "This? Oh, it's just something we're working on at the lab that I thought you might be interested in."
-                        "You dive into a technical description of your work, hoping to distract [the_person.title] from your real intentions."
-
-                    else:
-                        mc.name "This? Oh, it's just one of the serums I grabbed from production for quality control. I was just fidgeting with it I guess."
-                        "You make small talk with [the_person.title], hoping to distract her from your real intentions."
-                    "After a few minutes you've managed to avoid her suspicion, but haven't been able to deliver the dose of serum."
-
-                else:
-                    mc.name "This? Uh..."
-                    $ the_person.draw_person(emotion="angry")
-                    $ the_person.change_obedience(-10)
-                    $ the_person.change_happiness(-10)
-                    $ the_person.change_love(-5)
-                    the_person "Were you about to put that in my drink? Oh my god [the_person.mc_title]!"
-                    mc.name "Me? Never!"
-                    "[the_person.title] shakes her head and storms off. You can only hope this doesn't turn into soemthing more serious."
-                    $ clear_scene()
-                    return
-
-        "Ask her to take it.\n{size=22}Success Chance: [ask_serum_chance]%%{/size}" if not mandatory_unpaid_serum_testing_policy.is_active() or mc.business.get_employee_title(the_person) == "None":
-            if mc.business.get_employee_title(the_person) == "None":
-                mc.name "[the_person.title], I've got a project going on at work that could really use a test subject. Would you be interested in helping me out?"
-
-            else:
-                mc.name "[the_person.title], there's a serum design that is in need of a test subject. Would you be interested in helping out with a quick field study?"
-
-            if rand_chance < ask_serum_chance:
-                #Success
-                if mc.business.get_employee_title(the_person) == "None":
-                    if the_person.personality is nora_personality:
-                        the_person "I'd be happy to help. I've seen your work, I have complete confidence you've tested this design thoroughly."
-                    else:
-                        the_person "I'd be happy to help, as long as you promise it's not dangerous of course. I've always wanted to be a proper scientist!"
-                else:
-                    the_person "I'll admit I'm curious what it would do to me. Okay, as long as it's already passed the safety test requirements, of course."
-                mc.name "It's completely safe, we just need to test what the results from it will be. Thank you."
-                call give_serum(the_person) from _call_give_serum_2
-
-            else:
-                #Denies
-                $ the_person.change_obedience(-2)
-                the_person "I'm... I don't think I would be comfortable with that. Is that okay?"
-                mc.name "Of course it is, that's why I'm asking in the first place."
-
-        "Ask her to take it.\n{size=22}Success Chance: Required by Policy{/size}" if mandatory_unpaid_serum_testing_policy.is_active() and not mc.business.get_employee_title(the_person) == "None":
-            #Auto success
-            mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this."
-            call give_serum(the_person) from _call_give_serum_3
-
-        "Demand she takes it.\n{size=22}Success Chance: [demand_serum_chance]%%{/size}": #They must work for you to demand it.
-            mc.name "[the_person.title], you're going to drink this for me."
-            "You pull out a vial of serum and present it to [the_person.title]."
-            the_person "What is it for, is it important?"
-            mc.name "Of course it is, I wouldn't ask you to if it wasn't."
-            if rand_chance < demand_serum_chance:
-                #Success
-                the_person "Okay, if that's what you need me to do..."
-                call give_serum(the_person) from _call_give_serum_4
-            else:
-                #Refues
-                $ the_person.draw_person(emotion = "angry")
-                $ the_person.change_obedience(-2)
-                $ the_person.change_happiness(-2)
-                $ the_person.change_love(-2)
-                the_person "You expect me to just drink random shit you hand to me? I'm sorry, but that's just ridiculous."
-
-        "Pay her to take it.\n{size=22}Costs: $[pay_serum_cost]{/size}" if mandatory_paid_serum_testing_policy.is_active() and not mandatory_unpaid_serum_testing_policy.is_active() and not mc.business.get_employee_title(the_person) == "None": #This becomes redundent when they take it for free.
-            #Pay cost and proceed
-            $ mc.business.funds += -pay_serum_cost
-            mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this, a bonus will be added onto your paycheck."
-            call give_serum(the_person) from _call_give_serum_5
-
-
-        "Pay her to take it.\n{size=22}Requires: Mandatory Paid Serum Testing{/size} (disabled)" if not mandatory_unpaid_serum_testing_policy.is_active() and not mandatory_paid_serum_testing_policy.is_active() and not mc.business.get_employee_title(the_person) == "None":
-            pass
-
-        "Do nothing.":
-            pass
-    return
-
 label grope_person(the_person):
     # Note: the descirptions of the actual stages are stored in grope_descriptions.rpy to keep things organised.
     $ mc.change_energy(-5)
@@ -977,13 +855,6 @@ label grope_person(the_person):
     return
 
 label command_person(the_person):
-    # TODO: Add a couple of commands for a person, ramping up to entering the sex system on demand.
-    # Ideas:
-    # Roll all of the "wardrobe" and "call me BLANK" stuff into this, as the early options.
-    # "Show me your tits."
-    # "Get naked for me." - Both only usually possible in private.
-    # Eventaully move into the sex system properly.
-
     #TODO: All of the "talk about what you call me" stuff should be girlfriend/affair specific (or at least be Love gated), but you can _command_ people to do it.
 
     mc.name "[the_person.title], I want you to do something for me."
@@ -1021,105 +892,6 @@ label command_person(the_person):
     else:
         $ player_choice.call_action()
     return
-
-# label seduce_label(the_person): No longer needed since "seduce" was split up to be multiple different approaches
-#     mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
-#
-#     if prostitute_role in the_person.special_role and the_person.love < 20:
-#         the_person "I've been thinking about you too, but I've got bills to pay and I can't do this for free."
-#         return
-#     elif prostitute_role in the_person.special_role and the_person.love >= 20:
-#         the_person "I should really make you pay for this... but you're one of my favourites and I'm curious what you had in mind."
-#     else:
-#         $ the_person.call_dialogue("seduction_response")
-#
-#     $ random_chance = renpy.random.randint(0,100)
-#     $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
-#     $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
-#     $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
-#
-#     if chance_service_her > 100:
-#         $ chance_service_her = 100
-#     elif chance_service_her < 0:
-#         $ chance_service_her = 0
-#
-#     if chance_both_good > 100:
-#         $ chance_both_good = 100
-#     elif chance_both_good < 0:
-#         $ chance_both_good = 0
-#
-#     if chance_service_him > 100:
-#         $ chance_service_him = 100
-#     elif chance_service_him < 0:
-#         $ chance_service_him = 0
-#
-#     $ seduced = False #Flip to true if the approach works
-#     menu:
-#         "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
-#             "You lean in close whisper what you want to do to her."
-#             if random_chance < chance_service_her: #Success
-#                 $ seduced = True
-#                 $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
-#                 $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
-#                 $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
-#                 $ the_person.discover_opinion("taking control")
-#             else: #Failure
-#                 pass
-#
-#         "Let's have a good time.\n{size=22}Success Chance: [chance_both_good]%%\nModifiers: None{/size} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
-#             "You lean in close and whisper what you want to do together."
-#             if random_chance < chance_both_good:
-#                 $ seduced = True
-#             else:
-#                 pass
-#
-#         "I need you to get me off.\n{size=22}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
-#             "You lean in close and whisper what you want her to do to you."
-#             if random_chance < chance_service_him:
-#                 $ seduced = True
-#                 $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
-#                 $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
-#                 $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
-#                 $ the_person.discover_opinion("being submissive")
-#             else:
-#                 pass
-#
-#
-#
-#     if seduced and the_person.sexed_count < 1:
-#
-#         $ extra_people_count = mc.location.get_person_count() - 1
-#         $ in_private = True
-#         if extra_people_count > 0: #We have more than one person here
-#             $ the_person.call_dialogue("seduction_accept_crowded")
-#             menu:
-#                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
-#                     "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interrupted."
-#
-#                 "Stay right here.\n{size=22}[extra_people_count] watching{/size}":
-#                     if the_person.sluttiness < 50:
-#                         mc.name "I think we'll be fine right here."
-#                         the_person "I... Okay, if you say so."
-#
-#                     $ in_private = False
-#         else:
-#             $ the_person.call_dialogue("seduction_accept_alone")
-#
-#         call fuck_person(the_person,private = in_private) from _call_fuck_person
-#
-#         $ the_person.review_outfit()
-#
-#         #Tidy up our situational modifiers, if any.
-#         $ the_person.clear_situational_slut("public_sex")
-#         $ the_person.clear_situational_slut("seduction_approach")
-#         $ the_person.clear_situational_obedience("seduction_approach")
-#     else:
-#         $ the_person.call_dialogue("seduction_refuse")
-#         $ the_person.clear_situational_slut("seduction_approach")
-#         $ the_person.clear_situational_obedience("seduction_approach")
-#
-#     $ the_person.sexed_count += 1
-#     return
 
 label bc_talk_label(the_person):
     # Contains the Love and Sluttiness based approaches to asking someone to stop taking birth control.
@@ -1338,22 +1110,24 @@ label bc_demand_label(the_person):
             the_person "Good. That's all I wanted to know."
     return
 
-label manage_bc(the_person, start): # A little helper label to handle setting up the actions for a girl starting or stopping her BC the next morning.
+label manage_bc(the_person, start, update_knowledge = True): # A little helper label to handle setting up the actions for a girl starting or stopping her BC the next morning.
     if start:
         $ event_label = "bc_start_event"
     else:
         $ event_label = "bc_stop_event"
 
-    $ bc_start_action = Action("Change birth control", always_true_requirement, event_label, args = the_person)
-    $ mc.business.mandatory_morning_crises_list.append(bc_start_action) # She starts or stops the next morning.
+    $ bc_change_action = Action("Change birth control", always_true_requirement, event_label, args = [the_person, update_knowledge])
+    $ mc.business.mandatory_morning_crises_list.append(bc_change_action) # She starts or stops the next morning.
     return
 
-label bc_start_event(the_person):
+label bc_start_event(the_person, update_knowledge = True):
     $ the_person.on_birth_control = True
-    $ the_person.update_birth_control_knowledge()
+    if update_knowledge:
+        $ the_person.update_birth_control_knowledge()
     return
 
-label bc_stop_event(the_person):
+label bc_stop_event(the_person, update_knowledge = True):
     $ the_person.on_birth_control = False
-    $ the_person.update_birth_control_knowledge()
+    if update_knowledge:
+        $ the_person.update_birth_control_knowledge()
     return

@@ -704,10 +704,10 @@ label student_masturbate_label(the_person):
         # She just starts going at it.
         the_person "I guess I'll just... get to it then."
         if the_person.outfit.can_half_off_to_vagina():
-            $ strip_list = the_person.get_half_off_to_vagina_list()
+            $ strip_list = the_person.outfit.get_half_off_to_vagina_list()
             $ generalised_strip_description(the_person, strip_list, half_off_instead = True, position = "sitting")
         else:
-            $ strip_list = the_person.get_vagina_strip_list()
+            $ strip_list = the_person.outfit.get_vagina_strip_list()
             $ generalised_strip_description(the_person, strip_list, position = "sitting")
 
         $ mc.change_locked_clarity(15)

@@ -295,7 +295,6 @@ init -2 python:
                     return_list.append(underwear_set)
             return return_list
 
-
         def get_overwear_sets_list(self):
             return self.overwear_sets
 

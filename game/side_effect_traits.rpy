@@ -2,35 +2,35 @@
 init -1:
     python:
         ## depressant_side_effect_functions ##
-        def depressant_side_effect_on_apply(the_person, add_to_log):
+        def depressant_side_effect_on_apply(the_person, the_serum, add_to_log):
             the_person.change_happiness(-20)
 
         ## libido_suppressant_functions ##
-        def libido_suppressant_on_apply(the_person, add_to_log):
+        def libido_suppressant_on_apply(the_person, the_serum, add_to_log):
             the_person.change_slut_core(-20, fire_event = False)
             the_person.change_slut_temp(-20)
 
-        def libido_suppressant_on_remove(the_person, add_to_log):
+        def libido_suppressant_on_remove(the_person, the_serum, add_to_log):
             the_person.change_slut_core(20, fire_event = False)
             the_person.change_slut_temp(20)
 
         ## anxiety_provoking_functions ##
-        def anxiety_provoking_on_turn(the_person, add_to_log):
+        def anxiety_provoking_on_turn(the_person, the_serum, add_to_log):
             the_person.change_happiness(-3, add_to_log)
 
         ## performance_inhibitor_functions ##
-        def performance_inhibitor_on_apply(the_person, add_to_log):
+        def performance_inhibitor_on_apply(the_person, the_serum, add_to_log):
             the_person.change_int(-1, add_to_log)
             the_person.change_focus(-1, add_to_log)
             the_person.change_cha(-1, add_to_log)
 
-        def performance_inhibitor_on_remove(the_person, add_to_log):
+        def performance_inhibitor_on_remove(the_person, the_serum, add_to_log):
             the_person.change_int(1, add_to_log)
             the_person.change_focus(1, add_to_log)
             the_person.change_cha(1, add_to_log)
 
         ## mood_swings_functions ##
-        def mood_swings_on_turn(the_person, add_to_log):
+        def mood_swings_on_turn(the_person, the_serum, add_to_log):
             swing = renpy.random.randint(0,1)
             if swing == 0:
                 the_person.change_happiness(-10, add_to_log)
@@ -38,22 +38,22 @@ init -1:
                 the_person.change_happiness(10, add_to_log)
 
         ## Sedative functions ##
-        def sedative_on_apply(the_person, add_to_log):
+        def sedative_on_apply(the_person, the_serum, add_to_log):
             the_person.change_energy(-20, add_to_log)
             the_person.change_max_energy(-20, add_to_log)
 
-        def sedative_on_remove(the_person, add_to_log):
+        def sedative_on_remove(the_person, the_serum, add_to_log):
             the_person.change_max_energy(20, add_to_log) #They don't get the normal energy back instantly, it has to come back on it's own
 
         ## Slow release sedative functions ##
-        def slow_release_sedative_on_turn(the_person, add_to_log):
+        def slow_release_sedative_on_turn(the_person, the_serum, add_to_log):
             the_person.change_energy(-10)
 
         ## Toxic functions ##
-        def toxic_on_apply(the_person, add_to_log):
+        def toxic_on_apply(the_person, the_serum, add_to_log):
             the_person.serum_tolerance += -1
 
-        def toxic_on_remove(teh_person, add_to_log):
+        def toxic_on_remove(teh_person, the_serum, add_to_log):
             the_person.serum_tolerance += 1
 
 label instantiate_side_effect_traits(): #Creates all of the default LR2 serum trait objects.

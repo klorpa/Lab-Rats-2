@@ -111,4 +111,4 @@ init -2 python:
             if self.player_titles_function:
                 return self.player_titles_function(the_person)
             else:
-                return the_person.name
+                return mc.name

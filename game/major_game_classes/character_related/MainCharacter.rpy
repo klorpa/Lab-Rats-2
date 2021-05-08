@@ -7,7 +7,7 @@ init -2 python:
             self.energy = 50
             self.designed_wardrobe = Wardrobe("Designed Wardrobe")
             self.business = business
-            self.inventory = SerumInventory([])
+            self.inventory = SerumInventory()
 
             ##Mental stats##
             #Mental stats are generally fixed and cannot be changed permanently.
@@ -88,13 +88,13 @@ init -2 python:
 
             self.can_skip_time = False #A flag used to determine when it is safe to skip time and when it is not. Left in as of v0.19.0 to ensure missed references do not cause a crash; has no function.
 
-        def change_location(self,new_location): #TODO: Check if we can add the "show_background" command for our new location here. Is there any time where we want to be in a location but _not_ show it's background?
-            self.location = new_location
+            self.stolen_underwear = {} #Person should be a key, and should hold a list of clothing that has been taken by the MC.
+            self.event_triggers_dict = {} #General purpose dict for storing event flags related to the MC.
 
-        def use_energy(self,amount):
-            self.energy = self.energy - amount
-            if self.energy < 0:
-                self.energy = 0
+
+        def change_location(self,new_location): #TODO: Check if we can add the "show_background" command for our new location here. Is there any time where we want to be in a location but _not_ show it's background?
+            if isinstance(new_location, Room):
+                self.location = new_location
 
         def change_arousal(self,amount):
             self.arousal += amount
@@ -138,6 +138,24 @@ init -2 python:
             if add_to_log and amount != 0:
                 mc.log_event(log_string, "float_text_yellow")
             return
+
+        def change_masturbation_novelty(self, amount, add_to_log = True):
+            amount = __builtin__.round(amount)
+            if amount + self.masturbation_novelty > 100:
+                amount = 100 - self.masturbation_novelty
+
+            elif amount + self.masturbation_novelty < 50:
+                amount = -(self.masturbation_novelty - 50)
+
+            self.masturbation_novelty += amount
+
+            log_string = ""
+            if amount > 0:
+                log_string += "You: +" + str(amount) + " Masturbation Novelty"
+            else:
+                log_string += "You: " + str(amount) + " Masturbation Novelty"
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
 
         def change_locked_clarity(self, amount, add_to_log = True): #TODO: Decide if we need a max locked clarity thing to gate progress in some way.
             amount = int(__builtin__.round(amount))
@@ -223,9 +241,7 @@ init -2 python:
         def run_day(self):
             self.listener_system.fire_event("end_of_day")
             self.change_energy(60)
-            self.masturbation_novelty += 1
-            if self.masturbation_novelty > 100:
-                self.masturbation_novelty = 100
+            self.change_masturbation_novelty(1, add_to_log = False)
 
             self.reset_arousal()
             self.scrap_goal_available = True
@@ -339,6 +355,20 @@ init -2 python:
             self.text_conversation_paused = False
             return
 
-        def log_text_message(self, the_person, the_message):
-            #TODO: Allow you to insert arbitrary messages by building history entries here! Use this for a narrator sytle "[Sent a picture]"!
-            return
+        # def log_text_message(self, the_person, the_message):
+        #     #TODO: Allow you to insert arbitrary messages by building history entries here! Use this for a narrator sytle "[Sent a picture]"!
+        #     return
+
+        def steal_underwear(self, the_person, the_item): #TODO: Add unit tests. TODO: Add ability to clear items out of the list. #TODO: Add ability to check if a similar item already exists in your collection.
+            if not the_person in self.stolen_underwear:
+                self.stolen_underwear[the_person] = []
+
+            self.stolen_underwear[the_person].append(the_item)
+
+        def get_underwear_list(self): #Returns a list of tuples. First item is the common display name "PERSON's ITEM", the second is the item reference itself #TODO: Add unit tests
+            return_list = []
+            for person in self.stolen_underwear:
+                for item in self.stolen_underwear[person]:
+                    return_list.append([person.title + "'s " + item.display_name, item]) #TODO: Write the display code for this so it can show the little set of panties or bra with the correct colour/pattern. #TODO: might need an "empty" body type.
+
+            return return_list

@@ -274,6 +274,7 @@ label strip_ask_missionary(the_girl, the_clothing, the_location, the_object):
             $ the_girl.draw_animated_removal(the_clothing, position = missionary.position_tag)
             "You move back kneel for a moment while [the_girl.title] struggles out of her [the_clothing.name] and throws it to the side. Then she gets herself lined up in front of you again."
             "She sighs happily when you get on top of her and slide your cock back inside."
+            return True
 
         "Leave it on.":
             mc.name "No, I like how you look with it on."
@@ -286,6 +287,7 @@ label strip_ask_missionary(the_girl, the_clothing, the_location, the_object):
             else:
                 the_girl.char "Does it make me look like the cum hungry slut that I am? That's all I want to be for you sir, your dirty little cum dumpster!"
                 "She grinds her hips against you and moans ecstatically."
+            return False
     return
 
 label orgasm_missionary(the_girl, the_location, the_object):

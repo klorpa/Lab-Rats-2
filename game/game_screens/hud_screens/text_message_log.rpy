@@ -48,7 +48,7 @@ screen text_message_log(the_person, newest_who = None, newest_what = None):
                     $ log_who = history_item[0]
                     $ log_what = history_item[1]
 
-                    frame: #TODO: Add support for system messages (ie. in-phone narration)
+                    frame:
                         padding (15,15)
                         if log_who == mc.name:
                             background Frame("LR2_Text_Bubble.png", 26, 6, 26, 6)

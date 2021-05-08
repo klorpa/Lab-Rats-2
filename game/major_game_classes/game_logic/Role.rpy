@@ -1,8 +1,11 @@
 init -2 python:
     class Role(renpy.store.object): #Roles are assigned to special people. They have a list of actions that can be taken when you talk to the person and acts as a flag for special dialogue options.
-        def __init__(self, role_name, actions, hidden = False, on_turn = None, on_move = None, on_day = None):
+        def __init__(self, role_name, actions = None, hidden = False, on_turn = None, on_move = None, on_day = None):
             self.role_name = role_name
-            self.actions = actions # A list of actions that can be taken. These actions are shown when you talk to a person with this role if their requirement is met.
+            if actions is None:
+                self.actions = []
+            else:
+                self.actions = actions # A list of actions that can be taken. These actions are shown when you talk to a person with this role if their requirement is met.
             # At some point we may want a seperate list of role actions that are available when you text someone.
             self.hidden = hidden #A hidden role is not shown on the "Roles" list
             self.on_turn = on_turn #A function that is run each turn on every person with this Role.

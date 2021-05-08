@@ -1,6 +1,6 @@
 init -2 python:
-    def purchase_policy(the_policy):
-        the_policy.buy_policy()
+    def purchase_policy(the_policy,ignore_cost = False):
+        the_policy.buy_policy(ignore_cost)
         if not the_policy.toggleable or the_policy.is_toggleable(): #Note: is_toggleable() checks to see if a toggleable policy has pre-reqs met to toggle, while toggleable flags a policy to turn on when bought then stay on.
             the_policy.apply_policy()
 

@@ -8,7 +8,7 @@ init -2 python:
             self.requirement = requirement #Requirement is a function that is called when the action is checked.
 
             self.effect = effect #effect is a string for a renpy label that is called when the action is taken.
-            if not args:
+            if args is None:
                 self.args = [] #stores any arguments that we want passed to the action or requirement when the action is created. Should be a list of variables.
             elif type(args) is not list:
                 self.args = [args] #Make sure our list of arguments is a list.
@@ -16,7 +16,7 @@ init -2 python:
                 self.args = args
 
 
-            if not requirement_args:
+            if requirement_args is None:
                 self.requirement_args = [] #A list of arguments handed to the requirement but not the actual event.
             elif not isinstance(requirement_args, list):
                 self.requirement_args = [requirement_args]
@@ -50,7 +50,7 @@ init -2 python:
 
         def check_requirement(self, extra_args = None): #Calls the requirement function associated with this action.
         # Effectively private. Use "is_action_enabled" and "is_disabled_slug_shown" to figure out if there are important actions to display or take.
-            if not extra_args: #We need to make sure we package all potential extra args as a list and hand them over.
+            if extra_args is None: #We need to make sure we package all potential extra args as a list and hand them over.
                 extra_args = []
             elif not isinstance(extra_args, list):
                 extra_args = [extra_args]
@@ -78,13 +78,14 @@ init -2 python:
             return self.name + "\n{size=16}{color=#ff0000}" + requirement_return + "{/color}{/size} (disabled)"
 
         def call_action(self, extra_args = None): #Can only use global variables. args is a list of elements you want to include as arguments. None is default
-            if not extra_args:
+            if extra_args is None:
                 extra_args = []
             elif not isinstance(extra_args, list):
                 extra_args = [extra_args]
 
-            return_value = renpy.call(self.effect,*(self.args+extra_args))
-            renpy.return_statement(return_value) #NOTE: _return may _already_ hold the value of the most recent return, so this might be redundent, or even cause bugs. Need to test. TODO
+            _return = renpy.call(self.effect,*(self.args+extra_args))
+
+            #renpy.return_statement(True) #NOTE: _return may _already_ hold the value of the most recent return, so this might be redundent, or even cause bugs. Need to test. TODO
 
     class Limited_Time_Action(Action): #A wrapper class that holds an action and the amount of time it will be valid. This acts like an action everywhere
         #except it also has a turns_valid value to decide when to get rid of this reference to the underlying action

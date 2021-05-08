@@ -153,7 +153,7 @@ label outro_cowgirl(the_girl, the_location, the_object):
         "[the_girl.title] starts to pull up and off of you. She hesistates with the tip of your cock just inside of her pussy."
         the_girl.char "I... I really shouldn't let you..."
         "She bites her lip and moans, unsure of what to do."
-        $ climax_controller = ClimaxController(["Pull her down and cum inside her.", "pussy"],["Let her pull off and cum on her stomach."])
+        $ climax_controller = ClimaxController(["Pull her down and cum inside her.", "pussy"],["Let her pull off and cum on her stomach.", "body"])
         $ the_choice = climax_controller.show_climax_menu()
         if the_choice == "Pull her down and cum inside her.":
             "You reach up and grab [the_girl.possessive_title] by the hips. With one confident pull she plunges back onto your cock, gasping with pleasure."
@@ -197,6 +197,7 @@ label strip_ask_cowgirl(the_girl, the_clothing, the_location, the_object):
             mc.name "Take it off for me."
             $ the_girl.draw_animated_removal(the_clothing, position = cowgirl.position_tag)
             "[the_girl.title] slows down her pace while she strips out of her [the_clothing.name]. When she's free of it she puts her hands on your chest and fucks you faster again."
+            return True
 
         "Leave it on.":
             mc.name "No, I like how you look with it on."
@@ -206,6 +207,7 @@ label strip_ask_cowgirl(the_girl, the_clothing, the_location, the_object):
             else:
                 the_girl.char "Yeah? Do I look like a good little slut in it? Because that's what I feel like right now!"
                 "She sighs happily while she rides your cock hard and fast."
+            return False
     return
 
 label orgasm_cowgirl(the_girl, the_location, the_object):

@@ -59,7 +59,7 @@ screen person_info_ui(the_person, display_layer = "solo"): #Used to display stat
                         action NullAction()
                         sensitive True
                 else:
-                    textbutton "Arousal: 0/[the_person.max_arousal] {image=gui/extra_images/arousal_token.png}":
+                    textbutton "Arousal: [the_person.arousal]/[the_person.max_arousal] {image=gui/extra_images/arousal_token.png}":
                         ysize 24
                         text_style "menu_text_style"
                         tooltip "When a girl is brought to 100% arousal she will start to climax. Climaxing will instantly turn temporary sluttiness into core sluttiness, as well as make the girl happy. The more aroused you make a girl the more sex positions she is willing to consider."

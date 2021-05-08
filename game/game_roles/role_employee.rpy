@@ -754,7 +754,6 @@ label move_employee_label(the_person):
 
     the_person "Where would you like me then?"
     $ mc.business.remove_employee(the_person, remove_linked = False)
-    $ the_person.add_role(employee_role) #Remove_employee strips them of their workplace roles. We want to make sure we add it back.
     #TODO: All of the moving employees around should probably be its own function, which would let us set up an employee schedule where they work in different sections if we wanted.
 
     if rd_division.has_person(the_person):
@@ -770,27 +769,22 @@ label move_employee_label(the_person):
         "Research and Development.":
             $ mc.business.add_employee_research(the_person)
             $ mc.business.r_div.add_person(the_person)
-            $ the_person.set_work(mc.business.r_div) #TODO: This should reference the business r_div, p_div, etc. not the actual rooms.
 
         "Production.":
             $ mc.business.add_employee_production(the_person)
             $ mc.business.p_div.add_person(the_person)
-            $ the_person.set_work(mc.business.p_div)
 
         "Supply Procurement.":
             $ mc.business.add_employee_supply(the_person)
             $ mc.business.s_div.add_person(the_person)
-            $ the_person.set_work(mc.business.s_div)
 
         "Marketing.":
             $ mc.business.add_employee_marketing(the_person)
             $ mc.business.m_div.add_person(the_person)
-            $ the_person.set_work(mc.business.m_div)
 
         "Human Resources.":
             $ mc.business.add_employee_hr(the_person)
             $ mc.business.h_div.add_person(the_person)
-            $ the_person.set_work(mc.business.h_div)
 
     the_person "I'll move over there right away!"
     return

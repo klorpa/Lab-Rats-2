@@ -121,3 +121,4 @@ label bedroom_masturbation(location_description = "home", edging_available = Tru
     if should_advance_time:
         call advance_time()
     return
+    

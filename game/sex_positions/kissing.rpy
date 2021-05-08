@@ -264,6 +264,7 @@ label strip_ask_kissing(the_girl, the_clothing, the_location, the_object):
     $ kissing.current_modifier = None
     $ kissing.redraw_scene(the_girl)
     the_girl.char "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
+    $ return_value = True
     menu:
         "Let her strip.":
             mc.name "Take it off for me."
@@ -278,9 +279,12 @@ label strip_ask_kissing(the_girl, the_clothing, the_location, the_object):
             else:
                 the_girl.char "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
                 "[the_girl.possessive_title] smiles and pulls you against her, kissing you passionately."
+            $ return_value = False
+
+
     $ kissing.current_modifier = "kissing"
     $ kissing.redraw_scene(the_girl)
-    return
+    return return_value
 
 label orgasm_kissing(the_girl, the_location, the_object):
     "[the_girl.title] suddenly pulls you tight against her. You feel her body shiver against yours."

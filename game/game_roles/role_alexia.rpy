@@ -264,7 +264,6 @@ label alexia_hire_label(the_person):
     python: #TODO: Consider calling the "hire someone" label instead of having a special section for this.
         the_person.event_triggers_dict["employed_since"] = day
         mc.business.listener_system.fire_event("new_hire", the_person = the_person)
-        the_person.add_role(employee_role)
         for other_employee in mc.business.get_employee_list():
             town_relationships.begin_relationship(the_person, other_employee) #She is introduced to everyone at work
 
@@ -408,7 +407,6 @@ label alexia_photography_intro_label(the_person):
         $ mc.business.company_model.remove_role(company_model_role) #If we somehow ended up with her here, fire her.
     $ mc.business.company_model = the_person
     $ the_person.add_role(company_model_role) #Now we just make Alexia a model instead of having this be specific to her role. You get there by either buying the policy or following her storyline here.
-
-    $ public_advertising_license_policy.buy_policy(ignore_cost = True) # This special storyline "buys" the policy for free.
+    $ purchase_policy(public_advertising_license_policy,ignore_cost = True)
     call advance_time from _call_advance_time_19
     return

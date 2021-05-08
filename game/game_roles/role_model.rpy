@@ -297,7 +297,7 @@ label photo_flash(the_person):
 
     $ the_person.draw_animated_removal(first_item)
     $ mc.change_locked_clarity(10)
-    if not person.outfit.panties_covered():
+    if not the_person.outfit.panties_covered():
         "When she drops it she's wearing only her underwear."
     else:
         $ covering_item = the_person.outfit.get_lower_top_layer()

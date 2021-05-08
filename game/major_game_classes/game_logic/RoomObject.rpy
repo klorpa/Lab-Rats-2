@@ -1,8 +1,13 @@
 init -2 python:
     class Object(renpy.store.object): #Contains a list of traits for the object which decides how it can be used. #TODO: We need to rename this, this is just asking for a major namespace collision
         def __init__(self,name,traits,sluttiness_modifier = 0, obedience_modifier = 0):
-            self.traits = traits
             self.name = name
+            if isinstance(traits, list):
+                self.traits = traits
+            elif traits is None:
+                traits = []
+            else:
+                self.traits = [traits]    
             self.sluttiness_modifier = sluttiness_modifier #Changes a girls sluttiness when this object is used in a sex scene
             self.obedience_modifier = obedience_modifier #Changes a girls obedience when this object is used in a sex scene.
 

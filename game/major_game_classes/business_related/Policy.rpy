@@ -1,6 +1,8 @@
 init -2 python:
     class Policy(renpy.store.object): # An upgrade that can be purchased by the character for their business.
-        def __init__(self,name,desc,requirement,cost, toggleable = False, on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_move_function = None, on_day_function = None, dependant_policies = None):
+        def __init__(self, name, desc, requirement, cost, toggleable = False,
+            on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_move_function = None, on_day_function = None, dependant_policies = None):
+
             self.name = name #A short name for the policy.
             self.desc = desc #A text description of the policy.
             self.requirement = requirement #a function that is run to see if the PC can purchase this policy.

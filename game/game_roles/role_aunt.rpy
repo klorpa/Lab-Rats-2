@@ -1178,14 +1178,14 @@ label family_games_night_intro(the_person): # Triggered as an on-talk event in h
 
 label family_games_night_setup(the_mom, the_aunt): # Triggered as a mandatory crisis right before the
     python:
-        if the_mom.get_desination(specified_time = 4) in [the_mom.home, None, hall] and the_aunt.get_desination(specified_time = 4) in [the_aunt.home, None, hall]: #Change their schedule if they aren't explicitly suppose to be somewhere else.
+        if the_mom.get_destination(specified_time = 4) in [the_mom.home, None, hall] and the_aunt.get_destination(specified_time = 4) in [the_aunt.home, None, hall]: #Change their schedule if they aren't explicitly suppose to be somewhere else.
             the_mom.set_schedule(hall, [2], [4]) #She is in the hall on wednesdays in the evening.
             the_aunt.set_schedule(hall, [2], [4]) #She is in the hall on wednesdays in the evening.
 
-        elif the_mom.get_desination(specified_time = 4) == hall: #She's in the hall but her sister can't make it.
+        elif the_mom.get_destination(specified_time = 4) == hall: #She's in the hall but her sister can't make it.
             the_mom.set_schedule(the_mom.home, [2], [4])
 
-        elif the_aunt.get_desination(specified_time = 4) == hall: #She's in the hall but her sister can't make it.
+        elif the_aunt.get_destination(specified_time = 4) == hall: #She's in the hall but her sister can't make it.
             the_aunt.set_schedule(the_aunt.home, [2], [4])
 
 
@@ -1901,7 +1901,7 @@ label family_games_night_strip(the_mom, the_aunt, the_sister, partner):
                         $ the_group.redraw_person(the_mom)
                         "[the_mom.title] leans closer to her sister and half-whispers."
                         the_mom "[the_aunt.title], he's clearly... excited. Isn't this going a little too far?"
-                        $ the_aunt.redraw_person(the_aunt)
+                        $ the_group.redraw_person(the_aunt)
                         the_aunt "You're worrying way too much. Go ahead [the_aunt.mc_title], take it off!"
                     else:
                         the_mom "No need to be embarrassed [the_mom.mc_title], we're all family here."

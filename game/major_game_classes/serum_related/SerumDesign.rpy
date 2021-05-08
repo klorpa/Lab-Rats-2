@@ -60,7 +60,7 @@ init -2 python:
             return False
 
         def add_trait(self, the_trait, is_side_effect = False): #Used when the serum is being built in the serum designer.
-            if the_trait not in self.traits or the_trait not in self.side_effects:
+            if the_trait not in self.traits and the_trait not in self.side_effects:
                 if is_side_effect:
                     self.side_effects.append(the_trait)
                 else:

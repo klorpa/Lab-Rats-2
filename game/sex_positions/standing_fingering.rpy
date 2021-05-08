@@ -145,6 +145,7 @@ label strip_standing_finger(the_girl, the_clothing, the_location, the_object):
     return
 
 label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object):
+    $ return_value = True
     the_girl.char "Everything feels so tight, I want to take it all off... Do you mind?"
     "[the_girl.possessive_title] grabs onto her [the_clothing.name], waiting for you to tell her what to do."
     menu:
@@ -159,8 +160,9 @@ label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object
                 the_girl.char "Do you think I look sexy in it?"
             else:
                 the_girl.char "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
+            $ return_value = False
     $ standing_finger.redraw_scene(the_girl)
-    return
+    return return_value
 
 label orgasm_standing_finger(the_girl, the_location, the_object):
     the_girl.char "Oh god... Right there! Right there! Ahhhhh!"

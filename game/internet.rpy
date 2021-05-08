@@ -285,7 +285,7 @@ label text_flirt_label(the_person):
             #     "You text her the picture."
             #     $ the_person.call_dialogue("text_flirt_dick_pic")
 
-        return return_to_phone
+    return return_to_phone
 
 label view_twatch(the_person): #TODO: Implement this as a role at some point
     # TODO: Watch a girl stream, different outcomes based on different games.

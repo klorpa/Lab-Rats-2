@@ -10,6 +10,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
     $ finished = False #When True we exit the main loop (or never enter it, if we can't find anything to do)
     $ position_choice = None
     $ object_choice = None
+    $ repeat_strip_allowed = True #Set False when a girl is told not to strip something. She won't ask about stripping down any more for the rest of the encounter.
 
     #Family situational modifiers
     if the_person.has_family_taboo(): #Check if any of the roles the person has belong to the list of family roles.
@@ -198,7 +199,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                     $ object_choice = _return
 
                 if position_choice and object_choice and not position_locked:
-                    call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness
+                    call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo, skip_condom = skip_condom) from _call_check_position_willingness
                     if not _return: #If she wasn't willing for whatever reason (too slutty a position, not willing to wear a condom) we clear our settings and try again.
                         $ position_choice = None
                         $ object_choice = None
@@ -938,7 +939,9 @@ label girl_strip_event(the_person, the_position, the_object):
     if renpy.random.randint(0,100) < strip_chance and the_clothing:
         $ ask_chance = renpy.random.randint(0,100)
         if ask_chance < the_person.obedience - the_person.arousal:
-            $ the_position.call_strip_ask(the_person, the_clothing, mc.location, the_object)
+            if repeat_strip_allowed:
+                $ the_position.call_strip_ask(the_person, the_clothing, mc.location, the_object)
+                $ repeat_strip_allowed = _return
         else:
             $ the_position.call_strip(the_person, the_clothing, mc.location, the_object) #If a girl's outfit is less slutty than she is currently feeling (with arousal factored in) she will want to strip stuff off.
 

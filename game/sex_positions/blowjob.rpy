@@ -343,6 +343,7 @@ label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object):
             "[the_girl.possessive_title] stands up and strips out of her [the_clothing.name]. Then she gets back onto her knees and slides your cock all the way to the back of her mouth."
             $ blowjob.current_modifier = "blowjob"
             $ blowjob.redraw_scene(the_girl)
+            return True
 
 
         "Leave it on.":
@@ -356,6 +357,7 @@ label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object):
                 $ blowjob.current_modifier = "blowjob"
                 $ blowjob.redraw_scene(the_girl)
                 "She slides you back into her mouth and presses you all the way to the back, rubbing your tip against the back of her throat for a second before she goes back to blowing you."
+            return False
     return
 
 label orgasm_blowjob(the_girl, the_location, the_object):

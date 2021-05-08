@@ -2,12 +2,20 @@ init -2 python:
     class GroupDisplayManager(renpy.store.object):
         default_shift_amount = 0.15
         adjust_per_person = 0.05
-        def __init__(self, group_of_people, primary_speaker = None):
-            self.group_of_people = group_of_people #First person in the list is drawn on the left size, with new people being added to the right
+        def __init__(self, group_of_people = None, primary_speaker = None):
+            if group_of_people is None:
+                self.group_of_people = []
+            elif isinstance(group_of_people, Person):
+                self.group_of_people = [group_of_people] #In case someone hands a single person we handle it gracefully.
+            else:
+                self.group_of_people = group_of_people #First person in the list is drawn on the left size, with new people being added to the right
+
             if primary_speaker is not None and primary_speaker in self.group_of_people:
                 self.primary_speaker = primary_speaker
-            else:
+            elif group_of_people:
                 self.primary_speaker = group_of_people[0]
+            else:
+                self.primary_speaker = None
 
             self.last_draw_commands = {} # Tracks the list of arguments for the last draw_person or draw_animated_removal called for a person, sorted by character_number. Allows for characters to be redrawn when they are moved behind a new primary.
 
@@ -27,7 +35,7 @@ init -2 python:
                     del self.last_draw_commands[the_person.character_number]
 
             if new_primary is not None:
-                self.set_primary(the_person)
+                self.set_primary(new_primary)
 
         def set_primary(self, the_person): #Note: Does not redraw #TODO: maybe it should?
             if the_person in self.group_of_people:
@@ -39,8 +47,9 @@ init -2 python:
 
         # NOTE: It is most convenient to pass everything through as a key word argument, to avoid issues with normally defaulted arguments inside of draw_person or draw_animated_removal eating them as the wrong argument.
         def draw_person(self, the_person, make_primary = True, *args, **kwargs): #Seperate accessor methods to maintain consistency between group and single draws, while keeping all similar code in one place.
-            self.last_draw_commands[the_person.character_number] = [args, kwargs]
-            self.do_draw(the_person, Person.draw_person, make_primary, *args, **kwargs)
+            if the_person in self.group_of_people:
+                self.last_draw_commands[the_person.character_number] = [args, kwargs]
+                self.do_draw(the_person, Person.draw_person, make_primary, *args, **kwargs)
 
         def draw_animated_removal(self, the_person, make_primary = True, *args, **kwargs): #Removal draws need to have some arguments removed so we can redraw the character without redrawing the clothing removal
             # Remove animated_removal specific arguments so we can store a "draw_person" compatable set of arguments

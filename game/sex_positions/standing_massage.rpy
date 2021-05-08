@@ -132,6 +132,7 @@ label strip_standing_grope(the_girl, the_clothing, the_location, the_object):
     return
 
 label strip_ask_standing_grope(the_girl, the_clothing, the_location, the_object):
+    $ return_value = True
     the_girl.char "I want to feel you touch me everywhere... Can I talk off my [the_clothing.name] for you?"
     menu:
         "Let her strip.":
@@ -145,8 +146,9 @@ label strip_ask_standing_grope(the_girl, the_clothing, the_location, the_object)
                 the_girl.char "Do you think I look sexy in it?"
             else:
                 the_girl.char "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
+            $ return_value = False
     $ standing_grope.redraw_scene(the_girl)
-    return
+    return return_value
 
 label orgasm_standing_grope(the_girl, the_location, the_object):
     "You feel [the_girl.possessive_title] tense up in your arms as you explore her body."

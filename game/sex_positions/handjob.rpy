@@ -165,10 +165,12 @@ label strip_ask_handjob(the_girl, the_clothing, the_location, the_object):
             $ the_girl.draw_animated_removal(the_clothing, position = handjob.position_tag)
             "[the_girl.possessive_title] strips out of her [the_clothing.name] and drops it to the side."
             the_person.char "Ah, so much better."
+            return True
 
         "Leave it on.":
             mc.name "I think you look cute in it, leave it on."
             "She nods and keeps jerking you off."
+            return False
     return
 
 label orgasm_handjob(the_girl, the_location, the_object):

@@ -17,12 +17,15 @@ init -2 python:
             self.selected_climax_type = None #Set when the player selects a return value, let's us call run_climax() at the correct moment later.
             self.climax_options = args
 
-        def get_climax_multiplier(self, type, with_novelty = False):
+        def get_climax_multiplier(self, type):
             multiplier = ClimaxController.climax_type_dict[type]
             if type == "pussy" and mc.condom:
                 multiplier += -0.5
 
             return multiplier
+
+        def set_climax_type(self, type):
+            self.selected_climax_type = type
 
         def show_climax_menu(self): #NOTE: We show the menu even when we don't intend to give more than one option. More player interaction + more information display.
             display_list = []
@@ -35,17 +38,16 @@ init -2 python:
                 display_name += " (tooltip)All Locked Clarity is released when you climax. How much Clarity is produced varies depending on how you cum, and it's possible to have a multiplier greater than 1!"
                 display_list.append([display_name,climax_option])
 
-            self.selected_climax_type = renpy.display_menu(display_list, screen = "choice")
-            return self.selected_climax_type[0]
+            the_choice = renpy.display_menu(display_list, screen = "choice")
+            self.set_climax_type(the_choice[1])
+            return the_choice[0] #Returns the display string so an event can fllow the appropriate branch
 
         def do_clarity_release(self, the_person = None):
             if the_person:
-                multiplier = self.get_climax_multiplier(self.selected_climax_type[1])
+                multiplier = self.get_climax_multiplier(self.selected_climax_type)
                 mc.convert_locked_clarity(multiplier, with_novelty = the_person.novelty)
                 the_person.change_novelty(-5)
             else:
-                multiplier = self.get_climax_multiplier(self.selected_climax_type[1])
+                multiplier = self.get_climax_multiplier(self.selected_climax_type)
                 mc.convert_locked_clarity(multiplier, with_novelty = mc.masturbation_novelty)
-                mc.masturbation_novelty += -5
-                if mc.masturbation_novelty < 50:
-                    mc.masturbation_novelty = 50
+                mc.change_masturbation_novelty(-5, add_to_log = False)

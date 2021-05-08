@@ -24,7 +24,7 @@ screen map_manager():
                         focus_mask "gui/LR2_Hex_Button_idle.png"
                         action Function(mc.change_location,place)
                         sensitive place.accessable #TODO: replace once we want limited travel again with: place in mc.location.connections
-                    text place.formalName + "\n(" + str(len(place.people)) + ")" anchor [0.5,0.5] style "map_text_style"
+                    text place.formal_name + "\n(" + str(len(place.people)) + ")" anchor [0.5,0.5] style "map_text_style"
 
             else:
                 frame:
@@ -38,7 +38,7 @@ screen map_manager():
                         focus_mask "gui/LR2_Hex_Button_Alt_idle.png"
                         action Function(mc.change_location,place)
                         sensitive False
-                    text place.formalName + "\n(" + str(len(place.people)) + ")" anchor [0.5,0.5] style "map_text_style"
+                    text place.formal_name + "\n(" + str(len(place.people)) + ")" anchor [0.5,0.5] style "map_text_style"
 
         ##TODO: add a sub map to housing_map_manager() so we can go to people's homes
 

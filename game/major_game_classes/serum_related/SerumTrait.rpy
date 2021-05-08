@@ -4,7 +4,7 @@ init -2 python:
             value_added = 0, research_added = 0, slots_added = 0, production_added = 0, duration_added = 0, base_side_effect_chance = 0, clarity_added = 0,
             on_apply = None, on_remove = None, on_turn = None, on_day = None,
             requires = None, tier = 0, start_researched = False, research_needed=50, exclude_tags=None, is_side_effect = False,
-            clarity_cost = 50, start_unlocked = False): #effect is a function that takes a serumDesign as a parameter and modifies it based on whatever effect this trait has.
+            clarity_cost = 50, start_unlocked = False): #effect is a function that takes a SerumDesign as a parameter and modifies it based on whatever effect this trait has.
 
 
             # Display info #
