@@ -62,6 +62,35 @@ init -2 python:
 
             self.modifier_lock = modifier_lock #If set to something other than None this facial accessory adds the modifier to all positions if possible.
 
+        def __cmp__(self, other):
+            if type(self) is type(other):
+                if (self.name == other.name
+                    and self.hide_below == other.hide_below
+                    and self.layer == other.layer
+                    and self.is_extension == other.is_extension
+                    and self.colour == other.colour):
+
+                    return 0
+
+
+            if self.__hash__() < other.__hash__():
+                return -1
+            else:
+                return 1
+
+        def is_similar(self, other):
+            if type(self) is type(other):
+                if (self.name == other.name
+                    and self.hide_below == other.hide_below
+                    and self.layer == other.layer
+                    and self.is_extension == other.is_extension):
+
+                    return True
+
+            return False
+
+        def __hash__(self):
+            return hash((self.name, self.hide_below, self.layer, self.is_extension, self.draws_breasts, self.underwear, self.slut_value))
 
         def generate_item_displayable(self, position, face_type, emotion, special_modifiers = None, lighting = None):
             if not self.is_extension:
@@ -86,9 +115,20 @@ init -2 python:
                 alpha_matrix = im.matrix.opacity(self.colour[3])
                 shader_image = im.MatrixColor(greyscale_image, alpha_matrix * colour_matrix) #Now colour the final greyscale image
 
-                #shader_image = im.Recolor(the_image.filename,int(self.colour[0]*255),int(self.colour[1]*255),int(self.colour[2]*255),int(self.colour[3]*255))
-                # shader_image = ShaderDisplayable(shader.MODE_2D, the_image.filename, shader.VS_2D,PS_COLOUR_SUB_LR2,{},uniforms={"colour_levels":self.colour})
-
                 final_image = Composite(position_size_dict[position], self.crop_offset_dict.get(position,(0,0)), shader_image)
 
                 return final_image
+
+        def generate_raw_image(self, position, face_type, emotion, special_modifier):
+            image_set = self.position_sets.get(position)
+            if image_set is None:
+                image_set = self.position_sets.get("stand3") #Get a default image set if we are looking at a position we do not have.
+
+            the_image = image_set.get_image(face_type, emotion, special_modifiers)
+            if not the_image:
+                the_image = image_set.get_image(face_type, emotion) # If we weren't able to get something with the special modifier just use a default to prevent a crash.
+
+            return the_image
+
+        def get_crop_offset(self, position):
+            return self.crop_offset_dict.get(position, (0,0))

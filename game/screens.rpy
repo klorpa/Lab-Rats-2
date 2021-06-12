@@ -103,7 +103,7 @@ style frame:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
-screen say(who, what, vren_test = None):
+screen say(who, what):
     $ show_phone = False #If True the phone is shown. If having a text conversation with "who" then that message is displayed on the phone. The say window has priority on displaying dialogue.
     $ show_say_window = True #If True the say window is shown. If also showing the phone this will be on top, and is for narration or dialogue with other characters.
 
@@ -116,16 +116,6 @@ screen say(who, what, vren_test = None):
                 $ show_say_window = True
             else: #Otherwise we're talking via text, don't show the menu.
                 $ show_say_window = False
-
-
-
-        #     if show_phone and mc.override_phone:
-        #         $ show_say_window
-        #
-        # if mc.hide_say_window:
-        #     $ show_say_window = False
-        #     $ show_phone = mc.having_text_conversation is not None
-
 
     if show_phone:
         if show_say_window:
@@ -145,23 +135,24 @@ screen say(who, what, vren_test = None):
                     text who id "who"
 
     if show_say_window:
-        style_prefix "say"
+
         window:
+            style_prefix "say"
             id "window"
-            if vren_test is not None:
-                text vren_test id "what"
-            else:
-                text what id "what"
+            # if vren_test is not None:
+            #     text vren_test id "what"
+            # else:
+            text what id "what"
 
             if who is not None:
                 window:
                     style "namebox"
                     text who id "who"
 
-        # If there's a side image, display it above the text. Do not display
-        # on the phone variant - there's no room.
-        if not renpy.variant("small"):
-            add SideImage() xalign 0.0 yalign 1.0
+    #     # If there's a side image, display it above the text. Do not display
+    #     # on the phone variant - there's no room.
+    #     if not renpy.variant("small"):
+    #         add SideImage() xalign 0.0 yalign 1.0
 
 style window is default
 style say_label is default
@@ -288,7 +279,7 @@ init -2 python:
         act_choice = renpy.display_menu(valid_actions_list,True,"Choice")
         return act_choice #We've shown the screen and the player picked something. return that to them.
 
-screen main_choice_display(elements_list, draw_hearts_for_people = True, draw_person_previews = True, person_preview_args = None): #Elements_list is a list of lists, with each internal list recieving an individual column
+screen main_choice_display(elements_list, draw_hearts_for_people = True, draw_person_previews = True, person_preview_args = None): #Elements_list is a list of lists, with each internal list receiving an individual column
     #The first element in a column should be the title, either text or a displayable. After that it should be a tuple of (displayable/text, return_value).
     #[["Title",["Item",Return] ]]
 
@@ -359,9 +350,9 @@ screen main_choice_display(elements_list, draw_hearts_for_people = True, draw_pe
                                     $ person_preview_args = {}
 
                                 if draw_person_previews:
-                                    $ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
-                                    #$ hovered_list.append(Function(item.draw_person, **person_preview_args))
-                                    $ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="solo",what=person_displayable,tag=item.name))
+                                    #$ person_displayable = item.build_person_displayable(lighting = mc.location.get_lighting_conditions(), **person_preview_args)
+                                    $ hovered_list.append(Function(item.draw_person, **person_preview_args))
+                                    #$ hovered_list.append(Function(renpy.show, item.name, at_list=[character_right, scale_person(item.height)],layer="solo",what=person_displayable,tag=item.name))
                                     $ unhovered_list.append(Function(clear_scene))
 
                             if isinstance(item,Action):
@@ -1150,6 +1141,12 @@ screen preferences():
                         label "Animation"
                         textbutton "Enable" action SetField(persistent, "vren_animation", True)
                         textbutton "Disable" action SetField(persistent, "vren_animation", False)
+
+                vbox:
+                    style_prefix "radio"
+                    label "Character Background"
+                    textbutton "Aura Only" action SetField(persistent, "vren_display_pref", "Float")
+                    textbutton "Fully Coloured" action SetField(persistent, "vren_display_pref", "Frame")
 
                     # vbox:
                     #     style_prefix "radio"

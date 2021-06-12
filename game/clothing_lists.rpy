@@ -430,7 +430,7 @@ init 0:
 
         nightgown_dress_bottom = Clothing("Nightgown bottom", 2, False, False, "Nightgown_Bot", False, True, 0, is_extension = True, display_name = "nightgown bottom",
             can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region, lower_leg_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True)
-        nightgown_dress = Clothing("Nightgown", 2, False, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "nightgown",
+        nightgown_dress = Clothing("Nightgown", 2, True, True, "Nightgown", True, True, 3, has_extension = nightgown_dress_bottom, whiteness_adjustment = 0.1, contrast_adjustment = 1.1, display_name = "nightgown",
             can_be_half_off = True, half_off_regions = [torso_region], half_off_ignore_regions = [stomach_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [torso_region, stomach_region, skirt_region])
         dress_list.append(nightgown_dress)

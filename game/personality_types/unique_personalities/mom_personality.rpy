@@ -1229,7 +1229,7 @@ label mom_vaginal_sex_taboo_break(the_person):
     else:
         the_person "I should stop you here... This is so wrong. Isn't it?"
         mc.name "I don't think there's anything wrong. Why do you?"
-        the_person "My son has his cock out and I'm actually thinking about letthing him have sex with me!"
+        the_person "My son has his cock out and I'm actually thinking about letting him have sex with me!"
         the_person "Isn't that crazy!? Did we both go insane?"
         mc.name "I'm not just your son though, am I? We've done so much together already, isn't this just natural?"
         the_person "Nothing about this is natural..."

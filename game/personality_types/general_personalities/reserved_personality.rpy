@@ -990,7 +990,7 @@ label reserved_talk_busy(the_person):
     if the_person.obedience > 120:
         the_person "I'd love to chat some more, but I've already spent far to much time getting distracted. Maybe we can catch up some other day, okay?"
     else:
-        the_person "Sorry to interupt, but I've got some work I really need to see to. I'd love to catch up some other time though."
+        the_person "Sorry to interrupt, but I've got some work I really need to see to. I'd love to catch up some other time though."
     return
 
 label reserved_sex_strip(the_person):

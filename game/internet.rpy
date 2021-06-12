@@ -61,7 +61,7 @@ label browse_internet(is_phone = True): #TODO: Maybe make this a generic functio
 
 
     $ other_actions.append("Back")
-    call screen main_choice_display([text_actions, internet_actions, other_actions], draw_hearts_for_people = False)
+    call screen main_choice_display([text_actions, internet_actions, other_actions], draw_hearts_for_people = False, draw_person_previews = False)
     $ clear_scene()
 
     if _return == "Back":
@@ -87,7 +87,7 @@ label browse_internet(is_phone = True): #TODO: Maybe make this a generic functio
 
 
         $ text_actions_display_list.sort(key = sort_display_list, reverse = True)
-        $ text_actions_display_list.insert(0,"Text Her")
+        $ text_actions_display_list.insert(0,"Text [the_person.title]")
 
         $ other_actions_list = ["Other Actions"]
         $ other_actions_list.append("Back")

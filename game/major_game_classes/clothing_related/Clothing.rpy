@@ -170,7 +170,7 @@ init -2 python:
             else:
                 self.constrain_regions = [constrain_regions]
 
-        def __cmp__(self,other):
+        def __cmp__(self,other): #Checks that two pieces of clothing are _exactly_ the same, down to colour and pattern (but not check by reference)
             if type(self) is type(other):
                 if (self.name == other.name
                     and self.hide_below == other.hide_below
@@ -186,6 +186,16 @@ init -2 python:
                 return -1
             else:
                 return 1
+
+        def is_similar(self, other): #Checks that two pieces of clothing are similar. ie. their base clothing item is the same, even if pattern or colour differs.
+            if type(self) is type(other):
+                if (self.name == other.name
+                    and self.hide_below == other.hide_below
+                    and self.layer == other.layer
+                    and self.is_extension == other.is_extension):
+
+                    return True
+            return False
 
         def __hash__(self):
             return hash((self.name,self.hide_below,self.anchor_below,self.layer,self.draws_breasts,self.underwear,self.slut_value))
@@ -241,11 +251,14 @@ init -2 python:
                 image_set = self.position_sets.get("stand3")
 
             if self.draws_breasts:
-                return_imge = image_set.get_image(body_type, tit_size)
+                return_image = image_set.get_image(body_type, tit_size)
             else:
-                return_imge = image_set.get_image(body_type, "AA")
+                return_image = image_set.get_image(body_type, "AA")
 
-            return return_imge
+            return return_image
+
+        def get_crop_offset(self, position):
+            return self.crop_offset_dict.get(position, (0,0))
 
         def generate_item_displayable(self, body_type, tit_size, position, lighting = None, regions_constrained = None, nipple_wetness = 0.0):
             if not self.is_extension: #We don't draw extension items, because the image is taken care of in the main object.
@@ -393,10 +406,6 @@ init -2 python:
 
                     final_image = AlphaBlend(transparency_control_image, final_image, Solid("#00000000"), True) #Use the final mask to hide parts of the clothing image as appopriate.
 
-                #
-                # if self.crop_offset_dict:
-                #     offset_tuple = self.crop_offset_dict.get(position, (0,0))
-                # else:
-                #     offset_tuple = (0,0)
+
 
                 return final_image

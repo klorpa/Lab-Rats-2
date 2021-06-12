@@ -59,6 +59,9 @@ screen character_create_screen():
     else:
         text b_name pos(320,960) xanchor 0.5 yanchor 0.5 style "menu_text_style"
 
+    if name_select in [1,2,3] and renpy.mobile:
+        textbutton "Hide Keyboard" action SetScreenVariable("name_select", 0) xalign 0.0 yalign 0.0 style "textbutton_style" text_style "textbutton_text_style"
+
 
     if character_points > 0:
         text "Spend All Character Points to Proceed" style "menu_text_style" anchor(0.5,0.5) pos(1560,900)

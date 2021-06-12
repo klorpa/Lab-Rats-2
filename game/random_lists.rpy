@@ -156,6 +156,11 @@ init -2:
         list_of_names.append("Samantha")
         list_of_names.append("Mara")
         list_of_names.append("Zimu")
+        list_of_names.append("Maria")
+        list_of_names.append("Bunny")
+        list_of_names.append("Kara")
+        list_of_names.append("Dina")
+        list_of_names.append("Priya")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -279,6 +284,11 @@ init -2:
         list_of_last_names.append("Linden")
         list_of_last_names.append("Sov")
         list_of_last_names.append("Fang")
+        list_of_last_names.append("Sykora")
+        list_of_last_names.append("Honey")
+        list_of_last_names.append("Troy")
+        list_of_last_names.append("Landry")
+        list_of_last_names.append("Rai")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -970,7 +980,7 @@ init 1 python:
         global stephanie
         stephanie = create_random_person(name = "Stephanie", age = 29, body_type = "standard_body", face_style = "Face_3",  tits="C", height = 0.94, hair_colour="brown", hair_style = messy_short_hair, skin="white" , \
             eyes = "brown", personality = stephanie_personality, name_color = "#cf3232", dial_color = "#cf3232" , starting_wardrobe = stephanie_wardrobe, \
-            stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 7, \
+            stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 14, start_obedience = 12, start_happiness = 119, start_love = 7, \
             title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
         stephanie.generate_home()
         stephanie.opinions["research work"] = [2, True] #Steph always loves research work, which you know

@@ -25,7 +25,13 @@ screen mc_character_sheet():
                 vbox:
                     xsize 500
                     text "Main Stats" style "menu_text_style" size 32 xalign 0.5
-                    text "Unspent Points: " + str(mc.free_stat_points) style "menu_text_style" xalign 0.5
+                    hbox:
+                        xalign 0.5
+                        text "Unspent Points: " + str(mc.free_stat_points) style "menu_text_style" xalign 0.5 yalign 0.5
+                        textbutton "+1 (" + str(mc.buy_point_cost()) + " Clarity)":
+                            xalign 0.5 style "textbutton_style" text_style "textbutton_text_style" text_size 12 yanchor 0.5 yalign 0.5
+                            action Function(mc.buy_point, "stat", mc.buy_point_cost()) sensitive mc.free_clarity >= mc.buy_point_cost()
+
                     hbox:
                         xalign 0.5
                         text "Charisma: " + str(mc.charisma) + "/" + str(mc.max_stats) style "menu_text_style" xalign 0.5 yalign 0.5
@@ -70,7 +76,12 @@ screen mc_character_sheet():
                 vbox:
                     xsize 500
                     text "Work Skills" style "menu_text_style" size 32 xalign 0.5
-                    text "Unspent Points: " + str(mc.free_work_points) style "menu_text_style" xalign 0.5
+                    hbox:
+                        xalign 0.5
+                        text "Unspent Points: " + str(mc.free_work_points) style "menu_text_style" xalign 0.5 yalign 0.5
+                        textbutton "+1 (" + str(mc.buy_point_cost()) + " Clarity)":
+                            xalign 0.5 style "textbutton_style" text_style "textbutton_text_style" text_size 12 yanchor 0.5 yalign 0.5
+                            action Function(mc.buy_point, "work", mc.buy_point_cost()) sensitive mc.free_clarity >= mc.buy_point_cost()
                     hbox:
                         xalign 0.5
                         text "Human Resources: " + str(mc.hr_skill) + "/" + str(mc.max_work_skills) style "menu_text_style" xalign 0.5 yalign 0.5
@@ -120,7 +131,12 @@ screen mc_character_sheet():
                 vbox:
                     xsize 500
                     text "Sex Skills" style "menu_text_style" size 32 xalign 0.5
-                    text "Unspent Points: " + str(mc.free_sex_points) style "menu_text_style" xalign 0.5
+                    hbox:
+                        xalign 0.5
+                        text "Unspent Points: " + str(mc.free_sex_points) style "menu_text_style" xalign 0.5 yalign 0.5
+                        textbutton "+1 (" + str(mc.buy_point_cost()) + " Clarity)":
+                            xalign 0.5 style "textbutton_style" text_style "textbutton_text_style" text_size 12 yanchor 0.5 yalign 0.5
+                            action Function(mc.buy_point, "sex", mc.buy_point_cost()) sensitive mc.free_clarity >= mc.buy_point_cost()
                     hbox:
                         xalign 0.5
                         text "Stamina: " + str(mc.max_energy) + "/" +str(mc.max_energy_cap) style "menu_text_style" xalign 0.5 yalign 0.5

@@ -340,11 +340,11 @@ screen outfit_creator(starting_outfit, outfit_type = "full", slut_limit = None):
                                             xysize (60, 40)
                                             action SetScreenVariable("current_a", float(trans))
 
-                                hbox:
+                                grid 10 2:
                                     spacing 5
                                     xalign 0.5
                                     xanchor 0.5
-                                    for count, a_colour in __builtin__.enumerate(persistent.colour_palette):
+                                    for count, a_colour in __builtin__.enumerate(persistent.colour_palette[0:20]):
                                         frame:
                                             background "#aaaaaa"
                                             button:

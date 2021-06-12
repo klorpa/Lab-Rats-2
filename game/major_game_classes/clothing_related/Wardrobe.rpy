@@ -89,6 +89,13 @@ init -2 python:
         def pick_random_outfit(self): #TODO: We might be able to pass a reference instead of a copy here now that apply_outfit always takes a copy.
             return get_random_from_list(self.outfits).get_copy() # Get a copy of _any_ full outfit in this character's wardrobe.
 
+        def pick_random_overwear(self):
+            return get_random_from_list(self.overwear_sets).get_copy()
+
+        def pick_random_underwear(self):
+            return get_random_from_list(self.underwear_sets).get_copy()
+
+
         def get_random_appropriate_underwear(self, sluttiness_limit, sluttiness_min = 0, guarantee_output = False): #Get an underwear outfit that is considered appropriate (based on underwear sluttiness, not full outfit sluttiness)
             valid_underwear = []
             for underwear in self.underwear_sets:

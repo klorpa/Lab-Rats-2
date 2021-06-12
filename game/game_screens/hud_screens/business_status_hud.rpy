@@ -43,14 +43,14 @@ screen business_ui(): #Shows some information about your business.
                 action NullAction()
                 sensitive True
 
-            textbutton "Company Efficency: [mc.business.team_effectiveness]%":
+            textbutton "Company Efficiency: [mc.business.team_effectiveness]%":
                 ysize 28
                 text_style "menu_text_style"
-                tooltip "The more employees you have the faster your company will become inefficent. Perform HR work at your office or hire someone to do it for you to raise your company efficency. All productivity is modified by company efficency."
+                tooltip "The more employees you have the faster your company will become inefficent. Perform HR work at your office or hire someone to do it for you to raise your company efficiency. All productivity is modified by company efficiency."
                 action NullAction()
                 sensitive True
 
-            textbutton "Current Raw Supplys: " + str(int(mc.business.supply_count)) +"/[mc.business.supply_goal]":
+            textbutton "Current Raw Supplies: " + str(int(mc.business.supply_count)) +"/[mc.business.supply_goal]":
                 ysize 28
                 text_style "menu_text_style"
                 tooltip "Your current and goal amounts of serum supply. Manufacturing serum requires supplies, spend time ordering supplies from your office or hire someone to do it for you. Raise your supply goal from your office if you want to keep more supply stockpiled."

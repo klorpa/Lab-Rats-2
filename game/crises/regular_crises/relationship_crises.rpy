@@ -81,7 +81,7 @@ label so_relationship_improve_label():
     elif the_person.relationship == "Fiancée":
         #TODO: Add an event where you're invited to their wedding and fuck the bride.
         "You get a notification on your phone."
-        "It seems [the_person.title]'s just had her wedding to her Fiancé, [the_person.SO_name]. You take a moment to add your congradulations to her wedding photo."
+        "It seems [the_person.title]'s just had her wedding to her Fiancé, [the_person.SO_name]. You take a moment to add your congratulations to her wedding photo."
         $ the_person.relationship = "Married"
 
     $ potential_people = []
@@ -128,7 +128,7 @@ init 1 python:
         if time_of_day == 3 or time_of_day == 4:
             for place in list_of_places:
                 for a_person in place.people:
-                    if affair_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                    if affair_role in a_person.special_role and a_person not in mc.location.people: #someone is in an affair with you and wants a dic pic
                         return True
         return False
 
@@ -141,7 +141,7 @@ label affair_dick_pick_label():
     python:
         for place in list_of_places:
             for a_person in place.people:
-                if affair_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                if affair_role in a_person.special_role and a_person not in mc.location.people: #someone is in an affair with you and wants a dic pic
                     possible_people.append(a_person)
     $ the_person = get_random_from_list(possible_people)
     if the_person is None:
@@ -203,7 +203,7 @@ init 1 python:
         if time_of_day == 3 or time_of_day == 4:
             for place in list_of_places:
                 for a_person in place.people:
-                    if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                    if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #someone is in an affair with you and wants a dic pic
                         return True
         return False
 
@@ -215,7 +215,7 @@ label girlfriend_nudes_label():
     python:
         for place in list_of_places:
             for a_person in place.people:
-                if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #Soemone is in an affair with you and wants a dic pic
+                if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #someone is in an affair with you and wants a dic pic
                     possible_people.append(a_person)
     $ the_person = get_random_from_list(possible_people)
     if the_person is None:
@@ -256,7 +256,7 @@ label girlfriend_nudes_label():
                     the_person.draw_animated_removal(the_item, position = "stand5", the_animation = blowjob_bob, animation_effect_strength = 0.8)
                     if the_person.outfit.tits_visible():
                         renpy.say("", "She pulls her " + the_item.name + " off and lets her tits fall free.")
-                        renpy.say("", "She at the camera and shakes them for you.")
+                        renpy.say("", "She smiles at the camera and shakes them for you.")
                     else:
                         renpy.say("","")
             $ mc.change_locked_clarity(20)

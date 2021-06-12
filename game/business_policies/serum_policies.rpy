@@ -35,7 +35,7 @@ init 0 python:
             return False
 
     daily_serum_dosage_policy = Policy(name = "Daily Serum Dosage",
-        desc = "Mandatory serum testing is expanded into a full scale daily dosage program. Each employee will recieve a dose of the selected serum for their department, if one is currently in the stockpile.",
+        desc = "Mandatory serum testing is expanded into a full scale daily dosage program. Each employee will receive a dose of the selected serum for their department, if one is currently in the stockpile.",
         cost = 5000,
         toggleable = True,
         requirement = daily_serum_dosage_policy_requirement,
@@ -65,7 +65,7 @@ init 0 python:
             return False
 
     serum_size_2_policy = Policy(name = "Batch Size Improvement 2",
-        desc = "Improved recycling of waste materials allows for a boost in production efficency. Increases serum batch size by 2.",
+        desc = "Improved recycling of waste materials allows for a boost in production efficiency. Increases serum batch size by 2.",
         cost = 2500,
         toggleable = True,
         requirement = batch_size_2_requirement,
@@ -81,7 +81,7 @@ init 0 python:
             return False
 
     serum_size_3_policy = Policy(name = "Batch Size Improvement 3",
-        desc = "Another improvement to the lab equipment allows for even more impressive boosts in production efficency and speed. Increases serum batch size by 2.",
+        desc = "Another improvement to the lab equipment allows for even more impressive boosts in production efficiency and speed. Increases serum batch size by 2.",
         cost = 10000,
         toggleable = True,
         requirement = batch_size_3_requirement,

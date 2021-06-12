@@ -432,7 +432,7 @@ init 0 python:
             test_person = create_random_person()
             distance = test_person.days_from_ideal_fertility()
 
-            self.assertTrue(distance < 15)
+            self.assertTrue(distance <= 15)
             self.assertTrue(distance >= 0)
 
         def test_fertility_cycle_string(self):
@@ -561,3 +561,16 @@ init 0 python:
             test_person.remove_infraction(test_infraction)
 
             self.assertNotIn(test_infraction, test_person.infractions)
+
+        def test_break_taboo(self):
+            test_person = create_random_person()
+
+            self.assertTrue(test_person.has_taboo("kissing"))
+            self.assertTrue(test_person.has_taboo("underwear_nudity"))
+
+            self.assertTrue(test_person.break_taboo("kissing"))
+
+            self.assertFalse(test_person.has_taboo("kissing"))
+            self.assertTrue(test_person.has_taboo("underwear_nudity"))
+            self.assertFalse(test_person.break_taboo("kissing"))
+        #TODO: Add Taboo break tests

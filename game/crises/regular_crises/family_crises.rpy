@@ -355,7 +355,7 @@ label mom_lingerie_surprise_label():
     $ mc.change_locked_clarity(20)
     $ the_person.draw_person(position = "sitting")
     mc.name "What did you want to ask?"
-    the_person "I know you've been busy with work, and I'm very pround, but sometimes I worry you're not having your needs met."
+    the_person "I know you've been busy with work, and I'm very proud, but sometimes I worry you're not having your needs met."
     "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
     the_person "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
     menu:
@@ -1869,7 +1869,7 @@ label cousin_tease_crisis_label():
                             mc.name "You think I'd want to pay to see your tits? You should be paying me."
                             $ the_person.change_love(-1)
                             the_person "Whatever, I can make the cash somewhere else."
-                            "You don't recieve any more messages from her."
+                            "You don't receive any more messages from her."
 
 
 

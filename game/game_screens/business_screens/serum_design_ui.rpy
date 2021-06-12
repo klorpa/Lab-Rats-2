@@ -22,7 +22,7 @@ screen serum_design_ui(starting_serum,current_traits):
                 #text "Add a trait" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5
                 viewport:
                     xsize 550
-                    ysize 480
+                    ysize 760
                     scrollbars "vertical"
                     mousewheel True
                     frame:

@@ -1,6 +1,6 @@
 init -2 python:
     class Role(renpy.store.object): #Roles are assigned to special people. They have a list of actions that can be taken when you talk to the person and acts as a flag for special dialogue options.
-        def __init__(self, role_name, actions = None, hidden = False, on_turn = None, on_move = None, on_day = None):
+        def __init__(self, role_name, actions = None, hidden = False, on_turn = None, on_move = None, on_day = None, role_dates = None):
             self.role_name = role_name
             if actions is None:
                 self.actions = []
@@ -11,6 +11,13 @@ init -2 python:
             self.on_turn = on_turn #A function that is run each turn on every person with this Role.
             self.on_move = on_move #A function that is run each move phase on every person with this Role.
             self.on_day = on_day
+
+            if role_dates is None:
+                self.role_dates = [] # A role date is an action that should be added to the list of date triggers.
+            elif isinstance(role_dates, list):
+                self.role_dates = role_dates
+            else:
+                self.role_dates = [role_dates]
 
             self.linked_roles = [] #A list of other roles. If this role is removed, all linked roles are removed as well.
 

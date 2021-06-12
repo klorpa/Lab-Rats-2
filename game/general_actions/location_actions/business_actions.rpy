@@ -104,13 +104,13 @@ init 0 python:
     def review_designs_action_requirement():
         return True
 
-label give_serum(the_person):
+label give_serum(the_person): #TODO: This is a general action, not a business specific one. Move it to the correct file.
     call screen serum_inventory_select_ui(mc.inventory, the_person)
     if not _return == "None":
         $ the_serum = _return
         "You decide to give [the_person.title] a dose of [the_serum.name]."
         $ mc.inventory.change_serum(the_serum,-1)
-        $ the_person.give_serum(copy.copy(the_serum)) #use a copy rather than the main class, so we can modify and delete the effects without changing anything else.
+        $ the_person.give_serum(copy.copy(the_serum)) #Use a copy rather than the main class, so we can modify and delete the effects without changing anything else.
         return the_serum
     else:
         "You decide not to give [the_person.title] anything."
@@ -231,7 +231,7 @@ label hire_someone(new_person, add_to_location = False): # Breaks out some of th
         for other_employee in mc.business.get_employee_list():
             town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
 
-    "You complete the nessesary paperwork and hire [_return.name]. What division do you assign them to?"
+    "You complete the necessarypaperwork and hire [_return.name]. What division do you assign them to?"
     menu:
         "Research and Development.":
             $ mc.business.add_employee_research(new_person)

@@ -3,6 +3,17 @@ init 1 python:
 
 label test_chat_actions():
     $ test_person = mom
+    "Testing general description ways."
+    mom "This should be normal dialogue."
+    $ renpy.say(mom, "This is statement equiavlent dialogue.")
+    menu:
+        "Dialogue displayed correctly.":
+            pass
+
+        "Test failed.":
+            return False
+
+
     "Testing chat actions. Appropriate dialogue should be triggered, energy spent, ect."
     call small_talk_person(test_person)
     menu:

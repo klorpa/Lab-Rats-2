@@ -1510,7 +1510,7 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
                 $ the_group.redraw_person(the_mom)
                 "[the_mom.possessive_title] gasps quietly and shakes her head."
                 the_mom "[the_mom.mc_title], I would never..."
-                "She's interupted by her sister."
+                "She's interrupted by her sister."
                 $ the_group.redraw_person(the_aunt)
                 $ mc.change_locked_clarity(5)
                 the_aunt "Yeah, I have."

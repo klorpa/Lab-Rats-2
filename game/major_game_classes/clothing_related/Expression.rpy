@@ -75,3 +75,16 @@ init -2 python:
             final_image = AlphaBlend(mask_image, base_image, shader_pattern_image, alpha=False)
 
             return final_image
+
+        def generate_raw_image(self, position, emotion, special_modifier = None): #Returns the raw ZipFileImage or Image, instead of the displayable (used for generating region masks)
+            if not position in self.positions_set+self.ignore_position_set:
+                position = "stand3"
+            if not emotion in self.emotion_set:
+                emotion = "default" #Get our default emotion to show if we get an incorrect one.
+            elif special_modifier is not None and special_modifier in self.special_modifiers:
+                emotion = emotion + "_" + special_modifier
+
+            base_name = self.position_dict[position][emotion]
+            base_image = VrenZipImage(position, base_name)
+
+            return base_image

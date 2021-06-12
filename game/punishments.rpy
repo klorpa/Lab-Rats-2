@@ -193,7 +193,7 @@ label punishment_wrist_slap(the_person, the_infraction):
             "When you're satisfied you let go of her hands. She holds them, rubbing their backs gingerly."
             mc.name "Have you learned your lesson?"
             the_person "Yes [the_person.mc_title], I have."
-            mc.name "Good. I don't enjoy this, but I'll continue to do what is nessesary to maintain good disipline in my staff."
+            mc.name "Good. I don't enjoy this, but I'll continue to do what is necessaryto maintain good disipline in my staff."
             "She nods obediently."
 
 
@@ -300,7 +300,7 @@ init -1 python:
     list_of_punishments.append(punishment_underwear_only_action)
 
 label punishment_office_busywork(the_person, the_infraction):
-    # The employee gains +1 Obedience every work day, but the company loses an extra company efficency.
+    # The employee gains +1 Obedience every work day, but the company loses an extra company efficiency.
 
     mc.name "As punishment, for the next week you are expected to carry out all of the basic busywork of the office."
     mc.name "If the printer needs paper, you fill it. If someone needs coffee, you get it for them."
@@ -419,12 +419,12 @@ label spank_description(the_person, the_infraction):
                 mc.name "Do you have anything to say for your actions?"
                 if the_person.get_opinion_score("being submissive") > 0:
                     the_person "It won't happen again [the_person.mc_title], I..."
-                    "You interupt her with a slap on the ass. She pauses, then continues."
+                    "You interrupt her with a slap on the ass. She pauses, then continues."
                     the_person "I'm sorry to let you down, and I see just how wrong I was now! Ah!"
 
                 else:
                     the_person "Ow... It won't happen again [the_person.mc_title], I... Ow!"
-                    "You interupt her with a slap on the ass. She takes a moment to collect herself before continuing."
+                    "You interrupt her with a slap on the ass. She takes a moment to collect herself before continuing."
                     the_person "I promise it won't happen again!"
 
                 $ mc.change_locked_clarity(10)
@@ -467,7 +467,7 @@ label punishment_underwear_only(the_person, the_infraction):
     if not (the_person.outfit.wearing_bra() and the_person.outfit.wearing_panties()): # Whoops, not wearing underwear today! Tough luck.
         the_person "I... I can't do that [the_person.mc_title]."
         mc.name "What do you mean you can't? These are the rules you agreed with to work here, if you..."
-        "She shakes her head and interupts you."
+        "She shakes her head and interrupts you."
         $ slut_continue_requirement = 40
         if not (the_person.outfit.wearing_bra() or the_person.outfit.wearing_panties()):
             the_person "No, I mean I can't strip down to my underwear because... I'm not wearing any."
@@ -835,7 +835,7 @@ label punishment_office_humiliating_work(the_person, the_infraction):
         the_person "Right away, [the_person.mc_title]."
 
     $ the_person.add_role(employee_humiliating_work_role)
-    $ clear_action = Action("Clear employee busywork", employee_humiliating_work_role, "employee_humiliating_work_remove_requirement", args = the_person, requirement_args = [the_person, day + 7])
+    $ clear_action = Action("Clear employee busywork", employee_humiliating_work_remove_requirement, "employee_humiliating_work_remove_label", args = the_person, requirement_args = [the_person, day + 7])
     $ mc.business.mandatory_crises_list.append(clear_action)
     return
 

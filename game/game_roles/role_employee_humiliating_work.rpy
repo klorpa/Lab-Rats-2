@@ -3,7 +3,7 @@
 init -2 python:
     def employee_humiliating_work_on_turn(the_person):
         if mc.business.is_open_for_business():
-            mc.business.change_team_effectiveness(-2) #Worse for team efficency
+            mc.business.change_team_effectiveness(-2) #Worse for team efficiency
 
 
     def employee_humiliating_work_on_day(the_person):

@@ -1,4 +1,4 @@
-# Contains functions that recieve a Person, String and return a modified String based.
+# Contains functions that receive a Person, String and return a modified String based.
 init -3 python:
     def test_modifier(Person, what): #Note: we need to make sure we properly preserve text mark ups.
         return what + " | it worked! |"

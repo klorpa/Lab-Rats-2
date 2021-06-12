@@ -10,7 +10,7 @@
 # 0-10: Baseline normal views on what is acceptable behaviour and dress. Relationships progress with Love, sex only happens in private.
 # 11-21: Touching, groping is fine unless there is a good reason not to (in relationship, related). Reliant on circumstance to start making out. Outfits may be provocative but do not outright reveal anything.
 # 21-40: Willing to give handjobs, be fingered, have her tits groped. Willing to forego panties or a bra, but not be fully nude. Willing to start fooling around any time. Girls in relationships or who are related begin to consider kissing, groping. Most girls are willing to start an affair if they also Love you.
-# 41-60: Willing to give blowjobs, recieve head, and have missionary sex if nothing else is holding them back. When having sex girls will usually require you to wear a condom, especially if they are not on birth control.  Willing to go semi-nude and begin to be fine with having sex in public.
+# 41-60: Willing to give blowjobs, receive head, and have missionary sex if nothing else is holding them back. When having sex girls will usually require you to wear a condom, especially if they are not on birth control.  Willing to go semi-nude and begin to be fine with having sex in public.
 # 61-80: Willing to have all types of vaginal sex and to start having anal. Girls who are related to you will want to have anal sex instead of vaginal. Girls will ask, but don't require you to wear a condom, even if they are not on birth control. Willing to go fully nude. Orgasms are a suitable reward, orgasm denial is a suitable punishment.
 # 81-100: Willing to have all types of sex, and to go fully nude or be adorned with lingerie and/or fetish gear. Girls will ask you not to wear a condom, even if not on birth control.
 # 100+: Even girls related to you will have any type of sex and ask you not to wear a condom.
@@ -51,7 +51,7 @@
 ## Potential Policies ##
 # Optional in house serum testing - Gives the ability to give girls serum, for a cash reward.
 # Business size policies - Increase the total number of employees you can have working for you at once.
-# Efficency policies - Lets you increase the general efficency of your company, making HR even more useful.
+# Efficiency policies - Lets you increase the general efficiency of your company, making HR even more useful.
 # R&D connections - Unlocks certain key traits for R&D (ie. game is gated behind earning money).
 # Discount suppliers - Decreases price paid for serum supplies.
 
@@ -747,7 +747,7 @@ label special_training_crisis_label():
                 "Improve Researching Skill (Current [the_person.research_skill])":
                     $ the_person.research_skill += 2
                     $ mc.log_event(the_person.title + ": +2 Researching Skill", "float_text_grey")
-                    "[the_person.title] leaves work for a few hours to attend the training seminar. When she comes back she has several interesting new researching technqiues to test."
+                    "[the_person.title] leaves work for a few hours to attend the training seminar. When she comes back she has several interesting new researching techniques to test."
 
                 "Improve Production Skill (Current [the_person.production_skill])":
                     $ the_person.production_skill += 2
@@ -1337,7 +1337,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
     if the_person.happiness < 100:
         the_person "I've been doing my best to keep my head up lately, but honestly I just have been hating working here. I've decided that today is going to be my last day."
     elif the_person.salary < the_person.calculate_base_salary():
-        the_person "I've been looking into other positions, and the pay I'm recieving here just isn't high enough. I've decided to accept another offer; today will be my last day."
+        the_person "I've been looking into other positions, and the pay I'm receiving here just isn't high enough. I've decided to accept another offer; today will be my last day."
     else:
         the_person "I've been looking for a change in my life, and I feel like this job is holding me back. I've decided that today is going to be my last day."
 
@@ -1453,7 +1453,7 @@ label invest_rep_visit_label(rep_name):
         "[rep_name] hangs up. You doubt he will be interested in rescheduling."
     else:
         #The event was triggered properly, aka the MC was at their office during the next Monday, so they meet rep_name and give them a tour of the facilities.
-        "Your phone rings. When you check it you recognise the name [rep_name], the represntative of a mutual fund that you had promised a tour. You answer your phone."
+        "Your phone rings. When you check it you recognise the name [rep_name], the representative of a mutual fund that you had promised a tour. You answer your phone."
         mc.name "[rep_name], good to hear from you. How are you doing?"
         rep_name "I'm doing well. I'm just pulling into your parking lot now, do I need to check in at security?"
         mc.name "Don't worry about it, I'll come out and meet you and we can start the tour."
@@ -2393,7 +2393,7 @@ label research_reminder_crisis_label():
 
     $ the_person = mc.business.head_researcher
 
-    "While you're working you recieve a text from your head researcher [the_person.title]. It reads:"
+    "While you're working you receive a text from your head researcher [the_person.title]. It reads:"
 
     $ researched_all_at_level = True
     python:
@@ -2804,7 +2804,7 @@ label horny_at_work_crisis_label():
 
 
     menu:
-        "Ignore it.\n{size=22}-10%% Business Efficency{/size} (tooltip)Ignore your arousal through sheer willpower. It might save you some embarassment, but your business efficency is sure to suffer.":
+        "Ignore it.\n{size=22}-10%% Business Efficiency{/size} (tooltip)Ignore your arousal through sheer willpower. It might save you some embarassment, but your business efficiency is sure to suffer.":
             $ clear_scene()
             "Putting mind over matter into action you redouble your efforts. Time seems to pass slowly and it seems like you're getting no work done at all."
             $ mc.business.change_team_effectiveness(-10)

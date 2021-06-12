@@ -1,7 +1,10 @@
 init -2 python:
     class GroupDisplayManager(renpy.store.object):
-        default_shift_amount = 0.15
-        adjust_per_person = 0.05
+        aura_default_shift_amount = 0.08
+        aura_adjust_per_person = 0.06
+
+        frame_default_shift_amount = 0.15
+        frame_adjust_per_person = 0.05
         def __init__(self, group_of_people = None, primary_speaker = None):
             if group_of_people is None:
                 self.group_of_people = []
@@ -97,8 +100,13 @@ init -2 python:
 
 
             if len(self.group_of_people) > 1:
-                posible_shift_amount = GroupDisplayManager.default_shift_amount + (GroupDisplayManager.adjust_per_person*len(self.group_of_people))
-                shift_amount = 1.0 - (posible_shift_amount/(len(self.group_of_people)-1))*(character_index+1/len(self.group_of_people))
+                if persistent.vren_display_pref == "Float":
+                    possible_shift_amount = GroupDisplayManager.aura_default_shift_amount + (GroupDisplayManager.aura_adjust_per_person*len(self.group_of_people))
+
+                else:
+                    possible_shift_amount = GroupDisplayManager.frame_default_shift_amount + (GroupDisplayManager.frame_adjust_per_person*len(self.group_of_people))
+
+                shift_amount = 1.0 - (possible_shift_amount/(len(self.group_of_people)-1))*(character_index+1/len(self.group_of_people))
             else:
                 shift_amount = 1.0
 

@@ -86,18 +86,43 @@ init -1 python:
         else:
             return False
 
+    def sister_go_shopping_requirement(the_person):
+        if not the_person.has_role(sister_role):
+            return False
+        elif not lily_bedroom.has_person(the_person):
+            return False
+        elif not (time_of_day == 3):
+            return False
+        else:
+            return True
+
+    def mom_go_shopping_requirement(the_person):
+        if not the_person.has_role(mother_role):
+            return False
+        elif not person_at_home(the_person):
+            return False
+        elif not (time_of_day == 3):
+            return False
+        return True
+
     ### ON TALK EVENTS ###
     mom_work_slutty_event = Action("Mom work slutty", mom_work_slutty_requirement, "mom_work_slutty_report", event_duration = 2)
-
 
     limited_time_event_pool.append([mom_work_slutty_event,8,"on_talk"])
 
     ### ON ENTER EVENTS ###
     sister_walk_in = Action("Sister walk in", sister_walk_in_requirement, "sister_walk_in_label", event_duration = 5)
+    sister_go_shopping_action = Action("Sister go shopping", sister_go_shopping_requirement, "sister_go_shopping_label", event_duration = 5)
+
     nude_walk_in = Action("Nude walk in", nude_walk_in_requirement, "nude_walk_in_label", event_duration = 5)
+
     mom_house_work_nude = Action("Mom nude house work", mom_house_work_nude_requirement, "mom_house_work_nude_label", event_duration = 5)
     breeding_mom = Action("Mom breeding", mom_breeding_intro_requirement, "breeding_mom_intro_label", event_duration = 5)
+    mom_go_shopping_action = Action("Mom go shopping", mom_go_shopping_requirement, "mom_go_shopping_label", event_duration = 5)
+
+
     aunt_home_lingerie = Action("Aunt home lingerie", aunt_home_lingerie_requirement, "aunt_home_lingerie_label", event_duration = 3)
+
     cousin_home_panties = Action("Cousin home panties", cousin_home_panties_requirement, "cousin_home_panties_label", event_duration = 3)
 
 
@@ -107,6 +132,8 @@ init -1 python:
     limited_time_event_pool.append([breeding_mom,4,"on_enter"])
     limited_time_event_pool.append([aunt_home_lingerie,4,"on_enter"])
     limited_time_event_pool.append([cousin_home_panties,4,"on_enter"])
+    limited_time_event_pool.append([sister_go_shopping_action,6,"on_enter"])
+    limited_time_event_pool.append([mom_go_shopping_action,4,"on_enter"])
 
 label sister_walk_in_label(the_person):
     if the_person.effective_sluttiness() < 10:
@@ -133,7 +160,7 @@ label sister_walk_in_label(the_person):
         the_person "Oh my god, no!"
         "She sprints to her bed, opening up her laptop and turning it off as quickly as possible."
         $ mc.change_locked_clarity(10)
-        mc.name "Am I interupting?"
+        mc.name "Am I interrupting?"
         "[the_person.possessive_title] spins around, beet red, and stammers for a moment."
         the_person "I... I don't... Umm... I think my laptop has a virus, all these crazy popups!"
         mc.name "Mmmhm? Do you want me to take a look?"
@@ -374,7 +401,7 @@ label mom_house_work_nude_label(the_person):
         $ the_person.outfit.add_dress(coloured_apron)
         $ the_person.draw_person(position = "back_peek")
         "You find [the_person.possessive_title] in the kitchen working on dinner. She glances over her shoulder when you enter, seeming meek."
-        the_person "Hi [the_person.mc_title]. I hope you don't mind the way I'm dressed, it's nice to weark something more comfortable after I come home from work."
+        the_person "Hi [the_person.mc_title]. I hope you don't mind the way I'm dressed, it's nice to wear something more comfortable after I come home from work."
         $ mc.change_locked_clarity(5)
         mc.name "It's fine, I don't mind."
         "She turns her attention back to prepping dinner."
@@ -448,7 +475,7 @@ label breeding_mom_intro_label(the_person):
         "Fuck her and try to breed her.":
             "You nod, and the mere the confirmation makes her gasp. She lies down on the bed and holds out her hands for you."
             $ the_person.draw_person(position = "missionary")
-            "You strip down and climb on top of her. The tip of your hard cock runs along the enterance of her cunt and finds it dripping wet."
+            "You strip down and climb on top of her. The tip of your hard cock runs along the entrance of her cunt and finds it dripping wet."
             the_person "Go in raw [the_person.mc_title], enjoy my pussy and give me your cum!"
             $ mc.change_locked_clarity(20)
             $ the_person.break_taboo("vaginal_sex")
@@ -625,3 +652,117 @@ label cousin_home_panties_label(the_person):
 
     call talk_person(the_person)
     return
+
+label sister_go_shopping_label(the_person): #TODO: Hook this up as an on_enter event in her room.
+    if mc.location.has_person(the_person):
+        $ mc.location.move_person(the_person, mall) # Move her to the mall either way, if you don't go she's not in her room any more.
+    $ the_person.draw_person()
+    "You nearly run into [the_person.title] as you open the door to her room."
+    $ trigger_date = False
+    if the_person.love < 10:
+        the_person "Oh! Hey [the_person.mc_title], I was just heading out."
+        "She pushes past you and closes the door to her room behind her."
+        the_person "Tell [mom.title] I'm at the mall if she needs me. See ya later!"
+        "[the_person.possessive_title] hurries past you and out of the house."
+    elif the_person.love < 30:
+        the_person "Oh! Hey [the_person.mc_title], I was just heading to the mall."
+        "She pushes past you and closes the door to her room behind her."
+        menu:
+            "Ask to join.":
+                mc.name "That sounds like fun. Mind if I tag along?"
+                the_person "You really want to come on a shopping trip with your sister? Man, you must be {i}booooooored{/i}!"
+                "[the_person.possessive_title] smirks and shrugs."
+                $ the_person.change_obedience(-1)
+                the_person "I guess you can come with me though. I might need someone to carry my things!"
+                $ trigger_date = True
+
+            "Say goodbye.":
+                mc.name "Alright, have fun out there."
+                "Tell [mom.title] where I am if she needs me, okay? See ya later!"
+                "[the_person.possessive_title] hurries past you and out of the house."
+
+    else:
+        the_person "Oh, you have perfect timing [the_person.mc_title]!"
+        "She grabs your hand and pulls you into the hallway, closing the door to her room behind her."
+        the_person "I was going to head to the mall, but it's always more fun shopping with a friend."
+        the_person "Wanna come with me?"
+        menu:
+            "Go shopping.":
+                mc.name "Sure, that sounds like fun."
+                "[the_person.possessive_title] smiles and nods in agreement."
+                $ the_person.change_happiness(5)
+                $ trigger_date = True
+
+            "Not right now.":
+                mc.name "Sorry [the_person.title], I'm busy right now actually."
+                the_person "Aww, alright. I've got to get going, see ya later!"
+                "[the_person.possessive_title] hurries past you and out of the house."
+
+
+    if trigger_date:
+        "You and [the_person.possessive_title] head downtown, to the largest shopping mall around."
+        call shopping_date_intro(the_person, skip_intro = True)
+
+    #TODO: Have a version of this event for Mom
+    #TOOO: Have a version where both Lily and Mom go shopping together.
+    #TODO: Have a random event where Lily and Mom have already _gone_ shopping, and they want to show you what they bought.
+    return
+
+label mom_go_shopping_label(the_person):
+    if mc.location.has_person(the_person):
+        $ mc.location.move_person(the_person, mall)
+
+    $ the_person.draw_person()
+    the_person "Oh, hello [the_person.mc_title]. I was just about to head out and do some shopping."
+    $ trigger_date = False
+    if the_person.love < 10:
+        the_person "I might be back late, but there's dinner in the fridge. All you need to do is warm it up."
+        the_person "Take care of your sister, and call me if you need me."
+        "She smiles and waves goodbye as she heads for the front door."
+
+    elif the_person.love < 30:
+        the_person "I might be back late, but there's dinner in the fridge. All you need to do is warm it up."
+        menu:
+            "Ask to join.":
+                mc.name "You know, I have some shopping to do too. Would you like some company?"
+                "[the_person.possessive_title] smiles and puts her hand on her chest."
+                $ the_person.change_love(1)
+                $ the_person.change_obedience(-1)
+                the_person "Oh, you're so sweet. Of course you can, if you don't mind being seen with your Mom out in public."
+                the_person "I'll try not to embarrass you too badly."
+                $ trigger_date = True
+
+            "Say goodbye.":
+                mc.name "Okay, have fun [the_person.title]."
+                the_person "Take care of your sister, and call me if you need me."
+                "She smiles and waves goodbye as she heads for the front door."
+
+    else:
+        the_person "You have such good taste in clothing, would you like to come along and give me some advice?"
+        the_person "If you aren't to embarrassed to be seen shopping with your mom, of course."
+        menu:
+            "Go shopping.":
+                mc.name "I've got some shopping of my own to do too. Sure, I'll come along."
+                "She smiles happily."
+                the_person "It's always nice when we get to spend time together, just the two of us."
+                $ trigger_date = True
+
+            "Not right now.":
+                mc.name "Sorry [the_person.title], I've made plans for the afternoon already."
+                the_person "Of course, you're a busy boy! Well then, there's dinner in the fridge."
+                the_person "I'll be back later tonight. Take care of your sister."
+                "She smiles and waves goodbye, heading for the front door."
+
+    if trigger_date:
+        "You and [the_person.possessive_title] head downtown, to the largest shopping mall around."
+        call shopping_date_intro(the_person, skip_intro = True)
+    return
+
+#TODO: Add a Mom+Lily shopping haul review (or maybe a Mom+Aunt? They should get more screen time together)
+#TODO: You come home and find that Mom/Lily/Aunt have just gotten back from the mall, and they have stuff to show you.
+#TODO: Basic option to review their outfits, plus ability to have them strip down/dance/tease you while you watch.
+#TODO: Maybe do that as part of the expanded Lily/Mom storyline stuff. I want more context aware stuff from them as well.
+
+#TODO: Some late night events with Lily or Mom masturbating (LR1 vibes)
+#TODO: Lily's bedroom search - maybe a generic search for everyone else?
+# |-> Roll Gabrielle's room search into this, where you find info about her part time job

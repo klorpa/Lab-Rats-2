@@ -344,7 +344,20 @@ label got_boobjob(the_person):
         $ the_person.tits = get_larger_tits(the_person.tits)
         #Note that we DON'T change their breast region weight, to simulate natural vs. fake tits.
 
+    if the_person.has_role(instapic_role):
+        $ the_person.event_triggers_dict["insta_new_boobs_brag"] = True
+        $ the_person.event_triggers_dict["insta_generate_pic"] = True #She'll make a post right away on Instapic about her new boobs.
+    if the_person.has_role(dikdok_role):
+        $ the_person.event_triggers_dict["dikdok_new_boobs_brag"] = True
+        $ the_person.event_triggers_dict["dikdok_generate_video"] = True
+    if the_person.has_role(onlyfans_role):
+        $ the_person.event_triggers_dict["onlyfans_new_boobs_brag"] = True
+
     $ the_person.event_triggers_dict["getting boobjob"] = False #Reset the flag so you can ask her to get _another_ boobjob.
+    if the_person.event_triggers_dict.get("boobjob_count",0) == 0:
+        $ the_person.event_triggers_dict["boobjob_count"] = 1
+    else:
+        $ the_person.event_triggers_dict["boobjob_count"] += 1
     return
 
 label girlfriend_ask_trim_pubes_label(the_person):

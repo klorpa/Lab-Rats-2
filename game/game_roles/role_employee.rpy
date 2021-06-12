@@ -274,7 +274,7 @@ label employee_performance_review(the_person):
                     $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
-                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
+                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! congratulations!
                         $ the_person.change_happiness(20)
                         $ the_person.change_slut_temp(5)
                         $ the_person.change_love(2)
@@ -491,7 +491,7 @@ label employee_performance_review(the_person):
                                         if office_punishment.is_active():
                                             mc.name "You did try. I'll be lenient and just write this up as a rules infraction."
                                             $ the_person.add_infraction(Infraction.underperformance_factory())
-                                            the_person "Thank you [the_person.mc_name]. I'll do better next time."
+                                            the_person "Thank you [the_person.mc_title]. I'll do better next time."
 
                                         else:
                                             mc.name "You did, that's true. I'll be generous this time, but you better be prepared to finish me next time."
@@ -698,7 +698,7 @@ label employee_performance_review(the_person):
                     $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
-                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
+                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! congratulations!
                         $ the_person.change_happiness(5)
                         $ the_person.change_obedience(-10)
                         the_person "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't supposed to cum?"

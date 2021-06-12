@@ -303,7 +303,7 @@ label lily_sex_responses_anal(the_person):
             the_person "Stuff me full of your big cock [the_person.mc_title]! Make your sister cum like a desperate anal slut!"
         else:
             the_person "Oh god, I'm... I think I'm going to cum soon!"
-            the_person "I can't belive... My brother's cock is in my ass and it's going to make me cum! I feel like such a slut!"
+            the_person "I can't believe... My brother's cock is in my ass and it's going to make me cum! I feel like such a slut!"
             "The way she's moaning makes her sound more proud than ashamed."
     return
 

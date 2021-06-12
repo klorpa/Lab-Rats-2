@@ -10,7 +10,7 @@ label basic_business_tests(): #TODO:we can probably automate these tests (or bui
     "Starting with HR. Effectiveness set to 75 and should rise."
     call hr_work_action_description
     menu:
-        "Team Efficency rose.":
+        "Team Efficiency rose.":
             pass
 
         "Test failed.":

@@ -11,5 +11,5 @@ screen goal_hud_ui():
                     frame:
                         ysize 60
                         background None
-                        bar value goal.get_progress_fraction() range 1 xalign 0.5
+                        bar value goal.get_progress_fraction() range 1.0 xalign 0.5
                         textbutton goal.name + "\n" + goal.get_reported_progress() text_style "menu_text_style" xalign 0.5 yanchor 0.5 yalign 0.5 text_size 12 text_text_align 0.5 action NullAction() sensitive True tooltip goal.description

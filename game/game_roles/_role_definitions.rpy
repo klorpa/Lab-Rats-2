@@ -118,7 +118,14 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         sister_strip_action = Action("Ask her to strip for you.", sister_strip_requirement, "sister_strip_label",
             menu_tooltip = "Have your sister strip for you, in exchange for some money.", priority = 5)
 
-        sister_role = Role("Sister", [sister_reintro_action, sister_serum_test_action, sister_strip_reintro_action, sister_strip_action])
+        sister_boobjob_give_serum_action = Action("Give her some breast enhancement serum.", sister_boobjob_give_serum_requirement, "sister_give_boobjob_serum_label",
+            menu_tooltip = "Give your sister some serum, which she thinks will grow her boobs.", priority = 10)
+
+        sister_boobjob_ask_action = Action("Talk to her about getting implants.", sister_get_boobjob_talk_requirment, "sister_get_boobjob",
+            menu_tooltip = "Talk to your sister about the implants she wants to get.", priority = 10)
+
+
+        sister_role = Role("Sister", [sister_reintro_action, sister_serum_test_action, sister_strip_reintro_action, sister_strip_action, sister_boobjob_give_serum_action, sister_boobjob_ask_action])
 
 
         #MOTHER ACTIONS#
@@ -195,13 +202,13 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         # Adds more love to seduction attempts (reduce love from other sources)
         # Fallout if your girlfriend catches you with someone else.
 
+        girlfriend_shopping_date = Action("Go shopping together. {image=gui/heart/Time_Advance.png}", shopping_date_requirement, "shopping_date_intro", menu_tooltip = "Take her to the mall and do some shopping together.")
+
         ask_break_up_action = Action("Break up with her.", ask_break_up_requirement, "ask_break_up_label", menu_tooltip = "Breaking up may break her heart, but it'll be easier on her than catching you with another woman.")
-
         ask_get_boobjob_action = Action("Ask her to get a boob job. -$7000", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
-
         girlfriend_ask_trim_pubes_action = Action("Ask her to trim her pubes.", girlfriend_ask_trim_pubes_requirement, "girlfriend_ask_trim_pubes_label", menu_tooltip = "Ask her to do a little personal landscaping. Tell her to wax it off, grow it out, or shape it into anything in between.")
 
-        girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action]) #Your girlfriend, and she's not in a relationship with anyone else
+        girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action], role_dates = girlfriend_shopping_date) #Your girlfriend, and she's not in a relationship with anyone else
         #Getting married is some kind of victory for the game?
 
 
@@ -212,8 +219,9 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         # Start to blackmail her for money or sex.
 
         plan_fuck_date_action = Action("Plan a fuck date at her place.", fuck_date_requirement, "plan_fuck_date_label", menu_tooltip = "Pick a night to go over there and spend nothing but \"quality time\" with each other.")
+
         ask_leave_SO_action = Action("Ask her to leave her significant other for you.", ask_leave_SO_requirement, "ask_leave_SO_label", menu_tooltip = "This affair has been secret long enough! Ask her to leave her significant other and make your relationship official.")
-        affair_role = Role("Paramour", [plan_fuck_date_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action, ask_leave_SO_action]) #A woman who is in a relationship but also wants to fuck you because of love (rather than pure sluttiness, where she thinks that's normal)
+        affair_role = Role("Paramour", [ask_get_boobjob_action, girlfriend_ask_trim_pubes_action, ask_leave_SO_action], role_dates = plan_fuck_date_action) #A woman who is in a relationship but also wants to fuck you because of love (rather than pure sluttiness, where she thinks that's normal)
 
 
         ###################

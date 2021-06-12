@@ -1062,7 +1062,7 @@ label cousin_new_boobs_brag_label(the_person):
     return
 
 label cousin_tits_payback_label(the_person, amount_remaining):
-    "You recieve a notification on your phone from your bank."
+    "You receive a notification on your phone from your bank."
     $ mc.business.funds += 1000
     if amount_remaining > 1000:
         "[the_person.title] has transfered you $1000 with a note saying \"You know why\"."
@@ -1102,7 +1102,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         the_person "I still want to get my tits done properly. Come see me when I'm not doing anything important."
 
     else:
-        # At least two levels, which is hat she was aiming for.
+        # At least two levels, which is what she was aiming for.
         "You get a text from [the_person.title]."
         $ the_person.change_obedience(3)
         $ the_person.change_love(1)

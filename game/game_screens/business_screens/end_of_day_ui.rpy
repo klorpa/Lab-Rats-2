@@ -17,7 +17,7 @@ screen end_of_day_update():
             xsize 1500
             ysize 200
             text "Daily Statistics:" style "textbutton_text_style" size 20
-            text "     " + "Current Efficency Modifier: " + str(mc.business.team_effectiveness) + "%" style "textbutton_text_style"
+            text "     " + "Current Efficiency Modifier: " + str(mc.business.team_effectiveness) + "%" style "textbutton_text_style"
             text "     " + "Production Potential: " + str(mc.business.production_potential) style "textbutton_text_style"
             text "     " + "Supplies Procured: " + str(mc.business.supplies_purchased) + " Units" style "textbutton_text_style"
             text "     " + "Production Used: " + str(mc.business.production_used) style "textbutton_text_style"

@@ -14,19 +14,19 @@ label tutorial_start:
 
     "Your experimentation with the inhibition removing serum was fun, but in the end the effects were temporary."
     "The end of the summer also meant the end of your access to the serum making supplies."
-    "Little by litle the women slid back into into their previous lives."
+    "Little by little the women slid back into their previous lives."
 
     scene
     $ bedroom.show_background()
 
     "Four months ago you graduated from university with a degree in chemical engineering."
     "Since then you have been living at home and sending out resumes. You have had several interviews, but no job offers yet."
-    "Today you have have an interview with a small pharmacutical company. You've gotten up early and dressed in your finest suit."
+    "Today you have an interview with a small pharmacutical company. You've gotten up early and dressed in your finest suit."
     $ hall.show_background()
     "You head for the front door, eager to get to your interview early."
     mom.char "[mom.mc_title], are you leaving already?"
     "[mom.possessive_title]'s voice comes from the kitchen, along with the smell of breakfast."
-    mc.name "Yeah, I want make sure I make it on time."
+    mc.name "Yeah, I want to make sure I make it on time."
     mom.char "You haven't had any breakfast yet. You should eat, I'll drive you if you're running late."
     "The smell of cooked toast and frying eggs wins you over and you head to the kitchen."
     $ kitchen.show_background()
@@ -51,7 +51,7 @@ label tutorial_start:
     "It takes an hour on public transit then a short walk to find the building. It's a small single level office attached to a slightly larger warehouse style building."
     "You pull on the door handle. It thunks loudly - locked. You try the other one and get the same result."
     mc.name "Hello?"
-    "You pull on the locked door again, then take a step back and look around for another enterance you might have missed. You don't see any."
+    "You pull on the locked door again, then take a step back and look around for another entrance you might have missed. You don't see any."
     "You get your phone out and call the contact number you were given a few days earlier. It goes immediately to a generic voice mail system."
     "With nothing left to do you give up and turn around. Suddenly there's a click and the front door to the office swings open."
     "Janitor" "Hey, who's making all that noise?"
@@ -63,7 +63,7 @@ label tutorial_start:
     "The man, who you assume is a janitor of some sort, hands you one of the sheets of paper he's holding."
     "It features a picture of the building along with an address matching the one you were given and a large \"FORECLOSED\" label along the top."
     "The janitor turns around and holds a page up to the front door, then sticks it in place with tape around all four edges."
-    "Janitor" "They must have been neck deep in dept, if that makes you feel better about not working for 'em."
+    "Janitor" "They must have been neck deep in debt, if that makes you feel better about not working for 'em."
     "Janitor" "They left all their science stuff behind; must've been worth less than the debt they're ditching."
     mc.name "So everything's still in there?"
     "Janitor" "Seems like it. Bank doesn't know where to sell it and didn't want me to warehouse it, so it goes with the property."
@@ -76,7 +76,7 @@ label tutorial_start:
     "You step inside the building and take a walk around."
     "The main office building contains a small lab, much like the one you worked at while you were in university, suitable for research and development tasks."
     "The connected warehouse space has a basic chemical production line installed. The machines are all off-brand but seem functional."
-    "At the back of the building is a loading dock for shipping and recieving materials."
+    "At the back of the building is a loading dock for shipping and receiving materials."
     "While you're exploring you hear the janitor yell from across the building."
     "Janitor" "I need to be heading off. Are ya done in there?"
     mc.name "Yeah, I'm done. Thanks again."
@@ -103,12 +103,12 @@ label tutorial_start:
     $ lily.draw_person()
     "[lily.possessive_title] steps into the doorway and looks at you both."
     $ mom.draw_person(position = "sitting")
-    mom.char "Your brother is starting a business. I'm his first +investor."
+    mom.char "Your brother is starting a business. I'm his first investor."
     $ lily.draw_person(emotion = "happy")
     lily.char "Is that what you've been excited about the last couple days? What're you actually making?"
     mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
     $ clear_scene()
-    "You leave [mom.possessive_title] and sister in the kitchen to talk retreat to your room for some privacy."
+    "You leave [mom.possessive_title] and sister in the kitchen to talk. You retreat to your room for some privacy."
 
     $ bedroom.show_background()
     "You can manage the machinery of the lab, but you're going to need help refining the serum design from last year."
@@ -126,7 +126,7 @@ label tutorial_start:
     "When you arrive [stephanie.title] is sitting at the bar with a drink already. She smiles and raises her glass."
     $ stephanie.draw_person(position = "sitting", emotion = "happy")
     stephanie.char "Hey [stephanie.mc_title], it's great to see you!"
-    "She she stands and gives you a hug."
+    "She stands and gives you a hug."
     stephanie.char "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
     mc.name "Me too, that's actually part of what I want to talk to you about."
     "You order a drink for yourself and sit down."
@@ -136,7 +136,7 @@ label tutorial_start:
     "Stephanie finishes off her drink and flags down the bartender for another."
     stephanie.char "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
     mc.name "Correct."
-    stephanie.char "Do have any clients?"
+    stephanie.char "Do you have any clients?"
     mc.name "Not yet. It's hard to have clients without a product."
     "Stephanie gets her drink and sips it thoughtfully."
     mc.name "The pay won't be great either, but I can promise..."

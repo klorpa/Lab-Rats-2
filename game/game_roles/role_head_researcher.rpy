@@ -354,7 +354,7 @@ label advanced_serum_stage_2_label(the_person):
     the_person "Aww, do I have to? I really like the way I feel right now."
     mc.name "Drink up."
     "She frowns but does as she's told. She drinks the content of the vial."
-    $ int_to_add = old_int - the_person.int #Calculate what we need to add back, almost certainly 3 but wierd things might happen.
+    $ int_to_add = old_int - the_person.int #Calculate what we need to add back, almost certainly 3 but weird things might happen.
     $ the_person.change_int(int_to_add)
     $ the_person.change_slut_core(-25)
     $ the_person.change_slut_temp(-50)

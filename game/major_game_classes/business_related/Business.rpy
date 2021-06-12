@@ -103,7 +103,7 @@ init -2 python:
             if time_of_day == 1 and daily_serum_dosage_policy.is_active() and self.is_work_day(): #Not done on run_day because we want it to apply at the _start_ of the day.
                 self.give_daily_serum()
 
-            #Compute efficency drop
+            #Compute efficiency drop
             for person in self.supply_team + self.research_team + self.production_team + self.market_team:
                 if person in self.s_div.people + self.r_div.people + self.p_div.people + self.m_div.people: #Only people in the office lower effectiveness, no loss on weekends, not in for the day, etc.
                     self.team_effectiveness += -1 #TODO: Make this dependant on charisma (High charisma have a lower impact on effectiveness) and happiness.
@@ -544,10 +544,10 @@ init -2 python:
             eff_amount = self.hr_progress(mc.charisma,mc.int,mc.hr_skill)
             self.listener_system.fire_event("player_efficiency_restore", amount = eff_amount)
             self.listener_system.fire_event("general_work")
-            renpy.say("","You settle in and spend a few hours filling out paperwork, raising company efficency by " + str(eff_amount )+ "%%.")
+            renpy.say("","You settle in and spend a few hours filling out paperwork, raising company efficiency by " + str(eff_amount )+ "%%.")
             return eff_amount
 
-        def hr_progress(self,cha,int,skill): #Don't compute efficency cap here so that player HR effort will be applied against any efficency drop even though it's run before the rest of the end of the turn.
+        def hr_progress(self,cha,int,skill): #Don't compute efficiency cap here so that player HR effort will be applied against any efficiency drop even though it's run before the rest of the end of the turn.
             restore_amount = (3*cha) + (int) + (2*skill) + 5
             self.team_effectiveness += restore_amount
             return restore_amount

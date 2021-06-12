@@ -10,24 +10,22 @@ init -3 python: #Init -3 is used for all project wide imports of external resour
     from collections import defaultdict
     import unittest
 
-    if not renpy.mobile: #Mobile platforms do not support animation, so we only want to try to import it if we're going to use it.
-        import shader
-
 #Init -2 establishes all game clases
 #Init -1 is then used by all game content that will use those game classes (ie. instantiates different Crises that could be generated)
 #Init 0 establishes Renpy settings, including callbacks for display code.
 
 init -1: # Establish some platform specific stuff.
-    if renpy.macintosh:
-        default persistent.vren_animation = True
-        $ persistent.vren_mac_scale = 1.0 #2.0 # Changes to the way the surface size is calculated has made a mac specific setting like this oboslete. This section is only here until I can confirm everything is working properly.
+    # if renpy.macintosh:
+    #     #default persistent.vren_animation = True
+    #     $ persistent.vren_mac_scale = 1.0 #2.0 # Changes to the way the surface size is calculated has made a mac specific setting like this oboslete. This section is only here until I can confirm everything is working properly.
+    #
+    # else:
+    #     default persistent.vren_animation = True
+    #     $ persistent.vren_mac_scale = 1.0
 
-    else:
-        default persistent.vren_animation = True
-        $ persistent.vren_mac_scale = 1.0
-
-
+    default persistent.vren_animation = True #By default animation is enabled if possible. If it's not possible because it's on mobile toggling it just does nothing for now.
     default persistent.pregnancy_pref = 0 # 0 = no content, 1 = predictable, 2 = realistic
+    default persistent.vren_display_pref = "Float" # "Float" = no BG, "Frame" = Frame with coloured BG for most interactions.
 
     python:
         list_of_positions = [] # These are sex positions that the PC can make happen while having sex.
@@ -46,9 +44,11 @@ init 0 python:
 
     #config.use_cpickle = False #Set to True for more useful save failure info
 
-    config.interact_callbacks.append(take_animation_screenshot)
+    #config.interact_callbacks.append(take_animation_screenshot)
     config.history_callbacks.append(text_message_history_callback) #Ensures conversations had via text are recorded properly
     # config.say_arguments_callback = text_message_say_callback #Recolours and re-fonts say statements made while having a text conversation #NOTE: NOt needed now that we properly store messages into the phone and display them from a custom screen.
+
+    config.gl2 = True  #Required to enable the model based renderer and use shaders.
 
     config.predict_screen_statements = True
     config.predict_statements = 50
@@ -65,8 +65,10 @@ init 0 python:
     config.rollback_enabled = True #Disabled for the moment because there might be unexpected side effects of such a small rollback length.
     config.rollback_length = 32
 
-    if persistent.colour_palette is None:
-        persistent.colour_palette = [[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1]]
+    if persistent.colour_palette is None or len(persistent.colour_palette) < 20:
+        persistent.colour_palette = []
+        for x in range(0,20):
+            persistent.colour_palette.append([1,1,1,1])
 
     config.autoreload = False
 
@@ -79,29 +81,15 @@ init 0 python:
     # THIS IS WHAT PREVENTS IT FROM INDEXING IMAGES
     # SEE 00images.rpy for where this is created
     config.images_directory = None
-    preferences.gl_tearing = True ## Prevents juttery animation with text while using advanced shaders to display images
+    preferences.gl_tearing = True ## Prevents juttery animation with text while using advanced shaders to display images #TODO: Double check if this actually does anything anymore.
 
     _preferences.show_empty_window = False #Prevents Ren'py from incorrectly showing the text window in complex menu sitations (which was a new bug/behaviour in Ren'py v7.2)
-
-    global animation_draw_requested #Note that this is broken down by draw layer so that multiple threads can return safely in a single interaction.
-    animation_draw_requested = {} #This dict holds each draw layer request. Inside of each draw layer request are lists, which hold the character and their personal reference draw number, so that we can cull out of date draws
-
-    global global_draw_number # Holds the draw numbers for all possible scenes ("solo" is the main one). This value is increased by one every time a scene is cleared, and is used to prevent animations from being drawn after moving on from a scene.
-    global_draw_number = {}
-
-    global prepared_animation_render #The render that has been prepared by a separate thread should be placed here.
-    prepared_animation_render = {}
-
-    global prepared_animation_arguments #Holds all of the extra arguments that should be passed onto the display code.
-    prepared_animation_arguments = {}
 
     global draw_layers
     draw_layers = []
 
-    add_draw_layer("front_1") # Layers used for extra characters. In theory this can be expanded infinitely, but it reacts poorly to being adjusted mid-game.
+    add_draw_layer("front_1") # Layer used for extra characters. For example, drawing a preview while still showing a group in the back
     add_draw_layer("solo") # Add the main default draw layer, used for all single character displays
-    add_draw_layer("back_1")
-    add_draw_layer("back_2")
 
     build.classify("game/images/character_images/**stand2**.png", None) # unarchived images for the different positiosn are not needed, they are all included in .zip files.
     build.classify("game/images/character_images/**stand3**.png", None)
@@ -131,7 +119,7 @@ label start:
         "I am not over 18.":
             $renpy.full_restart()
 
-    "Vren" "v0.40.1 represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
+    "Vren" "[config.version] represents an early iteration of Lab Rats 2. Expect to run into limited content, unexplained features, and unbalanced game mechanics."
     "Vren" "Would you like to view the FAQ?"
     menu:
         "View the FAQ.":
@@ -208,7 +196,7 @@ label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS
     $ people_list.insert(0,"Talk to Someone")
 
 
-    call screen main_choice_display([people_list,actions_list])
+    call screen main_choice_display([people_list,actions_list], person_preview_args = {"show_person_info":False})
 
     $ picked_option = _return
     if isinstance(picked_option, Person):
@@ -322,7 +310,7 @@ label talk_person(the_person):
     $ small_talk_action = Action("Make small talk.\n-15 {image=gui/extra_images/energy_token.png}", requirement = small_talk_requirement, effect = "small_talk_person", args=the_person, requirement_args=the_person,
         menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ compliment_action = Action("Compliment her.\n-15 {image=gui/extra_images/energy_token.png}", requirement = compliment_requirement, effect = "compliment_person", args=the_person, requirement_args=the_person,
-        menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to recieve a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
+        menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to receive a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ flirt_action = Action("Flirt with her.\n-15 {image=gui/extra_images/energy_token.png}", requirement = flirt_requirement, effect = "flirt_person", args=the_person, requirement_args=the_person,
         menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
     $ date_action = Action("Ask her on a date.", requirement = date_option_requirement, effect = "date_person", args=the_person, requirement_args=the_person,
@@ -552,7 +540,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
 
         ##Work Actions##
         hr_work_action = Action("Organize your business.\n{image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
-            menu_tooltip = "Raise business efficency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficency.")
+            menu_tooltip = "Raise business efficiency, which drops over time based on how many employees the business has.\n+3*Charisma + 2*Skill + 1*Intelligence + 5 Efficiency.")
         research_work_action = Action("Research in the lab.\n{image=gui/heart/Time_Advance.png}",research_work_action_requirement,"research_work_action_description",
             menu_tooltip = "Contribute research points towards the currently selected project.\n+3*Intelligence + 2*Skill + 1*Focus + 10 Research Points.")
         supplies_work_action = Action("Order Supplies.\n{image=gui/heart/Time_Advance.png}",supplies_work_action_requirement,"supplies_work_action_description",

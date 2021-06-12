@@ -596,20 +596,28 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
 
 
 label date_person(the_person): #You invite them out on a proper date
-    $ lunch_date_action = Action("Ask her out to lunch. {image=gui/heart/Time_Advance.png}", lunch_date_requirement, "lunch_date_plan_label", args=the_person, requirement_args=the_person,
+    $ lunch_date_action = Action("Ask her out to lunch. {image=gui/heart/Time_Advance.png}", lunch_date_requirement, "lunch_date_plan_label",
         menu_tooltip = "Take her out on casual date out to lunch. Gives you the opportunity to impress her and further improve your relationship.")
-    $ movie_date_action = Action("Ask her out to the movies.", movie_date_requirement, "movie_date_plan_label", args=the_person, requirement_args=the_person,
+    $ movie_date_action = Action("Ask her out to the movies.", movie_date_requirement, "movie_date_plan_label",
         menu_tooltip = "Plan a more serious date to the movies. Another step to improving your relationship, and who knows what you might get up to in the dark!")
-    $ dinner_date_action = Action("Ask her out to a romantic dinner.", dinner_date_requirement, "dinner_date_plan_label", args=the_person, requirement_args=the_person,
+    $ dinner_date_action = Action("Ask her out to a romantic dinner.", dinner_date_requirement, "dinner_date_plan_label",
         menu_tooltip = "Plan a romantic, expensive dinner with her. Impress her and you might find yourself in a more intimate setting.")
+    $ date_list = [[lunch_date_action, the_person], [movie_date_action, the_person], [dinner_date_action, the_person]] #Formats the list to be shown, passing the_person to the event requirement so the proper disabled slug can be generated.
+    $ requires_person_passed = []
+    python:
+        for a_role in the_person.special_role:
+            for a_date in a_role.role_dates:
+                date_list.append([a_date, the_person])
 
-    $ date_list = [lunch_date_action, movie_date_action, dinner_date_action, "Never mind."]
+
+    #TODO: Have roles support adding their own date types.
+    $ date_list.append("Never mind.")
     $ return_value = call_formated_action_choice(date_list)
     if return_value == "Never mind.":
         return
     else: #It's an action, so it's one of the date actions (and must have been enabled).
         $ the_date = return_value
-        $ the_date.call_action() #This is where you're asked to plan out the date, or whatever.
+        $ the_date.call_action(the_person) #This is where you're asked to plan out the date, or whatever.
 
     return
 
@@ -822,7 +830,7 @@ label grope_person(the_person):
                             "[the_person.possessive_title] glances around at the people nearby."
                             the_person "I don't want other people to watch. Let's find someplace we can be alone."
                             menu:
-                                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                                "Find somewhere quiet.\n{size=22}No interruptions{/size}":
                                     mc.name "Alright, come with me."
                                     "You take [the_person.title] by her wrist and lead her away."
                                     #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
@@ -836,7 +844,7 @@ label grope_person(the_person):
                             # She doesn't care, but you can find someplace private.
                             "[the_person.possessive_title] either doesn't notice or doesn't care, but there are other people around."
                             menu:
-                                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                                "Find somewhere quiet.\n{size=22}No interruptions{/size}":
                                     mc.name "Come with me, I don't want to be interrupted."
                                     "You take [the_person.title] by the wrist and lead her away. She follows eagerly."
                                     "After searching for a couple of minutes you find a quiet space with just the two of you."
@@ -885,8 +893,6 @@ label command_person(the_person):
     #TODO: Add a way to add role specific commands.
 
     $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, suck_demand_action, bc_demand_action, "Return"])
-    #call screen main_choice_display([["Command her to...", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"]])
-    #$ player_choice = _return
     if player_choice == "Return":
         pass
     else:

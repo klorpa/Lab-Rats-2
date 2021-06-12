@@ -148,7 +148,7 @@ label demand_touch_label(the_person):
             the_person "[the_person.mc_title], there are people around! If you want me to do this, we need to go somewhere else."
             "She has a fierce look in her eye, like this might be the limit of her obedience."
             menu:
-                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                "Find somewhere quiet.\n{size=22}No interruptions{/size}":
                     mc.name "Alright, come with me."
                     "You take [the_person.title] by her wrist and lead her away."
                     #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
@@ -171,7 +171,7 @@ label demand_touch_label(the_person):
             "[the_person.possessive_title] looks around nervously."
             the_person "[the_person.mc_title], there are other people looking. Could we please find somewhere private?"
             menu:
-                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                "Find somewhere quiet.\n{size=22}No interruptions{/size}":
                     mc.name "Alright, come with me."
                     "You take [the_person.title] by her wrist and lead her away."
                     #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
@@ -191,7 +191,7 @@ label demand_touch_label(the_person):
             #She's fine with it, but we'll give you the option anyways.
             "There are other people around, but [the_person.possessive_title] either doesn't care or is too determined to follow your instructions exactly."
             menu:
-                "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+                "Find somewhere quiet.\n{size=22}No interruptions{/size}":
                     mc.name "Come with me, I don't want to be interrupted."
                     "You take [the_person.title] by the wrist and lead her away. She follows without question."
                     "After searching for a couple of minutes you find a quiet space with just the two of you."

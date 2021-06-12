@@ -18,10 +18,10 @@ init -2 python:
             self.requires_hard = requires_hard
             self.requires_large_tits = requires_large_tits
 
-            self.girl_arousal = girl_arousal # The base arousal the girl recieves from this position.
+            self.girl_arousal = girl_arousal # The base arousal the girl receives from this position.
             self.girl_energy = girl_energy # The amount of energy the girl spends on this position.
 
-            self.guy_arousal = guy_arousal # The base arousal the guy recieves from this position.
+            self.guy_arousal = guy_arousal # The base arousal the guy receives from this position.
             self.guy_energy = guy_energy # The base energy the guy spends on this position.
 
             self.position_tag = position_tag # The tag used to get the correct position image set.

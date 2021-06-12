@@ -107,7 +107,7 @@ init 0 python:
         mc.business.change_team_effectiveness(-1*mc.business.get_employee_count())
 
     strict_enforcement = Policy(name = "Strict Enforcement",
-        desc = "By strictly applying the letter, rather than spirit, of the company punishment guidelines you are able to treat infractions as more severe than they initially seem. All infraction severities are increased by one while this policy is active, but the increased administrative work lowers business efficency by one per employee every day.",
+        desc = "By strictly applying the letter, rather than spirit, of the company punishment guidelines you are able to treat infractions as more severe than they initially seem. All infraction severities are increased by one while this policy is active, but the increased administrative work lowers business efficiency by one per employee every day.",
         cost = 2500,
         toggleable = True,
         requirement = strict_enforcement_policy_requirment,
@@ -143,7 +143,7 @@ init 0 python:
         mc.business.change_team_effectiveness(-1*mc.business.get_employee_count())
 
     bureaucratic_nightmare = Policy(name = "Bureaucratic Nightmare",
-        desc = "Rewriting all company policies to be intentionally vague and misleading creates a work environment where mistakes are practically unavoidable. Allows you to generate minor infractions at will, but the new labyrinthian rules result in business efficency dropping by an additional one per employee each day.",
+        desc = "Rewriting all company policies to be intentionally vague and misleading creates a work environment where mistakes are practically unavoidable. Allows you to generate minor infractions at will, but the new labyrinthian rules result in business efficiency dropping by an additional one per employee each day.",
         cost = 2500,
         toggleable = True,
         requirement = bureaucratic_nightmare_policy_requirement,
@@ -226,7 +226,7 @@ init 0 python:
                     mc.business.change_team_effectiveness(-1)
 
     mandatory_staff_reading = Policy(name = "Mandatory Staff Reading",
-        desc = "Distribute copies of \"Your Place in the Work Place\" - a guidebook for women, written in the 60's by a womanizing executive. Increases all staff Sluttiness by an additional 1 per day, to a maximum of 40. Reduces business efficency by 1 per employee affected, and reduces happiness of women with Sluttiness 20 or lower by 5 per day.",
+        desc = "Distribute copies of \"Your Place in the Work Place\" - a guidebook for women, written in the 60's by a womanizing executive. Increases all staff Sluttiness by an additional 1 per day, to a maximum of 40. Reduces business efficiency by 1 per employee affected, and reduces happiness of women with Sluttiness 20 or lower by 5 per day.",
         cost = 1500,
         toggleable = True,
         requirement = mandatory_staff_reading_requirement,
@@ -251,7 +251,7 @@ init 0 python:
                 an_employee.change_slut_temp(1, add_to_log = False)
 
     superliminal_office_messaging = Policy(name = "Superliminal Messaging",
-        desc = "Fill the office with overtly sexual content. Distribute pinup girl calendars, provide access to a company porn account, hang nude posters. Increases staff Sluttiness by 1 per day, to a maximum of 60. Reduces business efficency by 1 per girl affected, or by 3 if her Sluttiness is 20 or lower. Reduces happiness of women with Sluttiness 20 or lower by 10 per day.",
+        desc = "Fill the office with overtly sexual content. Distribute pinup girl calendars, provide access to a company porn account, hang nude posters. Increases staff Sluttiness by 1 per day, to a maximum of 60. Reduces business efficiency by 1 per girl affected, or by 3 if her Sluttiness is 20 or lower. Reduces happiness of women with Sluttiness 20 or lower by 10 per day.",
         cost = 7500,
         toggleable = True,
         requirement = superliminal_office_messaging_requirement,

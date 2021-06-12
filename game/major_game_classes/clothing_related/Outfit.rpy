@@ -63,7 +63,7 @@ init -2 python:
             if hide_layers is None:
                 hide_layers = []
 
-            all_items = self.generate_clothing_list(body_type, tit_size, position) #First generate a list of the clothing objects
+            all_items = self.generate_clothing_list() #First generate a list of the clothing objects
 
             currently_constrained_regions = []
             ordered_displayables = []
@@ -99,7 +99,7 @@ init -2 python:
             bottom_items = [] #Things drawn below the middle item
             middle_item = None #The displayable for the middle item
             top_items = [] #Things drawn on top of the middle item
-            all_items = self.generate_clothing_list(body_type, tit_size, position)
+            all_items = self.generate_clothing_list()
 
 
             for item in all_items:
@@ -135,7 +135,7 @@ init -2 python:
                     forced_special_modifier = item.modifier_lock #TODO: Decide what to do if multiple accessories add a forced modifier. Probably limit outfits so only 1 can contribute a modifier
             return forced_special_modifier
 
-        def generate_clothing_list(self, body_type = None, tit_size = None, position = None): #Returns a properly ordered list of clothing. If used to draw them they would be displayed correctly.
+        def generate_clothing_list(self): #Returns a properly ordered list of clothing. If used to draw them they would be displayed correctly.
             # I don't believe position is needed for anything here. Actually body_type and tit_size aren't either any more. We'll clean that up at some point.
             items_to_draw = self.accessories + self.feet + self.lower_body + self.upper_body #Throw all of our items in a list.
             items_to_draw.sort(key= lambda clothing: clothing.tucked, reverse = True)
@@ -238,7 +238,7 @@ init -2 python:
         def can_add_accessory(self, new_clothing):
             allowed = True #For now all we do not filter what accessories we let people apply. All we require is that this exact type of accessory is not already part of the outfit.
             for accessory in self.accessories:
-                if accessory == new_clothing:
+                if accessory.is_similar(new_clothing):
                     allowed = False
             return allowed
 
@@ -644,7 +644,7 @@ init -2 python:
                 items_to_strip.remove(item) #Don't try and strip extension directly.
             return items_to_strip[::-1] #Put it in reverse order so when stripped it will be done from outside in.
 
-        def get_underwear_strip_list(self, visible_enough = True, avoid_nudity = False): #Gets a list of things to strip until this outfit would have a girl in her underwear
+        def get_underwear_strip_list(self, visible_enough = True, avoid_nudity = False, strip_shoes = False): #Gets a list of things to strip until this outfit would have a girl in her underwear
             #If a girl isn't wearning underwear this ends up being a full strip. If she is wearing only a bra/panties she'll strip until they are visible, and the other slot is naked.
             test_outfit = self.get_copy() #We'll use a copy of the outfit. Slightly less efficent, but makes it easier to ensure we are generating valid strip orders.
             items_to_strip = []
@@ -685,16 +685,19 @@ init -2 python:
                         else:
                             items_to_strip.append(item)
                             keep_stripping = True
+
+            if strip_shoes:
+                for item in self.get_feet_ordered():
+                    if item.layer == 2:
+                        items_to_strip.insert(0, item) #Inserts shoes atthe start of the list, since they're the first thing that should be removed.
             return items_to_strip
 
-        def strip_to_underwear(self, visible_enough = True, avoid_nudity = False): #Used to off screen strip a girl down to her underwear, or completely if she isn't wearing any.
-            items_to_strip = self.get_underwear_strip_list(visible_enough, avoid_nudity)
+        def strip_to_underwear(self, visible_enough = True, avoid_nudity = False, strip_shoes = False): #Used to off screen strip a girl down to her underwear, or completely if she isn't wearing any.
+            items_to_strip = self.get_underwear_strip_list(visible_enough, avoid_nudity, strip_shoes)
             for item in items_to_strip:
                 self.remove_clothing(item)
 
         def get_tit_strip_list(self, visible_enough = True): #Generates a list of clothing that, when removed from this outfit, result in tits being visible. Useful for animated clothing removal.
-            # TODO: Add a way to generate this while including half-off options.
-            #TODO: Add some pussy equivalent functions, I'll get to them when I need them for a crisis.
             test_outfit = self.get_copy()
             items_to_strip = []
             if visible_enough:
@@ -730,17 +733,17 @@ init -2 python:
             test_outfit = self.get_copy()
             items_to_strip = []
 
-            while not (test_outfit.vagina_visible() and visible_enough) or (test_outfit.vagina_available() and not visible_enough):
+            while not ((test_outfit.vagina_visible() and visible_enough) or (test_outfit.vagina_available() and not visible_enough)):
                 the_item = test_outfit.remove_random_lower(top_layer_first = True) #Try and remove lower layer clothing first each loop
-                if not the_item:
+                if the_item is None:
                     the_item = test_outfit.remove_random_any(top_layer_first = True, exclude_feet = True) #If that fails to make progress (ie. due to upper body items blocking things) remove upper body stuff until we can make progress again.
 
-                if not the_item:
+                if the_item is None:
                     break
                 else:
                     items_to_strip.append(the_item)
 
-            return strip_list
+            return items_to_strip
 
         def strip_to_vagina(self, visible_enough = False):
             self.remove_clothing_list(self.get_vagina_strip_list(visible_enough = visible_enough))
@@ -796,7 +799,7 @@ init -2 python:
         def can_half_off_to_vagina(self, visible_enough = True):
             # Returns true if all of the clothing blocking her vagina can be moved half-off to gain access
             if (visible_enough and self.vagina_visible()) or (not visible_enough and self.vagina_available()) or self.get_half_off_to_vagina_list(visible_enough = visible_enough):
-                    return True
+                return True
             return False
 
         def get_half_off_to_vagina_list(self, visible_enough = True):

@@ -649,7 +649,7 @@ label photo_sex(the_person):
     "You lay into her, fucking her until you feel your orgasm approaching."
     $ the_person.change_slut_temp(5)
     mc.name "Fuck, here I cum!"
-    $ the_girl.call_dialogue("cum_pullout")
+    $ the_person.call_dialogue("cum_pullout")
 
     $ came_inside_mod = 0
     $ climax_controller = ClimaxController(["Pull out and cum.", "body"],["Cum inside her.", "pussy"])

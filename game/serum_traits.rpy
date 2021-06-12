@@ -126,14 +126,14 @@ init -1:
                 new_tits = get_larger_tits(the_person.tits)
                 if new_tits != the_person.tits: #Double check we don't already have them to avoid increasing breast weight infinitely
                     the_person.tits = new_tits
-                    the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts recieve a boost in region weight because they're natural.
+                    the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts receive a boost in region weight because they're natural.
 
         def breast_reduction_on_turn(the_person, the_serum, add_to_log):
             if renpy.random.randint(0,100) < 25:
                 new_tits = get_smaller_tits(the_person.tits)
                 if new_tits != the_person.tits:
                     the_person.tits = new_tits
-                    the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts recieve a boost in region weight because they're natural.
+                    the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts receive a boost in region weight because they're natural.
 
         ## focus_enhancement_functions ##
         def focus_enhancement_on_apply(the_person, the_serum, add_to_log):
@@ -295,7 +295,7 @@ init -1:
                 else:
                     mc.log_event(display_name + ": Lactation increases", "float_text_blue")
 
-        def lactation_hormones_on_remove(the_person,add_to_log):
+        def lactation_hormones_on_remove(the_person, the_serum, add_to_log):
             the_person.lactation_sources += -1
 
         def massive_pregnancy_accelerator_on_turn(the_person, the_serum, add_to_log):
@@ -567,7 +567,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             clarity_cost = 30)
 
         simple_aphrodesiac = SerumTrait(name = "Inhibition Suppression",
-            desc = "Direct delivery of alchoholic molecules to the subjects brain produces notabely reduced inhibitions. Side effects are common, but always include drowsiness.",
+            desc = "Direct delivery of alchoholic molecules to the subject's brain produces notably reduced inhibitions. Side effects are common, but always include drowsiness.",
             positive_slug = "+$15 Value, +10 Sluttiness (Max 30)",
             negative_slug = "-20 Energy, +50 Serum Research",
             value_added = 15,
@@ -1010,7 +1010,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             clarity_cost = 1000)
 
         climax_enhancer = SerumTrait(name = "Pleasure Center Stimulator",
-            desc = "Changes the baseline of pleasure chemicals in the subjects brain. This has the effect of making it much easier for physical stimulation to trigger an orgasm in the subject. Comes with a large risk of side effects, and disturbs the subjects natural sense of enjoyment.",
+            desc = "Changes the baseline of pleasure chemicals in the subject's brain. This has the effect of making it much easier for physical stimulation to trigger an orgasm in the subject. Comes with a large risk of side effects, and disturbs the subjects natural sense of enjoyment.",
             positive_slug = "+25 Value, -20 Max Arousal (Min 20)",
             negative_slug = "-5 Happiness/Turn, +350 Serum Research",
             value_added = 25,

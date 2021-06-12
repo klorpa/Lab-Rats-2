@@ -1,7 +1,7 @@
 init -2 python:
     class ListenerManagementSystem(renpy.store.object): #Used to manage listeners in objects. Contains functiosn for enrolling and removing triggers as well as firing notices to those triggers.
         def __init__(self):
-            self.event_dict = {} #THis dictionary uses strings as keys (the trigger that is called) and each key holds a list of goals. When an event is triggered each listener enrolled to the key recieves a notice (the on_trigger_funciton is called)
+            self.event_dict = {} #THis dictionary uses strings as keys (the trigger that is called) and each key holds a list of goals. When an event is triggered each listener enrolled to the key receives a notice (the on_trigger_funciton is called)
 
         def enroll_goal(self, trigger_name, the_goal):
             if trigger_name in self.event_dict:

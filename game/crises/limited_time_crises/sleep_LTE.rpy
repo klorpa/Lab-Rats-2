@@ -346,7 +346,7 @@ label nightime_grope(the_person, masturbating = False):
                 $ the_person.change_slut_temp(1 + the_person.get_opinion_score("being submissive"))
                 the_person "Oh... I must have been talking in my sleep. I was having a dream, that's all."
                 mc.name "Right, that makes sense. Sorry for waking you up."
-                "You beat a hastiy retreat, leaving [the_person.possessive_title] slightly confused."
+                "You beat a hasty retreat, leaving [the_person.possessive_title] slightly confused."
                 return True
             else:
                 "She sighs and spreads her legs for you, instinct driving her even when asleep."
@@ -477,30 +477,6 @@ label nightime_grope(the_person, masturbating = False):
 
             call sleep_climax_manager(the_person, face_allowed = True, tits_allowed = True)
             $ awake = _return
-            # $ climax_options = []
-            # $ climax_options.append(["Cum in your hand.","air"])
-            # if the_person.effective_sluttiness() >= cum_face_slut_requirement:
-            #     $ climax_options.append(["Cum on her face.","face"])
-            # else:
-            #     $ climax_options.append(["Cum on her face.\n{color=#ff0000}Requires:[cum_face_slut_token]{/color} (disabled)","face"])
-            #
-            # if the_person.effective_sluttiness() >= cum_tits_slut_requirement:
-            #     $ climax_options.append(["Cum on her tits.","tits"])
-            # else:
-            #     $ climax_options.append(["Cum on her tits.\n{color=#ff0000}Requires:[cum_tits_slut_token]{/color} (disabled)","tits"])
-            # $ climax_controller = ClimaxController(*climax_options)
-            # $ the_choice = climax_controller.show_climax_menu()
-            # "You take a deep breath and pass the point of no return."
-            # if the_choice == "Cum in your hand.":
-            #     call sleep_cum_hand(the_person)
-            #
-            # elif the_choice == "Cum on her face.":
-            #     call sleep_cum_face(the_person)
-            #     $ awake = _return
-            #
-            # elif the_choice == "Cum on her tits.":
-            #     call sleep_cum_tits(the_person)
-            #     $ awake = _return
 
         "Tit fuck her." if the_person.has_large_tits() and the_person.outfit.tits_available() and masturbating and the_person.effective_sluttiness() >= titfuck_slut_requirement:
             "You climb onto [the_person.possessive_title]'s bed and swing one leg over her, straddling her chest."
@@ -828,15 +804,15 @@ label sleep_climax_manager(the_person, straddle = False, stomach_allowed = False
 
     if throat_allowed:
         if the_person.effective_sluttiness() >= cum_throat_slut_requirement:
-            $ climax_option.append(["Cum down her throat.","throat"])
+            $ climax_options.append(["Cum down her throat.","throat"])
         else:
-            $ climax_option.append(["Cum down her throat.\n{color=#ff0000}Requires:[cum_throat_slut_token]{/color} (disabled)"])
+            $ climax_options.append(["Cum down her throat.\n{color=#ff0000}Requires:[cum_throat_slut_token]{/color} (disabled)"])
 
     if inside_allowed:
         if the_person.effective_sluttiness() >= cum_inside_slut_requirement or mc.condom:
-            $ climax_option.append(["Cum inside her.","pussy"])
+            $ climax_options.append(["Cum inside her.","pussy"])
         else:
-            $ climax_option.append(["Cum inside her.\n{color=#ff0000}Requires:[fuck_slut_token]{/color} (disabled)","pussy"])
+            $ climax_options.append(["Cum inside her.\n{color=#ff0000}Requires:[fuck_slut_token]{/color} (disabled)","pussy"])
 
     $ climax_controller = ClimaxController(*climax_options)
     $ the_choice = climax_controller.show_climax_menu()

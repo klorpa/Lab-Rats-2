@@ -19,7 +19,7 @@ init -1 python:
     def pregnant_tits_annouce_requirement(the_person):
         return True
 
-    def become_pregnant(the_person): # Called when a girl is knocked up. Establishes all of the nessesary bits of info.
+    def become_pregnant(the_person): # Called when a girl is knocked up. Establishes all of the necessarybits of info.
         the_person.event_triggers_dict["immaculate_conception"] = the_person.has_taboo("vaginal_sex") #TODO: Add this, and a path where she doesn't think it's yours: and (the_person.relationship = "Single" and (the_person.effective_sluttiness() < 40 or the_person.love > 40)) or the_person.love > 80: #Doesn't even know how it happend!
         the_person.event_triggers_dict["preg_accident"] = the_person.on_birth_control # If a girl is on birth control the pregnancy is an accident.
         the_person.event_triggers_dict["preg_start_date"] = day

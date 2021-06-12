@@ -3,7 +3,7 @@
 init -2 python:
     def employee_busywork_on_turn(the_person):
         if mc.business.is_open_for_business():
-            mc.business.change_team_effectiveness(-1) #She's slightly worse for efficency because she's not focusing
+            mc.business.change_team_effectiveness(-1) #She's slightly worse for efficiency because she's not focusing
 
     def employee_busywork_on_day(the_person):
         if mc.business.is_open_for_business():

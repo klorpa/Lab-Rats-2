@@ -16,7 +16,7 @@ init -2 python:
             self.character_number = Person.global_character_number #This is a gunique number for each character. Used as a tag when showing a character to identify if they are already drawn (and thus need to be hidden)
             Person.global_character_number += 1
 
-            self.draw_number = defaultdict(int) #Used while drawing a character to avoid drawing an animation that has already been replaced with a new draw. Defaults to 0
+            #self.draw_number = defaultdict(int) #Used while drawing a character to avoid drawing an animation that has already been replaced with a new draw. Defaults to 0 #REMOVED AS OF v0.41
 
             self.title = title #Note: We format these down below!
             self.possessive_title = possessive_title #The way the girl is refered to in relation to you. For example "your sister", "your head researcher", or just their title again.
@@ -266,6 +266,12 @@ init -2 python:
             self.sexed_count = 0
 
 
+
+        def __call__(self, what, *args, **kwargs): #Required to play nicely with statement equivalent say() when passing only Peron object.
+            self.char(what, *args, **kwargs)
+
+
+
         def generate_home(self, set_home_time = True): #Creates a home location for this person and adds it to the master list of locations so their turns are processed.
             if self.home is None:
                 start_home = Room(self.name+"'s home", self.name+"'s home", [], standard_bedroom_backgrounds[:], [],[],[],False,[0.5,0.5], visible = False, hide_in_known_house_map = False, lighting_conditions = standard_indoor_lighting)
@@ -493,8 +499,16 @@ init -2 python:
             for a_role in self.special_role:
                 a_role.run_day(self)
 
+        def get_display_colour_code(self, saturation = 1.0, given_alpha = 1.0):
+            the_colour = Color(self.char.what_args["color"])
+            the_colour = the_colour.multiply_hsv_saturation(saturation)
+            the_colour = the_colour.multiply_value(saturation)
+            the_colour = the_colour.replace_opacity(given_alpha)
 
-        def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Encapsulates what is done when drawing a person and produces a single displayable.
+            return the_colour.hexcode
+
+
+        def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None): #Encapsulates what is done when drawing a person and produces a single displayable.
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
 
@@ -519,9 +533,6 @@ init -2 python:
             #NOTE: Positional modifiers like xanchor that expect pixles need to be given ints, they do not auto convert from floats.
 
             composite_list = [(x_size,y_size)] #Now we build a list of our parameters, done like this so they are arbitrarily long
-            if background_fill: #If we have a background add it now.
-                composite_list.append((0,0))
-                composite_list.append(Solid(background_fill))
 
             for display in displayable_list:
                 if isinstance(display, __builtin__.tuple):
@@ -530,95 +541,28 @@ init -2 python:
                     composite_list.append((0,0)) #Displayables are all handed over as composites with the image centered, so no extra work is needed here.
                     composite_list.append(display) #Append the actual displayable
 
-            if background_fill and not no_frame: #no_frame allows us to add the frame after for animated displayables, to avoid warping the frame itself.
-                composite_list.append((0,0))
-                composite_list.append(Frame("/gui/Character_Window_Frame.png", 12, 12))
+            character_composite = Composite(*composite_list)
 
-            final_image = Flatten(Composite(*composite_list)) # Create a composite image using all of the displayables
+            if persistent.vren_display_pref == "Float" or persistent.vren_display_pref == "Frame":
+                character_raw_body = im.Composite((x_size, y_size),
+                    (0,0), self.body_images.generate_raw_image(self.body_type,self.tits,position),
+                    (0,0), self.expression_images.generate_raw_image(position, emotion, special_modifier = special_modifier),
+                    self.hair_style.get_crop_offset(position), self.hair_style.generate_raw_image("standard_body",self.tits,position))
+
+                blurred_image = im.Blur(character_raw_body, 6)
+                aura_colour = self.get_display_colour_code()
+                recoloured_blur = im.MatrixColor(blurred_image, im.matrix.colorize(aura_colour, aura_colour))
+
+                final_composite = Composite((x_size, y_size), (0,0), recoloured_blur, (0,0), character_composite)
+
+            else:
+                final_composite = character_composite
+
+            final_image = Flatten(final_composite) # Create a composite image using all of the displayables
             return final_image
 
-        def prepare_animation_screenshot_render(self, position, emotion, special_modifier, lighting, background_fill, given_reference_draw_number, draw_layer):
-            log_message(self.name + " | PREP | " + str(time.time()))
-            if background_fill is None:
-                background_fill = "#0026a5"
-
-
-            the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
-            if the_displayable is None:
-                renpy.notify("NONE IMAGE ERROR!")
-
-
-
-            x_size = position_size_dict.get(position)[0]
-            y_size = position_size_dict.get(position)[1]
-            log_message(self.name + " | DISB | " + str(time.time()))
-            the_render = the_displayable.render(x_size,y_size,0,0)
-            log_message(self.name + " | REND | " + str(time.time()))
-
-            global prepared_animation_render
-            prepared_animation_render[draw_layer][self.character_number] = the_render
-
-            global animation_draw_requested
-            animation_draw_requested[draw_layer].append([self, given_reference_draw_number])
-            return
-
-        def prepare_animation_screenshot_render_multi(self, position, old_precalculated_render, new_precalculated_render, given_reference_draw_number, draw_layer):
-
+        def build_weight_mask(self, the_animation, position, animation_effect_strength): #Builds a weight mask displayable that highlights the sections of a character that should be animated.
             x_size, y_size = position_size_dict.get(position)
-
-            old_render = old_precalculated_render
-            new_render = new_precalculated_render
-
-            global prepared_animation_render
-            prepared_animation_render[draw_layer][self.character_number] = [old_render, new_render]
-
-            global animation_draw_requested
-            animation_draw_requested[draw_layer].append([self, given_reference_draw_number])
-            return
-
-        # Renamed from "build_person_animtion" in v0.30, now assuems it is handed a screenshot surface from take_animation_screenshot
-        def draw_person_animation(self, the_surface, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0, show_person_info = True, draw_reference_number = None,
-            draw_layer = "solo", display_transform = None, extra_at_arguments = None, display_zorder = None, clear_active = True): #Note: clear_active needs to be the last parameter here for the animation call to properly insert it as a parameter.
-
-            log_message(self.name + " | ASTR | " + str(time.time()))
-            if display_zorder is None:
-                display_zorder = 0
-
-            x_size, y_size = position_size_dict.get(position)
-
-            physical_x, physical_y = the_surface.get_size() #Use the surface render to figure out how large the displayed area is.
-
-            physical_x = physical_x*1.0
-            physical_y = physical_y*1.0
-
-            config_x = config.screen_width * 1.0
-            config_y = config.screen_height * 1.
-
-            if physical_x/(16.0/9.0) > physical_y: #Account for the screen resolution difference from 16x9
-                # TODO: Remove references to vren_mac_scale once we are sure they are no longer needed
-                y_scale = 1*(config_y/(physical_y*persistent.vren_mac_scale)) #This should adjust for high DPI displays that have a higher physical pixel density than their stated resolution
-
-                x_scale = y_scale
-            else:
-                x_scale = 1*(config_x/(physical_x*persistent.vren_mac_scale))
-
-                y_scale = x_scale
-
-            surface_file = io.BytesIO()
-            the_surface = the_surface.subsurface((0,0,(x_size/x_scale),(y_size/y_scale))) # Take a subsurface of the surface screenshotted, so that we only save what is strictly nessesary.
-
-            log_message(self.name + " | ACP1 | " + str(time.time()))
-            #TODO: Check if we can use display.pgrender.load_image(file, filename) to load the surface data without needing to screenshot it somehow.
-            renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform. #TODO: Retest how long this takes with the trimmed surface
-            static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
-            surface_file.close()
-
-
-            log_message(self.name + " | ACP2 | " + str(time.time()))
-
-            scaled_image = im.FactorScale(static_image, x_scale, y_scale)
-
-            the_image_name = self.name + " | " + str(time.time()) #Note: use to make use of a unique time stamp
 
             composite_components = []
             region_weight_items_dict = the_animation.get_weight_items()
@@ -628,60 +572,21 @@ init -2 python:
                 region_weight_modifier = animation_effect_strength * self.personal_region_modifiers.get(region_weight_name, 1) * the_animation.innate_animation_strength * the_animation.region_specific_weights.get(region_weight_name, 1)
                 if region_weight_modifier > 1:
                     region_weight_modifier = 1
-                #renpy.notify(str(animation_effect_strength) + " | " + str(self.personal_region_modifiers.get(region_weight_name, 1)) + " | " + str(the_animation.innate_animation_strength) + " | " + str(the_animation.region_specific_weights.get(region_weight_name, 1)))
 
                 region_brightness_matrix = im.matrix.brightness(-1 + region_weight_modifier)
                 region_mask = the_weight_item.generate_raw_image(self.body_type, self.tits, position)
                 region_mask = im.MatrixColor(region_mask, region_brightness_matrix)
                 composite_components.append(region_mask)
 
-
-
             the_mask_composite = im.Composite((x_size, y_size), *composite_components)
 
-            mask_image = im.Blur(the_mask_composite, 2)
-            mask_image_name = self.name + "_tex | " + str(self.character_number)
+            weight_mask = im.Blur(the_mask_composite, 2)
 
-            animation_uniforms = the_animation.uniforms #Copy the default uniforms for the animation
-            animation_uniforms["animation_strength"] = animation_effect_strength
+            return weight_mask
 
-            log_message(self.name + " | MASK | " + str(time.time()))
-
-            raw_animated_displayable = ShaderDisplayable(shader.MODE_2D, scaled_image, the_image_name, shader.VS_2D, the_animation.shader,{"tex1":mask_image}, animation_uniforms, None, None, mask_name = mask_image_name)
-
-            log_message(self.name + " | DISP | " + str(time.time()))
-
-            cropped_animated_displayable = Crop((0,0,x_size,y_size), raw_animated_displayable)
-            framed_animated_displayable = Composite((x_size,y_size),(0,0),cropped_animated_displayable,(0,0),Frame("/gui/Character_Window_Frame.png", 12, 12))
-
-            if show_person_info:
-                renpy.show_screen("person_info_ui", self)
-
-            if display_transform is None:
-                display_transform = character_right
-
-            at_list_arguments = [display_transform, scale_person(self.height)]
-
-            if extra_at_arguments:
-                if not isinstance(extra_at_arguments, list):
-                    extra_at_arguments = [extra_at_arguments]
-                at_list_arguments.extend(extra_at_arguments)
-            else:
-                extra_at_arguments = []
-
-            character_tag = str(self.character_number)
-
-            if clear_active: #Clear out the old version of this character, if they exist.
-                self.hide_person()
-            else:
-                character_tag += "_extra" #Allows for two varients of teh same character to be drawn, useful when fading from one to another to show clothing being removed.
-
-            renpy.show(character_tag,at_list=at_list_arguments,layer=draw_layer,what=framed_animated_displayable,zorder=display_zorder, tag=character_tag)
-            log_message(self.name + " | Anim | " + str(time.time()))
-
-        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0,
+        def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "auto", the_animation = None, animation_effect_strength = 1.0,
             draw_layer = "solo", display_transform = None, extra_at_arguments = None, display_zorder = None, wipe_scene = True): #Draw the person, standing as default if they aren't standing in any other position
-            log_message(self.name + " | Start | " + str(time.time()))
+            #log_message(self.name + " | Start | " + str(time.time()))
 
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
@@ -695,16 +600,41 @@ init -2 python:
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
-            character_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
+            character_image = self.build_person_displayable(position, emotion, special_modifier, lighting) #The static 2D displayable.
+
+            if not the_animation is None:
+                weight_mask = self.build_weight_mask(the_animation, position, animation_effect_strength)
+
+            else:
+                weight_mask = Solid("#000000") #Black mask = no influence.
+
+            x_size, y_size = position_size_dict[position]
+
+            animated_image = ShaderPerson(character_image, weight_mask)
+            if background_fill == "auto":
+                if persistent.vren_display_pref == "Frame":
+                    background_fill = self.get_display_colour_code(saturation = 0.8, given_alpha = 0.6) # Sets it to be partially transparent.
+                else:
+                    background_fill = None
+
+            if background_fill is not None: #If a background colour is given we add a solid to the back and a frame around the entire thing.
+                bg_colour =  Composite((x_size, y_size), (0,0), Solid(background_fill))
+                image_frame = Composite((x_size, y_size), (0,0), Frame("/gui/Character_Window_Frame.png", 12, 12))
 
             if display_transform is None:
                 display_transform = character_right
 
+            frame_at_arguments = [display_transform, scale_person(self.height)] # A list without basic_bounce to use for the background and the frame.
             at_arguments = [display_transform, scale_person(self.height)]
+            if the_animation is not None:
+                at_arguments.append(basic_bounce(the_animation))
+
             if extra_at_arguments:
                 if isinstance(extra_at_arguments, list):
+                    frame_arguments.extend(extra_at_arguments)
                     at_arguments.extend(extra_at_arguments)
                 else:
+                    frame_arguments.append(extra_at_arguments)
                     at_arguments.append(extra_at_arguments)
             else:
                 extra_at_arguments = []
@@ -714,23 +644,18 @@ init -2 python:
 
             character_tag = str(self.character_number)
 
-            self.draw_number[draw_layer] += 1
             self.hide_person()
             if wipe_scene:
                 clear_scene() #Make sure no other characters are drawn either.
 
-            renpy.show(character_tag, at_list=at_arguments, layer=draw_layer, what=character_image, zorder = display_zorder, tag=character_tag) #Display a static image of the character as soon as possible
-            log_message(self.name + " | Flat | " + str(time.time()))
+            if background_fill is not None:
+                renpy.show(character_tag+"_bg_fill", at_list=frame_at_arguments, layer=draw_layer, what=bg_colour, zorder = display_zorder, tag=character_tag+"_bg_fill")
+            renpy.show(character_tag, at_list=at_arguments, layer=draw_layer, what=animated_image, zorder = display_zorder, tag=character_tag)
+            if background_fill is not None:
+                renpy.show(character_tag+"_frame", at_list=frame_at_arguments, layer=draw_layer, what=image_frame, zorder = display_zorder, tag=character_tag+"_frame")
+
             if show_person_info:
                 renpy.show_screen("person_info_ui",self)
-
-            if the_animation:
-                global global_draw_number
-                animation_draw_number = self.draw_number[draw_layer] + global_draw_number[draw_layer]
-
-                global prepared_animation_arguments
-                prepared_animation_arguments[draw_layer][self.character_number] = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, animation_draw_number, draw_layer, display_transform, extra_at_arguments, display_zorder] #Effectively these are being stored and passed to draw_person_animation once take_animation_screenshot returns the surface
-                renpy.invoke_in_thread(self.prepare_animation_screenshot_render, position, emotion, special_modifier, lighting, background_fill, animation_draw_number, draw_layer) #This thread prepares the render. When it is finished it is caught by the interact_callback function take_animation_screenshot
 
         def hide_person(self, draw_layer = "solo"): #Hides the person. Makes sure to hide all posible known tags for the character.
             # We keep track of tags used to display a character so that they can always be unique, but still tied to them so they can be hidden
@@ -739,7 +664,7 @@ init -2 python:
             renpy.hide(character_tag+"_extra", draw_layer)
 
 
-        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0, half_off_instead = False,
+        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "auto", the_animation = None, animation_effect_strength = 1.0, half_off_instead = False,
             draw_layer = "solo", display_transform = None, extra_at_arguments = None, display_zorder = None, wipe_scene = True):
             #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
 
@@ -748,9 +673,14 @@ init -2 python:
 
             if not can_use_animation():
                 the_animation = None
-
             elif the_animation is None:
                 the_animation = self.idle_animation
+
+            if background_fill == "auto":
+                if persistent.vren_display_pref == "Frame":
+                    background_fill = self.get_display_colour_code(saturation = 0.8, given_alpha = 0.6) # Sets it to be partially transparent.
+                else:
+                    background_fill = None
 
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
@@ -762,77 +692,69 @@ init -2 python:
             if display_transform is None:
                 display_transform = character_right
 
-            at_arguments = [display_transform, scale_person(self.height)]
+            x_size, y_size = position_size_dict[position]
+
+            frame_at_arguments = [display_transform, scale_person(self.height)]
+            at_arguments = [display_transform, scale_person(self.height)] #TODO: make sure this works with a None animation.
+            if the_animation is not None:
+                at_arguments.append(basic_bounce(the_animation))
+
             if extra_at_arguments:
                 if isinstance(extra_at_arguments, list):
+                    frame_at_arguments.extend(extra_at_arguments)
                     at_arguments.extend(extra_at_arguments)
                 else:
+                    frame_at_arguments.append(extra_at_arguments)
                     at_arguments.append(extra_at_arguments)
             else:
                 extra_at_arguments = []
 
-            self.draw_number[draw_layer] += 1
-
             if display_zorder is None:
                 display_zorder = 0
 
+            if wipe_scene:
+                clear_scene()
 
-            if the_animation:
-                # Normally we would display a quick flat version, but we can assume we are already looking at the girl pre-clothing removal.
-                bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)) #Get the starting image without the frame
-                if isinstance(the_clothing, list):
-                    for cloth in the_clothing:
-                        if half_off_instead:
-                            self.outfit.half_off_clothing(cloth) #Half-off the clothing
-                        else:
-                            self.outfit.remove_clothing(cloth) #Remove the clothing
-                else:
+            if show_person_info:
+                renpy.show_screen("person_info_ui",self)
+
+            bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting)) #Get the starting image
+            if isinstance(the_clothing, list):
+                for cloth in the_clothing:
                     if half_off_instead:
-                        self.outfit.half_off_clothing(the_clothing) #Half-off the clothing
+                        self.outfit.half_off_clothing(cloth) #Half-off the clothing
                     else:
-                        self.outfit.remove_clothing(the_clothing) #Remove the clothing
-                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)) #Get the top image, with frame.
-
-                x_size, y_size = position_size_dict.get(position)
-                bottom_render = bottom_displayable.render(x_size, y_size, 0, 0)
-                top_render = top_displayable.render(x_size, y_size, 0, 0)
-
-                global global_draw_number
-                animation_draw_number = self.draw_number[draw_layer] + global_draw_number[draw_layer]
-
-                global prepared_animation_arguments
-                prepared_animation_arguments[draw_layer][self.character_number] = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, animation_draw_number, draw_layer, display_transform, extra_at_arguments, display_zorder]
-
-                renpy.invoke_in_thread(self.prepare_animation_screenshot_render_multi, position, bottom_render, top_render, animation_draw_number, draw_layer)
-
+                        self.outfit.remove_clothing(cloth) #Remove the clothing
             else:
-                if wipe_scene:
-                    clear_scene()
-
-                if show_person_info:
-                    renpy.show_screen("person_info_ui",self)
-
-                bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)) #Get the starting image
-                if isinstance(the_clothing, list):
-                    for cloth in the_clothing:
-                        if half_off_instead:
-                            self.outfit.half_off_clothing(cloth) #Half-off the clothing
-                        else:
-                            self.outfit.remove_clothing(cloth) #Remove the clothing
+                if half_off_instead:
+                    self.outfit.half_off_clothing(the_clothing) #Half-off the clothing
                 else:
-                    if half_off_instead:
-                        self.outfit.half_off_clothing(the_clothing) #Half-off the clothing
-                    else:
-                        self.outfit.remove_clothing(the_clothing) #Remove the clothing
-                top_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill) #Get the top image
+                    self.outfit.remove_clothing(the_clothing) #Remove the clothing
+            top_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting) #Get the top image
 
-                self.hide_person()
-                character_tag = str(self.character_number)
-                renpy.show(character_tag, at_list=at_arguments, layer = draw_layer, what = top_displayable, zorder = display_zorder, tag = character_tag)
-                fade_at_arguments = at_arguments[:]
-                fade_at_arguments.append(clothing_fade)
-                renpy.show(character_tag + "_extra", at_list=fade_at_arguments, layer = draw_layer, what = bottom_displayable, zorder = display_zorder, tag = character_tag + "_extra") #Blend from old to new.
+            if not the_animation is None:
+                weight_mask = self.build_weight_mask(the_animation, position, animation_effect_strength)
+            else:
+                weight_mask = weight_mask = Solid("#000000") #Black mask = no influence.
 
+            bottom_animation = ShaderPerson(bottom_displayable, weight_mask)
+            top_animation = ShaderPerson(top_displayable, weight_mask)
+
+            self.hide_person()
+            character_tag = str(self.character_number)
+
+            if background_fill is not None: #If a background colour is given we add a solid to the back and a frame around the entire thing.
+                bg_colour =  Composite((x_size, y_size), (0,0), Solid(background_fill))
+                renpy.show(character_tag + "_bg_fill", at_list=frame_at_arguments, layer = draw_layer, what = bg_colour, zorder = display_zorder, tag = character_tag + "_bg_fill")
+
+            renpy.show(character_tag, at_list=at_arguments, layer = draw_layer, what = top_animation, zorder = display_zorder, tag = character_tag)
+            fade_at_arguments = at_arguments[:]
+            fade_at_arguments.append(clothing_fade)
+            renpy.show(character_tag + "_extra", at_list=fade_at_arguments, layer = draw_layer, what = bottom_animation, zorder = display_zorder, tag = character_tag + "_extra") #Blend from old to new.
+
+            if background_fill is not None:
+                image_frame = Composite((x_size, y_size), (0,0), Frame("/gui/Character_Window_Frame.png", 12, 12))
+                renpy.show(character_tag + "_frame", at_list=frame_at_arguments, layer = draw_layer, what = image_frame, zorder = display_zorder, tag = character_tag + "_frame") #Uses an at_list copy that does not include the clothing_fade.
             return
 
         def get_emotion(self): # Get the emotion state of a character, used when the persons sprite is drawn and no fixed emotion is required.
@@ -1423,8 +1345,8 @@ init -2 python:
             return
 
         def review_outfit(self, dialogue = True, draw_person = True):
-        
-        
+
+
             if self.should_wear_uniform() and not self.is_wearing_uniform():
                 self.apply_outfit()#Reset uniform
                 if draw_person:
@@ -1440,7 +1362,7 @@ init -2 python:
                 self.apply_outfit()
                 if draw_person:
                     self.draw_person()
-   
+
                 if dialogue:
                    self.call_dialogue("clothing_review")
 

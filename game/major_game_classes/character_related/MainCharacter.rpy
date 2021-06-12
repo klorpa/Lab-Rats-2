@@ -81,6 +81,9 @@ init -2 python:
             self.work_goal_difficulty = 0
             self.sex_goal_difficulty = 0
 
+            self.clarity_purchase_level = 0 #Increased by 1 every time you buy a stat with Clarity.
+            # Each level costs 50*(2^level)
+
             self.log_items = [] #A list of items to display as a log. is a tuple of: [string_to_display, text_style, unix_time]
             self.log_max_size = 20
 
@@ -212,7 +215,7 @@ init -2 python:
 
             self.free_clarity += amount
 
-            log_string = "You: Recieved " + str(amount) + " Clarity"
+            log_string = "You: received " + str(amount) + " Clarity"
             if add_to_log and amount != 0:
                 mc.log_event(log_string, "float_text_blue")
             return
@@ -279,6 +282,23 @@ init -2 python:
             self.work_goal = create_new_work_goal(self.work_goal_difficulty)
             self.sex_goal = create_new_sex_goal(self.sex_goal_difficulty)
 
+        def buy_point(self, stat_string, clarity_cost = 0):
+            if stat_string == "stat":
+                self.free_stat_points += 1
+
+            elif stat_string == "work":
+                self.free_work_points += 1
+
+            elif stat_string == "sex":
+                self.free_sex_points += 1
+
+            self.clarity_purchase_level += 1
+            self.spend_clarity(clarity_cost)
+
+        def buy_point_cost(self):
+            point_cost = 50 * (2**self.clarity_purchase_level)
+            return point_cost
+
         def improve_stat(self, stat_string, amount = 1):
             if amount > self.free_stat_points:
                 amount = self.free_stat_points
@@ -336,15 +356,11 @@ init -2 python:
             self.phone.register_number(the_person)
             self.having_text_conversation = the_person
             self.text_conversation_paused = False
-
-            # renpy.show_screen("text_message_log", the_person)
             return
 
         def end_text_convo(self): #Resets all triggers from texting someone, so say messages are displayed properly again, ect.
             self.having_text_conversation = None
             self.text_conversation_paused = False
-
-            # renpy.hide_screen("text_message_log")
             return
 
         def pause_text_convo(self): #Keeps the phone UI and display up, but your dialogue and dialogue from any girl other than the one you're texting will display as normal and not be logged.

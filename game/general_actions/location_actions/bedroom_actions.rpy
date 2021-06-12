@@ -46,14 +46,14 @@ label faq_loop:
                     "Vren" "Suggesibility has another use. It will increase the cap for Temporary sluttiness. Temporary sluttiness looks like this: {image=gui/heart/grey_heart.png}"
                     "Vren" "Interacting with a girl is the most direct way to change their Obedience or Sluttiness. There may also be random events that change their scores."
                     "Vren" "Most actions have a minimum Temporary sluttiness rquirement before they can be attempted and a maximum Temporary sluttiness they will have an effect on."
-                    "Vren" "Having sex with a girl is nessesary to increase her sluttiness to the highest levels. Higher arousal will make a girl more willing to strip down or have sex."
+                    "Vren" "Having sex with a girl is necessaryto increase her sluttiness to the highest levels. Higher arousal will make a girl more willing to strip down or have sex."
                     "Vren" "If you are able to make a girl cum she will immediately start to turn Temporary sluttiness into core sluttiness."
                     "Vren" "As a girls Sluttiness increases she will be more willing to wear revealing clothing or have sex with you."
                     "Vren" "As her Obedience increase she will be more deferential. She may be willing to have sex simply because you ask, even if she is not normally slutty enough."
 
                 "Leveling Up.":
                     "Vren" "There are three main catagories of experience: Stats, Work Skills, and Sex Skills."
-                    "Vren" "For each of these catagories you will have a goal assigned. When that goal is completed you will recieve one point to spend on any of the scores in that catagory."
+                    "Vren" "For each of these catagories you will have a goal assigned. When that goal is completed you will receive one point to spend on any of the scores in that catagory."
                     "Vren" "Once per day you may also scrap a goal that is overly difficult or not possible to complete yet."
                     "Vren" "When you complete a goal future goals in that catagory will increase in difficulty. Spend your early points wisely!"
                     "Vren" "Some goals are only checked at the end of the day or end of a turn, so if you have a goal that should be completed but is not giving you the option try advancing time."
@@ -73,7 +73,7 @@ label faq_loop:
     call faq_loop
     return
 
-label bedroom_masturbation(location_description = "home", edging_available = True, should_advance_time = True): #Baseline efficency for masturbating. Advances time, consumes energy, and releases Clarity inefficently.
+label bedroom_masturbation(location_description = "home", edging_available = True, should_advance_time = True): #Baseline efficiency for masturbating. Advances time, consumes energy, and releases Clarity inefficently.
     if location_description == "home":
         "You sit down in front of your computer and start to look around for some porn to jerk off to."
 
@@ -121,4 +121,3 @@ label bedroom_masturbation(location_description = "home", edging_available = Tru
     if should_advance_time:
         call advance_time()
     return
-    

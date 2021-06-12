@@ -46,7 +46,7 @@ label intro_doggy_anal(the_girl, the_location, the_object):
     else:
         the_girl.char "No, but I don't know if I ever will be. Let's try it."
     "You hold onto her hips and push yourself in. She gasps as the tip of your cock slips into her ass."
-    "[the_girl.title] grunts and gasps as you slowy fit your whole dick inside of her. When you bottom out you hold still, giving her time to adjust to your size."
+    "[the_girl.title] grunts and gasps as you slowly fit your whole dick inside of her. When you bottom out you hold still, giving her time to adjust to your size."
     "After a long moment it seems like she's ready and you start to move, slowly at first then picking up speed."
     return
 
