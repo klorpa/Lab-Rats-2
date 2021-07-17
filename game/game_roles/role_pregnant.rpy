@@ -81,6 +81,12 @@ label pregnant_announce(the_person):
         the_person "I have some big news."
         mc.name "Okay, what's up?"
 
+    if not was_immaculate:
+        if the_person.event_triggers_dict.get("preg_your_kids_known", 0) > 0:
+            $ the_person.event_triggers_dict["preg_your_kids_known"] += 1
+        else:
+            $ the_person.event_triggers_dict["preg_your_kids_known"] = 1
+
 
     if girlfriend_role in the_person.special_role:
         if was_immaculate:
@@ -348,7 +354,7 @@ label pregnant_finish(the_person):
         the_person.body_type = the_person.event_triggers_dict.get("pre_preg_body", "standard_body")
         the_person.schedule = the_person.event_triggers_dict.get("preg_old_schedule")
 
-        the_person.event_triggers_dict["preg_knows"] = False #Otherwise she immediately knows the next time she's pregnant.
+        the_person.event_triggers_dict["preg_knows"] = False #Reset this, otherwise she immediately knows the next time she's pregnant.
         the_person.kids += 1 #TODO: add a new role related to a girl being a mother of your kid?
 
         tit_shrink_one_day = day + renpy.random.randint(21,30)

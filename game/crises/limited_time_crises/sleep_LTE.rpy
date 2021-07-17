@@ -325,12 +325,12 @@ label nightime_grope(the_person, masturbating = False):
             if the_person.outfit.vagina_available():
                 "You gently pet her pussy, feeling her soft folds."
                 "[the_person.possessive_title] shifts and moans again when you brush agaisnt the small nub of her clit."
-                $ the_person.change_arousal(6 + mc.sex_skills.get("Foreplay", 0))
+                $ the_person.change_arousal(10 + mc.sex_skills.get("Foreplay", 0))
                 $ mc.change_locked_clarity(10)
             else:
                 "You massage her pussy through her [panties_item.display_name]."
                 "Through the fabric you're able to make out the faint bump of her clit. She moans when you brush it."
-                $ the_person.change_arousal(10 + mc.sex_skills.get("Foreplay", 0))
+                $ the_person.change_arousal(6 + mc.sex_skills.get("Foreplay", 0))
                 $ mc.change_locked_clarity(5)
             the_person "Mmph..."
 

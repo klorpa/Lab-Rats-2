@@ -591,7 +591,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
     $ the_mom.draw_person()
     "[the_mom.possessive_title] steps into your room and closes the door behind her."
     the_mom "Oh, you're looking very handsome tonight. Is there some special occasion?"
-    if the_date.has_role(girlfriend_role):
+    if the_date.has_role(girlfriend_role) and (not the_date.has_role(sister_girlfriend_role) or the_date.event_triggers_dict.get("sister_girlfriend_mom_knows",False)):
         mc.name "I'm taking [the_date.title] on a date tonight."
     else:
         mc.name "I'm going out on a date tonight."

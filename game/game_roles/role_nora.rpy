@@ -78,6 +78,14 @@ init -2 python:
             return "Not enough time."
         return True
 
+    def nora_student_exam_rewrite_request_requirement(the_person):
+        if not the_person.event_triggers_dict.get("student_exam_ready", False):
+            return False
+        elif not university.has_person(the_person):
+            return "Better wait until she's working."
+        else:
+            return True
+
 
 
 
@@ -452,4 +460,33 @@ label nora_profile_person(the_person):
     $ mc.business.event_triggers_dict["nora_research_subject"] = the_person
     $ clear_scene()
     call advance_time from _call_advance_time_24
+    return
+
+label nora_student_exam_rewrite_request(the_person):
+    mc.name "I want to talk to you about [emily.title]. I've been tutoring her and she has really improved."
+    the_person "You're tutoring her? That would explain why she stopped showing up to my office every other day."
+    mc.name "Her marks on assignments have been improving lately, and she said there's an important exam you were going to let her rewrite."
+    the_person "Oh, that."
+    "[the_person.possessive_title] sighs and shakes her head."
+    the_person "I confess, I only told her that so she would stop bothering me about regrading every failing assignment she handed in."
+    the_person "I thought she would realise she wasn't cut out for this and give up."
+    mc.name "[the_person.title], this girl has worked hard and deserves a second shot. You need to let her rewrite this exam."
+    the_person "When would I have the time for that? The lab is so busy right now, it's a circus in there."
+    the_person "I don't have time to sit around while a single student rewrites an exam, and I certainly don't have time to grade it after."
+    menu:
+        "I'll run and grade the exam.":
+            mc.name "What if I run the exam? I'll sit with her while she takes it, and I'll grade it for you."
+            mc.name "All you need to do is record the results after."
+            the_person "I am confident in your own knowledge. And I did promise her..."
+            "[the_person.possessive_title] thinks about this for a long moment."
+            the_person "Okay, bring her to the lab and I'll give her an exam."
+            $ the_person.event_triggers_dict["student_exam_ready"] = False
+            $ emily.event_triggers_dict["test_rewrite_intro_enabled"] = True
+            # TODO: Set up the exam event (You need to wait until she's on campus??)
+
+
+        "Maybe some other time.":
+            mc.name "Maybe you'll be able to run it some time in the future?"
+            the_person "I wouldn't get her hopes up [the_person.mc_title]."
+            # Nothing changes, the player still has the option of pursuing this storyline
     return

@@ -3,6 +3,10 @@ init -1 python:
         the_wall = Object("wall",["Lean"], sluttiness_modifier = 0, obedience_modifier = 0) #0/5
         return the_wall
 
+    def make_door():
+        the_door = Object("door", ["Lean"], sluttiness_modifier = 0, obedience_modifier = 0)
+        return the_door
+
     def make_window():
         the_window = Object("window",["Lean"], sluttiness_modifier = 0, obedience_modifier = 0) #-5/5
         return the_window

@@ -21,14 +21,16 @@ init -2 python:
             self.s_div = s_div
             self.h_div = h_div
 
-            #Uniforms are stored as a wardrobe specific to each department. There is also a company wide wardrobe that can be accessed.
+            # These wardrobes handle the department specific uniform stuff. A list of UniformOutfits is used to populate the uniform manager screen.
             #self.all_uniform = Wardrobe(self.name + " All Wardrobe")
             self.m_uniform = Wardrobe(self.name + " Marketing Wardrobe")
             self.p_uniform = Wardrobe(self.name + " Production Wardrobe")
             self.r_uniform = Wardrobe(self.name + " Research Wardrobe")
             self.s_uniform = Wardrobe(self.name + " Supply Wardrobe")
             self.h_uniform = Wardrobe(self.name + " HR Wardrobe")
-            self.all_uniform = Wardrobe(self.name + " Shared Uniform Wardrobe")
+
+            self.business_uniforms = [] #A list of UniformOutfits
+            #self.all_uniform = Wardrobe(self.name + " Shared Uniform Wardrobe")
 
             self.m_serum = None #These are the serums given to the different departments if the daily serum dosage policy is researched.
             self.p_serum = None
@@ -186,15 +188,15 @@ init -2 python:
 
         def get_uniform_wardrobe(self,title): #Takes a title and returns the correct uniform for that division, if one exists. If it is None, returns false. TODO: get this working.
             if title == "Marketing":
-                return self.m_uniform.merge_wardrobes(self.all_uniform)
+                return self.m_uniform
             elif title == "Researcher":
-                return self.r_uniform.merge_wardrobes(self.all_uniform)
+                return self.r_uniform
             elif title == "Production":
-                return self.p_uniform.merge_wardrobes(self.all_uniform)
+                return self.p_uniform
             elif title == "Supply":
-                return self.s_uniform.merge_wardrobes(self.all_uniform)
+                return self.s_uniform
             elif title == "Human Resources":
-                return self.h_uniform.merge_wardrobes(self.all_uniform)
+                return self.h_uniform
             else:
                 return None
 
@@ -238,6 +240,36 @@ init -2 python:
                 underwear_limit = 0
                 limited_to_top = True
             return slut_limit, underwear_limit, limited_to_top
+
+        def update_uniform_wardrobes(self): #Rebuilds all uniforms in the wardrobe based on current uniform settings.
+            #NOTE: This is inefficent, because we will often be adding then clearing the same uniform every time we change the list.
+            # But it's only done once on exit from the screen, and is likely fast enough. Optimize by only manipulating changes if it's a problem.
+            self.m_uniform.clear_wardrobe()
+            self.p_uniform.clear_wardrobe()
+            self.r_uniform.clear_wardrobe()
+            self.s_uniform.clear_wardrobe()
+            self.h_uniform.clear_wardrobe()
+
+            for a_uniform in self.business_uniforms:
+                if a_uniform.hr_flag:
+                    self.update_department_uniform(self.h_uniform, a_uniform)
+                if a_uniform.research_flag:
+                    self.update_department_uniform(self.r_uniform, a_uniform)
+                if a_uniform.production_flag:
+                    self.update_department_uniform(self.p_uniform, a_uniform)
+                if a_uniform.supply_flag:
+                    self.update_department_uniform(self.s_uniform, a_uniform)
+                if a_uniform.marketing_flag:
+                    self.update_department_uniform(self.m_uniform, a_uniform)
+
+
+        def update_department_uniform(self, the_wardrobe, the_uniform):
+            if the_uniform.full_outfit_flag:
+                the_wardrobe.add_outfit(the_uniform.outfit)
+            if the_uniform.overwear_flag:
+                the_wardrobe.add_overwear_set(the_uniform.outfit)
+            if the_uniform.underwear_flag:
+                the_wardrobe.add_underwear_set(the_uniform.outfit)
 
         def clear_messages(self): #clear all messages for the day.
             self.message_list = []

@@ -1,6 +1,6 @@
 init -2 python:
     class Role(renpy.store.object): #Roles are assigned to special people. They have a list of actions that can be taken when you talk to the person and acts as a flag for special dialogue options.
-        def __init__(self, role_name, actions = None, hidden = False, on_turn = None, on_move = None, on_day = None, role_dates = None):
+        def __init__(self, role_name, actions = None, hidden = False, on_turn = None, on_move = None, on_day = None, role_dates = None, looks_like = None):
             self.role_name = role_name
             if actions is None:
                 self.actions = []
@@ -20,6 +20,12 @@ init -2 python:
                 self.role_dates = [role_dates]
 
             self.linked_roles = [] #A list of other roles. If this role is removed, all linked roles are removed as well.
+            if looks_like is None:
+                self.looks_like = [] #A list of other roles. when has_role() is used this role is treated as any of the roles in looks_like for comparison purposes. NOTE: Does not inherit actual role actions.
+            elif isinstance(looks_like, list):
+                self.looks_like = looks_like
+            else:
+                self.looks_like = [looks_like]
 
         def __cmp__(self,other):
             matches = True

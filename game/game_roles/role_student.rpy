@@ -37,6 +37,34 @@ init -2 python:
             return False
         return True
 
+    def student_test_intro_requirement(the_person):
+        if not the_person.event_triggers_dict.get("test_rewrite_intro_enabled", False):
+            return False
+        else:
+            return True
+
+    def student_test_requirement(the_person):
+        if not the_person.event_triggers_dict.get("student_exam_rewrite_enabled", False):
+            return False
+        elif not university.has_person(the_person):
+            return "Wait until she's on campus."
+        elif day%7 == 5 or day%7 == 6:
+            return "Closed on the weekend."
+        elif time_of_day == 4:
+            return "Too late to start the exam."
+        else:
+            return True
+
+    def student_offer_job_requirement(the_person):
+        if not the_person.event_triggers_dict.get("student_offer_job_enabled", False):
+            return False
+        elif mc.business.get_employee_count() >= mc.business.max_employee_count:
+            return "At employee limit."
+        else:
+            return True
+
+
+
 label student_intro_one(the_nora, the_student): #the_nora just because we don't want to conflict with the global Nora name.
     "You knock on the door to the lab. After a moment [the_nora.title] answers and steps out into the hallway."
     $ the_group = GroupDisplayManager([the_nora], primary_speaker = the_nora)
@@ -175,7 +203,7 @@ label student_study_university(the_person):
         the_person "Okay, so where should we start?"
         mc.name "Well let's start by talking about your marks, so we know how much work we need to do."
         "[the_person.title] drums her fingers nervously on the desk."
-        the_person "Right. Well, they aren't great. Right now I'm failing, but Professor [nora.last_name] said she would transfer all of the class weight to my exam if I could get up to an 80%%!"
+        the_person "Right. Well, they aren't great. Right now I'm failing, but Professor [nora.last_name] said she would let me rewrite the last exam if I could get my other marks up to an 80%%!"
         mc.name "That's good, then we just have to focus on that. How bad are your marks right now? 45%%? 40%%?"
         the_person "Well... My average right now is 25%%."
         mc.name "That's a lot of ground to make up."
@@ -190,7 +218,6 @@ label student_study_university(the_person):
         if current_marks > 80:
                 mc.name "Fantastic! A little more work and you'll be the best in your class!"
                 the_person "Thanks, you've really helped everything come together!"
-                "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
         elif current_marks > 50:
             mc.name "That sounds like a pass to me!"
             the_person "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
@@ -352,13 +379,29 @@ label student_study_home(the_person):
 
     mc.name "Let's talk about your grades. How have you been doing recently?"
     the_person "Well, I got a [current_marks]%% on my last assignment."
-    if current_marks > 80:
-            mc.name "Fantastic! A little more work and you'll be the best in your class!"
-            the_person "Thanks, you've really helped everything come together!"
-            "Vren" "This section of the game is under construction. In a future version you will have the ability to hire [the_person.title] once her marks are high enough."
+    if current_marks >= 80:
+        mc.name "Fantastic! A little more work and you'll be the best in your class!"
+        the_person "Thanks, you've really helped everything come together!"
+        if nora.event_triggers_dict.get("student_exam_ready", None) is None:
+            menu:
+                "You're ready to rewrite your exam.":
+                    mc.name "I think you're prepared to write your exam now."
+                    the_person "Do you really think so? I'm only going to have one chance."
+                    mc.name "Look at your last few assignments, the numbers don't lie."
+                    "[the_person.possessive_title] smiles and nods happily."
+                    the_person "Can you talk to Professor [nora.last_name] for me and tell her I'm ready to rewrite it?"
+                    mc.name "Sure, I'll make sure to talk to her. There's still some time left for some more studying today."
+                    $ nora.event_triggers_dict["student_exam_ready"] = True
+
+                "You need to study some more.":
+                    mc.name "You'll be ready to rewrite your exam soon. Just a little more studying to go and I think you're ready."
+                    the_person "I hope I do well, I'm really nervous about it..."
+                    mc.name "Some more studying will help with that. Let's get to it."
+        else:
+            mc.name "Not long now until your exam, let's get some more studying done while we can."
     elif current_marks > 50:
         mc.name "That sounds like a pass to me!"
-        the_person "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
+        the_person "Yeah! I still need to convince Professor [nora.last_name] to let rewrite my exam, but I might be able to do this!"
         mc.name "And we still have more time to improve."
     else:
         mc.name "So there's some room for improvement. That's fine, we still have time."
@@ -476,9 +519,6 @@ label student_study_home(the_person):
 
     if time_of_day == 3 and christina in christina.home.people:
         call study_check_up(the_person, christina) from _call_study_check_up
-
-    # TODO: Help the student study at home. Opens up more options for rewards/punishments
-    # TODO: If you make her orgasm, and as her marks improve, she'll "talk to her mom" and improves your pay.
 
     $ mc.business.funds += 200
     $ the_person.event_triggers_dict["times_studied_home"] = the_person.event_triggers_dict.get("times_studied_home", 0) + 1
@@ -1503,15 +1543,253 @@ label student_mom_intro(the_person):
     $ clear_scene()
     return
 
-label student_hire_intro(the_person):
-    #TODO: Option to hire the student when her marks are high enough.
-    #TODO: You need to talk to her mom and get her permission.
-    #TODO: If you're not having an affair with her Mom, or if her Obedience isn't low, she gives you persmission.
-    #TODO: If you are having an affair and her Obedience is high, she doesn't want you to hire her daughter so you have a reason to keep coming around.
-    #TODO: This becomes a "bad mom" storyline, where you need to purposefully sabotage her daughter, and she gets excited by you using her daughter.
-    # Starts off with something like "Wait, you mean you're done tutoring her? But then you won't have any reason to come around and visit me", along with cupping your balls
-    # "What if her grades start dropping again? If you started teaching her the wrong things, you could spend more time here. More time with me..."
-    # Answers to call her evil or crazy, or be all in.
-    # Once Emily's grades drop enough she "came home crying to me. I should feel guilty, but it just made me want to get fucked!"
-    # Options from there to tell her about how badly you're treating her daughter, eventually getting her blessing to fuck her up (mentally, ie. sex slave).
-    pass
+
+label student_test_intro(the_person):
+    #Also stops dialogue about her exam from triggering while studying
+    mc.name "I've talked to Professor [nora.last_name] and she's going to let you rewrite your exam."
+    $ the_person.draw_person(emotion = "happy")
+    $ the_person.change_happiness(15)
+    the_person "Oh my god, that's amazing! When do I need to go in?"
+    mc.name "I'll be running the exam, so we can do it any time we're both on campus."
+    "[the_person.possessive_title] nods happily."
+    the_person "Thank you so much [the_person.mc_title], I'm going to get it all right time!"
+    $ the_person.event_triggers_dict["test_rewrite_intro_enabled"] = False
+    $ the_person.event_triggers_dict["student_exam_rewrite_enabled"] = True
+
+    return
+
+label student_test(the_person): #TODO: Hook this up
+    $ the_person.event_triggers_dict["student_exam_rewrite_enabled"] = False
+    mc.name "Ready to write your exam?"
+    "[the_person.possessive_title] takes a deep breath and nods, clearly unsure."
+    the_person "I guess I am..."
+    mc.name "Relax, you're going to do fine. Let's go see [nora.title] and get the exam."
+    "You lead [the_person.title] down to [nora.possessive_title]'s lab. The door opens after a quick knock."
+    $ clear_scene()
+    $ the_group = GroupDisplayManager([the_person, nora], nora)
+    $ the_group.draw_group()
+    nora "Hello? Oh, [nora.mc_title], it's you. Hello [the_person.name]."
+    mc.name "Hey [nora.title]. We're here for [the_person.title]'s exam paper."
+    $ the_group.draw_person(nora, position = "walking_away")
+    "There's a loud bang inside of the lab and [nora.possessive_title] turns around."
+    nora "Be careful with that, for goodness sake! I... I'll be there in a moment!"
+    $ the_group.draw_person(nora)
+    "She hurries into the lab and snatches a stack of papers off of her desk and hands them over."
+    nora "Here, she has three hours."
+    $ the_group.draw_person(the_person)
+    the_person "Thank you Professor, this is really a huge..."
+    $ the_group.draw_person(nora)
+    "[nora.title] waves her off and starts to shut the door."
+    nora "I really need to get back to work. See me when the paper is graded, alright?"
+    $ clear_scene()
+    $ the_person.draw_person()
+    "You nod and she closes the lab door in your face."
+    mc.name "Right, let's go find an empty room for you."
+    "[the_person.possessive_title] follows you around until you find a small unused class room."
+    $ the_person.draw_person(position = "sitting")
+    "You have her sit down and hand her the test, then start a timer on your phone."
+    mc.name "Like [nora.title] said, you have three hours. Good luck."
+    the_person "Right, here we go!"
+    "She opens up the stack of papers and starts working on it."
+    #TODO: Add a varient if she's really slutty where she needs to get off first.
+    #TODO: Add a varient where she tries to "convince" you to give her the answers.
+    "You pass the time browsing the internet on your phone."
+    $ the_person.draw_person()
+    "Two hours in [the_person.possessive_title] stands up and walks towards you, test in hand."
+    mc.name "Don't give up [the_person.title], you still have time."
+    the_person "Huh? I'm not giving up, I'm done! I don't know why, but this exam was super easy!"
+    $ the_person.change_happiness(10)
+    $ the_person.draw_person(emotion = "happy")
+    the_person "I know you still have to grade it, but I think I've actually done it!"
+    "She hands you the exam paper, smiling ear to ear."
+    the_person "Thank you so much [the_person.mc_title], this was all because of you! I don't know how to thank you!"
+    $ slut_token = get_red_heart(30)
+    menu:
+        "Fuck her." if the_person.effective_sluttiness() >= 30:
+            "You take her hand and place it on your cock, which twitches reflexively."
+            $ front_desk = make_desk()
+            $ the_room = Room("classroom", "Classroom", background_image = standard_campus_backgrounds, objects = [front_desk, make_chair(), make_floor(), make_door()], lighting_conditions = standard_indoor_lighting)
+            $ old_location = mc.location
+            $ mc.change_location(the_room)
+            $ mc.location.show_background()
+            "[the_person.title] bites her lip and nods her understanding."
+            the_person "Of course, it's the least I can do..."
+            if the_person.effective_sluttiness("vaginal_sex") < 50 or the_person.get_opinion_score("giving blowjobs") > 0:
+                # she's either not super slutty, or she's just a fan of blowjobs.
+                $ the_person.draw_person(position = "blowjob")
+                $ mc.change_locked_clarity(30)
+                "She sinks to her knees in front of you, quickly unzipping your pants so your cock slaps down onto her face."
+                the_person "If you want to be a little rough with me... I think you've earned it."
+                $ the_person.add_situational_slut("tutor", 20, "My favourite tutor deserves a special reward!")
+                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
+                if the_person.sex_skills["Oral"] >= 4:
+                    "She winks at you before slipping the tip of your cock into her mouth and slams herself down the the base."
+                    "[the_person.title] gags slightly, then repositions on her knees and starts to bob her head."
+                    call fuck_person(the_person, private = True, start_position = deepthroat, skip_intro = True)
+                    $ the_report = _return
+                else:
+                    "She takes a deep breath, then slips the tip of your cock into her mouth and starts to suck slowly on it."
+                    call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True)
+                    $ the_report = _return
+            else:
+                "[the_person.possessive_title] moves around you to the desk at the front of the room."
+                $ the_person.draw_person(emotion = "happy", position = "missionary")
+                "She clears some papers off of it and jumps, sitting briefly before lying flat on her back."
+                if not the_person.outfit.vagina_available():
+                    if the_person.outfit.can_half_off_to_vagina():
+                        $ strip_list = the_person.outfit.get_half_off_to_vagina_list(visible_enough = False)
+                        $ generalised_strip_description(the_person, strip_list, half_off_instead = True, position = "missionary")
+                    else:
+                        $ strip_list = the_person.outfit.get_vagina_strip_list(visible_enough = False)
+                        $ generalised_strip_description(the_person, strip_list, position = "missionary")
+
+                $ mc.change_locked_clarity(30)
+                if the_person.has_taboo("vaginal_sex"):
+                    the_person "I know you've wanted me every time we studied together... You aren't very subtle!"
+                    the_person "So come on, this is your chance to finally fuck a school girl!"
+                    $ the_person.break_taboo("vaginal_sex")
+                else:
+                    the_person "Come on then, you know what to do!"
+                $ the_person.add_situational_slut("tutor", 20, "My favourite tutor deserves a special reward!")
+                "You hurry to pull off of your pants, rushing yourself to get inbetween her legs."
+                call condom_ask(the_person)
+                if _return:
+                    "You grab onto [the_person.possessive_title]'s hips and pull yourself inside of her."
+                    the_person "Oh, [the_person.mc_title]!"
+                    "You bottom out inside of her warm pussy, then lean forward and put a finger on her lips."
+                    mc.name "You're going to have to try and keep quiet, or someone will find us."
+                    "She nods conspiratorially and rocks her hips, encouraging you to start moving again."
+                    call fuck_person(the_person, private = True, start_position = missionary, start_object = front_desk, skip_intro = True)
+                    $ the_report = _return
+                else:
+                    the_person "Fine, what do you want to do then?"
+                    call fuck_person(the_person, private = True)
+                    $ the_report = _return
+
+            $ the_person.call_dialogue("sex_review", the_report = the_report)
+            $ the_person.clear_situational_slut("tutor")
+            $ the_person.review_outfit()
+            $ mc.change_location(old_location)
+            $ the_room = None #Clear memory
+
+        "Fuck her.\nRequires [slut_token] (disabled)" if the_person.effective_sluttiness() < 30:
+            pass
+
+
+        "Cash. Cash is good.":
+            mc.name "Cash is good. I take credit if you don't have any on you."
+            "She rolls her eyes."
+            the_person "I should have known. Okay, here..."
+            "She reaches into her purse and gives you a wad of cash."
+            $ mc.business.funds += 500
+            the_person "My Mom wanted to give you a bonus, I was just waiting a little to tell you."
+
+        "Seeing you happy is reward enough.":
+            mc.name "Watching you succeed is all I need."
+            $ the_person.change_love(3)
+            the_person "Aww, this is why you're the best tutor ever!"
+            $ mc.change_locked_clarity(5)
+            "[the_person.possessive_title] gives you a hug, pressing her head into your chest and keeping it there a long moment."
+
+    the_person "So, what now?"
+    mc.name "I have to go grade your test. That's going to take an hour or two."
+    the_person "Are you going to do that right now?"
+    mc.name "I don't see any reason to wait. If you have the time we can go give it back to [nora.title] today."
+    "[the_person.possessive_title] nods eagerly."
+    the_person "That's perfect!"
+
+    "You sit down at the front desk and start to compare [the_person.title]'s answers to the answer sheet [nora.title] gave you."
+    "[the_person.possessive_title] paces around nerviously as you work."
+    the_person "How am I doing? Was I right, did I do well?"
+    mc.name "I'm just getting started, this is going to take some time."
+    "She nods and continues to pace."
+    #TODO: Add some options where she doesn't pass, once we have a reason for that to happen with the Bad Mom content.
+    $ passed = True
+    menu:
+        "Make sure she fails.\nUnder Construction (disabled)":
+            $ passed = False
+            pass
+
+        "Mark it fairly.":
+            "You work your way through the test. After working in silence for half an hour you're finished."
+            "You mark the last question and stand up. [the_person.title] jumps up from the desk she had been leaning on."
+            the_person "Well? How did I do?"
+
+
+        "Make sure she passes.\nUnder Construction (disabled)":
+            $ passed = True
+            pass
+
+    if passed:
+        mc.name "You did well. Here, take a look."
+        $ the_person.change_happiness(20)
+        "You pass the marked exam to [the_person.possessive_title]. She's smiling ear to ear as she looks at her mark."
+        the_person "I knew it! Haha, I knew I could do it!"
+        "She jumps with joy, pumping her hands into the air. After a few moments of excitement she calms down."
+        the_person "So I guess this is it then, I don't need a tutor any more. I'll miss seeing you around."
+        menu:
+            "Offer her a job." if mc.business.get_employee_count() < mc.business.max_employee_count:
+                mc.name "Then how about you come work for me. We'll get to see each other every day."
+                the_person "You're really offering me a job! But... I haven't even finished my degree yet."
+                mc.name "I've seen how smart you are and how quickly you learn. I can teach you everything you need to know."
+                "[the_person.title] thinks about it for a moment, then nods."
+                the_person "Yeah, let's do it!"
+                mc.name "That's great to hear. I'll just need to ask you a few questions to confirm you're a good fit for the company..."
+                call hire_select_process([the_person,make_person()]) #Padded with extra random person to prevent hiring crash
+                if _return is not None:
+                    mc.name "It's a deal then, I'll see you at the office."
+                    the_person "Sounds good to me!"
+
+                else:
+                    mc.name "I'm going to have to take some time to consider this. I'll be in touch, okay?"
+                    the_person "Right, sure."
+                    $ the_person.event_triggers_dict["student_offer_job_already"] = True
+                    $ the_person.event_triggers_dict["student_offer_job_enabled"] = True
+
+            "Offer her a job.\nRequires: Free employee slot (disabled)." if mc.business.get_employee_count() >= mc.business.max_employee_count:
+                pass
+
+            "I'll still be around.":
+                mc.name "I won't be your tutor any more, but I can still be your friend."
+                "She smiles and nods."
+                the_person "That sounds good to me."
+                $ the_person.event_triggers_dict["student_offer_job_enabled"] = True
+
+        $ the_person.remove_role(student_role)
+        #TODO: Increase her work skill in production/research to mark the end of her education.
+
+
+
+    else:
+        pass #TODO: Write this section once there's a possiblity for her not to succeed.
+
+    mc.name "I need to give your exam to [nora.title], see you around [the_person.title]."
+    $ clear_scene()
+    "You split up from [the_person.possessive_title], turn the exam in to [nora.title], and head back to the center of campus."
+    call advance_time()
+    return
+
+label student_offer_job_reintro(the_person):
+    $ offered_before = the_person.event_triggers_dict.get("student_offer_job_already", False)
+    if offered_before:
+        mc.name "So, are you still interested in my job offer?"
+        the_person "Yeah I am!"
+    else:
+        mc.name "I was impressed with how quickly you learned once you had a proper teacher."
+        mc.name "If you're looking for work, I could use a good employee like you."
+        the_person "Really? But... I haven't even finished my degree yet."
+        mc.name "I've seen how smart you really are. I can teach you everything you need to know."
+        "[the_person.title] thinks about it for a moment, then nods."
+        the_person "Yeah, let's do it!"
+
+    mc.name "Alright, I'm just going to need to ask you a few questions to confirm you're a good fit for the company."
+    call hire_select_process([the_person,make_person()]) #Padded with extra random person to prevent hiring crash
+    if _return is not None:
+        mc.name "It's a deal then, I'll see you at the office."
+        the_person "Sounds good to me!"
+        $ the_person.event_triggers_dict["student_offer_job_enabled"] = False
+
+    else:
+        mc.name "I'm going to have to take some time to consider this. I'll be in touch, okay?"
+        the_person "Right, sure."
+    return

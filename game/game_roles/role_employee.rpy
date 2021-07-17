@@ -67,7 +67,10 @@ init -2 python:
             return True
 
     def move_employee_requirement(the_person):
-        return True
+        if person_at_work(the_person):
+            return True
+        else:
+            return False
 
     def employee_paid_serum_test_requirement(the_person):
         if mandatory_unpaid_serum_testing_policy.is_active():

@@ -379,3 +379,8 @@ label student_mom_appologise_label(the_person): #TODO Provide a way to not activ
     "She nods meekly, cheeks flush."
     $ the_person.add_role(affair_role)
     return
+
+label bad_mom_intro(the_person): #TODO: Set this up
+    #When she hears that her daughter might actually pass her test she asks you to "stall her a little" so you can stay around
+    # If you do that she tells you how horny the idea makes her. Asks you to do progressively meaner things to her daughter to get off.
+    return

@@ -231,7 +231,7 @@ label hire_someone(new_person, add_to_location = False): # Breaks out some of th
         for other_employee in mc.business.get_employee_list():
             town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
 
-    "You complete the necessarypaperwork and hire [_return.name]. What division do you assign them to?"
+    "You complete the necessary paperwork and hire [_return.name]. What division do you assign them to?"
     menu:
         "Research and Development.":
             $ mc.business.add_employee_research(new_person)
@@ -266,7 +266,6 @@ label hire_someone(new_person, add_to_location = False): # Breaks out some of th
     return
 
 label serum_design_action_description:
-    $counter = len(list_of_traits)
     hide screen main_ui
     hide screen phone_hud_ui
     hide screen business_ui
@@ -382,88 +381,98 @@ label pick_company_model_description:
         $ new_model.add_role(company_model_role)
     return
 
-label set_uniform_description:
-    #First, establish the maximums the uniform can reach.
-    $ slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits() #Function generates all uniform related limits to keep them consistent between events and active/deavtive policies.
-
-
-    #Some quick holding variables to store the options picked.
-    $ selected_div = None
-    $ uniform_mode = None
-    $ uniform_type = None
-    menu:
-        "Add a complete outfit." if not limited_to_top:
-            $ uniform_mode = "full"
-
-        "Add a complete outfit.\n{size=22}Requires: Reduced Coverage Corporate Uniforms{/size} (disabled)" if limited_to_top:
-            pass
-
-        "Add an overwear set.":
-            $ uniform_mode = "over"
-
-        "Add an underwear set." if not limited_to_top:
-            $ uniform_mode = "under"
-
-        "Add an underwear set.\n{size=22}Requires: Reduced Coverage Corporate Uniforms{/size} (disabled)" if limited_to_top:
-            pass
-
-        "Remove a uniform or set.":
-            $ uniform_mode = "delete"
-
-
-    menu:
-        "Company Wide Uniforms.\n{size=22}Can be worn by everyone.{/size}": #Get the wardrobe we are going to be modifying.
-            $ selected_div = mc.business.all_uniform
-
-        "R&D Uniforms.":
-            $ selected_div = mc.business.r_uniform
-
-        "Production Uniforms.":
-            $ selected_div = mc.business.p_uniform
-
-        "Supply Procurement Uniforms.":
-            $ selected_div = mc.business.s_uniform
-
-        "Marketing Uniforms.":
-            $ selected_div = mc.business.m_uniform
-
-        "Human Resources Uniforms.":
-            $ selected_div = mc.business.h_uniform
-
-    if uniform_mode == "delete":
-        call screen outfit_delete_manager(selected_div) #Calls the wardrobe screen and lets teh player delete whatever they want.
-
-    else:
-        if uniform_mode == "full":
-            call outfit_master_manager(slut_limit = slut_limit) from _call_outfit_master_manager_3
-            $ new_outfit = _return
-            if new_outfit is None:
-                return
-
-
-            $ mc.business.listener_system.fire_event("add_uniform", the_outfit = new_outfit, the_type = "full")
-            $ selected_div.add_outfit(new_outfit.get_copy())
-
-        elif uniform_mode == "under":
-            call outfit_master_manager(slut_limit = underwear_limit, show_outfits = False, show_underwear = True, show_overwear = False) from _call_outfit_master_manager_4
-            $ new_outfit = _return
-            if new_outfit is None:
-                return
-
-            $ mc.business.listener_system.fire_event("add_uniform", the_outfit = new_outfit, the_type = "under")
-            $ selected_div.add_underwear_set(new_outfit.get_copy())
-
-        else: #uniform_mode == "over":
-            call outfit_master_manager(slut_limit = slut_limit, show_outfits = False, show_underwear = False, show_overwear = True) from _call_outfit_master_manager_5
-            $ new_outfit = _return
-            if new_outfit is None:
-                return
-
-            $ mc.business.listener_system.fire_event("add_uniform", the_outfit = new_outfit, the_type = "over")
-            $ selected_div.add_overwear_set(new_outfit.get_copy())
-
-
+label uniform_manager_loop():
+    call screen uniform_manager()
+    if _return == "Add":
+        call outfit_master_manager() #TODO: Decide if we need to pass this the uniform peramiters, of if we do that purely in what's selectable.
+        if isinstance(_return, Outfit):
+            $ mc.business.business_uniforms.append(UniformOutfit(_return))
+            $ mc.business.listener_system.fire_event("add_uniform", the_outfit = _return)
+        call uniform_manager_loop()
     return
+
+# label set_uniform_description:
+#     #First, establish the maximums the uniform can reach.
+#     $ slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits() #Function generates all uniform related limits to keep them consistent between events and active/deavtive policies.
+#
+#
+#     #Some quick holding variables to store the options picked.
+#     $ selected_div = None
+#     $ uniform_mode = None
+#     $ uniform_type = None
+#     menu:
+#         "Add a complete outfit." if not limited_to_top:
+#             $ uniform_mode = "full"
+#
+#         "Add a complete outfit.\n{size=22}Requires: Reduced Coverage Corporate Uniforms{/size} (disabled)" if limited_to_top:
+#             pass
+#
+#         "Add an overwear set.":
+#             $ uniform_mode = "over"
+#
+#         "Add an underwear set." if not limited_to_top:
+#             $ uniform_mode = "under"
+#
+#         "Add an underwear set.\n{size=22}Requires: Reduced Coverage Corporate Uniforms{/size} (disabled)" if limited_to_top:
+#             pass
+#
+#         "Remove a uniform or set.":
+#             $ uniform_mode = "delete"
+#
+#
+#     menu:
+#         "Company Wide Uniforms.\n{size=22}Can be worn by everyone.{/size}": #Get the wardrobe we are going to be modifying.
+#             $ selected_div = mc.business.all_uniform
+#
+#         "R&D Uniforms.":
+#             $ selected_div = mc.business.r_uniform
+#
+#         "Production Uniforms.":
+#             $ selected_div = mc.business.p_uniform
+#
+#         "Supply Procurement Uniforms.":
+#             $ selected_div = mc.business.s_uniform
+#
+#         "Marketing Uniforms.":
+#             $ selected_div = mc.business.m_uniform
+#
+#         "Human Resources Uniforms.":
+#             $ selected_div = mc.business.h_uniform
+#
+#     if uniform_mode == "delete":
+#         call screen outfit_delete_manager(selected_div) #Calls the wardrobe screen and lets teh player delete whatever they want.
+#
+#     else:
+#         if uniform_mode == "full":
+#             call outfit_master_manager(slut_limit = slut_limit) from _call_outfit_master_manager_3
+#             $ new_outfit = _return
+#             if new_outfit is None:
+#                 return
+#
+#
+#             $ mc.business.listener_system.fire_event("add_uniform", the_outfit = new_outfit, the_type = "full")
+#             $ selected_div.add_outfit(new_outfit.get_copy())
+#
+#         elif uniform_mode == "under":
+#             call outfit_master_manager(slut_limit = underwear_limit, show_outfits = False, show_underwear = True, show_overwear = False) from _call_outfit_master_manager_4
+#             $ new_outfit = _return
+#             if new_outfit is None:
+#                 return
+#
+#             $ mc.business.listener_system.fire_event("add_uniform", the_outfit = new_outfit, the_type = "under")
+#             $ selected_div.add_underwear_set(new_outfit.get_copy())
+#
+#         else: #uniform_mode == "over":
+#             call outfit_master_manager(slut_limit = slut_limit, show_outfits = False, show_underwear = False, show_overwear = True) from _call_outfit_master_manager_5
+#             $ new_outfit = _return
+#             if new_outfit is None:
+#                 return
+#
+#             $ mc.business.listener_system.fire_event("add_uniform", the_outfit = new_outfit, the_type = "over")
+#             $ selected_div.add_overwear_set(new_outfit.get_copy())
+#
+#
+#     return
 
 label set_serum_description: #TODO: Add a special screen for all of this instead of doing it through menus
     "Which divisions would you like to set a daily serum for?"

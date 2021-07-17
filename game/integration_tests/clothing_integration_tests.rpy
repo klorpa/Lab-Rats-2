@@ -2,7 +2,6 @@ init 1 python:
     integration_test_labels.append("outfit_design_integration_test")
 
 label outfit_design_integration_test():
-    #TODO: have the player design and save an outfit, overwear set, underwear set.
     "Running outfit design test. Design an outfit."
     call outfit_master_manager(show_underwear = False, show_overwear = False)
     "Now design an overwear set."

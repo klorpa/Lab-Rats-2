@@ -609,7 +609,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
 
 
         ##Actions unlocked by policies##
-        set_uniform_action = Action("Manage Employee Uniforms.",set_uniform_requirement,"set_uniform_description")
+        set_uniform_action = Action("Manage Employee Uniforms.",set_uniform_requirement,"uniform_manager_loop")
         set_serum_action = Action("Set Daily Serum Doses.",set_serum_requirement,"set_serum_description")
 
 

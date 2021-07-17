@@ -170,7 +170,8 @@ label business_set_uniforms_integration_test():
     "Testing uniform creation. Create overwear uniform for full company."
     $ strict_uniform_policy.buy_policy(ignore_cost = True)
     $ strict_uniform_policy.apply_policy()
-    call set_uniform_description
+    $ renpy.notify("Create overwear for full company")
+    call uniform_manager_loop()
     $ test_person = create_random_person()
     $ mc.business.add_employee_research(test_person)
     $ test_person.wear_uniform()
@@ -183,7 +184,8 @@ label business_set_uniforms_integration_test():
             return False
 
     "Testing uniform removal."
-    call set_uniform_description
+    $ renpy.notify("Remove uniform")
+    call uniform_manager_loop()
     $ test_person.planned_uniform = None #Clear planned uniform so she replans
     $ test_person.wear_uniform()
     $ test_person.draw_person()
@@ -203,7 +205,8 @@ label business_set_uniforms_integration_test():
     $ casual_uniform_policy.apply_policy()
     $ reduced_coverage_uniform_policy.buy_policy(ignore_cost = True)
     $ reduced_coverage_uniform_policy.apply_policy()
-    call set_uniform_description
+    $ renpy.notify("Create full outfit for full company")
+    call uniform_manager_loop()
     $ test_person.wear_uniform()
     $ test_person.draw_person()
     menu:

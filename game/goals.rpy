@@ -5,7 +5,7 @@
 # "end_of_day"
 # "time_advance"
 # "general_work"
-# "add_uniform", the_outfit, the_type
+# "add_uniform", the_outfit
 # "player_research",amount
 # "player_flirt", the_person
 # "new_hire", the_person
@@ -192,7 +192,7 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
         the_goal.arg_dict["required"] += (the_difficulty * 50)
         return
 
-    def uniform_designer_function(the_goal, the_outfit, the_type):
+    def uniform_designer_function(the_goal, the_outfit):
         if the_outfit not in the_goal.arg_dict["outfits"]:
             the_goal.arg_dict["count"] += 1
             the_goal.arg_dict["outfits"].append(the_outfit)

@@ -239,7 +239,6 @@ label sister_strip_label(the_person):
     call pay_strip_scene(the_person) from _call_pay_strip_scene_1
     return
 
-
 label sister_cam_girl_intro_label(the_person):
     # Your sister comes to you asking for _more_ money, this time to buy a better computer.
     # "I have an idea to make money, right here at home. I just need to buy some equipment."

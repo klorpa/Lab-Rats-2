@@ -95,7 +95,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         #NORA ROLE#
         # Note: Nora's role actions are assigned through Stephanie's events.
-        nora_role = Role("Nora", [], hidden = True)
+        nora_student_exam_rewrite_request_action = Action("Ask her about the exam rewrite.", nora_student_exam_rewrite_request_requirement, "nora_student_exam_rewrite_request",
+            menu_tooltip = "Ask if she can set up a new exam for your student.")
+
+        nora_role = Role("Nora", [nora_student_exam_rewrite_request_action], hidden = True)
 
         #ALEXIA ACTIONS#
         alexia_ad_reintro = Action("Have her order photography equipment. -$500", alexia_ad_suggest_reintro_requirement, "alexia_ad_suggest_reintro_label")
@@ -124,8 +127,15 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         sister_boobjob_ask_action = Action("Talk to her about getting implants.", sister_get_boobjob_talk_requirment, "sister_get_boobjob",
             menu_tooltip = "Talk to your sister about the implants she wants to get.", priority = 10)
 
+        sister_mom_girlfriend_blessing_action = Action("Talk to her about Mom.", mom_girlfriend_ask_blessing_requirement, "mom_girlfriend_sister_blessing",
+            menu_tooltip = "Try and convince her to give you and Mom her blessing.", priority = 100)
 
-        sister_role = Role("Sister", [sister_reintro_action, sister_serum_test_action, sister_strip_reintro_action, sister_strip_action, sister_boobjob_give_serum_action, sister_boobjob_ask_action])
+        sister_girlfriend_return_action = Action("Give her the news.", sister_girlfriend_return_requirement, "sister_girlfriend_return",
+            menu_tooltip = "Tell her how your conversation with Mom went.", priority = 100)
+
+        sister_role = Role("Sister", [sister_reintro_action, sister_serum_test_action, sister_strip_reintro_action, sister_strip_action, sister_boobjob_give_serum_action, sister_boobjob_ask_action, sister_mom_girlfriend_blessing_action, sister_girlfriend_return_action])
+
+
 
 
         #MOTHER ACTIONS#
@@ -138,9 +148,13 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         mom_work_bigger_tits_reintro = Action("Talk to her about getting bigger tits.", mom_work_secretary_replacement_bigger_tits_reintro_requirement, "mom_work_secretary_replacement_bigger_tits_reintro",
             menu_tooltip = "Talk to her about improving her natural assets, either with implants or by using some of your serum.", priority = 10)
 
-        mom_debug_test = Action("DEBUG", always_true, "text_message_style_test")
+        mom_sister_girlfriend_blessing_action = Action("Talk to her about Lily.", sister_girlfriend_ask_blessing_requirement, "sister_girlfriend_mom_blessing",
+            menu_tooltip = "Try and convince her to give you and Lily her blessing.", priority = 100)
 
-        mother_role = Role("Mother", [mother_offer_make_dinner, mom_work_promotion_two_prep_action, mom_work_bigger_tits_reintro])
+        mom_girlfriend_return_action = Action("Give her the news.", mom_girlfriend_return_requirement, "mom_girlfriend_return",
+            menu_tooltip = "Tell her how your conversation with Lily went.", priority = 100)
+
+        mother_role = Role("Mother", [mother_offer_make_dinner, mom_work_promotion_two_prep_action, mom_work_bigger_tits_reintro, mom_sister_girlfriend_blessing_action, mom_girlfriend_return_action])
 
 
         #AUNT ACTIONS#
@@ -170,7 +184,13 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         student_study_propose_action = Action("Tutor her. {image=gui/heart/Time_Advance.png}", student_study_propose_requirement, "student_study_propose")
 
-        student_role = Role("Student", [student_reintro_action, student_study_propose_action])
+        student_test_intro_action = Action("Tell her she can rewrite her exam.", student_test_intro_requirement, "student_test_intro")
+
+        student_test_action = Action("Time to rewrite her exam. {image=gui/heart/Time_Advance.png}", student_test_requirement, "student_test")
+
+        student_offer_job_reintro_action = Action("Offer her a job.", student_offer_job_requirement, "student_offer_job_reintro")
+
+        student_role = Role("Student", [student_reintro_action, student_study_propose_action, student_test_intro_action, student_test_action, student_offer_job_reintro_action])
 
         ################
         #INTERNET ROLES#
@@ -211,6 +231,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action], role_dates = girlfriend_shopping_date) #Your girlfriend, and she's not in a relationship with anyone else
         #Getting married is some kind of victory for the game?
 
+
+        sister_girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action], role_dates = girlfriend_shopping_date, looks_like = girlfriend_role) #Sister specific girlfriend role.
+
+        mom_girlfriend_role = Role("Girlfriend", [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action], role_dates = girlfriend_shopping_date, looks_like = girlfriend_role) #Sister specific girlfriend role.
 
         #affair ACTIONS
         # Sneaky versions of all of the normal girlfriend stuff

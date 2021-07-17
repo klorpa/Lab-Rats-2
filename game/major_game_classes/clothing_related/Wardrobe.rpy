@@ -32,6 +32,11 @@ init -2 python:
 
             return Wardrobe(self.name, outfit_copy_list, under_copy_list, over_copy_list)
 
+        def clear_wardrobe(self):
+            self.outfits = []
+            self.underwear_sets = []
+            self.overwear_sets = []
+
         def merge_wardrobes(self, other_wardrobe, keep_primary_name = False): #Returns a copy of this wardrobe merged with the other one, with this taking priority for base outfits.
             base_wardrobe = self.__copy__() #This already redefines it's copy method, so we should be fine.
             for outfit in other_wardrobe.outfits:

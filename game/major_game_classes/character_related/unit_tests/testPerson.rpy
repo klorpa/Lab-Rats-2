@@ -546,6 +546,29 @@ init 0 python:
             self.assertIs(test_person.get_role_reference(test_role), test_role)
             self.assertIs(test_person.get_role_reference_by_name("Test role"), test_role)
 
+        def test_lookalike_role_manipulation(self):
+            test_person = create_random_person()
+            test_role = Role("Test role")
+            lookalike_role = Role("Lookalike role", looks_like = test_role)
+
+            test_person.add_role(test_role)
+
+            self.assertTrue(test_person.has_role(test_role))
+            self.assertFalse(test_person.has_role(lookalike_role))
+
+            test_person.remove_role(test_role)
+            test_person.add_role(lookalike_role)
+
+            self.assertTrue(test_person.has_role(test_role))
+            self.assertTrue(test_person.has_role(lookalike_role))
+            self.assertFalse(test_person.has_exact_role(test_role))
+            self.assertTrue(test_person.has_exact_role(lookalike_role))
+
+            test_person.remove_role(lookalike_role)
+
+            self.assertFalse(test_person.has_role(test_role))
+            self.assertFalse(test_person.has_role(lookalike_role))
+            
         def test_infraction_manipulation(self):
             test_person = create_random_person()
 

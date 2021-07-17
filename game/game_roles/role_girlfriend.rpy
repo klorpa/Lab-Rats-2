@@ -2,8 +2,12 @@
 
 init -1 python:
     def ask_girlfriend_requirement(the_person):
-        if girlfriend_role in the_person.special_role or affair_role in the_person.special_role:
-            return False #If we're already in some sort of relationship don't ask about it.
+        if the_person.has_role(girlfriend_role) or the_person.has_role(affair_role):
+            return False
+        elif the_person.has_role(sister_role) and the_person.event_triggers_dict.get("sister_girlfriend_waiting_for_blessing", False):
+            return False
+        elif the_person.has_role(mother_role) and the_person.event_triggers_dict.get("mom_girlfriend_waiting_for_blessing", False):
+            return False
         elif the_person.love < 30:
             return False
         elif the_person.love < 60:
@@ -22,7 +26,7 @@ init -1 python:
         if the_person.sluttiness < (40 - the_person.get_opinion_score("showing her tits") * 5):
             return False
         elif the_person.obedience < obedience_required:
-            return "Requires: " + str(obedience_required)
+            return "Requires: " + str(obedience_required) + " Obedience"
         elif the_person.event_triggers_dict.get("getting boobjob", False):
             return "Boobjob already scheduled."
         elif the_person.tits == "FF":
@@ -43,7 +47,7 @@ init -1 python:
         elif the_person.obedience < 110:
             return False
         elif the_person.obedience < obedience_required:
-            return "Requires: " + str(obedience_required)
+            return "Requires: " + str(obedience_required) + " Obedience"
         else:
             return True
 
@@ -80,99 +84,93 @@ label ask_be_girlfriend_label(the_person):
     #Requires high love, if successful she becomes your girlfriend (which unlocks many other options). Requires high lvoe and her not being in a relationship.
     #Hide this event at low love, show it when it at it's lowest love possibility and let it fail out for specific reasons (thus informing the player WHY it failed out).
 
-    mc.name "[the_person.title], can I talk to you about something important?"
-    the_person "Of course. What's on your mind."
-    mc.name "I've been thinking about this for a while. I really like you and I hope you feel the same way about me."
-    mc.name "I'd like to make our relationship official. What do you say?"
+    if the_person.has_role(sister_role): #She has specific dialogue
+        call sister_girlfriend_intro(the_person)
 
-    if the_person.relationship != "Single":
-        $ so_title = SO_relationship_to_title(the_person.relationship)
+    elif the_person.has_role(mother_role):
+        call mom_girlfriend_intro(the_person)
 
-        if the_person.get_opinion_score("cheating on men") > 0:
-            # She likes cheating on men and offers to have an affair with you instead. Adds the affair role.
-            "She takes a moment before responding."
-            the_person "I mean, I already have a [so_title] and I can't just leave him like this."
-            the_person "But... Maybe he doesn't need to know about any of this. Do you think you could be discreet."
-            $ the_person.discover_opinion("cheating on men")
-            menu:
-                "Have an affair with [the_person.title].":
-                    mc.name "I can be if that's what you need."
-                    $ the_person.draw_person(emotion = "happy")
-                    $ the_person.add_role(affair_role)
-                    $ the_person.change_slut_temp(2)
-                    $ mc.change_locked_clarity(10)
-                    "She leans forward and kisses you, putting an arm around your waist and pulling you close. When she breaks the kiss she looks deep into your eyes."
-                    the_person "Well then, you know where to find me."
-
-                "Refuse.":
-                    mc.name "I can't do that. I need a relationship I can count on."
-                    $ the_person.change_love(-3)
-                    the_person "Right... Well, if you change your mind I'll be here."
-
-        else:
-            # She's just not into it, no matter how slutty she is. You'll have to seduce her to convince her first to have an affair.
-            $ the_person.draw_person(emotion = "sad")
-            "She takes a long moment before responding."
-            the_person "Oh [the_person.mc_title], I'm so flattered, but you know that I have a [so_title]."
-            if the_person.kids > 0:
-                if the_person.kids > 1:
-                    the_person "I would never dream of leaving him, and it would devastate our children."
-                else:
-                    the_person "I would never dream of leaving him, and it would devastate our child."
-            else:
-                the_person "I would never dream of leaving him."
+    else: #General dialogue used for everyone.
+        mc.name "[the_person.title], can I talk to you about something important?"
+        the_person "Of course. What's on your mind."
+        mc.name "I've been thinking about this for a while. I really like you and I hope you feel the same way about me."
+        mc.name "I'd like to make our relationship official. What do you say?"
 
 
-            if not the_person.has_taboo("vaginal_sex"):
-                mc.name "You didn't care about him when we were fucking."
-                if the_person.effective_sluttiness() > 50:
-                    the_person "That didn't mean anything, we were just having fun. This is so much more serious than that."
-                else:
-                    the_person "I don't know what I was thinking, that was a mistake."
-
-            the_person "I care about you a lot, but it's just not something I could do."
-            mc.name "I'm sorry to hear that. I hope we can still be friends."
-            $ the_person.draw_person()
-            the_person "As long as you understand where we stand, I think we can be."
-
-
-    elif any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in the_person.special_role):
-        # She's related to you, so she won't do it. Note that we aren't using has_family_taboo(), which would allow for a postiive incest opinion to allow this.
-        # Future events will let you make this happen somehow (and in that case an incest opinion will make those events easier/trigger earlier, so training a girl makes sense).
-        if sister_role in the_person.special_role:
-            the_person "I love you like a brother... but just as a brother, you know?"
-            the_person "Could you imagine what people would say about us? It would be crazy!"
-            the_person "So... I guess no? Sorry."
-
-        elif mother_role in the_person.special_role:
-            the_person "Oh sweety, I love you more than anyone in the world, but we could never do that."
-            the_person "It's just not something people do."
-            the_person "Let's just talk about something else, okay?"
-
-        elif aunt_role in the_person.special_role:
+        if the_person.has_role(aunt_role):
             the_person "I... I don't know what to say [the_person.mc_title]. I love you like you were my own, but we could never have a real relationship together."
             the_person "Could you imagine what your mother would say about that, dating her sister? She would go crazy!"
             the_person "Come on, let's talk about something else."
 
-        elif cousin_role in the_person.special_role:
-            the_person "You and me being, like, boyfriend and girlfriend? Ha, you must be crazy. Have you been inhaling fumes at work?"
+        elif the_person.has_role(cousin_role):
+            the_person "You and me being, like, boyfriend and girlfriend? Ha, you must be crazy! Have you been huffing fumes at work?"
             the_person "I mean sure, I've come around on you and think you're not a total loser now, but we're cousins. Our parents would kill us."
             the_person "So yeah, that's going to be a no from me."
 
-    else:
-        # She agrees, you're now in a relationship! Congratulations!
-        $ the_person.draw_person(emotion = "happy")
-        $ the_person.change_happiness(15)
-        $ the_person.change_love(5)
-        if the_person.age > 40:
-            the_person "Oh I'm so happy to hear you say that! I was worried about our age difference, but I don't want that to stop us!"
+        elif the_person.relationship != "Single":
+            $ so_title = SO_relationship_to_title(the_person.relationship)
+
+            if the_person.get_opinion_score("cheating on men") > 0:
+                # She likes cheating on men and offers to have an affair with you instead. Adds the affair role.
+                "She takes a moment before responding."
+                the_person "I mean, I already have a [so_title] and I can't just leave him like this."
+                the_person "But... Maybe he doesn't need to know about any of this. Do you think you could be discreet."
+                $ the_person.discover_opinion("cheating on men")
+                menu:
+                    "Have an affair with [the_person.title].":
+                        mc.name "I can be if that's what you need."
+                        $ the_person.draw_person(emotion = "happy")
+                        $ the_person.add_role(affair_role)
+                        $ the_person.change_slut_temp(2)
+                        $ mc.change_locked_clarity(10)
+                        "She leans forward and kisses you, putting an arm around your waist and pulling you close. When she breaks the kiss she looks deep into your eyes."
+                        the_person "Well then, you know where to find me."
+
+                    "Refuse.":
+                        mc.name "I can't do that. I need a relationship I can count on."
+                        $ the_person.change_love(-3)
+                        the_person "Right... Well, if you change your mind I'll be here."
+
+            else:
+                # She's just not into it, no matter how slutty she is. You'll have to seduce her to convince her first to have an affair.
+                $ the_person.draw_person(emotion = "sad")
+                "She takes a long moment before responding."
+                the_person "Oh [the_person.mc_title], I'm so flattered, but you know that I have a [so_title]."
+                if the_person.kids > 0:
+                    if the_person.kids > 1:
+                        the_person "I would never dream of leaving him, and it would devastate our children."
+                    else:
+                        the_person "I would never dream of leaving him, and it would devastate our child."
+                else:
+                    the_person "I would never dream of leaving him."
+
+
+                if not the_person.has_taboo("vaginal_sex"):
+                    mc.name "You didn't care about him when we were fucking."
+                    if the_person.effective_sluttiness() > 50:
+                        the_person "That didn't mean anything, we were just having fun. This is so much more serious than that."
+                    else:
+                        the_person "I don't know what I was thinking, that was a mistake."
+
+                the_person "I care about you a lot, but it's just not something I could do."
+                mc.name "I'm sorry to hear that. I hope we can still be friends."
+                $ the_person.draw_person()
+                the_person "As long as you understand where we stand, I think we can be."
 
         else:
-            the_person "Oh my god, I'm so happy! Yes, I want you to be your girlfriend!"
-        "She puts her arms around you and pulls you close."
-        $ mc.change_locked_clarity(10)
-        "She kisses you, and you kiss her back just as happily."
-        $ the_person.add_role(girlfriend_role)
+            # She agrees, you're now in a relationship! Congratulations!
+            $ the_person.draw_person(emotion = "happy")
+            $ the_person.change_happiness(15)
+            $ the_person.change_love(5)
+            if the_person.age > 40:
+                the_person "Oh I'm so happy to hear you say that! I was worried about our age difference, but I don't want that to stop us!"
+
+            else:
+                the_person "Oh my god, I'm so happy! Yes, I want you to be your girlfriend!"
+            "She puts her arms around you and pulls you close."
+            $ mc.change_locked_clarity(10)
+            "She kisses you, and you kiss her back just as happily."
+            $ the_person.add_role(girlfriend_role)
 
     return
 

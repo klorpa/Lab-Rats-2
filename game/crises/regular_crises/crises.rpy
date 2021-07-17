@@ -981,7 +981,7 @@ label trait_for_side_effect_label():
     $ list_of_valid_traits = []
     python:
         for trait in list_of_traits:
-            if trait.researched and trait not in the_design.traits:
+            if trait.researched and trait not in the_design.traits and not trait.slots_added > 0:
                 list_of_valid_traits.append(trait)
 
     $ the_trait = get_random_from_list(list_of_valid_traits) #Note that this can generate normally impossible designs!
@@ -1001,7 +1001,7 @@ label trait_for_side_effect_label():
         "You head to your R&D lab and meet [the_person.title]. She leads you over to her lab bench."
 
     the_person "I've been working on the design you set out for [the_design.name] and one of the test batches developed some very interesting side effects."
-    "You look over the notes [the_person.possessive_title] has taken. The varient she has created includes an extra serum trait as well as a negative side effect."
+    "You look over the notes [the_person.possessive_title] has taken. The variant she has created includes an extra serum trait as well as a negative side effect."
     "It doesn't seem like there will be any way to detangle the effects."
     #TODO: Make sure these actually display the traits properly.
     show screen trait_list_tooltip([the_trait, the_side_effect], given_align = (0.1,0.6))
@@ -2950,8 +2950,8 @@ label horny_at_work_crisis_label():
 
                 $ display_list = helpful_people[:]
                 call screen person_choice(display_list, person_prefix = "Pick") #Shows a list of people w/ predictive imaging when you hover
-                $ the_choice = _return
-                if the_choice == exit_option:
+                $ the_person_choice = _return
+                if the_person_choice == exit_option:
                     #Power move, just jerk yourself off as they watch.
                     mc.name "I've got things under control, but I'd like you to stay and watch."
                     "You stroke your cock faster and faster, pulling yourself towards your orgasm."
@@ -2985,20 +2985,20 @@ label horny_at_work_crisis_label():
                         "You pull your pants up and get back to work, basking in your post orgasm clarity."
 
                 else:
-                    "You stand up, pants around your ankles, and motion for [the_choice.title] to come over to you."
+                    "You stand up, pants around your ankles, and motion for [the_person_choice.title] to come over to you."
                     $ clear_scene()
-                    call fuck_person(the_choice, private = False) from _call_fuck_person_29
+                    call fuck_person(the_person_choice, private = False) from _call_fuck_person_29
                     $ the_report = _return
-                    $ the_choice.review_outfit()
-                    $ helpful_people.remove(the_choice)
+                    $ the_person_choice.review_outfit()
+                    $ helpful_people.remove(the_person_choice)
                     $ wants_to_continue = True
                     while mc.energy >= 20 and len(helpful_people) > 0 and wants_to_continue:
                         $ the_group.redraw_group()
-                        $ the_group.draw_person(the_choice, position = "sitting", emotion = "happy")
+                        $ the_group.draw_person(the_person_choice, position = "sitting", emotion = "happy")
                         if the_report.get("girl orgasms", 0) > 0:
-                            "[the_choice.title] goes back to her desk and sits down when you're finished with her. She spreads her legs and starts to touch herself."
+                            "[the_person_choice.title] goes back to her desk and sits down when you're finished with her. She spreads her legs and starts to touch herself."
                         else:
-                            "[the_choice.title] stumbles back to her desk and collapses into her chair, legs still quivering."
+                            "[the_person_choice.title] stumbles back to her desk and collapses into her chair, legs still quivering."
 
                         if len(helpful_people > 1):
                             "The other girls are still standing next to your desk, and you haven't exhausted yourself quite yet..."
@@ -3019,14 +3019,14 @@ label horny_at_work_crisis_label():
                             $ wants_to_continue = False
 
                         else:
-                            $ the_choice = _return
-                            mc.name "[the_choice.title], you're next."
+                            $ the_person_choice = _return
+                            mc.name "[the_person_choice.title], you're next."
                             "She nods and smiles, stepping forward."
                             $ clear_scene()
-                            call fuck_person(the_choice, private = False) from _call_fuck_person_89
+                            call fuck_person(the_person_choice, private = False) from _call_fuck_person_89
                             $ the_report = _return
-                            $ the_choice.review_outfit()
-                            $ helpful_people.remove(the_choice)
+                            $ the_person_choice.review_outfit()
+                            $ helpful_people.remove(the_person_choice)
 
                     if the_report.get("guy orgasms",0) == 0:
                         "You've worn yourself out, but you still haven't gotten off."

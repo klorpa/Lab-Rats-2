@@ -1450,7 +1450,7 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
         $ the_group.redraw_person(the_mom)
         the_mom "[the_mom.mc_title], [the_sister.title], what do you want to do?"
     else:
-        the_mom "Okay then, we need to pick teams. [the_person.mc_title], you can pick first."
+        the_mom "Okay then, we need to pick teams. [the_mom.mc_title], you can pick first."
         call screen person_choice([the_mom, the_aunt, the_sister], person_prefix = "Pick", person_suffix = "as your partner.")
         $ partner = _return
         "You pick [partner.title] and move seats so you are sitting across from each other."

@@ -763,7 +763,7 @@ label mom_work_secretary_replacement_intro(the_person): #TODO: Set up as an on_t
 
 
                         "Show me your tits.":
-                            mc.name "Well then get, what are you waiting for?"
+                            mc.name "What are you waiting for? Get your tits out! That's what your boss is going to want to see!"
                             the_person "Right, okay then."
                             $ strip_list = the_person.outfit.get_tit_strip_list()
                             $ half_off_instead = False

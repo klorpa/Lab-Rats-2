@@ -7,7 +7,7 @@ init -2 python:
                 self.name = "Unnamed Room"
             else:
                 self.name = name
-                
+
             if formal_name is None:
                 self.formal_name = name
             else:

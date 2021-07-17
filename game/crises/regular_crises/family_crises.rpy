@@ -1215,7 +1215,7 @@ label lily_morning_encounter_label():
 
     else: #sluttiness >= 40-55
         #She likes being watched and teases you a little while you walk together.
-        "[the_person.title] closes her door behing her, then notices you."
+        "[the_person.title] closes her door behind her, then notices you."
         the_person "Morning [the_person.mc_title], I was wondering if you were going to be up now."
         mc.name "Yep, early start today. What are you up to?"
         the_person "I was just going to get some laundry out of the machine."

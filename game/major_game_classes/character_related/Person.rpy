@@ -776,6 +776,17 @@ init -2 python:
         def call_dialogue(self, type, **extra_args): #Passes the paramater along to the persons personality and gets the correct dialogue for the event if it exists in the dict.
             self.personality.get_dialogue(self, type, **extra_args)
 
+        def get_known_opinion_score(self, topic):
+            the_topic = self.get_opinion_topic(topic)
+            if the_topic is None:
+                return 0
+            else:
+                if the_topic[1]:
+                    return the_topic[0]
+                else:
+                    return 0
+
+
         def get_opinion_score(self, topic): #Like get_opinion_topic, but only returns the score and not a tuple. Use this when determining a persons reaction to a relavent event.
             if topic in self.opinions:
                 return self.opinions[topic][0]
@@ -1354,10 +1365,6 @@ init -2 python:
                 if dialogue:
                     self.call_dialogue("clothing_review")
 
-            #if dialogue:
-                #TODO: Have this call a dialogue branch
-                #self.call_uniform_review() #TODO: actually impliment this call, but only when her outfit significantly differs from the real uniform.
-
             elif not self.judge_outfit(self.outfit):
                 self.apply_outfit()
                 if draw_person:
@@ -1544,18 +1551,18 @@ init -2 python:
             creampie_threshold = 75
             effective_slut = the_person.effective_sluttiness("creampie") + (10*the_person.get_opinion_score("creampies"))
             if the_person.on_birth_control:
-                effective_slut += -20 #Much more willing to let you creampie her if she's on BC
+                creampie_threshold += -20 #Much more willing to let you creampie her if she's on BC
 
             if affair_role in the_person.special_role:
-                effective_slut += 5 - (10 * the_person.get_opinion_score("cheating on men"))
+                creampie_threshold += 5 - (10 * the_person.get_opinion_score("cheating on men"))
             elif the_person.relationship != "Single": # Less likely to want to be creampied if she's in a relationship, but cares less if you're officially cheating.
-                effective_slut += 15 - (10 * the_person.get_opinion_score("cheating on men"))
+                creampie_threshold += 15 - (10 * the_person.get_opinion_score("cheating on men"))
 
             if girlfriend_role in the_person.special_role:
-                effective_slut += -(10 + (5*the_person.get_opinion_score("being submissive"))) #Desire to be a "good wife"
+                creampie_threshold += -(10 + (5*the_person.get_opinion_score("being submissive"))) #Desire to be a "good wife"
 
             if the_person.is_family():
-                effective_slut += 10 - (10 * the_person.get_opinion_score("incest"))
+                creampie_threshold += 10 - (10 * the_person.get_opinion_score("incest"))
 
             if effective_slut >= creampie_threshold or the_person.event_triggers_dict.get("preg_knows", False):
                 return True
@@ -1621,7 +1628,7 @@ init -2 python:
                 self.outfit.add_accessory(the_cumshot)
 
             self.change_slut_temp(5*self.get_opinion_score("drinking cum"))
-            self.change_happiness(5*self.get_opinion_score("drinking_cum"))
+            self.change_happiness(5*self.get_opinion_score("drinking cum"))
             self.discover_opinion("drinking cum")
 
             if add_to_record:
@@ -1678,9 +1685,9 @@ init -2 python:
                 the_cumshot = creampie_cum.get_copy()
                 the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
-            self.change_slut_temp(5*self.get_opinion_score("creampies"))
-            self.change_happiness(5*self.get_opinion_score("creampies"))
-            self.discover_opinion("creampies")
+            self.change_slut_temp(5*self.get_opinion_score("anal creampies"))
+            self.change_happiness(5*self.get_opinion_score("anal creampies"))
+            self.discover_opinion("anal creampies")
 
             if add_to_record:
                 self.sex_record["Anal Creampies"] += 1
@@ -1857,6 +1864,16 @@ init -2 python:
                     self.remove_role(the_role, remove_all, remove_linked)
 
         def has_role(self, the_role):
+            if the_role in self.special_role:
+                return True
+            else:
+                for a_role in self.special_role:
+                    if the_role in a_role.looks_like:
+                        return True
+
+                return False
+
+        def has_exact_role(self, the_role): #As has_role, but checks against all roles and all of their looks_like roles.
             if the_role in self.special_role:
                 return True
             else:
