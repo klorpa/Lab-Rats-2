@@ -420,6 +420,6 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
     sex_goals.append(makeout_count_goal)
     sex_goals.append(mouth_cum_goal)
     sex_goals.append(orgasm_count_goal)
-    sex_goals.append(core_slut_increase_goal)
+    #sex_goals.append(core_slut_increase_goal) #Removed after the sluttiness rework of v0.43, awaiting expansion of goals/perks system to reimplement.
     sex_goals.append(vagina_cum_goal)
     sex_goals.append(chain_orgasm_goal)

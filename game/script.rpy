@@ -9,6 +9,12 @@ init -3 python: #Init -3 is used for all project wide imports of external resour
     import io
     from collections import defaultdict
     import unittest
+    import unicodedata
+    import sys
+    from functools import partial
+    import re
+    import string
+
 
 #Init -2 establishes all game clases
 #Init -1 is then used by all game content that will use those game classes (ie. instantiates different Crises that could be generated)
@@ -221,7 +227,7 @@ label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS
                 "You approach [picked_option.title] and chat for a little bit."
                 $ picked_option.call_dialogue("greetings")
 
-            if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-concious enough to coment on it.
+            if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-conscious enough to coment on it.
                 if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy") and picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
                     "[picked_option.title] doesn't say anything about it, but seems unconfortable being naked in front of you."
                     "As you talk she seems to become more comfortable with her own nudity, even if she isn't thrilled by it."
@@ -319,6 +325,7 @@ label talk_person(the_person):
         menu_tooltip = "Ask her to start an official, steady relationship and be your girlfriend.", priority = 10)
     $ bc_talk_action = Action("Talk about her birth control.", requirement = bc_talk_requirement, effect = "bc_talk_label", args = the_person, requirement_args = the_person,
         menu_tooltip = "Talk to her about her use of birth control. Ask her to start or stop taking it, or just check what she's currently doing.")
+
     $ chat_list = [small_talk_action, compliment_action, flirt_action, date_action, make_girlfriend_action, bc_talk_action]
 
     $ grope_action = Action("Grope her.\n-5 {image=gui/extra_images/energy_token.png}", requirement = grope_requirement, effect = "grope_person", args = the_person, requirement_args = the_person,
@@ -384,7 +391,7 @@ label advance_time:
 
     python:
         for (people,place) in people_to_process: #Run the results of people spending their turn in their current location.
-            people.run_turn()
+            people.run_turn() #T
 
         mc.business.run_turn()
         mc.run_turn()
@@ -603,7 +610,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
             menu_tooltip = "Select and import a wardrobe file, adding all outfits to your current wardrobe.")
 
         ## Temp and Test Actions
-        test_action = Action("This is a test.", faq_action_requirement, "debug_label")
+        test_action = Action("Temp test action.", integration_test_dev_requirement, "debug_label")
         integration_test_action = Action("Run Integration Tests.", integration_test_dev_requirement, "run_integration_tests")
 
 
@@ -617,7 +624,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         hall = Room("main hall","Home", background_image = standard_house_backgrounds[:],
             map_pos = [3,3], lighting_conditions = standard_indoor_lighting)
         bedroom = Room("your bedroom", "Your Bedroom", background_image = standard_bedroom_backgrounds[:],
-            actions = [sleep_action,bedroom_masturbate_action,faq_action,integration_test_action],
+            actions = [sleep_action,bedroom_masturbate_action,faq_action,integration_test_action, test_action],
             map_pos = [3,2], lighting_conditions = standard_indoor_lighting)
         lily_bedroom = Room("Lily's bedroom", "Lily's Bedroom", background_image = standard_bedroom_backgrounds[:],
             map_pos = [2,3], lighting_conditions = standard_indoor_lighting)

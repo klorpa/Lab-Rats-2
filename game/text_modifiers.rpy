@@ -1,4 +1,5 @@
 # Contains functions that receive a Person, String and return a modified String based.
+#NOTE: None of this is currently used
 init -3 python:
     def test_modifier(Person, what): #Note: we need to make sure we properly preserve text mark ups.
         return what + " | it worked! |"
@@ -55,11 +56,32 @@ init -3 python:
         #TODO: If we don't run into anything, scan right until we hit a non-special character and return that.
         #TODO: If neither of those work replace it with "ugh"
 
-#
-#
-# "What can I do?"
-# "Whaa aaan I ooo?"
-# "Whaaa aaan I ooo?"
-# "What the fuck"
-# "Whaaa eeee "
-# "What ugh fuck
+    # "What can I do?"
+    # "Whaa aaan I ooo?"
+    # "Whaaa aaan I ooo?"
+    # "What the fuck"
+    # "Whaaa eeee "
+    # "What ugh fuck
+
+
+    # NOTE: This partial work is no longer needed thanks to the awesome tag library I was able to find.
+    # def aroused_text_wiggle(tag, argument, contents):
+    #     return_value = []
+    #     for kind, text in contents:
+    #         if kind == renpy.TEXT_TEXT:
+    #             for i in range(0, len(text)):
+    #                 letter = text[i]
+    #                 variation = renpy.random.Random(i + ord(letter)) * 6.28 #Offsets the time of each letter by up to 1 rotation (2*pi), but keeps it consistent based on position and letter, so it only varies with time going forward.
+    #                 amount = argument * sin(time.time() + variation)
+    #                 rv.append(aroused_text_wiggle_transform(letter, amount, kind)))
+    #         else:
+    #             rv.append((kind, text))
+    #
+    #     return return_value
+    #     # Argument is the displacement of the text allowed in pixels.
+    #
+    #
+    # def text_move_transform(s, amount, kind): #Moves the text the amount pixels up (negative is down).
+    #     text_return = []
+    #     text_return.append(renpy.TEXT_TAG, "
+    #     return text_return

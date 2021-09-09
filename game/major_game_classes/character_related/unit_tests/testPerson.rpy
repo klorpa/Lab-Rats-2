@@ -33,7 +33,7 @@ init 0 python:
 
             test_person.change_suggest(-50)
 
-            self.assertEqual(test_person.suggestibility, 0)
+            self.assertEqual(test_person.suggestibility, start_suggest-30)
 
         def test_change_suggest_effect(self):
             test_person = create_random_person()
@@ -108,32 +108,48 @@ init 0 python:
         def test_change_slut_temp(self):
             test_person = create_random_person()
             start_sluttiness = test_person.sluttiness
-            test_person.change_slut_temp(20, add_to_log = False)
+            test_person.change_slut(20, add_to_log = False)
 
             self.assertEqual(test_person.sluttiness, start_sluttiness + 20)
 
-            test_person.change_slut_temp(-20, add_to_log = False)
+            test_person.change_slut(-20, add_to_log = False)
 
             self.assertEqual(test_person.sluttiness, start_sluttiness)
 
-            test_person.change_slut_temp(-100, add_to_log = False)
+            test_person.change_slut(-100, add_to_log = False)
 
             self.assertEqual(test_person.sluttiness, start_sluttiness - 100)
 
-        def test_change_slut_core(self):
+        def test_change_slut_capped(self):
             test_person = create_random_person()
-            start_sluttiness = test_person.core_sluttiness
-            test_person.change_slut_core(20, add_to_log = False, fire_event = False)
+            start_sluttiness = test_person.sluttiness
+            test_person.change_slut(20, add_to_log = False)
 
-            self.assertEqual(test_person.core_sluttiness, start_sluttiness + 20)
+            self.assertEqual(test_person.sluttiness, start_sluttiness + 20)
 
-            test_person.change_slut_core(-30, add_to_log = False, fire_event = False)
+            test_person.change_slut(20, start_sluttiness+20, add_to_log = False)
 
-            self.assertEqual(test_person.core_sluttiness, start_sluttiness - 10)
+            self.assertEqual(test_person.sluttiness, start_sluttiness + 20)
 
-            test_person.change_slut_core(-100, add_to_log = False, fire_event = False)
+            test_person.change_slut(20, start_sluttiness+30, add_to_log = False)
 
-            self.assertEqual(test_person.core_sluttiness, start_sluttiness - 110)
+            self.assertEqual(test_person.sluttiness, start_sluttiness + 30)
+
+        def test_change_slut_over_cap(self):
+            test_person = create_random_person()
+            start_sluttiness = test_person.sluttiness
+            test_person.change_slut(60, add_to_log = False)
+
+            self.assertEqual(test_person.sluttiness, start_sluttiness + 60)
+
+            test_person.change_slut(50, 20, add_to_log = False)
+
+            self.assertEqual(test_person.sluttiness, start_sluttiness + 60)
+
+            test_person.change_slut(-100, 50, add_to_log = False)
+
+            self.assertEqual(test_person.sluttiness, 50)
+
 
         def test_changee_obedience(self):
             test_person = create_random_person()
@@ -159,24 +175,25 @@ init 0 python:
             start_sluttiness = test_person.sluttiness
             test_person.add_situational_slut("testing", 20, "This is a test modifier")
 
-            self.assertEqual(test_person.sluttiness, start_sluttiness + 20)
+            self.assertEqual(test_person.sluttiness, start_sluttiness )
+            self.assertEqual(test_person.effective_sluttiness(), start_sluttiness + 20)
 
             test_person.add_situational_slut("testing", 10, "Another test modifier")
 
-            self.assertEqual(test_person.sluttiness, start_sluttiness + 10)
+            self.assertEqual(test_person.effective_sluttiness(), start_sluttiness + 10)
 
             test_person.add_situational_slut("different test", 15, "Test test")
 
-            self.assertEqual(test_person.sluttiness, start_sluttiness + 25)
+            self.assertEqual(test_person.effective_sluttiness(), start_sluttiness + 25)
 
             test_person.clear_situational_slut("testing")
             test_person.clear_situational_slut("different test")
 
-            self.assertEqual(test_person.sluttiness, start_sluttiness)
+            self.assertEqual(test_person.effective_sluttiness(), start_sluttiness)
 
             test_person.add_situational_slut("neg test", -15)
 
-            self.assertEqual(test_person.sluttiness, start_sluttiness - 15)
+            self.assertEqual(test_person.effective_sluttiness(), start_sluttiness - 15)
 
         def test_situational_obedience(self):
             test_person = create_random_person()
@@ -568,7 +585,33 @@ init 0 python:
 
             self.assertFalse(test_person.has_role(test_role))
             self.assertFalse(test_person.has_role(lookalike_role))
-            
+
+        def test_layered_lookalike_roles(self):
+            role_1 = Role("Role_1")
+            role_2 = Role("Role_2", looks_like = role_1)
+            role_3 = Role("Role_3", looks_like = role_2)
+
+            test_person = create_random_person()
+            test_person.add_role(role_1)
+
+            self.assertTrue(test_person.has_role(role_1))
+            self.assertFalse(test_person.has_role(role_2))
+            self.assertFalse(test_person.has_role(role_3))
+
+            test_person.remove_role(role_1)
+            test_person.add_role(role_2)
+
+            self.assertTrue(test_person.has_role(role_1))
+            self.assertTrue(test_person.has_role(role_2))
+            self.assertFalse(test_person.has_role(role_3))
+
+            test_person.remove_role(role_2)
+            test_person.add_role(role_3)
+
+            self.assertTrue(test_person.has_role(role_1))
+            self.assertTrue(test_person.has_role(role_2))
+            self.assertTrue(test_person.has_role(role_3))
+
         def test_infraction_manipulation(self):
             test_person = create_random_person()
 
@@ -596,4 +639,96 @@ init 0 python:
             self.assertFalse(test_person.has_taboo("kissing"))
             self.assertTrue(test_person.has_taboo("underwear_nudity"))
             self.assertFalse(test_person.break_taboo("kissing"))
-        #TODO: Add Taboo break tests
+
+        def test_get_opinion(self):
+            test_person = create_random_person()
+            test_person.opinions["Test Normal"] = [1,False]
+            test_person.sexy_opinions["Test Sexy"] = [2,False]
+
+            self.assertTrue(test_person.has_unknown_opinions())
+
+            while test_person.has_unknown_opinions(sexy_opinions = False):
+                test_person.discover_opinion(test_person.get_random_opinion(include_known = False, include_sexy = False))
+
+            self.assertTrue(test_person.has_unknown_opinions())
+            self.assertFalse(test_person.has_unknown_opinions(sexy_opinions = False))
+
+            while test_person.has_unknown_opinions():
+                test_person.discover_opinion(test_person.get_random_opinion(include_known = False, include_sexy = True))
+
+            self.assertFalse(test_person.has_unknown_opinions())
+            self.assertFalse(test_person.has_unknown_opinions(sexy_opinions = False))
+            self.assertFalse(test_person.has_unknown_opinions(normal_opinions = False))
+
+        def test_opinion_manipulation(self):
+            test_person = create_random_person()
+            while not test_person.get_opinion_score("being fingered") == 0:
+                test_person = create_random_person() #Guarantee they don't have this opinion.
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
+
+            test_person.create_opinion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 1)
+
+            test_person.strengthen_opinion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 2)
+
+            test_person.strengthen_opinion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 2)
+
+            test_person.weaken_opnion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 1)
+
+            test_person.weaken_opnion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
+
+            test_person.weaken_opnion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
+
+            test_person.create_opinion("being fingered", start_positive = False)
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), -1)
+
+            test_person.strengthen_opinion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), -2)
+
+            test_person.strengthen_opinion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), -2)
+
+            test_person.weaken_opnion("being fingered")
+            test_person.weaken_opnion("being fingered")
+
+            self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
+
+        def test_trance_proc(self):
+            test_person = create_random_person()
+
+            self.assertFalse(test_person.has_role(trance_role))
+
+            test_person.run_orgasm(show_dialogue = False, trance_chance_modifier = -10, add_to_log = False)
+
+            self.assertFalse(test_person.has_role(trance_role))
+
+            test_person.run_orgasm(show_dialogue = False, trance_chance_modifier = 200, add_to_log = False)
+
+            self.assertTrue(test_person.has_exact_role(trance_role))
+
+            test_person.run_orgasm(show_dialogue = False, force_trance = True, add_to_log = False)
+
+            self.assertTrue(test_person.has_exact_role(heavy_trance_role))
+
+            test_person.run_turn()
+
+            self.assertTrue(test_person.has_exact_role(trance_role))
+
+            test_person.run_turn()
+
+            self.assertFalse(test_person.has_role(trance_role))

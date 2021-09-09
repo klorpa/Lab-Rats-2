@@ -95,13 +95,6 @@ init -2 python:
             else:
                 return False #Returns false when there is more time to go
 
-        def run_on_turn(self, the_person): #Increases the counter, applies serum effect if there is still some duration left
-            if self.duration_counter < self.duration:
-                for trait in self.traits + self.side_effects:
-                    trait.run_on_turn(the_person, self)
-            if self.expires:
-                self.duration_counter += 1
-
         def run_on_apply(self, the_person):
             self.effects_dict = {} #Ensure this is clear and it isn't a reference to the main dict.
             for trait in self.traits + self.side_effects:
@@ -110,6 +103,17 @@ init -2 python:
         def run_on_remove(self, the_person):
             for trait in self.traits + self.side_effects:
                 trait.run_on_remove(the_person, self)
+
+        def run_on_turn(self, the_person): #Increases the counter, applies serum effect if there is still some duration left
+            if self.duration_counter < self.duration:
+                for trait in self.traits + self.side_effects:
+                    trait.run_on_turn(the_person, self)
+            if self.expires:
+                self.duration_counter += 1
+
+        def run_on_move(self, the_person):
+            for trait in self.traits + self.side_effects:
+                trait.run_on_move(the_person, self)
 
         def run_on_day(self, the_person):
             for trait in self.traits + self.side_effects:
@@ -131,7 +135,17 @@ init -2 python:
         def generate_side_effects(self): #Called when a serum is finished development. Tests all traits against their side effect chance and adds an effect for any that fail.
             for trait in self.traits:
                 if trait.test_effective_side_effect_chance():
-                    the_side_effect = get_random_from_list(list_of_side_effects)
+                    valid_side_effects = []
+                    for side_effect_trait in list_of_side_effects:
+                        valid_side_effect = True #Check to make sure we don't have conflicting trait tags.
+                        for tag in side_effect_trait.exclude_tags:
+                            for checking_trait in self.traits + self.side_effects:
+                                if tag in checking_trait.exclude_tags:
+                                    valid_side_effect = False
+                        if valid_side_effect:
+                            valid_side_effects.append(side_effect_trait)
+
+                    the_side_effect = get_random_from_list(valid_side_effects)
                     self.add_trait(the_side_effect, is_side_effect = True)
                     mc.log_event(self.name + " developed side effect " + the_side_effect.name + " due to " + trait.name, "float_text_blue")
 

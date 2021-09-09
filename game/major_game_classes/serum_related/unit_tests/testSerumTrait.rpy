@@ -8,6 +8,9 @@ init 0 python:
     def test_trait_on_turn(the_person, the_serum, add_to_log = False):
         the_serum.effects_dict["on_turn"] = True
 
+    def test_trait_on_move(the_person, the_serum, add_to_log = False):
+        the_serum.effects_dict["on_move"] = True
+
     def test_trait_on_day(the_person, the_serum, add_to_log = False):
         the_serum.effects_dict["on_day"] = True
 
@@ -22,6 +25,7 @@ init 0 python:
                 on_apply = test_trait_on_apply,
                 on_remove = test_trait_on_remove,
                 on_turn = test_trait_on_turn,
+                on_move = test_trait_on_move,
                 on_day = test_trait_on_day,
                 requires = None,
                 tier = 0,
@@ -43,12 +47,14 @@ init 0 python:
             self.complex_test_serum_trait.run_on_apply(test_person, test_serum)
             self.complex_test_serum_trait.run_on_remove(test_person, test_serum)
             self.complex_test_serum_trait.run_on_turn(test_person, test_serum)
+            self.complex_test_serum_trait.run_on_move(test_person, test_serum)
             self.complex_test_serum_trait.run_on_day(test_person, test_serum)
 
-            self.assertTrue(test_serum.effects_dict["on_apply"])
-            self.assertTrue(test_serum.effects_dict["on_remove"])
-            self.assertTrue(test_serum.effects_dict["on_turn"])
-            self.assertTrue(test_serum.effects_dict["on_day"])
+            self.assertTrue(test_serum.effects_dict.get("on_apply",False))
+            self.assertTrue(test_serum.effects_dict.get("on_remove",False))
+            self.assertTrue(test_serum.effects_dict.get("on_turn",False))
+            self.assertTrue(test_serum.effects_dict.get("on_move",False))
+            self.assertTrue(test_serum.effects_dict.get("on_day",False))
 
 
         def test_add_research(self):

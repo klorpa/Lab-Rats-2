@@ -220,6 +220,8 @@ screen outfit_creator(starting_outfit, outfit_type = "full", slut_limit = None):
                                 hbox:
                                     spacing -5 #We will manually handle spacing so we can have our colour predictor frames
                                     textbutton "Primary Colour":
+                                        yanchor 0.5
+                                        yalign 0.5
                                         style "textbutton_style"
                                         text_style "textbutton_text_style"
                                         text_size 12
@@ -235,19 +237,17 @@ screen outfit_creator(starting_outfit, outfit_type = "full", slut_limit = None):
                                             action [SetField(selected_clothing,"colour_pattern",[current_r,current_g,current_b,current_a]), SetScreenVariable("selected_colour","colour"), SetScreenVariable("current_r",selected_clothing.colour[0]), SetScreenVariable("current_g",selected_clothing.colour[1]), SetScreenVariable("current_b",selected_clothing.colour[2]), SetScreenVariable("current_a",selected_clothing.colour[3])]
                                         else:
                                             action NullAction()
+                                    if selected_colour == "colour":
+                                        use colour_square([current_r, current_g, current_b, current_a])
+                                    else:
+                                        use colour_square([selected_clothing.colour[0], selected_clothing.colour[1], selected_clothing.colour[2], selected_clothing.colour[3]])
 
-                                    frame:
-                                        if selected_colour == "colour":
-                                            background Color(rgb=(current_r,current_g,current_b,current_a))
-                                        else:
-                                            background Color(rgb=(selected_clothing.colour[0], selected_clothing.colour[1], selected_clothing.colour[2]))
-                                        xysize (45,45)
-                                        yanchor 0.5
-                                        yalign 0.5
 
                                     if __builtin__.type(selected_clothing) is Clothing and selected_clothing.pattern is not None:
                                         null width 15
                                         textbutton "Pattern Colour":
+                                            yanchor 0.5
+                                            yalign 0.5
                                             style "textbutton_style"
                                             text_style "textbutton_text_style"
                                             text_size 12
@@ -263,96 +263,13 @@ screen outfit_creator(starting_outfit, outfit_type = "full", slut_limit = None):
                                                 action [SetField(selected_clothing,"colour",[current_r,current_g,current_b,current_a]), SetScreenVariable("selected_colour","colour_pattern"), SetScreenVariable("current_r",selected_clothing.colour_pattern[0]), SetScreenVariable("current_g",selected_clothing.colour_pattern[1]), SetScreenVariable("current_b",selected_clothing.colour_pattern[2]), SetScreenVariable("current_a",selected_clothing.colour_pattern[3])]
                                             else:
                                                 action NullAction()
-                                        frame:
-                                            if selected_colour == "colour_pattern":
-                                                background Color(rgb=(current_r,current_g,current_b,current_a))
-                                            else:
-                                                background Color(rgb=(selected_clothing.colour_pattern[0], selected_clothing.colour_pattern[1], selected_clothing.colour_pattern[2]))
-                                            xysize (45,45)
-                                            yanchor 0.5
-                                            yalign 0.5
 
-                                hbox:
-                                    spacing 10
-                                    vbox:
-                                        text "Red" style "textbutton_text_style"
-                                        hbox:
-                                            if bar_select == 1:
-                                                frame:
-                                                    input default current_r length 4 changed colour_changed_r allow ".0123456789" style "menu_text_style"
-                                                    xsize 70
-                                                    ysize 50
-                                            else:
-                                                button:
-                                                    background "#888888"
-                                                    action SetScreenVariable("bar_select",1)
-                                                    text "%.2f" % current_r style "menu_text_style"
-                                                    xsize 70
-                                                    ysize 50
+                                        if selected_colour == "colour_pattern":
+                                            use colour_square([current_r, current_g, current_b, current_a])
+                                        else:
+                                            use colour_square([selected_clothing.colour_pattern[0], selected_clothing.colour_pattern[1], selected_clothing.colour_pattern[2], selected_clothing.colour_pattern[3]])
 
-                                            bar value ScreenVariableValue("current_r", 1.0) xsize 120 ysize 45 style style.slider unhovered SetScreenVariable("current_r",__builtin__.round(current_r,2))
-                                    vbox:
-                                        text "Green" style "textbutton_text_style"
-                                        hbox:
-                                            if bar_select == 2:
-                                                frame:
-                                                    input default current_g length 4 changed colour_changed_g allow ".0123456789" style "menu_text_style"
-                                                    xsize 70
-                                                    ysize 50
-                                            else:
-                                                button:
-                                                    background "#888888"
-                                                    action SetScreenVariable("bar_select",2)
-                                                    text "%.2f" % current_g style "menu_text_style"
-                                                    xsize 70
-                                                    ysize 50
-
-                                            bar value ScreenVariableValue("current_g", 1.0) xsize 120 ysize 45 style style.slider unhovered SetScreenVariable("current_g",__builtin__.round(current_g,2))
-                                    vbox:
-                                        text "Blue" style "textbutton_text_style"
-                                        hbox:
-                                            if bar_select == 3:
-                                                frame:
-                                                    input default current_b length 4 changed colour_changed_b allow ".0123456789" style "menu_text_style"
-                                                    xsize 70
-                                                    ysize 50
-                                            else:
-                                                button:
-                                                    background "#888888"
-                                                    action SetScreenVariable("bar_select",3)
-                                                    text "%.2f" % current_b style "menu_text_style"
-                                                    xsize 70
-                                                    ysize 50
-
-                                            bar value ScreenVariableValue("current_b", 1.0) xsize 120 ysize 45 style style.slider unhovered SetScreenVariable("current_b",__builtin__.round(current_b,2))
-
-                                text "Transparency: " style "menu_text_style"
-                                hbox:
-                                    spacing 5
-                                    for trans in ['1.0', '0.95', '0.9', '0.8', '0.75', '0.66', '0.5', '0.33', '0.25']:
-                                        $ trans_name = str(int(float(trans)*100)) + "%"
-                                        button:
-                                            if current_a == float(trans):
-                                                background "#4f7ad6"
-                                            else:
-                                                background "#1a45a1"
-                                            text trans_name style "menu_text_style" xalign 0.5 xanchor 0.5 yalign 0.5 yanchor 0.5
-                                            xysize (60, 40)
-                                            action SetScreenVariable("current_a", float(trans))
-
-                                grid 10 2:
-                                    spacing 5
-                                    xalign 0.5
-                                    xanchor 0.5
-                                    for count, a_colour in __builtin__.enumerate(persistent.colour_palette[0:20]):
-                                        frame:
-                                            background "#aaaaaa"
-                                            button:
-                                                background Color(rgb=(a_colour[0], a_colour[1], a_colour[2]))
-                                                xysize (40,40)
-                                                sensitive True
-                                                action [SetScreenVariable("current_r", a_colour[0]), SetScreenVariable("current_g", a_colour[1]), SetScreenVariable("current_b", a_colour[2]), SetScreenVariable("current_a", a_colour[3])]
-                                                alternate Function(update_colour_palette, count, current_r, current_g, current_b, current_a)
+                                use colour_ui(current_r, current_g, current_b, current_a)
 
 
 
@@ -375,9 +292,6 @@ screen outfit_creator(starting_outfit, outfit_type = "full", slut_limit = None):
 
 
 
-            # vbox: #Items selector
-            #     #W/ item customixing window at bottom
-            #
         vbox:
             spacing 15
             frame:

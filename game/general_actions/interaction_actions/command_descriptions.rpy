@@ -184,7 +184,7 @@ label demand_touch_label(the_person):
                     mc.name "I don't care if they're watching."
                     $ the_person.change_arousal(5 * the_person.get_opinion_score("being submissive"))
                     $ the_person.change_love(-1 + the_person.get_opinion_score("being submissive"))
-                    $ the_person.change_slut_temp(1)
+                    $ the_person.change_slut(1, 25)
                     $ should_be_private = False
 
         else:
@@ -313,7 +313,7 @@ label demand_strip_tits_label(the_person):
         mc.name "I want to get a look first, and I can't see anything if you're hiding everything like this."
         $ mc.change_locked_clarity(10)
         "She nods and moves her hands to her side again. She blushes and looks away as you ogle her tits."
-        $ the_person.change_slut_temp(1+ the_person.get_opinion_score("showing her tits"))
+        $ the_person.change_slut(1 + the_person.get_opinion_score("showing her tits"), 35)
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("showing her tits"))
         "When you've seen enough you give her an approving nod. She sighs and moves towards her clothes."
         the_person "Can get dressed now?"
@@ -335,7 +335,7 @@ label demand_strip_tits_label(the_person):
             mc.name "I think you look good with your tits out. Stay like this for a while, okay?"
             if the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("showing her tits"))):
                 the_person "I... Okay, if that's what you want [the_person.mc_title]."
-                $ the_person.change_slut_temp(1)
+                $ the_person.change_slut(1, 35)
                 $ the_person.change_happiness(-2)
             else:
                 the_person "Okay, if that's what you want me to do [the_person.mc_title]."
@@ -389,7 +389,7 @@ init -2 python:
                         renpy.say("", the_person.title + " pulls off her " + item.display_name + ", letting her tits spill out.")
                 else:
                     if half_off_instead:
-                        renpy.say("", the_person.title + " pulsl her " + item.display_name + " aside and sets her tits free.")
+                        renpy.say("", the_person.title + " pulls her " + item.display_name + " aside and sets her tits free.")
                     else:
                         renpy.say("", the_person.title + " takes off her " + item.display_name + " and sets her tits free.")
             elif the_person.outfit.tits_visible() and not test_outfit.tits_visible(): #Tits aren't out for use, but her clothing let's you get a good look.
@@ -516,8 +516,8 @@ label demand_strip_underwear_label(the_person):
         the_person "Um... So what do we do now?"
         mc.name "Just relax and let me take a look. You look cute."
         $ mc.change_locked_clarity(10)
-        "She nods and puts her hands behind her back. She blushes and looks away self-conciously as you ogle her."
-        $ the_person.change_slut_temp( 1+ the_person.get_opinion_score("lingerie"))
+        "She nods and puts her hands behind her back. She blushes and looks away self-consciously as you ogle her."
+        $ the_person.change_slut(1 + the_person.get_opinion_score("lingerie"), 35)
         $ the_person.change_happiness(-2 + the_person.get_opinion_score("lingerie"))
         mc.name "Let me see what it looks like from behind."
         $ the_person.draw_person(position = "back_peek")
@@ -549,7 +549,7 @@ label demand_strip_underwear_label(the_person):
             mc.name "Your underwear is too cute to hide it away, you should should stay in it for a while."
             if the_person.effective_sluttiness() < (40 - (5*the_person.get_opinion_score("lingerie"))):
                 the_person "I... Okay, if that's what you want [the_person.mc_title]."
-                $ the_person.change_slut_temp(1)
+                $ the_person.change_slut(1, 35)
                 $ the_person.change_happiness(-2)
             else:
                 the_person "Okay, if that's what you want me to do [the_person.mc_title]."
@@ -639,7 +639,7 @@ label demand_strip_naked_label(the_person):
             mc.name "Your body is way too nice looking to hide away. Stay like this for a while."
             if the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))):
                 the_person "I... Okay, if that's what you want [the_person.mc_title]."
-                $ the_person.change_slut_temp(1)
+                $ the_person.change_slut(1, 75)
                 $ the_person.change_happiness(-2)
             else:
                 the_person "Okay, if that's what you want me to do [the_person.mc_title]."

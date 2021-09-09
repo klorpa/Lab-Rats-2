@@ -198,7 +198,7 @@ init 0 python:
         if mc.business.is_work_day():
             for an_employee in mc.business.get_employee_list():
                 if an_employee.sluttiness < 20:
-                    an_employee.change_slut_temp(1, add_to_log = False)
+                    an_employee.change_slut(1, 20, add_to_log = False)
                     mc.business.change_team_effectiveness(-1)
 
     office_conduct_guidelines = Policy(name = "Office Conduct Guidelines",
@@ -222,7 +222,7 @@ init 0 python:
                     an_employee.change_happiness(-5, add_to_log = False)
 
                 if an_employee.sluttiness < 40:
-                    an_employee.change_slut_temp(1, add_to_log = False)
+                    an_employee.change_slut(1, 40, add_to_log = False)
                     mc.business.change_team_effectiveness(-1)
 
     mandatory_staff_reading = Policy(name = "Mandatory Staff Reading",
@@ -248,7 +248,7 @@ init 0 python:
                     mc.business.change_team_effectiveness(-3)
                 elif an_employee.sluttiness < 60:
                     mc.business.change_team_effectiveness(-1)
-                an_employee.change_slut_temp(1, add_to_log = False)
+                an_employee.change_slut(1, 60, add_to_log = False)
 
     superliminal_office_messaging = Policy(name = "Superliminal Messaging",
         desc = "Fill the office with overtly sexual content. Distribute pinup girl calendars, provide access to a company porn account, hang nude posters. Increases staff Sluttiness by 1 per day, to a maximum of 60. Reduces business efficiency by 1 per girl affected, or by 3 if her Sluttiness is 20 or lower. Reduces happiness of women with Sluttiness 20 or lower by 10 per day.",

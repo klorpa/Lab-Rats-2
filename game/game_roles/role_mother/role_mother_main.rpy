@@ -96,7 +96,7 @@ label mom_weekly_pay_label(the_person):
             $ mc.change_locked_clarity(10)
             the_person "Maybe we could start doing that again... I know I shouldn't even bring it up."
             mc.name "No [the_person.title], you're doing it for the good of the family, right? I think it's a great idea."
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(2, 30)
             $ the_person.change_happiness(5)
             $ the_person.change_love(2)
             the_person "Of course, it's the best thing for all of us. What would you like to do?"
@@ -148,7 +148,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
                             $ mc.change_locked_clarity(10)
                             "When you finally break the kiss she looks away from you, blushing with embarrassment."
 
-                    $ the_person.change_slut_temp(2)
+                    $ the_person.change_slut(2, 30)
                     the_person "There, have I earned my reward?"
                     "You hold out the cash for her and she takes it."
                     the_person "Thank you so much, every little bit helps."
@@ -637,7 +637,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 mc.name "[the_mom.title]... You know you're the most important woman in my life. I'll call [the_date.title] and cancel."
                 $ the_mom.change_happiness(10)
                 $ the_mom.change_love(2)
-                $ the_mom.change_slut_temp(2)
+                $ the_mom.change_slut(1, 70)
                 "[the_mom.possessive_title]'s face lights up."
                 the_mom "Thank you [the_mom.mc_title], you're making the right decision. We're going to have such a wonderful time togther."
                 mc.name "Just give me a moment, okay? She's probably not going to be happy about this."
@@ -661,7 +661,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     "[the_mom.possessive_title] looks up at you from her knees, your cock bulging out one cheek."
                     mc.name "Something important has come up, and it needs to be taken care of. I won't be able to go out tonight."
                     $ the_mom.change_love(4)
-                    $ the_mom.change_slut_temp(3)
+                    $ the_mom.change_slut(1, 70)
                     $ mc.change_locked_clarity(30)
                     "[the_mom.title]'s eyes light up, and she bobs her head up and down on your shaft happily. You have to stiffle a moan."
                     the_date "Oh no, is everyone okay?"
@@ -775,7 +775,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                             "You sigh, then nod."
                             mc.name "Fine, but we need to make it quick."
                             $ the_mom.change_love(1)
-                            $ the_mom.change_slut_temp(1)
+                            $ the_mom.change_slut(1, 80)
                             "She nods happly."
                             $ the_mom.add_situational_slut("Eager", 20, "I need to drain those balls before that skank touches him!")
                             call fuck_person(the_mom, private = True) from _call_fuck_person_40
@@ -866,7 +866,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     "[the_mom.possessive_title] looks up at you from her knees, your cock bulging out one cheek."
                     mc.name "Something important has come up, and it needs to be taken care of. I won't be able to go out tonight."
                     $ the_mom.change_love(4)
-                    $ the_mom.change_slut_temp(3)
+                    $ the_mom.change_slut(1, 70)
                     $ mc.change_locked_clarity(20)
                     "[the_mom.title]'s eyes light up, and she bobs her head up and down on your shaft happily. You have to stiffle a moan."
                     the_date "Oh no, is everyone okay?"
@@ -892,7 +892,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     mc.name "Something important has come up, and it needs to be taken care of. I won't be able to go out tonight."
                     "[the_mom.possessive_title]'s eyes light up, and she smiles happily at you."
                     $ the_mom.change_love(3)
-                    $ the_mom.change_slut_temp(2)
+                    $ the_mom.change_slut(1, 70)
                     the_date "Oh no, is everyone okay?"
                     $ the_date.change_happiness(-20)
                     $ the_date.change_love(-3)
@@ -1092,7 +1092,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 if the_report.get("guy orgasms", 0) > 0:
                     the_mom "There we go [the_mom.mc_title], all taken care of. Now I don't have to worry about you getting into trouble while you're out."
                     "She gives you a happy smile."
-                    $ the_mom.change_slut_temp(2)
+                    $ the_mom.change_slut(2, 80)
                     $ the_mom.change_love(2)
                     the_mom "Now go on, you've got a date to keep. Have fun out there, okay?"
                     mc.name "Thanks [the_mom.title], I will."
@@ -1105,7 +1105,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 else:
                     the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy to finish you off. I need more practice I guess."
                     "She seems rather disappointed in herself."
-                    $ the_mom.change_slut_temp(1)
+                    $ the_mom.change_slut(1, 60)
                     mc.name "We can work on that. Thanks for trying [the_mom.title], it was still nice."
                     "[the_mom.possessive_title] gives you a weak smile."
                     the_mom "Go on, you've got a date to keep. Have fun out there."
@@ -1123,13 +1123,13 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     mc.name "Relax, it's fine. I don't think it's a bad idea, but I might need my energy for later tonight."
                     the_mom "Oh, I... Oh [the_mom.mc_title], please promise me you'll be safe, at the very least."
                     mc.name "I will [the_mom.title], I promise."
-                    $ the_mom.change_slut_temp(2)
+                    $ the_mom.change_slut(1, 50)
                     the_mom "Well, if that's what you're planning... Be sure to show her a good time. Don't be selfish, girls don't like that."
                     mc.name "Okay [the_mom.title], I'll do that."
                 else:
                     mc.name "Depending on how the date goes I might need all my energy for later tonight."
                     the_mom "Oh [the_mom.mc_title], well..."
-                    $ the_mom.change_slut_temp(1)
+                    $ the_mom.change_slut(1, 60)
                     the_mom "In that case, be sure to show her a good time. Don't be selfish, girls don't like that."
                     mc.name "Noted, thanks [the_mom.title]."
                 $ the_mom.draw_person()
@@ -1197,155 +1197,4 @@ label mom_office_person_request():
         else:
             the_person "I'm sorry, but she doesn't seem to be in the building at the moment."
             mc.name "Right, okay. Sorry to bother you."
-    return
-
-label breeding_mom_label(the_person):
-    #TODO: This event. Enabled by an LTE that can trigger at high Love and Sluttiness, greatly impacted by high Fertility.
-    #TODO: Starts by talking to her in her room.
-
-    mc.name "I've got some spare time [the_person.title], want to try for that baby again?"
-    $ wants_breeding = True
-    if the_person.effective_sluttiness() >= the_person.get_no_condom_threshold(): #Slutty enough that she'd fuck you raw any time, no big deal just comment on it
-        if the_person.fertility_percent >= 70: #Crazy high fertility
-            the_person "Oh [the_person.mc_title], how did you know just what I was thinking?"
-            the_person "It might sound crazy, but my entire body just feels ready for breeding today!"
-            the_person "I'll probably be knocked up the second you cum inside me, but you should still try and do it a few times, okay?"
-            $ mc.change_locked_clarity(30)
-            the_person "Really fill me up with cum so we can be sure!"
-
-
-        elif the_person.fertility_percent >= 20: #High fertility. She's "Feeling ready".
-            the_person "Of course I do [the_person.mc_title]!"
-            $ mc.change_locked_clarity(20)
-            the_person "I've got a good feeling about today! Make sure to cum nice and deep, I want the best chances of getting pregnant!"
-
-        elif the_person.days_from_ideal_fertility() <= 3:
-            the_person "Of course I do [the_person.mc_title]!"
-            the_person "The key to breeding is consistency. Each time you cum inside me is another chance for me to get knocked up."
-            $ mc.change_locked_clarity(30)
-            the_person "It's the right time of the month too, so keep me filled up and I'll be pregnant in no time!"
-
-        else: #Not likely to work, but she'll give it a try anyways because it's fun. I mean, because it's necessary...
-            the_person "She pauses to think for a moment, then shrugs and nods."
-            the_person "It's not the right time of the month, but there's no harm in trying!"
-            $ mc.change_locked_clarity(10)
-            the_person "It's a fun time either way, and if I get knocked up then even better!"
-
-    else:  #Ie. she's not slutty enough to fuck you without a condom usually. Probably comes up because of massive fertility
-        if the_person.days_from_ideal_fertility() <= 3: #ie. one week out of the month. She's fertile enough that she wants to try.
-            "She thinks for a moment, then nods."
-            the_person "It's the right time of the month for me, we should try as much as possible."
-            the_person "Well then, let's get to it!"
-        else:
-            "She thinks for a moment, then shakes her head."
-            the_person "It's not the right time of the month for me. We need to wait until it's likely to work, okay?"
-            $ wants_breeding = False
-            menu:
-                "Fuck her anyways." if the_person.obedience >=140:
-                    mc.name "You want to get you knocked up [the_person.title], and every load I put inside of you is one more chance for that to happen."
-                    $ mc.change_locked_clarity(10)
-                    "You reach around her and grab her ass, squeezing it hard. She moans, but doesn't try to pull away"
-                    mc.name "So I need to get inside of you and pump you full of cum as often as possible. Even if it's not likely to knock you up."
-                    the_person "I suppose that makes sense... Okay, you're right, as usual."
-                    $ wants_breeding = True
-
-                "Fuck her anyways.\nRequires: 140 Obedience" if the_person.obedience < 140:
-                    pass
-
-                "Try some other time.":
-                    mc.name "We'll have to try some other time then."
-                    "She nods happily."
-                    the_person "There's nothing I want more, [the_person.mc_title], than to get pregnant and be a mother all over again."
-
-    if wants_breeding:
-        # Option to give her some serum (ie. ability to give her some fertility stuff right away)."
-        if mc.inventory.get_any_serum_count():
-            menu:
-                "Give her some serum.":
-                    mc.name "Before we get started, I have something for you."
-                    the_person "You do? What does it do?"
-                    mc.name "It'll help you get pregnant. You want the best chance possible, right?"
-                    "She nods eagerly and and waits for you to hand something over."
-                    call give_serum(the_person)
-                    if _return is not None:
-                        "[the_person.title] takes the vial of serum and drinks it down as quickly as she can."
-                    else:
-                        mc.name "I must have left it at the office."
-                        the_person "Bring it for me next time. Until then..."
-
-                "Don't give her anything.":
-                    pass
-
-        $ strip_list = the_person.get_full_strip_list()
-        $ generalised_strip_description(the_person, strip_list)
-        $ the_person.draw_person(position = "missionary")
-        "[the_person.possessive_title] lies down her bed and spreads her legs, waiting for you."
-        menu:
-            "Fuck her.":
-                "You pull down your pants and get your hard cock out. You climb onto [the_person.title]'s bed and fit your hips between her legs."
-                the_person "Get inside me [the_person.mc_title], come fuck your mother."
-                "She reaches down and holds onto your shaft, rubbing the tip of your cock against her pussy lips. She strokes your cheek lovingly with her other hand."
-                "You push forward, sinking your dick inside of her. Her eyes flutter and she gasps softly."
-                the_person "Oh [the_person.title]..."
-                call fuck_person(the_person, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, skip_condom = True)
-                $ sex_record = _return
-
-            "Have her suck you off first.":
-                mc.name "Not so fast [the_person.title], I need you to get me ready first."
-                "You pull your cock out and present it to her."
-                mc.name "Get me hard and wet, I'll be sure to slide into you before I cum."
-                the_person "Of course [the_person.mc_title], right away!"
-                $ the_person.draw_person(position = "blowjob")
-                $ mc.change_locked_clarity(20)
-                "She swings her legs off of the bed and gets onto her knees in front of you. She holds onto your shaft with one hand and slips your tip into her mouth eagerly."
-                call fuck_person(the_person, start_position = blowjob, skip_intro = True, skip_condom = True)
-                $ sex_record = _return
-
-
-        if sex_record.get("creampies", 0) >= 3:
-            "[the_person.title] puts a hand between her legs, gasping as it touches the hot cum still rushing out of her overflowing pussy."
-            the_person "Oh god, there's so much! I want it all inside me but there's just too much!"
-            $ mc.change_locked_clarity(50)
-            "She quivers gently with pleasure, and even that small movement sends a pulse of your cum gushing out of her and onto the bed."
-            $ the_person.change_slut_temp(1 + 3*the_person.get_opinion_score("creampies"))
-            $ the_person.change_happiness(15 + 5*the_person.get_opinion_score("creampies"))
-        elif sex_record.get("creampies", 0) == 2:
-            "[the_person.title] puts a hand between her legs, gasping when it touches her cum covered cunt."
-            the_person "Oh, there's so much! You did such a good job [the_person.mc_title]."
-            $ mc.change_locked_clarity(40)
-            "She slips her middle finger inside her pussy and holds it there, keeping all of your seed trapped inside."
-            $ the_person.change_slut_temp(1 + 2*the_person.get_opinion_score("creampies"))
-            $ the_person.change_happiness(10 + 5*the_person.get_opinion_score("creampies"))
-        elif sex_record.get("creampies", 0) == 1:
-            $ mc.change_locked_clarity(20)
-            "[the_person.title] puts a hand between her legs, petting her slit with her middle finger."
-            the_person "Mmm, I can feel it deep inside me. Now I just have to hope I'm lucky."
-            $ the_person.change_slut_temp(1 + 1*the_person.get_opinion_score("creampies"))
-            $ the_person.change_happiness(5 + 5*the_person.get_opinion_score("creampies"))
-        elif sex_record.get("guy orgasms", 0) > 0: #You came, but not inside her. She's pissed."
-            the_person "You're not... done, are you?"
-            mc.name "Sorry [the_person.title], but I just can't keep going."
-            "[the_person.possessive_title] scowls at you."
-            the_person "[the_person.mc_title], you said you were going to cum inside of me. That was our deal."
-            the_person "If you were tired and couldn't finish, or even if you came inside me after, that would have been fine."
-            the_person "But this... This just feels selfish."
-            mc.name "I said I was sorry, I..."
-            "She waves a hand and cuts you off."
-            the_person "Forget it, just... Let's get dressed."
-            $ the_person.change_happiness(-10)
-            $ the_person.change_love(-2)
-            $ the_person.apply_outfit()
-            $ the_person.draw_person()
-        else: #You couldn't cum. She's disappointed, but not angry
-            the_person "Wait, you're not... finished already, are you?"
-            mc.name "Sorry [the_person.title], but I just can't keep going."
-            "She sighs and frowns. She doesn't seem angry, but she does seem disappointed."
-            $ the_person.change_happiness(-10)
-            the_person "Well, I suppose there's nothing you can do about it now... Try and save your energy for next time, okay?"
-            mc.name "Okay [the_person.title], I will."
-
-    else:
-        pass
-    #TODO: Have a girlfriend analog to this where she approaches you and tells you she wants to get pregnant. Same basic idea, you can fuck her and cum inside of her whenever you want.
-    #TODO: Have a crisis where Mom comes to you (or texts you) and begs you to fuck her, because it's her most fertile day (or just because her fertility percent is huge).
     return

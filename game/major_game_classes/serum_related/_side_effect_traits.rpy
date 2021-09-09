@@ -7,12 +7,10 @@ init -1:
 
         ## libido_suppressant_functions ##
         def libido_suppressant_on_apply(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(-20, fire_event = False)
-            the_person.change_slut_temp(-20)
+            the_person.change_slut(-20)
 
         def libido_suppressant_on_remove(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(20, fire_event = False)
-            the_person.change_slut_temp(20)
+            the_person.change_slut(20)
 
         ## anxiety_provoking_functions ##
         def anxiety_provoking_on_turn(the_person, the_serum, add_to_log):
@@ -53,8 +51,29 @@ init -1:
         def toxic_on_apply(the_person, the_serum, add_to_log):
             the_person.serum_tolerance += -1
 
-        def toxic_on_remove(teh_person, the_serum, add_to_log):
+        def toxic_on_remove(the_person, the_serum, add_to_log):
             the_person.serum_tolerance += 1
+
+        ## libido suppresant ##
+        def libido_suppresent_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_max_arousal(50, add_to_log)
+
+        def libido_suppresent_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_max_arousal(-50, add_to_log)
+
+        ## hair colour changes ##
+        def hair_colour_wild_on_turn(the_person, the_serum, add_to_log):
+            random_colour = Color((renpy.random.randint(0,255), renpy.random.randint(0,255), renpy.random.randint(0,255)))
+
+            hair_colour_change_on_turn(random_colour, the_person, the_serum, add_to_log)
+
+        def hair_colour_dull_on_turn(the_person, the_serum, add_to_log):
+            current_colour = Color(rgb=(the_person.hair_colour[1][0], the_person.hair_colour[1][1], the_person.hair_colour[1][2]))
+            goal_colour = current_colour.replace_hsv_saturation(0.0)
+
+            hair_colour_change_on_turn(goal_colour, the_person, the_serum, add_to_log)
+
+
 
 label instantiate_side_effect_traits(): #Creates all of the default LR2 serum trait objects.
     python:
@@ -149,10 +168,37 @@ label instantiate_side_effect_traits(): #Creates all of the default LR2 serum tr
         toxic_side_effect = SerumTrait(name = "Toxic",
             desc = "Mildly toxic interactions make this serum dangerous to mix with other medications at any dose. Reduces serum tolerance for the duration.",
             positive_slug = "None",
-            negative_slug = "-1 Serum Tolerance, -$5 value",
+            negative_slug = "-1 Serum Tolerance, -$5 Value",
             value_added = -5,
             on_apply = toxic_on_apply,
             on_remove = toxic_on_remove,
+            is_side_effect = True)
+
+        libido_suppressant_effect = SerumTrait(name = "Stimulation Suppressant",
+            desc = "Interactions with the body's nervous system makes it very difficult for the subject to orgasm. A common side effect for many medications.",
+            positive_slug = "None",
+            negative_slug = "+40 Max Arousal, -$5 Value",
+            value_added = -5,
+            on_apply = libido_suppresent_on_apply,
+            on_remove = libido_suppresent_on_remove,
+            is_side_effect = True)
+
+        hair_colour_wild_effect = SerumTrait(name = "Hair Colour Shifts",
+            desc = "Complex interactions produce visible changes in hair colour. Produces random and sometimes striking changes in hair colour over time.",
+            positive_slug = "None",
+            negative_slug = "Random Hair Colour Changes, -$5 Value",
+            value_added = -5,
+            on_turn = hair_colour_wild_on_turn,
+            exclude_tags = "Dye",
+            is_side_effect = True)
+
+        hair_colour_dull_effect = SerumTrait(name = "Dull Hair",
+            desc = "Complex interactions produce visible changes in hair colour. Has the effect of dulling down the hair colour of the subject.",
+            positive_slug = "None",
+            negative_slug = "Reduces Hair Saturation, -$5 Value",
+            value_added = -5,
+            on_turn = hair_colour_dull_on_turn,
+            exclude_tags = "Dye",
             is_side_effect = True)
 
         list_of_side_effects.append(depressant_side_effect)
@@ -167,5 +213,8 @@ label instantiate_side_effect_traits(): #Creates all of the default LR2 serum tr
         list_of_side_effects.append(sedative)
         list_of_side_effects.append(slow_release_sedative)
         list_of_side_effects.append(toxic_side_effect)
+        list_of_side_effects.append(libido_suppressant_effect)
+        list_of_side_effects.append(hair_colour_wild_effect)
+        list_of_side_effects.append(hair_colour_dull_effect)
 
     return

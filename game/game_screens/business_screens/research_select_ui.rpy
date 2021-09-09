@@ -40,7 +40,7 @@ screen research_select_ui: #How you select serum and trait research
                         xsize 320
                         spacing 0
                         text "Research New Traits" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
-                        for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
+                        for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
                             if not trait.researched and trait.has_required():
                                 $ trait_tags = ""
                                 if trait.exclude_tags:
@@ -49,7 +49,7 @@ screen research_select_ui: #How you select serum and trait research
                                         $ trait_tags += "[[" + a_tag + "]"
 
                                 if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
-                                    $ research_needed_string = "Research Impossible"
+                                    $ research_needed_string = "\nResearch Impossible"
                                 else:
                                     $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
                                 $ trait_title = trait.name + " " + research_needed_string  + trait_tags
@@ -160,15 +160,18 @@ screen research_select_ui: #How you select serum and trait research
                 $ button_name = "Halt Research"
                 $ button_actions.append(Function(mc.business.set_serum_research,None))
 
-            elif isinstance(selected_research, SerumTrait): #
+            elif isinstance(selected_research, SerumTrait):
                 if not selected_research.unlocked:
-                    $ button_name = "Unlock and Begin Research"
+                    if isinstance(selected_research, SerumTraitBlueprint):
+                        $ button_name = "Design and Unlock Trait"
+                    else:
+                        $ button_name = "Unlock and Begin Research"
                     $ button_name += "\nCosts: " + str(selected_research.clarity_cost) + " Clarity"
                     if selected_research.clarity_cost > mc.free_clarity:
                         $ button_sensitive = False
                     else:
-                        $ button_actions.append(Function(selected_research.unlock_trait))
-                        $ button_actions.append(Function(mc.business.set_serum_research,selected_research))
+                        $ button_actions.append(Function(mc.business.set_serum_research, selected_research.unlock_trait))
+                        $ button_actions.append(SetScreenVariable("selected_research", None)) #Unlocking SerumTraitBlueprints might have changed what was selected.
 
                 elif not selected_research.researched:
                     $ button_name = "Continue Unlocked Research"

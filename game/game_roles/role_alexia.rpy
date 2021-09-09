@@ -297,7 +297,7 @@ label alexia_ad_suggest_label(the_person):
     menu:
         "You're all the eye candy we need.":
             mc.name "You're all the eye candy we need. We can take a few high quality pictures of you and we're good to go."
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(2, 20)
             $ the_person.change_love(1)
             "[the_person.title] blushes and waves her hand at you dismissively."
             the_person "Oh come on, you know we could find someone better for it. But I guess if I did it we would save some money."
@@ -383,7 +383,7 @@ label alexia_photography_intro_label(the_person):
             the_person "Really? Do you think that's important?"
             mc.name "Sex sells. It may not be what we go with, but I want to have options."
             $ mc.change_locked_clarity(10)
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(2, 20)
             $ the_person.change_obedience(1)
             "She rolls her eyes and bends forward, perking up her ass and showing it off to the camera. You take a couple more pictures."
 

@@ -39,7 +39,9 @@ init -1 python:
             return False
         elif the_person.love + the_person.fertility_percent < (75 - (10*the_person.get_opinion_score("creampies"))):
             return False
-        elif the_person.event_triggers_dict.get("breeding_mom_enabled", False):
+        elif the_person.get_opinion_score("creampies") < 0 or the_person.get_opinion_score("bareback sex") < 0:
+            return False
+        elif the_person.has_role(breeder_role):
             return False
         return True
 
@@ -84,7 +86,7 @@ init -1 python:
         elif not cousin_bedroom.has_person(the_person):
             return False
         else:
-            return False
+            return True
 
     def sister_go_shopping_requirement(the_person):
         if not the_person.has_role(sister_role):
@@ -170,7 +172,7 @@ label sister_walk_in_label(the_person):
                 mc.name "You know there's nothing wrong with watching porn, right?"
                 the_person "I wasn't! I..."
                 mc.name "Of course not, but even if you were there's nothing wrong with that. It's a natural thing, everyone does it. I certainly do."
-                $ the_person.change_slut_temp(3)
+                $ the_person.change_slut(1, 20)
                 $ the_person.change_happiness(5)
                 the_person "Really? Ew, I don't need to know about that."
                 "She still seems more interested than her words would suggest."
@@ -287,7 +289,7 @@ label sister_walk_in_label(the_person):
                     mc.name "Don't worry about me, just keep going."
                     if the_person.effective_sluttiness("bare_pussy") < 60: #She's a little unsure about it, but goes for it
                         the_person "Really? I... I mean, do you really want to see me like this?"
-                        "[the_person.possessive_title] relaxes a little, her hand unconciously drifting back between her legs."
+                        "[the_person.possessive_title] relaxes a little, her hand unconsciously drifting back between her legs."
                         mc.name "I think it's hot, keep touching yourself for me."
                         "She shrugs and nods, spreading her legs and sliding a finger along her wet slit."
                         $ the_person.change_obedience(2)
@@ -302,11 +304,12 @@ label sister_walk_in_label(the_person):
                     "Soon she's almost forgotten about you standing and watching at her door. She arches her back and turns her head, moaning into a pillow."
                     "She starts to rock her hips against her own hand as her fingering becomes increasingly intense."
                     "Even as she starts to climax she keeps her legs wide open, giving you a clear view of her dripping wet cunt."
+                    $ the_person.run_orgasm()
                     "Her body spasms as she cums, fingers buried deep inside of herself. She holds them there for a long moment, eyes shut tight."
                     "Finally she relaxes and pulls her fingers out, trailing her own juices behind them. She glances up at you and smiles weakly."
                     $ mc.change_locked_clarity(20)
                     the_person "Ah... That was good."
-                    $ the_person.change_slut_temp(2+the_person.get_opinion_score("masturbating"))
+                    $ the_person.change_slut(1+the_person.get_opinion_score("masturbating"), 50)
                     $ the_person.discover_opinion("masturbating")
 
             "Leave her alone.":
@@ -339,7 +342,7 @@ label nude_walk_in_label(the_person):
             $ the_person.apply_outfit(the_person.planned_outfit)
             $ the_person.draw_person()
             "Soon enough she opens the door and invites you in."
-            $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
+            $ the_person.change_slut(1+the_person.get_opinion_score("not wearing anything"), 60)
             $ the_person.discover_opinion("not wearing anything")
             the_person "Sorry about that, I always forget to lock the door."
         else:
@@ -370,7 +373,7 @@ label nude_walk_in_label(the_person):
             $ the_person.apply_outfit(the_person.planned_outfit)
             $ the_person.draw_person()
             "When she opens the door she's fully dressed and invites you in."
-            $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
+            $ the_person.change_slut(1+the_person.get_opinion_score("not wearing anything"), 40)
             $ the_person.discover_opinion("not wearing anything")
             the_person "Sorry about that, I was just relaxing and forgot the door wasn't locked."
         else:
@@ -392,7 +395,7 @@ label mom_house_work_nude_label(the_person):
     # When she's in the kitchen (or any other part of the house, for later events) she'll work in her underwear or (later) nude.
     $ effective_slut = the_person.effective_sluttiness("underwear_nudity") + (the_person.get_opinion_score("not wearing anything")*10)
     if effective_slut < 20: #TODO: This method of adding clothing with specific colours is dumb. (I suppose we could do the apron as being an overwear and then add it to underwear, but we should still have a system for it).
-        # She's in her underwear but self concious about it
+        # She's in her underwear but self conscious about it
         $ the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.effective_sluttiness(), guarantee_output = True))
         $ coloured_apron = apron.get_copy()
         $ coloured_apron.colour = [0.74,0.33,0.32,1.0]
@@ -492,7 +495,7 @@ label breeding_mom_intro_label(the_person):
                 the_person "I don't know. It's the right time of the month."
                 "You lie together in silence. [the_person.possessive_title] rocks herself side to side. You imagine your cum sloshing around her womb."
                 "Eventually she puts her legs down and the two of you sit up in bed."
-                $ the_person.event_triggers_dict["breeding_mom_enabled"] = True
+                $ the_person.add_role(breeder_role)
 
             else:
                 "You roll off of [the_person.possessive_title] and onto the bed beside her."
@@ -511,7 +514,7 @@ label breeding_mom_intro_label(the_person):
             the_person "But why..."
             mc.name "[the_person.title], I love you but I can't give you what you want."
             "She nods and turns her head."
-            $ the_person.change_slut_temp(-2)
+            $ the_person.change_slut(-2)
             $ the_person.change_love(-2)
             the_person "Of course... I was just being silly. I should know better."
     return
@@ -530,7 +533,7 @@ label aunt_home_lingerie_label(the_person):
         the_person "No, it's fine. I just need a moment to get dressed. You startled me, is all."
         "[the_person.title] seems to relax now that she's recovered from the shock."
         $ the_person.draw_person(position = "walking_away")
-        $ the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 35)
 
         the_person "I'm sure you don't want to see me prancing around like this. Just wait there, I'll be back in a moment!"
         $ get_dressed = True
@@ -756,6 +759,8 @@ label mom_go_shopping_label(the_person):
     if trigger_date:
         "You and [the_person.possessive_title] head downtown, to the largest shopping mall around."
         call shopping_date_intro(the_person, skip_intro = True)
+    else:
+        $ clear_scene()
     return
 
 #TODO: Add a Mom+Lily shopping haul review (or maybe a Mom+Aunt? They should get more screen time together)

@@ -261,9 +261,9 @@ init -1 python:
     def punishment_office_busywork_requirement(the_person, the_infraction):
         if the_infraction.severity < 2:
             return "Severity 2"
-        elif employee_busywork_role in the_person.special_role:
+        elif the_person.has_role(employee_busywork_role):
             return "Already performing office busywork"
-        elif employee_humiliating_work_role in the_person.special_role:
+        elif the_person.has_role(employee_humiliating_work_role):
             return "Already performing humiliating work"
         else:
             return True
@@ -552,7 +552,7 @@ label punishment_underwear_only(the_person, the_infraction):
         $ slut_change += the_person.get_opinion_score("showing her ass")
     if the_person.outfit.tits_visible() and the_person.outfit.vagina_visible():
         $ slut_change += the_person.get_opinion_score("not wearing anything")
-    $ the_person.change_slut_temp(slut_change)
+    $ the_person.change_slut(slut_change, 40)
 
     mc.name "I expect you to stay in your new uniform for the rest of the week. Any deviation from it and there will be further punishments."
     mc.name "Understood?"
@@ -727,7 +727,7 @@ label punishment_office_nudity(the_person, the_infraction):
         $ slut_change += the_person.get_opinion_score("showing her ass")
     if the_person.outfit.tits_visible() and the_person.outfit.vagina_visible():
         $ slut_change += the_person.get_opinion_score("not wearing anything")
-    $ the_person.change_slut_temp(slut_change)
+    $ the_person.change_slut(slut_change, 60)
     mc.name "If I find you attempting to wear anything else there will have to be further punishments."
     mc.name "Understood?"
     the_person "Yes [the_person.mc_title], I understand."
@@ -777,9 +777,9 @@ init -1 python:
     def punishment_office_humiliating_work_requirement(the_person, the_infraction):
         if the_infraction.severity < 4:
             return "Severity 4"
-        elif employee_busywork_role in the_person.special_role:
+        elif the_person.has_role(employee_busywork_role):
             return "Already performing office busywork"
-        elif employee_humiliating_work_role in the_person.special_role:
+        elif the_person.has_role(employee_humiliating_work_role):
             return "Already performing humiliating work"
         else:
             return True
@@ -909,7 +909,7 @@ label punishment_orgasm_denial(the_person, the_infraction):
                         if report.get("girl orgasms", 0) > 0:
                             mc.name "I hope that satisfied you."
                             the_person "It was everything I needed it to be. Ah..."
-                            $ the_person.change_slut_temp(2)
+                            $ the_person.change_slut(1, 80)
                             $ the_person.change_obedience(1)
                             mc.name "Good, now get back to work."
                             the_person "Yes [the_person.mc_title], right away."
@@ -974,7 +974,7 @@ label punishment_orgasm_denial(the_person, the_infraction):
         the_person "Ah, that was nice..."
         mc.name "It wasn't supposed to be nice, it was supposed to be a punishment."
         the_person "Do you want to punish me some more?"
-        $ the_person.change_slut_temp(3)
+        $ the_person.change_slut(2, 60)
         $ the_person.change_obedience(-3)
         "You sigh and give up."
         mc.name "Get back to work, or I'll come up with something more unpleasant."
@@ -1020,7 +1020,7 @@ label punishment_forced_punishment_outfit(the_person, the_infraction):
         "You watch as she gets changed. When [the_person.possessive_title] is finished she stands in front of you."
 
         if the_person.effective_sluttiness() < the_person.outfit.slut_requirement:
-            the_person "Is this it? This is so embarassing..."
+            the_person "Is this it? This is so embarrassing..."
 
     $ the_person.event_triggers_dict["forced_uniform"] = the_person.outfit.get_copy()
     $ slut_change = 0
@@ -1030,7 +1030,7 @@ label punishment_forced_punishment_outfit(the_person, the_infraction):
         $ slut_change += the_person.get_opinion_score("showing her ass")
     if the_person.outfit.tits_visible() and the_person.outfit.vagina_visible():
         $ slut_change += the_person.get_opinion_score("not wearing anything")
-    $ the_person.change_slut_temp(slut_change)
+    $ the_person.change_slut(slut_change, 30)
     mc.name "If I find you attempting to wear anything else there will have to be further punishments."
     mc.name "Understood?"
     the_person "Yes [the_person.mc_title], I understand."

@@ -70,10 +70,10 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                 $ blowjob.redraw_scene(the_girl)
                 if the_girl.get_opinion_score("giving blowjobs") < 0:
                     $ the_girl.discover_opinion("giving blowjobs")
-                    the_girl.char "Ugh... I hate that feeling."
+                    the_girl "Ugh... I hate that feeling."
                     mc.name "Give it time, you'll get use to it."
                 else:
-                    the_girl.char "Ah... Ah..."
+                    the_girl "Ah... Ah..."
                     mc.name "Better. Now keep it up."
 
                 $ blowjob.current_modifier = "blowjob"
@@ -85,24 +85,24 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                 if the_girl.sex_skills["Foreplay"] < 2:
                     "[the_girl.possessive_title] wraps her right hand around the base of your cock. She tries jerk off the base of your cock while licking at the tip, but can't quite coordinate the movements."
                     "After trying for a few seconds she takes a break and sighs."
-                    the_girl.char "Ugh, I'm just so bad at this..."
+                    the_girl "Ugh, I'm just so bad at this..."
                     mc.name "Keep trying, you'll get better. Don't worry, I promise I'm having a good time."
                     "You press the tip of your cock against her lips and she lets you slide it back in. She resumes sucking and licking the tip, without trying to stroke you off at the same time."
                 else:
                     "[the_girl.possessive_title] wraps her right hand around the base of your cock and starts to slide it back and forth in time with her blowjob."
                     if (the_girl.get_opinion_score("cum facials") > 0 or the_girl.get_opinion_score("being covered in cum") > 0 ) and the_girl.sluttiness > 40:
                         "After a moment she takes her lips off your dick and looks up at you."
-                        the_girl.char "Mmm, look at this. Don't you just want to cum all over my face?"
+                        the_girl "Mmm, look at this. Don't you just want to cum all over my face?"
                         "She strokes you off faster and holds your cock right against her face."
-                        the_girl.char "I want you to cum on me. I want you to pump your load right onto my face!"
+                        the_girl "I want you to cum on me. I want you to pump your load right onto my face!"
                         $ the_girl.discover_opinion("cum facials")
                         $ the_girl.discover_opinion("being covered in cum")
                         "[the_girl.title] trembles slightly and slides your cock back into her mouth, sucking at it with renewed vigor."
                     elif the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 40:
                         "After a moment she takes her lips off your dick and looks up at you."
-                        the_girl.char "Come on, I want you to unload right in my mouth [the_girl.mc_title]."
+                        the_girl "Come on, I want you to unload right in my mouth [the_girl.mc_title]."
                         "She pops back onto your cock, sucking at the tip eagerly before letting it slip out again."
-                        the_girl.char "I want you to fire it right down my throat. Ugh, I want it so badly!"
+                        the_girl "I want you to fire it right down my throat. Ugh, I want it so badly!"
                         "[the_girl.title] slides you back into her mouth and sucks your dick with renewed vigor."
                     else:
                         "You relax for a little while while [the_girl.possessive_title] services your cock, stroking your shaft and sucking gently on your tip."
@@ -116,19 +116,19 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                 mc.name "That feels great [the_girl.title]. You look good on your knees, sucking my cock."
                 if the_girl.get_opinion_score("giving blowjobs") > 0:
                     "She slides your cock out of her mouth to speak."
-                    the_girl.char "Mmm, and you feel so good in my mouth. You're so big I can barely manage."
+                    the_girl "Mmm, and you feel so good in my mouth. You're so big I can barely manage."
                     $ the_girl.discover_opinion("giving blowjobs")
                     "She rubs her cheek against your wet shaft."
                     if the_girl.get_opinion_score("drinking cum") > 0:
-                        the_girl.char "Now just relax and enjoy. I want you to cum right into my mouth, okay?"
+                        the_girl "Now just relax and enjoy. I want you to cum right into my mouth, okay?"
                         $ the_girl.discover_opinion("drinking cum")
                     else:
-                        the_girl.char "Now just relax and enjoy, I'll take care of everything."
+                        the_girl "Now just relax and enjoy, I'll take care of everything."
                     "She slips you back into her mouth and resumes blowing you."
 
                 elif the_girl.get_opinion_score("giving blowjobs") < 0:
                     "She pulls off of your cock to speak."
-                    the_girl.char "How about we try some other position? My knees are killing me, and I keep feeling like I'm going to gag on this."
+                    the_girl "How about we try some other position? My knees are killing me, and I keep feeling like I'm going to gag on this."
                     $ the_girl.discover_opinion("giving blowjobs")
                     mc.name "Maybe in a little bit. Come on, back to work."
                     "[the_girl.possessive_title] sighs and slides your dick back into her mouth, settling back into the steady rhythm of her blowjob."
@@ -160,7 +160,7 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                     "[the_girl.title] keeps up a steady pace, bobbing her head back and forth and running your cock in and out of her soft mouth."
                     if the_girl.get_opinion_score("giving blowjobs") < 0:
                         "After a minute she pulls off and wipes at her lips."
-                        the_girl.char "Are you almost done? My jaw is getting sore."
+                        the_girl "Are you almost done? My jaw is getting sore."
                         $ the_girl.discover_opinion("giving blowjobs")
                         mc.name "Keep going, I'll finish soon."
                         "She sighs and slips you back into her mouth."
@@ -172,19 +172,19 @@ label scene_blowjob_2(the_girl, the_location, the_object):
     $ blowjob.redraw_scene(the_girl)
 
     "[the_girl.title] pulls your cock out of her her mouth and leans in even closer. She runs her tongue along the bottom of your shaft, pausing at the top to kiss the tip a few times."
-    the_girl.char "Does that feel good?"
+    the_girl "Does that feel good?"
     menu:
         "Encourage her.":
             mc.name "Yeah, it does. Keep licking it for me."
             "[the_girl.possessive_title] smiles and keeps working her tongue over your cock. She licks it bottom to top, then sucks on the tip, then licks it from the top back to the bottom."
             if the_girl.get_opinion_score("taking control") > 0:
-                the_girl.char "Mmm, I love this so much. I love being in control of your pleasure. Being able to..."
+                the_girl "Mmm, I love this so much. I love being in control of your pleasure. Being able to..."
                 "She runs her tongue along the underside of your cock, licking the sensitive spot just below the tip. You moan in response."
                 $ the_girl.discover_opinion("taking control")
                 $ the_girl.change_arousal(the_girl.get_opinion_score("taking control"))
-                the_girl.char "Make you moan, just like that."
+                the_girl "Make you moan, just like that."
             else:
-                the_girl.char "Just relax and enjoy, I'll take care of you as best I can."
+                the_girl "Just relax and enjoy, I'll take care of you as best I can."
                 if the_girl.sex_skills["Oral"] < 2:
                     "[the_girl.title] keeps on licking your cock. You enjoy the feeling for a while, but you're glad when she finally opens her mouth and starts to blow you again."
                 else:
@@ -203,11 +203,11 @@ label scene_blowjob_2(the_girl, the_location, the_object):
                 $ the_girl.change_arousal(the_girl.get_opinion_score("being submissive"))
                 mc.name "Do you like having a wet cock slapped against your face? I bet you're a total slut for it, right?"
                 "You do it again. Your cock makes a wet thwack against her face. This time she moans."
-                the_girl.char "Yes..."
+                the_girl "Yes..."
                 "She responds softly, as if she's suddenly distracted."
                 mc.name "I didn't hear you."
                 "Thwack. You flop your cock over her face again. She moans again."
-                the_girl.char "Yes... Yes I like having your cock all over my face!"
+                the_girl "Yes... Yes I like having your cock all over my face!"
                 "She opens her mouth wide and sticks her tongue out. You bounce your cock against her soft tongue, then against her cheeks and onto her forehead. She moans with each hit."
                 $ the_girl.change_obedience(the_girl.get_opinion_score("being submissive"))
                 mc.name "Good girl. Now be a good slut for me and keep sucking me off."
@@ -217,27 +217,27 @@ label scene_blowjob_2(the_girl, the_location, the_object):
                 $ the_girl.discover_opinion("being submissive")
                 $ the_girl.change_arousal(the_girl.get_opinion_score("being submissive"))
                 "[the_girl.title] leans away from you."
-                the_girl.char "Ugh, could you not say stuff like that, please? It really kills the mood."
+                the_girl "Ugh, could you not say stuff like that, please? It really kills the mood."
                 "She sighs and slips your cock back into her mouth."
 
             else:
                 "You grab hold of your dick with one hand and bounce it against [the_girl.title]'s face. She gasps in surprise."
                 if the_girl.sex_skills["Foreplay"] > 3:
-                    the_girl.char "Filthy cocksucker, huh? Is that what you want me to be?"
+                    the_girl "Filthy cocksucker, huh? Is that what you want me to be?"
                     "She leans forward and rubs her cheek against your wet cock, nuzzling it like a cat."
-                    the_girl.char "Okay then, I'll be your filthy little cocksucker [the_girl.mc_title]. I'll take this monster cock nice and deep..."
+                    the_girl "Okay then, I'll be your filthy little cocksucker [the_girl.mc_title]. I'll take this monster cock nice and deep..."
                     "She kisses the side of it, then sticks her tongue out and runs it along the entire length of your shaft."
-                    the_girl.char "I'll gag on it until you're ready to cum, if that's what you want me to do."
-                    the_girl.char "Because deep down I'm just a cock hungry slut, begging to be used."
+                    the_girl "I'll gag on it until you're ready to cum, if that's what you want me to do."
+                    the_girl "Because deep down I'm just a cock hungry slut, begging to be used."
                     "Hearing [the_girl.title] gets you even more aroused. Your dick flexes in response and bumps against her face."
-                    the_girl.char "Mmm, I thought so. Everyone likes a bit of dirty talk..."
+                    the_girl "Mmm, I thought so. Everyone likes a bit of dirty talk..."
                     "She opens her mouth and slides you inside."
                 else:
-                    the_girl.char "Hey, I'm..."
+                    the_girl "Hey, I'm..."
                     "You interrupt her and flop your cock onto her face again."
-                    the_girl.char "Ugh, fine. Go to town."
+                    the_girl "Ugh, fine. Go to town."
                     "She closes her eyes and points her face up. You enjoy a few moments rubbing your cock all over [the_girl.possessive_title]'s face."
-                    the_girl.char "Happy now?"
+                    the_girl "Happy now?"
                     mc.name "Very."
                     "She opens her mouth back up and slides you inside."
 
@@ -305,7 +305,7 @@ label transition_blowjob_deepthroat(the_girl, the_location, the_object):
     $ blowjob.current_modifier = None
     $ blowjob.redraw_scene(the_girl)
     "[the_girl.possessive_title] slides off your dick with a wet pop and takes a few breaths."
-    the_girl.char "Well, I can try."
+    the_girl "Well, I can try."
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     "Once she's caught her breath she opens her mouth wide and slides you back down her throat. She doesn't stop until her nose taps your stomach and she has your entire cock in her mouth."
@@ -335,7 +335,7 @@ label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object):
     $ blowjob.redraw_scene(the_girl)
 
     "[the_girl.title] pops off your cock and looks up at you from her knees."
-    the_girl.char "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
+    the_girl "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
     menu:
         "Let her strip.":
             mc.name "Take it off for me."
@@ -349,11 +349,11 @@ label strip_ask_blowjob(the_girl, the_clothing, the_location, the_object):
         "Leave it on.":
             mc.name "No, I like how you look with it on."
             if the_girl.sluttiness < 60:
-                the_girl.char "Yeah? Do I look sexy in it?"
+                the_girl "Yeah? Do I look sexy in it?"
                 $ blowjob.current_modifier = "blowjob"
                 "She licks the length of your shaft, then slides your tip into her mouth and starts to blow you again."
             else:
-                the_girl.char "Does it make me look like a good little slut? Or is your cock in my mouth enough for that?"
+                the_girl "Does it make me look like a good little slut? Or is your cock in my mouth enough for that?"
                 $ blowjob.current_modifier = "blowjob"
                 $ blowjob.redraw_scene(the_girl)
                 "She slides you back into her mouth and presses you all the way to the back, rubbing your tip against the back of her throat for a second before she goes back to blowing you."
@@ -375,9 +375,8 @@ label orgasm_blowjob(the_girl, the_location, the_object):
 
             mc.name "A cock sleeve like you deserves to have her throat stuffed when she cums."
             if the_girl.get_opinion_score("being submissive") > 0:
-                if the_girl.sluttiness > the_girl.core_sluttiness and the_girl.core_sluttiness < blowjob.slut_cap:
-                    $ the_girl.change_slut_core(the_girl.get_opinion_score("being submissive")) #If she likes being submissive this makes her cum and become sluttier super hard.
-                    $ the_girl.change_slut_temp(-the_girl.get_opinion_score("being submissive"))
+                if the_girl.sluttiness < blowjob.slut_cap:
+                    $ the_girl.change_slut(-the_girl.get_opinion_score("being submissive")) #If she likes being submissive this makes her cum and become sluttier super hard.
                 $ the_girl.change_obedience(2*the_girl.get_opinion_score("being submissive"))
                 "[the_girl.possessive_title] closes her eyes tight. You can feel her throat spasm around your shaft in time with her orgasmic contractions."
                 if the_girl.outfit.vagina_visible():
@@ -391,7 +390,7 @@ label orgasm_blowjob(the_girl, the_location, the_object):
                 $ blowjob.current_modifier = None
                 $ blowjob.redraw_scene(the_girl)
                 "When she's stopped twitching and moaning you let [the_girl.title] slide back. She pants loudly, then licks along the length of your cock."
-                the_girl.char "That was... incredible... I want more!"
+                the_girl "That was... incredible... I want more!"
             else:
                 "[the_girl.possessive_title] closes her eyes as her orgasm peaks. She holds almost perfectly still, your dick still sitting in her mouth, until she's finished."
                 $ blowjob.current_modifier = None
@@ -399,7 +398,7 @@ label orgasm_blowjob(the_girl, the_location, the_object):
                 "She pulls off and takes a long, deep breath."
                 $ the_girl.change_obedience(1)
                 $ the_girl.change_happiness(-2)
-                the_girl.char "Just... Let me handle things next time, okay?"
+                the_girl "Just... Let me handle things next time, okay?"
 
         "Be gentle as she cums.":
             $ blowjob.current_modifier = None

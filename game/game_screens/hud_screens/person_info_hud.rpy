@@ -5,6 +5,20 @@ screen person_info_ui(the_person, display_layer = "solo"): #Used to display stat
     python:
         positive_effects = ""
         negative_effects = ""
+
+        if the_person.arousal >= 20:
+            positive_effects += get_coloured_arrow(1)+get_red_heart(int(the_person.arousal/4)) + " - "
+            if the_person.arousal >= the_person.max_arousal:
+                positive_effects += "I'm CUMMING! More! MORE!"
+            elif the_person.arousal >= 80:
+                positive_effects += "I'm so CLOSE! I'll do anything if it means I get to CUM!"
+            elif the_person.arousal >= 60:
+                positive_effects += "I'm so horny, I need some release!"
+            elif the_person.arousal > 40:
+                positive_effects += "I'm really turned on! I feel like my head is spinning!"
+            else:
+                positive_effects += "I'm getting worked up, and my body knows what it wants..."
+            positive_effects += "\n"
         for situation in the_person.situational_sluttiness:
             if the_person.situational_sluttiness[situation][0] > 0: #We purposefully ignore 0 so we don't show null sluttiness modifiers.
                 positive_effects += get_coloured_arrow(1)+get_red_heart(the_person.situational_sluttiness[situation][0])+" - " + the_person.situational_sluttiness[situation][1] + "\n"
@@ -51,39 +65,46 @@ screen person_info_ui(the_person, display_layer = "solo"): #Used to display stat
                         text "       - " + role.role_name style "menu_text_style" size 14
 
             vbox:
-                if the_person.arousal >= 20:
-                    textbutton "Arousal: [the_person.arousal]/[the_person.max_arousal] (+" + get_red_heart(__builtin__.int(the_person.arousal/4)) + ") {image=gui/extra_images/arousal_token.png}":
-                        ysize 24
-                        text_style "menu_text_style"
-                        tooltip "When a girl is brought to 100% arousal she will start to climax. Climaxing will instantly turn temporary sluttiness into core sluttiness, as well as make the girl happy. The more aroused you make a girl the more sex positions she is willing to consider."
-                        action NullAction()
-                        sensitive True
-                else:
-                    textbutton "Arousal: [the_person.arousal]/[the_person.max_arousal] {image=gui/extra_images/arousal_token.png}":
-                        ysize 24
-                        text_style "menu_text_style"
-                        tooltip "When a girl is brought to 100% arousal she will start to climax. Climaxing will instantly turn temporary sluttiness into core sluttiness, as well as make the girl happy. The more aroused you make a girl the more sex positions she is willing to consider."
-                        action NullAction()
-                        sensitive True
+                # if the_person.arousal >= 20: #Removed in v0.43, arousal gains are now displayed in the same way as situational sluttiness.
+                #     textbutton "Arousal: [the_person.arousal]/[the_person.max_arousal] (+" + get_red_heart(__builtin__.int(the_person.arousal/4)) + ") {image=gui/extra_images/arousal_token.png}":
+                #         ysize 24
+                #         text_style "menu_text_style"
+                #         tooltip "When a girl is brought to 100% arousal she will start to climax. Climaxing will instantly turn temporary sluttiness into core sluttiness, as well as make the girl happy. The more aroused you make a girl the more sex positions she is willing to consider."
+                #         action NullAction()
+                #         sensitive True
+                # else:
 
-                textbutton "Energy: [the_person.energy]/[the_person.max_energy] {image=gui/extra_images/energy_token.png}":
+                $ disp_arousal = the_person.arousal
+                $ disp_max_arousal = the_person.max_arousal
+                textbutton "Arousal: " + str(disp_arousal) + "/" + str(disp_max_arousal) + " {image=gui/extra_images/arousal_token.png}":
+                    ysize 24
+                    text_style "menu_text_style"
+                    tooltip "When a girl is brought to 100% arousal she will start to climax. Climaxing will instantly turn temporary sluttiness into core sluttiness, as well as make the girl happy. The more aroused you make a girl the more sex positions she is willing to consider."
+                    action NullAction()
+                    sensitive True
+
+                $ disp_energy = the_person.energy
+                $ disp_max_energy = the_person.max_energy
+                textbutton "Energy: " + str(disp_energy) + "/" + str(disp_max_energy) + " {image=gui/extra_images/energy_token.png}":
                     ysize 24
                     text_style "menu_text_style"
                     tooltip "Energy is spent while having sex, with more energy spent on positions that give the man more pleasure. Some energy comes back each turn, and a lot of energy comes back over night."
                     action NullAction()
                     sensitive True
 
-                textbutton "Happiness: [the_person.happiness]":
+                $ disp_happiness = the_person.happiness
+                textbutton "Happiness: " + str(disp_happiness):
                     ysize 24
                     text_style "menu_text_style"
                     tooltip "The happier a girl the more tolerant she will be of low pay and unpleasant interactions. High or low happiness will return to it's default value over time."
                     action NullAction()
                     sensitive True
 
-                textbutton "Suggestibility: [the_person.suggestibility]%":
+                $ disp_suggest = the_person.suggestibility
+                textbutton "Suggestibility: " + str(disp_suggest) + "%":
                     ysize 24
                     text_style "menu_text_style"
-                    tooltip "How likely this character is to increase her core sluttiness. Every time chunk there is a chance to change 1 point of temporary sluttiness (" + get_red_heart(5) + ") into core sluttiness (" + get_gold_heart(5) + ") as long as temporary sluttiness is higher."
+                    tooltip "How likely a girl is to slip into a trance when she cums. While in a trance she will be highly suggestible, and you will be able to directly influence her stats, skills, and opinions."
                     action NullAction()
                     sensitive True
 
@@ -94,14 +115,16 @@ screen person_info_ui(the_person, display_layer = "solo"): #Used to display stat
                     action NullAction()
                     sensitive True
 
-                textbutton "Love: [the_person.love]":
+                $ disp_love = the_person.love
+                textbutton "Love: " + str(disp_love):
                     ysize 24
                     text_style "menu_text_style"
                     tooltip "Girls who love you will be more willing to have sex when you're in private (as long as they aren't family) and be more devoted to you. Girls who hate you will have a lower effective sluttiness regardless of the situation."
                     action NullAction()
                     sensitive True
 
-                textbutton "Obedience: [the_person.obedience] - " + get_obedience_plaintext(the_person.obedience):
+                $ disp_obedience = the_person.obedience
+                textbutton "Obedience: " + str(disp_obedience) + " - " + get_obedience_plaintext(the_person.obedience):
                     ysize 24
                     text_style "menu_text_style"
                     tooltip formatted_obedience_tooltip

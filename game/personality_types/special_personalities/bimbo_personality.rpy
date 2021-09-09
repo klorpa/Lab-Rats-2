@@ -56,19 +56,27 @@ label bimbo_greetings(the_person):
     return
 
 label bimbo_sex_responses_foreplay(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] giggles happily."
+            the_person "Teehee, you're making me feel really funny [the_person.mc_title]!"
+        else:
+            the_person "You aren't just going to keep teasing me, are you [the_person.mc_title]?"
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Mmm, you know just how to touch me [the_person.mc_title]!"
         else:
             "[the_person.title] giggles softly while you touch her."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Do you like touching me [the_person.mc_title]? I know I like it when you do!"
         else:
             the_person "Do you like touching me [the_person.mc_title]? You seem to know exactly what to do."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Yes! That feels really nice!"
             "She giggles happily, clearly having a good time."
@@ -88,19 +96,27 @@ label bimbo_sex_responses_foreplay(the_person):
     return
 
 label bimbo_sex_responses_oral(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] giggles happily, practically bouncing as you eat her out."
+        else:
+            the_person "Hehe, I know where this is going!"
+            the_person "When you get bored I can suck on your cock, so it's fair!"
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Aww, you always know what I like [the_person.mc_title]!"
         else:
             "[the_person.title] giggles softly."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Does my pussy taste good [the_person.mc_title]? I'll repay the favour suck your cock later!"
         else:
             the_person "That, like, feels so good [the_person.mc_title]!"
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Ah! Hehe, that's feels so good!"
             "She giggles happily, clearly having a good time."
@@ -120,24 +136,32 @@ label bimbo_sex_responses_oral(the_person):
     return
 
 label bimbo_sex_responses_vaginal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Oooh yeah, fuck me [the_person.mc_title]!"
+            "She giggles happily, practically bouncing around on your cock."
+        else:
+            "She giggles happily, practically vibrating around your cock."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Mmm, you know what I like [the_person.mc_title]!"
         else:
             "[the_person.title] giggles softly."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Is your cock always this big, or are you just happy to see me? Hehe!"
         else:
             the_person "Am I your dirty girl [the_person.mc_title]? Because I'm having so much fun right now!"
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Yes! Keep fucking me!"
             "She giggles happily, clearly having a good time."
         else:
-            the_person "Oh wow! Mmmm, you're cock is driving me crazy [the_person.mc_title]!"
+            the_person "Oh wow! Mmmm, your is driving me crazy [the_person.mc_title]!"
     else:
         if the_person.sluttiness > 50:
             if the_person.relationship == "Single":
@@ -152,19 +176,26 @@ label bimbo_sex_responses_vaginal(the_person):
     return
 
 label bimbo_sex_responses_anal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] giggles and wiggles your cock deeper into her butt."
+        else:
+            "[the_person.possessive_title] giggles nervously."
+            the_person "Oh my god, it's so big! I'm, like, half cock right now!"
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "I can, like, feel every single inch of you in me! You're so big!"
         else:
             the_person "You're, like, {i}huge{/i} inside of me! I don't know if I can do this for very long!"
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Fuck my ass [the_person.mc_title], fuck it raw! Use me!"
         else:
             the_person "Oh, it feels like you're stirring up my insides with your dick! Ah!"
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "I'm so stretched out, I think I'm starting to get the hang of this!"
             "She giggles happily, clearly proud of her accomplishment."
@@ -752,7 +783,11 @@ label bimbo_condom_bareback_ask(the_person):
     return
 
 label bimbo_condom_bareback_demand(the_person):
-    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0: #Just likes raw sex
+    if the_person.has_role(breeder_role): #Actively looking to get knocked up.
+        the_person "Don't be silly, even I know you won't knock me up wearing one of those!"
+        the_person "I want you to cum inside me and make me pregnant!"
+
+    elif the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0: #Just likes raw sex
         the_person "You don't need that silly! I like doing it without it, it's so much better!"
         the_person "Especially when you cum! It's so warm inside me!"
     else:
@@ -974,13 +1009,13 @@ label bimbo_sex_watch(the_person, the_sex_person, the_position):
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person "Wow [the_sex_person.name] you're so adventurous, I don't think I could ever do that. But it looks, like, super fun!"
-        $ change_report = the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 40)
         "[the_person.title] averts her gaze, but keeps glancing over while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person "Oh. My. God. That is so fucking hot... Keep it up girl, you're doing great!"
-        $ change_report = the_person.change_slut_temp(2)
+        $ the_person.change_slut(1, 60)
         "[the_person.title] watches you and [the_sex_person.name] [the_position.verb]."
 
     else:
@@ -1015,14 +1050,14 @@ label bimbo_being_watched(the_person, the_watcher, the_position):
         #She's into it but shamed by the prude watching her.
         the_person "[the_person.mc_title], maybe we shouldn't be doing this here..."
         $ the_person.change_arousal(-1)
-        $ the_person.change_slut_temp(-1)
+        $ the_person.change_slut(-1)
         "[the_person.title] seems uncomfortable with [the_watcher.title] nearby."
 
     else: #the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
         #They're both into it but not fanatical about it.
         the_person "Oh my god, having you watch us do this feels so dirty. I think I like it!"
         $ the_person.change_arousal(1)
-        $ the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 70)
         "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
@@ -1299,21 +1334,43 @@ label bimbo_sex_review(the_person, the_report):
 
 ## Role Specific Section ##
 label bimbo_improved_serum_unlock(the_person):
-    mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
-    the_person "Okay, how can I help?"
-    mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
-    "[the_person.title] nods happily."
-    "There's a long pause."
-    mc.name "Do you know what to do?"
-    the_person "Uh, duh! Look into the serum-stuff we make and make it better-er!"
-    mc.name "Right, and do you have any idea how to actually do that?"
-    "[the_person.title]'s eyebrows knit together as she tries to think."
-    the_person "Uhm... not yet but... what if..."
-    "You imagine you can see the little hamster in her head running as fast as it can."
-    the_person "I've got it! What if you test it on me!"
-    mc.name "Do you think that's a good idea!"
-    the_person "Duh, that's why I thought of it! Come on, how bad could it be? Just let me try it! Record it or something and I'll tell you what it feels like!"
+    mc.name "[the_person.title], now that you've had some time to get use to the lab there is something I want to talk to you about."
+    the_person "Sure, what can I help you with?"
+    mc.name "Our R&D up to this point has been based on my old notes from university."
+    mc.name "There were some unofficial experiment results that suggested the effects might be enhanced by sexual arousal."
+    "[the_person.title] nods her understanding."
+    the_person "Ah, so you had noticed that too? I have a hypothesis that an orgasm opens chemical receptors that are normally blocked."
+    mc.name "What else can we do if we assume that is true? Does that open up any more paths for our research?"
+    the_person "If it's true I could leverage the effect to induce greater effects in our subjects."
+    "[the_person.possessive_title] thinks for a long moment, then smiles mischeviously."
+    the_person "But we'll need to do some experiments to be sure."
+    mc.name "What sort of experiments?"
+    the_person "I want to take a dose of serum myself, and you can record the effects."
+    the_person "Then I'll make myself cum, and we can compare the effects after."
+    mc.name "Do you think that's a good idea?"
+    the_person "Not entirely, no. But we can't trust anyone else with this information if we're right."
+    the_person "We might be able to make progress by brute force, but this is a chance to catapult our knowledge to another level."
+    the_person "A finished dose of serum that raises my Suggestibility. The higher it gets my Suggestibility the better, but any amount should do."
+    the_person "Then we'll just need some time and some privacy for me to see what sort of effects my orgasms will have."
     return
+
+
+# label bimbo_improved_serum_unlock(the_person):
+#     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
+#     the_person "Okay, how can I help?"
+#     mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
+#     "[the_person.title] nods happily."
+#     "There's a long pause."
+#     mc.name "Do you know what to do?"
+#     the_person "Uh, duh! Look into the serum-stuff we make and make it better-er!"
+#     mc.name "Right, and do you have any idea how to actually do that?"
+#     "[the_person.title]'s eyebrows knit together as she tries to think."
+#     the_person "Uhm... not yet but... what if..."
+#     "You imagine you can see the little hamster in her head running as fast as it can."
+#     the_person "I've got it! What if you test it on me!"
+#     mc.name "Do you think that's a good idea!"
+#     the_person "Duh, that's why I thought of it! Come on, how bad could it be? Just let me try it! Record it or something and I'll tell you what it feels like!"
+#     return
 
 ## Taboo break dialogue ##
 # label bimbo_kissing_taboo_break(the_person):

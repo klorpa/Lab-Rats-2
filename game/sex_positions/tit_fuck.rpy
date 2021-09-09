@@ -27,7 +27,7 @@ init:
 label intro_tit_fuck(the_girl, the_location, the_object):
     #This position requires free (and big) tits, so we can assume they're available for everything.
     "You place a hand on [the_girl.possessive_title]'s shoulder and rub it gently, then move down to her sizeable [the_girl.tits] cup tits and squeeze them."
-    the_girl.char "Ah... Do you like them?"
+    the_girl "Ah... Do you like them?"
     mc.name "Of course I like them. I'd like them even more if they were wrapped around my cock."
     "She smiles and nods, reaching down to your waist and undoing your pants zipper."
     $ tit_fuck.redraw_scene(the_girl)
@@ -49,12 +49,12 @@ label taboo_break_tit_fuck(the_girl, the_location, the_object):
     "You grind your erection against [the_girl.title]'s thigh while you squeeze her tits."
     #TODO: Maybe also a taboo break for touching your penis
     if the_girl.effective_sluttiness(tit_fuck.associated_taboo) > tit_fuck.slut_cap:
-        the_girl.char "Of course I can. You're going to have to let go of these first though."
+        the_girl "Of course I can. You're going to have to let go of these first though."
         "She places her hands over yours and presses them against her breasts."
-        the_girl.char "I promise I'll put them to good use."
+        the_girl "I promise I'll put them to good use."
         "She lets go of your hands and kneels down, taking her tits into her own hands."
     else:
-        the_girl.char "I can try. You're going to have to let go of me first though."
+        the_girl "I can try. You're going to have to let go of me first though."
         "She lifts your hands off of her chest and kneels down, taking her tits up into her own hands"
     $ the_girl.draw_person(position = "blowjob")
     "She hefts her breasts up and presses them on either side of your shaft."
@@ -68,13 +68,13 @@ label taboo_break_tit_fuck(the_girl, the_location, the_object):
 
 label scene_tit_fuck_1(the_girl, the_location, the_object):
     "[the_girl.possessive_title] works her tits up and down your cock, alternating between slow and fast strokes."
-    the_girl.char "Mmm, do my tits feel good? Your cock feels so good between them."
+    the_girl "Mmm, do my tits feel good? Your cock feels so good between them."
     "She jiggles her tits in opposite directions to each other, then presses down hard on them and gives you a few powerful strokes."
     return
 
 label scene_tit_fuck_2(the_girl, the_location, the_object):
     "You reach down and grab [the_girl.title]'s tits yourself. You place your hands over hers and hold them in place."
-    the_girl.char "Mmm, fuck my tits [the_girl.mc_title], they're all yours."
+    the_girl "Mmm, fuck my tits [the_girl.mc_title], they're all yours."
     "You squeeze down hard on her breasts and work your hips, fucking her soft cleavage. [the_girl.title] moans in response."
     "When you're satisfied you let go and let her take over again."
     return
@@ -83,16 +83,16 @@ label scene_tit_fuck_3(the_girl, the_location, the_object):
     "[the_girl.possessive_title] gives you a few fast strokes with her tits, then stops and tilts her head down."
     "She lets a long line of saliva drip down between her tits and onto the tip of your cock."
     "She gives your shaft a few strokes, spreading her spit and lubricating her cleavage. She looks up at you from her knees and smiles."
-    the_girl.char "There, much better."
+    the_girl "There, much better."
     "She starts servicing you her tits again, now gliding quickly and easily over your hard dick."
     return
 
 
 label outro_tit_fuck(the_girl, the_location, the_object):
     "Her warm, soft tits wrapped around your sensitive cock drive you closer and closer to climax with each stroke up and down."
-    the_girl.char "You're so tense, are you going to cum?"
+    the_girl "You're so tense, are you going to cum?"
     "You nod and she speeds up."
-    the_girl.char "Cum for me [the_girl.mc_title], cum for me!"
+    the_girl "Cum for me [the_girl.mc_title], cum for me!"
     $ climax_controller = ClimaxController(["Cum between her tits.", "air"],["Cum on her face.","face"])
     $ the_choice = climax_controller.show_climax_menu()
     if the_choice == "Cum between her tits.":
@@ -106,7 +106,7 @@ label outro_tit_fuck(the_girl, the_location, the_object):
             "Your cum splatters down over the top of [the_girl.title]'s tits. She gasps as the warm liquid covers her and drips back down between her tits."
 
 
-        $ the_person.cum_on_tits()
+        $ the_girl.cum_on_tits()
         $ tit_fuck.redraw_scene(the_girl)
 
     elif the_choice == "Cum on her face.":
@@ -117,13 +117,13 @@ label outro_tit_fuck(the_girl, the_location, the_object):
             $ climax_controller.do_clarity_release(the_girl)
             "You stroke yourself to completion and blast your load over her face, throwing thick ropes of cum her lips and nose and eyes."
         else:
-            the_girl.char "What's wrong? I...!"
+            the_girl "What's wrong? I...!"
             $ climax_controller.do_clarity_release(the_girl)
             "You grunt and climax, blasting thick ropes of cum over [the_girl.title]'s surprised face. She jerks back, then waits until you're finished."
         $ the_girl.cum_on_face()
         $ tit_fuck.redraw_scene(the_girl)
 
-    the_girl.char "Ah... Wow..."
+    the_girl "Ah... Wow..."
     return
 
 label transition_default_tit_fuck(the_girl, the_location, the_object):
@@ -140,14 +140,14 @@ label strip_tit_fuck(the_girl, the_clothing, the_location, the_object):
     return
 
 label strip_ask_tit_fuck(the_girl, the_clothing, the_location, the_object):
-    the_person.char "[the_person.mc_title], would you like me to take off my [the_clothing.name]?"
+    the_girl "[the_girl.mc_title], would you like me to take off my [the_clothing.name]?"
     "She works her tits up and down while she waits for you to respond."
     menu:
         "Let her strip.":
             mc.name "Take it off for me."
             $ the_girl.draw_animated_removal(the_clothing, position = tit_fuck.position_tag)
             "[the_girl.title] leans back, letting your cock slide out of her cleavage, and pulls off her [the_clothing.name]."
-            the_person.char "Ah, so much better. Now, where were we..."
+            the_girl "Ah, so much better. Now, where were we..."
             "She leans back and engulfs your hard cock in her breasts again."
             return True
 
@@ -162,6 +162,6 @@ label orgasm_tit_fuck(the_girl, the_location, the_object):
     "Suddenly she squeezes down on her tits and through them your cock, gasping softly."
     $ the_girl.call_dialogue("climax_responses_foreplay")
     "She holds her breath as her body is wracked with an orgasm, then lets it out as a loud sigh when she recovers."
-    the_girl.char "I... Wow... Feeling your cock between my tits like this just made me..."
+    the_girl "I... Wow... Feeling your cock between my tits like this just made me..."
     "She moans and starts tit fucking you again, going at it with renewed vigor."
     return

@@ -95,8 +95,9 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         #NORA ROLE#
         # Note: Nora's role actions are assigned through Stephanie's events.
+
         nora_student_exam_rewrite_request_action = Action("Ask her about the exam rewrite.", nora_student_exam_rewrite_request_requirement, "nora_student_exam_rewrite_request",
-            menu_tooltip = "Ask if she can set up a new exam for your student.")
+            menu_tooltip = "Ask if she can set up a new exam for your student.") # This crisis triggers if your RL ever gets to 2 or higher without her introing herself. Provides an alternative way to the university.
 
         nora_role = Role("Nora", [nora_student_exam_rewrite_request_action], hidden = True)
 
@@ -249,6 +250,30 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
 
         ###################
+        ### TRANCE ROLE ###
+        ###################
+
+        trance_training_action = Action("Take advantage of her trance.", trance_train_requirement, "trance_train_label", menu_tooltip = "Take advantage of her orgasm-induced trance and make some changes while she is highly suggestible.")
+
+
+        trance_role = Role("In a Trance", actions = [trance_training_action], on_turn = trance_on_turn, on_day = trance_on_day)
+        heavy_trance_role = Role("In a Deep Trance", actions = [trance_training_action], on_turn = trance_on_turn, on_day = trance_on_day, looks_like = trance_role)
+        very_heavy_trance_role = Role("In a Very Deep Trance", actions = [trance_training_action], on_turn = trance_on_turn, on_day = trance_on_day, looks_like = heavy_trance_role)
+
+        #######################
+        ### TRAINABLE ROLES ###
+        #######################
+        breeder_fuck_action = Action("Offer to knock her up.", breeder_fuck_requirement, "breeder_fuck", menu_tooltip = "She wants to get pregnant. You could help with that." )
+
+        breeder_role = Role("Eager Breeder", actions = [breeder_fuck_action]) #TODO: Add an on-day (or on-turn?) LTE when her fertility is really high and she begs you to fuck her.
+
+
+        hypno_trigger_orgasm_action = Action("Trigger an orgasm.", hypno_trigger_orgasm_requirement, "hypno_trigger_orgasm", menu_tooltip = "You've implanted a trigger word. You can make her cum whenever you want.")
+        hypno_trigger_online_action = Action("Trigger an orgasm.", hypno_trigger_orgasm_requirement, "hypno_trigger_online", menu_tooltip = "You've implanted a trigger word, it should work over a text message.")
+
+        hypno_orgasm_role = Role("Hypno Orgasm", actions = [hypno_trigger_orgasm_action], hidden = True, on_turn = hypno_orgasm_on_turn, internet_actions = [hypno_trigger_online_action])
+
+        ###################
         ### OTHER ROLES ###
         ###################
 
@@ -257,8 +282,10 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         prostitute_role = Role("Prostitute", [prostitute_action])
 
-
         pregnant_role = Role("Pregnant", [], hidden = True)
+
+        milk_for_serum_action = Action("Milk her for serum. -15{image=gui/extra_images/energy_token.png}", milk_for_serum_requirement, "milk_for_serum_label", menu_tooltip = "Those tits contain company property!")
+        lactating_serum_role = Role("Lactating Serum", [milk_for_serum_action], hidden = True)
 return
 
 
@@ -489,7 +516,7 @@ label pay_strip_scene(the_person):
                                     "You pull the cash out of your wallet and hand it over."
                                     $ mc.business.funds += -price
                                     $ the_person.change_obedience(-1)
-                                    $ the_person.change_slut_temp(1)
+                                    $ the_person.change_slut(1, 40)
                                     $ the_person.draw_animated_removal(tease_item, position = picked_pose)
                                     $ mc.change_locked_clarity(10)
                                     "[the_person.title] takes it, puts it to the side, and starts to slide her [tease_item.name] off."
@@ -578,7 +605,7 @@ label pay_strip_scene(the_person):
                     "You pull some cash from your wallet and offer it to [the_person.title]. She takes it and looks at it for a long second."
                     the_person "Oh my god... I shouldn't be doing this..."
                     $ the_person.change_obedience(2)
-                    $ the_person.change_slut_temp(1)
+                    $ the_person.change_slut(1, 40)
                     $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
                     $ mc.change_locked_clarity(10)
                     "Nevertheless, she keeps the money and pulls off her [the_clothing.display_name]."
@@ -586,7 +613,7 @@ label pay_strip_scene(the_person):
                     "You pull some cash out from your wallet and hand it over to [the_person.title]. She puts it to the side and grabs her [the_clothing.display_name]."
                     the_person "Ready?"
                     $ the_person.change_obedience(1)
-                    $ the_person.change_slut_temp(1)
+                    $ the_person.change_slut(1, 40)
                     $ the_person.draw_animated_removal(strip_choice[0], position = picked_pose)
                     $ mc.change_locked_clarity(10)
                     "You nod and [the_person.title] pulls off the piece of clothing, throwing it to the side."

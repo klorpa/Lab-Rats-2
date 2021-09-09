@@ -58,3 +58,6 @@ init 0 python:
 
             self.assertNotIn(test_underwear, test_wardrobe.underwear_sets)
             self.assertNotIn(test_overwear, test_wardrobe.overwear_sets)
+
+        def test_verify_default_wardrobe(self):
+            self.assertTrue(verify_wardrobe())

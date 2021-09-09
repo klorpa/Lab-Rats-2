@@ -58,10 +58,10 @@ label scene_kissing_1(the_girl, the_location, the_object):
 
             "Squeeze her ass.":
                 "You move your hands down [the_girl.title]'s waist and around to her butt. You give both cheeks a squeeze."
-                if the_girl.core_sluttiness > 60:
+                if the_girl.sluttiness > 60:
                     $ kissing.current_modifier = None
                     $ kissing.redraw_scene(the_girl)
-                    the_girl.char "Mmm, don't you want to spread those cheeks and fuck me? I'd let you, you know. Just say the word and you can fuck me."
+                    the_girl "Mmm, don't you want to spread those cheeks and fuck me? I'd let you, you know. Just say the word and you can fuck me."
                     $ kissing.current_modifier = "kissing"
                     $ kissing.redraw_scene(the_girl)
                     "She grinds her hips against you and kisses you agressively."
@@ -71,7 +71,7 @@ label scene_kissing_1(the_girl, the_location, the_object):
                         "[the_girl.possessive_title] presses herself tight against you when you squeeze her ass cheeks. She breaks the kiss briefly to talk."
                         $ kissing.current_modifier = None
                         $ kissing.redraw_scene(the_girl)
-                        the_girl.char "Your hands are so strong... I just want to stay in your arms like this forever."
+                        the_girl "Your hands are so strong... I just want to stay in your arms like this forever."
                         $ kissing.current_modifier = "kissing"
                         $ kissing.redraw_scene(the_girl)
                         "You give her ass a light spank. She lets out a happy sigh and keeps kissing you."
@@ -80,7 +80,7 @@ label scene_kissing_1(the_girl, the_location, the_object):
                         $ kissing.current_modifier = None
                         $ kissing.redraw_scene(the_girl)
                         "[the_girl.possessive_title] breaks the kiss to speak."
-                        the_girl.char "Mmm, go ahead and give me a spank. I've been a bad girl, haven't I?"
+                        the_girl "Mmm, go ahead and give me a spank. I've been a bad girl, haven't I?"
                         $ kissing.current_modifier = "kissing"
                         $ kissing.redraw_scene(the_girl)
                         "You slap her ass. She jumps slightly and giggles, then goes back to kissing you while you massage her butt."
@@ -94,7 +94,7 @@ label scene_kissing_1(the_girl, the_location, the_object):
         $ kissing.current_modifier = None
         $ kissing.redraw_scene(the_girl)
         "After a moment you break the kiss and she looks away, embarrassed."
-        the_girl.char "I'm sorry, I just don't know how to do this very well..."
+        the_girl "I'm sorry, I just don't know how to do this very well..."
         mc.name "Don't worry, I'll show you."
         #CHOICE CONCEPT: Teach her what to do and Go gentle // Passioante french (Good oral skill leads to great french kissing).
         menu:
@@ -117,16 +117,16 @@ label scene_kissing_1(the_girl, the_location, the_object):
                     "When you break the kiss she looks at you breathlessly for a moment."
                     $ kissing.current_modifier = None
                     $ kissing.redraw_scene(the_girl)
-                    the_girl.char "Wow..."
+                    the_girl "Wow..."
                     "She pulls at your hips and grinds her body against yours."
-                    the_girl.char "Do it again."
+                    the_girl "Do it again."
                 else:
                     "After a few moments you break the kiss. [the_girl.title] takes a deep breath."
                     $ kissing.current_modifier = None
                     $ kissing.redraw_scene(the_girl)
-                    the_girl.char "Wow, that was more intense than I was expecting it to be."
+                    the_girl "Wow, that was more intense than I was expecting it to be."
                     "She smiles and pulls at your hips."
-                    the_girl.char "Let's do it again."
+                    the_girl "Let's do it again."
 
                 $ kissing.current_modifier = "kissing"
                 $ kissing.redraw_scene(the_girl)
@@ -147,14 +147,14 @@ label scene_kissing_2(the_girl, the_location, the_object):
             "You lean forward and kiss [the_girl.possessive_title]'s neck. She tilts her head to the side for you and lets out a long gasp."
             $ kissing.current_modifier = None
             $ kissing.redraw_scene(the_girl)
-            the_girl.char "Oh my god..."
+            the_girl "Oh my god..."
             "Her neck is soft and warm. You kiss it up and down while she moans happily into your ear."
-            if the_girl.core_sluttiness > 65:
-                the_girl.char "I hope you aren't just planning to tease me [the_girl.mc_title], I want you so badly."
-            elif the_girl.core_sluttiness > 40:
-                the_girl.char "Ah, when you do that it drives me crazy. Get me warmed up, then maybe we can do something else."
+            if the_girl.sluttiness > 65:
+                the_girl "I hope you aren't just planning to tease me [the_girl.mc_title], I want you so badly."
+            elif the_girl.sluttiness > 40:
+                the_girl "Ah, when you do that it drives me crazy. Get me warmed up, then maybe we can do something else."
             else:
-                the_girl.char "[the_girl.mc_title]... Hold me close and don't let go."
+                the_girl "[the_girl.mc_title]... Hold me close and don't let go."
 
             $ kissing.current_modifier = "kissing"
             $ kissing.redraw_scene(the_girl)
@@ -166,7 +166,7 @@ label scene_kissing_2(the_girl, the_location, the_object):
             if the_girl.has_large_tits():
                 if the_girl.outfit.tits_available():
                     "You cup one of [the_girl.title]'s sizeable breasts and heft it, making it bounce and jiggle."
-                    the_girl.char "Mmm, having fun? Go ahead, give it a squeeze."
+                    the_girl "Mmm, having fun? Go ahead, give it a squeeze."
                     "You grab [the_girl.possessive_title]'s other tit and squeeze them both. She bites her lip and sighs."
                     $ kissing.current_modifier = "kissing"
                     $ kissing.redraw_scene(the_girl)
@@ -175,9 +175,9 @@ label scene_kissing_2(the_girl, the_location, the_object):
                 else:
                     $top_clothing = the_girl.outfit.get_upper_ordered()[-1]
                     "You cup one of [the_girl.title]'s sizeable breasts through her [top_clothing.name]. You bounce it up and down a few times."
-                    the_girl.char "Mmm, that's nice. Maybe if you ask nicely I'll let you get a better feel of them."
+                    the_girl "Mmm, that's nice. Maybe if you ask nicely I'll let you get a better feel of them."
                     "She pulls you back against her and leans in close. You can feel her warm breath against your lips."
-                    the_girl.char "But don't get too distracted. Weren't you doing something already?"
+                    the_girl "But don't get too distracted. Weren't you doing something already?"
                     $ kissing.current_modifier = "kissing"
                     $ kissing.redraw_scene(the_girl)
                     "She plants her lips on yours and you keep kissing."
@@ -185,7 +185,7 @@ label scene_kissing_2(the_girl, the_location, the_object):
             else:
                 if the_girl.outfit.tits_available():
                     "You run one of your hands over [the_girl.title]'s small tits, taking an extra moment to rub her nipples with your thumb."
-                    the_girl.char "Mmm... That feels nice."
+                    the_girl "Mmm... That feels nice."
                     $ kissing.current_modifier = "kissing"
                     $ kissing.redraw_scene(the_girl)
                     "She lets you fondle her for a few more seconds before pulling you back into a kiss."
@@ -193,7 +193,7 @@ label scene_kissing_2(the_girl, the_location, the_object):
                 else:
                     $top_clothing = the_girl.outfit.get_upper_ordered()[-1]
                     "You run your hand over [the_girl.title]'s chest, feeling her small tits through her [top_clothing.name]."
-                    the_girl.char "I hope you aren't getting distracted..."
+                    the_girl "I hope you aren't getting distracted..."
                     $ kissing.current_modifier = "kissing"
                     $ kissing.redraw_scene(the_girl)
                     "She pulls you back against her and plants her lips on yours."
@@ -233,13 +233,13 @@ label transition_kissing_blowjob(the_girl, the_location, the_object):
     "You reach down with your other hand and unzip your pants. You pull your underwear down and let your hard cock spring free."
     if the_girl.effective_sluttiness() > 80:
         "[the_girl.title] stares down at your cock hungrily, licking her lips."
-        the_girl.char "Mmm, let me at it."
+        the_girl "Mmm, let me at it."
         $ the_girl.draw_person(position="blowjob")
         "[the_girl.possessive_title] drops down to her knees quickly, shuffling right up next to you and resting your hard shaft on her cheek."
     else:
         $ the_person.draw_person(position="blowjob")
         "[the_girl.possessive_title] looks down at your erection then back up at you. She smiles and nods, dropping slowly to her knees while her hands run down your sides."
-        the_girl.char "How's this?"
+        the_girl "How's this?"
     "[the_girl.title] leans in close and kisses the tip of your dick gently, swirling her tongue around the tip."
     return
 
@@ -263,7 +263,7 @@ label strip_ask_kissing(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] breaks the kiss."
     $ kissing.current_modifier = None
     $ kissing.redraw_scene(the_girl)
-    the_girl.char "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
+    the_girl "[the_girl.mc_title], I'd like to take off my [the_clothing.name], would you mind?"
     $ return_value = True
     menu:
         "Let her strip.":
@@ -274,10 +274,10 @@ label strip_ask_kissing(the_girl, the_clothing, the_location, the_object):
         "Leave it on.":
             mc.name "No, I like how you look with it on."
             if the_girl.sluttiness < 80:
-                the_girl.char "Do you think I look sexy in it?"
+                the_girl "Do you think I look sexy in it?"
                 "[the_girl.possessive_title] smiles and pulls you against her, kissing you passionately."
             else:
-                the_girl.char "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
+                the_girl "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
                 "[the_girl.possessive_title] smiles and pulls you against her, kissing you passionately."
             $ return_value = False
 
@@ -292,6 +292,6 @@ label orgasm_kissing(the_girl, the_location, the_object):
     $ the_girl.call_dialogue("climax_responses_foreplay")
     "After a few seconds she twitches one last time, then relaxes as all the tension drains from her body."
     "You break the kiss and look into each others eyes."
-    the_girl.char "That was... amazing [the_girl.mc_title]."
+    the_girl "That was... amazing [the_girl.mc_title]."
     "Before you can respond she kisses you again, seemingly eager to keep going."
     return

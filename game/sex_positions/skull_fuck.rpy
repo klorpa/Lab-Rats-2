@@ -134,8 +134,8 @@ label outro_skull_fuck(the_girl, the_location, the_object):
             $ climax_controller.do_clarity_release(the_girl)
             "When the last moments of your climax have passed you pull back, cock trailing spit and cum as you leave her mouth."
             if the_girl.get_opinion_score("drinking cum") > 0:
-                the_girl.char "I thought you were going to drown me with your cum for a moment... Mmmm."
-                $ the_girl.change_slut_temp(1)
+                the_girl "I thought you were going to drown me with your cum for a moment... Mmmm."
+                $ the_girl.change_slut(the_girl.get_opinion_score("drinking cum"))
                 $ the_girl.change_happiness(1)
                 "She shivers with pleasure at the thought."
             else:
@@ -152,9 +152,9 @@ label outro_skull_fuck(the_girl, the_location, the_object):
             $ skull_fuck.redraw_scene(the_girl)
             $ climax_controller.do_clarity_release(the_girl)
             "Finally you're spent and you finally let [the_person.title] pull off of your cock."
-            the_girl.char "Guahh... Guahh... Ah.... Ah...."
+            the_girl "Guahh... Guahh... Ah.... Ah...."
             mc.name "Fuck that felt good."
-            the_girl.char "There was so much... Ah... I thought I was going to drown in it..."
+            the_girl "There was so much... Ah... I thought I was going to drown in it..."
             "Still gasping for air, she wipes your sperm away from her nose and chin, then swallows loudly to get rid of the rest of it."
             $ the_girl.call_dialogue("cum_mouth")
 
@@ -175,10 +175,10 @@ label transition_default_skull_fuck(the_girl, the_location, the_object):
     "You place your hands on either side of [the_girl.title]'s head and level your hard cock with her mouth."
     "You rest the tip on her lower lip and feel her warm breath on the sensitive skin each time she exhales."
     mc.name "Ready?"
-    the_girl.char "Take me however you want."
+    the_girl "Take me however you want."
     "She kisses the tip. You pull her head hard towards you and push your hips forward, slamming your cock to its base in a single stroke."
     "Her eyes go wide and she gags loudly"
-    the_girl.char "Guaaah!"
+    the_girl "Guaaah!"
     "Her arms come up instinctively, but she struggles against the urge to push you away. She balls her fists and holds them close against her body."
 
     return
@@ -193,11 +193,11 @@ label strip_skull_fuck(the_girl, the_clothing, the_location, the_object):
             $ skull_fuck.current_modifier = None
             $ skull_fuck.redraw_scene(the_girl)
             "You give her throat one last thrust, then let her slide back until the tip of your cock clears her lips."
-            the_girl.char "Ah... One... Sec..."
+            the_girl "Ah... One... Sec..."
             $ the_girl.call_dialogue("sex_strip")
             $ the_girl.draw_animated_removal(the_clothing, position = deepthroat.position_tag)
             "She gasps for air while pulling off her [the_clothing.name]. She drops it to the ground, then nods up at you."
-            the_girl.char "Much better. Well, what are you waiting for?"
+            the_girl "Much better. Well, what are you waiting for?"
             "She opens her mouth and you slam your dick back down her throat."
             $ skull_fuck.current_modifier = "blowjob"
             $ skull_fuck.redraw_scene(the_girl)
@@ -214,7 +214,7 @@ label strip_ask_skull_fuck(the_girl, the_clothing, the_location, the_object):
             $ skull_fuck.current_modifier = None
             $ skull_fuck.redraw_scene(the_girl)
             "You give her throat one last thrust, then let her slide back until the tip of your cock just barely clears her lips."
-            the_girl.char "I'm going to take off my [the_clothing.name], if that's okay with you."
+            the_girl "I'm going to take off my [the_clothing.name], if that's okay with you."
             menu:
                 "Let her strip.":
                     mc.name "Take it off."
@@ -224,7 +224,7 @@ label strip_ask_skull_fuck(the_girl, the_clothing, the_location, the_object):
 
                 "Leave it on.":
                     mc.name "No, I like how you look with it on."
-                    the_girl.char "Well then, what are you waiting for?"
+                    the_girl "Well then, what are you waiting for?"
                     "She opens her mouth wide and you slam your dick back down her throat."
                     $ return_value = False
             $ skull_fuck.current_modifier = "blowjob"

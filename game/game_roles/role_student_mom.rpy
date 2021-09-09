@@ -13,16 +13,72 @@ init -2 python:
 label study_check_up(the_student, the_mom):
     # TODO: Christina asks how things are going after a study session.
     # If her marks have improved enough, and if you haven't been already, Christina invites you to stay for dinner.
+    if (the_student.outfit.tits_visible() or the_student.outfit.vagina_visible()) and not (the_student.planned_outfit.tits_visible() or the_student.planned_outfit.vagina_visible()):
+        $ the_student.apply_outfit() #Get dressed again
+        $ the_student.draw_person()
+        "[the_student.possessive] gets dressed so she can safely show you to the door."
 
     $ clear_scene()
     $ the_group = GroupDisplayManager([the_student, the_mom], primary_speaker = the_mom)
     $ the_group.draw_group()
+
+
     "[the_student.title] opens the door to her room and leads you downstairs. [the_mom.title] is waiting at the front door."
-    the_mom "All done for tonight? Tell me [the_mom.mc_title], how is my daughter doing?"
+    if (the_student.outfit.tits_visible() or the_student.outfit.vagina_visible()) and not the_mom.judge_outfit(the_student.outfit, -10):
+        "She is about to say something, when she notices her daughter's state of undress."
+        the_mom "[the_student.title], where are your clothes!"
+        the_student "Hmm? Oh, I was just..."
+        "Her mother cuts her off, clearly intending the question to be rhetorical."
+        the_mom "Go put something on, right now! I'm sorry [the_mom.mc_title], she shouldn't have been undressed like that around you."
+        mc.name "It's no problem, really. As long as she's learning I don't care what she wears."
+        $ the_student.apply_outfit(the_student.wardrobe.get_random_appropriate_outfit(20, guarantee_output = True ))
+        $ the_group.redraw_person(the_student)
+        "[the_student.possessive_title] scampers off to her room and returns a short moment later, more reasonably dressed."
+        the_student "Sorry..."
+        the_mom "That's better. Now [the_mom.mc_title], tell me how my daughter is doing."
+
+    elif not the_mom.judge_outfit(the_student.outfit, -10):
+        if the_mom.judge_outfit(the_student.outfit, 10):
+            # Just a little too slutty
+            "She's about to say something, but pauses and looks over [the_student.title]'s outfit."
+            the_mom "[the_student.title], do you really think that's appropriate to wear when we have guests over?"
+            the_student "[the_student.mc_title] isn't just a guest Mom, he's a friend!"
+            "She scowls at her daughter."
+            the_mom "We'll have a talk about this later."
+            "[the_mom.possessive_title] turns her attention to you."
+            the_mom "Tell me [the_mom.mc_title], how is my daughter doing? I hope her marks are better than her sense of decency."
+
+        elif the_student.outfit.underwear_visible():
+            "She's about to say something, but pauses when she notices her daughter's lack of clothing."
+            the_mom "[the_student.title], where are your clothes? You shouldn't be wandering around in your underwear when we have a guest."
+            the_student "Oh, he doesn't care, right [the_student.mc_title]?"
+            "You shrug and nod."
+            mc.name "She'll see the best results if she's comfortable while studying, and I suppose she finds that comfortable."
+            mc.name "As long as she's learning I don't care what she's wearing."
+            "[the_mom.possessive_title] scowls at her daughter for a moment, but then turns her attention to you."
+            the_mom "Well then tell me [the_mom.mc_title], how are her marks doing?"
+
+        else:
+            "She's about to say something, when she notices her daughter's outfit."
+            the_mom "[the_student.title], what are you wearing!"
+            the_student "Hmm? Oh, I was just..."
+            "Her mother cuts her off, clearly intending the question to be rhetorical."
+            the_mom "Go put something on, right now! I'm sorry [the_mom.mc_title], she shouldn't have been undressed like that around you."
+            mc.name "It's no problem, really. As long as she's learning I don't care what she wears."
+            $ the_student.apply_outfit(the_student.wardrobe.get_random_appropriate_outfit(20, guarantee_output = True))
+            $ the_group.redraw_person(the_student)
+            "[the_student.possessive_title] scampers off to her room and returns a short moment later, more reasonably dressed."
+            the_student "Sorry..."
+            the_mom "That's better. Now [the_mom.mc_title], tell me how my daughter is doing."
+
+    else:
+        pass #Even if she's a little naked her mom is chill with it. Neat!
+        the_mom "All done for tonight? Tell me [the_mom.mc_title], how is my daughter doing?"
+
     $ current_marks = the_student.event_triggers_dict.get("current_marks",0)
     if current_marks < 20:
         mc.name "I'll be honest, there's still a lot of work to do. It's going to take a lot of hard work if she wants to succeed."
-        the_mom "Do you hear that [the_person.title]? I expect you to keep working at this and to listen to everything [the_mom.mc_title] says."
+        the_mom "Do you hear that [the_student.title]? I expect you to keep working at this and to listen to everything [the_mom.mc_title] says."
         $ the_group.draw_person(the_student)
         $ the_student.change_happiness(-5)
         $ the_student.change_obedience(1)
@@ -57,7 +113,7 @@ label study_check_up(the_student, the_mom):
     else:
         mc.name "[the_student.title] has been a model student. She's put in the hard work, and her marks reflect that. I'm expecting her to be the top of her class."
         $ the_mom.change_love(1)
-        the_mom "Well that's suprising to hear. [the_student.title] has never been very invested in her academics before."
+        the_mom "Well that's surprising to hear. [the_student.title] has never been very invested in her academics before."
         $ the_group.draw_person(the_student)
         $ the_student.change_obedience(1)
         $ the_student.change_love(2)
@@ -221,7 +277,7 @@ label student_dinner(the_student, the_mom, first_time):
             "[the_mom.possessive_title] laughs and waves you off."
             the_mom "You're too kind."
             "You flirt with [the_mom.title] as much as you think you can get away with while her daughter is in the room."
-            $ the_mom.change_slut_temp(1)
+            $ the_mom.change_slut(1, 25)
             $ the_mom.change_love(2, max_modified_to = 25)
 
         "Touch [the_student.title]." if the_student.effective_sluttiness("touching_body") > 35:
@@ -236,7 +292,7 @@ label student_dinner(the_student, the_mom, first_time):
                 $ mc.change_locked_clarity(20)
                 "She runs her hand along the bulge of your crotch, stroking you slowly through the fabric."
                 the_student "He's been such a strong, firm presence in my life since I met him. I'm really learning a lot."
-                $ the_student.change_slut_temp(1)
+                $ the_student.change_slut(1, 65)
                 $ mc.change_locked_clarity(20)
                 "You and [the_student.possessive_title] fondle each other while you eat dinner, doing your best to keep [the_mom.title] from noticing everything."
 
@@ -246,7 +302,7 @@ label student_dinner(the_student, the_mom, first_time):
 
 
 
-            $ the_student.change_slut_temp(1 + the_student.get_opinion_score("public sex"))
+            $ the_student.change_slut(1 + the_student.get_opinion_score("public sex"), 60)
             $ the_student.discover_opinion("public sex")
             "Eventually you finish your ice cream."
             $ the_group.draw_person(the_mom, position = "sitting")
@@ -287,14 +343,14 @@ label student_dinner(the_student, the_mom, first_time):
             the_mom "No, nothing is wrong. I wanted to say thank you for tutoring my daughter."
             "She takes a half step closer, putting one of her legs between yours."
             the_mom "And for spending the evening with me, when I would have otherwise been all alone..."
-            "She leans close, barely an inch seperating you from her. You can smell the faint hint of wine on her breath."
+            "She leans close, barely an inch separating you from her. You can smell the faint hint of wine on her breath."
             the_mom "With no one to comfort me..."
             $ the_mom.draw_person(position = "kissing", emotion = "happy", special_modifier = "kissing")
             "[the_mom.possessive_title] closes the gap and kisses you passionately, almost over-eagerly."
             $ mc.change_locked_clarity(10)
             "She presses her body against you and holds the back of your neck. After a long moment she pulls back, panting softly."
             $ the_mom.draw_person(position = "kissing", emotion = "happy")
-            $ the_mom.change_slut_temp(1)
+            $ the_mom.change_slut(1, 60)
             $ the_mom.break_taboo("kissing")
             the_mom "Thank you for coming for dinner [the_mom.mc_title]. I hope I see you again soon..."
             "She steps back, trailing a hand along your chest."
@@ -332,7 +388,7 @@ label student_dinner(the_student, the_mom, first_time):
 
 #TODO: Hook this event up!
 label student_mom_appologise_label(the_person): #TODO Provide a way to not activate this event right away? Or even just to turn it down when it triggers.
-    if affair_role in the_person.special_role or the_person.effective_sluttiness() >= 60:
+    if the_person.has_role(affair_role) or the_person.effective_sluttiness() >= 60:
         $ the_person.event_triggers_dict["student_mom_door_kiss"] = 2
         return # There's nothing to worry about, she's either already fooling around with you or she's slutty enough she doesn't care.
     $ the_person.draw_person()

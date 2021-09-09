@@ -29,23 +29,23 @@ label intro_cunnilingus(the_girl, the_location, the_object):
     "Get down in front of her and place your hands on her knees, guiding them open."
     "She spreads your legs for you, giving you access to her cute pussy."
     "You lean forward and run your tongue along her slit. She moans softly as soon as you make contact."
-    the_girl.char "Oh [the_girl.mc_title]..."
+    the_girl "Oh [the_girl.mc_title]..."
     return
 
 label taboo_break_cunnilingus(the_girl, the_location, the_object):
     "You take [the_girl.title] by the hand and guide her towards the [the_object.name]."
     $ cunnilingus.redraw_scene(the_girl)
     "She follows your direction, sitting down in front of you."
-    the_girl.char "What are you doing?"
+    the_girl "What are you doing?"
     "You get down in front of her, place your hands on her knees, and encourage her to spread her legs for you."
     $ the_girl.call_dialogue(cunnilingus.associated_taboo+"_taboo_break")
     "She lets you spread her legs, giving you a clear view of her vagina."
     "You slide forward and bring your head even closer. [the_girl.possessive_title] takes a sharp breath and turns her head to the side."
     "You bring one hand up to her pussy and spread it open to reveal the tender pink inside."
     "With her thighs pressed against your shoulders you can feel every tremble and shiver of anticipation in her body."
-    the_girl.char "Come on, do it!"
+    the_girl "Come on, do it!"
     "You run your tongue along the length of her slit, tasting her sweet juices."
-    the_girl.char "Oh my god!"
+    the_girl "Oh my god!"
     return
 
 label scene_cunnilingus_1(the_girl, the_location, the_object):
@@ -71,7 +71,7 @@ label outro_cunnilingus(the_girl, the_location, the_object): #With low arousal g
     $ climax_controller.show_climax_menu()
     "You pull your head back and grunt, jerking your cock and blasting out a load of cum onto the floor in front of [the_girl.title]."
     $ climax_controller.do_clarity_release(the_girl)
-    the_girl.char "Oh my god... That's so hot!"
+    the_girl "Oh my god... That's so hot!"
     #TODO: There needs to be a cum-licking branch here.
     return
 
@@ -89,7 +89,7 @@ label strip_cunnilingus(the_girl, the_clothing, the_location, the_object):
     return
 
 label strip_ask_cunnilingus(the_girl, the_clothing, the_location, the_object):
-    the_girl.char "[the_girl.mc_title], I'm like to take off my [the_clothing.name] if you don't mind."
+    the_girl "[the_girl.mc_title], I'm like to take off my [the_clothing.name] if you don't mind."
     menu:
         "Let her strip.":
             "You look up from between her legs and nod."
@@ -102,7 +102,7 @@ label strip_ask_cunnilingus(the_girl, the_clothing, the_location, the_object):
         "Leave it on.":
             "You look up from between her legs and shake your head."
             mc.name "No, I like how you look with it on."
-            the_girl.char "Yeah? Do I look sexy in it? Mmmm..."
+            the_girl "Yeah? Do I look sexy in it? Mmmm..."
             return False
     return
 

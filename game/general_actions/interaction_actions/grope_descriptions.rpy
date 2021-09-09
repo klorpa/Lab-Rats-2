@@ -14,7 +14,7 @@ label grope_shoulder(the_person):
             "Once you have her talking again you start to gently massage her shoulder."
             "[the_person.possessive_title] seems uncomfortable but doesn't leave immediately."
             $ the_person.change_love(-1)
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(1, 10)
         else:
             "[the_person.possessive_title] doesn't seem to mind at all as you start to gently massage her shoulder."
 
@@ -43,7 +43,7 @@ label grope_waist(the_person):
             mc.name "Is something wrong?"
             "She hesitates for a moment, then shakes her head."
             the_person "Uh, no. Nothing's wrong [the_person.mc_title]."
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(1, 15)
             $ the_person.change_love(-1)
             # Uncomfortable
 
@@ -120,9 +120,9 @@ label grope_ass(the_person):
             the_person "Uh... [the_person.mc_title]. Do you mind?"
             mc.name "Is something wrong?"
             "You grab a handful of her ass and squeeze, making her yelp quietly."
-            the_person "Ah! You're hand is on my..."
+            the_person "Ah! Your hand is on my..."
             $ the_person.change_arousal(5 + mc.sex_skills["Foreplay"])
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(1, 20)
             $ the_person.change_love(-1)
             "You squeeze again, and this time she just takes a deep breath."
             the_person "Never... Never mind. Sorry, what were we talking about?"
@@ -178,7 +178,7 @@ label grope_tits(the_person):
                 $ the_item = the_person.outfit.get_upper_top_layer()
                 "She trails off awkwardly. You feel her nipple harden as you touch her, hidden somewhere beneath her [the_item.display_name]."
             $ the_person.change_arousal(8 + mc.sex_skills["Foreplay"])
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(1, 25)
             mc.name "That's okay, I don't mind. Take your time."
             "She still seems nervous, but takes a deep breath and tries her best to continue holding up her side of the conversation."
             "You think about going even further, but [the_person.possessive_title] seems to be on the edge of what she would tolerate."

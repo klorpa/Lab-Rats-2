@@ -86,8 +86,19 @@ init -2 python:
         else:
             return True
 
-
-
+    def nora_reintro_requirement():
+        if mc.business.research_tier < 2:
+            return False
+        elif not mc.business.event_triggers_dict.get("nora_cash_reintro_needed", True):
+            return False
+        elif mc.business.is_weekend():
+            return False
+        elif time_of_day == 0 or time_of_day == 4:
+            return False
+        elif renpy.random.randint(0,100) < 10:
+            return False #Try and give a little bit of spacing from the event, but be lazy about it.
+        else:
+            return True
 
 label nora_intro_label(the_steph):
     $ the_nora = nora
@@ -203,6 +214,7 @@ label nora_research_up_label(the_person):
     $ university.actions.remove(mc.business.event_triggers_dict.get("nora_research_up"))
     $ the_trait = mc.business.event_triggers_dict.get("nora_trait_researched")
     $ mc.business.event_triggers_dict["nora_trait_researched"] = None
+    $ mc.business.event_triggers_dict["nora_cash_reintro_needed"] = False
     $ list_of_traits.remove(the_trait)
     $ list_of_nora_traits.remove(the_trait)
     $ nora.set_schedule(university, times = [1,2,3])
@@ -215,17 +227,50 @@ label nora_research_up_label(the_person):
 
     return
 
-label nora_research_cash_intro(the_person):
+
+label nora_research_cash_intro(the_person, did_research = False):
     # Nora calls you and enables the rest of the quest line. Doesn't give you the first trait yet, for that you need to visit her.
-    "You get a call from [the_person.title]."
-    mc.name "[the_person.title], good to hear from you. How can I help you."
-    the_person "Hello [the_person.mc_title], I have some good news for you."
-    the_person "I presented the research findings from your field tests to my section head."
-    the_person "They were very impressed with my findings and have given my lab a grant to accelerate our work."
-    the_person "Obviously, I won't be able to keep up with the pace they expect without some help from you."
-    mc.name "So you're saying you have some more work for me."
-    the_person "I do. Come by the lab when you have the time and I can give you the details and discuss payment."
-    mc.name "I'll see when I have time in my schedule. Talk to you soon [the_person.title]."
+    if did_research:
+        "You get a call from [the_person.title]."
+        mc.name "[the_person.title], good to hear from you. How can I help you."
+        the_person "Hello [the_person.mc_title], I have some good news for you."
+        the_person "I presented the research findings from your field tests to my section head."
+        the_person "They were very impressed with my findings and have given my lab a grant to accelerate our work."
+        the_person "Obviously, I won't be able to keep up with the pace they expect without some help from you."
+        mc.name "So you're saying you have some more work for me."
+        the_person "I do. Come by the lab when you have the time and I can give you the details and discuss payment."
+        mc.name "I'll see when I have time in my schedule. Talk to you soon [the_person.title]."
+    else: #If you haven't talked to her before this will provide you with the chance to get back onto campus and research traits for her.
+        "You get a call on your cellphone. You're going to ignore it, but you stop when you see it's from [the_person.title]."
+        "Recognising the name of your former boss, bio-chem mentor, unwitting accomplice, and occasional target of your debauchery last year. You answer the call."
+        mc.name "Hello?"
+        the_person "Hello [the_person.mc_title]. I wanted to call and give you my congradulations."
+        mc.name "Pardon? I'm sorry [the_person.title], but we haven't talked in over a year."
+        the_person "I know, but I have kept in contact with [stephanie.name], and through her some of your work."
+        "You're suddenly worried about how much she knows, but this still seems to be a friendly conversation."
+        the_person "You've made very good progress. My team, which is much larger, was stuck on the same problem as you for a much longer time."
+        the_person "I'm curious, what gave you your breakthrough?"
+        mc.name "Oh, it just came to me..."
+        "She seems to accept this as a reasonable answer and continues."
+        the_person "I'm not surprised, you've always been a good thinker."
+        the_person "Now, I did have some business to discuss, if you have the time."
+        mc.name "For you, always. What do you need?"
+        the_person "My research here at the university is completely wrapped up in bureaucratic red tape. I've got a lab full of scientists, always busy, and we're learning nothing."
+        the_person "You are outside the system, and can run experiments that I simply cannot."
+        mc.name "So you want me to test serums for you?"
+        the_person "For pay, of course. What the university lacks in scientific fervor it makes up for in funding."
+        the_person "I will provide you with the production details of a serum trait, you will need to produce and test it."
+        the_person "Come by the lab and we can discuss the details."
+        mc.name "Will do. Nice talking to you [the_person.title]."
+        the_person "Likewise."
+        "With that she hangs up. You make a note to stop by your old university at some point and move on with your day."
+        $ mc.business.event_triggers_dict["nora_trait_researched"] = None
+        $ university.visible = True
+        $ nora.set_schedule(university, times = [1,2,3])
+        $ nora_research_visit = Action("Vist Nora's lab.", visit_lab_intro_requirement, "nora_research_cash_first_time", args = the_person, requirement_args = the_person,
+            menu_tooltip = "Visit your old lab and talk to Nora about serum research.")
+
+        $ university.actions.append(nora_research_visit)
 
     $ mc.business.event_triggers_dict["nora_cash_research_trigger"] = True
     return
@@ -313,13 +358,13 @@ label nora_research_cash(the_person):
         #Unlock the boss trait phase
         the_person "I also have some good news. Thanks in part to your assistance I have been given a long term grant to continue my research."
         mc.name "Congratulations [the_person.title], after all your hard work you deserve it."
-        the_person "Thank you. I had to pressure on my boss but I was able to... Well, I was able to convince him, let's leave it at that."
+        the_person "Thank you. My boss was an issue but I was able to... Well, I was able to convince him, let's leave it at that."
         the_person "This money relieves the pressure on me to produce results quickly, and means I will not need you to perform any more field tests."
         the_person "But I have an idea we may both benefit from."
         mc.name "Go on, you always have interesting ideas for me."
         the_person "In my studies I have found that people with extreme personalities, mindsets, backgrounds, or beliefs can offer insights into new serum traits."
         the_person "I will provide you with a detailed questionnaire. Have an intersting person fill it out, or interview them and fill it out yourself, and bring it back to me."
-        the_person "If I find any hints pointing towards a trait I will share the research with you. I improve my research, and you may discover useful applications for your business."
+        the_person "If I find any hints pointing towards a trait I will share the research with you. I expand the forefront of science, and you discover useful applications for your business."
         mc.name "That sounds like a good deal for both of us."
         the_person "My thoughts exactly, I'm glad you agree."
         "You say goodbye to [the_person.possessive_title] and split up. She sends your final payment and her research questionnaire soon after."
@@ -345,21 +390,29 @@ label nora_special_research(the_person):
     $ clear_scene()
     "[the_person.title] leaves for her lab. True to her word, she's back in less than half an hour with her findings in hand."
     $ the_person.draw_person()
-    if mother_role in the_subject.special_role and the_subject.core_sluttiness > 75 and the_subject.love > 75 and nora_reward_mother_trait not in list_of_traits:
+    if the_subject.has_exact_role(very_heavy_trance_role) and nora_reward_instant_trance not in list_of_traits:
+        the_person "A very interesting case [the_person.mc_title]. I have some leads for you."
+        the_person "The subject's level of suggestibility is remarkable. With persistence I believe you could convince them of almost anything in this state."
+        the_person "It reminded me of some of our old research work. I've dug out the notes on those early designs and identified the molecule responsible for this state."
+        the_person "It won't achieve results as extreme as what the subject presented with, but it may prove much faster than whatever means you used to achieve this state naturally."
+        "She hands you her research on the matter, unlocking a new serum trait for you to research."
+        $ list_of_traits.append(nora_reward_instant_trance)
+
+    elif the_subject.has_role(mother_role) and the_subject.sluttiness > 75 and the_subject.love > 75 and nora_reward_mother_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "Your mother's responses indicate an intense level of devotion to you, to the point that she seems to derive almost sexual pleasure from your satisfaction."
         the_person "It may be possible to reverse the relationship in others, inspiring love in place of sexual attraction."
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_mother_trait)
 
-    elif sister_role in the_subject.special_role and the_subject.core_sluttiness > 75 and the_subject.obedience > 150 and nora_reward_sister_trait not in list_of_traits:
+    elif the_subject.has_role(sister_role) and the_subject.sluttiness > 75 and the_subject.obedience > 150 and nora_reward_sister_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "Your sister's responses seemed incredibly deferential, but she seemed to derive some sort of pleasure from the act."
         the_person "It may be possible to produce that association in others, with the effect increasing alongside their natural tendencies to obey."
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_sister_trait)
 
-    elif cousin_role in the_subject.special_role and the_subject.core_sluttiness > 75 and the_subject.love < -25 and nora_reward_cousin_trait not in list_of_traits:
+    elif the_subject.has_role(cousin_role) and the_subject.sluttiness > 75 and the_subject.love < -25 and nora_reward_cousin_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "This was your cousin, correct? I'm surprised to find such vitriol in such a close family member."
         the_person "Her hate of you brings her great pleasure, to the point that I believe she has a sexual link to it."
@@ -367,13 +420,13 @@ label nora_special_research(the_person):
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_cousin_trait)
 
-    elif aunt_role in the_subject.special_role and the_subject.core_sluttiness > 75 and nora_reward_aunt_trait not in list_of_traits:
+    elif the_subject.has_role(aunt_role) and the_subject.sluttiness > 75 and nora_reward_aunt_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "Your aunt is a blank slate, ready for any sort of change. That would make her an ideal candidate to be affected by any number of other effects."
         the_person "If we could emulate that state of mind in others, you could safely add more serum traits to a single design."
         $ list_of_traits.append(nora_reward_aunt_trait)
 
-    elif nora_role in the_subject.special_role and the_subject.core_sluttiness > 75 and nora_reward_nora_trait not in list_of_traits:
+    elif the_subject.has_role(nora_role) and the_subject.sluttiness > 75 and nora_reward_nora_trait not in list_of_traits:
         the_person "Well I suppose your out-of-the-box thinking is why I appreciate your scientific input, [the_person.mc_title]."
         the_person "I ran your report on myself, and much to my surprise I think there may be something here for us both to study."
         the_person "My own sexual drive seems to be linked quite heavily to the intelligence of the person I am talking to."
@@ -381,7 +434,7 @@ label nora_special_research(the_person):
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_nora_trait)
 
-    elif pregnant_role in the_subject.special_role and the_subject.event_triggers_dict.get("preg_transform_day",day) < day and the_subject.core_sluttiness > 75 and nora_reward_hucow_trait not in list_of_traits:
+    elif the_subject.has_role(pregnant_role) and the_subject.event_triggers_dict.get("preg_transform_day",day) < day and the_subject.sluttiness > 75 and nora_reward_hucow_trait not in list_of_traits:
         the_person "First off, congratulations [the_person.mc_title]. You're the father."
         the_person "Second, I have an interesting development and possible path forward."
         the_person "My testing has revealed a number of major differences between the test subject's hormonal balance and what is expected."
@@ -413,7 +466,7 @@ label nora_special_research(the_person):
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_high_obedience_trait)
 
-    elif the_subject.core_sluttiness > 100 and nora_reward_high_slut_trait not in list_of_traits:
+    elif the_subject.sluttiness > 100 and nora_reward_high_slut_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "Your subject was obviously very forthcoming with her sexual desires, but what I found interesting was how central to her personality they were."
         the_person "It may be possible to instill this same sexual confidence in others, if they have a budding tendency for it to start with."

@@ -14,30 +14,31 @@ screen person_info_detailed(the_person):
         xalign 0.5
         xanchor 0.5
         yalign 0.2
-        frame:
-            xsize 1750
-            ysize 120
-            xalign 0.5
-            background "#1a45a1aa"
-            vbox:
-                xalign 0.5 xanchor 0.5
-                text "[the_person.name] [the_person.last_name]" style "menu_text_style" size 30 xalign 0.5 yalign 0.5 yanchor 0.5 color the_person.char.who_args["color"] font the_person.char.what_args["font"]
-                if not mc.business.get_employee_title(the_person) == "None":
-                    text "Position: " + mc.business.get_employee_title(the_person) + " ($[the_person.salary]/day)" style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
-
-                $ visible_roles = []
-                $ role_string = "Special Roles: "
-                python:
-                    for role in the_person.special_role:
-                        if not role.hidden:
-                            visible_roles.append(role.role_name)
-
-                    if visible_roles:
-                        role_string += visible_roles[0]
-                        for role in visible_roles[1::]: #Slicing off the first manually let's us use commas correctly.
-                            role_string += ", " + role
-                if visible_roles:
-                    text role_string style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
+        use girl_title_header(the_person, 1750, 120)
+        # frame:
+        #     xsize 1750
+        #     ysize 120
+        #     xalign 0.5
+        #     background "#1a45a1aa"
+        #     vbox:
+        #         xalign 0.5 xanchor 0.5
+        #         text "[the_person.name] [the_person.last_name]" style "menu_text_style" size 30 xalign 0.5 yalign 0.5 yanchor 0.5 color the_person.char.who_args["color"] font the_person.char.what_args["font"]
+        #         if not mc.business.get_employee_title(the_person) == "None":
+        #             text "Position: " + mc.business.get_employee_title(the_person) + " ($[the_person.salary]/day)" style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
+        #
+        #         $ visible_roles = []
+        #         $ role_string = "Special Roles: "
+        #         python:
+        #             for role in the_person.special_role:
+        #                 if not role.hidden:
+        #                     visible_roles.append(role.role_name)
+        #
+        #             if visible_roles:
+        #                 role_string += visible_roles[0]
+        #                 for role in visible_roles[1::]: #Slicing off the first manually let's us use commas correctly.
+        #                     role_string += ", " + role
+        #         if visible_roles:
+        #             text role_string style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
 
         hbox:
             xsize 1750
@@ -58,14 +59,14 @@ screen person_info_detailed(the_person):
 
                     text "Age: [the_person.age]" style "menu_text_style"
                     text "Cup Size: [the_person.tits]" style "menu_text_style"
-                    if girlfriend_role in the_person.special_role:
+                    if the_person.has_role(girlfriend_role):
                         text "Relationship: Girlfriend" style "menu_text_style"
                     else:
                         text "Relationship: [the_person.relationship]" style "menu_text_style"
 
                     if the_person.relationship != "Single":
                         text "Significant Other: [the_person.SO_name]" style "menu_text_style"
-                    elif girlfriend_role in the_person.special_role:
+                    elif the_person.has_role(girlfriend_role):
                         text "Significant Other: [mc.name]" style "menu_text_style"
 
                     text "Kids: [the_person.kids]" style "menu_text_style"

@@ -46,19 +46,14 @@ init -1:
             the_person.change_obedience(-20, add_to_log)
 
         def large_obedience_enhancer_on_turn(the_person, the_serum, add_to_log):
-            the_person.change_slut_temp(-1, add_to_log)
-            if the_person.sluttiness < the_person.core_sluttiness:
-                if renpy.random.randint(0,100) < 10:
-                    the_person.change_slut_core(-1, add_to_log, fire_event = False) #If this brings her into negative relative sluttiness she might lose core sluttiness as well.
+            the_person.change_slut(-1, add_to_log = add_to_log)
 
         ## aphrodisiac_functions ##
         def aphrodisiac_on_apply(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(15, add_to_log, fire_event = False)
-            the_person.change_slut_temp(15, add_to_log)
+            the_person.change_slut(15, add_to_log = add_to_log)
 
         def aphrodisiac_on_remove(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(-15, add_to_log, fire_event = False)
-            the_person.change_slut_temp(-15, add_to_log)
+            the_person.change_slut(-15, add_to_log = add_to_log)
 
         def aphrodisiac_on_turn(the_person, the_serum, add_to_log):
             the_person.change_obedience(-1, add_to_log)
@@ -85,13 +80,11 @@ init -1:
         def slutty_caffeine_trait_on_apply(the_person, the_serum, add_to_log):
             the_person.change_max_energy(20, add_to_log)
             the_person.change_energy(20, add_to_log)
-            the_person.change_slut_temp(15, add_to_log)
-            the_person.change_slut_core(15, add_to_log)
+            the_person.change_slut(15, add_to_log = add_to_log)
 
         def slutty_caffeine_trait_on_remove(the_person, the_serum, add_to_log):
             the_person.change_max_energy(-20, add_to_log)
-            the_person.change_slut_temp(-15, add_to_log)
-            the_person.change_slut_core(-15, add_to_log)
+            the_person.change_slut(-15, add_to_log = add_to_log)
 
         ## love_potion_functions ##
         def love_potion_on_apply(the_person, the_serum, add_to_log):
@@ -106,7 +99,7 @@ init -1:
             the_person.add_suggest_effect(30, add_to_log)
 
         def off_label_drugs_on_remove(the_person, the_serum, add_to_log):
-            the_person.remove_suggest_effect(30 )
+            the_person.remove_suggest_effect(30)
 
         ## mood_enhancer_functions ##
         def mood_enhancer_on_turn(the_person, the_serum, add_to_log):
@@ -169,8 +162,7 @@ init -1:
 
         ## permanent_bimbo_functions ##
         def permanent_bimbo_on_apply(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(10, add_to_log, fire_event = True)
-            the_person.change_slut_temp(10, add_to_log)
+            the_person.change_slut(10, add_to_log = add_to_log)
             the_person.change_obedience(10, add_to_log)
 
             display_name = the_person.create_formatted_title("???")
@@ -219,22 +211,20 @@ init -1:
             the_person.bc_penalty += -40
 
         def simple_aphrodesiac_on_apply(the_person, the_serum, add_to_log):
-            change_amount = 30 - the_person.sluttiness
+            change_amount = 30 - the_person.effective_sluttiness()
             if change_amount > 10:
                 change_amount = 10
             elif change_amount < 0:
                 change_amount = 0
 
-            the_person.change_slut_temp(change_amount, add_to_log)
-            the_person.change_slut_core(change_amount, add_to_log, fire_event = False)
+            the_person.change_slut(change_amount, add_to_log = add_to_log)
             the_serum.effects_dict["simple_aphrodesiac_amount"] = change_amount
 
             the_person.change_max_energy(-20, add_to_log)
 
         def simple_aphrodesiac_on_remove(the_person, the_serum, add_to_log):
             change_amount = the_serum.effects_dict.get("simple_aphrodesiac_amount", 10)
-            the_person.change_slut_temp(-change_amount, add_to_log)
-            the_person.change_slut_core(-change_amount, add_to_log, fire_event = False)
+            the_person.change_slut(-change_amount, add_to_log = add_to_log)
 
             the_person.change_max_energy(20, add_to_log)
 
@@ -257,6 +247,18 @@ init -1:
 
         def climax_enhancer_on_turn(the_person, the_serum, add_to_log):
             the_person.change_happiness(-5, add_to_log)
+
+
+        def rolling_orgasm_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_max_energy(-10, add_to_log)
+
+        def rolling_orgasm_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_max_energy(10, add_to_log)
+
+        def rolling_orgasm_on_move(the_person, the_serum, add_to_log):
+            the_person.run_orgasm(show_dialogue = False, add_to_log = add_to_log)
+            the_person.change_happiness(5, add_to_log)
+
 
         ## Sex skill enhancements ##
 
@@ -313,6 +315,70 @@ init -1:
             the_person.event_triggers_dict["preg_transform_day"] = the_person.event_triggers_dict.get("preg_transform_day", day) + 1
             the_person.event_triggers_dict["preg_finish_announce_day"] = the_person.event_triggers_dict.get("preg_finish_announce_day", day) + 1
 
+
+        ## Body modification functions ##
+        def hair_lighten_dye_on_turn(the_person, the_serum, add_to_log):
+            change_per_turn = 0.3 #At 1 it changes in a single turn, at 0 it never changes at all. At 0.5 it gets 50% closer each turn.
+
+            current_colour_raw = the_person.hair_colour[1] #NOTE: Hair colour also comes with a discriptor, but we need a way to override/replace that at some point in the future.
+            current_colour = Color(rgb=(current_colour_raw[0], current_colour_raw[1], current_colour_raw[2]), alpha = current_colour_raw[3]) #Generate a proper Colour object
+            new_colour = current_colour.tint(1.0 - change_per_turn) #Each turn it gets 30% closer to the goal (but never _quite_ gets there).
+            the_person.set_hair_colour(new_colour)
+
+        def hair_darken_dye_on_turn(the_person, the_serum, add_to_log):
+            change_per_turn = 0.3 #At 1 it changes in a single turn, at 0 it never changes at all. At 0.5 it gets 50% closer each turn.
+
+            current_colour_raw = the_person.hair_colour[1] #NOTE: Hair colour also comes with a discriptor, but we need a way to override/replace that at some point in the future.
+            current_colour = Color(rgb=(current_colour_raw[0], current_colour_raw[1], current_colour_raw[2]), alpha = current_colour_raw[3]) #Generate a proper Colour object
+            new_colour = current_colour.shade(1.0 - change_per_turn) #Each turn it gets 30% closer to the goal (but never _quite_ gets there).
+            the_person.set_hair_colour(new_colour)
+
+        def weight_gain_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_max_energy(-20, add_to_log)
+
+        def weight_gain_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_max_energy(20, add_to_log)
+
+        def weight_gain_on_turn(the_person, the_serum, add_to_log):
+            if renpy.random.randint(0,100) < 15:
+                if the_person.body_type == "thin_body":
+                    the_person.body_type = "standard_body"
+                elif the_person.body_type == "standard_body":
+                    the_person.body_type = "curvy_body"
+
+        def weight_loss_on_apply(the_person, the_serum, add_to_log):
+            the_person.change_max_energy(-20, add_to_log)
+
+        def weight_loss_on_remove(the_person, the_serum, add_to_log):
+            the_person.change_max_energy(20, add_to_log)
+
+        def weight_loss_on_turn(the_person, the_serum, add_to_log):
+            if renpy.random.randint(0,100) < 15:
+                if the_person.body_type == "standard_body":
+                    the_person.body_type = "thin_body"
+                elif the_person.body_type == "curvy_body":
+                    the_person.body_type = "standard_body"
+
+        def height_increase_on_day(the_person, the_serum, add_to_log):
+            the_person.height += 0.01 #TODO: Decide what the maximum should be. You should be able to make giants with this
+            if the_person.height > 1.1:
+                the_person.height = 1.1
+            if renpy.random.randint(0,100) < 10:
+                new_tits = get_larger_tits(the_person.tits)
+                if new_tits != the_person.tits: #Double check we don't already have them to avoid increasing breast weight infinitely
+                    the_person.tits = new_tits
+                    the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts receive a boost in region weight because they're natural.
+
+        def height_decrease_on_day(the_person, the_serum, add_to_log):
+            the_person.height -= 0.01 #TODO: Decide what the minimum should be. Should be smaller than normal
+            if the_person.height < 0.56:
+                the_person.height = 0.56
+            if renpy.random.randint(0,100) < 10:
+                new_tits = get_smaller_tits(the_person.tits)
+                if new_tits != the_person.tits:
+                    the_person.tits = new_tits
+                    the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts receive a boost in region weight because they're natural.
+
         ## nora_serum_up_trait ##
         def nora_suggest_up_on_apply(the_person, the_serum, add_to_log):
             the_person.add_suggest_effect(50, add_to_log)
@@ -328,12 +394,10 @@ init -1:
             the_person.change_obedience(change_amount)
 
         def nora_sluttiness_boost_on_apply(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(20, add_to_log, fire_event = False)
-            the_person.change_slut_temp(20, add_to_log)
+            the_person.change_slut(20, add_to_log = add_to_log)
 
         def nora_sluttiness_boost_on_remove(the_person, the_serum, add_to_log):
-            the_person.change_slut_core(-20, add_to_log, fire_event = False)
-            the_person.change_slut_temp(-20, add_to_log)
+            the_person.change_slut(-20, add_to_log = add_to_log)
 
 
         ## nora_special_unlock_taits
@@ -346,29 +410,26 @@ init -1:
         def nora_reward_sister_trait_on_day(the_person, the_serum, add_to_log):
             amount_change = __builtin__.round((the_person.obedience - 100)/10)
             if amount_change > 0:
-                the_person.change_slut_temp(amount_change, add_to_log)
-                the_person.change_slut_core(amount_change, add_to_log, fire_event = False)
+                the_person.change_slut(amount_change, add_to_log = add_to_log)
 
         def nora_reward_cousin_trait_on_day(the_person, the_serum, add_to_log):
             amount_change = __builtin__.round((the_person.love)/-5)
             if amount_change > 0:
-                the_person.change_slut_core(amount_change, add_to_log, fire_event = False)
+                the_person.change_slut(amount_change, add_to_log = add_to_log)
 
         def nora_reward_nora_trait_on_apply(the_person, the_serum, add_to_log):
             amount = 5 * mc.int
-            the_person.change_slut_temp(amount, add_to_log)
-            the_person.change_slut_core(amount, add_to_log, fire_event = False)
+            the_person.change_slut(amount, add_to_log = add_to_log)
             the_person.change_obedience(amount, add_to_log)
 
         def nora_reward_nora_trait_on_remove(the_person, the_serum, add_to_log):
             amount = 5 * mc.int
-            the_person.change_slut_temp(-amount, add_to_log)
-            the_person.change_slut_core(-amount, add_to_log)
+            the_person.change_slut(-amount, add_to_log = add_to_log)
             the_person.change_obedience(-amount, add_to_log)
 
         def nora_reward_high_love_trait_on_turn(the_person, the_serum, add_to_log):
-            if the_person.core_sluttiness > the_person.love:
-                the_person.change_slut_core(-1, add_to_log, fire_event = False)
+            if the_person.sluttiness > the_person.love:
+                the_person.change_slut(-1, add_to_log = add_to_log)
                 the_person.change_love(1, add_to_log)
 
         def nora_reward_low_love_trait_on_apply(the_person, the_serum, add_to_log):
@@ -382,12 +443,7 @@ init -1:
             the_person.change_happiness(amount, add_to_log)
 
         def nora_reward_high_slut_trait_on_apply(the_person, the_serum, add_to_log):
-            amount = the_person.sluttiness - the_person.core_sluttiness
-            if amount > 5:
-                amount = 5
-            if amount > 0:
-                the_person.change_slut_temp(-amount)
-                the_person.change_slut_core(amount, add_to_log, fire_event = False)
+            the_person.change_slut(5, add_to_log = add_to_log)
 
         def nora_reward_genius_trait_on_apply(the_person, the_serum, add_to_log):
             if (the_person.charisma < 5):
@@ -425,6 +481,10 @@ init -1:
             the_person.tits = get_smaller_tits(the_person.tits) #Her tits start to swell.
             the_person.tits = get_smaller_tits(the_person.tits)
             the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
+
+        def nora_reward_instant_trance_on_apply(the_person, the_serum, add_to_log):
+            if not the_person.has_role(trance_role):
+                the_person.run_orgasm(show_dialogue = False, force_trance = True, add_to_log = add_to_log)
 
 
 label instantiate_serum_traits(): #Creates all of the default LR2 serum trait objects.
@@ -579,7 +639,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             clarity_cost = 25)
 
         foreplay_enhancer = SerumTrait(name = "Tactile Stimulator",
-            desc = "Tunes the subjects nerves, especially those in the extremities, to higher levels of precision. Increases a girls Foreplay skill for the duration.",
+            desc = "Tunes the subject's nerves, especially those in the extremities, to higher levels of precision. Increases a girls Foreplay skill for the duration.",
             positive_slug = "+$10 Value, +2 Foreplay Skill",
             negative_slug = "+50 Serum Research",
             value_added = 10,
@@ -591,6 +651,32 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 0,
             research_needed = 100,
             clarity_cost = 50)
+
+        hair_lighten_dye = SerumTrait(name = "Synthetic Hair Bleach",
+            desc = "Slow release chemicals lighten the hair colour of the subject's hair. Application over several hours or days is needed for the best results.",
+            positive_slug = "+$10 Value, Lightens the Subject's Hair Colour.",
+            negative_slug = "+40 Serum Research",
+            value_added = 10,
+            research_added = 40,
+            base_side_effect_chance = 40,
+            on_turn = hair_lighten_dye_on_turn,
+            tier = 0,
+            research_needed = 75,
+            exclude_tags = "Dye",
+            clarity_cost = 20)
+
+        hair_darken_dye = SerumTrait(name = "Synthetic Hair Darkening Agent",
+            desc = "Slow release chemicals darken the hair colour of the subject. Application over several hours or days is needed for the best results.",
+            positive_slug = "+$10 Value, Darkens the Subject's Hair Colour.",
+            negative_slug = "+40 Serum Research",
+            value_added = 10,
+            research_added = 40,
+            base_side_effect_chance = 40,
+            on_turn = hair_darken_dye_on_turn,
+            tier = 0,
+            research_needed = 75,
+            exclude_tags = "Dye",
+            clarity_cost = 20)
 
 
         #################
@@ -741,7 +827,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             clarity_cost = 250)
 
         fertility_enhancement_trait = SerumTrait(name = "Fertility Enhancement",
-            desc = "Targets and enhances a womans natural reproductive cycle, increasing the chance that she may become pregnant. If taken birth control will still prevent most pregnancies.",
+            desc = "Targets and enhances a womans natural reproductive cycle, increasing the chance that she may become pregnant. Birth control will still prevent most pregnancies.",
             positive_slug = "+$20 Value, +20% Fertility",
             negative_slug = "+100 Serum Research",
             value_added = 20,
@@ -767,6 +853,20 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 1,
             research_needed = 250,
             clarity_cost = 200)
+
+        lactation_hormones = SerumTrait(name = "Lactation Promotion Hormones",
+            desc = "Contains massive quantities of hormones normally found naturally in the body during late stage pregnancy. Triggers immediate breast lactation",
+            positive_slug = "+$25 Value, Encourages Lactation",
+            negative_slug = "+150 Serum Research",
+            value_added = 25,
+            research_added = 150,
+            base_side_effect_chance = 20,
+            on_apply = lactation_hormones_on_apply,
+            on_remove = lactation_hormones_on_remove,
+            requires = [fertility_enhancement_trait],
+            tier = 1,
+            research_needed = 600,
+            clarity_cost = 750)
 
         oral_enhancer = SerumTrait(name = "Gag Suppressant",
             desc = "Targets and suppresses the natural gag reflex of the subject. This has little practical benefit, other than making it significantly easier for the subject to perform oral sex.",
@@ -796,7 +896,39 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 200,
             clarity_cost = 500)
 
-    #################
+        weight_gain = SerumTrait(name = "Weight Gain Promoter",
+            desc = "Triggers a natural response inside of the body, encouraging it to store as much excess energy as possible. Has a small chance of changing the subject's body type each turn, at the cost of lowering the amount of energy they have available.",
+            positive_slug = "+$10 Value, 15% Chance/Turn to Change Body Type",
+            negative_slug = "+80 Serum Research, -20 Max Energy",
+            value_added = 10,
+            research_added = 80,
+            base_side_effect_chance = 40,
+            on_apply = weight_gain_on_apply,
+            on_remove = weight_gain_on_remove,
+            on_turn = weight_gain_on_turn,
+            requires = [basic_med_app],
+            tier = 1,
+            research_needed = 150,
+            exclude_tags = ["Weight Modification"],
+            clarity_cost = 200)
+
+        weight_loss = SerumTrait(name = "Weight Loss Promoter",
+            desc = "Dampens the appetite of the subject, resulting in mostly-natural weight loss. Has a small chance of changing the subject's body type each turn, at the cost of lowering the amount of energy they have available.",
+            positive_slug = "+$20 Value, 15% Chance/Turn to Change Body Type",
+            negative_slug = "+160 Serum Research, -20 Max Energy",
+            value_added = 20,
+            research_added = 160,
+            base_side_effect_chance = 80,
+            on_apply = weight_loss_on_apply,
+            on_remove = weight_loss_on_remove,
+            on_turn = weight_loss_on_turn,
+            requires = [basic_med_app],
+            tier = 1,
+            research_needed = 500,
+            exclude_tags = ["Weight Modification"],
+            clarity_cost = 700)
+
+        #################
         # Tier 2 Traits #
         #################
         # Tier 2 traits can produce moderate effects at a cost or minor effects without side effects.
@@ -854,7 +986,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_added = 125,
             base_side_effect_chance = 20,
             on_turn = breast_enhancement_on_turn,
-            requires = basic_med_app,
+            requires = [weight_gain],
             tier = 2,
             research_needed = 500,
             clarity_cost = 1000)
@@ -867,7 +999,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_added = 125,
             base_side_effect_chance = 20,
             on_turn = breast_reduction_on_turn,
-            requires = basic_med_app,
+            requires = [weight_loss],
             tier = 2,
             research_needed = 500,
             clarity_cost = 750)
@@ -967,21 +1099,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 800,
             clarity_cost = 800)
 
-        lactation_hormones = SerumTrait(name = "Lacation Promotion Hormones",
-            desc = "Contains massive quantities of hormones normally found naturally in the body during late stage pregnancy. Triggers immediate breast lactation",
-            positive_slug = "+$25 Value, Encourages Lactation",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
-            research_added = 150,
-            base_side_effect_chance = 20,
-            on_apply = lactation_hormones_on_apply,
-            on_remove = lactation_hormones_on_remove,
-            requires = [fertility_enhancement_trait, breast_enhancement],
-            tier = 2,
-            research_needed = 600,
-            clarity_cost = 750)
-
-        vaginal_enhancer = SerumTrait(name = "Natural Lubrication Stimulation",
+        vaginal_enhancer = SerumTrait(name = "Natural Lubricant Stimulation",
             desc = "Kicks the subject's natural lubrication production into overdrive. Improved lubrication allows for more vigorous activities without discomfort.",
             positive_slug = "+20 Value, +2 Vaginal Skill",
             negative_slug = "+300 Serum Research",
@@ -1010,7 +1128,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             clarity_cost = 1000)
 
         climax_enhancer = SerumTrait(name = "Pleasure Center Stimulator",
-            desc = "Changes the baseline of pleasure chemicals in the subject's brain. This has the effect of making it much easier for physical stimulation to trigger an orgasm in the subject. Comes with a large risk of side effects, and disturbs the subjects natural sense of enjoyment.",
+            desc = "Changes the baseline of pleasure chemicals in the subject's brain. This has the effect of making it much easier for physical stimulation to trigger an orgasm in the subject. Comes with a large risk of side effects, and disturbs the subject's natural sense of enjoyment.",
             positive_slug = "+25 Value, -20 Max Arousal (Min 20)",
             negative_slug = "-5 Happiness/Turn, +350 Serum Research",
             value_added = 25,
@@ -1024,7 +1142,50 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 1000,
             clarity_cost = 1600)
 
-    #################
+        rolling_orgasm = SerumTrait(name = "Climax Cycler",
+            desc = "Linking the pleasure center of the brain to the subject's natural circadian rhythm causes periodic, low grade orgasms spaced several hours apart. In addition to being pleasant and slightly tiring, this can trigger other orgasm related effects if they exist.",
+            positive_slug = "+30 Value, +5 Happiness/Turn, 1 Forced Orgasm/Turn",
+            negative_slug = "-10 Max Energy, +400 Serum Research",
+            value_added = 30,
+            research_added = 400,
+            base_side_effect_chance = 50,
+            on_apply = rolling_orgasm_on_apply,
+            on_remove = rolling_orgasm_on_remove,
+            on_move = rolling_orgasm_on_move,
+            requires = [climax_enhancer],
+            tier = 2,
+            research_needed = 1000,
+            clarity_cost = 2000)
+
+        height_increase = SerumTrait(name = "Human Growth Rebooter",
+            desc = "Provides the required hormonal signals to promote growth that would otherwise stop after puberty, allowing the subject to grow taller. Causes a height increase of roughly 1 inch per day. There is a minor chance that the subject's breasts will grow along with her frame.",
+            positive_slug = "+$20 Value, +1\" Height/Day",
+            negative_slug = "10% Chance/Day Breast Enhancement, +200 Serum Research",
+            value_added = 20,
+            research_added = 200,
+            base_side_effect_chance = 80,
+            on_day = height_increase_on_day,
+            requires = [weight_gain],
+            tier = 2,
+            research_needed = 600,
+            exclude_tags = ["Height Modification"],
+            clarity_cost = 1400)
+
+        height_decrease = SerumTrait(name = "Human Growth Rewinder",
+            desc = "Carefully engineered hormones produce an inverted growth effect, effectively causing the subject to grow shorter. The subject's height will decrease by roughly 1 inch per day. There is a minor chance that the subject's breasts will be shrink along with her frame",
+            positive_slug = "+$20 Value, -1\" Height/Day",
+            negative_slug = "10% Chance/Day Breast Reduction, +200 Serum Research",
+            value_added = 20,
+            research_added = 200,
+            base_side_effect_chance = 80,
+            on_day = height_decrease_on_day,
+            requires = [weight_loss],
+            tier = 2,
+            research_needed = 600,
+            exclude_tags = ["Height Modification"],
+            clarity_cost = 1400)
+
+        #################
         # Tier 3 Traits #
         #################
         # Tier 3 traits produce large effects at a cost or moderate ones for free.
@@ -1064,7 +1225,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         permanent_bimbo = SerumTrait(name = "Permanent Bimbofication",
             desc = "This delicate chemical cocktail was reverse engineered from an experimental serum sampled in the lab and will turn the recipient into a complete bimbo. Intelligence and obedience will suffer, but she will be happy and slutty. This change is permanent. It does not end when the serum expires and cannot be reversed with other serums.",
             positive_slug = "New Personality: Bimbo, +$40 Value, +10 Permanent Sluttiness, +10 Permanent Obedience",
-            negative_slug = "+400 Serum Research, Int Lowered to 1 Permanently",
+            negative_slug = "+$40 Value, +400 Serum Research, Int Lowered to 1 Permanently",
             value_added = 40,
             research_added = 400,
             base_side_effect_chance = 80,
@@ -1075,7 +1236,6 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 2000,
             clarity_cost = 2200)
 
-        #TODO: Maybe this should also cost energy to fit thematically
         massive_pregnancy_accelerator = SerumTrait(name = "Extreme Pregnancy Hormones",
             desc = "Overloads the body with natural pregnancy hormones alongside nutrient supplements. Massively increases the pace at which a pregnancy will progress.",
             positive_slug = "+$40 Value, +1 Pregnancy Progress per Turn",
@@ -1089,6 +1249,18 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             research_needed = 1400,
             clarity_cost = 1800)
 
+        self_generating_serum = SerumTrait(name = "Self Replicating Serum",
+            desc = "Inserts instructions for the creation of this serum into the subject's cells, allowing them to create it entirely within the body. The effects of this serum will last practically forever.",
+            positive_slug = "+$40 Value, Near-infinite Duration",
+            negative_slug = "+800 Serum Research, Near-infinite Duration",
+            value_added = 40,
+            research_added = 800,
+            duration_added = 9999,
+            base_side_effect_chance = 200,
+            requires = [low_volatility_reagents, futuristic_serum_prod],
+            tier = 3,
+            research_needed = 2400,
+            clarity_cost = 3000)
 
 
     ### SPECIAL TRAITS ###
@@ -1105,7 +1277,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             on_remove = nora_suggest_up_on_remove,
             tier = 2,
             start_researched = False,
-            research_needed = 1000000,
+            research_needed = 1000,
+            clarity_cost = 1000,
             exclude_tags = "Suggest")
 
         nora_nightmares = SerumTrait(name = "Nora's Research Trait",
@@ -1116,8 +1289,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             base_side_effect_chance = 1000000,
             on_day = nora_nightmares_on_day,
             tier = 2,
-            start_researched = False,
-            research_needed = 1000000)
+            research_needed = 1000,
+            clarity_cost = 1000)
 
         nora_obedience_swing = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Causes wild fluctuations in the recipient's willingness to follow orders, as well as generating a side effect and negatively effecting value.",
@@ -1127,8 +1300,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             base_side_effect_chance = 1000000,
             on_turn = nora_obedience_swing_on_turn,
             tier = 2,
-            start_researched = False,
-            research_needed = 1000000)
+            research_needed = 1000,
+            clarity_cost = 1000)
 
         nora_sluttiness_boost = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Causes a sudden spike in the recipients sluttiness, as well as generating a side effect and negatively effecting value.",
@@ -1141,7 +1314,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             on_remove = nora_sluttiness_boost_on_remove,
             tier = 2,
             start_researched = False,
-            research_needed = 1000000)
+            research_needed = 1000,
+            clarity_cost = 1000)
 
 
         ### Nora boss unlock traits ###
@@ -1253,8 +1427,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             clarity_cost = 500)
 
         nora_reward_high_slut_trait = SerumTrait(name = "Rapid Corruption",
-            desc = "A special serum trait developed by Nora after studying someone who was a complete slut. Instantly and permanently converts up to 5 Temporary Sluttiness into Core Sluttiness when applied.",
-            positive_slug = "5 Temp to Core Sluttiness, +$35 Value",
+            desc = "A special serum trait developed by Nora after studying someone who was a complete slut. Instantly and permanently increases their Sluttiness by 5.",
+            positive_slug = "+5 Permanent Sluttiness, +$35 Value",
             negative_slug = "+300 Serum Research",
             value_added = 35,
             research_added = 300,
@@ -1280,13 +1454,25 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         nora_reward_hucow_trait = SerumTrait(name = "Human Breeding Hormones",
             desc = "A special serum trait developed by Nora after studying someone who was in the later stages of pregnancy. Massively decreases birth control effectiveness, increases fertility, and triggers breast swelling and lactation.",
-            positive_slug = "+$35 Value, +70% Fertility, -75% BC Effectiveness, Increased Breast Size, Massive Lactation",
+            positive_slug = "+70% Fertility, -75% BC Effectiveness, Increased Breast Size, Massive Lactation, +$35 Value",
             negative_slug = "+300 Serum Research",
             value_added = 35,
             research_added = 300,
             base_side_effect_chance = 80,
             on_apply = nora_reward_hucow_trait_on_apply,
             on_remove = nora_reward_hucow_trait_on_remove,
+            tier = 2,
+            research_needed = 750,
+            clarity_cost = 500)
+
+        nora_reward_instant_trance = SerumTrait(name = "Trance Inducer",
+            desc = "A special serum trait developed by Nora after studying someone who was deep in a trance at the time. Instantly puts the subject in a Trance if they are not already in one. Does not deepen existing Trances.",
+            positive_slug = "Induces Trance State, +$35 Value",
+            negative_slug = "+300 Serum Research",
+            value_added = 35,
+            research_added = 300,
+            base_side_effect_chance = 75,
+            on_apply = nora_reward_instant_trance_on_apply,
             tier = 2,
             research_needed = 750,
             clarity_cost = 500)
@@ -1301,6 +1487,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(caffeine_trait)
         list_of_traits.append(simple_aphrodesiac)
         list_of_traits.append(foreplay_enhancer)
+        list_of_traits.append(hair_lighten_dye)
+        list_of_traits.append(hair_darken_dye)
 
     # Tier 1
         list_of_traits.append(improved_serum_prod)
@@ -1316,8 +1504,12 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(birth_control_suppression)
         list_of_traits.append(fertility_enhancement_trait)
         list_of_traits.append(fertility_suppression_trait)
+        list_of_traits.append(lactation_hormones)
         list_of_traits.append(oral_enhancer)
         list_of_traits.append(climax_limiter)
+        list_of_traits.append(rolling_orgasm)
+        list_of_traits.append(weight_gain)
+        list_of_traits.append(weight_loss)
 
     # Tier 2
         list_of_traits.append(advanced_serum_prod)
@@ -1332,21 +1524,25 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         list_of_traits.append(slutty_caffeine_trait)
         list_of_traits.append(pregnancy_accelerator_trait)
         list_of_traits.append(pregnancy_decelerator_trait)
-        list_of_traits.append(lactation_hormones)
         list_of_traits.append(vaginal_enhancer)
         list_of_traits.append(anal_enhancer)
         list_of_traits.append(climax_enhancer)
+        list_of_traits.append(height_increase)
+        list_of_traits.append(height_decrease)
 
     # Tier 3
         list_of_traits.append(futuristic_serum_prod)
         list_of_traits.append(mind_control_agent)
         list_of_traits.append(permanent_bimbo)
         list_of_traits.append(massive_pregnancy_accelerator)
+        list_of_traits.append(self_generating_serum)
 
     # Nora research traits
         list_of_nora_traits.append(nora_suggest_up)
         list_of_nora_traits.append(nora_nightmares)
         list_of_nora_traits.append(nora_obedience_swing)
         list_of_nora_traits.append(nora_sluttiness_boost)
+
+    call instantiate_serum_trait_blueprints() #Broken into their own file for clarity.
 
     return

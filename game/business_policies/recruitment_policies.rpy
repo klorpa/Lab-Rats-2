@@ -89,7 +89,7 @@ init 0 python:
             return False
 
     recruitment_knowledge_four_policy = Policy(name = "Applicant Sexual History Survey",
-        desc = "A detailed questionnaire focused on sex, fetishes, and kinks produces even more information about an applicants sexaul preferences. It can also be used as a suprisingly accurate predictor of sexual experience. Reveals one more opinion, and sex skills are now displayed on an applicants resume.",
+        desc = "A detailed questionnaire focused on sex, fetishes, and kinks produces even more information about an applicants sexaul preferences. It can also be used as a surprisingly accurate predictor of sexual experience. Reveals one more opinion, and sex skills are now displayed on an applicants resume.",
         cost = 2500,
         toggleable = True,
         requirement = recruitment_knowledge_four_requirement,
@@ -122,7 +122,7 @@ init 0 python:
 
     recruitment_policies_list.append(recruitment_stat_improvement_policy)
 
-    # def recruitment_high_suggest_requirement(): #TODO: Figure out what this means with suggestability. What the hell do we even want suggestability to do right now?
+    # def recruitment_high_suggest_requirement(): #TODO: Figure out what this means with suggestibility. What the hell do we even want suggestability to do right now?
     #     return True
     #
     # recruitment_suggest_improvment_policy = Policy(name = "High Suggestibility Recruits",

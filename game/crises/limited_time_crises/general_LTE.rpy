@@ -76,8 +76,15 @@ init -1 python:
     ask_new_title_action = Action("Ask new title", ask_new_title_requirement, "ask_new_title_label", event_duration = 2)
     work_walk_in = Action("Employee walk in", work_walk_in_requirement, "work_walk_in_label", event_duration = 4)
 
+    new_insta_account_action = Action("Make New Insta", new_insta_account_requirement, "new_insta_account", event_duration = 4)
+    new_dikdok_account_action = Action("Make New Dikdok", new_dikdok_account_requirement, "new_dikdok_account", event_duration = 4)
+    new_onlyfans_account_action = Action("Make New Onlyfans", new_onlyfans_account_requirement, "new_onlyfans_account", event_duration = 4)
+
     limited_time_event_pool.append([ask_new_title_action,8,"on_talk"])
     limited_time_event_pool.append([work_walk_in,4,"on_talk"])
+    limited_time_event_pool.append([new_insta_account_action,4, "on_talk"])
+    limited_time_event_pool.append([new_dikdok_account_action,2, "on_talk"])
+    limited_time_event_pool.append([new_onlyfans_account_action,1, "on_talk"])
 
     #TODO: Add some girlfriend/paramour events where they ask right away if you want to fuck
 
@@ -143,7 +150,8 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                         the_person "I guess you could say that..."
                         mc.name "I need my employees focused, so if you feel \"distracted\" again I expect you to solve the problem."
                         "She's still blushing, but nods obediently."
-                        $ the_person.change_slut_temp(3)
+                        $ the_person.change_slut(1 + the_person.get_opinion_score("masturbating"), 35)
+                        $ the_person.discover_opinion("masturbating")
                         the_person "Okay [the_person.mc_title], I will. Is there anything else you wanted to talk about?"
 
                     "Scold her.":
@@ -167,7 +175,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                         the_person "...A horny highschool slut, [the_person.mc_title]."
                         mc.name "I expect you to shape up, or I'm going to have to start treating you like one."
                         $ the_person.change_obedience(2)
-                        $ the_person.change_slut_temp(1)
+                        $ the_person.change_slut(1 + the_person.get_opinion_score("being submissive"), 35)
                         if office_punishment.is_active():
                             menu:
                                 "Punish her for her inappropriate behaviour.":
@@ -210,7 +218,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     "[the_person.possessive_title] swivels her chair around to face you, wiping her hand off onto her thigh."
                 else:
                     "[the_person.possessive_title] swivels her chair around to face you, wiping her hand off onto her [the_item.display_name]."
-                $ the_person.change_slut_temp(1)
+                $ the_person.change_slut(1 + the_person.get_opinion_score("masturbating"), 40)
                 the_person "I, was just... relieving some tension. Have you read some of our product reports?"
                 the_person "They really got my motor running and I couldn't focus."
                 "She shrugs."
@@ -231,6 +239,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                 "Her pace quickens, and she pushes herself over the edge."
                 $ the_person.draw_person(position = "sitting", emotion = "orgasm")
                 the_person "Ah! Ah... Ah..."
+                $ the_person.run_orgasm()
                 $ mc.change_locked_clarity(10)
                 "[the_person.possessive_title] slumps in her chair, panting quietly. After taking a moment to recover she sits up and glances around."
                 $ the_person.draw_person(position = "sitting")
@@ -246,7 +255,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     mc.name "Take a breath, it's fine. If I was angry I wouldn't have just watched."
                     "Her cheeks have turned beet red. She looks away from you and nods."
                     the_person "It'll never happen again. Sorry."
-                    the_person "Is there something you wanted to talk about, or can I go find someplace quiet to die of embarassment?"
+                    the_person "Is there something you wanted to talk about, or can I go find someplace quiet to die of embarrassment?"
                 elif the_person.get_opinion_score("public sex") == 0: #Normal
                     the_person "Right... Well, I guess you can count that as my lunch break."
                     the_person "I was reading some of our case studies. They get very... descriptive."
@@ -262,7 +271,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     $ mc.change_locked_clarity(5)
                     the_person "Did you need to talk about something? I might... I might need to go for another round before I can focus on work again."
 
-                $ the_person.change_slut_temp((the_person.get_opinion_score("public sex") * 2) + 1)
+                $ the_person.change_slut(1 + the_person.get_opinion_score("public sex"), 50)
 
         if office_punishment.is_active():
             menu:
@@ -373,6 +382,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     $ the_person.draw_person(position = "sitting", emotion = "orgasm")
                     the_person "Fuck... Watch me cum [the_person.mc_title]! I'm cumming!"
                     $ mc.change_locked_clarity(10)
+                    $ the_person.run_orgasm()
                     "[the_person.title]'s whole body quivers, her hips thrusting out with each pulse of her climax."
                     "She holds perfectly still for a moment, back still arched, as her pussy spasms a few last times."
                     "Then she collapses down into her chair, panting loudly."
@@ -383,7 +393,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     "She nods, almost meekly now."
                     the_person "Much, I didn't realise how badly I needed that."
                     the_person "Now, what did you want to talk about?"
-                    $ the_person.change_slut_temp(the_person.get_opinion_score("public sex")*2)
+                    $ the_person.change_slut(2 + the_person.get_opinion_score("public sex"), 80)
                     $ the_person.reset_arousal()
 
                 else:
@@ -409,10 +419,11 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     $ mc.change_locked_clarity(10)
                     "She arches her back, lifting her hips away from her office chair where she has left a noticeable wet spot."
                     the_person "Ahh!"
+                    $ the_person.run_orgasm()
                     "Her body quivers for a moment, then she slumps back into her chair and pants."
                     the_person "Sorry... about the wait. I just... ah, couldn't stop thinking about sex."
                     mc.name "Feeling better now?"
-                    $ the_person.change_slut_temp(1)
+                    $ the_person.change_slut(1, 50)
                     "She takes a deep breath and nods, pulling herself up to sit properly in her chair."
                     the_person "I think so [the_person.mc_title]. Did you need to talk to me?"
                     $ the_person.reset_arousal()
@@ -464,6 +475,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     $ mc.change_locked_clarity(10)
                     "She arches her back, lifting her hips away from her office chair where she has left a noticeable wet spot."
                     the_person "Ahh!"
+                    $ the_person.run_orgasm()
                     "Her body quivers for a moment, then she slumps back into her chair and pants."
                     if office_punishment.is_active():
                         menu:
@@ -477,7 +489,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                                 pass
 
                     $ the_person.reset_arousal()
-                    $ the_person.change_slut_temp(3)
+                    $ the_person.change_slut(2 + the_person.get_opinion_score("masturbating") + the_person.discover_opinion("public sex"), 80)
                     $ the_person.change_obedience(-2)
                     the_person "Now, what did you need to talk about?"
 
@@ -505,7 +517,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
     $ clear_scene()
     return
 
-label new_insta_account(the_person): #TODO: decide if we want to have some sort of dialogue accompanying these.
+label new_insta_account(the_person):
     $ the_person.special_role.append(instapic_role)
     if the_person.love >= 15:
         the_person "Hey [the_person.mc_title]! Oh, you'll probably be interested in this."

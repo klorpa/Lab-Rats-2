@@ -215,10 +215,10 @@ label comment_description(comment_type, the_person):
             $ the_person.change_happiness(-5 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), add_to_log = False)
         elif her_slut < 40: #Doesn't mind, is made slightly sluttier by it
             $ the_person.change_happiness(-2 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), add_to_log = False)
-            $ the_person.change_slut_temp(1 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), add_to_log = False)
+            $ the_person.change_slut(1 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), 40, add_to_log = False)
         else: #Likes it, gets sluttier if her opinions line up with that
             $ the_person.change_happiness(5 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), add_to_log = False)
-            $ the_person.change_slut_temp(0 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), add_to_log = False)
+            $ the_person.change_slut(1 + the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"), 40, add_to_log = False)
     call instapic_comment_loop(the_person, posted_today = False) from _call_instapic_comment_loop_1
     return
 
@@ -519,6 +519,7 @@ label dm_option_nude(the_person):
 
 label dm_option_nude_response(the_person):
     $ previous_request_level = the_person.event_triggers_dict.get("insta_special_request_level")
+    $ the_choice = False
     if the_person.effective_sluttiness() < 20:
         the_person "I would never do that, for any amount of money!" (what_style = "text_message_style")
     #TODO: If she has an Onlyfans it can be plugged here instead of giving you anything.
@@ -576,9 +577,10 @@ label dm_option_nude_response(the_person):
         $ the_person.apply_outfit()
 
     if the_choice:
-        the_person "Oh, and if you liked that, check out my OnlyFanatics page. I'm sure you'll love it!" (what_style = "text_message_style")
-        "She sends you a link."
-        $ the_person.event_triggers_dict["onlyfans_known"] = True
+        if the_person.has_role(onlyfans_role):
+            the_person "Oh, and if you liked that, check out my OnlyFanatics page. I'm sure you'll love it!" (what_style = "text_message_style")
+            "She sends you a link."
+            $ the_person.event_triggers_dict["onlyfans_known"] = True
 
         $ mc.business.funds += -200
         if the_person.event_triggers_dict.get("insta_special_request_level",0) < 4:

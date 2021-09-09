@@ -75,7 +75,6 @@ label browse_internet(is_phone = True): #TODO: Maybe make this a generic functio
             call browse_internet() from _call_browse_internet_1
 
     elif isinstance(_return, Person):
-        #TODO: We need way more search focused stuff.
         $ the_person = _return
         $ return_to_phone = True
         $ mc.start_text_convo(the_person)
@@ -84,6 +83,10 @@ label browse_internet(is_phone = True): #TODO: Maybe make this a generic functio
         python:
             for act in texting_actions:
                 text_actions_display_list.append([act, the_person])
+
+            for role in the_person.special_role:
+                for act in role.internet_actions:
+                    text_actions_display_list.append([act, the_person])
 
 
         $ text_actions_display_list.sort(key = sort_display_list, reverse = True)
@@ -179,7 +182,7 @@ label text_flirt_label(the_person):
                     "She doesn't seem very interested, unfortunately."
                     the_person "I've got to go, sorry. Talk some other time, okay?"
                 else:
-                    $ the_person.change_slut_temp(1)
+                    $ the_person.change_slut(1, 30)
                     the_person "Hahah, you're so funny [the_person.mc_title]."
                     the_person "I've got to run. Talk to you later, okay?"
                 mc.name "Alright, talk to you later."
@@ -201,6 +204,7 @@ label text_flirt_label(the_person):
 
                     $ the_person.draw_person.draw_person(position = "back_peek", the_animation = None)
                     "She sends you another pic."
+                    $ the_person.change_slut(1, 60)
                     the_person "Don't make me wait too long!"
 
                 elif the_person.has_role(girlfriend_role):
@@ -213,6 +217,7 @@ label text_flirt_label(the_person):
                         $ mc.change_locked_clarity(15)
                         "Another pause, then she sends you a picture."
                         the_person "Come and see me so we can have some real fun!"
+                        $ the_person.change_slut(1, 60)
                         mc.name "I'll see you soon, I promise."
 
                     else:
@@ -222,6 +227,7 @@ label text_flirt_label(the_person):
                             the_person.outfit.strip_to_underwear()
                             the_person.draw_person(emotion = "happy", the_animation = None)
                         $ mc.change_locked_clarity(10)
+                        $ the_person.change_slut(1, 40)
                         the_person "You'll have to convince me in person to show you any more. Hope that cures your \"boredom\"."
                 elif the_person.is_family():
                     if the_person.effective_sluttiness() >= 60:
@@ -233,6 +239,7 @@ label text_flirt_label(the_person):
                             the_person.draw_person(position = "kneeling1", emotion = "happy", the_animation = None)
                         $ mc.change_locked_clarity(15)
                         the_person "How's that?"
+                        $ the_person.change_slut(1, 65)
                         mc.name "You're looking great [the_person.title], that's just what I wanted."
 
                     elif the_person.effective_sluttiness() >= 40:
@@ -243,6 +250,7 @@ label text_flirt_label(the_person):
                             the_person.draw_person(emotion = "happy", the_animation = None)
 
                         $ mc.change_locked_clarity(10)
+                        $ the_person.change_slut(1, 55)
                         the_person "There, I hope that helps. Don't show it to anyone else!"
 
                     else:
@@ -259,6 +267,7 @@ label text_flirt_label(the_person):
                             the_person.draw_person(position = "kneeling1", emotion = "happy", the_animation = None)
                         $ mc.change_locked_clarity(15)
                         "There's a pause, then she sends you a picture."
+                        $ the_person.change_slut(1, 55)
                         the_person "It's kind of fun doing this! Enjoy ;)"
 
                     elif the_person.effective_sluttiness() >= 30:
@@ -269,6 +278,7 @@ label text_flirt_label(the_person):
                             the_person.draw_person(emotion = "happy", the_animation = None)
                         $ mc.change_locked_clarity(10)
                         "There's a pause, then she sends you a picture."
+                        $ the_person.change_slut(1, 35)
                         the_person "I'm so embarrassed! I hope you like it!"
 
                     else:

@@ -5,7 +5,11 @@ init -2 python:
         return
 
     def onlyfans_on_day(the_person):
-        content_types = [["underwear", 25], ["nudes", 25], ["dildo", 25]] #Decide on what new content she has on her site for the day.
+        underwear_weight = 25 + 10*the_person.get_opinion_score("lingerie")
+        nudes_weight = 25 + 10*(the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass"))
+        dildo_weight = 25 + 10*(the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"))
+
+        content_types = [["underwear", underwear_weight], ["nudes", nudes_weight], ["dildo", dildo_weight]] #Decide on what new content she has on her site for the day.
         if the_person.event_triggers_dict.get("onlyfans_new_boobs_brag", False):
             the_person.event_triggers_dict["onlyfans_content_type"] = "new_boobs"
             the_person.event_triggers_dict["onlyfans_new_boobs_brag"] = False

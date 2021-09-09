@@ -164,6 +164,15 @@ init -2:
         list_of_names.append("Zaya")
         list_of_names.append("Mitzy")
         list_of_names.append("Abigail")
+        list_of_names.append("Georgia")
+        list_of_names.append("Kaitlyn")
+        list_of_names.append("Asa")
+        list_of_names.append("Olivia")
+        list_of_names.append("Kimberley")
+        list_of_names.append("Daisy")
+        list_of_names.append("Ariel")
+        list_of_names.append("Jade")
+        list_of_names.append("Kaia")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -295,6 +304,15 @@ init -2:
         list_of_last_names.append("Cassidy")
         list_of_last_names.append("Irons")
         list_of_last_names.append("Bard")
+        list_of_last_names.append("Holmes")
+        list_of_last_names.append("Birch")
+        list_of_last_names.append("Akira")
+        list_of_last_names.append("Holmes")
+        list_of_last_names.append("Benson")
+        list_of_last_names.append("Spitz")
+        list_of_last_names.append("Rose")
+        list_of_last_names.append("Collins")
+        list_of_last_names.append("Jones")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -696,7 +714,7 @@ init -2:
 
 
 
-            if the_person.love >= 60 and girlfriend_role in the_person.special_role:
+            if the_person.love >= 60 and the_person.has_role(girlfriend_role):
                 list_of_titles.append("Love")
 
             if the_person.love < 0:
@@ -720,7 +738,7 @@ init -2:
             else:
                 list_of_possessive_titles.append(personality_possessive_titles)
 
-            if employee_role in the_person.special_role:
+            if the_person.has_role(employee_role):
                 list_of_possessive_titles.append("Your employee")
                 if the_person.sluttiness > 60:
                     list_of_possessive_titles.append("Your office slut")
@@ -764,14 +782,14 @@ init -2:
 
 
 
-            if the_person.love >= 60 and girlfriend_role in the_person.special_role:
+            if the_person.love >= 60 and the_person.has_role(girlfriend_role):
                 list_of_possessive_titles.append("Your love")
                 list_of_possessive_titles.append("Your girlfriend")
 
-            if the_person.love >= 60 and affair_role in the_person.special_role:
+            if the_person.love >= 60 and the_person.has_role(affair_role):
                 list_of_possessive_titles.append("Your lover")
 
-            if student_role in the_person.special_role:
+            if the_person.has_role(student_role):
                 list_of_possessive_titles.append("Your student")
 
             return list_of_possessive_titles
@@ -787,11 +805,11 @@ init -2:
             else:
                 list_of_player_titles.append(personality_player_titles)
 
-            if employee_role in the_person.special_role or student_role in the_person.special_role:
+            if the_person.has_role(employee_role) or the_person.has_role(student_role):
                 list_of_player_titles.append("Mr." + mc.last_name)
                 if the_person.obedience > 120:
                     list_of_player_titles.append("Sir")
-                elif the_person.obedience < 80 and employee_role in the_person.special_role:
+                elif the_person.obedience < 80 and the_person.has_role(employee_role):
                     list_of_player_titles.append("Boss")
 
             if the_person.obedience > 140 and the_person.sluttiness > 50:
@@ -806,7 +824,7 @@ init -2:
                 else:
                     list_of_player_titles.append("Boy Toy")
 
-            if student_role in the_person.special_role:
+            if the_person.has_role(student_role):
                 list_of_player_titles.append("Teacher")
 
             return list_of_player_titles
@@ -1011,6 +1029,9 @@ init 1 python:
         nora.add_role(nora_role)
         nora.set_schedule(nora.home, times = [0,1,2,3,4])
         nora.home.add_person(nora)
+
+        reintro_event = Action("Nora cash reintro", nora_reintro_requirement, "nora_research_cash_intro", args = [nora, False])
+        mc.business.mandatory_crises_list.append(reintro_event) #Reintro her if you don't take the option to visit her. Provides access to her special traits eventually.
 
         town_relationships.update_relationship(nora, stephanie, "Friend")
 

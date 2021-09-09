@@ -36,7 +36,7 @@ label stephanie_greetings(the_person):
                 the_person "Hey [the_person.mc_title], are you here for business or pleasure?"
                 "[the_person.title] smiles playfully."
             else:
-                "Hey [the_person.mc_title], what's up?"
+                the_person "Hey [the_person.mc_title], what's up?"
     return
 
 label stephanie_cum_face(the_person):
@@ -77,17 +77,40 @@ label stephanie_cum_mouth(the_person):
 #     return
 
 label stephanie_improved_serum_unlock(the_person):
-    mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
-    the_person "Okay, how can I help?"
-    mc.name "All of our research and development up until this point has been based on the limited notes you and I have from our days at the lab. I wanted to ask if you think there's more we could be doing."
-    "[the_person.title] smiles mischieviously."
-    the_person "I've got an idea then, I'm sure it's something you'll like."
-    mc.name "What's your plan?"
-    the_person "All of the testing that I've been doing so far focuses on not getting people killed, which is important, but I really need to know more about what subjective effects there are."
-    the_person "I want to take a dose of serum myself and have you record the effects. You can ask me a few questions, gauge how much it affects me."
+    mc.name "[the_person.title], now that you've had some time to get use to the lab there is something I want to talk to you about."
+    the_person "Sure, what can I help you with?"
+    mc.name "Our R&D up to this point has been based on the notes you and I have from our days at the lab."
+    mc.name "Remember how some of the effects we saw were enhanced by sexual arousal?"
+    "[the_person.title] nods her understanding."
+    the_person "Our data did indicate that, yes. [nora.title]'s hypothesis was that an orgasm opened up chemical receptors that were normally unavailable."
+    mc.name "What else can we do if we assume that is true? Does that open up any more research paths?"
+    the_person "If it's true it might give us a way to induce greater effects in the recipients."
+    "[the_person.possessive_title] thinks for a long moment, then smiles mischeviously."
+    the_person "But we'll need to do some experiments to be sure."
+    mc.name "What sort of experiments?"
+    the_person "I want to take a dose of serum myself, and you can record the effects."
+    the_person "Then I'll make myself cu... induce a climax, and we can compare the effects after."
     mc.name "Do you think that's a good idea?"
-    the_person "[nora.title] would never let me do it, but that's why I work for you now and not for her. Come on [the_person.mc_title], this is chance to do real, proper science!"
+    the_person "Self experimentation with prototype drugs? I don't see how it could go wrong!"
+    the_person "Come on [the_person.mc_title], this is the stuff [nora.title] would never let me do! It's a chance to be at the bleeding edge of science!"
+    mc.name "Alright, what do we need?"
+    the_person "A finished dose of serum that raises my Suggestibility. The higher it gets my Suggestibility the better, but any amount should do."
+    the_person "Then we'll just need some time and some privacy for me to see what sort of effects my orgasms will have."
     return
+
+# No longer used post v0.43.
+# label stephanie_improved_serum_unlock(the_person):
+#     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
+#     the_person "Okay, how can I help?"
+#     mc.name "All of our research and development up until this point has been based on the limited notes you and I have from our days at the lab. I wanted to ask if you think there's more we could be doing."
+#     "[the_person.title] smiles mischieviously."
+#     the_person "I've got an idea then, I'm sure it's something you'll like."
+#     mc.name "What's your plan?"
+#     the_person "All of the testing that I've been doing so far focuses on not getting people killed, which is important, but I really need to know more about what subjective effects there are."
+#     the_person "I want to take a dose of serum myself and have you record the effects. You can ask me a few questions, gauge how much it affects me."
+#     mc.name "Do you think that's a good idea?"
+#     the_person "[nora.title] would never let me do it, but that's why I work for you now and not for her. Come on [the_person.mc_title], this is chance to do real, proper science!"
+#     return
 
 label stephanie_sex_strip(the_person):
     if the_person.sluttiness < 20:

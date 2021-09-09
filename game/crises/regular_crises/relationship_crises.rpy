@@ -105,7 +105,7 @@ label so_relationship_worsen_label():
         return #Something's changed and there is no longer a valid person
 
     $ so_title = SO_relationship_to_title(the_person.relationship)
-    if affair_role in the_person.special_role:
+    if the_person.has_role(affair_role):
         "You get a call from [the_person.title]. When you pick up she sounds tired, but happy."
         the_person "Hey [the_person.mc_title], I've got some news. Me and my [so_title], [the_person.SO_name], had a fight. We aren't together any more."
         the_person "We don't have to hide what's going on between us any more."
@@ -166,7 +166,7 @@ label affair_dick_pick_label():
             "After a short wait you get a response."
             the_person "That's what I want! I wish I could feel that hard thing down my throat right now."
             the_person "God, I'm such a dirty fucking slut for your cock!"
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(2 + the_person.get_opinion_score("cheating on men"), 60)
             $ the_person.change_obedience(1)
             mc.name "Good, then be a good slut and cum your brains out for me."
             "After another short pause she messages you again."
@@ -179,7 +179,7 @@ label affair_dick_pick_label():
             "As much as you enjoy the picture, you've got important work to do. You text her back."
             mc.name "I've got work to get done [the_person.title]. Stop bothing me just because you're a bitch in heat."
             if the_person.get_opinion_score("being submissive") > 0:
-                $ the_person.change_slut_temp(2)
+                $ the_person.change_slut(2 + the_person.get_opinion_score("cheating on men"), 70)
                 $ the_person.change_obedience(2)
                 "There's a long pause, then she texts back."
                 the_person "That's what I am. Your horny bitch, desperate for your cock!"
@@ -187,7 +187,7 @@ label affair_dick_pick_label():
                 the_person "Fuck, I just came so hard!"
 
             else:
-                $ the_person.change_slut_temp(1)
+                $ the_person.change_slut(1 + the_person.get_opinion_score("cheating on men"), 40)
                 $ the_person.change_obedience(2)
                 $ the_person.change_love(-1)
                 "There's a long pause, then she texts you back."
@@ -286,6 +286,7 @@ label girlfriend_nudes_label():
         "Before long her thighs are quivering. You watch as [the_person.title] drives herself to orgasm with her vibrator."
         $ mc.change_locked_clarity(20)
         "Her legs clamp down on her own hand as she cums. After a moment she relaxes, leaving the vibrator running on the bed."
+        $ the_person.run_orgasm()
         "She looks into the camera again and sighs happily, then reaches forward and ends the video."
         $ the_person.update_outfit_taboos()
         $ the_person.apply_outfit(the_person.planned_outfit)
@@ -351,7 +352,7 @@ label friends_help_friends_be_sluts_label():
                 $ clear_scene()
                 $ person_one.draw_person()
                 "She hurries out of the room, blushing."
-                $ person_one.change_slut_temp(2)
+                $ person_one.change_slut(1, 20)
                 person_one "She's so cute when she's embarrassed. See you around [person_two.mc_title]."
             "Ignore them.":
                 "You leave them to their discussion and circle back to your desk."
@@ -386,7 +387,7 @@ label friends_help_friends_be_sluts_label():
                     person_two "You're sure?"
                     mc.name "Of course I'm sure, but if I'm making you self conscious I'll give you some privacy."
                     mc.name "Once you're done your break I expect to see you both back at work."
-                    $ person_two.change_slut_temp(3)
+                    $ person_two.change_slut(2, 25)
                     $ person_two.change_obedience(2)
                     $ mc.change_locked_clarity(5)
                     "You leave the room, and a few seconds later you can hear them resume watching porn together."
@@ -409,7 +410,7 @@ label friends_help_friends_be_sluts_label():
                     $ person_one.discover_opinion(person_one.get_random_opinion(include_known = True, include_sexy = True, include_normal = False, only_positive = True))
                     $ person_one.discover_opinion(person_one.get_random_opinion(include_known = True, include_sexy = True, include_normal = False, only_positive = True))
                     $ person_one.change_love(1)
-                    $ person_two.change_slut_temp(3+person_two.get_opinion_score("public sex"))
+                    $ person_two.change_slut(2+person_two.get_opinion_score("public sex"), 35)
                     $ person_two.change_love(1)
                     $ mc.change_locked_clarity(10)
                     "After a few minutes the video ends and you've discovered a few things about [person_one.title]'s sexual preferences."
@@ -472,7 +473,7 @@ label friends_help_friends_be_sluts_label():
                     person_two "Ah! You..."
                     "You hear them chatting and laughing as they head back to work."
                     $ person_one.change_obedience(1)
-                    $ person_two.change_slut_temp(3)
+                    $ person_two.change_slut(2, 20)
                     $ person_two.change_obedience(2)
 
                 elif person_two.effective_sluttiness() < 40:
@@ -529,7 +530,7 @@ label friends_help_friends_be_sluts_label():
                             $ the_group.draw_person(person_one)
                             person_one "Exactly! You're just going to have to accept that you're smoking hot [person_two.title]."
                             $ the_group.draw_person(person_two)
-                            $ person_two.change_slut_temp(2 + person_one.get_opinion_score("showing her tits"))
+                            $ person_two.change_slut(2 + person_one.get_opinion_score("showing her tits"), 50)
                             $ person_two.change_love(1 + person_one.get_opinion_score("showing her tits"))
                             person_two "Fine, I guess my tits are pretty nice. Shouldn't we be getting back to work."
                             $ the_group.draw_person(person_one)
@@ -583,7 +584,7 @@ label friends_help_friends_be_sluts_label():
                                         "She starts to strip down, eagerly pulling her [the_item.display_name] up."
                                     else:
                                         "She starts to strip down, eagerly pulling off her [the_item.display_name]."
-                                    $ person_two.change_slut_temp(person_two.discover_opinion("showing her tits"))
+                                    $ person_two.change_slut(2 + person_two.discover_opinion("showing her tits"), 50)
                                 elif person_two.obedience >= 120:
                                     person_two "Do you really want me to do this [person_two.mc_title]?"
                                     mc.name "I do, now show them to us."
@@ -640,7 +641,7 @@ label friends_help_friends_be_sluts_label():
                                     $ the_group.draw_person(person_one)
                                     $ person_one.change_happiness(5)
                                     $ person_one.change_love(1 + person_one.get_opinion_score("showing her tits"))
-                                    $ person_two.change_slut_temp(2 + person_two.get_opinion_score("showing her tits"))
+                                    $ person_two.change_slut(2 + person_two.get_opinion_score("showing her tits"), 50)
                                     person_two "So I got naked just to lose, huh?"
                                     $ the_group.draw_person(person_one)
                                     person_one "I guess you did, but at least you get to see some nice tits."
@@ -655,7 +656,7 @@ label friends_help_friends_be_sluts_label():
                                         mc.name "I've got to give it to [person_two.title]. I like them big."
                                     $ the_group.draw_person(person_two)
                                     person_two "Well, at least I didn't get naked just to lose."
-                                    $ person_two.change_slut_temp(4 + person_one.get_opinion_score("showing her tits"))
+                                    $ person_two.change_slut(2 + person_one.get_opinion_score("showing her tits"), 50)
                                     $ person_two.change_love(1 + person_one.get_opinion_score("showing her tits"))
                                     $ the_group.draw_person(person_one)
                                     person_one "You've got some award winning tits on you, you should be proud of them!"

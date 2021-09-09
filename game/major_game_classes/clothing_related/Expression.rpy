@@ -1,6 +1,6 @@
 init -2 python:
     class Expression(renpy.store.object):
-        def __init__(self,name,skin_colour,facial_style):
+        def __init__(self,name,skin_colour,facial_style, colour = None):
             self.name = name
             self.skin_colour = skin_colour
             self.facial_style = facial_style #The style of face the person has, currently creatively named "Face_1", "Face_2", "Face_3", etc..
@@ -33,6 +33,12 @@ init -2 python:
                         self.position_dict[position][modified_emotion] = modified_emotion + "_" + facial_style + "_" + position + "_" + skin_colour + ".png"#Add a new emotion titled "<emotion>_<modifier>", for example "sad_blowjob".
 
 
+            if not colour:
+                self.colour = [1,1,1,1]
+            else:
+                self.colour = colour
+
+
         def generate_emotion_displayable(self,position,emotion, special_modifier = None, eye_colour = None, lighting = None):
 
             if not position in self.positions_set+self.ignore_position_set:
@@ -56,13 +62,6 @@ init -2 python:
             mask_name = self.position_dict[position][emotion].replace("_" + self.skin_colour,"_Pattern_1")
             mask_image = VrenZipImage(position, mask_name)
 
-            # else:
-            #     base_name = "character_images/" + self.position_dict[position][emotion]
-            #     base_image = Image(base_name)
-            #
-            #     mask_name = base_name.replace("_" + self.skin_colour,"_Pattern_1") # Match the naming scheme used for the eye patterns.
-            #     mask_image = Image(mask_name)
-
 
 
             inverted_mask_image = im.MatrixColor(mask_image, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,-1,1])
@@ -71,7 +70,9 @@ init -2 python:
             colour_pattern_matrix = im.matrix.tint(eye_colour[0], eye_colour[1], eye_colour[2]) * im.matrix.tint(*lighting)
             shader_pattern_image = im.MatrixColor(base_image, colour_pattern_matrix)
 
-            base_image = im.MatrixColor(base_image, im.matrix.tint(*lighting)) #To support the lighting of the room we also retint it here.
+            skin_colour_matrix = im.matrix.tint(self.colour[0], self.colour[1], self.colour[2]) * im.matrix.tint(*lighting)
+
+            base_image = im.MatrixColor(base_image, skin_colour_matrix) #To support the lighting of the room we also retint it here.
             final_image = AlphaBlend(mask_image, base_image, shader_pattern_image, alpha=False)
 
             return final_image

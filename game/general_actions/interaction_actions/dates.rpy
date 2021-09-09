@@ -240,7 +240,7 @@ label movie_date_label(the_person):
 
     else: #She's bored. Bad for love gain, but good for getting her to fool around. She may start to feel you up to disctract herself.
         "Halfway through the movie it's becoming clear that [the_person.title] isn't enthralled by it."
-        if (the_person.sluttiness - the_person.get_opinion_score("public sex") * 5) > 50 and (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0) and not the_person.has_family_taboo():
+        if (the_person.sluttiness + the_person.get_opinion_score("public sex") * 5) > 50 and (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0) and not the_person.has_family_taboo():
             $ mc.change_locked_clarity(10)
             "While you're watching you feel her rest her hand on your thigh. She squeezes it gently and slides her hand up higher and higher while whispering into your ear."
             the_person "I'm bored. You don't mind if I make this a little more interesting, do you?"
@@ -255,7 +255,7 @@ label movie_date_label(the_person):
                     $ mc.change_locked_clarity(10)
                     "After a few minutes [the_person.possessive_title] brings her hand to her mouth, licks it, and then goes back go jerking you off with her slick hand."
 
-                    if (the_person.sluttiness - the_person.get_opinion_score("public sex") * 5) > 65 and (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0) and not the_person.has_family_taboo():
+                    if (the_person.sluttiness + the_person.get_opinion_score("public sex") * 5) > 65 and (the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0) and not the_person.has_family_taboo():
                         "You're enjoying the feeling of her wet hand sliding up and down your cock when she stops. You're about to say something when she slides off of her movie seat and kneels down in the isle."
                         $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", lighting = [0.5, 0.5, 0.5])
                         $ mc.change_locked_clarity(20)
@@ -294,8 +294,9 @@ label movie_date_label(the_person):
                                     $ the_person.cum_in_mouth()
                                     $ the_person.draw_person(position = "sitting")
                                     "She waits until you're finished, then pulls off your cock, wipes her lips on the back of her hand, and sits down next to you."
-                                    $ the_person.change_slut_temp(3)
-                                    the_person "Thank you. That was fun."
+                                    $ the_person.change_slut(1 + the_person.get_opinion_score("drinking cum"), 60)
+                                    $ the_person.discover_opinion("drinking cum")
+                                    the_person "Mmm, thank you. That was fun."
                                     "She takes your hand and holds it. You lean back, thoroughly spent, and zone out for the rest of the movie."
                                 elif the_choice == "Cum down her throat.":
                                     "You grab onto [the_person.title]'s head and pull her as deep as you can get her onto your cock."
@@ -305,7 +306,7 @@ label movie_date_label(the_person):
                                         "You cum, pumping your load out in big, hot pulses right into her stomach. In the dim theater light you can see her flutter with each new deposit."
                                         $ the_person.cum_in_mouth()
                                         "When you're entirely spent you let go of [the_person.possessive_title]'s head and sit back with a sigh."
-                                        $ the_person.change_slut_temp(3 + the_person.get_opinion_score("being submissive") + the_person.get_opinion_score("drinking cum"))
+                                        $ the_person.change_slut(2 + the_person.get_opinion_score("being submissive") + the_person.get_opinion_score("drinking cum"), 80)
                                         $ the_person.discover_opinion("being submissive")
                                         $ the_person.discover_opinion("drinking cum")
                                         "[the_person.title] doesn't move for another few long seconds. You feel her throat constrict a few times as she swallows the last of your cum first."
@@ -321,7 +322,7 @@ label movie_date_label(the_person):
                                         $ the_person.draw_person(position = "kneeling1", emotion = "angry")
                                         "When you're entirely spent you let go of [the_person.possessive_title]'s head and sit back with a sigh."
                                         $ the_person.change_love(-2)
-                                        $ the_person.change_slut_temp(2)
+                                        $ the_person.change_slut(1, 80)
                                         $ the_person.change_obedience(1)
                                         "She pulls off your dick and gasps for breath. When she's recovered she glares up at you."
                                         mc.name "Sorry, I got carried away."
@@ -447,7 +448,7 @@ label dinner_date_label(the_person):
             pass
 
     $ the_person.draw_person(emotion = "happy", position = "sitting")
-    if sister_role in the_person.special_role or mother_role in the_person.special_role:
+    if the_person.has_role(sister_role) or the_person.has_role(mother_role):
         if the_person.sluttiness >= 20:
             "You and [the_person.possessive_title] get to the restaurant and order your meals. She chats and flirts with you freely, as if forgetting you were related."
         else:
@@ -518,7 +519,7 @@ label dinner_date_label(the_person):
             menu:
                 "Go to [the_person.title]'s place.":
                     mc.name "That sounds like a great idea."
-                    if not aunt_role in the_person.special_role and not cousin_role in the_person.special_role:
+                    if not the_person.has_role(aunt_role) and not the_person.has_role(cousin_role):
                         if not the_person.home in mc.known_home_locations:
                             $ mc.known_home_locations.append(the_person.home) #You know where she lives and can visit her.
                     "You join [the_person.possessive_title] when her taxi arrives."
@@ -917,6 +918,7 @@ label shopping_date_underwear(the_person):
         the_person "Come on, let's just go look for some normal clothes. There's a place right over there."
         "It doesn't seem like you can change her mind, so you follow her to the opposite side of the hall into a normal clothing store."
         call shopping_date_overwear(the_person, skip_intro = True)
+        return
     elif the_person.has_taboo("underwear_nudity") and the_person.is_family():
         "[the_person.possessive_title] seems unsure for a moment."
         the_person "Are you sure you want to go into a place like that with me?"
@@ -1305,7 +1307,7 @@ label shopping_date_inside_changing_room(the_person, new_outfit, changing_type, 
                 "She plants her hands on the far side of the changing room and arches her back a little bit."
 
             else:
-                "She gasps and shuffles away from you in suprise, but there isn't enough room in the small changing room to get away from your touch."
+                "She gasps and shuffles away from you in surprise, but there isn't enough room in the small changing room to get away from your touch."
                 the_person "[the_person.mc_title], stop it! You're going to get us in trouble!"
                 "She glances nervously at the curtain-door, worried someone might have heard her yelp."
                 $ mc.change_locked_clarity(10)

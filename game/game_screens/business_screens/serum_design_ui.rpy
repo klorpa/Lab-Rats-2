@@ -31,7 +31,7 @@ screen serum_design_ui(starting_serum,current_traits):
                         vbox:
                             xsize 530
                             text "Pick Production Type" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5 xsize 530
-                            for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True): # Sort traits by exclude tags (So all production traits are grouped, for example), then by tier (so the highest tier production tag ends up at the top
+                            for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True): # Sort traits by exclude tags (So all production traits are grouped, for example), then by tier (so the highest tier production tag ends up at the top
                                 if trait not in starting_serum.traits and trait.researched and "Production" in trait.exclude_tags:
                                     $ trait_tags = ""
                                     if trait.exclude_tags:
@@ -62,7 +62,7 @@ screen serum_design_ui(starting_serum,current_traits):
 
                             null height 30
                             text "Add Serum Traits" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5 xsize 530
-                            for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True): # Sort traits by exclude tags (So all production traits are grouped, for example), then by tier (so the highest tier production tag ends up at the top
+                            for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True): # Sort traits by exclude tags (So all production traits are grouped, for example), then by tier (so the highest tier production tag ends up at the top
                                 if trait not in starting_serum.traits and trait.researched and "Production" not in trait.exclude_tags:
                                     $ trait_tags = ""
                                     if trait.exclude_tags:

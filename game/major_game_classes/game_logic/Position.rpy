@@ -116,7 +116,7 @@ init -2 python:
             male_animation_effect = male_energy_fraction * (mc.arousal/mc.max_arousal)  # Being closer to max arousal increases the speed of the animation.
 
             female_energy_fraction = (1.0*self.girl_energy) / (self.guy_energy+self.girl_energy)
-            female_animation_effect = female_energy_fraction * (the_person.arousal/the_person.max_arousal)
+            female_animation_effect = female_energy_fraction * (1.0*the_person.arousal/the_person.max_arousal)
 
             the_animation_speed = 0.5 + (0.5 * (male_animation_effect + female_animation_effect)) #Scales the animation strength from 50% to 100%, increasing as each party gets more aroused.
 

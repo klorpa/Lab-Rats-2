@@ -96,7 +96,7 @@ label scene_standing_finger_2(the_girl, the_location, the_object):
     else:
         if the_girl.outfit.vagina_available():
             "She places one of her own hands over yours, encouraging you to speed up."
-            the_girl.char "Just like that... Ah..."
+            the_girl "Just like that... Ah..."
         else:
             $ the_item = the_girl.outfit.get_lower_top_layer()
             if the_item:
@@ -117,10 +117,10 @@ label outro_standing_finger(the_girl, the_location, the_object):
         $ climax_controller.do_clarity_release(the_girl)
         "You grasp her tightly with your free hand as you cum, shoving your fingers deep into her cunt and making her gasp in surprise."
         "When you've recovered you recover you slide them out."
-        the_girl.char "Did you just... Cum?"
+        the_girl "Did you just... Cum?"
         mc.name "Yeah."
         "She grinds her butt back into your crotch."
-        the_girl.char "Aww, I thought I was going to get there first. Oh well."
+        the_girl "Aww, I thought I was going to get there first. Oh well."
     return
 
 
@@ -139,14 +139,14 @@ label transition_default_standing_finger(the_girl, the_location, the_object):
     return
 
 label strip_standing_finger(the_girl, the_clothing, the_location, the_object):
-    the_girl.char "Your hands feel amazing... Oh my god..."
+    the_girl "Your hands feel amazing... Oh my god..."
     $ the_girl.draw_animated_removal(the_clothing, position = standing_finger.position_tag)
     "She strips off her [the_clothing.name] while you're fingering her, moaning the whole time."
     return
 
 label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object):
     $ return_value = True
-    the_girl.char "Everything feels so tight, I want to take it all off... Do you mind?"
+    the_girl "Everything feels so tight, I want to take it all off... Do you mind?"
     "[the_girl.possessive_title] grabs onto her [the_clothing.name], waiting for you to tell her what to do."
     menu:
         "Let her strip.":
@@ -157,17 +157,17 @@ label strip_ask_standing_finger(the_girl, the_clothing, the_location, the_object
         "Leave it on.":
             mc.name "No, I like how you look with it on."
             if the_girl.sluttiness < 80:
-                the_girl.char "Do you think I look sexy in it?"
+                the_girl "Do you think I look sexy in it?"
             else:
-                the_girl.char "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
+                the_girl "Don't you think I would look better wearing your cum? That would be so fitting for your dirty little slut, wouldn't it?"
             $ return_value = False
     $ standing_finger.redraw_scene(the_girl)
     return return_value
 
 label orgasm_standing_finger(the_girl, the_location, the_object):
-    the_girl.char "Oh god... Right there! Right there! Ahhhhh!"
+    the_girl "Oh god... Right there! Right there! Ahhhhh!"
     "Her whole body tenses up and she leans back into you. A shiver runs through her body as she climaxes."
     $ the_girl.call_dialogue("climax_responses_foreplay")
     "She quivers with pleasure for a few seconds before her whole body relaxes."
-    the_girl.char "Ah... Keep going..."
+    the_girl "Ah... Keep going..."
     return

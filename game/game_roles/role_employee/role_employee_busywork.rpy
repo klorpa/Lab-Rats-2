@@ -23,10 +23,10 @@ init -2 python:
 
 label employee_busywork_remove_label(the_person):
     python:
-        if employee_busywork_role in the_person.special_role:
+        if the_person.has_role(employee_busywork_role):
             the_person.remove_role(employee_busywork_role)
 
-        if employee_role in the_person.special_role: #She may have quit/been fired since then.
+        if the_person.has_role(employee_role): #She may have quit/been fired since then.
             busywork_report_action = Action("Busywork report crisis", employee_busywork_report_requirement, "employee_busywork_report_label", args = the_person, requirement_args = the_person)
             mc.business.mandatory_crises_list.append(busywork_report_action)
 
@@ -34,7 +34,7 @@ label employee_busywork_remove_label(the_person):
 
 label employee_busywork_report_label(the_person):
     # The person tells you about their week being the office bitch.
-    if employee_role not in the_person.special_role:
+    if not the_person.has_role(employee_role):
         return
     $ the_person.draw_person()
     "[the_person.title] catches your attention while you are working."

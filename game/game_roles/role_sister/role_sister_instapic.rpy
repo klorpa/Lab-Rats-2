@@ -232,7 +232,7 @@ label sister_instathot_label_solo(the_person):
         menu:
             "Of course!":
                 mc.name "Of course, you look hot!"
-                $ the_person.change_slut_temp(1)
+                $ the_person.change_slut(1, 30)
                 $ the_person.change_happiness(3)
 
             "I don't think so.":
@@ -323,7 +323,7 @@ label sister_instathot_label_solo(the_person):
         "Finally she's happy with what she's got and takes her phone back."
         $ the_person.draw_person(emotion = "happy")
         the_person "Thanks so much [the_person.mc_title], these look amazing!"
-        $ the_person.change_slut_temp(3)
+        $ the_person.change_slut(1, 40)
     the_person "I guess I should pay you, huh? Since you're doing all this work for me."
     $ money_amount = 100 + 50*(rank_tits(the_person.tits)-4)
     if money_amount < 50:
@@ -410,7 +410,7 @@ label sister_instathot_special_intro(the_person, is_topless_shoot = True):
             mc.name "You know what they say [the_person.title]. Once it's on the internet it's there forever."
             mc.name "I think it would be a bad idea to be giving nudes to anyone, even if they're paying you a lot of money."
             "She seems a little disappointed, but nods anyways."
-            the_person "Yeah, you're probably right. I would die of embarassement if [mom.title] found them."
+            the_person "Yeah, you're probably right. I would die of embarrassment if [mom.title] found them."
     return
 
 label sister_instathot_special_underwear(the_person): #She's been asked to do an underwear shoot.
@@ -448,7 +448,7 @@ label sister_instathot_special_underwear(the_person): #She's been asked to do an
     the_person "Okay, there should be something good there. Let me take a look!"
     "She hurries over to you and holds onto your arm as you flick through the pictures you just took."
     the_person "Ooh, that one looks good. I'll send him that one, and maybe that one..."
-    $ the_person.change_slut_temp(2)
+    $ the_person.change_slut(1, 50)
     "She gives you a hug and takes her phone back."
     the_person "Thanks for the help [the_person.mc_title], you're an awesome brother!"
     $ the_person.event_triggers_dict["sister_insta_underwear_count"] += 1
@@ -624,7 +624,7 @@ label sister_instathot_special_pictures(the_person, is_topless_shoot = True):
         else:
             "[the_person.title] hops off of the bed and hurries to your side. She holds onto your arm as you flick through her new nudes."
         the_person "... Oh, that one's cute. I think I'll send him that one. Thank you so much [the_person.mc_title]!"
-    $ the_person.change_slut_temp(2)
+    $ the_person.change_slut(1, 30)
     "She gives you a hug and takes her phone back."
     if the_person.event_triggers_dict.get("sister_insta_special_count", 0) == 0:
         $ the_person.event_triggers_dict["sister_insta_special_count"] = 1
@@ -662,7 +662,7 @@ label sister_instathot_mom_discover(the_person):
             the_person "You really think so? But she's still my mom, isn't that a little weird."
             mc.name "It's just to keep your followers hooked. I bet a a bunch of them would be into an older woman."
             the_person "Eww, gross. Still..."
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(2, 60)
             the_person "Alright, I'll think about it. At least I don't have to worry about her catching me anymore."
             $ the_person.event_triggers_dict["sister_instathot_mom_pics_slutty"] = True #A flag for the instathot event to have Lily suggest Mom wears something slutty like her.
 
@@ -835,7 +835,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
             the_mom "[the_mom.mc_title], make sure to get some shots of me embarrassing your sister."
             "She leans over [the_sister.title]'s shoulder and kisses her on the side of the cheek."
             $ the_mom.change_happiness(10)
-            $ the_mom.change_slut_temp(2)
+            $ the_mom.change_slut(2, 60)
             $ the_sister.change_happiness(5)
             "You get some great pictures of [the_mom.title] and [the_sister.title] playing around on the bed together."
 
@@ -1169,7 +1169,7 @@ label sister_give_boobjob_serum_label(the_person):
 
 label sister_got_boobjob_label(the_person):
     call got_boobjob(the_person) #This does the actual breast increase
-    $ sister_brag_action = Action("Sister_brag_boobjob", sister_boobjob_brag_requirement, "sister_new_boobs_brag_label")
+    $ sister_brag_action = Action("Sister_brag_boobjob", sister_boobjob_brag_requirement, "sister_new_boobs_brag_label", args = False)
     $ the_person.on_room_enter_event_list.append(sister_brag_action)
     return
 
@@ -1200,7 +1200,7 @@ label sister_new_boobs_brag_label(from_serum = False, the_person):
             mc.name "You look great with them [the_person.title]. This was a good idea."
             $ the_person.change_happiness(10)
             $ the_person.change_love(1)
-            $ the_person.change_slut_temp(1)
+            $ the_person.change_slut(1, 40)
             the_person "Thanks! I think they look great too!"
 
         "You look like a slut.":
@@ -1217,7 +1217,7 @@ label sister_new_boobs_brag_label(from_serum = False, the_person):
                     the_person "Really? You don't think it was too much, was it? I could have gone smaller..."
                 mc.name "No, I think it suits you perfectly. It was a good idea."
                 $ the_person.change_love(-1)
-                $ the_person.change_slut_temp(3)
+                $ the_person.change_slut(2, 60)
 
     the_person "I'm excited to show them off on InstaPic, I think I'm going to earn way more money now!"
     menu:

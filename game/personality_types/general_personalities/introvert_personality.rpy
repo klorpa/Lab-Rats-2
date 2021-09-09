@@ -60,19 +60,26 @@ label introvert_greetings(the_person):
     return
 
 label introvert_sex_responses_foreplay(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Mmm..."
+        else:
+            "[the_person.title] doesn't say much, but you seem to have her full attention."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "That feels nice."
         else:
             "[the_person.title]'s breathing gets louder and heavier."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "That feels really nice... Ah..."
         else:
             "[the_person.possessive_title]'s face flushes with blood as she becomes more and more aroused."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "I feel so nice when you touch me like this..."
         else:
@@ -86,19 +93,26 @@ label introvert_sex_responses_foreplay(the_person):
     return
 
 label introvert_sex_responses_oral(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Oh lord..."
+        else:
+            "[the_person.title] doesn't say anything, but she holds her breath in anticipation."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Your tongue feels so good..."
         else:
             "[the_person.title]'s breathing gets louder and heavier."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "That's it... that's what I want."
         else:
             "[the_person.possessive_title]'s face flushes with blood as you eat her out."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Oh, my pussy... It feels so good!"
         else:
@@ -108,49 +122,61 @@ label introvert_sex_responses_oral(the_person):
             the_person "You are going to... Make me cum!"
         else:
             "[the_person.title] pants and moans, her body barely under her control."
-
     return
 
 label introvert_sex_responses_vaginal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] sighs happily with your dick inside of her."
+        else:
+            the_person "Oh, I didn't know it would feel like this..."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Your dick feels nice."
         else:
             "[the_person.title]'s breathing gets louder and heavier as you fuck her."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "You feel so big and warm..."
         else:
             "[the_person.possessive_title]'s face flushes with blood as she becomes more and more aroused."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Mmm, my pussy feels so good with your dick inside!"
         else:
             "[the_person.title] closes her eyes and bites her lower lip. The only sound she makes is a low, sensual growl."
     else:
         if the_person.sluttiness > 50:
-            the_person "Your dick is going to make cum if you keep going..."
+            the_person "Your dick is going to make me cum if you keep going..."
+            "It sounds more like a challenge than a concern."
         else:
             "[the_person.title] pants and moans, her body barely under her control."
-
     return
 
 label introvert_sex_responses_anal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] takes a deep breath and holds it as you stretch her out."
+        else:
+            the_person "Oh... Oh! Are we sure it's really going to fit?"
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Gah!"
         else:
             "[the_person.title]'s breathing gets louder and heavier."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Ah... I'm so stretched out..."
         else:
             "[the_person.possessive_title]'s face flushes with blood as she struggles to take your cock."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Mmm. Fuck."
         else:
@@ -747,7 +773,12 @@ label introvert_condom_bareback_ask(the_person):
     return
 
 label introvert_condom_bareback_demand(the_person):
-    if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0: #Just likes raw sex
+    if the_person.has_role(breeder_role): #Actively looking to get knocked up.
+        "[the_person.possessive_title] shakes her head in distress."
+        the_person "No, no, you don't need that!"
+        the_person "Come on, I want you to get me pregnant already!"
+
+    elif the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0: #Just likes raw sex
         if the_person.on_birth_control:
             the_person "Screw that, this is why I'm on birth control."
             the_person "If you're going to fuck me you're going to do it raw and cum inside me!"
@@ -972,12 +1003,12 @@ label introvert_sex_watch(the_person, the_sex_person, the_position):
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person "Right in front of me? Really?"
-        $ change_report = the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 30)
         "[the_person.title] watches for a moment, then turns away while you and [the_sex_person.name] keep [the_position.verb]."
 
     elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
-        $ change_report = the_person.change_slut_temp(2)
+        $ the_person.change_slut(1, 50)
         "[the_person.title] blushes, watching you and [the_sex_person.name] [the_position.verb]."
 
     else:
@@ -1013,14 +1044,14 @@ label introvert_being_watched(the_person, the_watcher, the_position):
         #She's into it but shamed by the prude watching her.
         the_person "We should go somewhere quiet..."
         $ the_person.change_arousal(-1)
-        $ the_person.change_slut_temp(-1)
+        $ the_person.change_slut(-1)
         "[the_person.title] seems uncomfortable with [the_watcher.title] nearby."
 
     else: #the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
         #They're both into it but not fanatical about it.
         "[the_person.possessive_title] glances between you and [the_watcher.title]."
         $ the_person.change_arousal(1)
-        $ the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 60)
         "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
@@ -1288,16 +1319,38 @@ label introvert_sex_review(the_person, the_report):
     return
 
 ## Role Specific Section ##
+
 label introvert_improved_serum_unlock(the_person):
-    mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
-    "[the_person.title] nods and listens."
-    mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
-    "[the_person.title] thinks about it, then nods again."
-    the_person "Well, I may have an idea. I think it could lead to a breakthrough."
-    mc.name "Go on."
-    the_person "Our testing procedures focus on human safety. If we put that to the side we could gain much more information about the subjective effects of our serum."
-    the_person "I want to do is take a dose of our serum myself. I would need you to record me and ask me some questions."
+    mc.name "[the_person.title], now that you've had some time to get use to the lab there is something I want to talk to you about."
+    the_person "Sure, what can I help you with?"
+    mc.name "Our R&D up to this point has been based on my old notes from university."
+    mc.name "There were some unofficial experiment results that suggested the effects might be enhanced by sexual arousal."
+    "[the_person.title] nods her understanding."
+    the_person "Ah, so you had noticed that too? I have a hypothesis that an orgasm opens chemical receptors that are normally blocked."
+    mc.name "What else can we do if we assume that is true? Does that open up any more paths for our research?"
+    the_person "If it's true I could leverage the effect to induce greater effects in our subjects."
+    "[the_person.possessive_title] thinks for a long moment, then smiles mischeviously."
+    the_person "But we'll need to do some experiments to be sure."
+    mc.name "What sort of experiments?"
+    the_person "I want to take a dose of serum myself, and you can record the effects."
+    the_person "Then I'll make myself climax, and we can compare the effects after."
+    mc.name "Do you think that's a good idea?"
+    the_person "Not entirely, no. But we can't trust anyone else with this information if we're right."
+    the_person "We might be able to make progress by brute force, but this is a chance to catapult our knowledge to another level."
+    the_person "A finished dose of serum that raises my Suggestibility. The higher it gets my Suggestibility the better, but any amount should do."
+    the_person "Then we'll just need some time and some privacy for me to see what sort of effects my orgasms will have."
     return
+
+# label introvert_improved_serum_unlock(the_person):
+#     mc.name "[the_person.title], now that you've had some time in the lab there's something I wanted to talk to you about."
+#     "[the_person.title] nods and listens."
+#     mc.name "All of our research and development up until this point has been based on the limited notes I have from my university days. I'm sure there's more we could learn, and I want you to look into it for me."
+#     "[the_person.title] thinks about it, then nods again."
+#     the_person "Well, I may have an idea. I think it could lead to a breakthrough."
+#     mc.name "Go on."
+#     the_person "Our testing procedures focus on human safety. If we put that to the side we could gain much more information about the subjective effects of our serum."
+#     the_person "I want to do is take a dose of our serum myself. I would need you to record me and ask me some questions."
+#     return
 
 ## Taboo break dialogue ##
 label introvert_kissing_taboo_break(the_person):
@@ -1400,7 +1453,7 @@ label introvert_vaginal_sex_taboo_break(the_person):
                         mc.name "Of course I do. You're about to let me fuck your pussy raw."
                     mc.name "You're a dirty little slut, but there's nothing wrong with that. You just have to embrace it."
                     "She nods."
-                    $ the_person.change_slut_temp(1 + the_person.get_opinion_score("being_submissive"))
+                    $ the_person.change_slut(1 + the_person.get_opinion_score("being_submissive"))
                     the_person "I think I've known that deep down for a while..."
 
                 "Of course not.":
@@ -1557,7 +1610,7 @@ label introvert_bare_pussy_taboo_break(the_person, the_clothing):
     elif the_person.love > 35:
         the_person "Oh! If you take that off you're going to see my... You know."
         mc.name "That's the plan. Is there a problem with that?"
-        the_person "No, I guess not. I just feel a little self concious about getting naked like this."
+        the_person "No, I guess not. I just feel a little self conscious about getting naked like this."
         if the_person.has_taboo("touching_vagina"):
             mc.name "Just take a deep breath and relax. You trust me, right?"
             the_person "Of course I do [the_person.mc_title]. Okay, go ahead..."

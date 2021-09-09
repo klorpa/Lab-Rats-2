@@ -223,7 +223,7 @@ label aunt_flirt_response_high(the_person):
                     $ the_person.draw_person(the_animation = blowjob_bob)
                     $ mc.change_locked_clarity(15)
                     "[the_person.possessive_title] grabs her own tits and jiggles them up and down, alternating between her left and right boob."
-                    "She lets you watch for a few moments, then lets go and laughs self-conciously."
+                    "She lets you watch for a few moments, then lets go and laughs self-consciously."
                     the_person "You're such a bad influence on me, you know that?"
                     $ the_person.draw_person()
 
@@ -506,7 +506,7 @@ label aunt_sucking_cock_taboo_break(the_person):
         mc.name "Of course not."
         the_person "Alright. I'll..."
 
-    "[the_person.possessive_title] shakes her head and laughs self conciously."
+    "[the_person.possessive_title] shakes her head and laughs self consciously."
     the_person "...This is so crazy! I'll give you a blowjob [the_person.mc_title]."
     return
 

@@ -136,7 +136,7 @@ label view_dikdok(the_person):
                 $ the_person.draw_person(position = "doggy", the_animation = ass_bob, animation_effect_strength = 0.6)
                 "She keep shaking her butt for her digital audience until the song and the video end."
                 $ the_person.apply_outfit()
-                $ the_person.clear_scene()
+                $ clear_scene()
             else:
                 $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
                 $ the_person.draw_person(position = "kneeling1")

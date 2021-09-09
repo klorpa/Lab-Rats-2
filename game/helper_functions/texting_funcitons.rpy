@@ -13,3 +13,5 @@ init -1 python:
                 kwargs["what_color"] = "#19e9f7" #We need to define these explicitly so they are not overridden by the characters defaults.
                 kwargs["what_font"] = "fonts/Autobusbold-1ynL.ttf"
         return args, kwargs
+
+        

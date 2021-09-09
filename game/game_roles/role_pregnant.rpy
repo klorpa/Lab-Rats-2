@@ -75,7 +75,7 @@ label pregnant_announce(the_person):
         the_person "So, I have some news. This is really surprising, even to me..."
         mc.name "What's up? Is everything alright?"
     elif was_accident:
-        the_person "So I have some news. This might be a little suprising."
+        the_person "So I have some news. This might be a little surprising."
         mc.name "What's up? Is everything okay?"
     else:
         the_person "I have some big news."
@@ -88,7 +88,7 @@ label pregnant_announce(the_person):
             $ the_person.event_triggers_dict["preg_your_kids_known"] = 1
 
 
-    if girlfriend_role in the_person.special_role:
+    if the_person.has_role(girlfriend_role):
         if was_immaculate:
             $ mc.change_locked_clarity(100)
             the_person "I know this might sound crazy but... I'm pregnant!"
@@ -108,7 +108,7 @@ label pregnant_announce(the_person):
         "You hug [the_person.title], and she squeezes you back. After a long moment she breaks the hug."
         the_person "That's all for now, I don't need you to do anything. I'm just so happy to be able to share this with you!"
 
-    elif affair_role in the_person.special_role: #Note: Requires her to be in a relationship, so there's no "immaculate conception" chance. She'll just think it's his.
+    elif the_person.has_role(affair_role): #Note: Requires her to be in a relationship, so there's no "immaculate conception" chance. She'll just think it's his.
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if was_immaculate:
             $ mc.change_locked_clarity(100)
@@ -302,7 +302,7 @@ label pregnant_transform_announce(start_day, the_person):
 
     if the_person.event_triggers_dict.get("preg_start_date", day) - day <= 75:
         # Unusually short pregnancy.
-        the_person "Hey [the_person.mc_title]. I know this might be a little suprising, but obviously things..."
+        the_person "Hey [the_person.mc_title]. I know this might be a little surprising, but obviously things..."
         $ mc.change_locked_clarity(50)
         "She runs her hand over her belly, accentuating the new and prominent curves that have formed."
         the_person "... are moving pretty fast. My doctor tells me everything is fine, I'm just ahead of the curve."
@@ -326,7 +326,7 @@ label pregnant_finish_announce(the_person): #TODO: have more varients for girlfr
     "You get a call from [the_person.possessive_title]. You answer it."
     mc.name "Hey [the_person.title], what's up?"
 
-    if employee_role in the_person.special_role:
+    if the_person.has_role(employee_role):
         the_person "Hi [the_person.mc_title]. I wanted to let you to know that I won't be at work for a few days."
     else:
         the_person "Hi [the_person.mc_title], I have some exciting news."
@@ -342,7 +342,7 @@ label pregnant_finish_announce(the_person): #TODO: have more varients for girlfr
     the_person "I'll let you know as soon as things are finished. Bye!"
 
     python:
-        the_person.event_triggers_dict["preg_old_schedule"] = the_person.schedule.copy() #Take a shallow copy so we can change their current schedule to nothing
+        the_person.event_triggers_dict["preg_old_schedule"] = the_person.copy_schedule() #Get a duplicate copy of their current schedule.
         the_person.set_schedule(the_person.home, times = [0,1,2,3,4])
 
         preg_finish_action = Action("Pregnancy Finish", preg_finish_requirement, "pregnant_finish", args = the_person, requirement_args = [the_person, day + renpy.random.randint(4,7)])
@@ -371,14 +371,14 @@ label pregnant_finish(the_person):
         the_person.on_talk_event_list.append(tit_shrink_one_announcement_action) #And here is where she tells you about those changes
         the_person.on_talk_event_list.append(tit_shrink_two_announcement_action)
 
-        while pregnant_role in the_person.special_role: #While loop just in case it's ended up in there multiple times. In theory this should only trigger once.
+        while the_person.has_role(pregnant_role): #While loop just in case it's ended up in there multiple times. In theory this should only trigger once.
             the_person.remove_role(pregnant_role)
 
     "You get a call from [the_person.possessive_title] early in the morning. You answer it."
     the_person "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.
     #TODO: Let you pick a name (or at low obedience she's already picked one)
     mc.name "That's amazing, but are you sure you don't need more rest?"
-    if affair_role in the_person.special_role:
+    if the_person.has_role(affair_role):
         $ so_title = SO_relationship_to_title(the_person.relationship)
         the_person "I'll be fine, I'll be leaving our girl with her \"father\" so I can come back and see you again."
 

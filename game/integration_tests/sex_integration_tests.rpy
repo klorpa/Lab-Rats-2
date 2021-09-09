@@ -23,8 +23,7 @@ label run_sex_system_integration_test():
             return False
     $ mc.change_energy(100)
     $ test_person.change_energy(100)
-    $ test_person.change_slut_temp(100)
-    $ test_person.change_slut_core(100)
+    $ test_person.change_slut(100)
     "Starting sex with empty room, high Sluttiness."
     call fuck_person(test_person)
     menu:
@@ -48,10 +47,8 @@ label run_sex_system_integration_test():
 
     $ mc.change_energy(100)
     $ test_person.change_energy(100)
-    $ test_person.change_slut_core(-100)
-    $ test_person.change_slut_temp(-100)
+    $ test_person.change_slut(-100)
     $ test_person.change_obedience(100)
-
     "Starting sex in room with high obedience, no Sluttiness."
     call fuck_person(test_person)
     menu:
@@ -63,8 +60,7 @@ label run_sex_system_integration_test():
 
     $ mc.change_energy(100)
     $ test_person.change_energy(100)
-    $ test_person.change_slut_core(50)
-    $ test_person.change_slut_temp(50)
+    $ test_person.change_slut(50)
     $ other_person = create_random_person()
     $ other_person.set_title("Watcher")
     $ test_room.add_person(other_person)
@@ -121,8 +117,7 @@ label run_complex_sex_integraiton_test():
     $ test_person.change_energy(100)
 
     "Let's get her a little more comfortable and willing."
-    $ test_person.change_slut_temp(100)
-    $ test_person.change_slut_core(100)
+    $ test_person.change_slut(100)
     $ test_person.change_obedience(100)
     $ test_person.apply_outfit(Outfit("Nude"))
     $ test_person.draw_person()

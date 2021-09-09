@@ -3,7 +3,7 @@ init -2 python:
         global_character_number = 0 #This is increased for each character that is created.
         def __init__(self,name,last_name,age,body_type,tits,height,body_images,expression_images,hair_colour,hair_style,pubes_colour,pubes_style,skin,eyes,job,wardrobe,personality,stat_list,skill_list,
             sluttiness=0,obedience=0,suggest=0,sex_list=[0,0,0,0], love = 0, happiness = 100, home = None, work = None,
-            font = "Avara.tff", name_color = "#ffffff", dialogue_color = "#ffffff",
+            font = "fonts/Avara.tff", name_color = "#ffffff", dialogue_color = "#ffffff",
             face_style = "Face_1",
             special_role = None,
             title = None, possessive_title = None, mc_title = None,
@@ -15,8 +15,6 @@ init -2 python:
             self.last_name = last_name
             self.character_number = Person.global_character_number #This is a gunique number for each character. Used as a tag when showing a character to identify if they are already drawn (and thus need to be hidden)
             Person.global_character_number += 1
-
-            #self.draw_number = defaultdict(int) #Used while drawing a character to avoid drawing an animation that has already been replaced with a new draw. Defaults to 0 #REMOVED AS OF v0.41
 
             self.title = title #Note: We format these down below!
             self.possessive_title = possessive_title #The way the girl is refered to in relation to you. For example "your sister", "your head researcher", or just their title again.
@@ -93,6 +91,10 @@ init -2 python:
                 what_color = dialogue_color, #The colour of the character's dialogue.
                 what_style = "general_dialogue_style") #Used to describe everything that isn't character specific.
 
+            self.what_font = font
+            self.who_font = font
+            self.what_color = dialogue_color
+
             if title: #Format the given titles, if any, so they appear correctly the first time you meet at person.
                 self.set_title(title) #The way the girl is refered to by the MC. For example: "Mrs. Whatever", "Lily", or "Mom". Will reset "???" if appropriate
             else:
@@ -106,31 +108,28 @@ init -2 python:
             self.age = age
             self.body_type = body_type
             self.tits = tits
-            self.height = height * 0.8 #This is the scale factor for height, with the talest girl being 1.0 and the shortest being 0.8
-            self.body_images = body_images #instance of Clothing class, which uses full body shots.
+            self.height = height * 0.8 #This is the scale factor for height, with the talest girl being 0.8 and the shortest being 0.64
+            self.body_images = body_images.get_copy() #instance of Clothing class, which uses full body shots.
             self.face_style = face_style
             self.expression_images = expression_images #instance of the Expression class, which stores facial expressions for different skin colours
-            self.hair_colour = hair_colour #A list of [description, color value], where colour value is a standard RGBA list.
+
+            self.pubes_colour = None
+
             self.hair_style = hair_style
-
-            if pubes_colour is None:
-                self.pubes_colour = get_darkened_colour(hair_colour[1], 0.07) #Unless otherwise specifified they are 10% darker than normal hair
-            else:
-                self.pubes_colour = pubes_colour #generally hair colour but a little darker.
-
             if pubes_style is None:
                 self.pubes_style = shaved_pubes #An empty image place holder so we can always call on them to draw.
             else:
                 self.pubes_style = pubes_style
 
+            self.set_hair_colour(Color(rgb=(hair_colour[1][0],hair_colour[1][1],hair_colour[1][2])))
+
 
             self.skin = skin
-            self.eyes = eyes #A list of [description, color value], where colour value is a standard RGBA list.
+            self.set_eye_colour(Color(rgb=(eyes[1][0], eyes[1][1], eyes[1][2])))
+            # self.eyes = eyes #A list of [description, color value], where colour value is a standard RGBA list.
             #TODO: Tattoos eventually
-            #TODO: a "mandatory" or "default" set of accessories that characters will always wear. Do as a third "personal_effects" outfit that they always merge in if possible?
 
-
-            self.serum_tolerance = 2 #How many active serums this person can tolerate before they start to suffer negative effects. TODO: Expand on this mechanic in a future update.
+            self.serum_tolerance = 2 #How many active serums this person can tolerate before they start to suffer negative effects.
             self.serum_effects = [] #A list of all of the serums we are under the effect of.
 
             if not special_role:  #Characters may have a special role that unlocks additional actions. By default this is an empty list.
@@ -265,10 +264,144 @@ init -2 python:
             ## Conversation things##
             self.sexed_count = 0
 
+            self.training_log = defaultdict(int) #Contains a list of Trainable.training_tag's that this person has had trained already, which is used to increase the cost of future training in similar things.
 
 
-        def __call__(self, what, *args, **kwargs): #Required to play nicely with statement equivalent say() when passing only Peron object.
-            self.char(what, *args, **kwargs)
+
+        def __call__(self, what, *args, **kwargs): #Required to play nicely with statement equivalent say() when passing only Person object.
+            new_what = what #keep the old what as a reference in case we need it.
+            new_colour = Color(self.what_color) #Multiple sections may modify the colour of the entire string, so we apply it once at the end.
+
+            #Tags that are applied are generally applied to the inner most parts up here, more general as we go down.
+            if self.has_role(trance_role): #Desaturate her dialogue as she falls deeper into a trance.
+                if self.has_exact_role(trance_role):
+                    new_colour = new_colour.multiply_hsv_saturation(0.7)
+                elif self.has_exact_role(heavy_trance_role):
+                    new_colour = new_colour.multiply_hsv_saturation(0.4)
+                elif self.has_exact_role(heavy_trance_role):
+                    new_colour = new_colour.multiply_hsv_saturation(0.1)
+
+            flattened_phrase = remove_punctuation(what).lower() #Strip the entire phrase so we can check for individual words.
+            if "knocked up" in new_what.lower():
+                if self.arousal > 40 - (10*self.get_opinion_score("bareback sex") + self.get_opinion_score("creampies")) or self.has_role(breeder_role):
+                    start_index = new_what.lower().find("knocked up")
+                    start_substring = new_what[start_index:start_index + len("knocked up")]
+                    replace_substring = "{sc=1}"+self.wrap_string(start_substring, the_colour = new_colour)+"{/sc}"
+                    new_what = new_what.replace(start_substring, replace_substring)
+
+            if "knock me up" in new_what.lower():
+                if self.arousal > 40 - (10*self.get_opinion_score("bareback sex") + self.get_opinion_score("creampies")) or self.has_role(breeder_role):
+                    start_index = new_what.lower().find("knock me up")
+                    start_substring = new_what[start_index:start_index + len("knock me up")]
+                    replace_substring = "{sc=1}"+self.wrap_string(start_substring, the_colour = new_colour)+"{/sc}"
+                    new_what = new_what.replace(start_substring, replace_substring)
+
+            if "preg me" in new_what.lower():
+                if self.arousal > 40 - (10*self.get_opinion_score("bareback sex") + self.get_opinion_score("creampies")) or self.has_role(breeder_role):
+                    start_index = new_what.lower().find("preg me")
+                    start_substring = new_what[start_index:start_index + len("preg me")]
+                    replace_substring = "{sc=1}"+self.wrap_string(start_substring, the_colour = new_colour)+"{/sc}"
+                    new_what = new_what.replace(start_substring, replace_substring)
+
+            if "oh god" in new_what.lower():
+                if self.arousal > 40 - (10*self.get_opinion_score("bareback sex") + self.get_opinion_score("creampies")) or self.has_role(breeder_role):
+                    start_index = new_what.lower().find("oh god")
+                    start_substring = new_what[start_index:start_index + len("oh god")]
+                    replace_substring = "{sc=1}"+self.wrap_string(start_substring, the_colour = new_colour)+"{/sc}"
+                    new_what = new_what.replace(start_substring, replace_substring)
+
+            if "oh my god" in new_what.lower():
+                if self.arousal > 40 - (10*self.get_opinion_score("bareback sex") + self.get_opinion_score("creampies")) or self.has_role(breeder_role):
+                    start_index = new_what.lower().find("oh my god")
+                    start_substring = new_what[start_index:start_index + len("oh my god")]
+                    replace_substring = "{sc=1}"+self.wrap_string(start_substring, the_colour = new_colour)+"{/sc}"
+                    new_what = new_what.replace(start_substring, replace_substring)
+
+
+            temp_what = ""
+            for word in new_what.split(): #Per word modifications
+                flattened_word = remove_punctuation(word).lower() #Stripped and lower case for easy comparison, we use the full raw word (including punctaiton) for replacement.
+                modified_word = False
+                effect_strength = str(int(6*(self.arousal/self.max_arousal)) + 2) #If an effect triggers this scales the effect with arousal.
+                if word[0] == "{" and word [-1] == "}":
+                    pass #Don't do anything to tags.
+
+                elif flattened_word == "cum" or flattened_word == "cumming": #Strip punctuation, avoids us catching phrases like "cumming" and only shaking the front.
+                    if self.arousal > (40 - 10*(self.get_opinion_score("drinking cum")+self.get_opinion_score("being covered in cum")+self.get_opinion_score("cum facials")+self.get_opinion_score("creampies"))):
+                        modified_word = True
+                        cum_color = Color("#e5e5d6")
+
+                        word_replace = self.wrap_string(word, the_colour = cum_color, the_font = "fonts/plasdrip.ttf")
+                        word_replace = "{atl=0.3,drop_text~#~ 2.0, bounce_text~" + effect_strength + "}" + word_replace + "{/atl}"
+                        temp_what += word_replace + " "
+
+                elif flattened_word == "cock" or flattened_word == "dick":
+                    if self.arousal > (40 - 20*(self.get_opinion_score("big dicks"))):
+                        modified_word = True
+                        word_replace = self.wrap_string(word, the_colour = new_colour, size_mod = effect_strength)
+                        word_replace = "{sc=1}{bt=" + effect_strength + "}" + word_replace + "{/bt}{/sc}"
+                        temp_what += word_replace + " "
+
+                elif flattened_word == "pussy" or flattened_word == "vagina" or flattened_word == "cunt":
+                    if self.arousal > (50):
+                        modified_word = True
+                        word_replace = self.wrap_string(word, the_colour = new_colour)
+                        word_replace = "{bt=" + effect_strength + "}" + word_replace + "{/bt}"
+                        temp_what += word_replace + " "
+
+                elif any(flattened_word == target_word for target_word in ["tit","tits","boob","boobs","breast","breasts","mommy milkers"]):
+                    if self.arousal > 40 - 10*self.get_opinion_score("showing her tits"):
+                        modified_word = True
+                        tit_effect_strength = str(int(6*(self.arousal/self.max_arousal)) + rank_tits(self.tits))
+                        word_replace = self.wrap_string(word, the_colour = new_colour)
+                        word_replace = "{atl=bounce_text~" + tit_effect_strength + "}" + word_replace + "{/atl}"
+                        temp_what += word_replace + " "
+
+                elif flattened_word == "fuck":
+                    if self.arousal > 60:
+                        modified_word = True
+                        word_replace = self.wrap_string(word, the_colour = new_colour, size_mod = effect_strength)
+                        temp_what += word_replace + " "
+
+                elif flattened_word == "pregnant" or flattened_word == "bred" or flattened_word == "breed": #TODO: Add a word effect that swells through the middle?
+                    if self.arousal > 40 - (10*self.get_opinion_score("bareback sex") + self.get_opinion_score("creampies")) or self.has_role(breeder_role):
+                        modified_word = True
+                        word_replace = self.wrap_string(word, the_colour = new_colour, size_mod = effect_strength)
+                        word_replace = "{sc=1}" + word_replace + "{/sc}"
+                        temp_what += word_replace + " "
+
+                if not modified_word:
+                    temp_what += word + " "
+                    
+            new_what = temp_what #[:-1] #STrip the last character, which is an unused space.
+            new_what = self.wrap_string(new_what, the_colour = new_colour)
+
+            self.char(new_what, *args, **kwargs)
+
+        def wrap_string(self, string, the_colour = None, the_font = None, size_mod = None): #Useful for wrapping a piece of advanced tag dialogue with the proper font, colour, style.
+            return_string = string
+            if the_colour is None:
+                the_colour = self.what_color.hexcode
+            else:
+                the_colour = the_colour.hexcode
+
+            if the_font is None:
+                the_font = self.who_font
+            return_string = "{color=" + the_colour + "}" + return_string + "{/color}"
+            return_string = "{font=" + the_font + "}" + return_string + "{/font}" #Then set the font
+            if size_mod is not None:
+                size_string = str(size_mod)
+                if size_mod > 0:
+                    size_string = "+" + size_string
+                return_string = "{size=" + size_string + "}" + return_string + "{/size}"
+            return_string = "{=general_dialogue_style}" + return_string + "{/=general_dialogue_style}"
+            return return_string
+
+        def __getattr__(self, attr):
+            if attr == "core_sluttiness": #Helps maintain mod support after v0.43 removed core_sluttiness as an attribute
+                return self.sluttiness
+            else:
+                raise AttributeError
 
 
 
@@ -348,9 +481,6 @@ init -2 python:
 
         def run_turn(self):
             self.change_energy(20, add_to_log = False)
-            self.bleed_slut() #if our sluttiness is over our core slut, bleed some off and, if we have suggest, turn it into core slut.
-
-
 
             remove_list = []
             for serum in self.serum_effects: #Compute the effects of all of the serum that the girl is under.
@@ -380,6 +510,10 @@ init -2 python:
         def run_move(self,location): #Move to the apporpriate place for the current time unit, ie. where the player should find us.
 
             #Move the girl the appropriate location on the map. For now this is either a division at work (chunks 1,2,3) or downtown (chunks 0,5). TODO: add personal homes to all girls that you know above a certain amount.
+            for serum in self.serum_effects: #Compute the effects of all of the serum that the girl is under.
+                serum.run_on_move(self) #Run the serum's on_move function if one exists
+
+
             self.sexed_count = 0 #Reset the counter for how many times you've been seduced, you might be seduced multiple times in one day!
 
             if time_of_day == 0: #It's a new day, get a new outfit out to wear!
@@ -398,7 +532,7 @@ init -2 python:
                         self.wear_uniform()
                         self.change_happiness(self.get_opinion_score("work uniforms"),add_to_log = False)
                         if self.planned_uniform and self.planned_uniform.slut_requirement > self.sluttiness*0.75: #A skimpy outfit/uniform is defined as the top 25% of a girls natural sluttiness.
-                            self.change_slut_temp(self.get_opinion_score("skimpy uniforms"), add_to_log = False)
+                            self.change_slut(self.get_opinion_score("skimpy uniforms"), 30, add_to_log = False)
 
                 elif destination == self.home:
                     self.apply_outfit(self.planned_outfit)
@@ -416,12 +550,12 @@ init -2 python:
 
             #We do uniform/outfit checks in run move because it happens at the _start_ of the time chunk. The girl looks forward to wearing her outfit (or dreads it) rather than responds to actually doing it.
             if self.outfit and self.planned_outfit.slut_requirement > self.sluttiness*0.75: #A skimpy outfit is defined as the top 25% of a girls natural sluttiness.
-                self.change_slut_temp(self.get_opinion_score("skimpy outfits"), add_to_log = False)
+                self.change_slut(self.get_opinion_score("skimpy outfits"), 30, add_to_log = False)
             elif self.outfit and self.planned_outfit.slut_requirement < self.sluttiness*0.25: #A conservative outfit is defined as the bottom 25% of a girls natural sluttiness.
                 self.change_happiness(self.get_opinion_score("conservative outfits"), add_to_log = False)
 
             if self.outfit.tits_available() and self.outfit.tits_visible() and self.outfit.vagina_available() and self.outfit.vagina_visible():
-                self.change_slut_temp(self.get_opinion_score("not wearing anything"), add_to_log = False)
+                self.change_slut(self.get_opinion_score("not wearing anything"), 50, add_to_log = False)
 
             if not self.outfit.wearing_bra() or not self.outfit.wearing_panties(): #We need to determine how much underwear they are not wearing. Each piece counts as half, so a +2 "love" is +1 slut per chunk.
                 underwear_bonus = 0
@@ -430,12 +564,12 @@ init -2 python:
                 if not self.outfit.wearing_panties():
                     underwear_bonus += self.get_opinion_score("not wearing underwear")
                 underwear_bonus = __builtin__.int(underwear_bonus/2.0) #I believe this rounds towards 0. No big deal if it doesn't, very minor detail.
-                self.change_slut_temp(underwear_bonus, add_to_log = False)
+                self.change_slut(underwear_bonus, 40, add_to_log = False)
 
             if self.outfit.tits_visible():
-                self.change_slut_temp(self.get_opinion_score("showing her tits"), add_to_log = False)
+                self.change_slut(self.get_opinion_score("showing her tits"), 60, add_to_log = False)
             if self.outfit.vagina_visible():
-                self.change_slut_temp(self.get_opinion_score("showing her ass"), add_to_log = False)
+                self.change_slut(self.get_opinion_score("showing her ass"), 60, add_to_log = False)
 
             for event_list in [self.on_room_enter_event_list, self.on_talk_event_list]: #Go through both of these lists and curate them, ie trim out events that should have expired.
                 removal_list = [] #So we can iterate through without removing and damaging the list.
@@ -451,23 +585,24 @@ init -2 python:
             for a_role in self.special_role:
                 a_role.run_move(self)
 
-
-
         def run_day(self): #Called at the end of the day.
             #self.outfit = self.wardrobe.decide_on_outfit(self.sluttiness) #Put on a new outfit for the day!
 
             self.change_energy(60, add_to_log = False)
             self.change_novelty(1, add_to_log = False)
 
-            if self.arousal > (self.max_arousal/2): #TODO: Have this trigger an LTE where girls might be getting off when you walk in.
-                self.arousal = __builtin__.int(self.arousal/2) # If her arousal is high she masturbates at night, generating a small amount of sluttiness
-                self.change_slut_temp(1, add_to_log = False)
-                self.change_happiness(5*self.get_opinion_score("masturbating"), add_to_log = False)
-
             #Now we will normalize happiness towards 100 over time. Every 5 points of happiness above or below 100 results in a -+1 per time chunk, rounded towards 0.
             hap_diff = self.happiness - 100
             hap_diff = __builtin__.int(hap_diff/5.0) #python defaults to truncation towards 0, so this gives us the number we should be changing our happinss by
             self.change_happiness(-hap_diff, add_to_log = False) #Apply the change
+
+            if self.arousal > (self.max_arousal/2): #If her arousal is high she masturbates at night, generating a small amount of sluttiness #TODO: Have this trigger an LTE where girls might be getting off when you walk in.
+                self.arousal = 0
+                if self.get_opinion_score("masturbating") > 0: # Masturbating turns her on, so just getting off turns her back on!
+                    self.arousal = 15*self.get_opinion_score("masturbating")
+                self.change_happiness(5+5*self.get_opinion_score("masturbating"), add_to_log = False)
+                self.run_orgasm(show_dialogue = False, trance_chance_modifier = self.get_opinion_score("masturbating"), add_to_log = False)
+
 
             remove_list = []
             for serum in self.serum_effects:
@@ -786,6 +921,18 @@ init -2 python:
                 else:
                     return 0
 
+        def has_unknown_opinions(self, normal_opinions = True, sexy_opinions = True):
+            if normal_opinions:
+                for topic in self.opinions:
+                    if not self.opinions[topic][1]:
+                        return True
+
+            if sexy_opinions:
+                for topic in self.sexy_opinions:
+                    if not self.sexy_opinions[topic][1]:
+                        return True
+
+            return False
 
         def get_opinion_score(self, topic): #Like get_opinion_topic, but only returns the score and not a tuple. Use this when determining a persons reaction to a relavent event.
             if topic in self.opinions:
@@ -795,6 +942,34 @@ init -2 python:
                 return self.sexy_opinions[topic][0]
 
             return 0
+
+        def get_opinion_topics_list(self, include_unknown = True, include_normal = True, include_sexy = True, include_hate = True, include_dislike = True, include_like = True, include_love = True):
+            #TODO: Needs unit testing
+            opinion_return_list = []
+            lists_to_check = []
+            if include_normal:
+                for topic in self.opinions:
+                    if self.opinions[topic][1] or include_unknown:
+                        if self.opinions[topic][0] == -2 and include_hate:
+                            opinion_return_list.append(topic)
+                        elif self.opinions[topic][0] == -1 and include_dislike:
+                            opinion_return_list.append(topic)
+                        elif self.opinions[topic][0] == 1 and include_like:
+                            opinion_return_list.append(topic)
+                        elif self.opinions[topic][0] == 2 and include_love:
+                            opinion_return_list.append(topic)
+            if include_sexy:
+                for topic in self.sexy_opinions:
+                    if self.sexy_opinions[topic][1] or include_unknown:
+                        if self.sexy_opinions[topic][0] == -2 and include_hate:
+                            opinion_return_list.append(topic)
+                        elif self.sexy_opinions[topic][0] == -1 and include_dislike:
+                            opinion_return_list.append(topic)
+                        elif self.sexy_opinions[topic][0] == 1 and include_like:
+                            opinion_return_list.append(topic)
+                        elif self.sexy_opinions[topic][0] == 2 and include_love:
+                            opinion_return_list.append(topic)
+            return opinion_return_list
 
         def get_opinion_topic(self, topic): #topic is a string matching the topics given in our random list (ie. "the colour blue", "sports"). Returns a tuple containing the score: -2 for hates, -1 for dislikes, 0 for no opinion, 1 for likes, and 2 for loves, and a bool to say if the opinion is known or not.
             if topic in self.opinions:
@@ -865,6 +1040,92 @@ init -2 python:
 
             return updated
 
+        def strengthen_opinion(self, topic, add_to_log = True):
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+
+            display_string = ""
+
+            old_opinion = self.get_opinion_topic(topic)
+            if old_opinion is None: #You cannot strengthen an opinion of 0, for that make a new one entirely.
+                return False
+
+            updated = False
+            if old_opinion[0] == 1 or old_opinion[0] == -1:
+                updated = True
+                new_opinion_value = 2*old_opinion[0]
+                if topic in self.opinions:
+                    self.opinions[topic] = [new_opinion_value, old_opinion[1]]
+                else:
+                    self.sexy_opinions[topic] = [new_opinion_value, old_opinion[1]]
+                display_string += "Opinion Strengthened: " + display_name + " now " + opinion_score_to_string(self.get_opinion_score(topic)) + " " + topic
+
+            if add_to_log and display_string:
+                mc.log_event(display_string, "float_text_grey")
+
+            return updated
+
+        def weaken_opnion(self, topic, add_to_log = True):
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+
+            display_string = ""
+
+            old_opinion = self.get_opinion_topic(topic)
+            if old_opinion is None: #You cannot strengthen an opinion of 0, for that make a new one entirely.
+                return False
+
+            updated = False
+            if old_opinion[0] == 2 or old_opinion[0] == -2:
+                updated = True
+                new_opinion_value = int(old_opinion[0]/2)
+                if topic in self.opinions:
+                    self.opinions[topic] = [new_opinion_value, old_opinion[1]]
+                else:
+                    self.sexy_opinions[topic] = [new_opinion_value, old_opinion[1]]
+                display_string += "Opinion Weakened: " + display_name + " now " + opinion_score_to_string(self.get_opinion_score(topic)) + " " + topic
+
+            else: #ie it was -1 or 1, because 0 already returned
+                updated = True
+                if topic in self.opinions:
+                    self.opinions.pop(topic)
+                else:
+                    self.sexy_opinions.pop(topic)
+                display_string += "Opinion Weakened: " + display_name + " now " + opinion_score_to_string(self.get_opinion_score(topic)) + " " + topic
+
+            if add_to_log and display_string:
+                mc.log_event(display_string, "float_text_grey")
+
+            return updated
+
+        def create_opinion(self, topic, start_positive = True, start_known = True, add_to_log = True):
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+
+            start_value = 1
+            if not start_positive:
+                start_value = -1 #Determines if the opinion starts as like or dislike.
+            if not self.get_opinion_score(topic) == 0: #She already has an opinion
+                return False
+
+            is_sexy_opinion = False
+            if topic in sexy_opinions_list:
+                is_sexy_opinion = True
+
+            opinion_tuple = [start_value, start_known]
+            if is_sexy_opinion:
+                self.sexy_opinions[topic] = opinion_tuple
+            else:
+                self.opinions[topic] = opinion_tuple
+
+            if add_to_log:
+                mc.log_event("Opinion Inspired: " + display_name + " now " + opinion_score_to_string(self.get_opinion_score(topic)) + " " + topic, "float_text_grey")
+
+            return True
+
         def has_taboo(self, the_taboos):
             if the_taboos is None:
                 return False
@@ -927,7 +1188,11 @@ init -2 python:
 
         def apply_outfit(self, the_outfit = None, ignore_base = False, update_taboo = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
             if the_outfit is None:
-                the_outfit = self.planned_outfit
+                if self.should_wear_uniform():
+                    the_outfit = self.planned_uniform;
+                else:
+                    the_outfit = self.planned_outfit
+
                 if the_outfit is None:
                     return #We don't have a planned outfit, so trying to return to it makes no sense.
             if ignore_base:
@@ -975,15 +1240,20 @@ init -2 python:
                 mc.log_event("Observed " + display_name + ", mastery of all active serum traits increased by 0.2", "float_text_blue")
 
 
-        def change_suggest(self,amount): #This changes the base, usually permanent suggest. Use add_suggest_effect to add temporary, only-highest-is-used, suggestion values
+        def change_suggest(self,amount, add_to_log = True): #This changes the base, usually permanent suggest. Use add_suggest_effect to add temporary, only-highest-is-used, suggestion values
             self.suggestibility += amount
-            if self.suggestibility < 0:
-                self.suggestibility = 0
+            if add_to_log and amount != 0 and self.title:
+                if amount > 0:
+                    mc.log_event(self.title + ": Suggestibility increased permanently by +" + str(amount) + "%", "float_text_blue")
+                else:
+                    mc.log_event(self.title + ": Suggestibility decreased permanently by " + str(amount) + "%", "float_text_blue")
+
+            # Note that suggestability can be negative, representing someone who is _resistant_ to trances for some reason.
 
         def add_suggest_effect(self,amount, add_to_log = True):
             if amount > __builtin__.max(self.suggest_bag or [0]):
-                self.change_suggest(-__builtin__.max(self.suggest_bag or [0])) #Subtract the old max and...
-                self.change_suggest(amount) #add our new suggest.
+                self.change_suggest(-__builtin__.max(self.suggest_bag or [0]), add_to_log = False) #Subtract the old max and...
+                self.change_suggest(amount, add_to_log = False) #add our new suggest.
                 if add_to_log and amount != 0 and self.title:
                     mc.log_event(self.title + ": Suggestibility increased, now " + str(amount), "float_text_blue")
             else:
@@ -994,12 +1264,12 @@ init -2 python:
 
         def remove_suggest_effect(self,amount):
             if amount in self.suggest_bag: # Avoid removing the "amount" if we don't actually have it in the bag.
-                self.change_suggest(- __builtin__.max(self.suggest_bag or [0])) #Subtract the max
+                self.change_suggest(- __builtin__.max(self.suggest_bag or [0]), add_to_log = False) #Subtract the max
                 self.suggest_bag.remove(amount)
-                self.change_suggest(__builtin__.max(self.suggest_bag or [0])) # Add the new max. If we were max, it is now lower, otherwie it cancels out.
+                self.change_suggest(__builtin__.max(self.suggest_bag or [0]), add_to_log = False) # Add the new max. If we were max, it is now lower, otherwie it cancels out.
 
         def change_happiness(self,amount, add_to_log = True):
-            self.happiness += amount
+            self.happiness += amount*self.get_trance_multiplier()
             if self.happiness < 0:
                 self.happiness = 0
 
@@ -1008,6 +1278,9 @@ init -2 python:
                 log_string = "+" + str(amount) + " Happiness"
             else:
                 log_string = str(amount) + " Happiness"
+
+            if self.get_trance_multiplier() != 1:
+                log_string += "\nChange amplified by " + str(int((self.get_trance_multiplier()*100)-100)) + "% due to trance."
 
             if add_to_log and amount != 0:
                 display_name = self.create_formatted_title("???")
@@ -1032,7 +1305,6 @@ init -2 python:
             elif self.love > 100:
                 self.love = 100
 
-
             if amount > 0:
                 log_string += "+" + str(amount) + " Love"
             else:
@@ -1044,24 +1316,33 @@ init -2 python:
                     display_name = self.title
                 mc.log_event(display_name + ": " + log_string, "float_text_pink")
 
-        def change_slut_temp(self,amount, add_to_log = True): #Adds the amount to our slut value. If over our max, add only to the max instead (but don't lower). If subtracting, don't go lower than 0.
+        def change_slut(self, amount, max_modified_to = None, add_to_log = True):
             return_report = "" #This is the string that is returned that will report what the final value of the change was.
+            if max_modified_to is None:
+                if amount > 0:
+                    max_modified_to = 9999
+                else:
+                    max_modified_to = -9999
+
+            if amount > 0:
+                if amount + self.sluttiness > max_modified_to:
+                    amount = max_modified_to - self.sluttiness
+                    if amount < 0:
+                        amount = 0
+
+            if amount < 0:
+                if amount + self.sluttiness < max_modified_to:
+                    amount = max_modified_to - self.sluttiness
+                    if amount > 0:
+                        amount = 0
+
             if amount > 0:
                 self.sluttiness += amount
                 return_report = "+" + str(amount) + " Sluttiness"
 
-                # We're experimenting with uncapping the sluttiness and having sluttiness in excess of your suggestability cap bleed off quickly and inefficently.
-                # if self.sluttiness > self.core_sluttiness + self.suggestibility + 10:
-                #     self.sluttiness = self.core_sluttiness + self.suggestibility + 10 #Set it to our max.
-                #     return_report = "Sluttiness Cap Reached." #If we hit the cap, let them know that instead of the numeric amount.
-                #     if self.suggestibility == 0:
-                #         return_report += "\nUse Serum to Increase Cap."
-
             elif amount < 0:
                 self.sluttiness += amount
                 return_report = str(amount) + " Sluttiness"
-                # if self.sluttiness < 0: #TODO: confirm that letting temp sluttiness drop below 0 does not cause any problems.
-                #     self.sluttiness = 0
 
             else: #It is exactly 0
                 return_report = "No Effect on Sluttiness"
@@ -1072,38 +1353,15 @@ init -2 python:
                     display_name = self.title
                 mc.log_event(display_name + ": " + return_report, "float_text_pink")
 
-            # return return_report #Return this so we can display the effective change or cap message. #Depreciated as of phone log approach
+        def change_slut_temp(self, *args, **kwargs): #Adds the amount to our slut value. If over our max, add only to the max instead (but don't lower). If subtracting, don't go lower than 0.
+            self.change_slut(*args, **kwargs) #Renamed change_slut_temp to change_slut, keeping this alias to avoid breaking mods where possible.
 
 
-        def change_slut_core(self, amount, add_to_log = True, fire_event = True): #Adds set amount to core slut.
-            self.core_sluttiness += amount
-            # if self.core_sluttiness < 0: #TODO: Confirm that letting core sluttiness drop below 0 does not cause any problems.
-            #     self.core_sluttiness = 0
-            if fire_event:
-                mc.listener_system.fire_event("core_slut_change", the_person = self, amount = amount)
-            log_string = ""
-            if amount > 0:
-                log_string = "+" + str(amount) + " Core Sluttiness"
-            else:
-                log_string = str(amount) + " Core Sluttiness"
-
-            if add_to_log and amount != 0:
-                display_name = self.create_formatted_title("???")
-                if self.title:
-                    display_name = self.title
-                mc.log_event(display_name + ": " + log_string, "float_text_pink")
+        def change_slut_core(self, amount, add_to_log = True, fire_event = True): #Exists only to help preserve mod support during the transition.
+            self.change_slut(ammount, add_to_log)
+            return
 
         def add_situational_slut(self, source, amount, description = ""):
-            #Adds a conditional, temporary sluttiness amount. This is added now and removed when clear_situational is called, or when another add_situational is called with the same source.
-            if source in self.situational_sluttiness:
-                difference = amount - self.situational_sluttiness[source][0]
-                self.change_slut_core(difference, add_to_log = False, fire_event = False)
-                self.change_slut_temp(difference, add_to_log = False)
-
-            else:
-                self.change_slut_core(amount, add_to_log = False, fire_event = False)
-                self.change_slut_temp(amount, add_to_log = False)
-
             self.situational_sluttiness[source] = (amount,description)
 
         def clear_situational_slut(self, source):
@@ -1119,34 +1377,6 @@ init -2 python:
 
         def clear_situational_obedience(self, source):
             self.add_situational_obedience(source, 0)
-
-
-        def bleed_slut(self): #Reduce temp slut in order to increase core slut at a ratio determined by the suggest score.
-            if self.sluttiness > self.core_sluttiness: #We need to bleed away sluttiness.
-                if self.suggestibility == 0 and self.title: #TODO: think about how much we need this now. TODO: We neeed a way to flag girls as known, for ones we want to make but have unmet for some time.
-                    mc.business.add_normal_message(self.title + " has a sluttiness higher then her core sluttiness. Raising her suggestibility with serum will turn temporary sluttiness into core sluttiness more quickly and efficently!")
-
-                if self.sluttiness > self.core_sluttiness + self.suggestibility:
-                    #We need to bleed a lot because our suggestibility dropped.
-                    difference = self.sluttiness - (self.core_sluttiness + self.suggestibility)
-                    if difference > 5:
-                        difference = 5
-
-                    if renpy.random.randint(1,5) <= difference: #ie. there's a 20% chance per point over to increase it by a point.
-                        self.change_slut_core(1, add_to_log = False) #We're experimenting with sluttiness above your suggestability amount converting inefficently (instead of not at all)
-                    self.change_slut_temp(-difference, add_to_log = False)
-
-                # self.change_slut_temp(-3, add_to_log = False) #We're experimenting with only lowering the temporary sluttiness when the core sluttiness goes up.
-                elif renpy.random.randint(0,100) < self.suggestibility: # If we're not over our suggestability amount we turn it into core slut effectively.
-                    self.change_slut_core(3, add_to_log = False)
-                    self.change_slut_temp(-3, add_to_log = False)
-
-            if self.sluttiness < self.core_sluttiness: #If we're lower than core we quickly return to it.
-                difference = self.core_sluttiness - self.sluttiness
-                if difference > 5:
-                    difference = 5
-                self.change_slut_temp(difference, add_to_log = False)
-
 
         def change_obedience(self,amount, add_to_log = True):
             self.obedience += amount
@@ -1231,6 +1461,91 @@ init -2 python:
 
 
                 mc.log_event(log_string, "float_text_grey")
+
+        def change_hr_skill(self, amount, add_to_log = True):
+            if amount + self.hr_skill < 0:
+                amount = -self.hr_skill #Min 0
+            self.hr_skill += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+            if amount > 0:
+                log_string +=  display_name + ": +" + str(amount) + " HR Skill"
+            else:
+                log_string +=  display_name + ": " + str(amount) + " HR Skill"
+
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
+
+        def change_market_skill(self, amount, add_to_log = True):
+            if amount + self.market_skill < 0:
+                amount = -self.market_skill #Min 0
+            self.market_skill += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+            if amount > 0:
+                log_string +=  display_name + ": +" + str(amount) + " Market Skill"
+            else:
+                log_string +=  display_name + ": " + str(amount) + " Market Skill"
+
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
+
+        def change_research_skill(self, amount, add_to_log = True):
+            if amount + self.research_skill < 0:
+                amount = -self.research_skill #Min 0
+            self.research_skill += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+            if amount > 0:
+                log_string +=  display_name + ": +" + str(amount) + " Research Skill"
+            else:
+                log_string +=  display_name + ": " + str(amount) + " Research Skill"
+
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
+
+        def change_production_skill(self, amount, add_to_log = True):
+            if amount + self.production_skill < 0:
+                amount = -self.production_skill #Min 0
+            self.production_skill += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+            if amount > 0:
+                log_string +=  display_name + ": +" + str(amount) + " Production Skill"
+            else:
+                log_string +=  display_name + ": " + str(amount) + " Production Skill"
+
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
+
+        def change_supply_skill(self, amount, add_to_log = True):
+            if amount + self.supply_skill < 0:
+                amount = -self.supply_skill #Min 0
+            self.supply_skill += amount
+
+            log_string = ""
+            display_name = self.create_formatted_title("???")
+            if self.title:
+                display_name = self.title
+            if amount > 0:
+                log_string +=  display_name + ": +" + str(amount) + " Supply Skill"
+            else:
+                log_string +=  display_name + ": " + str(amount) + " Supply Skill"
+
+            if add_to_log and amount != 0:
+                mc.log_event(log_string, "float_text_yellow")
 
         def change_sex_skill(self, skill_name, amount, add_to_log = True): #NOTE: We assume we pass a proper skill name here, otherwise we crash out.
             # ["Foreplay","Oral","Vaginal","Anal"]
@@ -1336,7 +1651,7 @@ init -2 python:
                 mc.log_event(log_string, "float_text_yellow")
             return
 
-        def change_max_energy(self, amount ,add_to_log = True):
+        def change_max_energy(self, amount, add_to_log = True):
             amount = __builtin__.round(amount)
             self.max_energy += amount
 
@@ -1356,10 +1671,8 @@ init -2 python:
             return
 
         def review_outfit(self, dialogue = True, draw_person = True):
-
-
             if self.should_wear_uniform() and not self.is_wearing_uniform():
-                self.apply_outfit()#Reset uniform
+                self.wear_uniform()#Reset uniform
                 if draw_person:
                     self.draw_person()
                 if dialogue:
@@ -1505,8 +1818,11 @@ init -2 python:
             return happy_points
 
         def get_no_condom_threshold(self, situational_modifier = 0):
-            if pregnant_role in self.special_role and self.event_triggers_dict.get("preg_knows", False):
+            if self.has_role(pregnant_role) and self.event_triggers_dict.get("preg_knows", False):
                 return 0 #You can't get more pregnant, so who cares?
+
+            if self.has_role(breeder_role):
+                return 0 #She _wants_ to get knocked up. This will probably trigger other dialogue as well.
 
             no_condom_threshold = 50 + (self.get_opinion_score("bareback sex") * -10) + situational_modifier
             if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
@@ -1514,7 +1830,7 @@ init -2 python:
 
             if persistent.pregnancy_pref == 0:
                 no_condom_threshold += 10 #If pregnancy content is being ignored we return to the baseline of 60
-            elif the_person.on_birth_control: #If there is pregnancy content then a girl is less likely to want a condom when using BC, much more likely to want it when not using BC.
+            elif self.on_birth_control: #If there is pregnancy content then a girl is less likely to want a condom when using BC, much more likely to want it when not using BC.
                 no_condom_threshold -= 20
 
             return no_condom_threshold
@@ -1549,22 +1865,22 @@ init -2 python:
 
         def wants_creampie(self): #Returns True if the girl is going to use dialogue where she wants you to creampie her, False if she's going to be angry about it. Used to help keep dialogue similar throughout events
             creampie_threshold = 75
-            effective_slut = the_person.effective_sluttiness("creampie") + (10*the_person.get_opinion_score("creampies"))
-            if the_person.on_birth_control:
+            effective_slut = self.effective_sluttiness("creampie") + (10*self.get_opinion_score("creampies"))
+            if self.on_birth_control:
                 creampie_threshold += -20 #Much more willing to let you creampie her if she's on BC
 
-            if affair_role in the_person.special_role:
-                creampie_threshold += 5 - (10 * the_person.get_opinion_score("cheating on men"))
-            elif the_person.relationship != "Single": # Less likely to want to be creampied if she's in a relationship, but cares less if you're officially cheating.
-                creampie_threshold += 15 - (10 * the_person.get_opinion_score("cheating on men"))
+            if affair_role in self.special_role:
+                creampie_threshold += 5 - (10 * self.get_opinion_score("cheating on men"))
+            elif self.relationship != "Single": # Less likely to want to be creampied if she's in a relationship, but cares less if you're officially cheating.
+                creampie_threshold += 15 - (10 * self.get_opinion_score("cheating on men"))
 
-            if girlfriend_role in the_person.special_role:
-                creampie_threshold += -(10 + (5*the_person.get_opinion_score("being submissive"))) #Desire to be a "good wife"
+            if girlfriend_role in self.special_role:
+                creampie_threshold += -(10 + (5*self.get_opinion_score("being submissive"))) #Desire to be a "good wife"
 
-            if the_person.is_family():
-                creampie_threshold += 10 - (10 * the_person.get_opinion_score("incest"))
+            if self.is_family():
+                creampie_threshold += 10 - (10 * self.get_opinion_score("incest"))
 
-            if effective_slut >= creampie_threshold or the_person.event_triggers_dict.get("preg_knows", False):
+            if effective_slut >= creampie_threshold or self.event_triggers_dict.get("preg_knows", False):
                 return True
 
             return False
@@ -1612,13 +1928,61 @@ init -2 python:
                 taboos = []
             elif not isinstance(taboos, list): #Handles handing over a single item without pre-wrapping it for "iteration".
                 taboos = [taboos]
+
             return_amount = __builtin__.int(self.sluttiness + (self.arousal/4))
 
             for taboo in taboos:
                 if taboo not in self.broken_taboos: #If any of the taboo handed over are not already broken this person has a -15 effective sluttiness.
                     return_amount += -10
                     break #Only appies once, so break once the mallus is applied.
+
+
+            for source in self.situational_sluttiness:
+                return_amount += self.situational_sluttiness[source][0]
+
             return return_amount
+
+        def run_orgasm(self, show_dialogue = True, force_trance = False, trance_chance_modifier = 0, add_to_log = True, sluttiness_increase_limit = 30):
+            self.change_slut(1, sluttiness_increase_limit, add_to_log = add_to_log)
+            if renpy.random.randint(0,100) < self.suggestibility + trance_chance_modifier or force_trance:
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+
+                if not self.has_role(trance_role):
+                    self.add_role(trance_role)
+                    if add_to_log:
+                        mc.log_event(display_name + " sinks into a trance!", "float_text_red")
+                    if show_dialogue:
+                        renpy.say("", self.possessive_title + "'s eyes lose focus slightly as she slips into a climax induced trance.")
+
+                elif self.has_exact_role(trance_role):
+                    self.remove_role(trance_role)
+                    self.add_role(heavy_trance_role)
+                    if add_to_log:
+                        mc.log_event(display_name + " sinks deeper into a trance!", "float_text_red")
+                    if show_dialogue:
+                        renpy.say("", self.possessive_title + " seems to lose all focus as her brain slips deeper into a post-orgasm trance.")
+
+
+                elif self.has_exact_role(heavy_trance_role):
+                    self.remove_role(heavy_trance_role)
+                    self.add_role(very_heavy_trance_role)
+                    if add_to_log:
+                        mc.log_event(display_name + " sinks deeper into a trance!", "float_text_red")
+                    if show_dialogue:
+                        renpy.say("", self.possessive_title + " eyes glaze over, and she sinks completely into a cum addled trance.")
+
+        def get_trance_multiplier(self):
+            if self.has_exact_role(trance_role):
+                return 1.5
+            elif self.has_exact_role(heavy_trance_role):
+                return 2.0
+            elif self.has_exact_role(very_heavy_trance_role):
+                return 3.0
+            else:
+                return 1.0
+
 
         def cum_in_mouth(self, add_to_record = True): #Add the appropriate stuff to their current outfit, and peform any personal checks if rquired.
             mc.listener_system.fire_event("sex_cum_mouth", the_person = self)
@@ -1627,7 +1991,7 @@ init -2 python:
                 the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
 
-            self.change_slut_temp(5*self.get_opinion_score("drinking cum"))
+            self.change_slut(self.get_opinion_score("drinking cum"))
             self.change_happiness(5*self.get_opinion_score("drinking cum"))
             self.discover_opinion("drinking cum")
 
@@ -1642,16 +2006,16 @@ init -2 python:
                 the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
 
-            slut_change_amount = 5*self.get_opinion_score("creampies")
+            slut_change_amount =  self.get_opinion_score("creampies")
 
-            if the_person.wants_creampie():
+            if self.wants_creampie():
                 self.change_happiness(5*self.get_opinion_score("creampies"))
             else:
                 self.change_happiness(-5 + (5*self.get_opinion_score("creampies")))
                 self.change_love(-2 + self.get_opinion_score("creampies"))
-                slut_change_amount += 1 + self.get_opinion_score("being_submissive")
+                slut_change_amount += self.get_opinion_score("being_submissive")
 
-            self.change_slut_temp(slut_change_amount)
+            self.change_slut(slut_change_amount)
             self.discover_opinion("creampies")
 
             if add_to_record:
@@ -1685,7 +2049,7 @@ init -2 python:
                 the_cumshot = creampie_cum.get_copy()
                 the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
-            self.change_slut_temp(5*self.get_opinion_score("anal creampies"))
+            self.change_slut(self.get_opinion_score("anal creampies"))
             self.change_happiness(5*self.get_opinion_score("anal creampies"))
             self.discover_opinion("anal creampies")
 
@@ -1698,11 +2062,11 @@ init -2 python:
                 the_cumshot.layer = 0
                 self.outfit.add_accessory(the_cumshot)
 
-            self.change_slut_temp(5*self.get_opinion_score("cum facials"))
+            self.change_slut(self.get_opinion_score("cum facials"))
             self.change_happiness(5*self.get_opinion_score("cum facials"))
             self.discover_opinion("cum facials")
 
-            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
+            self.change_slut(self.get_opinion_score("being covered in cum"))
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
 
@@ -1719,7 +2083,7 @@ init -2 python:
                 the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
                 self.outfit.add_accessory(the_cumshot)
 
-            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
+            self.change_slut(self.get_opinion_score("being covered in cum"))
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
 
@@ -1736,7 +2100,7 @@ init -2 python:
                 the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
                 self.outfit.add_accessory(the_cumshot)
 
-            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
+            self.change_slut(self.get_opinion_score("being covered in cum"))
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
 
@@ -1753,7 +2117,7 @@ init -2 python:
                 the_cumshot.layer = top_layer+1 #The cumshot lives on a layer it hit, above the one it hit. Accessories are drawn first in the hirearchy, so they have to be on a level higehr than what they hit.
                 self.outfit.add_accessory(the_cumshot)
 
-            self.change_slut_temp(5*self.get_opinion_score("being covered in cum"))
+            self.change_slut(self.get_opinion_score("being covered in cum"))
             self.change_happiness(5*self.get_opinion_score("being covered in cum"))
             self.discover_opinion("being covered in cum")
 
@@ -1791,6 +2155,12 @@ init -2 python:
                 for time_chunk in times:
                     self.schedule[the_day][time_chunk] = the_location
 
+        def copy_schedule(self): #Returns a properly formatted dict without references to the current schedule.
+            return_schedule = {}
+            for x in range(0,7):
+                return_schedule[x] = copy.copy(self.schedule[x])
+            return return_schedule
+
         def set_work(self, the_location, work_days = None, work_times = None): #Sets the person's schedule so they visit their location at those times.
             if work_days is None:
                 work_days = [0,1,2,3,4] #Standard values
@@ -1819,7 +2189,7 @@ init -2 python:
             return self.schedule[specified_day][specified_time] #Returns the Room this person should be in during the specified time chunk.
 
         def person_meets_requirements(self, slut_required = 0, core_slut_required = 0, obedience_required = 0, obedience_max = 2000, love_required = -200):
-            if self.sluttiness >= slut_required and self.core_sluttiness >= core_slut_required and self.obedience >= obedience_required and self.obedience <= obedience_max and self.love >= love_required:
+            if self.sluttiness >= slut_required and self.obedience >= obedience_required and self.obedience <= obedience_max and self.love >= love_required:
                 return True
             return False
 
@@ -1868,10 +2238,10 @@ init -2 python:
                 return True
             else:
                 for a_role in self.special_role:
-                    if the_role in a_role.looks_like:
+                    if a_role.check_looks_like(the_role):
                         return True
 
-                return False
+            return False
 
         def has_exact_role(self, the_role): #As has_role, but checks against all roles and all of their looks_like roles.
             if the_role in self.special_role:
@@ -1903,3 +2273,32 @@ init -2 python:
         def remove_infraction(self, the_infraction):
             if the_infraction in self.infractions:
                 self.infractions.remove(the_infraction)
+
+        def set_eye_colour(self, new_colour):
+            new_colour = Color(rgb=(new_colour.rgb)) #Make sure we don't have any alpha problems.
+            eye_colour_name = closest_colour(new_colour).capitalize()
+            eye_colour_list = [new_colour.rgb[0], new_colour.rgb[1], new_colour.rgb[2], 1.0]
+
+            self.eyes = [eye_colour_name, eye_colour_list]
+
+        def set_hair_colour(self, new_colour, change_pubes = True, darken_pubes_amount = 0.07):
+            #NOTE: new_colour should be a Ren'py colour.
+            new_colour = Color(rgb=(new_colour.rgb)) #Make sure we don't have any alpha problems.
+            hair_colour_name = closest_colour(new_colour).capitalize()
+            hair_colour_list = [new_colour.rgb[0], new_colour.rgb[1], new_colour.rgb[2], 1.0]
+
+            self.hair_colour = [hair_colour_name, hair_colour_list]
+
+            if change_pubes:
+                pubes_colour = new_colour.shade(1.0-darken_pubes_amount)
+                self.pubes_colour = [pubes_colour.rgb[0], pubes_colour.rgb[1], pubes_colour.rgb[2], 1.0]
+                self.pubes_colour = pubes_colour
+            self.hair_style.colour = hair_colour_list
+
+        def get_milk_trait(self): # Generates a milk trait that can be used any time you harvest lactating milk. #TODO: Add ways to give this trait augments, like +duration or it suppresses side effects.
+            milk_trait = SerumTrait(self.title + "'s Breast Milk",
+                "Fresh breast milk produced by " +  self.possessive_title + ". Valuable to the right sort of person.",
+                positive_slug = "+$20 Value",
+                negative_slug = "",
+                value_added = 20)
+            return milk_trait

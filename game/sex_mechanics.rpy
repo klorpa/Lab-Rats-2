@@ -53,14 +53,14 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
     if the_person.love < 0:
         $ the_person.add_situational_slut("love_modifier", the_person.love, "I hate you, get away from me!")
     elif private:
-        if girlfriend_role in the_person.special_role: #Girlfriend and affairs gain full Love
+        if the_person.has_role(girlfriend_role): #Girlfriend and affairs gain full Love
             $ the_person.add_situational_slut("love_modifier", the_person.love, "You're my special someone, I love you!")
-        elif affair_role in the_person.special_role:
+        elif the_person.has_role(affair_role):
             $ the_person.add_situational_slut("love_modifier", the_person.love, "I have to keep it a secret, but I love you!")
         elif the_person.has_family_taboo(): #Family now only gains 1/4 (but this now helps offset the taboo penalty)
-            if mother_role in the_person.special_role:
+            if the_person.has_role(mother_role):
                 $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "Even if it's wrong, a mother should do everything she can for her son!")
-            elif sister_role in the_person.special_role:
+            elif the_person.has_role(sister_role):
                 $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "I love my brother, and even if it's wrong I want to be close to him!")
             else: #Generic family one
                 $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/4), "I love you, even though we're related!")
@@ -169,6 +169,9 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                                 appended_name = "Transition to " + position.build_position_willingness_string(the_person) #Note: clothing and energy checks are done inside of build_position_willingness, invalid positiosn marked (disabled)
                                 option_list.append([appended_name,position])
 
+                    if the_person.has_role(hypno_orgasm_role) and object_choice is not None and not the_person.event_triggers_dict.get("hypno_orgasmed_recently", False):
+                        option_list.append(["Trigger an orgasm.","Hypno_Orgasm"])
+
                     if not hide_leave: #TODO: Double check that we can always get out
                         option_list.append(["Stop " + position_choice.verbing + " her and leave.", "Leave"]) #TODO: Have this appear differently depending on if you've cum yet, she's cum yet, or you've both cum.
 
@@ -182,7 +185,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
 
         # Now that a round_choice has been picked we can do something.
-        if round_choice == "Change" or round_choice == "Continue":
+        if round_choice == "Change" or round_choice == "Continue" or round_choice == "Hypno_Orgasm":
             if round_choice == "Change": # If we are changing we first select and transition/intro the position, then run a round of sex. If we are continuing we ignroe all of that
                 $ mc.condom = False # If we're changing position we want to be able to re-check if we need a condom.
                 if start_position is None: #The first time we get here,
@@ -269,7 +272,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                                 "[the_person.possessive_title]'s hand caresses her tits."
                                 $ position_choice = None
                     if position_choice != None and not position_locked:
-                        if the_person.sluttiness > position_choice.slut_cap: #She's sluttier than this position, it's only good to warm her up.
+                        if the_person.effective_sluttiness() > position_choice.slut_cap: #She's sluttier than this position, it's only good to warm her up.
                             if the_person.arousal > position_choice.slut_cap: #Once her arousal is higher than the cap she's completely bored by it.
                                 "[the_person.title] wants to spice things up."
                                 if girl_in_charge:
@@ -330,6 +333,16 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
         elif round_choice == "Girl Leave":
             $ finished = True
+
+        elif round_choice == "Hypno_Orgasm":
+            $ the_person.event_triggers_dict["hypno_orgasmed_recently"] = True
+            $ the_word = the_person.event_triggers_dict.get("hypno_trigger_word","Cum")
+            $ the_word.capitalize()
+            mc.name "[the_word]."
+            $ the_person.change_arousal(the_person.max_arousal)
+            "[the_person.possessive_title] whimpers with pleasure as your training takes hold of her brain."
+            call describe_girl_climax(the_person, position_choice, object_choice, private, report_log) #Calls just the climax stuff without costing energy.
+
         $ round_choice = None #Get rid of our round choice at the end of the round to prepare for the next one. By doing this at the end instead of the begining of the loop we can set a mandatory choice for the first one.
 
 
@@ -343,17 +356,15 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
     $ the_person.clear_situational_obedience("sex_object")
 
     $ report_log["end arousal"] = the_person.arousal
-    if report_log.get("girl orgasms",0) > 0:
-        $ the_person.arousal = 0 # If she came she's satisfied.
-    else:
-        $ the_person.change_arousal(-the_person.arousal/2) #Otherwise they are half as aroused as you leave them.
+
+    $ the_person.change_arousal(-(the_person.arousal/(report_log.get("girl orgasms",0)+1))) # The more you make her cum the more satisfied she will be. At 0 orgasms her arousal does not move - you've just edged her!
 
 
     $ mc.condom = False
     $ mc.recently_orgasmed = False
 
     if affair_ask_after and private and ask_girlfriend_requirement(the_person) is True and not the_person.relationship == "Single":
-        if the_person.love >= 60 and the_person.sluttiness >= 30 - (the_person.get_opinion_score("cheating on men") * 5) and report_log.get("girl orgasms",0) >= 1: #If she loves you enoguh, is moderately slutty, and you made her cum
+        if the_person.love >= 60 and the_person.effective_sluttiness() >= 30 - (the_person.get_opinion_score("cheating on men") * 5) and report_log.get("girl orgasms",0) >= 1: #If she loves you enoguh, is moderately slutty, and you made her cum
             call affair_check(the_person, report_log) from _call_affair_check
 
 
@@ -508,6 +519,10 @@ label sex_description(the_person, the_position, the_object, private = True, repo
     $ the_position.redraw_scene(the_person)
     $ the_position.call_scene(the_person, mc.location, the_object)
     $ mc.listener_system.fire_event("sex_event", the_person = the_person, the_position = the_position, the_object = the_object)
+
+    if the_person.lactation_sources > 0:
+        call lactation_description(the_person, the_position, the_object, report_log)
+
     if report_log is not None:
         $ report_log["total rounds"] += 1
 
@@ -523,13 +538,15 @@ label sex_description(the_person, the_position, the_object, private = True, repo
         else:
             $ her_arousal_change += 2 * the_person.get_opinion_score("bareback sex")
 
+    $ trance_chance_modifier = 0
     if the_position.opinion_tags: #If she likes or dislikes this position in particular she will gain (or lose) a little bit of arousal.
         python:
             for opinion_tag in the_position.opinion_tags:
                 her_arousal_change += the_person.get_opinion_score(opinion_tag) #Add a bonus or penalty if she likes or dislikes the position.
+                trance_chance_modifier += 2*the_person.get_opinion_score(opinion_tag)
                 the_person.discover_opinion(opinion_tag)
 
-    if the_person.sluttiness > the_position.slut_cap: #She's sluttier than this position, it's only good to warm her up.
+    if the_person.effective_sluttiness() > the_position.slut_cap: #She's sluttier than this position, it's only good to warm her up.
         if the_person.arousal > the_position.slut_cap: #Once her arousal is higher than the cap he's completely bored by it.
             $ mc.log_event(the_person.title + ": Bored by position. Arousal gain halved.", "float_text_red")
             $ her_arousal_change = her_arousal_change/2.
@@ -578,22 +595,13 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
     # If someone orgasms describe that.
     if the_person.arousal >= the_person.max_arousal:
-        $ the_position.call_orgasm(the_person, mc.location, the_object)
-        $ mc.listener_system.fire_event("girl_climax", the_person = the_person, the_position = the_position, the_object = the_object)
-        if the_person.effective_sluttiness(the_position.associated_taboo) < the_position.slut_requirement: #She was ordered to do this. Bonus sluttiness if she had to be ordered to do this position("I must actually be a slut deep down...")
-            $ the_person.change_slut_temp(8 + the_person.get_opinion_score("being submissive"))
-            $ the_person.change_happiness(8 + the_person.get_opinion_score("being submissive"))
-        else:
-            $ the_person.change_slut_temp(5)
-            $ the_person.change_happiness(5)
+        call describe_girl_climax(the_person, the_position, the_object, private, report_log)
 
-        $ the_person.change_arousal(-the_person.arousal/2) #Halve their arousal, making future orgasms easier (Note that if they cum their arousal drops to 0 after the encounter, otherwise it's halved and left there).
-        $ report_log["girl orgasms"] += 1
 
 
     if mc.arousal >= 80: #NOTE: use to be mc.max_arousal, this number is now the threshold for being forced to cum.
         $ is_cumming = False
-        if mc.arousal < mc.max_arousal: #TODO: Different dialogue based on your focus might make sense here.
+        if mc.arousal < mc.max_arousal:
             menu:
                 "Try and cum early.":
                     if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal):
@@ -644,7 +652,12 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
     $ other_people = [person for person in mc.location.people if person is not the_person] #Build a list with all the _other_ people in the room other than the one we're fucking.
     python: #Checks to see if anyone watching is in a realtionship, and if they are sets up an event where they confront you later about you actively cheating in front of the,
         for a_person in other_people:
-            if girlfriend_role in a_person.special_role and the_position.slut_requirement > (a_person.sluttiness/2): #You can get away with stuff half as slutty as she would do
+            if the_person.get_opinion_score("public sex") > 0:
+                a_person.add_situational_slut("public sex watcher", 5*a_person.get_opinion_score("public sex"), "They're doing it right in front of me! That's so fucking hot!")
+            elif the_person.get_opinion_score("public sex") < 0:
+                a_person.add_situational_slut("public sex watcher", 5*a_person.get_opinion_score("public sex"), "Right here in front of me?! That's disgusting!")
+
+            if the_person.has_role(girlfriend_role) and the_position.slut_requirement > (a_person.effective_sluttiness()/2): #You can get away with stuff half as slutty as she would do
                 caught_cheating_action = Action("Caught cheating action", caught_cheating_requirement, "caught_cheating_label", args = the_person)
                 not_already_in = True
                 for an_action in a_person.on_room_enter_event_list:
@@ -656,7 +669,7 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
                     renpy.say("",a_person.title + " gasps when she sees what you and " + the_person.title + " are doing.")
 
 
-            elif affair_role in a_person.special_role and the_position.slut_requirement > ((a_person.sluttiness*2)/3): #You can get away with stuff two thirds as slutty as what she would do.
+            elif the_person.has_role(affair_role) and the_position.slut_requirement > ((a_person.effective_sluttiness()*2)/3): #You can get away with stuff two thirds as slutty as what she would do.
                 caught_affair_cheating_action = Action("Caught affair cheating action", caught_affair_cheating_requirement, "caught_affair_cheating_label", args = the_person)
                 not_already_in = True
                 for an_action in a_person.on_room_enter_event_list:
@@ -675,11 +688,27 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
         $ the_person.call_dialogue("being_watched", the_watcher = watcher, the_position = the_position) #Call her response to the person watching her.
         $ the_person.change_arousal(the_person.get_opinion_score("public sex"))
         $ the_person.discover_opinion("public sex")
+
+    python:
+         for a_person in other_people:
+             a_person.clear_situational_slut("public sex watcher")
+    return
+
+label describe_girl_climax(the_person, the_position, the_object, private, report_log):
+    $ the_position.call_orgasm(the_person, mc.location, the_object)
+    $ mc.listener_system.fire_event("girl_climax", the_person = the_person, the_position = the_position, the_object = the_object)
+
+    $ the_person.change_arousal(-the_person.arousal/(report_log.get("girl orgasms", 0)+2)) # Repeated orgasms make it easier and easier to make a girl cum. It's possible to make her cum every single round!
+    $ trance_chance_modifier += report_log.get("girl orgasms", 0)
+    if not trance_chance_modifier == 0:
+        $ mc.log_event("Trance chance modifed by " + str(trance_chance_modifier) + "%% due to position opinion and previous orgasms.", "float_text_grey")
+    $ the_person.run_orgasm(trance_chance_modifier = trance_chance_modifier, sluttiness_increase_limit = the_position.slut_requirement)
+    $ report_log["girl orgasms"] += 1
     return
 
 label condom_ask(the_person):
     $ condom_threshold = the_person.get_no_condom_threshold()
-    if pregnant_role in the_person.special_role and the_person.event_triggers_dict.get("preg_knows", False):
+    if the_person.has_role(pregnant_role) and the_person.event_triggers_dict.get("preg_knows", False):
         the_person "We don't need to worry about using a condom any more. You can't get me {i}more{/i} pregnant."
 
     elif the_person.effective_sluttiness("condomless_sex") < condom_threshold: # they demand you put on a condom.
@@ -714,11 +743,11 @@ label condom_ask(the_person):
 
 
     else: #Slutty enough that she doesn't even care about a condom.
-        if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0:
+        if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0 or the_person.has_role(breeder_role):
             menu:
                 "Put on a condom.":
                     mc.name "One sec, let me just get a condom on..."
-                    $ the_person.call_dialogue("condom_bareback_demand") #TODO: Write this. Girl demands you fuck her bareback, or she'll force you to do something else. High Obedience will let you ignore her and wear one anyways.
+                    $ the_person.call_dialogue("condom_bareback_demand")
                     menu:
                         "Fuck her raw.":
                             mc.name "Alright, as long as you know what you're getting into..."
@@ -733,6 +762,7 @@ label condom_ask(the_person):
                             pass
 
                         "Put on a condom anyways." if the_person.obedience >= 120:
+                            $ mc.condom = True
                             mc.name "I can't risk it [the_person.title], no matter how desperate you are for raw cock."
                             "You pull out a condom from your wallet, tear open the package, and start to unroll it down your dick."
                             mc.name "So you have a choice. You can have my cock inside you like this, or you can have no cock at all."
@@ -958,10 +988,65 @@ label affair_check(the_person, report_log): #Report log is handed over so we can
             mc.name "I want that too, anything that will let me be close to you."
             $ the_person.draw_person(emotion = "happy")
             $ the_person.add_role(affair_role)
-            $ the_person.change_slut_temp(2)
+            $ the_person.change_slut(2, 60)
             "She smiles and hugs you."
 
         "Refuse.":
             mc.name "That's not what I'm here for [the_person.title]. This was fun, but I don't want it to be anything but completely casual."
             $ the_person.change_love(-1)
+    return
+
+label lactation_description(the_person, the_position, the_object, report_log): #NOTE: Is only called if lactation_sources > 0.
+    $ tit_rank = rank_tits(the_person.tits)
+    $ strength = (the_person.arousal*1.0/the_person.max_arousal) * (the_person.lactation_sources + (tit_rank * 0.1)) #ie large tits add anywhere from 0 to 0.9 extra lactation sources.
+    if strength > tit_rank + 1:
+        $ strength = tit_rank + 1
+
+    if the_person.outfit.tits_available():
+        if strength <= 0.5:
+            pass
+        elif strength <= 0.75:
+            "[the_person.title]'s bare tits are leaking milk, a single drop hanging from each nipple."
+        elif strength <= 1.0:
+            "[the_person.title]'s naked tits drip milk, a drop every couple of seconds."
+        elif strength <= 1.5:
+            "[the_person.title]'s are leaking faster now. She shakes a couple of drops free with every movement." #Triggers at 100% arousal w/ 1 lactation source, 50% arousal w/ 2 sources or max sized tits.
+        elif strength <= 2.0:
+            "[the_person.title] has a steady trickle of milk running from her nipples and over her breasts."
+        elif strength <= 3.0:
+            "[the_person.title]'s tits are producing a steady stream of breast milk, which gets flung around in fat drops every time she moves."
+        elif strength <= 4.0: #This is 100% arousal w/ big tits and 1 source, or the result of 2+ sources
+            "Breast milk squirts out of [the_person.title]'s tits, provoked only by her own arousal."
+        elif strength <= 6.0: #This is 100% arousal w/ hucow modification
+            "Breast milk jets out of [the_person.title]'s nipples. It sprays out in an arc, pulsing farther with every jolt of pleasure."
+        elif strength <= 7.5:
+            "[the_person.title]'s tits continue to pulse out hot breast milk, unprovoked by anything other than her own arousal."
+        else:
+            "[the_person.title]'s tits are producing a heavy spray of milk, making a wet mess of her chest and anything within two feet that she points herself at."
+
+
+    elif (the_person.outfit.wearing_bra() and not the_person.outfit.bra_covered()) or not the_person.outfit.wearing_bra():
+        $ the_clothing = the_person.outfit.get_upper_top_layer()
+        if strength <= 0.5:
+            pass #Not a noticeable effect, do nothing
+        elif strength <= 1.5:
+            "[the_person.title]'s nipples must be dripping milk, because there are two wet spots on her [the_clothing.display_name] forming around them."
+        elif strength <= 3.0:
+            "[the_person.title]'s lactating tits have soaked through her [the_clothing.display_name], leaving large wet spots around her nipples."
+        elif strength <= 7.5:
+            "[the_person.title]'s milky tits have completely soaked her [the_clothing.display_name] now. Warm milk drips off away from the edges in a steady stream."
+        else:
+            "[the_person.title]'s tits are squirting milk so hard that it's spraying right through her [the_clothing.display_name]. Little arcs of the warm liquid sail out amost two inches from her chest."
+
+
+    else:
+        $ the_clothing = the_person.outfit.get_upper_top_layer()
+        if strength <= 2.0:
+            pass #Not a noticeable effect under all of her clothing.
+        elif strength <= 4.0:
+            "[the_person.title]'s nipples must be dripping milk, because there are two wet spots on her [the_clothing.display_name] forming around them."
+        elif strength <= 7.5:
+            "[the_person.title]'s lactating tits have soaked through her [the_clothing.display_name], leaving large wet spots around her nipples."
+        else:
+            "[the_person.title]'s milky tits have completely soaked her [the_clothing.display_name] now. Warm milk drips off away from the edges in a steady stream."
     return

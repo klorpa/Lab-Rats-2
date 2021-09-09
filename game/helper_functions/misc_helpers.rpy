@@ -12,7 +12,7 @@ init -1 python:
                 return the_item.priority - 1000 #Apply a ranking penalty to disabled items. They will appear in priority order but below enabled events (Unless something has a massive priority).
 
         elif isinstance(the_item, Person):
-            return the_item.core_sluttiness #Order people by sluttiness? Love? Something else?
+            return the_item.sluttiness #Order people by sluttiness? Love? Something else?
 
         else:
             return 0

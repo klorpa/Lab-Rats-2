@@ -93,3 +93,11 @@ init -1 python:
             return "5' 0\""
         else:
             return "Problem, height not found in chart."
+
+
+    def remove_punctuation(the_text):
+        #TODO: might need to cast unicode to string/aski
+        return re.sub("[.,!;\"']", "", the_text)
+        # tbl = dict.fromkeys(i for i in xrange(sys.maxunicode)
+        #   if unicodedata.category(unichr(i)).startswith('P'))
+        # return text.translate(tbl)

@@ -179,20 +179,31 @@ label lily_greetings(the_person):
     return
 
 label lily_sex_responses_foreplay(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Jeez, where did you learn this stuff?"
+            the_person "[mom.title] would be so disappointed in you..."
+            "Her happy little moans make it clear she doesn't really care right now."
+        else:
+            the_person "I don't know [the_person.mc_title], maybe we shouldn't..."
+            "She stifles a moan."
+            the_person "Okay, just a little bit... We can't take it too far though."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Are you trying to get me turned on? Because it might be working..."
         else:
             the_person "[the_person.mc_title], maybe we should stop before we get too excited..."
             "She moans happily, obviously not interested in taking her own advice."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Fuck, that feels good... Do it again."
         else:
             the_person "Oh my god... Where did you learn how to do this? You're so good at it..."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             if the_person.outfit.wearing_panties():
                 the_person "Ah... If you get me any wetter I'm going to soak right through my panties [the_person.mc_title]."
@@ -206,28 +217,37 @@ label lily_sex_responses_foreplay(the_person):
 
     else:
         if the_person.sluttiness > 50:
-            the_person "[the_person.mc_name], do you want to make me cum? Keep going!"
+            the_person "[the_person.mc_title], do you want to make me cum? Keep going!"
         else:
             the_person "Oh god, I feel strange, I think... I think you're going to make me cum soon!"
 
     return
 
 label lily_sex_responses_oral(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] wiggles her hips happily as you eat her out."
+
+        else:
+            the_person "I can't believe you really want to do this, you're so weird."
+            the_person "... Don't stop though."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Oh god, you're such a good big brother..."
             "[the_person.possessive_title] sighs happily."
         else:
             the_person "Oh god, ah! Ah..."
-            "[the_person.title] tries and fails to stiffle her moans."
+            "[the_person.title] tries and fails to stifle her moans."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Mmm, that feels so good [the_person.mc_title], you're amazing!"
         else:
             the_person "Where.... Mmmm.... Where did you learn to do this? You're so good at it!"
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "How does my pussy taste [the_person.mc_title]? Do you like eatting me out?"
             "You respond by making her moan even louder."
@@ -245,20 +265,27 @@ label lily_sex_responses_oral(the_person):
     return
 
 label lily_sex_responses_vaginal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
         if the_person.sluttiness > 50:
-            the_person "Oh god, you're cock feel so good inside me..."
+            the_person "How's my pussy feel [the_person.mc_title]? Is it worth fucking your sister for?"
+        else:
+            the_person "Take it slowly, okay? I haven't done this very much."
+
+    elif response_value < 40:
+        if the_person.sluttiness > 50:
+            the_person "Oh god, your cock feel so good inside me..."
             "She moans happily to herself."
         else:
             the_person "You're so big, is it even all in yet? Ah..."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Fuck... Ah..."
         else:
             the_person "Oh my god, that feeling..."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             "Mmm, give it to me [the_person.mc_title]! Stretch out my teen pussy so it will only fit your big, hot cock!"
 
@@ -277,20 +304,29 @@ label lily_sex_responses_vaginal(the_person):
     return
 
 label lily_sex_responses_anal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Oh fuck, I can't believe you really fit!"
+            "She grunts in a mixture of pleasure and pain."
+            the_person "Sometimes I wish you actually had a smaller cock!"
+        else:
+            the_person "[the_person.possessive_title] whimpers to herself as you stretch out her ass."
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Fuck, I can feel you stretching me out..."
         else:
             the_person "Oh fuck, I don't know if I can do this... It feels like you're tearing me in half!"
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Ah! Ah! I can take it, don't hold back! Ah!"
         else:
             "[the_person.title] growls defiantly."
             the_person "Fuuuuuuuck!"
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Your cock is so big, it feels like you're moulding me to it!"
         else:
@@ -669,7 +705,11 @@ label lily_condom_bareback_ask(the_person):
     return
 
 label lily_condom_bareback_demand(the_person):
-    if the_person.on_birth_control:
+    if the_person.has_role(breeder_role): #Actively looking to get knocked up.
+        the_person "Forget that [the_person.mc_title], you know I want to get pregnant."
+        the_person "So just come and do it already! Knock me up!"
+
+    elif the_person.on_birth_control:
         the_person "Forget it [the_person.mc_title], I'm on the pill."
         the_person "Get inside me already!"
         $ the_person.update_birth_control_knowledge()
@@ -892,13 +932,13 @@ label lily_sex_watch(the_person, the_sex_person, the_position):
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person "Oh my god, you two are just... Wow..."
-        $ change_report = the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 30)
         "[the_person.possessive_title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person "Oh my god, [the_person.mc_title], where did you learn to do that? I shouldn't be watching this, but..."
-        $ change_report = the_person.change_slut_temp(2)
+        $ the_person.change_slut(1, 50)
         "[the_person.title] watches you and [the_sex_person.name] [the_position.verb]."
 
     else:
@@ -936,7 +976,7 @@ label lily_being_watched(the_person, the_watcher, the_position):
         #She's into it but shamed by the prude watching her.
         the_person "[the_person.mc_title], we shouldn't be doing this here. What if people talk?"
         $ the_person.change_arousal(-1)
-        $ the_person.change_slut_temp(-1)
+        $ the_person.change_slut(-1)
         "[the_person.title] seems uncomfortable with [the_watcher.title] nearby."
 
     else: #the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
@@ -944,7 +984,7 @@ label lily_being_watched(the_person, the_watcher, the_position):
         the_person "[the_watcher.title], I'm so glad you don't think this is too weird."
         the_person "I know it's suppose to be wrong, but then why does it feel so good?"
         $ the_person.change_arousal(1)
-        $ the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 60)
         "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
@@ -1346,7 +1386,7 @@ label lily_creampie_taboo_break(the_person):
             the_person "...It did."
             mc.name "Then what's the problem? You're on the pill, right?"
             "She nods."
-            the_person "Yeah, I am. I guesss you're right, it's not such a big deal as long as you don't do it too often."
+            the_person "Yeah, I am. I guess you're right, it's not such a big deal as long as you don't do it too often."
             $ the_person.update_birth_control_knowledge()
 
         else:

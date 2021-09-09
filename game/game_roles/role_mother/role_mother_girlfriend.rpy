@@ -258,6 +258,7 @@ label mom_girlfriend_sister_blessing(the_person):
     menu:
         #TODO: Figure out hat our convince conditions are
         "Isn't our love important?" if the_person.get_known_opinion_score("incest") > 0:
+            $ convinced = True
             mc.name "Don't be like that [the_person.title], isn't love more important than what other people tell us is right?"
             "She seems unconvinced, but doesn't immediately respond. You keep pressing your point."
             mc.name "This is going to make [mom.title] happy. You want her to be happy, right?"

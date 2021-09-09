@@ -33,16 +33,16 @@ label mom_room_search_description():
                 #TODO: Way to fuck with her BC, because evil is fun.
 
             "You slide open the single drawer to have a peek inside."
-            if the_person.core_sluttiness < 10: # V. low sluttiness
+            if the_person.sluttiness < 10: # V. low sluttiness
                 "The inside is as neat as the top, with a murder mystery novel sitting at the front of the otherwise empty drawer."
-                "Disappointed, you slide hthe drawer closed again."
-            elif the_person.core_sluttiness < 30: # Low sluttiness.
+                "Disappointed, you slide the drawer closed again."
+            elif the_person.sluttiness < 30: # Low sluttiness.
                 "The inside is as neat as the top. The only thing inside is a well read, probably second hand novel."
                 "The cover features a shirtless cowboy looking out over wide open plains and a herd of cattle."
                 "The title reads \"A Fist Full of Bodices\", and [the_person.possessive_title] has dog-earred a bunch of pages."
                 "You aren't terribly interested in reading through her cheap romance novel, so you slide the drawer closed again."
                 pass
-            elif the_person.core_sluttiness < 50: # Mid sluttiness.
+            elif the_person.sluttiness < 50: # Mid sluttiness.
                 "The inside is as neat as the top, except for a cheap looking paper back novel."
                 "The cover features a shirtless cowboy looking out over wide open plains and a herd of cattle."
                 "The title reads \"A Fist Full of Bodices\", and [the_person.possessive_title] has dog-earred a bunch of pages."
@@ -52,7 +52,7 @@ label mom_room_search_description():
                 "You enjoy a moment imagining [the_person.possessive_title] on her bed, vibrator planted against her clit."
                 "With nothing else to do you make sure everything is back in place and close the drawer again."
 
-            elif the_person.core_sluttiness < 75: # High sluttiness. A larger rabbit vibrator, plus a small container of lube."
+            elif the_person.sluttiness < 75: # High sluttiness. A larger rabbit vibrator, plus a small container of lube."
                 $ mc.change_locked_clarity(10)
                 "The inside isn't as prim and proper as the top is. The first thing you see as you open the drawer is a plum coloured dildo."
                 "Coming off the base is a small forked section, the perfect length to rub against her clit while she plays with herself."
@@ -101,11 +101,11 @@ label mom_room_search_description():
 
             if the_person.event_triggers_dict.get("known_computer_password", False): #If you know the password at this point, no problem logging in."
                 "COMPUTER" "WELCOME [the_person.title]!" (what_style = "text_message_style")
-                if the_person.core_sluttiness < 15: # Nothing interesting to find
+                if the_person.sluttiness < 15: # Nothing interesting to find
                     "[the_person.possessive_title] doesn't keep much on her computer, but you spend a few minutes poking through files anyways."
                     "You don't find anything other than reports from work and the family budget for the month."
                     "She's cleared her search history as well. Nothing interesting to find."
-                elif the_person.core_sluttiness < 30:
+                elif the_person.sluttiness < 30:
                     "[the_person.possessive_title] doesn't keep much on her computer, but you spend a few minutes poking around anyways."
                     "All you find are work reports and the family budget. Next, you open up her browser."
                     "COMPUTER" "RESTORE BROWSING SESSION?" (what_style = "text_message_style")
@@ -127,7 +127,7 @@ label mom_room_search_description():
                     $ mc.change_locked_clarity(5)
                     "Either way [the_person.title] was at least reading this. Maybe it gave her some ideas..."
 
-                elif the_person.core_sluttiness < 50:
+                elif the_person.sluttiness < 50:
                     "[the_person.possessive_title] doesn't keep much on her computer, but she might not have cleared her browser history lately."
                     "You check and see that the last site visited was \"AphroditeNightly.com/The_Poolboy\". You bring up the site again to see what she was looking at."
                     "It's an online sex store, and [the_person.title] was looking at one of their product pages. The page features a picture of a small, discrete black vibrator."

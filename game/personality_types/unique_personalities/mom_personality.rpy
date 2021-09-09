@@ -58,13 +58,23 @@ label mom_greetings(the_person):
     return
 
 label mom_sex_responses_foreplay(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "You really shouldn't be doing that with your mother..."
+            "She sighs happily."
+            the_person "... but the attention is very nice."
+        else:
+            the_person "Oh [the_person.mc_title], we should stop..."
+            "She moans softly despite herself."
+            the_person "... just a little more, then we should stop. Okay?"
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Oh [the_person.mc_title], you're going to get me turned on if you keep doing that..."
         else:
             the_person "Oh my..."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             "[the_person.title] lets out a soft, sensual moan."
             the_person "Oh, [the_person.mc_title]!"
@@ -72,7 +82,7 @@ label mom_sex_responses_foreplay(the_person):
             "She takes a deep breath, trying to suppress a moan."
             the_person "Oh my god... Who taught you how to do that?"
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Oh [the_person.mc_title], you know just how to... Ah! Push my buttons!"
         else:
@@ -88,14 +98,23 @@ label mom_sex_responses_foreplay(the_person):
     return
 
 label mom_sex_responses_oral(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            "[the_person.possessive_title] quivers underneath your tongue."
+            the_person "Be gentle, that's a very sensitive area!"
+        else:
+            the_person "You really should't [the_person.mc_title]... Maybe we should do something else?"
+            "She quivers underneath your tongue, obviously enjoying your stimulation."
+            the_person "Maybe just... just a little bit more..."
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Oh sweetheart, you're too good to me... Ah..."
         else:
             the_person "Oh! I... Ah..."
             "[the_person.title] bites her lower lip and tries to stifle her moans."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "I'm so lucky to have such a... Mmph!... caring son!"
         else:
@@ -103,7 +122,7 @@ label mom_sex_responses_oral(the_person):
             "She struggles not to moan and mutters to herself."
             the_person "This shouldn't feel so good..."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Ah, right there! Keep... Mmph! Keep doing that [the_person.mc_title], don't stop!"
         else:
@@ -118,13 +137,20 @@ label mom_sex_responses_oral(the_person):
     return
 
 label mom_sex_responses_vaginal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Start slowly, okay? I'll be nice and wet for you real soon."
+        else:
+            the_person "We really shouldn't... This is going too far..."
+            "[the_person.possessive_title]'s happy moans as you slide into her betray her real feelings."
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Mmm... you fit inside me so perfectly [the_person.mc_title]."
         else:
             the_person "Your cock is so big [the_person.mc_title], I don't know if I can take it all..."
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Oh [the_person.mc_title], it's so good..."
             "[the_person.title] closes her eyes and lets out a long, sensual moan."
@@ -132,7 +158,7 @@ label mom_sex_responses_vaginal(the_person):
             the_person "God that feels good. I know it's wrong, but I've missed this so badly..."
             "She moans happily."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             the_person "Yes! Oh god yes, fuck me [the_person.mc_title]! I want you to use me!"
         else:
@@ -148,20 +174,29 @@ label mom_sex_responses_vaginal(the_person):
     return
 
 label mom_sex_responses_anal(the_person):
-    if the_person.arousal < 25:
+    $ response_value = (the_person.arousal + renpy.random.randint(0,20))*1.0/the_person.max_arousal
+    if response_value < 20:
+        if the_person.sluttiness > 50:
+            the_person "Take your time, I know I can take your entire cock if patient with me."
+        else:
+            the_person "Oh my... Do you really think I can do this [the_person.mc_title]?"
+            "She whimpers, stuck somewhere between pain and pleasure."
+            the_person "I'll try, but just for you!"
+
+    elif response_value < 40:
         if the_person.sluttiness > 50:
             the_person "Your cock feels so big... Come on [the_person.mc_title], fuck mommy's ass!"
         else:
             the_person "Ah, it's so tight! Be gentle, you might break me if you try and put it all in!"
 
-    elif the_person.arousal < 50:
+    elif response_value < 60:
         if the_person.sluttiness > 50:
             the_person "Ah! Does my ass feel good to fuck [the_person.mc_title]? Do you like how tight it is?"
         else:
             the_person "Oh god... Ah!"
             "She alternates between grunting and moaning as you fuck her."
 
-    elif the_person.arousal < 75:
+    elif response_value < 80:
         if the_person.sluttiness > 50:
             if the_person.has_taboo("vaginal_sex"):
                 the_person "Fuck me [the_person.mc_title]! You can't have my pussy, but you can use my ass as much as you want!"
@@ -543,7 +578,7 @@ label mom_condom_ask(the_person):
         the_person "Do you have a condom to put on? I don't want you to have to pull out when you finish."
         $ the_person.discover_opinion("creampies")
     else:
-        the_person "You should really put on a condom [the_person.mc_name]."
+        the_person "You should really put on a condom [the_person.mc_title]."
         the_person "I trust you, but it's so easy for accidents to happen when we're... distracted."
     return
 
@@ -563,8 +598,11 @@ label mom_condom_bareback_ask(the_person):
     return
 
 label mom_condom_bareback_demand(the_person):
-    #Just likes raw sex
-    if the_person.on_birth_control:
+    if the_person.has_role(breeder_role): #Actively looking to get knocked up.
+        the_person "Don't bother [the_person.mc_title], I want it raw so you can get me pregnant!"
+        the_person "Make sure to cum inside me so you knock me up!"
+
+    elif the_person.on_birth_control:#Just likes raw sex
         the_person "Don't bother with that. I'm on birth control, so we don't need to worry."
         the_person "I want you to fuck me [the_person.mc_title], and I want you to do it raw!"
         $ the_person.update_birth_control_knowledge()
@@ -748,13 +786,13 @@ label mom_sex_watch(the_person, the_sex_person, the_position):
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person "[the_person.mc_title], I'm... You really shouldn't be doing this here..."
-        $ change_report = the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 30)
         "[the_person.possessive_title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person "Who taught you this [the_person.mc_title]? It certainly wasn't me..."
-        $ change_report = the_person.change_slut_temp(2)
+        $ the_person.change_slut(1, 50)
         "[the_person.title] watches you and [the_sex_person.name] [the_position.verb]."
 
     else:
@@ -791,7 +829,7 @@ label mom_being_watched(the_person, the_watcher, the_position):
         #She's into it but shamed by the prude watching her.
         the_person "[the_person.mc_title], we shouldn't be doing this. Not here. What if people recognize us? What if they talk?"
         $ the_person.change_arousal(-1)
-        $ the_person.change_slut_temp(-1)
+        $ the_person.change_slut(-1)
         "[the_person.title] seems uncomfortable with [the_watcher.title] nearby."
 
     else: #the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
@@ -799,7 +837,7 @@ label mom_being_watched(the_person, the_watcher, the_position):
         the_person "[the_watcher.title], I'm glad you're so supportive."
         the_person "People say we shouldn't do this, but this is the closest I've ever felt to my son."
         $ the_person.change_arousal(1)
-        $ the_person.change_slut_temp(1)
+        $ the_person.change_slut(1, 60)
         "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."
 
     return
@@ -1053,7 +1091,7 @@ label mom_touching_penis_taboo_break(the_person):
         mc.name "I don't think it's anyone's business but our own how we show our love for each other."
         "She thinks for a long moment, eyes still locked on your dick."
         the_person "Okay, but only because I love you [the_person.mc_title]."
-        "[the_person.possessive_title] looks you in the eyes again and laughs self-conciously."
+        "[the_person.possessive_title] looks you in the eyes again and laughs self-consciously."
         the_person "I guess it's fine to tell you then that your... Penis is very impressive. You should be very proud."
 
     else: #High Slut version

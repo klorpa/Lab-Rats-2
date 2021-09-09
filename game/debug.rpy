@@ -63,6 +63,42 @@ init -15 python:
             for person in place.get_person_list():
                 person.add_role(instapic_role)
 
+    def verify_wardrobe_report(the_wardrobe = None):
+        if the_wardrobe is None:
+            the_wardrobe = default_wardrobe
+
+        for an_outfit in the_wardrobe.underwear_sets:
+            for an_item in an_outfit.generate_clothing_list():
+                if an_item.layer >= 2:
+                    print "Problem: " + an_outfit.name + " is stored as underwear set but contains layer 2 items."
+                    break
+
+        for an_outfit in the_wardrobe.overwear_sets:
+            for an_item in an_outfit.generate_clothing_list():
+                if an_item.layer < 2:
+                    print "Problem: " + an_outfit.name + " is stored as overerwear set but contains layer 1 items."
+                    break
+
+
+    def verify_wardrobe (the_wardrobe = None):
+        if the_wardrobe is None:
+            the_wardrobe = default_wardrobe
+
+        for an_outfit in the_wardrobe.underwear_sets:
+            for an_item in an_outfit.generate_clothing_list():
+                if an_item.layer >= 2:
+                    print "Problem: " + an_outfit.name + " is stored as underwear set but contains layer 2 items."
+                    return False
+
+        for an_outfit in the_wardrobe.overwear_sets:
+            for an_item in an_outfit.generate_clothing_list():
+                if an_item.layer < 2:
+                    print "Problem: " + an_outfit.name + " is stored as overerwear set but contains layer 1 items."
+                    return False
+
+        return True
+
+
 
 label test_memory_use():
     #TODO: Create 10 people
@@ -77,17 +113,11 @@ label test_memory_use():
     return
 
 label debug_label():
-    "About to add some clarity..."
-    $ mc.change_locked_clarity(20)
-    "Done. Now let's add a little less."
-    $ mc.change_locked_clarity(10)
-    "Done. And now a lot more!"
-    $ mc.change_locked_clarity(100)
-    "That's a lot of Clarity! Let's release that!"
-    "Ready?"
-    $ mc.convert_locked_clarity(1.0)
-    "Aaaaah!"
-    "All done. Hopefully we haven't given ourselves a seizure with that."
+    call screen colour_selector()
+    if isinstance(_return, Color):
+        "We got a colour return!"
+    else:
+        "Something went wrong, no color return."
     return
 
 
@@ -245,6 +275,16 @@ screen display_all_hair():
                     text hair.name
                     $ hair_displayable = hair.generate_item_displayable("standard_body", "AA", "stand2")
                     add hair_displayable
+
+screen test_variable_display():
+
+    text "Energy: [mc.energy]":
+        xanchor 1.0
+        xalign 1.0
+
+    textbutton "Energy: [mc.energy]":
+        xanchor 1.0
+        xalign 1.0
 
 label test_malformed_say(the_person):
     the_person "Hello world!"

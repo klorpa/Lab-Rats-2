@@ -26,8 +26,8 @@ init -2 python:
             return False
         elif mc.business.research_tier != 1:
             return False
-        elif the_person.obedience < 120 or the_person.core_sluttiness < 25 or the_person.int < 4:
-            return "Requires: 120 Obedience, 4 Intelligence, " + get_gold_heart(25)
+        elif the_person.obedience < 120 or the_person.sluttiness < 25 or the_person.int < 4:
+            return "Requires: 120 Obedience, 4 Intelligence, " + get_red_heart(25)
         else:
             return True
 
@@ -60,8 +60,8 @@ init -2 python:
             return False
         elif mc.business.research_tier != 2:
             return False
-        elif the_person.obedience < 140 or the_person.core_sluttiness < 50 or the_person.int < 5:
-            return "Requires: 140 obedience, 5 Intelligence, " + get_gold_heart(50)
+        elif the_person.obedience < 140 or the_person.sluttiness < 50 or the_person.int < 5:
+            return "Requires: 140 obedience, 5 Intelligence, " + get_red_heart(50)
         else:
             return True
 
@@ -74,8 +74,8 @@ init -2 python:
             return False
         elif mc.business.research_tier != 2:
             return False
-        elif the_person.obedience < 140 or the_person.core_sluttiness < 50 or the_person.int < 5:
-            return "Requires: 140 obedience, 5 Intelligence, " + get_gold_heart(50)
+        elif the_person.obedience < 140 or the_person.sluttiness < 50 or the_person.int < 5:
+            return "Requires: 140 obedience, 5 Intelligence, " + get_red_heart(50)
         else:
             return True
 
@@ -83,7 +83,7 @@ init -2 python:
         return True
 
     def visit_nora_intro_requirement(the_person):
-        if steph_role not in the_person.special_role: #Only Stephanie gets to have this event trigger while she is head researcher.
+        if not the_person.has_role(steph_role): #Only Stephanie gets to have this event trigger while she is head researcher.
             return False
         elif not mc.business.event_triggers_dict.get("intro_nora", False):
             return False
@@ -117,82 +117,190 @@ label fire_head_researcher(the_person):
     $ mc.business.head_researcher = None
     return
 
-label improved_serum_unlock_label(the_person):
-    $ the_person.call_dialogue("improved_serum_unlock") #In which the player introduces the idea of advancing the lab's research and the head researcher offers to test serum on themselves.
+label improved_serum_unlock_label(the_person): #TODO: Double check this has a time requirement (might be fine because it has to take place when you are at work.)
+
+    if not the_person.event_triggers_dict.get("improved_serum_unlock_intro", False):
+        $ the_person.event_triggers_dict["improved_serum_unlock_intro"] = True
+        $ the_person.call_dialogue("improved_serum_unlock")
+    else:
+        the_person "Do you have some serum for us to test with?"
+
     menu:
-        "Assist [the_person.title]":
-            mc.name "I think you're right, this is the only way forward. What do you need me to do?"
-            "[the_person.title] opens the door to one of the small offices attached to the reserach lab. The two of you step inside and she closes the door."
-            the_person "First, we're going to need a test dose of serum."
-            call give_serum(the_person) from _call_give_serum_6
-            if not _return:
-                mc.name "I don't have any with me right now. I'll stop by the production division and pick some up."
-                the_person "Come see me when you do. I'll be waiting."
-            else:
-                "You pull out the vial of serum and present it to [the_person.title]. She takes the vial and holds it up to the light, then opens it up and drinks the content."
-                the_person "No going back now. I'm going to need you to take notes for me - about me I suppose."
-                "There's a pad of paper and a pen on the desk already. You pick it up, click the pen, and turn to a fresh page."
-                mc.name "Let's start with the basics. How did it taste?"
-                the_person "Hmm, a little sweet, then bitter towards the end."
-                mc.name "Was it an overpowering taste?"
-                the_person "Not particularly, no."
-                "You scribble down [the_person.possessive_title]'s name at the top of your notes page then add some bullet points listing her responses."
-                mc.name "My old research suggested that these serums could make people more suggestable. Do you feel like you are more suggestable than normal?"
-                "[the_person.title] thinks for a moment before responding."
-                the_person "Maybe? No? God, that's hard question to answer objectively, isn't it?"
-                if mc.charisma > 4:
-                    "You take a keen look at [the_person.title]. She might not be able to tell but you certainly can. You mark her down as \"Highly Suggestible\"."
+        "Run the Experiment.":
+            mc.name "Okay, I'm ready to start."
+            the_person "Do you have the serum?"
+            call screen serum_inventory_select_ui(mc.inventory, the_person)
+            $ picked_serum = _return
+            if isinstance(picked_serum, SerumDesign):
+                mc.name "Yeah, I have it right here."
+
+                $ is_valid_design = False #Create a fake person to apply the serum to. If it raises Suggest we're good.
+                $ test_person = create_random_person()
+                $ start_suggest = the_person.suggestibility
+                $ test_person.give_serum(copy.copy(picked_serum), add_to_log = False)
+                if start_suggest >= test_person.suggestibility:
+                    "You hand the vial of serum to [the_person.title]. She swirls it in front of her eye and frowns."
+                    the_person "No, I don't think this design is going to work."
+                    "She hands the vial back to you."
+                    the_person "We need something that will raise Suggestibility, otherwise I don't think we can trigger the effect we are looking for."
                 else:
-                    "You can't tell any better than [the_person.title]. You put down \"Suggestability Uncertain\" on your notepad."
-                mc.name "That's fine, you're doing great."
-                mc.name "Next question: Early research has suggested that our serums might deliver performance enhancing effects. What do you think about this?"
-                the_person "Well, I think I need to know more about it. I suppose that's why I'm doing this - to learn more."
-                mc.name "I think we should take advantage of these effects. You agree with me, correct?"
-                the_person "I... Yes, I agree with you sir."
-                "[the_person.title]'s eyes are fixed firmly on yours. This seems like a good chance to impress upon her your goals for the company."
-                menu:
-                    "Stress the importance of obedience. (tooltip)Likely to raise her obedience.":
-                        mc.name "A highly organised workplace is important, especially in a lab setting. I need employees who are able to listen to my instructions and follow them."
-                        "[the_person.possessive_title] nods in agreement."
-                        mc.name "As the leader of the research team I need you to be especially loyal. Do you understand?"
-                        $ the_person.change_obedience(10)
-                        the_person "Yes, absolutely. I'll do everything I can to make sure this business is successful."
+                    "You hand the vial of serum to [the_person.title]. She swirls it in front of her eye and nods."
+                    if mc.location.get_person_count() > 1:
+                        the_person "Alright, this design should work. Let's go find somewhere private. This may have unintended effects."
+                        "You step into a small office attached to the research lab."
+                    "You prepare a notepad and a pen to take notes, and [the_person.possessive_title] uncorks the vial."
+                    the_person "Here we go!"
+                    $ the_person.give_serum(copy.copy(picked_serum))
+                    $ mc.inventory.change_serum(picked_serum, -1)
+                    "She drinks it down in one smooth motion."
+                    mc.name "Okay, let's start with some initial questions..."
+                    "You lead [the_person.title] through a serious of questions to establish a baseline for the current effects."
+                    mc.name "... Good, that's the last question. Now onto phase two."
+                    the_person "Okay... Wow, this making me more nervous than I was expecting!"
+                    mc.name "Just relax and I'm sure it will come naturally to you. I'll wait outside, call me when you get \"there\" and we'll rerun the tests."
+                    the_person "Alright, I'll do my best!"
+                    $ clear_scene()
+                    "You stand up and leave the room, giving [the_person.possessive_title] the privacy she wants to get herself off."
+                    "It's a few minutes until you get a text."
+                    $ mc.start_text_convo(the_person)
+                    the_person "You can come back in."
+                    $ mc.end_text_convo()
+                    $ the_person.draw_person(position = "sitting")
+                    "You step back into the room. [the_person.possessive_title] is blushing, and breathing just a little harder than normal."
+                    the_person "Okay, let's see if that worked. Run me through the tests again..."
+                    "You sit down and run [the_person.title] through the same questionnaire."
+                    "You get the same results. No additional effect."
+                    mc.name "No differences [the_person.title]. It hasn't worked yet."
+                    "She scowls."
+                    the_person "I feel like we are on the right course [the_person.mc_title]."
+                    the_person "When I climaxed I felt... something. Maybe it's not a sure thing, but if I try again it might happen."
+                    mc.name "Okay, if you're comfortable with it."
+                    the_person "I am, now this shouldn't take too long. It's always easier the second time..."
+                    $ clear_scene()
+                    "You leave the room again. True to her word it's only a short wait before you get another text to come back in."
+                    $ the_person.add_role(trance_role)
+                    $ the_person.draw_person(position = "sitting")
+                    "Her face is even redder this time, and now her breathing is heavy."
+                    the_person "Okay, I made myself cum again. Run the tests."
+                    "For the second time you run [the_person.possessive_title] through the questionnaire. This time the results are clear."
+                    mc.name "You were right [the_person.title], we've got some divergences here."
+                    "She smiles happily, but her enthusiasm is more muted than you would have expected."
+                    the_person "That's good! So now what do we do?"
+                    "Her eyes seem slightly unfocused, and she waits patiently until you answer."
+                    mc.name "I've got some ideas, let me just review this information..."
+                    the_person "Take as long as you need. I'll just wait here."
+                    "She crosses her hands on her lap and stares into the middle distance as you scan her test results."
+                    "It seems like the combination of serum and her orgasm has made her highly suggestible, but likely just for a short time."
+                    "If you are clever enough you may be able to make some pinpoint changes to her personality."
+                    $ mc.add_clarity(400)
+                    "Her test results give you plenty of starting points. You consider for a moment what, if anything, you want to tell her..."
+                    call do_training(the_person)
+                    mc.name "Good, I think we're finished here."
+                    the_person "Excellent, I'm glad I could help. What should I do now [the_person.mc_title]?"
+                    mc.name "Orgasms seem to have an interaction with the normal serum formula. I want you to investigate other potential uses for this."
+                    "She listens intently and nods."
+                    the_person "Okay, I understand."
+                    $ mc.business.research_tier = 1
+                    $ mc.log_event("Tier 1 Research Unlocked", "float_text_grey")
+                    call advance_time()
 
-                    "Stress the importance of appearance. (tooltip)Likely to raise her sluttiness.":
-                        mc.name "Impressions are key in this line of business, and I need my employees dressed to impress."
-                        "[the_person.possessive_title] nods in agreement."
-                        mc.name "As the leader of the research team I need you to be especially aware of your appearance. You represent everything our technology can achieve. Do you understand?"
-                        $ the_person.change_slut_temp(5)
-                        $ the_person.change_slut_core(5)
-                        the_person "Yes, absolutely. I'll make sure I always leave a positive impression."
 
-                    "Stress the importance of satisfaction. (tooltip)Likely to dramatically raise her happiness.":
-                        mc.name "It can be easy to burn yourself out in this line of business. Pay might not always be great and the hours might be long, but a good attitude is key."
-                        "[the_person.possessive_title] nods in agreement."
-                        mc.name "Your attitude is going to affect the rest of the research team. I need you to be as positive as possible, do you understand?"
-                        $ the_person.change_happiness(10)
-                        the_person "Yes sir, I understand completely. I'll try and be as chipper as possible."
 
-                    "Stress the importance of your relationship. (tooltip)Likely to raise her love for you.":
-                        mc.name "Through everything we're going to do together I want you to know that your friendship means the world to me."
-                        mc.name "I need you to stick by my side throught it all."
-                        $ the_person.change_love(5)
-                        "[the_person.possessive_title] nods in agreement."
-                        the_person "Yes, absolutely. Our friendship means everything to me too."
 
-                mc.name "Good to hear it."
-                "You ask [the_person.title] a few more questions, recording her observations and noting down a few of your own. Half an hour passes before you're finished."
-                the_person "Thank you for your help [the_person.mc_title], that was an... interesting experience. It might take some work, but I think I know where we should focus our research efforts."
-                $ mc.business.research_tier = 1
-                $ mc.log_event("Tier 1 Research Unlocked", "float_text_grey")
-                "[the_person.title] takes your notes and returns to the R&D department."
-                call advance_time from _call_advance_time_8
+            else:
+                mc.name "Not yet, I'll go make some and pick it up from the production division."
+                the_person "Alright, come see me when you have it. I'll be waiting."
 
-        "Do not allow the test.":
-            mc.name "I'll think about it, but I would like to avoid self experimentation if possible."
-            the_person "If you change your mind let me know. Until then I will do my best with what little knowledge we have available."
+
+        "Run the Experiment later.":
+            mc.name "We'll have to do this later. I need to pick up some serum from the production division."
+            the_person "Come see me when you have it. I'll be waiting."
+
+    # TODO: You tell her you want to advance your research
+    # TODO: You reveal (or Steph points out) that there was some sort of effect related to orgasms before.
+    # TODO: She offers to be a test subject. You need to get her a dose of serum that raises suggestability (maybe all serums should raise suggestability)
+    # TODO: She jills off in a private room until she's in a trance.
+    # TODO: You have the opportunity to train her if you have Clarity.
+    # TODO: Advance research
 
     return
+
+# Rewritten in v0.43 to match the new Trance mechanics
+# label old_improved_serum_unlock_label(the_person):
+#     $ the_person.call_dialogue("improved_serum_unlock") #In which the player introduces the idea of advancing the lab's research and the head researcher offers to test serum on themselves.
+#     menu:
+#         "Assist [the_person.title]":
+#             mc.name "I think you're right, this is the only way forward. What do you need me to do?"
+#             "[the_person.title] opens the door to one of the small offices attached to the reserach lab. The two of you step inside and she closes the door."
+#             the_person "First, we're going to need a test dose of serum."
+#             call give_serum(the_person) from _call_give_serum_6
+#             if not _return:
+#                 mc.name "I don't have any with me right now. I'll stop by the production division and pick some up."
+#                 the_person "Come see me when you do. I'll be waiting."
+#             else:
+#                 "You pull out the vial of serum and present it to [the_person.title]. She takes the vial and holds it up to the light, then opens it up and drinks the content."
+#                 the_person "No going back now. I'm going to need you to take notes for me - about me I suppose."
+#                 "There's a pad of paper and a pen on the desk already. You pick it up, click the pen, and turn to a fresh page."
+#                 mc.name "Let's start with the basics. How did it taste?"
+#                 the_person "Hmm, a little sweet, then bitter towards the end."
+#                 mc.name "Was it an overpowering taste?"
+#                 the_person "Not particularly, no."
+#                 "You scribble down [the_person.possessive_title]'s name at the top of your notes page then add some bullet points listing her responses."
+#                 mc.name "My old research suggested that these serums could make people more suggestable. Do you feel like you are more suggestable than normal?"
+#                 "[the_person.title] thinks for a moment before responding."
+#                 the_person "Maybe? No? God, that's hard question to answer objectively, isn't it?"
+#                 if mc.charisma > 4:
+#                     "You take a keen look at [the_person.title]. She might not be able to tell but you certainly can. You mark her down as \"Highly Suggestible\"."
+#                 else:
+#                     "You can't tell any better than [the_person.title]. You put down \"Suggestability Uncertain\" on your notepad."
+#                 mc.name "That's fine, you're doing great."
+#                 mc.name "Next question: Early research has suggested that our serums might deliver performance enhancing effects. What do you think about this?"
+#                 the_person "Well, I think I need to know more about it. I suppose that's why I'm doing this - to learn more."
+#                 mc.name "I think we should take advantage of these effects. You agree with me, correct?"
+#                 the_person "I... Yes, I agree with you sir."
+#                 "[the_person.title]'s eyes are fixed firmly on yours. This seems like a good chance to impress upon her your goals for the company."
+#                 menu:
+#                     "Stress the importance of obedience. (tooltip)Likely to raise her obedience.":
+#                         mc.name "A highly organised workplace is important, especially in a lab setting. I need employees who are able to listen to my instructions and follow them."
+#                         "[the_person.possessive_title] nods in agreement."
+#                         mc.name "As the leader of the research team I need you to be especially loyal. Do you understand?"
+#                         $ the_person.change_obedience(10)
+#                         the_person "Yes, absolutely. I'll do everything I can to make sure this business is successful."
+#
+#                     "Stress the importance of appearance. (tooltip)Likely to raise her sluttiness.":
+#                         mc.name "Impressions are key in this line of business, and I need my employees dressed to impress."
+#                         "[the_person.possessive_title] nods in agreement."
+#                         mc.name "As the leader of the research team I need you to be especially aware of your appearance. You represent everything our technology can achieve. Do you understand?"
+#                         $ the_person.change_slut(5)
+#                         the_person "Yes, absolutely. I'll make sure I always leave a positive impression."
+#
+#                     "Stress the importance of satisfaction. (tooltip)Likely to dramatically raise her happiness.":
+#                         mc.name "It can be easy to burn yourself out in this line of business. Pay might not always be great and the hours might be long, but a good attitude is key."
+#                         "[the_person.possessive_title] nods in agreement."
+#                         mc.name "Your attitude is going to affect the rest of the research team. I need you to be as positive as possible, do you understand?"
+#                         $ the_person.change_happiness(10)
+#                         the_person "Yes sir, I understand completely. I'll try and be as chipper as possible."
+#
+#                     "Stress the importance of your relationship. (tooltip)Likely to raise her love for you.":
+#                         mc.name "Through everything we're going to do together I want you to know that your friendship means the world to me."
+#                         mc.name "I need you to stick by my side throught it all."
+#                         $ the_person.change_love(5)
+#                         "[the_person.possessive_title] nods in agreement."
+#                         the_person "Yes, absolutely. Our friendship means everything to me too."
+#
+#                 mc.name "Good to hear it."
+#                 "You ask [the_person.title] a few more questions, recording her observations and noting down a few of your own. Half an hour passes before you're finished."
+#                 the_person "Thank you for your help [the_person.mc_title], that was an... interesting experience. It might take some work, but I think I know where we should focus our research efforts."
+#                 $ mc.business.research_tier = 1
+#                 $ mc.log_event("Tier 1 Research Unlocked", "float_text_grey")
+#                 "[the_person.title] takes your notes and returns to the R&D department."
+#                 call advance_time from _call_advance_time_8
+#
+#         "Do not allow the test.":
+#             mc.name "I'll think about it, but I would like to avoid self experimentation if possible."
+#             the_person "If you change your mind let me know. Until then I will do my best with what little knowledge we have available."
+#
+#     return
 
 label advanced_serum_stage_1_label(the_person):
     $ the_person.draw_person()
@@ -206,7 +314,7 @@ label advanced_serum_stage_1_label(the_person):
     the_person "Well, I've seen a few papers floating around that make it seem like other groups are working with the same basic techniques as us."
     the_person "I'd like to reach out to them and see about securing a prototype of some sort, to see if we can learn anything from its effects."
     the_person "These academic types can get very defensive about their research, so I don't think we'll get anything for free."
-    if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False):
+    if the_person.has_role(steph_role) and not mc.business.event_triggers_dict.get("intro_nora", False):
         the_person "I suppose there's one person we could ask..."
         mc.name "Do you mean [nora.title]?"
         "[the_person.title] nods."
@@ -225,7 +333,7 @@ label advanced_serum_stage_1_label(the_person):
         "Try and secure a prototype serum.\n{size=22}Costs $2000{/size} (disabled)" if mc.business.funds < 2000:
             pass
 
-        "Contact Nora."if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False) and mc.business.event_triggers_dict.get("nora_trait_researched",None) is None:
+        "Contact Nora." if the_person.has_role(steph_role) and not mc.business.event_triggers_dict.get("intro_nora", False) and mc.business.event_triggers_dict.get("nora_trait_researched",None) is None:
             $ mc.business.event_triggers_dict["intro_nora"] = True
             mc.name "I think [nora.title] is the right choice."
             the_person "I'll call and see when she's available. Come back and talk to me when you want to go visit her."
@@ -284,8 +392,7 @@ label advanced_serum_stage_2_label(the_person):
     "She looks at you and smiles, then laughs self consciously."
     $ the_person.change_happiness(15)
     the_person "I don't know why I was so worried about this, I feel silly getting you so involved. This feels fine."
-    $ the_person.change_slut_core(5)
-    $ the_person.change_slut_temp(10)
+    $ the_person.change_slut(10)
     $ mc.change_locked_clarity(5)
     the_person "I mean, not that I mind the help of such a good looking man."
     "She giggles and looks you up and down."
@@ -293,14 +400,12 @@ label advanced_serum_stage_2_label(the_person):
     $ mc.change_locked_clarity(5)
     the_person "With me? Why would... Oh right, because of the test! Sorry, you're just so... distracting."
     $ the_person.change_int(-1)
-    $ the_person.change_slut_core(10)
-    $ the_person.change_slut_temp(20)
+    $ the_person.change_slut(20)
     "She bites her lip and takes a step closer. You notice her cheeks are flush and her breathing is getting a little heavier."
     $ mc.change_locked_clarity(5)
     the_person "Ugh, [the_person.mc_title] do we really have to do this right now? Couldn't we be doing something more fun? I can think of a ton of fun things we could do together."
     $ the_person.change_int(-1)
-    $ the_person.change_slut_core(10)
-    $ the_person.change_slut_temp(20)
+    $ the_person.change_slut(20)
     $ old_personality = the_person.personality
     $ the_person.personality = bimbo_personality
     $ mc.log_event("[the_person.title]: Personality changed. Now: Bimbo", "float_text_pink")
@@ -314,7 +419,7 @@ label advanced_serum_stage_2_label(the_person):
             $ the_report = _return
             if the_report.get("girl orgasms", 0) > 0:
                 $ the_person.change_obedience(10)
-                the_person "Oh... my... god... [the_person.mc_title] that felt so good! If you could make me feel like that all the time I swear I would do anything for you. Anything at all."
+                the_person "Oh... my... god! [the_person.mc_title] that felt so good! If you could make me feel like that all the time I swear I would do anything for you. Anything at all."
             else:
                 "[the_person.possessive_title] giggles softly."
                 the_person "Ahh, that was a lot of fun [the_person.mc_title]. I really want to give that another try, maybe once you've had a chance to recharge."
@@ -356,11 +461,10 @@ label advanced_serum_stage_2_label(the_person):
     "She frowns but does as she's told. She drinks the content of the vial."
     $ int_to_add = old_int - the_person.int #Calculate what we need to add back, almost certainly 3 but weird things might happen.
     $ the_person.change_int(int_to_add)
-    $ the_person.change_slut_core(-25)
-    $ the_person.change_slut_temp(-50)
+    $ the_person.change_slut(-50)
     $ the_person.change_happiness(-15)
     $ the_person.personality = old_personality
-    $ mc.log_event("[the_person.title]: Personality Restored", "float_text_blue")
+    $ mc.log_event(the_person.title +": Personality Restored", "float_text_blue")
     "After another moment [the_person.title] shakes her head and looks at you. She seems suddenly more alert, more aware."
     the_person "Ugh, that's given me a serious headache. I'm not sure if I should blame their stuff or mine."
     mc.name "Glad to have you back. Are you feeling like yourself again?"
@@ -369,7 +473,7 @@ label advanced_serum_stage_2_label(the_person):
     if had_sex:
         the_person "Well I guess we have plenty of evidence that the prototype affects inhibition and arousal."
         mc.name "Sorry about that, I just..."
-        $ the_person.change_slut_temp(5)
+        $ the_person.change_slut(3, 60)
         the_person "No, I was literally throwing myself at you, I understand. It was fun, honestly."
         "She looks at her phone for a moment, then back up at you."
         the_person "And you managed to keep it all in frame. That should help me break down the effects piece by piece."
@@ -378,6 +482,7 @@ label advanced_serum_stage_2_label(the_person):
         the_person "About what I said before, while I was... you know. Thank you for not taking advantage of it."
         $ the_person.change_obedience(5)
         $ the_person.change_happiness(5)
+        $ the_person.change_slut(1, 40)
         $ the_person.change_love(5)
         mc.name "Of course, I understand that you weren't yourself. I'm glad to have you're back to normal."
         "She looks at her phone for a moment, then back up at you."
@@ -400,14 +505,13 @@ label advanced_serum_stage_3_label(the_person):
     else:
         mc.name "A previous head of research insisted she try a prototype serum she had located. These were the test results."
     "You hand [the_person.title] a thumb drive containing the footage of your test session with [old_researcher.name]. She plugs the drive into her computer and opens up the footage."
-    $ the_person.change_slut_temp(5)
+    $ the_person.change_slut(5)
     the_person "Oh my god... it's like something flipped a switch inside of her."
     "[the_person.title] watches as [old_researcher.name] steps close to you and reaches down to grab your crotch."
     mc.name "As far as I can tell the effects are permanent. It's unfortunate, but I know she wouldn't want us to let all of her research go to waste."
     the_person "I... I understand sir. I'll pull apart what I can and list out some preliminary theories."
     $ mc.business.research_tier = 2
     $ mc.log_event("Tier 2 Research Unlocked", "float_text_grey")
-
     return
 
 label futuristic_serum_stage_1_label(the_person):

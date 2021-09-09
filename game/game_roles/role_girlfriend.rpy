@@ -121,7 +121,7 @@ label ask_be_girlfriend_label(the_person):
                         mc.name "I can be if that's what you need."
                         $ the_person.draw_person(emotion = "happy")
                         $ the_person.add_role(affair_role)
-                        $ the_person.change_slut_temp(2)
+                        $ the_person.change_slut(2, 60)
                         $ mc.change_locked_clarity(10)
                         "She leans forward and kisses you, putting an arm around your waist and pulling you close. When she breaks the kiss she looks deep into your eyes."
                         the_person "Well then, you know where to find me."
@@ -202,7 +202,7 @@ label caught_cheating_label(the_other_girl, the_girlfriend): #Note: the_other_gi
         "She glares at you, but bit by bit her expression softens."
         "You sit down with her and calm her down, until finally she breaks and hugs you."
         the_girlfriend "Just never do that to me again, okay?"
-        $ the_girlfriend.change_slut_temp(4)
+        $ the_girlfriend.change_slut(2, 60)
         $ the_girlfriend.change_obedience(4)
         mc.name "Of course not, you'll never catch me doing that again."
         the_girlfriend "And I never want to see that bitch anywhere around you, okay?"
@@ -295,7 +295,7 @@ label ask_get_boobjob_label(the_person):
         the_person "Okay [the_person.mc_title], if you want it I'll do it for you."
 
     the_person "I'll get it scheduled, if we're lucky I'll be able to have it done in a few days."
-    if affair_role in the_person.special_role:
+    if the_person.has_role(affair_role):
         the_person "I don't know if my [so_title] would want to kill you or thank you for this."
 
     $ the_person.event_triggers_dict["getting boobjob"] = True #Reset the flag so you can ask her to get _another_ boobjob.
@@ -316,12 +316,12 @@ label girlfriend_boob_brag_label(the_person): #TODO: Decide if we need a little 
         $ mc.change_locked_clarity(20)
         "She puts her arms behind her, revealing her newly enlarged chest."
         the_person "These feel so... excessive. It feels like everyone is staring at them all the time now."
-        $ the_person.change_slut_temp(-1 + the_person.get_opinion_score("showing her tits"))
+        $ the_person.change_slut(-1 + the_person.get_opinion_score("showing her tits"))
     else:
         $ mc.change_locked_clarity(20)
         "She pushes her chest out towards you, shaking her tits just a little."
         the_person "I hope you like them, maybe we can have some fun with them later."
-        $ the_person.change_slut_temp(2)
+        $ the_person.change_slut(2, 60)
 
     call talk_person(the_person) from _call_talk_person_9
     return

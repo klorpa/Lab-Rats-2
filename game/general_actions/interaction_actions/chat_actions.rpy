@@ -18,7 +18,7 @@ init -2 python:
 
     def flirt_requirement(the_person):
         if the_person.love < 10:
-            return "Requires: 10{image=gui/extra_images/energy_token.png}"
+            return "Requires: 10 Love"
         elif mc.energy < 15:
             return "Requires: 15{image=gui/extra_images/energy_token.png}"
         else:
@@ -122,7 +122,7 @@ init -2 python:
             return True
 
     def serum_demand_requirement(the_person):
-        if employee_role in the_person.special_role:
+        if the_person.has_role(employee_role):
             #It's easier to convince her if she works for you
             if the_person.obedience < 110:
                 return "Requires: 110 Obedience"
@@ -550,11 +550,11 @@ label compliment_person(the_person): #Tier 1. Raises the character's love. #TODO
 
 label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a low cap while also raising their love by less than a compliment.
     $ mc.change_energy(-15)
-    if girlfriend_role in the_person.special_role:
+    if the_person.has_role(girlfriend_role):
         mc.name "You're so beautiful [the_person.title], I'm so lucky to have a woman like you in my life."
         $ the_person.call_dialogue("flirt_response_girlfriend")
 
-    elif affair_role in the_person.special_role:
+    elif the_person.has_role(affair_role):
         mc.name "You look so good today [the_person.title], you're making me want to do some very naughty things to you."
         $ the_person.call_dialogue("flirt_response_affair")
 
@@ -578,22 +578,29 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
 
     # mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
     $ mc.listener_system.fire_event("player_flirt", the_person = the_person)
-    $ change_amount = mc.charisma + 1 + the_person.get_opinion_score("flirting") #We still cap out at 20, but we get there a little faster or slower depending on if they like flirting
-    if change_amount + the_person.sluttiness > 20:
-        $ change_amount = 20 - the_person.sluttiness
-        if change_amount < 0:
-            $ change_amount = 0
-
+    $ change_amount = 1 + the_person.get_opinion_score("flirting") # cap out at 20, but get there a little faster or slower depending on if they like flirting
+    if change_amount <= 0:
+        $ change_amount = 1
     $ the_person.change_happiness(the_person.get_opinion_score("flirting"))
-    $ the_person.change_slut_temp(change_amount)
-    $ the_person.change_love(3, max_modified_to = 25)
+    $ the_person.change_slut(change_amount, 20)
+    $ the_person.change_love(1, max_modified_to = 25)
     $ the_person.discover_opinion("flirting")
     $ the_person.apply_serum_study()
     # $ the_person.call_dialogue("flirt_response") #This has been divided up into flirt_response_[low,mid,high].
 
     return
 
-
+label give_serum(the_person):
+    call screen serum_inventory_select_ui(mc.inventory, the_person)
+    if not _return == "None":
+        $ the_serum = _return
+        "You decide to give [the_person.title] a dose of [the_serum.name]."
+        $ mc.inventory.change_serum(the_serum,-1)
+        $ the_person.give_serum(copy.copy(the_serum)) #Use a copy rather than the main class, so we can modify and delete the effects without changing anything else.
+        return the_serum
+    else:
+        "You decide not to give [the_person.title] anything."
+        return False
 
 label date_person(the_person): #You invite them out on a proper date
     $ lunch_date_action = Action("Ask her out to lunch. {image=gui/heart/Time_Advance.png}", lunch_date_requirement, "lunch_date_plan_label",
@@ -623,19 +630,19 @@ label date_person(the_person): #You invite them out on a proper date
 
 label lunch_date_plan_label(the_person):
     # Take her out to lunch, raises love to a max of 50 if you pick the correct chat options
-    if sister_role in the_person.special_role:
+    if the_person.has_role(sister_role):
         mc.name "I was thinking about getting some lunch, do you want to come with me and hang out?"
         the_person "Hey, that sounds nice! You're always out of the house, I wish we got to spend more time to gether like we did when we were younger."
 
-    elif mother_role in the_person.special_role:
+    elif the_person.has_role(mother_role):
         mc.name "I'm going to go out for lunch. You've been busy lately, would you like to take a break and join me?"
         the_person "Aww, it's so sweet that you still want to spend time with your mother. I'd love to!"
 
-    elif aunt_role in the_person.special_role:
+    elif the_person.has_role(aunt_role):
         mc.name "Would you like to come and have lunch with me? I haven't seen you much since I was a kid, I'm sure we have a lot to catch up on."
         the_person "It has been a long time, hasn't it. Lunch sounds wonderful!"
 
-    elif cousin_role in the_person.special_role:
+    elif the_person.has_role(cousin_role):
         mc.name "I'm going to get some lunch, would you like to come along with me?"
         the_person "You want me to be seen in public with you? You're really pushing it [the_person.mc_title], but sure."
 
@@ -758,21 +765,21 @@ label movie_date_plan_label(the_person):
     return "Advance time"
 
 label dinner_date_plan_label(the_person):
-    if sister_role in the_person.special_role:
+    if the_person.has_role(sister_role):
         mc.name "[the_person.title], I was wondering if you'd like to go out for a dinner date together. Some brother sister bonding time."
         the_person "That sounds great [the_person.mc_title]. Would Friday be good?"
 
-    elif mother_role in the_person.special_role:
+    elif the_person.has_role(mother_role):
         mc.name "Mom, I was wondering if I could take you out to dinner, just the two of us. I'd enjoy some mother son bonding time."
         the_person "Aww, that's so sweet. How about Friday, after we're both finished with work."
 
-    elif aunt_role in the_person.special_role:
+    elif the_person.has_role(aunt_role):
         mc.name "[the_person.title], would you like to go out on a dinner date with me? I think it would be a nice treat for you."
         the_person "That sounds like it would be amazing. It's been tough, just me and [cousin.title]. I don't get out much any more."
         "She smiles and gives you a quick hug."
         the_person "How about Friday night?"
 
-    elif cousin_role in the_person.special_role:
+    elif the_person.has_role(cousin_role):
         mc.name "Hey, I want to take you out to dinner."
         the_person "Jesus, at least buy me dinner first. Wait a moment..."
         "She laughs at her own joke."
@@ -823,6 +830,9 @@ label grope_person(the_person):
                     $ should_be_private = True
                     if mc.location.get_person_count() > 1: #We aren't alone and should ask if we want to find somewhere private
                         $ extra_people_count = mc.location.get_person_count() - 1
+                        $ obedience_required = 130 - (10*the_person.get_opinion_score("public sex"))
+                        if the_person.get_opinion_score("cheating on men") < 1 and the_person.relationship != "Single" and not the_person.has_role(affair_role):
+                            $ obedience_required += 10 + -10*the_person.get_opinion_score("cheating on men")
                         $ the_person.discover_opinion("public sex")
                         if the_person.effective_sluttiness("touching_body") < 40 or the_person.get_opinion_score("public sex") < 0:
                             # She's nervous about it and asks to go somewhere private.
@@ -837,23 +847,33 @@ label grope_person(the_person):
                                     "After a couple of minutes searching you find a quiet space with just the two of you."
                                     "You don't waste any time getting back to what you were doing, fondling [the_person.possessive_title]'s tits and ass."
 
-                                "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
+                                "Stay where you are.\n{size=22}[extra_people_count] watching{/size}" if the_person.obedience >= obedience_required:
                                     $ should_be_private = False
+                                    "You scoff and keep feeling up her body."
+                                    mc.name "Come on, we don't need to worry about them. Just relax."
+                                    the_person "But they're going to be watching..."
+                                    $ the_person.change_happiness(5*the_person.get_opinion_score("public sex"))
+                                    mc.name "You ignore her and keep going. Her anxiety is obvious, but she doesn't object any further."
+
+                                "Say where you are.\nRequires: [obedience_required] Obedience (disabled)" if the_person.obedience < obedience_required:
+                                    pass
 
                         else:
                             # She doesn't care, but you can find someplace private.
                             "[the_person.possessive_title] either doesn't notice or doesn't care, but there are other people around."
                             menu:
                                 "Find somewhere quiet.\n{size=22}No interruptions{/size}":
-                                    mc.name "Come with me, I don't want to be interrupted."
-                                    "You take [the_person.title] by the wrist and lead her away. She follows eagerly."
+                                    $ should_be_private = False
+                                    mc.name "Let's find somewhere that isn't quite as busy. I don't want to be interrupted."
+                                    if the_person.get_opinion_score("public sex"):
+                                        the_person "Aww, you don't want to put on a little show? I'm sure they would be {i}very{/i} entertained."
+                                    else:
+                                        the_person "Oh yeah, that's a good idea."
                                     "After searching for a couple of minutes you find a quiet space with just the two of you."
-                                    #TODO: have each location have a unique "find someplace quiet" descriptor with a default fallback option
-                                    "After a couple of minutes searching you find a quiet space with just the two of you."
                                     "You don't waste any time getting back to what you were doing, fondling [the_person.possessive_title]'s tits and ass."
 
                                 "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
-                                    $ should_be_private = False
+                                    pass
 
 
                     call fuck_person(the_person, private = should_be_private, start_position = standing_grope, start_object = None, skip_intro = True) from _call_fuck_person_43 # Enter the sex system, starting from this point.
@@ -904,13 +924,13 @@ label bc_talk_label(the_person):
     mc.name "Can we talk about something?"
     the_person "Mmhm, what's that?"
     mc.name "I want to talk about your birth control."
-    if girlfriend_role in the_person.special_role or affair_role in the_person.special_role:
+    if the_person.has_role(girlfriend_role) or the_person.has_role(affair_role):
         #She'll talk to you about it. High Love or moderate sluttiness are needed to convince her to stop taking BC. Easier to convince her to start.
         # High influence from opinion of creampies.
 
         $ needed_start = 30 + (15 * the_person.get_opinion_score("creampies"))
         $ needed_stop = 45 - (15 * the_person.get_opinion_score("creampies"))
-        if affair_role in the_person.special_role:
+        if the_person.has_role(affair_role):
             $ needed_stop += -10*the_person.get_opinion_score("cheating on men") #They think it's hot to have another man's baby
 
         if the_person.on_birth_control:

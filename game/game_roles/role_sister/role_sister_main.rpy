@@ -87,7 +87,7 @@ label sister_intro_crisis_label(the_person):
             $ the_person.draw_person(emotion = "happy")
             "[the_person.possessive_title] thinks about it for a moment, then nods."
             the_person "Okay, but I want $50 each time."
-            mc.name "You drive a hard bargin sis. You've got a deal."
+            mc.name "You drive a hard bargain sis. You've got a deal."
             "You shake on it."
             $ the_person.change_obedience(5)
             the_person "Thank you so much [the_person.mc_title]. Uh, if Mom asks just say I got a part time job."
@@ -120,7 +120,7 @@ label sister_reintro_label(the_person):
     $ the_person.draw_person(emotion = "happy")
     "[the_person.possessive_title] thinks about it for a moment, then nods."
     the_person "Okay, but I want $50 each time."
-    mc.name "You drive a hard bargin sis. You've got a deal."
+    mc.name "You drive a hard bargain sis. You've got a deal."
     "You shake on it."
     $ the_person.change_obedience(5)
     the_person "Thank you so much [the_person.mc_title]. Uh, if Mom asks just say I got a part time job."

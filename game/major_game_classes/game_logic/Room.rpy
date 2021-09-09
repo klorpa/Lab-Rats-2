@@ -120,6 +120,12 @@ init -2 python:
                     return True
             return False
 
+        def get_object_with_trait(self, the_trait):
+            if self.has_object_with_trait(the_trait):
+                return get_random_from_list(self.objects_with_trait(the_trait))
+            else:
+                return None
+
         def get_object_with_name(self,name): #Use this to get objects from a room when you know what they should be named but don't have an object reference yet (ik
             for obj in self.objects:
                 if obj.name == name:

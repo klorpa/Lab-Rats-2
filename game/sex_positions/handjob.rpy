@@ -25,10 +25,10 @@ init:
 label intro_handjob(the_girl, the_location, the_object):
     "[the_girl.title] places her hand on your chest and strokes it gently."
     "She looks into your eyes as her hand runs down your torso, running gently over your abs, down to your waist."
-    the_girl.char "Mmm, what do we have here?"
+    the_girl "Mmm, what do we have here?"
     "Her hand runs tight against your body, into your pants and down to your bulge."
     "A shiver of pleasure shoots up your spine as she strokes it gently over your underwear, caressing your package."
-    the_girl.char "Do you want to give me a hand with this? These buttons can be so tricky..."
+    the_girl "Do you want to give me a hand with this? These buttons can be so tricky..."
     "You undo your pants for her and she pull them down, followed quicky by your underwear."
     "Your hard cock springs free into her waiting hand, and she starts to stroke it slowly while holding you close."
     return
@@ -47,7 +47,7 @@ label taboo_break_handjob(the_girl, the_location, the_object):
     if the_girl.sex_skills["Foreplay"] >= 3:
         "She runs a finger along the bottom of your shaft, ending at the sensitive spot under your tip."
         "Then she wraps her full hand around it and slides it back down to the base."
-        "[the_person.possessive_title] begins to stroke you off with long, deliberate motions."
+        "[the_girl.possessive_title] begins to stroke you off with long, deliberate motions."
     else:
         "She wraps her fingers around the base of your shaft and squeezes it lightly, then begins to slide her hand up and down your length."
     return
@@ -59,21 +59,21 @@ label scene_handjob_1(the_girl, the_location, the_object):
             "She rubs her thumb over your tip, spreading your precum over it and then working it back to the shaft."
         else:
             "She rubs her thumb over your tip, then moves to the sensitive underside."
-        the_girl.char "You're so big in my hand... Mmm."
+        the_girl "You're so big in my hand... Mmm."
     else:
         "[the_girl.possessive_title] fondles your soft cock, rubbing the tip with her thumb."
-        the_girl.char "Mmm, even soft you're so big..."
+        the_girl "Mmm, even soft you're so big..."
     return
 
 label scene_handjob_2(the_girl, the_location, the_object):
     "[the_girl.title] moves her hand down and cups your balls, massaging them gently."
-    the_person.char "I want you to let all of your cum out of here for me..."
+    the_girl "I want you to let all of your cum out of here for me..."
     "She holds your body against her and slides her hand back to your shaft."
     return
 
 label scene_handjob_3(the_girl, the_location, the_object):
     "[the_girl.possessive_title] gives you a few fast strokes, then lets go."
-    the_girl.char "One second..."
+    the_girl "One second..."
     "She brings her hand up to her mouth and sticks her tongue out, running it from her palm to the tips of her fingers."
     "She reaches back down and wraps her slippery hand around your cock again. She starts to gently stroke it."
     return
@@ -81,13 +81,13 @@ label scene_handjob_3(the_girl, the_location, the_object):
 label outro_handjob(the_girl, the_location, the_object):
     # describe wanting to cum
     "[the_girl.title]'s touch pulls you closer and closer to your climax. She smiles at you and speeds up."
-    the_girl.char "Are you close? I want you to cum for me."
+    the_girl "Are you close? I want you to cum for me."
     "Her hand makes wet, sloppy noises as she jerks you towards completion."
     $ slut_willingness = the_girl.effective_sluttiness()
     if slut_willingness > (60 - the_girl.get_opinion_score("drinking cum")*5):
         "Just as you're about to fire your load [the_girl.possessive_title] drops to the ground in front of you."
-        $ the_person.draw_person(position = "blowjob")
-        the_girl.char "I want you to put that hot load in my mouth."
+        $ the_girl.draw_person(position = "blowjob")
+        the_girl "I want you to put that hot load in my mouth."
         "Just hearing her say that would have pushed you over the edge - her soft, wet hand working your cock is just a bonus."
         "She opens up her mouth and sticks out her tongue, presenting you with a clear target."
         $ climax_controller = ClimaxController(["Cum in her mouth.", "mouth"])
@@ -101,7 +101,7 @@ label outro_handjob(the_girl, the_location, the_object):
     elif slut_willingness > (40 - (the_girl.get_opinion_score("cum facials")*5 + the_girl.get_opinion_score("being covered in cum")*5)):
         "Just as you're about to fire your load [the_girl.possessive_title] drops to the ground in front of you."
         $ the_girl.draw_person(position = "blowjob")
-        the_girl.char "I want you to cum all over my face. Make me a mess!"
+        the_girl "I want you to cum all over my face. Make me a mess!"
         "Just hearing her say that would have pushed you over the edge - her soft, wet hand working your cock is just a bonus."
         $ climax_controller = ClimaxController(["Cum on her face.", "face"])
         $ the_choice = climax_controller.show_climax_menu()
@@ -110,14 +110,14 @@ label outro_handjob(the_girl, the_location, the_object):
         $ the_girl.cum_on_face()
         $ the_girl.draw_person(position = "blowjob")
         $ climax_controller.do_clarity_release(the_girl)
-        "You fire rope after rope of thick cum over [the_person.title]'s waiting face. When you're finished she opens her eyes again and smiles up at you."
+        "You fire rope after rope of thick cum over [the_girl.title]'s waiting face. When you're finished she opens her eyes again and smiles up at you."
         $ the_girl.call_dialogue("cum_face")
 
     elif slut_willingness > (25 - (the_girl.get_opinion_score("being covered in cum")*5)) and the_girl.has_large_tits():
         # You cum on her tits
         "Just as you're about to fire your load [the_girl.possessive_title] drops to the ground in front of you."
         $ the_girl.draw_person(position = "blowjob")
-        the_girl.char "I want you to put your cum all over my tits [the_girl.mc_title]!"
+        the_girl "I want you to put your cum all over my tits [the_girl.mc_title]!"
         "Just hearing her say that would have pushed you over the edge, but her soft, wet hand working your cock doesn't hurt either."
         $ climax_controller = ClimaxController(["Cum on her tits.", "tits"])
         $ the_choice = climax_controller.show_climax_menu()
@@ -135,7 +135,7 @@ label outro_handjob(the_girl, the_location, the_object):
 
     else:
         # You cum into the air/floor
-        the_girl.char "Cum for me [the_girl.mc_title], do it!"
+        the_girl "Cum for me [the_girl.mc_title], do it!"
         $ climax_controller = ClimaxController(["Cum on the floor.", "air"])
         $ the_choice = climax_controller.show_climax_menu()
         "You reach your limit and start to pulse your load out in thick ropes, past [the_girl.possessive_title]'s thigh and onto the floor."
@@ -157,14 +157,14 @@ label strip_handjob(the_girl, the_clothing, the_location, the_object):
     return
 
 label strip_ask_handjob(the_girl, the_clothing, the_location, the_object):
-    the_person.char "[the_person.mc_title], would you like me to take off my [the_clothing.name]?"
+    the_girl "[the_girl.mc_title], would you like me to take off my [the_clothing.name]?"
     "She keeps stroking your cock while you respond."
     menu:
         "Let her strip.":
             mc.name "Take it off for me."
             $ the_girl.draw_animated_removal(the_clothing, position = handjob.position_tag)
             "[the_girl.possessive_title] strips out of her [the_clothing.name] and drops it to the side."
-            the_person.char "Ah, so much better."
+            the_girl "Ah, so much better."
             return True
 
         "Leave it on.":
@@ -176,7 +176,7 @@ label strip_ask_handjob(the_girl, the_clothing, the_location, the_object):
 label orgasm_handjob(the_girl, the_location, the_object):
     "[the_girl.possessive_title]'s breathing picks up and her grip on your cock gets firmer."
     "She holds you tight, her breath warm on your ear and whispers."
-    the_person.char "Oh god, I think I'm going to cum... Thinking about this big cock, so close to me..."
+    the_girl "Oh god, I think I'm going to cum... Thinking about this big cock, so close to me..."
     "With one final gasp she shivers with pleasure. She struggles to stroke you off as she climaxes, each movement jerky and wild."
     "The moment passes quickly and she gets her body back under control."
     return

@@ -261,8 +261,7 @@ label sister_girlfriend_return(the_person):
     if convinced_mom:
         mc.name "A little, at first, but I talked it out with her and she agrees wtih us."
         mc.name "She gave us her blessing, she won't give us any trouble."
-        #TOOD: A little more dialogue here
-        call sister_girlfriend_setup(mom_knows = True)
+        call sister_girlfriend_setup(the_person, mom_knows = True)
 
     else:
         mc.name "I tried, but she was a lot more resistant than I was expecting."
@@ -283,12 +282,12 @@ label sister_girlfriend_mom_blessing(the_person):
     $ the_person.event_triggers_dict["sister_girlfriend_asked_blessing_before"] = True
     "[the_person.title], I have something important to tell you about me and [lily.title]."
     the_person "Oh? What is it?"
-    mc.name "Me and [the_person.title] are in love, and we are going to be spending more time together. As a couple."
+    mc.name "Me and [lily.title] are in love, and we are going to be spending more time together. As a couple."
     if not first_time:
         mc.name "I'm not joking this time, I really mean it."
 
 
-    #TODO: Have some measure of how suprised they are by this. ie. if they've caught you fucking before.
+    #TODO: Have some measure of how surprised they are by this. ie. if they've caught you fucking before.
     "[the_person.possessive_title] doesn't say anything for a long moment."
     the_person "... Could you run that by me again? You love your sister... romantically?"
     mc.name "That's right."
@@ -305,7 +304,7 @@ label sister_girlfriend_mom_blessing(the_person):
             the_person "Oh, to be young and in love."
             "[the_person.possessive_title] expression softens."
             the_person "If this is what you both want and you understand the challenges, then I won't stop you."
-            mc.name "Thank you [mthe_person.title], I knew we could trust you."
+            mc.name "Thank you [the_person.title], I knew we could trust you."
             "[the_person.possessive_title] smiles and opens her arms up for a hug."
             $ the_person.change_happiness(10)
             the_person "Come here, give me a hug. I'll always be here for both of you."

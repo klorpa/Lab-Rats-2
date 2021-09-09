@@ -2,10 +2,9 @@ init -2 python:
     class SerumTrait(renpy.store.object):
         def __init__(self,name,desc, positive_slug = "", negative_slug = "",
             value_added = 0, research_added = 0, slots_added = 0, production_added = 0, duration_added = 0, base_side_effect_chance = 0, clarity_added = 0,
-            on_apply = None, on_remove = None, on_turn = None, on_day = None,
+            on_apply = None, on_remove = None, on_turn = None, on_day = None, on_move = None,
             requires = None, tier = 0, start_researched = False, research_needed=50, exclude_tags=None, is_side_effect = False,
-            clarity_cost = 50, start_unlocked = False): #effect is a function that takes a SerumDesign as a parameter and modifies it based on whatever effect this trait has.
-
+            clarity_cost = 50, start_unlocked = False):
 
             # Display info #
             self.name = name
@@ -27,7 +26,8 @@ init -2 python:
             # Serum trait effects #
             self.on_apply = on_apply #The function applied to the person when the serum is first applied.
             self.on_remove = on_remove #The function applied to the person when the serum is removed (it should generally undo the on_apply effects)
-            self.on_turn = on_turn #The function applied to the person at the end of a turn under the effect of the serum.
+            self.on_turn = on_turn #The function applied to the person at the end of a turn under the effect of the serum. Effectively "End" of turn.
+            self.on_move = on_move #The function applied to the person on the move phase. Effectively "Start" of turn
             self.on_day = on_day #The function applied to the person at the end of the day.
 
             # Research details #
@@ -55,7 +55,6 @@ init -2 python:
 
             self.is_side_effect = is_side_effect #If true this trait is a side effect and not counted towards serum max traits and such. It also cannot be added to a serum on purpose.
 
-
         def run_on_apply(self, the_person, the_serum, add_to_log = True):
             if self.on_apply is not None:
                 self.on_apply(the_person, the_serum, add_to_log)
@@ -67,6 +66,10 @@ init -2 python:
         def run_on_turn(self, the_person, the_serum, add_to_log = False):
             if self.on_turn is not None:
                 self.on_turn(the_person, the_serum, add_to_log)
+
+        def run_on_move(self, the_person, the_serum, add_to_log = False):
+            if self.on_move is not None:
+                self.on_move(the_person, the_serum, add_to_log)
 
         def run_on_day(self, the_person, the_serum, add_to_log = False):
             if self.on_day is not None:
@@ -91,6 +94,7 @@ init -2 python:
             if pay_clarity:
                 mc.spend_clarity(self.clarity_cost)
             self.unlocked = True
+            return self #Return self so we can unlock and set as selected research as an atomic action in research UI.
 
         def add_mastery(self, amount):
             self.mastery_level += amount

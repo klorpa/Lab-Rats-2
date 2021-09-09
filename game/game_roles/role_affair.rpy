@@ -158,7 +158,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
     while not done:
         if the_report.get("girl orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
             $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
-            $ the_person.change_slut_temp(1)
+            $ the_person.change_slut(1, 80)
             the_person "Oh god... That was amazing. You're so much better at that than my [so_title]."
             "[the_person.title] lies down on her bed and catches her breath."
             the_person "Ready to get back to it?"
@@ -181,7 +181,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
             else:
 
                 $ the_person.change_love(-1)
-                $ the_person.change_slut_temp(-1)
+                $ the_person.change_slut(-1)
                 the_person "Well I guess we're done then... Maybe next time you can get me off as well."
 
             $ done = True
@@ -385,7 +385,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
                                 "You slide a finger into her pussy and she holds her breath for a second."
                                 the_person "Goodnight, I love you. Talk to you soon!"
                                 $ the_person.change_obedience(1)
-                                $ the_person.change_slut_core(the_person.get_opinion_score("cheating on men"))
+                                $ the_person.change_slut(2 + the_person.get_opinion_score("cheating on men"), 60)
                                 $ the_person.change_arousal((mc.sex_skills["Foreplay"] + the_person.get_opinion_score("cheating on men") + the_person.get_opinion_score("being fingered")) * 5) #Arousal boost to start the encounter.
                                 "She hangs up quickly and moans in relief."
                                 the_person "Oh god, you're so bad!"
@@ -515,7 +515,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
                     else:
                         the_person "Really? I didn't even get to cum yet..."
                         $ the_person.change_love(-1)
-                        $ the_person.change_slut_temp(-1)
+                        $ the_person.change_slut(-1)
                     $ done = True
                     "You shrug and pull up your pants."
 
@@ -536,7 +536,7 @@ label blackmail_person(the_person):
 
 label transform_affair(the_person):
     # If a girl leaves her SO for crisis reasons call this, which transforms her affair you had into a boyfriend-girlfriend relationship.
-    if affair_role in the_person.special_role: # Technically we can use this to immediately jump to girlfrined with someone who is in a relationship as well.
+    if the_person.has_role(affair_role): # Technically we can use this to immediately jump to girlfrined with someone who is in a relationship as well.
         $ the_person.remove_role(affair_role)
     $ the_person.add_role(girlfriend_role)
     $ the_person.relationship = "Single" #Technically they aren't "single", but the MC has special roles for their girlfriend.
