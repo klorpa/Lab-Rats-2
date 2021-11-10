@@ -95,7 +95,7 @@ label breeder_fuck(the_person):
             $ the_person.discover_opinion("public sex")
             if the_person.effective_sluttiness("touching_body") < 40 or the_person.get_opinion_score("public sex") < 0:
                 # She's nervous about it and asks to go somewhere private.
-                the_person "Before we get down to it we should find somewhere we don't be distrubed..."
+                the_person "Before we get down to it we should find somewhere we don't be disturbed..."
                 "[the_person.possessive_title] nods her head at the people nearby."
                 menu:
                     "Find somewhere quiet.\n{size=22}No interruptions{/size}":

@@ -129,7 +129,7 @@ label train_hypnotic_orgasm(the_person):
 
     $ the_clothing = the_person.outfit.get_lower_top_layer()
     if the_clothing:
-        $ clothing_phrase = "a hand between her legs and under her [the_clothing.display_name]."
+        $ clothing_phrase = "a hand between her legs and under her " + the_clothing.display_name
     else:
         $ clothing_phrase = "a hand between her legs."
     if mc.location.get_person_count() > 1:
@@ -363,7 +363,7 @@ label train_online_attention_whore(the_person):
         mc.name "Good, because you're built for it. You're going to have guys drooling all over the world."
         "You spend a little longer reminding her to post as often as she can, and make a mental note to check in on her progress yourself."
     else:
-        "You reconsider putting [the_person.possessive_title] on the internet for other men to oggle at."
+        "You reconsider putting [the_person.possessive_title] on the internet for other men to ogle at."
         return False #You didn't actually set anything up, so you don't have to pay the training cost (you get the account info for free, congrats)
 
     return

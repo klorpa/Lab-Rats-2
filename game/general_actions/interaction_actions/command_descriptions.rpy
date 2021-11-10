@@ -363,7 +363,9 @@ init -2 python:
     #TODO: Maybe add some flow stuff so we get "She strips off her BLANK." followed by "Next she pulls off her BLANK".
     #TODO: Add some taboo break dialogues into this.
 
-        #strip_list = the_person.outfit.get_underwear_strip_list()
+        if isinstance(strip_list, Clothing):
+            strip_list = [strip_list] #Let's you hand over a single item to strip off.
+
         test_outfit = the_person.outfit.get_copy() #Use a copy to keep track of what's changed between iterations, so we can narate tits being out, ect.
         loop_count = 0 #Used to keep all of the other people on the same track as the main stripper
         for item in strip_list:

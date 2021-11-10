@@ -18,6 +18,14 @@ init -2 python:
                 count += design[1]
             return count
 
+        def get_max_serum_count(self): #Returns the count of the highest group of serums you have available.
+            highest_count = 0
+            for design in self.serums_held:
+                if self.get_serum_count(design) > highest_count:
+                    highest_count = self.get_serum_count(design)
+
+            return highest_count
+
         def change_serum(self, serum_design,change_amount): ##Serum count must be greater than 0. Adds to stockpile of serum_design if it is already there, creates it otherwise.
             found = False
             for design in self.serums_held:

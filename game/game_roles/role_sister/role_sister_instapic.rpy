@@ -6,6 +6,8 @@ init -2 python:
     def instathot_intro_requirement(the_person): #This action sits in her room
         if the_person.sluttiness < 20:
             return False
+        elif the_person.event_triggers_dict.get("insta_intro_finished", False):
+            return False
         elif the_person not in lily_bedroom.people:
             return False
         elif __builtin__.len(lily_bedroom.people) > 1:
@@ -92,11 +94,6 @@ label sister_instathot_intro_label(the_person):
 
 
     # Actually, let's have her start with a relatively tame outfit and grow into really sexy ones.
-    if not the_person.has_role(instapic_role):
-        $ the_person.special_role.append(instapic_role)
-    $ the_person.event_triggers_dict["insta_known"] = True
-
-
     "You open the door to [the_person.possessive_title]'s room."
     $ the_person.draw_person(position = "kneeling1")
     $ mc.change_locked_clarity(10)
@@ -145,17 +142,26 @@ label sister_instathot_intro_label(the_person):
 
     "You make a mental note to check out her profile on instapic at some point."
 
+    call setup_sister_insta(the_person)
+    $ clear_scene()
+    return
 
-
+label setup_sister_insta(the_person):
+    if not the_person.has_role(instapic_role):
+        $ the_person.special_role.append(instapic_role)
+    $ the_person.event_triggers_dict["insta_known"] = True
+    $ the_person.event_triggers_dict["insta_intro_finished"] = True # Other events may set this is you discover her instapic career some other way
     $ sister_instathot_action = Action("Help her take Insta-pics.{image=gui/heart/Time_Advance.png}",instathot_requirement, "sister_instathot_label", menu_tooltip = "Help your sister grow her InstaPic account by taking some pictures of her.")
     $ sister_role.actions.append(sister_instathot_action)
-    $ clear_scene()
     return
 
 label sister_instathot_label(the_person):
     #Help your sister take slutty pictures for the internet. Get a share of the cash she's earning on them.
     #Requires you to be in Lily's bedroom with her, so we can assume that's true.
     mc.name "I've got some spare time, do you want some help taking pictures for InstaPic?"
+    if the_person.event_triggers_dict.get("sister_kissing_quest_active", False):
+        $ the_person.event_triggers_dict["sister_kissing_quest_progress"] = the_person.event_triggers_dict.get("sister_kissing_quest_progress",0) + 1
+
     if the_person.event_triggers_dict.get("sister_instathot_mom_enabled", False) and person_at_home(mom):
         if mom.event_triggers_dict.get("mom_instathot_pic_count",0) == 0: #It's your first time inviting her.
             "[the_person.possessive_title] smiles and nods excitedly."
@@ -207,92 +213,149 @@ label sister_instathot_label_solo(the_person):
                 $ special_request = None
     else:
         $ for_player = True
-
     $ the_person.event_triggers_dict["insta_special_request_sis"] = None #And then clear any special requests. NOTE: outfit requests are handled seperately. This is for anything that produces a private pic.
 
-    $ strip_list = the_person.outfit.get_full_strip_list()
-    $ generalised_strip_description(the_person, strip_list)
+    $ skip_change = False
+    if the_person.has_taboo(["bare_tits", "bare_pussy"]):
+        $ skip_change = True
+        "She looks at you expectantly."
+        the_person "Can, you give me a moment? I'm not going to get undressed in front of you."
+        menu:
+            "Ask to watch.":
+                mc.name "Let me watch, it'll be fun."
+                if the_person.get_opinion_score(["showing her tits", "showing her ass", "not wearing anything"]) > 0:
+                    "[the_person.possessive_title] rolls her eyes and shrugs."
+                    the_person "You aren't going to be weird about this, are you?"
+                    mc.name "Of course not [the_person.title]. We don't want [mom.title] wondering why I'm standing in the hall, right?"
+                    the_person "Good point. Alright, you can stay."
+                    $ the_person.break_taboo("bare_tits")
+                    $ the_person.break_taboo("bare_pussy")
+                elif the_person.effective_sluttiness() >= 30:
+                    the_person "Fun for you, maybe. WHat am I getting out of it?"
+                    mc.name "I'm helping you out already, aren't I? Come on [the_person.title], it's not a big deal."
+                    "She thinks for a moment, but finally shrugs her acceptance."
+                    $ the_person.change_love(-1)
+                    the_person "You're weird, you know that? You need a girlfriend."
+                    $ the_person.break_taboo("bare_tits")
+                    $ the_person.break_taboo("bare_pussy")
 
-    $ the_person.draw_person(position = "doggy")
-    $ mc.change_locked_clarity(20)
-    "She gets onto her knees and pulls a shopping bag from the mall out from under her bed."
-    the_person "I keep my stuff here so Mom doesn't find it. Okay, let's put this on!"
-    $ the_person.draw_person(emotion = "happy")
-    "[the_person.title] gets dressed in her new outfit and turns to you, smiling."
-    if the_person.event_triggers_dict.get("insta_special_request_outfit", False):
-        $ insta_outfit = the_person.event_triggers_dict.get("insta_special_request_outfit")
-        $ the_person.apply_outfit(insta_outfit, update_taboo = True)
-        $ mc.change_locked_clarity(10)
-        the_person "A fan said I should wear this. Isn't it cute?"
+                else:
+                    the_person "Ew, that's fun for you? I'm your sister [the_person.mc_title]!"
+                    mc.name "So?"
+                    "She scoffs and shakes her head."
+                    the_person "Yeah, that's not happening. Come on, we need to do this quick before [mom.title] gets curious."
+                    "You get the sense that she's not going to change her mind, so you step out into the hallway."
+                    $ skip_change = True
+
+            "Let her change.":
+                $ skip_change = True
+                mc.name "Right, sure."
+                $ clear_scene()
+                "You step out into the hallway so [the_person.possessive_title] can get changed."
+
+
+    if skip_change:
+        "You consider risking a peek, but the soft click of her door lock cuts that thought short."
+        $ the_person.draw_person()
+        "After a short wait there's another click and she opens the door."
+        the_person "Come back in!"
+        if the_person.event_triggers_dict.get("insta_special_request_outfit", False):
+            $ insta_outfit = the_person.event_triggers_dict.get("insta_special_request_outfit")
+            $ the_person.apply_outfit(insta_outfit, update_taboo = True)
+            $ mc.change_locked_clarity(10)
+            the_person "A fan said I should wear this. Isn't it cute?"
+            $ the_person.draw_person()
+
+        else:
+            $ the_person.apply_outfit(insta_outfit, update_taboo = True)
+            $ the_person.draw_person()
+            the_person "It's cute, right?"
 
     else:
-        $ the_person.apply_outfit(insta_outfit, update_taboo = True)
+        $ strip_list = the_person.outfit.get_full_strip_list()
+        $ generalised_strip_description(the_person, strip_list)
+        $ the_person.update_outfit_taboos()
+        $ the_person.draw_person(position = "doggy")
+        $ mc.change_locked_clarity(20)
+        "She gets onto her knees and pulls a shopping bag from the mall out from under her bed."
+        the_person "I keep my stuff here so Mom doesn't find it. Okay, let's put this on!"
         $ the_person.draw_person(emotion = "happy")
-        the_person "Well, do you think they'll like it?"
-        menu:
-            "Of course!":
-                mc.name "Of course, you look hot!"
-                $ the_person.change_slut(1, 30)
-                $ the_person.change_happiness(3)
+        "[the_person.title] gets dressed in her new outfit and turns to you, smiling."
 
-            "I don't think so.":
-                mc.name "I'm not so sure. They might be looking for something... More."
-                if the_person.effective_sluttiness() >= 30:
-                    the_person "Yeah, I think so too. Too bad InstaPic is run by a bunch of prudes. I wish there was somewhere I could show more..."
-                else:
-                    $ the_person.change_happiness(-2)
-                    the_person "Really? Well, this is as much as I'm allowed to show, so I guess it doesn't matter either way."
-                "She shrugs."
-                the_person "Come on, let's take some pics!"
+        if the_person.event_triggers_dict.get("insta_special_request_outfit", False):
+            $ insta_outfit = the_person.event_triggers_dict.get("insta_special_request_outfit")
+            $ the_person.apply_outfit(insta_outfit, update_taboo = True)
+            $ mc.change_locked_clarity(10)
+            the_person "A fan said I should wear this. Isn't it cute?"
 
-            "I've got another idea...":
-                mc.name "It's nice, but I think I know an outfit they might like even more."
-                the_person "Uh huh? Let me see it!"
-                call outfit_master_manager() from _call_outfit_master_manager_1
-                $ the_suggested_outfit = _return
-                if the_suggested_outfit is None:
-                    mc.name "On second thought, I don't think I have anything better than what you're wearing."
-                    the_person "Well, let's get started with this then!"
+        else:
+            $ the_person.apply_outfit(insta_outfit, update_taboo = True)
+            $ the_person.draw_person(emotion = "happy")
+            the_person "Well, do you think they'll like it?"
+            menu:
+                "Of course!":
+                    mc.name "Of course, you look hot!"
+                    $ the_person.change_slut(1, 30)
+                    $ the_person.change_happiness(3)
 
-                elif the_suggested_outfit.vagina_visible():
-                    the_person "Come on [the_person.mc_title], I can't have my... You know, just hanging out like that."
-                    the_person "I'd get kicked off of InstaPic so fast! Let's just take some pictures with what I'm wearing."
-
-                elif the_suggested_outfit.tits_visible():
-                    the_person "I couldn't get away with that, they would ban me for showing my boobs."
-                    the_person "It's so unfair that guys can take pictures shirtless and post them but girls can't."
-                    the_person "Oh well, let's just take some pictures with the outfit I'm wearing."
-
-                elif the_person.judge_outfit(the_suggested_outfit, -30):
-                    the_person "I mean, I guess it would be nice, but it isn't very... revealing, you know?"
-                    the_person "Guys on the site like it when you show some skin. A little cleavage, maybe some underwear."
-                    the_person "As long as it's not full on tits or pussy, it's fair game. Let's just go with what I'm wearing right now, okay?"
-
-                elif not the_person.judge_outfit(the_suggested_outfit, 20):
-                    #It's so slutty she can't be convinced to try it.
-                    the_person "Oh wow... I guess it technically covers everything that needs to be covered but..."
-                    the_person "I don't think I could wear that [the_person.mc_title]. I wish I had that kind of confidence, but what if Mom saw these pictures?"
-                    the_person "Let's stick with what I had picked out, okay?"
-
-                else:
-                    the_person "Oh, that would look really cute! Okay, I'll try it on!"
-
-                    $ strip_list = the_person.outfit.get_full_strip_list()
-                    $ generalised_strip_description(the_person, strip_list)
-
-                    "Once she's stripped down she puts on the outfit you've suggested."
-                    $ the_person.apply_outfit(the_suggested_outfit, update_taboo = True)
-                    #$ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want. changed v0.24.1
-                    $ the_person.draw_person()
-                    $ the_person.change_love(1)
-                    $ the_person.change_obedience(2)
-                    if the_person.judge_outfit(the_suggested_outfit):
-                        the_person "Alright, there we go! This is actually a really nice blend of cute and sexy."
-                        the_person "You've got a really good eye for fashion, I might even wear this later I like it so much! Now let's take some pics!"
-                        $ the_person.wardrobe.add_outfit(the_suggested_outfit)
+                "I don't think so.":
+                    mc.name "I'm not so sure. They might be looking for something... More."
+                    if the_person.effective_sluttiness() >= 30:
+                        the_person "Yeah, I think so too. Too bad InstaPic is run by a bunch of prudes. I wish there was somewhere I could show more..."
                     else:
-                        the_person "Alright, there we go! It's perfect, just the right amount of sexy! Let's take some pics now!"
-                        $ insta_wardrobe.add_outfit(the_suggested_outfit) #If she wouldn't wear it normally it's added to the list of insta-appropriate outfits instead
+                        $ the_person.change_happiness(-2)
+                        the_person "Really? Well, this is as much as I'm allowed to show, so I guess it doesn't matter either way."
+                    "She shrugs."
+                    the_person "Come on, let's take some pics!"
+
+                "I've got another idea...":
+                    mc.name "It's nice, but I think I know an outfit they might like even more."
+                    the_person "Uh huh? Let me see it!"
+                    call outfit_master_manager() from _call_outfit_master_manager_1
+                    $ the_suggested_outfit = _return
+                    if the_suggested_outfit is None:
+                        mc.name "On second thought, I don't think I have anything better than what you're wearing."
+                        the_person "Well, let's get started with this then!"
+
+                    elif the_suggested_outfit.vagina_visible():
+                        the_person "Come on [the_person.mc_title], I can't have my... You know, just hanging out like that."
+                        the_person "I'd get kicked off of InstaPic so fast! Let's just take some pictures with what I'm wearing."
+
+                    elif the_suggested_outfit.tits_visible():
+                        the_person "I couldn't get away with that, they would ban me for showing my boobs."
+                        the_person "It's so unfair that guys can take pictures shirtless and post them but girls can't."
+                        the_person "Oh well, let's just take some pictures with the outfit I'm wearing."
+
+                    elif the_person.judge_outfit(the_suggested_outfit, -30):
+                        the_person "I mean, I guess it would be nice, but it isn't very... revealing, you know?"
+                        the_person "Guys on the site like it when you show some skin. A little cleavage, maybe some underwear."
+                        the_person "As long as it's not full on tits or pussy, it's fair game. Let's just go with what I'm wearing right now, okay?"
+
+                    elif not the_person.judge_outfit(the_suggested_outfit, 20):
+                        #It's so slutty she can't be convinced to try it.
+                        the_person "Oh wow... I guess it technically covers everything that needs to be covered but..."
+                        the_person "I don't think I could wear that [the_person.mc_title]. I wish I had that kind of confidence, but what if Mom saw these pictures?"
+                        the_person "Let's stick with what I had picked out, okay?"
+
+                    else:
+                        the_person "Oh, that would look really cute! Okay, I'll try it on!"
+
+                        $ strip_list = the_person.outfit.get_full_strip_list()
+                        $ generalised_strip_description(the_person, strip_list)
+
+                        "Once she's stripped down she puts on the outfit you've suggested."
+                        $ the_person.apply_outfit(the_suggested_outfit, update_taboo = True)
+                        #$ the_person.outfit = the_suggested_outfit.get_copy() #Getting a copy of it so we can assign the proper one to her wardrobe if we want. changed v0.24.1
+                        $ the_person.draw_person()
+                        $ the_person.change_love(1)
+                        $ the_person.change_obedience(2)
+                        if the_person.judge_outfit(the_suggested_outfit):
+                            the_person "Alright, there we go! This is actually a really nice blend of cute and sexy."
+                            the_person "You've got a really good eye for fashion, I might even wear this later I like it so much! Now let's take some pics!"
+                            $ the_person.wardrobe.add_outfit(the_suggested_outfit)
+                        else:
+                            the_person "Alright, there we go! It's perfect, just the right amount of sexy! Let's take some pics now!"
+                            $ insta_wardrobe.add_outfit(the_suggested_outfit) #If she wouldn't wear it normally it's added to the list of insta-appropriate outfits instead
 
     $ the_person.draw_person(emotion = "happy", position = "kneeling1")
     $ mc.change_locked_clarity(10)
@@ -384,6 +447,7 @@ label sister_instathot_label_solo(the_person):
         $ the_person.event_triggers_dict["sister_instathot_pic_count"] = 1
     else:
         $ the_person.event_triggers_dict["sister_instathot_pic_count"] += 1
+    $ the_person.apply_outfit() #She gets redressed in something decent.
     return
 
 label sister_instathot_special_intro(the_person, is_topless_shoot = True):
@@ -835,11 +899,104 @@ label sister_instathot_label_mom(the_sister, the_mom):
             the_mom "[the_mom.mc_title], make sure to get some shots of me embarrassing your sister."
             "She leans over [the_sister.title]'s shoulder and kisses her on the side of the cheek."
             $ the_mom.change_happiness(10)
-            $ the_mom.change_slut(2, 60)
+            $ the_mom.change_slut(2, 40)
             $ the_sister.change_happiness(5)
             "You get some great pictures of [the_mom.title] and [the_sister.title] playing around on the bed together."
 
-        "Bring up [the_sister.title]'s boobs." if the_person.event_triggers_dict.get("sister_boobjob_convince_mom_enabled", False):
+            menu:
+                "Take your tits out.": #TODO: Figure out what our requirements for this should be (mainly for Lily). Maybe a new event for Lily where she tells you people want shirtless shots.
+
+                    mc.name "This is really good stuff, but I want just a little bit more."
+                    mc.name "How about you take your shirts off now girls."
+                    if the_mom.has_taboo("bare_tits"):#TODO: She's not okay with it until you've broken her taboo.
+                        $ the_mom.change_obedience(-1)
+                        $ the_group.draw_person(the_mom)
+                        "[the_mom.possessive_title] scoffs and shakes her head."
+                        the_mom "Don't even joke about that [the_mom.mc_title]! It's obviously wrong for your mother and sister to have their shirts off in front of you."
+                        $ the_group.draw_person(the_sister)
+                        the_sister "Aww, come on..."
+                        $ the_group.draw_person(the_mom)
+                        "[the_mom.title] interrupts her sharply."
+                        the_mom "I said no, now that's the end of it!"
+                        $ the_group.draw_person(the_sister)
+                        "[the_sister.possessive_title] glances at you and shrugs."
+
+                    elif the_sister.event_triggers_dict.get("mom_sister_instapic_shirtless_count", 0) == 0:
+                        $ the_group.draw_person(the_mom)
+                        the_mom "[the_mom.mc_title], don't joke like that in front of your sister."
+                        $ the_group.draw_person(the_sister)
+                        the_sister "Aww come on [the_mom.title], let's do it! It's just a little bit of fun, and I know [the_sister.mc_title] doesn't care."
+                        $ the_group.draw_person(the_mom)
+                        the_mom "I thought you said InstaPic doesn't let you post nude pictures? Won't they kick you off the site?"
+                        $ the_group.draw_person(the_sister)
+                        the_sister "Well they don't, but... Uh... [the_sister.mc_title], what do you think?"
+                        "She looks at you, hopeful that you have a way to convince her."
+
+                        $ tease_requirement = 50 - 10*the_mom.get_opinion_score(["showing her tits", "incest"])
+                        $ tease_token = get_red_heart(tease_requirement)
+                        menu:
+                            "It's just for fun!" if the_mom.get_known_opinion_score("showing her tits") > 0:
+                                $ the_group.draw_person(the_mom)
+                                mc.name "It's just for the fun of it, really."
+                                mc.name "You're up for a little fun, right [the_mom.title]? Unless you're not confident about your tits."
+                                the_mom "Oh, I'm plenty confident in them, and it does sound like fun..."
+                                "[the_mom.possessive_title] thinks for a moment."
+                                the_mom "Screw it, they won't look like this forever so we might as well have some fun with them while we can!"
+                                the_mom "Now you two aren't going to be doing any with these shots, right? They'll be deleted after?"
+                                $ the_group.draw_person(the_sister)
+                                the_sister "Yeah, of course [the_mom.title]. Of course..."
+                                call sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group)
+
+                            "It's just for fun!\nRequires: [the_mom.title] likes showing her tits (disabled)" if the_mom.get_known_opinion_score("showing her tits") <= 0:
+                                pass
+
+                            "We're just going to tease them." if the_mom.effective_sluttiness() >= tease_requirement:
+                                $ the_group.draw_person(the_mom)
+                                mc.name "Don't worry [the_mom.title], we're just going to take some teasing shots."
+                                mc.name "You cover up [the_sister.title] and she covers you up. Nothing that breaks the rules, but it still gets a lot of views."
+                                $ the_group.draw_person(the_sister)
+                                "[the_sister.possessive_title] nods encouragingly."
+                                the_sister "Yeah, that's it. You'll do ti for me, right [the_mom.title]?"
+                                call sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group)
+
+                            "We're just going to tease them.\nRequires: [the_mom.title] [tease_token] (disabled)" if the_mom.effective_sluttiness() < tease_requirement:
+                                pass
+
+                            "Just do it [the_mom.title]." if the_mom.obedience >= 140:
+                                $ the_group.draw_person(the_mom)
+                                mc.name "Why do you have to make this complicated [the_mom.title]? Just do it."
+                                $ the_group.draw_person(the_sister)
+                                "[the_sister.possessive_title]'s jaw goes slack as you talk to her mother like that. She starts to stammer an apology."
+                                the_sister "He doesn't mean that..."
+                                $ the_group.draw_person(the_mom)
+                                the_mom "It's okay [the_sister.title]. Sorry [the_mom.mc_title], I didn't mean to argue."
+                                $ the_group.draw_person(the_sister)
+                                "[the_sister.title] glances at you, confused."
+                                the_sister "Right then..."
+                                call sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group)
+
+                            "Just do it [the_mom.title]\nRequires: [the_mom.title] 140 Obedience. (disabled)" if the_mom.obedience < 140:
+                                pass
+
+                            "Uh...":
+                                mc.name "Uh... Up to you guys?"
+
+                                the_mom "I don't want to get your account banned [the_sister.title]. Let's just get a few more shots like this and call it a day."
+                                the_sister "Alright [the_mom.title], you're probably right."
+                                "[the_sister.possessive_title] rolls her eyes."
+
+
+                    else: #You've already convinced her, so she'll just do it.
+                        $ the_group.draw_person(the_sister)
+                        the_sister "What do you say [the_mom.title]? Up for it?"
+                        $ the_group.draw_person(the_mom)
+                        the_mom "I'm not here to cramp your style. Let's do it!"
+                        call sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group)
+
+                "All done.":
+                    pass
+
+        "Bring up [the_sister.title]'s boobs." if the_sister.event_triggers_dict.get("sister_boobjob_convince_mom_enabled", False):
             call sister_convince_mom_boobjob(the_mom, the_sister)
 
         # TODO: Add some extra variations for this as sluttiness and Obedience rises.
@@ -910,6 +1067,117 @@ label sister_instathot_label_mom(the_sister, the_mom):
     else:
         $ the_sister.event_triggers_dict["sister_instathot_pic_count"] += 1
 
+    return
+
+label sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group): #Called when you convince them to take some shirtless pics.
+    $ the_sister.event_triggers_dict["mom_sister_instapic_shirtless_count"] = the_sister.event_triggers_dict.get("mom_sister_instapic_shirtless_count", 0) + 1
+    $ the_item = the_sister.outfit.get_upper_top_layer()
+    "[the_sister.possessive_title] starts to strip off her [the_item.display_name], and [the_mom.possessive_title] follows her lead."
+    $ generalised_strip_description(the_sister, the_sister.outfit.get_tit_strip_list(), group_display = the_group, other_people = [(the_mom, the_mom.outfit.get_tit_strip_list())])
+    $ mc.change_locked_clarity(20)
+
+    $ the_group.draw_person(the_mom)
+    if the_mom.has_large_tits():
+        "With her tits out [the_mom.title] cups them with her hands. They're more than a handful, but she does succeed in hiding her nipples away from the camera."
+    else:
+        "With her tits out [the_mom.title] cups them with her hands. She manages to cover most of herself up, while still looking hot for the camera."
+    the_mom "Come on [the_sister.title], hold them like this so we aren't showing too much for the camera."
+    $ the_group.draw_person(the_sister)
+    the_sister "Let's see, like this?"
+    $ mc.change_locked_clarity(10)
+    "She does the same, grabbing her breasts and holding them tight to her chest with her hand bra."
+    the_sister "How do we look [the_sister.mc_title]?"
+    mc.name "Fantastic, let me get a few pictures..."
+
+    if the_sister.event_triggers_dict.get("sister_instathot_mom_shirtless_covered_count", 0) > 0:
+
+        $ cover_other_requirement = 45
+        $ red_heart_token = get_red_heart(cover_other_requirement)
+
+        menu:
+            "Cover each other's tits." if (the_mom.effective_sluttiness() >= 50 or the_mom.get_known_opinion_score("incest") > 0) and (the_sister.effective_sluttiness() >= 50 or the_sister.get_known_opinion_score("incest") > 0):
+                mc.name "Let's try a few different poses now. [the_mom.title], sit behind [the_sister.title] and hold onto her boobs for her."
+                mc.name "[the_sister.title], all you have to do is make sure your body is in the way of [the_mom.title]'s tits. Can you do that?"
+                the_sister "Yeah, I can do that [the_sister.mc_title]."
+                #TODO: Have some sort of taboo style system for Mom and Lily.
+                $ the_group.draw_person(the_mom)
+                the_mom "Are you okay with this [the_sister.title]?"
+                $ the_group.draw_person(the_sister)
+                the_sister "Of course [the_mom.title]! Come on, here..."
+                $ mc.change_locked_clarity(10)
+                "She wraps [the_mom.possessive_title]'s arms around her and presses her hands against her tits."
+                the_sister "There, no big deal!"
+                $ the_group.draw_person(the_mom)
+                the_mom "Oh! Well... [the_mom.mc_title], take the pictures!"
+                "[the_sister.title] leans back, squishing herself up against [the_mom.title]'s tits. You get a few hot shots that might just survive on InstaPic."
+                mc.name "What do [the_sister.title]'s tits feel like [the_mom.title]?"
+                "[the_mom.possessive_title] jiggles her daughter's tits experimentally, without really thinking about it."
+                the_mom "They're so perky! Oh, the benefits of youth!"
+
+                if the_sister.event_triggers_dict.get("sister_instathot_mom_shirtless_uncovered_count", 0) > 0:
+                    $ show_them_requirement = 50
+                    $ red_heart_token = get_red_heart(show_them_requirement)
+
+                    menu:
+                        "Now show them to the camera." if (the_mom.effective_sluttiness() >= show_them_requirement or the_mom.get_known_opinion_score("incest") > 0) and (the_sister.effective_sluttiness() >= show_them_requirement or the_sister.get_known_opinion_score("incest") > 0):
+                            mc.name "That's great, now [the_sister.title], just lean to the side so we can see [the_mom.title]'s tits."
+                            if first_time:
+                                $ the_group.draw_person(the_mom)
+                                the_mom "Oh, I don't know..."
+                                "[the_sister.title] doesn't hesitate. She shuffles to the side on her bed, and [the_mom.possessive_title] pulls her hands back suddenly to cover herself."
+                                "Of course, this means she's not covering up her daughter any more."
+                                $ the_group.draw_person(the_sister)
+                                the_sister "Well I don't care. How do I look [the_sister.mc_title]?"
+                                if the_sister.has_large_tits():
+                                    "[the_sister.possessive_title] shakes her shoulders, jiggling her big for the camera."
+                                else:
+                                    "[the_sister.possessive_title] shakes her shoulders, jiggling her little tits for the camera."
+                                the_sister "Come on [the_mom.title], just show them off a little!"
+                                $ the_group.draw_person(the_mom)
+                                the_mom "Well... Just a little can't hurt..."
+                                "She lowers her hands tenatively from her chest, letting her boobs spill free from. They take a few seconds to stop jiggling."
+
+                            else:
+                                $ the_group.draw_person(the_sister)
+                                the_sister "Right away boss!"
+                                "She shuffles to the side on her bed, leaving [the_mom.title]'s tits uncovered."
+                                $ the_group.draw_person(the_mom)
+                                the_mom "Oh you two... Alright, just a few shots..."
+                                "She takes her hands off of [the_sister.title]'s breasts and puts them on the bed."
+
+                            mc.name "Perfect. Shake 'em around a little bit. Give me something to work with..."
+                            $ mc.change_locked_clarity(10)
+                            "The girls shake their shoulders, working their tits around for you."
+                            $ the_group.draw_person(the_mom)
+                            the_mom "Like this? I'm not sure if I'm doing this right..."
+                            mc.name "That's great... Really just great..."
+                            #TODO: Here's where you can get them to start touching each other.
+                            #TODO: Do that in the future.
+
+                        "Now show them to the camera.\nRequires: both [red_heart_token] or likes incest (disabled)" if the_mom.effective_sluttiness < 55:
+                            pass
+
+                else:
+                    "[the_sister.title] laughs, and [the_mom.possessive_title] seems to realise exactly what she's doing."
+                    the_mom "Oh my god... I'm sorry [the_sister.title]!"
+                    $ the_group.draw_person(the_sister)
+                    the_sister "It's fine [the_mom.title], it's fun!"
+                    $ the_group.draw_person(the_mom)
+                    "[the_mom.title] pulls her hands back and wraps them around her own chest."
+                    the_mom "I... I still think that's enough for today."
+                    "[the_sister.possessive_title] shrugs, apparently unworried about showing off her own tits."
+
+                $ the_sister.event_triggers_dict["sister_instathot_mom_shirtless_uncovered_count"] = the_sister.event_triggers_dict.get("sister_instathot_mom_shirtless_uncovered_count", 0) + 1
+
+            "Cover each other's tits.\nRequires: both [red_heart_token] or likes incest (disabled)" if the_mom.effective_sluttiness() < cover_other_requirement or the_sister.effective_sluttiness() < cover_other_requirement:
+                pass
+
+            "All done.":
+                pass
+
+    else:
+        "You take some great shots of them with their shirts off."
+    $ the_sister.event_triggers_dict["sister_instathot_mom_shirtless_covered_count"] = the_sister.event_triggers_dict.get("sister_instathot_mom_shirtless_covered_count", 0) + 1
     return
 
 label sister_instathot_mom_report(the_person): #Lily tells you that her shots with Mom were super popular and that you want to do more

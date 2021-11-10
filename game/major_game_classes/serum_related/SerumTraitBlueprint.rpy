@@ -5,6 +5,7 @@ init -2 python:
             super(SerumTraitBlueprint, self).__init__(*args, **kwargs)
             self.unlock_label = unlock_label #Unlock label should take a copy trait (ie. a proper SerumTrait) and fill any needed traits for effects_dict.
 
+            self.unlocked_once = False
             #Record the actual traits so we can have an acualised design.
             self.given_args = args
             self.given_kwargs = kwargs

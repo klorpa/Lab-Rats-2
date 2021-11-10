@@ -1023,48 +1023,61 @@ label lily_date_seduction(the_person):
 label lily_kissing_taboo_break(the_person):
     the_person "Hey... What are you doing?"
     mc.name "I'm going to kiss you [the_person.title]."
-    the_person "Ew. You're my brother, that's weird."
-    mc.name "Why? We use to kiss when we were kids."
-    the_person "Oh my god, I forgot about that. That was different, we were young and just practicing."
-    mc.name "Let's practice some more. I'm sure we can both get better at it if we try."
-    the_person "You're serious? I... I don't know [the_person.mc_title], what if [mom.title] finds out?"
-    mc.name "She doesn't need to know. Nobody does. It will be our little secret."
-    mc.name "Plus it gives me a reason to spend time with my awesome little sister. Isn't that nice?"
-    "She nods meekly and doesn't say anything."
+    if the_person.event_triggers_dict.get("kissing_revisit_count", 0) == 0:
+        the_person "Ew. You're my brother, that's weird."
+        mc.name "Why? We use to kiss when we were kids."
+        the_person "Oh my god, I forgot about that. That was different, we were young and just practicing."
+        mc.name "Let's practice some more. I'm sure we can both get better at it if we try."
+        the_person "You're serious? I... I don't know [the_person.mc_title], what if [mom.title] finds out?"
+        mc.name "She doesn't need to know. Nobody does. It will be our little secret."
+        mc.name "Plus it gives me a reason to spend time with my awesome little sister. Isn't that nice?"
+        "She nods meekly and doesn't say anything."
+    else:
+        the_person "Ew, again? Don't be weird..."
+        mc.name "Come on, you liked it last time. Right?"
+        the_person "Yeah, I guess."
+        "She rolls her eyes and thinks about it for a second."
+        the_person "Fine, I guess we can kiss again for a little bit..."
     return
 
 label lily_touching_body_taboo_break(the_person):
-    if the_person.love > 20:
-        the_person "Hey, stop that..."
-        mc.name "Why?"
-        the_person "Why do you think? You're my brother, and you're touching me like you want to... Do other things."
-        mc.name "And you're my little sister, who I love more than anyone else in the world."
-        the_person "Oh yeah? What about Mom?"
-        mc.name "Even more than her. I would die to keep you safe, and I would never do anything to hurt you."
-        the_person "Really? I... We still shouldn't do this though..."
-        "You can hear her resolve breaking down in her voice."
-        mc.name "Maybe not, but I want more than anything to be close to you right now."
-        "She looks away and sighs, then turns back and nods."
-        the_person "Just don't make this weird, okay?"
-        the_person "Oh, and don't say anything to Mom. She would probably freak out and kick you out or something."
+    if the_person.event_triggers_dict.get("kissing_revisit_count", 0) == 0:
+        if the_person.love > 20:
+            the_person "Hey, stop that..."
+            mc.name "Why?"
+            the_person "Why do you think? You're my brother, and you're touching me like you want to... Do other things."
+            mc.name "And you're my little sister, who I love more than anyone else in the world."
+            the_person "Oh yeah? What about Mom?"
+            mc.name "Even more than her. I would die to keep you safe, and I would never do anything to hurt you."
+            the_person "Really? I... We still shouldn't do this though..."
+            "You can hear her resolve breaking down in her voice."
+            mc.name "Maybe not, but I want more than anything to be close to you right now."
+            "She looks away and sighs, then turns back and nods."
+            the_person "Just don't make this weird, okay?"
+            the_person "Oh, and don't say anything to Mom. She would probably freak out and kick you out or something."
 
+        else:
+            the_person "Hey, you shouldn't be doing that..."
+            mc.name "Why?"
+            the_person "Because it's incest, you're my brother. That's wrong, isn't it?"
+            mc.name "Come on, it's only incest if I could get you pregnant."
+            mc.name "I hope you know that a guy can't get you pregnant by touching your butt."
+            "She laughs and looks away."
+            the_person "I know that, but... Does that really mean it's not incest?"
+            mc.name "Yeah, of course. I just want to be close to my baby sister. Don't you feel close right now."
+            "She looks away from you and nods meekly."
+            mc.name "Me too. Just relax and enjoy yourself, you know you can trust me."
+            the_person "Okay, you're right [the_person.mc_title]. Just don't tell Mom okay?"
+            the_person "I feel like she wouldn't understand and freak out."
+        mc.name "I won't tell her a word. I promise."
     else:
-        the_person "Hey, you shouldn't be doing that..."
-        mc.name "Why?"
-        the_person "Because it's incest, you're my brother. That's wrong, isn't it?"
-        mc.name "Come on, it's only incest if I could get you pregnant."
-        mc.name "I hope you know that a guy can't get you pregnant by touching your butt."
-        "She laughs and looks away."
-        the_person "I know that, but... Does that really mean it's not incest?"
-        mc.name "Yeah, of course. I just want to be close to my baby sister. Don't you feel close right now."
-        "She looks away from you and nods meekly."
-        mc.name "Me too. Just relax and enjoy yourself, you know you can trust me."
-        the_person "Okay, you're right [the_person.mc_title]. Just don't tell Mom okay?"
-        the_person "I feel like she wouldn't understand and freak out."
-    mc.name "I won't tell her a word. I promise."
+        the_person "[the_person.mc_title], stop that... We talked about this, we shouldn't be doing stuff like this..."
+        mc.name "It feels good though, right? Come on, why are you so worried about this?"
+        the_person "It does feel pretty good... Ugh, why am I like this?"
+        "She sighs dramatically and shrugs, as much confirmation as you need right now."
     return
 
-label lily_touching_penis_taboo_break(the_person):
+label lily_touching_penis_taboo_break(the_person): #TODO: Should this taboo have a revisit
     if the_person.love > 30:
         the_person "Holy shit. Are all guys as big as you, or are you... Unusual?"
         "You shrug?"
@@ -1094,201 +1107,250 @@ label lily_touching_penis_taboo_break(the_person):
     return
 
 label lily_touching_vagina_taboo_break(the_person):
-    the_person "Jesus, careful! Were you going to touch my pussy?"
-    if the_person.love > 30:
-        if the_person.has_taboo("touching_penis"):
-            mc.name "I want to. Will you let me?"
-            the_person "You shouldn't... Mom would be so angry if she knew what we were doing."
-            mc.name "It's a good thing she's not here then. Please [the_person.title], I need more practice and I trust you."
-            the_person "Really? You need practice?"
-            mc.name "Yeah, I don't meet many women. I don't want to embarrass myself if I get the chance."
-            "She thinks for a long moment, then sighs and nods."
-            the_person "Okay, you can touch it."
+    if the_person.event_triggers_dict.get("oral_revisit_count", 0) == 0:
+        the_person "Jesus, careful! Were you going to touch my pussy?"
+        if the_person.love > 30:
+            if the_person.has_taboo("touching_penis"):
+                mc.name "I want to. Will you let me?"
+                the_person "You shouldn't... Mom would be so angry if she knew what we were doing."
+                mc.name "It's a good thing she's not here then. Please [the_person.title], I need more practice and I trust you."
+                the_person "Really? You need practice?"
+                mc.name "Yeah, I don't meet many women. I don't want to embarrass myself if I get the chance."
+                "She thinks for a long moment, then sighs and nods."
+                the_person "Okay, you can touch it."
+
+            else:
+                mc.name "Of course I was. You've gotten to feel my cock, why can't I touch you?"
+                the_person "I mean... You can, I guess, but I thought you were going to ask first."
 
         else:
-            mc.name "Of course I was. You've gotten to feel my cock, why can't I touch you?"
-            the_person "I mean... You can, I guess, but I thought you were going to ask first."
-
+            mc.name "I was. It'll feel good, why are you worried?"
+            the_person "I mean, yeah of course it would, but you're my brother!"
+            if the_person.has_taboo("touching_penis"):
+                mc.name "I'm your brother, so you should trust me. Relax, enjoy yourself."
+                "She puts her face in her hands and shakes her head."
+                the_person "I can't believe I'm letting you do this. I'm so embarrassed!"
+            else:
+                mc.name "You're my sister, but you've still had your hand wrapped around my cock."
+                the_person "I can't believe I did that. I'm so embarrassed!"
+                mc.name "Don't be. Just relax and enjoy yourself."
     else:
-        mc.name "I was. It'll feel good, why are you worried?"
-        the_person "I mean, yeah of course it would, but you're my brother!"
-        if the_person.has_taboo("touching_penis"):
-            mc.name "I'm your brother, so you should trust me. Relax, enjoy yourself."
-            "She puts her face in her hands and shakes her head."
-            the_person "I can't believe I'm letting you do this. I'm so embarrassed!"
-        else:
-            mc.name "You're my sister, but you've still had your hand wrapped around my cock."
-            the_person "I can't believe I did that. I'm so embarrassed!"
-            mc.name "Don't be. Just relax and enjoy yourself."
+        the_person "Careful [the_person.mc_title], we talked about stuff like this. My pussy is off limits."
+        mc.name "It doesn't have to be though. I promise it will feel really good, just let me take care of you."
+        the_person "You're my brother, this is so weird though!"
+        mc.name "Who cares? You want me to touch you, right?"
+        the_person "... Yes."
+        mc.name "That's all we need to care about then."
+        "She bites her lip and nods her agreement."
     return
 
 label lily_sucking_cock_taboo_break(the_person):
     mc.name "Hey [the_person.title], do you want to try something special?"
     the_person "What?"
     mc.name "I want you to try sucking my cock."
-    if the_person.love > 40:
-        the_person "Haha, very funny. Come on, what do you really mean?"
-        mc.name "I'm serious. I want to have my cock sucked."
-        the_person "Oh my god, you really are serious. [the_person.mc_title], that's so fucked up!"
-        if the_person.has_taboo("kissing"):
-            mc.name "Come on, it's not like we've even kissed before. We're experimenting."
+    if the_person.event_triggers_dict.get("oral_revisit_count", 0) == 0:
+        if the_person.love > 40:
+            the_person "Haha, very funny. Come on, what do you really mean?"
+            mc.name "I'm serious. I want to have my cock sucked."
+            the_person "Oh my god, you really are serious. [the_person.mc_title], that's so fucked up!"
+            if the_person.has_taboo("kissing"):
+                mc.name "Come on, it's not like we've even kissed before. We're experimenting."
+
+            else:
+                mc.name "Come on, we've made out before, right?"
+                the_person "Yeah..."
+                mc.name "So it's just your lips on a different part of me."
+                "She sighs and shakes her head in disbelief."
+                mc.name "It means even less than kissing. We're just experimenting."
+
+            the_person "Normal familes don't experiment with each other! Do you know anyone else who has their sister suck their dick?"
+            mc.name "No, but I don't know anyone who loves their little sister as much as I do either."
+            mc.name "We aren't a normal family [the_person.title], we have something special. You love me, right?"
+            the_person "Yeah, I love you [the_person.mc_title]."
+            mc.name "I love you too, so let's forget about what other people call normal and do what feels right for us."
+            "[the_person.possessive_title] takes a long moment to think, then nods enthusiastically."
+            the_person "You're right. Fuck what other people think!"
+            "She wraps her arms around you and hugs you tight. You return the gesture, kissing the top of her head."
+            "She's smiling when she breaks the hug and looks up at you."
+            the_person "So... I guess we're doing this then!"
+            mc.name "Looks like it. Have you given a blowjob before, or should I walk you through it?"
+
 
         else:
-            mc.name "Come on, we've made out before, right?"
-            the_person "Yeah..."
-            mc.name "So it's just your lips on a different part of me."
-            "She sighs and shakes her head in disbelief."
-            mc.name "It means even less than kissing. We're just experimenting."
+            the_person "Wait, really?"
 
-        the_person "Normal familes don't experiment with each other! Do you know anyone else who has their sister suck their dick?"
-        mc.name "No, but I don't know anyone who loves their little sister as much as I do either."
-        mc.name "We aren't a normal family [the_person.title], we have something special. You love me, right?"
-        the_person "Yeah, I love you [the_person.mc_title]."
-        mc.name "I love you too, so let's forget about what other people call normal and do what feels right for us."
-        "[the_person.possessive_title] takes a long moment to think, then nods enthusiastically."
-        the_person "You're right. Fuck what other people think!"
-        "She wraps her arms around you and hugs you tight. You return the gesture, kissing the top of her head."
-        "She's smiling when she breaks the hug and looks up at you."
-        the_person "So... I guess we're doing this then!"
-        mc.name "Looks like it. Have you given a blowjob before, or should I walk you through it?"
+            if the_person.has_taboo("kissing"):
+                mc.name "Yeah, why not? It feels good and I'd bet you're really good at it."
 
+            else:
+                mc.name "Yeah, why not? I know you're a good kisser, I bet your mouth is good at sucking cock too."
 
+            the_person "Why not? Because I'm your sister and Mom would kill us both if she found out!"
+            mc.name "So we'll just make sure she doesn't find out. Come on [the_person.title], you want to try it too, right?"
+            "[the_person.possessive_title] blushes and nods meekly."
+            the_person "I've thought about it before."
+            mc.name "Does thinking about sucking my cock get you turned on."
+            "She looks away shyly and shrugs."
+            the_person "I guess a little."
+            mc.name "So then what's stopping you. We're both adults, you want to do it, I want you to do it. Hey..."
+            "You place a gentle hand on her cheek and turn her head to look at you. You look each other in the eyes."
+            mc.name "Mom is never going to find out about this. Nobody is, so we don't have to worry what other people say is normal."
+            mc.name "We aren't normal. I don't want to be normal, and I don't think you want to be either."
+            "She shakes her head, then wraps her arms around you and hugs you tight. You return the gesture, holding her head to your chest."
+            "When she breaks the hug she's smiling."
+            the_person "You're right [the_person.mc_title]! Okay, I guess I should get on my knees then."
+            mc.name "That would be the next step, yeah. Have you ever given a blowjob before, or should I walk you through it?"
+
+        the_person "Oh my god, I'm not a kid. I know how to give a blowjob."
+        mc.name "Alright, you show me what you know."
     else:
-        the_person "Wait, really?"
-
-        if the_person.has_taboo("kissing"):
-            mc.name "Yeah, why not? It feels good and I'd bet you're really good at it."
-
-        else:
-            mc.name "Yeah, why not? I know you're a good kisser, I bet your mouth is good at sucking cock too."
-
-        the_person "Why not? Because I'm your sister and Mom would kill us both if she found out!"
-        mc.name "So we'll just make sure she doesn't find out. Come on [the_person.title], you want to try it too, right?"
-        "[the_person.possessive_title] blushes and nods meekly."
-        the_person "I've thought about it before."
-        mc.name "Does thinking about sucking my cock get you turned on."
-        "She looks away shyly and shrugs."
-        the_person "I guess a little."
-        mc.name "So then what's stopping you. We're both adults, you want to do it, I want you to do it. Hey..."
-        "You place a gentle hand on her cheek and turn her head to look at you. You look each other in the eyes."
-        mc.name "Mom is never going to find out about this. Nobody is, so we don't have to worry what other people say is normal."
-        mc.name "We aren't normal. I don't want to be normal, and I don't think you want to be either."
-        "She shakes her head, then wraps her arms around you and hugs you tight. You return the gesture, holding her head to your chest."
-        "When she breaks the hug she's smiling."
-        the_person "You're right [the_person.mc_title]! Okay, I guess I should get on my knees then."
-        mc.name "That would be the next step, yeah. Have you ever given a blowjob before, or should I walk you through it?"
-
-    the_person "Oh my god, I'm not a kid. I know how to give a blowjob."
-    mc.name "Alright, you show me what you know."
+        the_person "Oh my god, [the_person.mc_title], we talked about this!"
+        mc.name "Come on, just one more time [the_person.title]. It feels so fucking good."
+        the_person "Can't you at least pretend to be normal?"
+        "You shake your head, and she sighs dramatically."
+        the_person "Uuugh... You're lucky I'm such a good sister."
+        mc.name "You're the best sister [the_person.title]. Does that mean..."
+        the_person "Yeah, I'll do it. But I'm not a slut, alright? I'm only doing it to be nice."
     return
 
 label lily_licking_pussy_taboo_break(the_person):
-    if the_person.love > 40:
-        the_person "Wait, what are you doing?"
-        mc.name "I'm going to lick your pussy."
-        "[the_person.possessive_title] seems embarrassed by the idea. She looks away and blushes."
-        the_person "I don't know [the_person.mc_title], maybe we shouldn't..."
-        if the_person.has_taboo("sucking_cock"):
-            mc.name "Why not? Don't you trust me?"
-            the_person "I do, but... you're my brother, you know? Mom would be so angry if she knew."
-            mc.name "She won't ever find out about it. You want this too, don't you?"
-            "She blushes and nods meekly."
-            mc.name "I thought so. Just spread your legs, relax, and let your brother take care of you."
-        else:
-            mc.name "Why not? You've already sucked my cock, I'm just going to do the same for you."
-            the_person "I guess... It would feel really nice."
-            mc.name "Exactly. Just spread your legs, relax, and let me take care of you."
+    if the_person.event_triggers_dict.get("oral_revisit_count", 0) == 0:
+        if the_person.love > 40:
+            the_person "Wait, what are you doing?"
+            mc.name "I'm going to lick your pussy."
+            "[the_person.possessive_title] seems embarrassed by the idea. She looks away and blushes."
+            the_person "I don't know [the_person.mc_title], maybe we shouldn't..."
+            if the_person.has_taboo("sucking_cock"):
+                mc.name "Why not? Don't you trust me?"
+                the_person "I do, but... you're my brother, you know? Mom would be so angry if she knew."
+                mc.name "She won't ever find out about it. You want this too, don't you?"
+                "She blushes and nods meekly."
+                mc.name "I thought so. Just spread your legs, relax, and let your brother take care of you."
+            else:
+                mc.name "Why not? You've already sucked my cock, I'm just going to do the same for you."
+                the_person "I guess... It would feel really nice."
+                mc.name "Exactly. Just spread your legs, relax, and let me take care of you."
 
+        else:
+            the_person "Are you going to do what I think you're going to do?"
+            mc.name "That depends on what you think I'm going to do."
+            the_person "Are you going to... lick my pussy?"
+            mc.name "That was what I was going to do, yeah. Do you want me to?"
+            if the_person.has_taboo("sucking_cock"):
+                the_person "We shouldn't... Mom would be so angry."
+                mc.name "I didn't ask if Mom would be angry. I asked if you want me to."
+                "She hesitates, then nods her head."
+                the_person "I do. Do you promise she won't find out?"
+                mc.name "I promise. Just spread your legs, relax, and let your big brother take care of you."
+
+            else:
+                the_person "I already sucked you off, so it would be pretty fair..."
+                mc.name "Exactly. Just spread your legs, relax, and let your big brother take care of you."
     else:
-        the_person "Are you going to do what I think you're going to do?"
-        mc.name "That depends on what you think I'm going to do."
-        the_person "Are you going to... lick my pussy?"
-        mc.name "That was what I was going to do, yeah. Do you want me to?"
-        if the_person.has_taboo("sucking_cock"):
-            the_person "We shouldn't... Mom would be so angry."
-            mc.name "I didn't ask if Mom would be angry. I asked if you want me to."
-            "She hesitates, then nods her head."
-            the_person "I do. Do you promise she won't find out?"
-            mc.name "I promise. Just spread your legs, relax, and let your big brother take care of you."
-
-        else:
-            the_person "I already sucked you off, so it would be pretty fair..."
-            mc.name "Exactly. Just spread your legs, relax, and let your big brother take care of you."
+        the_person "Are you going to lick my pussy?"
+        mc.name "I want to, yeah."
+        the_person "We talked about this though [the_person.mc_title]... We shouldn't be doing stuff like this any more!"
+        the_person "I'm your sister, it's not normal!"
+        mc.name "Who cares about being normal? I don't."
+        mc.name "It'll feel great [the_person.title]. You want me to eat you out, right?"
+        "She bites her lip and nods meekly."
+        mc.name "That's what I thought. Just relax, I'll take care of you."
     return
 
 label lily_vaginal_sex_taboo_break(the_person):
-    if the_person.love > 60:
-        the_person "This is so crazy! We should really stop, we've taken this too far..."
-        if the_person.has_taboo("kissing"):
-            mc.name "[the_person.title], stop. You love me, right?"
-
-        else:
-            if the_person.has_taboo("sucking_cock"):
-                mc.name "Was it too far when we kissed? I liked doing that a lot."
-                the_person "I did too, but that was different. We were just experimenting. Right?"
-                mc.name "That's what we told ourselves, but I think we both knew it meant more. Do you love me?"
-
+    if the_person.event_triggers_dict.get("vaginal_revisit_count", 0) == 0:
+        if the_person.love > 60:
+            the_person "This is so crazy! We should really stop, we've taken this too far..."
+            if the_person.has_taboo("kissing"):
+                mc.name "[the_person.title], stop. You love me, right?"
 
             else:
-                mc.name "Was it too far when we kissed? What about when you sucked my cock?"
-                the_person "That was... Maybe that was a mistake."
-                mc.name "I don't think it was. I think we've been lying to ourselves."
-                the_person "What do you mean?"
-                mc.name "Do you love me?"
+                if the_person.has_taboo("sucking_cock"):
+                    mc.name "Was it too far when we kissed? I liked doing that a lot."
+                    the_person "I did too, but that was different. We were just experimenting. Right?"
+                    mc.name "That's what we told ourselves, but I think we both knew it meant more. Do you love me?"
 
 
-        the_person "You're my brother, of course I love you, but..."
-        mc.name "\"But\" nothing. I love you too and want to share that with you."
-        "She is quiet for a long moment, then nods uncertainly."
-        the_person "Okay... We can do this, but we can't let anyone know! And we aren't, like, a couple, okay?"
-        the_person "You're still my brother, we just... Do other things together. Understand?"
-        mc.name "Sure thing sis."
+                else:
+                    mc.name "Was it too far when we kissed? What about when you sucked my cock?"
+                    the_person "That was... Maybe that was a mistake."
+                    mc.name "I don't think it was. I think we've been lying to ourselves."
+                    the_person "What do you mean?"
+                    mc.name "Do you love me?"
 
 
+            the_person "You're my brother, of course I love you, but..."
+            mc.name "\"But\" nothing. I love you too and want to share that with you."
+            "She is quiet for a long moment, then nods uncertainly."
+            the_person "Okay... We can do this, but we can't let anyone know! And we aren't, like, a couple, okay?"
+            the_person "You're still my brother, we just... Do other things together. Understand?"
+            mc.name "Sure thing sis."
+
+
+        else:
+            the_person "I can't believe we are really doing this... Is it wrong? Should we stop?"
+            mc.name "What do you think? Do you want to stop?"
+            "She bites her lip and shakes her head."
+            the_person "No. I want to see what it feels like."
+            mc.name "What do you want to feel?"
+            the_person "Stop teasing me [the_person.mc_title]! I want to feel your... cock inside me."
+            mc.name "That's a good girl. Well, let's give it a try!"
     else:
-        the_person "I can't believe we are really doing this... Is it wrong? Should we stop?"
-        mc.name "What do you think? Do you want to stop?"
-        "She bites her lip and shakes her head."
-        the_person "No. I want to see what it feels like."
-        mc.name "What do you want to feel?"
-        the_person "Stop teasing me [the_person.mc_title]! I want to feel your... cock inside me."
-        mc.name "That's a good girl. Well, let's give it a try!"
+        the_person "We should stop... Fuck, I don't know what to do [the_person.mc_title]!"
+        mc.name "Just stop worrying. Your body knows what it wants."
+        the_person "You're my brother..."
+        mc.name "That didn't stop us last time, and we both had a pretty good time."
+        mc.name "You want it, right?"
+        "She hesitates for a long moment, then nods meekly."
+        mc.name "You're such a slut [the_person.title]. You're really going to let your brother fuck you?"
+        the_person "Oh shut up and just do it already!"
     return
 
 label lily_anal_sex_taboo_break(the_person):
-    if the_person.love > 60:
-        the_person "Wait, do you really mean you want to try anal?"
-        if the_person.has_taboo("vaginal_sex"):
-            mc.name "Yeah, I do. I want to have sex, but you probably don't want me fucking your pussy yet."
-            the_person "Ever. That would be actual, full incest [the_person.mc_title]."
-            mc.name "Exactly, so we can cheat a little like this."
-            "[the_person.possessive_title] seems unsure."
-            mc.name "Come on, don't you want to experiment with someone you trust?"
-        else:
-            mc.name "Yeah, why not? I've already fucked all of your other holes, what's special about this one?"
-            the_person "It's not special, I just thought you'd want to fuck my pussy some more. Didn't you enjoy it last time."
-            mc.name "It was great, but I want to experiment a little more. Come on, don't you want to try something new?"
+    if the_person.event_triggers_dict.get("anal_revisit_count", 0) == 0:
+        if the_person.love > 60:
+            the_person "Wait, do you really mean you want to try anal?"
+            if the_person.has_taboo("vaginal_sex"):
+                mc.name "Yeah, I do. I want to have sex, but you probably don't want me fucking your pussy yet."
+                the_person "Ever. That would be actual, full incest [the_person.mc_title]."
+                mc.name "Exactly, so we can cheat a little like this."
+                "[the_person.possessive_title] seems unsure."
+                mc.name "Come on, don't you want to experiment with someone you trust?"
+            else:
+                mc.name "Yeah, why not? I've already fucked all of your other holes, what's special about this one?"
+                the_person "It's not special, I just thought you'd want to fuck my pussy some more. Didn't you enjoy it last time."
+                mc.name "It was great, but I want to experiment a little more. Come on, don't you want to try something new?"
 
+        else:
+            the_person "Wait, do you want to try anal?"
+            mc.name "Yeah, I do. You've got a cute butt."
+            if the_person.has_taboo("vaginal_sex"):
+                the_person "You're crazy [the_person.mc_title]! We're related, we shouldn't  be fucking!"
+                mc.name "It's not like it's real sex. If you want I can go to town on your pussy though, it looks just as tight."
+                the_person "I guess anal isn't as bad as my own brother fucking my pussy..."
+
+
+            else:
+                the_person "What's wrong with my pussy? Didn't you enjoy it last time?"
+                mc.name "It was great, I just want to try something new. Come on, you like experimenting, right?"
+                the_person "I guess this way I don't have to worry about you pulling out..."
+
+        "She sighs and gives in."
+        the_person "Okay, but you need to be gentle with me."
+        mc.name "I promise I will. Have you ever tried this before?"
+        the_person "With toys a couple of times... Never with a guy."
+        mc.name "You'll probably be really tight then. I'll go nice and slow to give you time to stretch out."
+        the_person "Okay. Thank you [the_person.mc_title]."
     else:
-        the_person "Wait, do you want to try anal?"
-        mc.name "Yeah, I do. You've got a cute butt."
-        if the_person.has_taboo("vaginal_sex"):
-            the_person "You're crazy [the_person.mc_title]! We're related, we shouldn't  be fucking!"
-            mc.name "It's not like it's real sex. If you want I can go to town on your pussy though, it looks just as tight."
-            the_person "I guess anal isn't as bad as my own brother fucking my pussy..."
-
-
-        else:
-            the_person "What's wrong with my pussy? Didn't you enjoy it last time?"
-            mc.name "It was great, I just want to try something new. Come on, you like experimenting, right?"
-            the_person "I guess this way I don't have to worry about you pulling out..."
-
-    "She sighs and gives in."
-    the_person "Okay, but you need to be gentle with me."
-    mc.name "I promise I will. Have you ever tried this before?"
-    the_person "With toys a couple of times... Never with a guy."
-    mc.name "You'll probably be really tight then. I'll go nice and slow to give you time to stretch out."
-    the_person "Okay. Thank you [the_person.mc_title]."
+        the_person "Anal, again? We talked about this..."
+        mc.name "Fuck [the_person.title], I'm so horny right now I just want to fuck you."
+        mc.name "At least this isn't really sex, right? I mean it's not as bad as fucking your pussy."
+        the_person "I don't know..."
+        mc.name "Come on, you want to be a good little sister, right?"
+        the_person "Sure, but is this really the way to do that?"
+        mc.name "Right now it is. Come on [the_person.title], I need you!"
+        "She thinks for a long moment, then moans and nods her head meekly."
+        the_person "Okay, if you say it'll make me a good sister..."
     return
 
 label lily_condomless_sex_taboo_break(the_person):

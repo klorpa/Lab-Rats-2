@@ -933,7 +933,7 @@ label mom_morning_surprise_label():
         $ the_person.cum_in_mouth()
         $ the_person.draw_person(position = "blowjob")
         $ climax_controller.do_clarity_release(the_person)
-        "She pulls back until the tip of your cock is just inside her lips and holds there, collecting each new spurt of semem until you're completely spent."
+        "She pulls back until the tip of your cock is just inside her lips and holds there, collecting each new spurt of semen until you're completely spent."
         "When you're done she pulls up and off, keeping her lips tight to avoid spilling any onto you."
         menu:
             "Order her to swallow." if the_person.obedience >= 130:

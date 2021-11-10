@@ -62,7 +62,7 @@ init -1 python:
             return False
         elif renpy.random.randint(0,100) >= -5 + 10*(the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass") + the_person.get_opinion_score("public sex")):
             return False #Personality type and Opinions has a large impact on chance to generate a new profile.
-        elif the_person.effective_sluttiness() < 50 + 10*(the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass") + the_person.get_opinion_score("public sex")):
+        elif the_person.effective_sluttiness() < 50 - 10*(the_person.get_opinion_score("showing her tits") + the_person.get_opinion_score("showing her ass") + the_person.get_opinion_score("public sex")):
             return False
         elif the_person.love < 10: #Girls who don't like you won't tell you they've made a profile (and are assumed to either have one or not depending on their starting generation)
             return False
@@ -239,7 +239,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                 "Her pace quickens, and she pushes herself over the edge."
                 $ the_person.draw_person(position = "sitting", emotion = "orgasm")
                 the_person "Ah! Ah... Ah..."
-                $ the_person.run_orgasm()
+                $ the_person.run_orgasm(fire_event = False)
                 $ mc.change_locked_clarity(10)
                 "[the_person.possessive_title] slumps in her chair, panting quietly. After taking a moment to recover she sits up and glances around."
                 $ the_person.draw_person(position = "sitting")

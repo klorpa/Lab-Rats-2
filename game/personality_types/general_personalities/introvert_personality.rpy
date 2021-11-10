@@ -13,7 +13,7 @@ init 1300:
         introvert_personality = Personality("introvert", #Stephanie style personality
         common_likes = ["conservative outfits", "research work", "punk", "working", "the colour black"],
         common_sexy_likes = ["big dicks", "kissing", "anal sex", "getting head", "giving blowjobs", "masturbating", "anal creampies", "giving tit fucks"],
-        common_dislikes = ["skimpy outfits", "skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
+        common_dislikes = ["skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
         common_sexy_dislikes = ["skimpy outfits", "not wearing underwear", "not wearing anything", "public sex", "lingerie"],
         titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles,
         insta_chance = 20, dikdok_chance = 0)

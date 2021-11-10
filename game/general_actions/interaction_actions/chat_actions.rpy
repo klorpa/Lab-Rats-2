@@ -863,7 +863,7 @@ label grope_person(the_person):
                             "[the_person.possessive_title] either doesn't notice or doesn't care, but there are other people around."
                             menu:
                                 "Find somewhere quiet.\n{size=22}No interruptions{/size}":
-                                    $ should_be_private = False
+
                                     mc.name "Let's find somewhere that isn't quite as busy. I don't want to be interrupted."
                                     if the_person.get_opinion_score("public sex"):
                                         the_person "Aww, you don't want to put on a little show? I'm sure they would be {i}very{/i} entertained."
@@ -873,6 +873,7 @@ label grope_person(the_person):
                                     "You don't waste any time getting back to what you were doing, fondling [the_person.possessive_title]'s tits and ass."
 
                                 "Stay where you are.\n{size=22}[extra_people_count] watching{/size}":
+                                    $ should_be_private = False
                                     pass
 
 

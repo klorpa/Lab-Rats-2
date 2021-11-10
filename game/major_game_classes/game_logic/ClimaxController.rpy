@@ -32,10 +32,13 @@ init -2 python:
             for climax_option in self.climax_options:
                 display_name = climax_option[0]
                 climax_type = climax_option[1]
-                display_name += "{size=20}{color=#29B6F6}\n"
-                display_name += "x{multiplier:.2f} Clarity Produced".format(multiplier = self.get_climax_multiplier(climax_type))
-                display_name += "{/color}{/size}"
-                display_name += " (tooltip)All Locked Clarity is released when you climax. How much Clarity is produced varies depending on how you cum, and it's possible to have a multiplier greater than 1!"
+                if climax_type in ClimaxController.climax_type_dict:
+                    display_name += "{size=20}{color=#29B6F6}\n"
+                    display_name += "x{multiplier:.2f} Clarity Produced".format(multiplier = self.get_climax_multiplier(climax_type))
+                    display_name += "{/color}{/size}"
+                    display_name += " (tooltip)All Locked Clarity is released when you climax. How much Clarity is produced varies depending on how you cum, and it's possible to have a multiplier greater than 1!"
+                else:
+                    climax_option = "masturbation" #TODO: Test this. Allows for non-climax options to be used.
                 display_list.append([display_name,climax_option])
 
             the_choice = renpy.display_menu(display_list, screen = "choice")
@@ -51,3 +54,5 @@ init -2 python:
                 multiplier = self.get_climax_multiplier(self.selected_climax_type)
                 mc.convert_locked_clarity(multiplier, with_novelty = mc.masturbation_novelty)
                 mc.change_masturbation_novelty(-5, add_to_log = False)
+
+            mc.reset_arousal()

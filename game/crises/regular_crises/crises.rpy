@@ -975,7 +975,7 @@ label trait_for_side_effect_label():
     $ list_of_valid_traits = []
     python:
         for trait in list_of_traits:
-            if trait.researched and trait not in the_design.traits and not trait.slots_added > 0:
+            if trait.researched and trait not in the_design.traits and not trait.slots > 0:
                 list_of_valid_traits.append(trait)
 
     $ the_trait = get_random_from_list(list_of_valid_traits) #Note that this can generate normally impossible designs!
@@ -1857,7 +1857,7 @@ label work_chat_crisis_label:
                             the_person "Oh god... there it is..."
                             "You hear [the_person.title] gasp. You glance over and watch as she climaxes."
                         $ the_person.draw_person(position = "sitting", emotion = "orgasm")
-                        $ the_person.run_orgasm()
+                        $ the_person.run_orgasm(fire_event = False)
                         "[the_person.possessive_title]'s breath catches in her throat as she cums. Her free hand grasps at the arm of her office chair. She holds still for a few seconds, then lets out a long sigh."
                         $ the_person.change_slut(1+the_person.get_opinion_score("masturbating"), 40)
                         $ mc.change_locked_clarity(20)
@@ -3004,12 +3004,12 @@ label horny_at_work_crisis_label():
                     while mc.energy >= 20 and len(helpful_people) > 0 and wants_to_continue:
                         $ the_group.redraw_group()
                         $ the_group.draw_person(the_person_choice, position = "sitting", emotion = "happy")
-                        if the_report.get("girl orgasms", 0) > 0:
+                        if the_report.get("girl orgasms", 0) == 0:
                             "[the_person_choice.title] goes back to her desk and sits down when you're finished with her. She spreads her legs and starts to touch herself."
                         else:
                             "[the_person_choice.title] stumbles back to her desk and collapses into her chair, legs still quivering."
 
-                        if len(helpful_people > 1):
+                        if len(helpful_people) > 1:
                             "The other girls are still standing next to your desk, and you haven't exhausted yourself quite yet..."
                         else:
                             $ renpy.say("", helpful_people[0].title + " is still standing next to your desk, and you haven't exhausted yourself quite yet...")
@@ -3021,7 +3021,7 @@ label horny_at_work_crisis_label():
                         $ display_list.append(exit_option)
                         call screen person_choice(display_list, person_prefix = "Pick")
                         if _return == exit_option:
-                            if len(helpful_people > 1):
+                            if len(helpful_people) > 1:
                                 "You wave the girls back to their desk. They seem disappointed they didn't get a chance to service you."
                             else:
                                 "You wave her back to her desk. She seems disappointed that she didn't get a chance to service you."

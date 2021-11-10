@@ -104,7 +104,7 @@ label mom_sex_responses_oral(the_person):
             "[the_person.possessive_title] quivers underneath your tongue."
             the_person "Be gentle, that's a very sensitive area!"
         else:
-            the_person "You really should't [the_person.mc_title]... Maybe we should do something else?"
+            the_person "You really shouldn't [the_person.mc_title]... Maybe we should do something else?"
             "She quivers underneath your tongue, obviously enjoying your stimulation."
             the_person "Maybe just... just a little bit more..."
     elif response_value < 40:
@@ -1029,55 +1029,71 @@ label mom_sex_review(the_person, the_report):
 label mom_kissing_taboo_break(the_person):
     the_person "[the_person.mc_title], what are you doing?"
     mc.name "I want to kiss you."
-    the_person "Oh, well..."
-    "She turns her cheek to you."
-    the_person "It's so sweet of you to..."
-    "You press a finger to her chin and turn her back to you."
-    mc.name "I mean really kiss you, [the_person.title]."
-    the_person "Oh, I see..."
-    the_person "I'm sorry if I've been confusing, but we really can't do that..."
-    mc.name "You're the most important woman in the world to me. Other people never need to know, I just really want to feel close to you."
-    "Her eyes melt."
-    the_person "Oh sweetheart! I want to be close to you too! You know you'll always be my special man, right?"
-    the_person "Okay, we can kiss just a little bit if that's how you want to show your love. I understand how you feel."
-    the_person "And um... Let's just not tell anyone else about this, okay? There's nothing wrong with it, but other people might get the wrong idea."
-    mc.name "Of course [the_person.title]."
+    if the_person.event_triggers_dict.get("kissing_revisit_count", 0) == 0:
+
+        the_person "Oh, well..."
+        "She turns her cheek to you."
+        the_person "It's so sweet of you to..."
+        "You press a finger to her chin and turn her back to you."
+        mc.name "I mean really kiss you, [the_person.title]."
+        the_person "Oh, I see..."
+        the_person "I'm sorry if I've been confusing, but we really can't do that..."
+        mc.name "You're the most important woman in the world to me. Other people never need to know, I just really want to feel close to you."
+        "Her eyes melt."
+        the_person "Oh sweetheart! I want to be close to you too! You know you'll always be my special man, right?"
+        the_person "Okay, we can kiss just a little bit if that's how you want to show your love. I understand how you feel."
+        the_person "And um... Let's just not tell anyone else about this, okay? There's nothing wrong with it, but other people might get the wrong idea."
+        mc.name "Of course [the_person.title]."
+    else:
+        the_person "We can't. Not again, I said..."
+        mc.name "I know what you said, but I want to do it anyways."
+        mc.name "Just one more time, and that'll be it."
+        "[the_person.possessive_title] struggles with her feelings for a moment, then nods meekly."
+        the_person "Okay, just this one more time."
     return
 
 label mom_touching_body_taboo_break(the_person):
     "[the_person.mc_title], what are you doing? You shouldn't be touching me like this!"
-    if the_person.love > 20: # Love varient
-        mc.name "Why not? You love me, don't you?"
-        the_person "Of course I love you, but I'm still your mother!"
-        mc.name "Please [the_person.title]? I feel so lonely sometimes, and I feel loved when I'm close to you."
-        the_person "Oh [the_person.mc_title]... It's still not right though..."
-        mc.name "I know, but nobody else needs to know, right? We can keep this all a secret."
-        "You feel the last bit of resistance leave her body."
-        the_person "I guess you're just very... affectionate. I can't be angry about that."
-        mc.name "Thank you [the_person.title], you're the best."
-        the_person "It's just part of the way we bond as a mother and son. Yes, that's it..."
-        "She seems to be trying to convince herself more than you."
+    if the_person.event_triggers_dict.get("kissing_revisit_count", 0) == 0:
+        if the_person.love > 20: # Love varient
+            mc.name "Why not? You love me, don't you?"
+            the_person "Of course I love you, but I'm still your mother!"
+            mc.name "Please [the_person.title]? I feel so lonely sometimes, and I feel loved when I'm close to you."
+            the_person "Oh [the_person.mc_title]... It's still not right though..."
+            mc.name "I know, but nobody else needs to know, right? We can keep this all a secret."
+            "You feel the last bit of resistance leave her body."
+            the_person "I guess you're just very... affectionate. I can't be angry about that."
+            mc.name "Thank you [the_person.title], you're the best."
+            the_person "It's just part of the way we bond as a mother and son. Yes, that's it..."
+            "She seems to be trying to convince herself more than you."
 
 
-    else: # High slut varient
+        else: # High slut varient
+            mc.name "Why not? Don't you like it?"
+            the_person "That's... That's not the point! I'm your mother! I'm twice your age!"
+            mc.name "So? I think older women are hot."
+            the_person "That wasn't the important part! My son shouldn't be feeling me up..."
+            mc.name "Well you didn't answer me: do you like it?"
+            the_person "I..."
+            mc.name "It's okay if you do. I don't mind telling you I like touching you."
+            "You watch her struggle with herself for a moment before she answers."
+            the_person "I... Like how it feels. It's been a long time since someone touched me like this."
+            mc.name "There you go. We both like it, we're both adults. Nobody else ever needs to know."
+            "You feel the last bit of resistance leave her body."
+            the_person "Maybe you're right. Nobody else is going to find out?"
+            mc.name "Do you plan on telling someone?"
+            the_person "Of course not! Do you know what people would say if they knew my own son was... touching me?"
+            mc.name "Well I won't tell anyone either. This is just part of our mother-son bonding."
+    else:
         mc.name "Why not? Don't you like it?"
-        the_person "That's... That's not the point! I'm your mother! I'm twice your age!"
-        mc.name "So? I think older women are hot."
-        the_person "That wasn't the important part! My son shouldn't be feeling me up..."
-        mc.name "Well you didn't answer me: do you like it?"
-        the_person "I..."
-        mc.name "It's okay if you do. I don't mind telling you I like touching you."
-        "You watch her struggle with herself for a moment before she answers."
-        the_person "I... Like how it feels. It's been a long time since someone touched me like this."
-        mc.name "There you go. We both like it, we're both adults. Nobody else ever needs to know."
-        "You feel the last bit of resistance leave her body."
-        the_person "Maybe you're right. Nobody else is going to find out?"
-        mc.name "Do you plan on telling someone?"
-        the_person "Of course not! Do you know what people would say if they knew my own son was... touching me?"
-        mc.name "Well I won't tell anyone either. This is just part of our mother-son bonding."
+        the_person "We've talked about this [the_person.mc_title], we shouldn't... It's not right..."
+        mc.name "Just this once, alright... Please [the_person.title], I need it so badly."
+        "Her resistance only holds up for a few moments."
+        the_person "Just this once. Just this once..."
+        "She sounds like she's reassuring herself, not you."
     return
 
-label mom_touching_penis_taboo_break(the_person):
+label mom_touching_penis_taboo_break(the_person): #TODO: Should this taboo have a revisit?
     # She's in control here.
     if the_person.love > 30: # Love varient
         the_person "Oh my god, what am I doing!"
@@ -1106,237 +1122,287 @@ label mom_touching_penis_taboo_break(the_person):
     return
 
 label mom_touching_vagina_taboo_break(the_person):
-    the_person "Wait! You can't touch mommy there [the_person.mc_title]."
-    if the_person.love > 30:
-        mc.name "Why not? You trust me, don't you?"
-        the_person "I would trust you with my life sweetheart, but that's a very private place for a woman."
-        if the_person.has_taboo("touching_penis"):
-            "Almost as an afterthought, she remembers to add:"
-            the_person "And you're my son! You shouldn't be trying to touch your mom's..."
-            mc.name "Pussy."
-            the_person "Hey, who raised you to be so crass? I know I certainly didn't!"
+    if the_person.event_triggers_dict.get("oral_revisit_count", 0) == 0:
+        the_person "Wait! You can't touch mommy there [the_person.mc_title]."
+        if the_person.love > 30:
+            mc.name "Why not? You trust me, don't you?"
+            the_person "I would trust you with my life sweetheart, but that's a very private place for a woman."
+            if the_person.has_taboo("touching_penis"):
+                "Almost as an afterthought, she remembers to add:"
+                the_person "And you're my son! You shouldn't be trying to touch your mom's..."
+                mc.name "Pussy."
+                the_person "Hey, who raised you to be so crass? I know I certainly didn't!"
 
+            else:
+                mc.name "My cock is very private, but I let you touch that."
+                the_person "[the_person.mc_title], that's different. That's your mother taking care of you."
+                mc.name "But I feel the same way about you, I want to know that you're taken care of."
+                the_person "You shouldn't have to take care of me though, that's not your responsibility."
+            mc.name "Please [the_person.title], I just want to see how it feels with someone I trust."
+            "[the_person.possessive_title] takes a long moment to think, but you can see her resistance is breaking down."
+            the_person "I suppose... It's alright if it's just to show you what it's like. For when you meet a nice girl and want to impress her."
+            mc.name "Exactly. Thank you [the_person.title]."
         else:
-            mc.name "My cock is very private, but I let you touch that."
-            the_person "[the_person.mc_title], that's different. That's your mother taking care of you."
-            mc.name "But I feel the same way about you, I want to know that you're taken care of."
-            the_person "You shouldn't have to take care of me though, that's not your responsibility."
-        mc.name "Please [the_person.title], I just want to see how it feels with someone I trust."
-        "[the_person.possessive_title] takes a long moment to think, but you can see her resistance is breaking down."
-        the_person "I suppose... It's alright if it's just to show you what it's like. For when you meet a nice girl and want to impress her."
-        mc.name "Exactly. Thank you [the_person.title]."
+            mc.name "Why not? Don't you think it would feel good?"
+            the_person "Of course it would feel good, I..."
+            "Her eyes go wide and she shakes her head in disbelief."
+            the_person "What am I saying! You're my son, you shouldn't be touching me. Not even if it would feel good."
+            mc.name "If it would feel good for you, and I want to do it, why shouldn't I do it?"
+            the_person "Because... Because it's just not what a good mother should let her son do, okay?"
+            if the_person.has_taboo("touching_penis"):
+                mc.name "According to who? Why should anyone else tell us what we should enjoy doing together as a family?"
+                mc.name "It might not be \"normal\", but who cares about being normal. I just want to be with you."
+
+            else:
+                mc.name "But a good mother touches her sons cock?"
+                the_person "That was different! It is my responsibility to make sure you are taken care of."
+                mc.name "Well that felt good for me, and you wanted to do it. This is just the golden rule in action:"
+                mc.name "\"Do unto others as you would have them do unto you.\", Right?"
+
+            "She looks away and thinks for a long second, but you can see her resistance breaking down."
+            the_person "Okay... As long as you can keep this secret, you can touch me down there."
     else:
-        mc.name "Why not? Don't you think it would feel good?"
-        the_person "Of course it would feel good, I..."
-        "Her eyes go wide and she shakes her head in disbelief."
-        the_person "What am I saying! You're my son, you shouldn't be touching me. Not even if it would feel good."
-        mc.name "If it would feel good for you, and I want to do it, why shouldn't I do it?"
-        the_person "Because... Because it's just not what a good mother should let her son do, okay?"
-        if the_person.has_taboo("touching_penis"):
-            mc.name "According to who? Why should anyone else tell us what we should enjoy doing together as a family?"
-            mc.name "It might not be \"normal\", but who cares about being normal. I just want to be with you."
-
-        else:
-            mc.name "But a good mother touches her sons cock?"
-            the_person "That was different! It is my responsibility to make sure you are taken care of."
-            mc.name "Well that felt good for me, and you wanted to do it. This is just the golden rule in action:"
-            mc.name "\"Do unto others as you would have them do unto you.\", Right?"
-
-        "She looks away and thinks for a long second, but you can see her resistance breaking down."
-        the_person "Okay... As long as you can keep this secret, you can touch me down there."
+        the_person "Wait, we talked about this [the_person.mc_title]..."
+        mc.name "Come on [the_person.title], we both want this."
+        "She shakes her head, but the blush in her cheeks and the quiver in her voice tells you that's a lie."
+        mc.name "I just want to be with you [the_person.title], is that so bad?"
+        the_person "No, but... Oh, how did this happen again!"
+        "She sighs in defeat."
+        the_person "Okay, okay, you can touch my pussy. Now hurry up, before I think about it too much!"
     return
 
 label mom_sucking_cock_taboo_break(the_person):
     mc.name "[the_person.title], can you do something special for me?"
     the_person "Maybe, what do you want sweetheart?"
     mc.name "I want you to give me a blowjob."
-    if the_person.love > 40:
-        "She stares at you in disbelief for a moment."
-        the_person "I must have misheard you... A what?"
-        mc.name "A blowjob, [the_person.title]. You know, putting your mouth on my..."
-        the_person "I know what a blowjob is! I just... Have I really let this go so far that you think I would give you a blowjob?"
-        the_person "I'm your mother! You're my son! I could never do that to you!"
-        if not the_person.has_taboo("kissing"):
-            mc.name "That's what you said about us kissing..."
-            if not the_person.has_taboo("touching_penis"):
-                the_person "That was diff..."
-                mc.name "And what you said about feeling up my cock."
-                if not the_person.has_taboo("touching_vagina"):
-                    the_person "No, that wasn't... It was different!"
-                    mc.name "And it was what you said when I wanted to touch your pussy."
+    if the_person.event_triggers_dict.get("oral_revisit_count", 0) == 0:
+        if the_person.love > 40:
+            "She stares at you in disbelief for a moment."
+            the_person "I must have misheard you... A what?"
+            mc.name "A blowjob, [the_person.title]. You know, putting your mouth on my..."
+            the_person "I know what a blowjob is! I just... Have I really let this go so far that you think I would give you a blowjob?"
+            the_person "I'm your mother! You're my son! I could never do that to you!"
+            if not the_person.has_taboo("kissing"):
+                mc.name "That's what you said about us kissing..."
+                if not the_person.has_taboo("touching_penis"):
+                    the_person "That was diff..."
+                    mc.name "And what you said about feeling up my cock."
+                    if not the_person.has_taboo("touching_vagina"):
+                        the_person "No, that wasn't... It was different!"
+                        mc.name "And it was what you said when I wanted to touch your pussy."
+
+            else:
+                mc.name "I'm not normal [the_person.title], and I don't think you are either. Normal families don't feel like we do."
+
+            mc.name "So maybe we should stop pretending that we have a normal mother-son relationship and embrace what we do have."
+            "You see something in her eyes break."
+            the_person "You're right, we aren't normal. So... What do we do? Where do we go from here?"
+            mc.name "You've given a blowjob before, right?"
+            "She nods meekly."
+            the_person "When I was younger. It's been a long time..."
+            mc.name "Then you know what to do. Just kneel down, put slide your lips onto it, and it'll all come back to you."
+            "[the_person.possessive_title] grabs your head and kisses you passionately. You wrap your arms around her reciprocate."
+            "She finally breaks the kiss, pulling back her head and staring into your eyes."
+            the_person "I love you [the_person.mc_title]."
+            mc.name "I love you too [the_person.title]. I've loved you my whole life."
 
         else:
-            mc.name "I'm not normal [the_person.title], and I don't think you are either. Normal families don't feel like we do."
+            the_person "I'm sorry, I think I misheard you."
+            mc.name "I don't think you did. I want you to give me a blowjob."
+            "She shakes her head in disbelief."
+            the_person "Come on [the_person.mc_title], you know I shouldn't do that. No matter how much I love you."
+            if not the_person.has_taboo("kissing"):
+                mc.name "That's what you said about us kissing, but you liked doing that."
+                if not the_person.has_taboo("touching_penis"):
+                    the_person "I did, but..."
+                    mc.name "And it's what you said about feeling up my cock, but I think we both had a good time with that."
+                    if not the_person.has_taboo("touching_vagina"):
+                        the_person "It was very impressive... But that doesn't mean we should go any further! Does it?"
+                        mc.name "We went further when I touched your pussy, and you got really turned on by that, didn't you?"
 
-        mc.name "So maybe we should stop pretending that we have a normal mother-son relationship and embrace what we do have."
-        "You see something in her eyes break."
-        the_person "You're right, we aren't normal. So... What do we do? Where do we go from here?"
-        mc.name "You've given a blowjob before, right?"
-        "She nods meekly."
-        the_person "When I was younger. It's been a long time..."
-        mc.name "Then you know what to do. Just kneel down, put slide your lips onto it, and it'll all come back to you."
-        "[the_person.possessive_title] grabs your head and kisses you passionately. You wrap your arms around her reciprocate."
-        "She finally breaks the kiss, pulling back her head and staring into your eyes."
-        the_person "I love you [the_person.mc_title]."
-        mc.name "I love you too [the_person.title]. I've loved you my whole life."
+            else:
+                mc.name "I'm not normal [the_person.title], and I don't think you are either. We do lots of things normal families shouldn't do."
 
+            mc.name "So let's stop worrying about what we should or shouldn't do. It's all bullshit anyways."
+            "[the_person.possessive_title] stares intently into your eyes as she listens to you."
+            mc.name "Let's just do what we want, and be the happiest mother and son on the whole planet."
+            the_person "This... Really makes you happy?"
+            mc.name "It does, more than I could ever explain."
+            the_person "It makes me happy too. You're right, I should never have been worried when happiness was right in front of me."
+            "[the_person.possessive_title] grabs your head and kisses you passionately. You wrap your arms around her reciprocate."
+            "She finally breaks the kiss, pulling back her head and staring into your eyes."
+            the_person "It's been a long time, but I think I still remember how to suck a man off."
+            mc.name "Get on your knees and I'm sure it'll come back to you."
     else:
-        the_person "I'm sorry, I think I misheard you."
-        mc.name "I don't think you did. I want you to give me a blowjob."
-        "She shakes her head in disbelief."
-        the_person "Come on [the_person.mc_title], you know I shouldn't do that. No matter how much I love you."
-        if not the_person.has_taboo("kissing"):
-            mc.name "That's what you said about us kissing, but you liked doing that."
-            if not the_person.has_taboo("touching_penis"):
-                the_person "I did, but..."
-                mc.name "And it's what you said about feeling up my cock, but I think we both had a good time with that."
-                if not the_person.has_taboo("touching_vagina"):
-                    the_person "It was very impressive... But that doesn't mean we should go any further! Does it?"
-                    mc.name "We went further when I touched your pussy, and you got really turned on by that, didn't you?"
-
-        else:
-            mc.name "I'm not normal [the_person.title], and I don't think you are either. We do lots of things normal families shouldn't do."
-
-        mc.name "So let's stop worrying about what we should or shouldn't do. It's all bullshit anyways."
-        "[the_person.possessive_title] stares intently into your eyes as she listens to you."
-        mc.name "Let's just do what we want, and be the happiest mother and son on the whole planet."
-        the_person "This... Really makes you happy?"
-        mc.name "It does, more than I could ever explain."
-        the_person "It makes me happy too. You're right, I should never have been worried when happiness was right in front of me."
-        "[the_person.possessive_title] grabs your head and kisses you passionately. You wrap your arms around her reciprocate."
-        "She finally breaks the kiss, pulling back her head and staring into your eyes."
-        the_person "It's been a long time, but I think I still remember how to suck a man off."
-        mc.name "Get on your knees and I'm sure it'll come back to you."
+        the_person "Again? [the_person.mc_title], we talked about this."
+        mc.name "Please [the_person.title], I really need you to take care of me right now."
+        "She shakes her head, in disbelief rather than refusal."
+        the_person "Why am I even considering this? What kind of mother am I?"
+        mc.name "The kind that really loves her son. It would make me so happy [the_person.title]."
+        "You watch her resolve break down. Her eyes soften and she nods."
+        the_person "I can't say no to you, that's the problem."
+        mc.name "I don't think it's a problem. Now get on your knees, please."
     return
 
 label mom_licking_pussy_taboo_break(the_person):
-    if the_person.love > 40:
-        the_person "You can look, but you can't do any more than that sweetheart."
+    if the_person.event_triggers_dict.get("oral_revisit_count", 0) == 0:
+        if the_person.love > 40:
+            the_person "You can look, but you can't do any more than that sweetheart."
 
-        if the_person.has_taboo("sucking_cock"):
-            mc.name "Why not? Your pussy looks really sweet, I don't mind giving it a taste."
-            the_person "[the_person.mc_title]! I'm your mother, that's no way to talk to me!"
-            mc.name "I'm sorry. I just want to find a way make you feel as special as you are to me."
-            the_person "Oh sweetheart... I'm very flattered, but there are other things we could do, aren't there?"
-            mc.name "Why are those things okay for us to do, but this isn't?"
-            the_person "Well... I... I don't know [the_person.mc_title]."
-            mc.name "Exactly. Just relax and let me treat you [the_person.title]. Let me show you how much I love you by making you feel good."
-            "She sighs loudly and nods."
-            the_person "Fine, but only because you're being so persistent. That attitude is going to make some girl very happy one day."
-            mc.name "I just want to make you happy today."
-            the_person "Aww."
+            if the_person.has_taboo("sucking_cock"):
+                mc.name "Why not? Your pussy looks really sweet, I don't mind giving it a taste."
+                the_person "[the_person.mc_title]! I'm your mother, that's no way to talk to me!"
+                mc.name "I'm sorry. I just want to find a way make you feel as special as you are to me."
+                the_person "Oh sweetheart... I'm very flattered, but there are other things we could do, aren't there?"
+                mc.name "Why are those things okay for us to do, but this isn't?"
+                the_person "Well... I... I don't know [the_person.mc_title]."
+                mc.name "Exactly. Just relax and let me treat you [the_person.title]. Let me show you how much I love you by making you feel good."
+                "She sighs loudly and nods."
+                the_person "Fine, but only because you're being so persistent. That attitude is going to make some girl very happy one day."
+                mc.name "I just want to make you happy today."
+                the_person "Aww."
 
 
+            else:
+                mc.name "Why not? You've had your lips around my cock. Just relax and let me repay the favour, okay?"
+                the_person "You... You really don't mind doing that for me?"
+                mc.name "Of course not! You're the most important woman in my life [the_person.title], I want to make you feel special."
+                "She thinks about it, then nods happily."
+                the_person "Okay. That would be really nice sweetheart."
         else:
-            mc.name "Why not? You've had your lips around my cock. Just relax and let me repay the favour, okay?"
-            the_person "You... You really don't mind doing that for me?"
-            mc.name "Of course not! You're the most important woman in my life [the_person.title], I want to make you feel special."
-            "She thinks about it, then nods happily."
-            the_person "Okay. That would be really nice sweetheart."
+            the_person "Get a good look, if that's what you're after."
+            mc.name "I want to do more than look. I want to know how you taste."
+            the_person "Oh [the_person.mc_title]! I'm flattered, but you don't have to do this just to try and impress me."
+
+            if the_person.has_taboo("sucking_cock"):
+                mc.name "I don't want to do it to impress you, I want to do it to make you feel good. It would feel good, wouldn't it?"
+                the_person "It would... But don't you think you'd enjoy doing something else more?"
+                mc.name "This is for both of us to enjoy. Just relax and let me take care of you for once."
+                the_person "I must have raised you right. You're going to make some girl very happy one day."
+
+
+            else:
+                mc.name "You've done the same for me, I just want to return the favour."
+                the_person "Well, men who think like you are very rare. You're going to make some girl very happy one day."
+            mc.name "For today, I just want to make you happy."
+            the_person "Aww. You're too sweet. Okay then, you can do whatever you'd like."
+
     else:
-        the_person "Get a good look, if that's what you're after."
-        mc.name "I want to do more than look. I want to know how you taste."
-        the_person "Oh [the_person.mc_title]! I'm flattered, but you don't have to do this just to try and impress me."
-
-        if the_person.has_taboo("sucking_cock"):
-            mc.name "I don't want to do it to impress you, I want to do it to make you feel good. It would feel good, wouldn't it?"
-            the_person "It would... But don't you think you'd enjoy doing something else more?"
-            mc.name "This is for both of us to enjoy. Just relax and let me take care of you for once."
-            the_person "I must have raised you right. You're going to make some girl very happy one day."
-
-
-        else:
-            mc.name "You've done the same for me, I just want to return the favour."
-            the_person "Well, men who think like you are very rare. You're going to make some girl very happy one day."
-        mc.name "For today, I just want to make you happy."
-        the_person "Aww. You're too sweet. Okay then, you can do whatever you'd like."
+        the_person "You just want to look, right?"
+        mc.name "Where's the fun in that? I want to eat you out [the_person.title]."
+        the_person "We talked about this [the_person.mc_title], we can't... You can't be doing things like that with me."
+        mc.name "But this is just for you, so it's fine. I want to make you feel good, that's all."
+        "She seems torn for a moment, but finally she sighs in defeat."
+        the_person "Oh... Why do I let you get away with this?"
+        mc.name "Because you're a great mother [the_person.title]."
+        the_person "I don't always feel like one..."
+        mc.name "Relax and let me fix that. You'll feel great after this."
     return
 
 label mom_vaginal_sex_taboo_break(the_person):
     #TODO: Add a "How do we tell your sister?" Event after this has been triggered.
-    if the_person.love > 60:
-        the_person "We should stop... If we do this there is no going back to the way things were."
-        mc.name "I don't want to go back [the_person.title]. I want to be with you."
-        the_person "I... I do too, but you shouldn't be taking your mother as your lover."
-        mc.name "I want to be your lover, your son, your best friend, and your confidant."
-        mc.name "I want to be your whole world, just like you're already mine."
-        the_person "Aww... How did I raise such a romantic gentleman?"
-        the_person "Okay, if you're ready then I'm ready. Take me [the_person.mc_title]!"
+    if the_person.event_triggers_dict.get("vaginal_revisit_count", 0) == 0:
+        if the_person.love > 60:
+            the_person "We should stop... If we do this there is no going back to the way things were."
+            mc.name "I don't want to go back [the_person.title]. I want to be with you."
+            the_person "I... I do too, but you shouldn't be taking your mother as your lover."
+            mc.name "I want to be your lover, your son, your best friend, and your confidant."
+            mc.name "I want to be your whole world, just like you're already mine."
+            the_person "Aww... How did I raise such a romantic gentleman?"
+            the_person "Okay, if you're ready then I'm ready. Take me [the_person.mc_title]!"
 
 
+        else:
+            the_person "I should stop you here... This is so wrong. Isn't it?"
+            mc.name "I don't think there's anything wrong. Why do you?"
+            the_person "My son has his cock out and I'm actually thinking about letting him have sex with me!"
+            the_person "Isn't that crazy!? Did we both go insane?"
+            mc.name "I'm not just your son though, am I? We've done so much together already, isn't this just natural?"
+            the_person "Nothing about this is natural..."
+            mc.name "Yeah it is. It's natural for a young, virile man to want to fuck a beautiful woman like you."
+            mc.name "And it's natural for you, a beautiful woman, to want to get fucked by someone she loves and trusts."
+            mc.name "You love me, don't you?"
+            the_person "I do..."
+            mc.name "Then there's no good reason to hold back our love. We need to follow our hearts and do what makes us happy."
+            mc.name "[the_person.title], you make me happy."
+            the_person "You make me happy too. Okay, if you're ready then I think I'm ready."
+            the_person "Come and fuck your mother!"
     else:
-        the_person "I should stop you here... This is so wrong. Isn't it?"
-        mc.name "I don't think there's anything wrong. Why do you?"
-        the_person "My son has his cock out and I'm actually thinking about letting him have sex with me!"
-        the_person "Isn't that crazy!? Did we both go insane?"
-        mc.name "I'm not just your son though, am I? We've done so much together already, isn't this just natural?"
-        the_person "Nothing about this is natural..."
-        mc.name "Yeah it is. It's natural for a young, virile man to want to fuck a beautiful woman like you."
-        mc.name "And it's natural for you, a beautiful woman, to want to get fucked by someone she loves and trusts."
-        mc.name "You love me, don't you?"
-        the_person "I do..."
-        mc.name "Then there's no good reason to hold back our love. We need to follow our hearts and do what makes us happy."
-        mc.name "[the_person.title], you make me happy."
-        the_person "You make me happy too. Okay, if you're ready then I think I'm ready."
-        the_person "Come and fuck your mother!"
+        the_person "We need to stop [the_person.mc_title]. We talked about this, this is too far!"
+        mc.name "You don't want to stop here though, do you?"
+        "She moans and shrugs."
+        the_person "I don't know what I want... I want to be a good mother!"
+        mc.name "Then let me fuck you [the_person.title]. That will make me the happiest boy in the world."
+        "Another long pause, then she moans softly and nods."
+        the_person "Okay, you can fuck me... Hurry up before I change my mind!"
     return
 
 label mom_anal_sex_taboo_break(the_person):
-    if the_person.love > 60:
-        the_person "Oh my god, you mean my butt! I... That's not where that goes, [the_person.mc_title]!"
-        if the_person.has_taboo("vaginal_sex"):
-            mc.name "Should I slide it into your pussy then?"
-            the_person "Of course not! You're my son, which means we absolutely should not be having sex."
-            mc.name "That's why I want to try anal. I couldn't get you pregnant, so it's not really incest."
-            mc.name "I love you so much [the_person.title], I want to try every way possible to be close to each other."
-            the_person "I guess it wouldn't really count. It's no different than me using my hand or my boobs, right?"
-            mc.name "That's what I'm saying. Have you ever tried this before?"
+    if the_person.event_triggers_dict.get("anal_revisit_count", 0) == 0:
+        if the_person.love > 60:
+            the_person "Oh my god, you mean my butt! I... That's not where that goes, [the_person.mc_title]!"
+            if the_person.has_taboo("vaginal_sex"):
+                mc.name "Should I slide it into your pussy then?"
+                the_person "Of course not! You're my son, which means we absolutely should not be having sex."
+                mc.name "That's why I want to try anal. I couldn't get you pregnant, so it's not really incest."
+                mc.name "I love you so much [the_person.title], I want to try every way possible to be close to each other."
+                the_person "I guess it wouldn't really count. It's no different than me using my hand or my boobs, right?"
+                mc.name "That's what I'm saying. Have you ever tried this before?"
 
-
-        else:
-            mc.name "Trust me [the_person.title], we can make it work."
-            the_person "Isn't my pussy enough? Why do you want to try anal all of a sudden?"
-            if the_person.has_taboo("condomless_sex"):
-                mc.name "If I'm fucking your pussy I need to wear a condom, but I don't need one if we do it like this."
-                the_person "Does it really feel that much better?"
-                mc.name "It really does."
-                the_person "Okay, for your happiness I'll give it a try."
 
             else:
-                mc.name "If I'm fucking your pussy I might get you pregnant, but with anal that can't hapen."
-                the_person "Or you could put on a condom."
-                mc.name "Those feel like crap though [the_person.title]. I want to feel you wrapped around my cock."
-                the_person "Well... Okay, if it would make you happy we can give it a try."
-            mc.name "Thank you [the_person.title]. Have you ever done this before?"
+                mc.name "Trust me [the_person.title], we can make it work."
+                the_person "Isn't my pussy enough? Why do you want to try anal all of a sudden?"
+                if the_person.has_taboo("condomless_sex"):
+                    mc.name "If I'm fucking your pussy I need to wear a condom, but I don't need one if we do it like this."
+                    the_person "Does it really feel that much better?"
+                    mc.name "It really does."
+                    the_person "Okay, for your happiness I'll give it a try."
+
+                else:
+                    mc.name "If I'm fucking your pussy I might get you pregnant, but with anal that can't hapen."
+                    the_person "Or you could put on a condom."
+                    mc.name "Those feel like crap though [the_person.title]. I want to feel you wrapped around my cock."
+                    the_person "Well... Okay, if it would make you happy we can give it a try."
+                mc.name "Thank you [the_person.title]. Have you ever done this before?"
 
 
-        "[the_person.possessive_title] shakes her head sheepishly."
-        the_person "No. I never thought I would either."
-        mc.name "I'll be as gentle as possible then."
-        the_person "Thank you. I love you [the_person.mc_title]."
-        mc.name "I love you [the_person.title]."
+            "[the_person.possessive_title] shakes her head sheepishly."
+            the_person "No. I never thought I would either."
+            mc.name "I'll be as gentle as possible then."
+            the_person "Thank you. I love you [the_person.mc_title]."
+            mc.name "I love you [the_person.title]."
+        else:
+            the_person "Whoa! You mean you want to try anal? Right now?"
+            if the_person.has_taboo("vaginal_sex"):
+                mc.name "Why not? It's not really incest if you can't get pregnant from it, right?"
+                the_person "I kind of see what you mean..."
+
+            else:
+                if the_person.has_taboo("condomless_sex"):
+                    mc.name "Why not? If I want to fuck your pussy I need to wear a condom, and they really kill the sensation."
+                    mc.name "If we do anal I can go in raw and feel you wrapped around me."
+
+                else:
+                    mc.name "Why not? If I fuck your pussy I might get you pregnant, but that can't happen with anal."
+                    the_person "Or you could wear a condom."
+                    mc.name "They really kill the sensation. I want to feel you wrapped around my cock."
+
+            the_person "That does sound nice..."
+            mc.name "Have you ever tried anal before?"
+            "She shakes her head."
+            the_person "No. I've thought about it, but I've never been brave enough to try it."
+            mc.name "I'll be as gentle as possible then, so you have time to adjust."
+            the_person "It feels so naughty to give my anal vaginity to my own son. It's kind of turning me on."
+
     else:
-        the_person "Whoa! You mean you want to try anal? Right now?"
-        if the_person.has_taboo("vaginal_sex"):
-            mc.name "Why not? It's not really incest if you can't get pregnant from it, right?"
-            the_person "I kind of see what you mean..."
-
-        else:
-            if the_person.has_taboo("condomless_sex"):
-                mc.name "Why not? If I want to fuck your pussy I need to wear a condom, and they really kill the sensation."
-                mc.name "If we do anal I can go in raw and feel you wrapped around me."
-
-            else:
-                mc.name "Why not? If I fuck your pussy I might get you pregnant, but that can't happen with anal."
-                the_person "Or you could wear a condom."
-                mc.name "They really kill the sensation. I want to feel you wrapped around my cock."
-
-        the_person "That does sound nice..."
-        mc.name "Have you ever tried anal before?"
-        "She shakes her head."
-        the_person "No. I've thought about it, but I've never been brave enough to try it."
-        mc.name "I'll be as gentle as possible then, so you have time to adjust."
-        the_person "It feels so naughty to give my anal vaginity to my own son. It's kind of turning me on."
+        the_person "We shouldn't... not again."
+        mc.name "We could just fuck..."
+        the_person "No! We shouldn't do that either!"
+        mc.name "Then what am I suppose to do [the_person.title]? You got me so hard, and need you to take care of me."
+        mc.name "If I fuck your ass it's not like we're really having sex. Then you're being a good mother and protecting us both."
+        "She moans and thinks for a moment."
+        the_person "Okay... Just so we don't accidentally fuck - I mean have sex!"
     return
 
 label mom_condomless_sex_taboo_break(the_person):

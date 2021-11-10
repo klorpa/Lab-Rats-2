@@ -479,7 +479,7 @@ label friends_help_friends_be_sluts_label():
                 elif person_two.effective_sluttiness() < 40:
                     # The sluttier girl is talking about the less slutty girls tits when you walk in. She wants you to give a comparison, the less slutty girl begrudgingly agrees
                     # Note: At high love she hints that she's doing this as a favour to you.
-                    $ the_group.draw_group(person_one)
+                    $ the_group.draw_group()
                     if rank_tits(person_one.tits) < rank_tits(person_two.tits):
                         # The slutty girl wants smaller, perkier tits.
                         person_one "Look at them though, they're the perfect shape. Mine just don't have the same perk yours do."

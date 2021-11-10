@@ -101,7 +101,10 @@ label mom_room_search_description():
 
             if the_person.event_triggers_dict.get("known_computer_password", False): #If you know the password at this point, no problem logging in."
                 "COMPUTER" "WELCOME [the_person.title]!" (what_style = "text_message_style")
-                if the_person.sluttiness < 15: # Nothing interesting to find
+
+                if the_person.event_triggers_dict.get("mom_vaginal_quest_active", False) and the_person.event_triggers_dict.get("mom_vaginal_quest_progress", 0) == 0:
+                    call mom_vaginal_taboo_break_revisit_quest_1(the_person)
+                elif the_person.sluttiness < 15: # Nothing interesting to find
                     "[the_person.possessive_title] doesn't keep much on her computer, but you spend a few minutes poking through files anyways."
                     "You don't find anything other than reports from work and the family budget for the month."
                     "She's cleared her search history as well. Nothing interesting to find."
@@ -147,7 +150,7 @@ label mom_room_search_description():
                     "Each one has a video loaded, and each video features an older busty woman getting fucked in a variety of interesting ways."
                     "You flick through the tabs, noting which videos are starting half way through."
                     if the_person.discover_opinion(the_person.get_random_opinion(only_positive = True, include_known = False, include_sexy = True, include_normal = False)):
-                        "Seeing [the_person.title]'s prefernece in porn has given you some insight into her."
+                        "Seeing [the_person.title]'s preference in porn has given you some insight into her."
                     else:
                         "Even you're surprised at how hard core some of the videos are. You have a hard time imagining [the_person.possessive_title] sitting down and watching them."
                         $ mc.change_locked_clarity(10)

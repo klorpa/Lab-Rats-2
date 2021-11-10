@@ -1,6 +1,73 @@
 #Contains all of the role events and actions related to the main Mom storylin.
 
 init -2 python:
+    def mom_on_day(the_person):
+        # Set up taboo break revisits if taboos have been broken.
+        if the_person.has_broken_taboo(["touching_body","kissing","bare_pussy","bare_tits","touching_vagina"]) and not the_person.event_triggers_dict.get("kissing_revisit_complete", False): #Checks if they have all of these taboos or not.
+            if the_person.has_role(mom_girlfriend_role):
+                the_person.event_triggers_dict["kissing_revisit_complete"] = True
+            else:
+                broken_taboos = the_person.event_triggers_dict.get("kissing_revisit_restore_taboos",[]) #Note: this will result in duplicates sometimes.
+                if the_person.has_broken_taboo("bare_tits"):
+                    broken_taboos.append("bare_tits")
+                if the_person.has_broken_taboo("bare_pussy"):
+                    broken_taboos.append("bare_pussy")
+                if the_person.has_broken_taboo("kissing"):
+                    broken_taboos.append("kissing")
+                if the_person.has_broken_taboo("touching_body"):
+                    broken_taboos.append("touching_body")
+                if the_person.has_broken_taboo("touching_vagina"):
+                    broken_taboos.append("touching_vagina")
+
+                taboo_revisit_event = Action("mom kissing taboo revisit", mom_kissing_taboo_revisit_requirement, "mom_kissing_taboo_break_revisit")
+                if not the_person.has_queued_event(taboo_revisit_event):
+                    the_person.event_triggers_dict["kissing_revisit_count"] = the_person.event_triggers_dict.get("kissing_revisit_count",0) + 1
+                    the_person.on_room_enter_event_list.append(taboo_revisit_event)
+                    for a_taboo in broken_taboos:
+                        the_person.restore_taboo(a_taboo, add_to_log = False)
+                the_person.event_triggers_dict["kissing_revisit_restore_taboos"] = broken_taboos
+
+        if the_person.has_broken_taboo(["sucking_cock", "licking_pussy"]) and not the_person.event_triggers_dict.get("oral_revisit_complete", False):
+            if the_person.has_role(mom_girlfriend_role):
+                the_person.event_triggers_dict["oral_revisit_complete"] = True
+            else:
+                broken_taboos = the_person.event_triggers_dict.get("oral_revisit_restore_taboos",[])
+                if the_person.has_broken_taboo("sucking_cock"):
+                    broken_taboos.append("sucking_cock")
+                if the_person.has_broken_taboo("licking_pussy"):
+                    broken_taboos.append("licking_pussy")
+                taboo_revisit_event = Action("mom oral taboo revisit", mom_oral_taboo_revisit_requirement, "mom_oral_taboo_break_revisit")
+                if not the_person.has_queued_event(taboo_revisit_event):
+                    for a_taboo in broken_taboos:
+                        the_person.restore_taboo(a_taboo, add_to_log = False)
+                    the_person.event_triggers_dict["oral_revisit_count"] = the_person.event_triggers_dict.get("oral_revisit_count", 0) + 1
+                    the_person.on_room_enter_event_list.append(taboo_revisit_event)
+                the_person.event_triggers_dict["oral_revisit_restore_taboos"] = broken_taboos
+
+        if the_person.has_broken_taboo("anal_sex") and not the_person.event_triggers_dict.get("anal_revisit_complete", False):
+            if the_person.has_role(mom_girlfriend_role):
+                the_person.event_triggers_dict["anal_revisit_complete"] = True
+            else:
+                taboo_revisit_event = Action("mom anal taboo revisit", mom_anal_taboo_revisit_requirement, "mom_anal_taboo_break_revisit")
+                if not the_person.has_queued_event(taboo_revisit_event):
+                    the_person.restore_taboo("anal_sex", add_to_log = False)
+                    the_person.event_triggers_dict["anal_revisit_count"] = the_person.event_triggers_dict.get("anal_revisit_count", 0) + 1
+                    the_person.on_room_enter_event_list.append(taboo_revisit_event)
+
+        if the_person.has_broken_taboo("vaginal_sex") and not the_person.event_triggers_dict.get("vaginal_revisit_complete", False):
+            if the_person.has_role(mom_girlfriend_role):
+                the_person.event_triggers_dict["vaginal_revisit_complete"] = True
+            else:
+                taboo_revisit_event = Action("mom vaginal taboo revisit", mom_vaginal_taboo_revisit_requirement, "mom_vaginal_taboo_break_revisit")
+                if not the_person.has_queued_event(taboo_revisit_event):
+                    the_person.restore_taboo("vaginal_sex", add_to_log = False)
+                    the_person.event_triggers_dict["vaginal_revisit_count"] = the_person.event_triggers_dict.get("vaginal_revisit_count", 0) + 1
+                    the_person.on_room_enter_event_list.append(taboo_revisit_event)
+
+
+        return
+
+init -2 python:
     #MOM ACTION REQUIREMENTS
     def mom_weekly_pay_requirement(the_person):
         if day%7 == 5: #It is the end of the day on friday
@@ -183,6 +250,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 mc.name "I want you to show off yourself off to me, how does that sound?"
                 the_person "Fair is fair, but I'll need a little extra if you want to see anything... inappropriate."
                 $ mc.business.funds += -100
+                $ the_person.change_obedience(1)
                 "You hand over the cash and sit back while [the_person.possessive_title] entertains you."
             else:
                 $ mc.business.event_triggers_dict["Mom_Strip"] = 1
@@ -190,9 +258,11 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 the_person "Oh my god, I've raised such a dirty boy. How about I pose for you a bit, and if you want to see more you can contribute a little extra."
                 mc.name "Sounds like a good deal Mom."
                 $ mc.business.funds += -100
+                $ the_person.change_obedience(1)
                 "You hand over the cash and sit back while [the_person.possessive_title] entertains you."
 
-            call pay_strip_scene(the_person) from _call_pay_strip_scene_2
+            call strip_tease(the_person, for_pay = True)
+
 
         "Strip for me. -$100 (disabled)" if mc.business.funds <100:
             pass
@@ -760,7 +830,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 mc.name "Sounds good [the_mom.title]."
                 $ the_mom.change_love(1 + mc.charisma)
                 "You spend the rest of the evening with [the_mom.possessive_title], sitting on the couch, watching TV, and chatting."
-                #TODO: Add a proper Mom date that this leads into
+                return True
 
             "Tell her no.":
                 mc.name "Sorry [the_mom.title], but I just can't cancel my plans this suddenly."
@@ -1040,7 +1110,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                         $ strip_list = the_mom.outfit.get_tit_strip_list()
                         $ generalised_strip_description(the_mom, strip_list)
                     $ mc.change_locked_clarity(20)
-                    the_mom "There, now you have something to oggle while I get you off."
+                    the_mom "There, now you have something to ogle while I get you off."
                     if not the_mom.outfit.vagina_visible():
                         menu:
                             "Order her to strip completely." if the_mom.obedience >= 140:

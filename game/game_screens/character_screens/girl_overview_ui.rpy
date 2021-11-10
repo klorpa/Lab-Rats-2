@@ -72,12 +72,15 @@ screen person_info_detailed(the_person):
                     text "Kids: [the_person.kids]" style "menu_text_style"
                     #TODO: Decide how much of this information we want to give to the player directly and how much we want to have delivered in game.
                     if persistent.pregnancy_pref > 0:
-                        if persistent.pregnancy_pref == 1:
-                            text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
-                        if persistent.pregnancy_pref == 2:
-                            $ modified_fertility = the_person.calculate_realistic_fertility()
-                            text "Fertility: " + str(round(modified_fertility)) + "%" style "menu_text_style"
-                            text "Monthly Peak Day: " + str(the_person.ideal_fertile_day ) style "menu_text_style"
+                        if the_person.event_triggers_dict.get("preg_knows", False):
+                            text "Pregnant, " + str(the_person.event_triggers_dict["preg_start_date"] - day) + " Days" style "menu_text_style"
+                        else:
+                            if persistent.pregnancy_pref == 1:
+                                text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
+                            if persistent.pregnancy_pref == 2:
+                                $ modified_fertility = the_person.calculate_realistic_fertility()
+                                text "Fertility: " + str(round(modified_fertility)) + "%" style "menu_text_style"
+                                text "Monthly Peak Day: " + str(the_person.ideal_fertile_day ) style "menu_text_style"
                             #TODO: replace this with less specific info. Replace fertility peak with the_person.fertility_cycle_string()
 
                         if the_person.event_triggers_dict.get("birth_control_status", None) is None:

@@ -296,7 +296,7 @@ init -2 python:
             self.spend_clarity(clarity_cost)
 
         def buy_point_cost(self):
-            point_cost = 50 * (2**(self.clarity_purchase_level/2.0))
+            point_cost = __builtin__.int(50 * (2**(self.clarity_purchase_level/2.0)))
             return point_cost
 
         def improve_stat(self, stat_string, amount = 1):

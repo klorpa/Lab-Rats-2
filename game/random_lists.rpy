@@ -173,6 +173,14 @@ init -2:
         list_of_names.append("Ariel")
         list_of_names.append("Jade")
         list_of_names.append("Kaia")
+        list_of_names.append("Madeline")
+        list_of_names.append("Nu")
+        list_of_names.append("Piper")
+        list_of_names.append("Kelly")
+        list_of_names.append("Claire")
+        list_of_names.append("Elizabeth")
+        list_of_names.append("Hayley")
+
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -313,6 +321,13 @@ init -2:
         list_of_last_names.append("Rose")
         list_of_last_names.append("Collins")
         list_of_last_names.append("Jones")
+        list_of_last_names.append("Cakes")
+        list_of_last_names.append("Nguyen")
+        list_of_last_names.append("Perri")
+        list_of_last_names.append("Archer")
+        list_of_last_names.append("Grant")
+        list_of_last_names.append("Black")
+        list_of_last_names.append("Williams")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -637,6 +652,8 @@ init -2:
         sexy_opinions_list.append("cheating on men") #Has gameplay effect
         sexy_opinions_list.append("anal creampies") #Has gameplay effect
         sexy_opinions_list.append("incest") #Has gameplay effect
+        #TODO: Add an "open relationships" sexy opinion. Reduces penalties of a girl seeing you cheating on her (at high levels add a special training to give a "harem member" role).
+        #TODO: Add a "voyeurism" sexy opinion. Increases effects of watching someone having sex.
 
         def get_random_sexy_opinion():
             return get_random_from_list(sexy_opinions_list)
@@ -1089,6 +1106,19 @@ init 1 python:
         christina.set_schedule(christina.home, times = [1,2,3]) #She's a stay-at-home Mom.
         christina.home.add_person(christina)
         #Note: She plays an important role to Emily's story, but she is just given the normal affair role during the game.
+
+        ### IRIS ###
+        #iris_wardrobe = wardrobe_from_xml("Iris_Wardrobe")
+        iris_base = Outfit("Iris's accessories") #TODO: Decide what accessories we want her to haven
+
+        global iris
+        iris = create_random_person(name = "Iris", age = 18, body_type = "thin_body", face_style = "Face_7", tits = "DD", height = 0.9, hair_colour = "blond", hair_style = twintail, pubes_style = shaved_pubes, skin = "white", \
+            eyes = "green", personality = relaxed_personality, stat_array = [6,2,1], skill_array = [1,4,0,0,1], sex_array = [4,4,0,0], \
+            start_sluttiness = 5, start_obedience = -20, start_happiness = 120, start_love = 0, relationship = "Single", kids = 0)
+
+        iris.add_role(instapic_role)
+        iris.add_role(dikdok_role)
+        # NOTE: SHe doesn't exist on the map until you run into her at the mall doing one of Lily's events. (TODO: Add an alternative way to intro that if you avoid that quest.)
 
         ### LILY ###
         lily_wardrobe = wardrobe_from_xml("Lily_Wardrobe")

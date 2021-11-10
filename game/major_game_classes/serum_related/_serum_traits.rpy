@@ -88,10 +88,16 @@ init -1:
 
         ## love_potion_functions ##
         def love_potion_on_apply(the_person, the_serum, add_to_log):
-            the_person.change_love(20, add_to_log)
+            change_amount = 20
+            if the_person.love + change_amount > 100:
+                change_amount = 100 - the_person.love
+            the_serum.effects_dict["love_potion_change"] = change_amount
+
+            the_person.change_love(change_amount, add_to_log)
 
         def love_potion_on_remove(the_person, the_serum, add_to_log):
-            the_person.change_love(-20, add_to_log)
+            change_amount = the_serum.effects_dict.get("love_potion_change", 20)
+            the_person.change_love(-change_amount, add_to_log)
 
 
         ## off_label_drugs_functions ##
@@ -458,9 +464,15 @@ init -1:
             the_person.fertility_percent += 70
             the_person.lactation_sources += 3
 
-            the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
-            the_person.tits = get_larger_tits(the_person.tits)
-            the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
+            tit_changes = 2
+            if rank_tits(the_person.tits) > 5:
+                tit_changes = 7 - rank_tits(the_person.tits)
+
+            for count in range(0, tit_changes):
+                the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
+
+            the_serum.effects_dict["nora_hucow_tit_changes"] = tit_changes
+            the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + (tit_changes*0.1) #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
             display_name = the_person.create_formatted_title("???")
             if the_person.title:
@@ -478,9 +490,12 @@ init -1:
             the_person.bc_penalty += -75
             the_person.fertility_percent += -70
             the_person.lactation_sources += -3
-            the_person.tits = get_smaller_tits(the_person.tits) #Her tits start to swell.
-            the_person.tits = get_smaller_tits(the_person.tits)
-            the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
+
+            tit_changes = the_serum.effects_dict.get("nora_hucow_tit_changes", 2)
+            for count in range(0, tit_changes):
+                the_person.tits = get_smaller_tits(the_person.tits) #Her tits start to swell.
+
+            the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - (0.1*tit_changes) #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
         def nora_reward_instant_trance_on_apply(the_person, the_serum, add_to_log):
             if not the_person.has_role(trance_role):

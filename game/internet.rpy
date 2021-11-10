@@ -202,7 +202,7 @@ label text_flirt_label(the_person):
                     the_person "Wish you were here so we could really have some fun."
                     mc.name "We'll have some fun soon, I promise."
 
-                    $ the_person.draw_person.draw_person(position = "back_peek", the_animation = None)
+                    $ the_person.draw_person(position = "back_peek", the_animation = None)
                     "She sends you another pic."
                     $ the_person.change_slut(1, 60)
                     the_person "Don't make me wait too long!"

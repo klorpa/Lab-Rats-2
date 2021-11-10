@@ -12,39 +12,8 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
     $ object_choice = None
     $ repeat_strip_allowed = True #Set False when a girl is told not to strip something. She won't ask about stripping down any more for the rest of the encounter.
 
-    #Family situational modifiers
-    if the_person.has_family_taboo(): #Check if any of the roles the person has belong to the list of family roles.
-        $ the_person.add_situational_slut("taboo_sex", -20, "We're related, we shouldn't be doing this.")
 
-    #Cheating modifiers
-    if the_person.relationship != "Single":
-        $ the_person.discover_opinion("cheating on men")
-    if the_person.relationship == "Girlfriend":
-        if the_person.get_opinion_score("cheating on men") > 0:
-            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 5, "I'm cheating on my boyfriend!")
-        else:
-            $ the_person.add_situational_slut("cheating", -5 + (the_person.get_opinion_score("cheating on men") * -10), "I can't cheat on my boyfriend!")
-    elif the_person.relationship == "Fiancée":
-        if the_person.get_opinion_score("cheating on men") > 0:
-            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 8, "I'm cheating on my fiancé!")
-        else:
-            $ the_person.add_situational_slut("cheating", -15 + (the_person.get_opinion_score("cheating on men") * -15), "I could never cheat on my fiancé!")
-    elif the_person.relationship == "Married":
-        if the_person.get_opinion_score("cheating on men") > 0:
-            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 10, "I'm cheating on my husband!")
-        else:
-            $ the_person.add_situational_slut("cheating", -20 + (the_person.get_opinion_score("cheating on men") * -20), "I could never cheat on my husband!")
-
-    #Privacy modifiers
-    if mc.location.get_person_count() == 1 and not private:
-        $ private = True #If we're alone in the space we're always Private, even if we had left the possibility for people being around.
-
-    if not private:
-        if the_person.effective_sluttiness() < 50:
-            $ the_person.add_situational_slut("public_sex", -10 + the_person.get_opinion_score("public sex") * 5, "There are people watching...")
-        else:
-            $ the_person.add_situational_slut("public_sex", the_person.get_opinion_score("public sex") * 5, "There are people watching!")
-
+    call apply_sex_slut_modifiers(the_person, in_private = private)
     $ report_log["was_public"] = not private
 
 
@@ -185,7 +154,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
 
         # Now that a round_choice has been picked we can do something.
-        if round_choice == "Change" or round_choice == "Continue" or round_choice == "Hypno_Orgasm":
+        if round_choice == "Change" or round_choice == "Continue":
             if round_choice == "Change": # If we are changing we first select and transition/intro the position, then run a round of sex. If we are continuing we ignroe all of that
                 $ mc.condom = False # If we're changing position we want to be able to re-check if we need a condom.
                 if start_position is None: #The first time we get here,
@@ -345,19 +314,14 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
         $ round_choice = None #Get rid of our round choice at the end of the round to prepare for the next one. By doing this at the end instead of the begining of the loop we can set a mandatory choice for the first one.
 
-
-    # Teardown the sex modifiers
-    $ the_person.clear_situational_slut("love_modifier")
-    $ the_person.clear_situational_slut("happiness_modifier")
-    $ the_person.clear_situational_slut("cheating")
-    $ the_person.clear_situational_slut("taboo_sex")
-    $ the_person.clear_situational_slut("sex_object")
-    $ the_person.clear_situational_slut("public_sex")
-    $ the_person.clear_situational_obedience("sex_object")
+    call clear_sex_slut_modifiers(the_person)
 
     $ report_log["end arousal"] = the_person.arousal
 
-    $ the_person.change_arousal(-(the_person.arousal/(report_log.get("girl orgasms",0)+1))) # The more you make her cum the more satisfied she will be. At 0 orgasms her arousal does not move - you've just edged her!
+    $ orgasms_recieved = report_log.get("girl orgasms",0)
+
+    if orgasms_recieved > 0:
+        $ the_person.change_arousal(-((the_person.arousal)/(orgasms_recieved+1))) # The more you make her cum the more satisfied she will be. At 0 orgasms her arousal does not move - you've just edged her!
 
 
     $ mc.condom = False
@@ -600,29 +564,8 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
 
     if mc.arousal >= 80: #NOTE: use to be mc.max_arousal, this number is now the threshold for being forced to cum.
-        $ is_cumming = False
-        if mc.arousal < mc.max_arousal:
-            menu:
-                "Try and cum early.":
-                    if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal):
-                        $ is_cumming = True
-                        "You focus as hard as you can and feel yourself grow closer and closer to climax."
-                    else:
-                        "You focus as hard as you can, but you're unable to push yourself over the edge."
-
-                "Keep going!":
-                    pass
-        else:
-            menu:
-                "Try to hold back.":
-                    if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal): #Note: arousal is > max_arousal, so that's focus - some number, ie it's harder and harder as your arousal increases.
-                        "You focus yourself and stave off your climax for a little longer."
-                    else:
-                        "You focus as hard as you can, but there's nothing you can do at this point!"
-                        $ is_cumming = True
-
-                "Cum!":
-                    $ is_cumming = True
+        call climax_check()
+        $ is_cumming = _return
 
         if is_cumming:
             $ the_position.call_outro(the_person, mc.location, the_object)
@@ -630,7 +573,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
                 $ the_person.change_obedience(5 + the_person.get_opinion_score("being submissive"))
             else:
                 $ the_person.change_obedience(3)
-            $ mc.reset_arousal()
+            # $ mc.reset_arousal() The actual sex psoitions include a do_clarity_release call which will reset MC arousal.
             $ mc.recently_orgasmed = True
             $ report_log["guy orgasms"] += 1
             if the_person.sex_record.get("Vaginal Creampies", 0) > creampie_counter:
@@ -646,6 +589,79 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
     return
 
+label climax_check():
+    $ is_cumming = False
+    if mc.arousal < mc.max_arousal:
+        menu:
+            "Try and cum early.":
+                if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal):
+                    $ is_cumming = True
+                    "You focus as hard as you can and feel yourself grow closer and closer to climax."
+                else:
+                    "You focus as hard as you can, but you're unable to push yourself over the edge."
+
+            "Keep going!":
+                pass
+    else:
+        menu:
+            "Try to hold back.":
+                if renpy.random.randint(0,100) < 10*mc.focus + (mc.max_arousal - mc.arousal): #Note: arousal is > max_arousal, so that's focus - some number, ie it's harder and harder as your arousal increases.
+                    "You focus yourself and stave off your climax for a little longer."
+                else:
+                    "You focus as hard as you can, but there's nothing you can do at this point!"
+                    $ is_cumming = True
+
+            "Cum!":
+                $ is_cumming = True
+
+    return is_cumming
+return
+
+label apply_sex_slut_modifiers(the_person, in_private = True):
+    # Family situational modifiers
+    if the_person.has_family_taboo(): #Check if any of the roles the person has belong to the list of family roles.
+        $ the_person.add_situational_slut("taboo_sex", -20, "We're related, we shouldn't be doing this.")
+
+    #Cheating modifiers
+    if the_person.relationship != "Single":
+        $ the_person.discover_opinion("cheating on men")
+    if the_person.relationship == "Girlfriend":
+        if the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 5, "I'm cheating on my boyfriend!")
+        else:
+            $ the_person.add_situational_slut("cheating", -5 + (the_person.get_opinion_score("cheating on men") * -10), "I can't cheat on my boyfriend!")
+    elif the_person.relationship == "Fiancée":
+        if the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 8, "I'm cheating on my fiancé!")
+        else:
+            $ the_person.add_situational_slut("cheating", -15 + (the_person.get_opinion_score("cheating on men") * -15), "I could never cheat on my fiancé!")
+    elif the_person.relationship == "Married":
+        if the_person.get_opinion_score("cheating on men") > 0:
+            $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 10, "I'm cheating on my husband!")
+        else:
+            $ the_person.add_situational_slut("cheating", -20 + (the_person.get_opinion_score("cheating on men") * -20), "I could never cheat on my husband!")
+
+    #Privacy modifiers
+    if mc.location.get_person_count() == 1 and not in_private:
+        $ in_private = True #If we're alone in the space we're always Private, even if we had left the possibility for people being around.
+
+    if not in_private:
+        if the_person.effective_sluttiness() < 50:
+            $ the_person.add_situational_slut("public_sex", -10 + the_person.get_opinion_score("public sex") * 5, "There are people watching...")
+        else:
+            $ the_person.add_situational_slut("public_sex", the_person.get_opinion_score("public sex") * 5, "There are people watching!")
+
+    return
+
+label clear_sex_slut_modifiers(the_person):
+    $ the_person.clear_situational_slut("love_modifier")
+    $ the_person.clear_situational_slut("happiness_modifier")
+    $ the_person.clear_situational_slut("cheating")
+    $ the_person.clear_situational_slut("taboo_sex")
+    $ the_person.clear_situational_slut("sex_object")
+    $ the_person.clear_situational_slut("public_sex")
+    $ the_person.clear_situational_obedience("sex_object")
+    return
 
 # TODO: Replace Private being a boolean with being a bool OR a list, when a list it is the people we should consider being in the scene. When it is true it is everyone, when false no one.
 label watcher_check(the_person, the_position, the_object, the_report): # Check to see if anyone is around to comment on the characters having sex.
@@ -696,8 +712,6 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
 
 label describe_girl_climax(the_person, the_position, the_object, private, report_log):
     $ the_position.call_orgasm(the_person, mc.location, the_object)
-    $ mc.listener_system.fire_event("girl_climax", the_person = the_person, the_position = the_position, the_object = the_object)
-
     $ the_person.change_arousal(-the_person.arousal/(report_log.get("girl orgasms", 0)+2)) # Repeated orgasms make it easier and easier to make a girl cum. It's possible to make her cum every single round!
     $ trance_chance_modifier += report_log.get("girl orgasms", 0)
     if not trance_chance_modifier == 0:
@@ -723,6 +737,28 @@ label condom_ask(the_person):
                 mc.name "I don't have one on me. Guess we'll have to do it some other way."
                 return False
 
+            "Fuck her raw anyways." if the_person.obedience >= 150:
+                mc.name "No way, this pussy is getting fucked raw."
+                if the_person.has_taboo("condomless_sex"):
+                    $ the_person.call_dialogue("condomless_sex_taboo_break")
+                else:
+                    if the_person.on_birth_control:
+                        "[the_person.title] doesn't argue with you any more."
+                    else:
+                        if the_person.get_opinion_score("creampies") > 0:
+                            the_person "Oh fuck, If you cum inside I'm going to get knocked up..."
+                            "You aren't sure if she's worried or excited."
+                        else:
+                            $ the_person.update_birth_control_knowledge()
+                            the_person "I'm not on birth control [the_person.mc_title], promise you won't cum inside me."
+                            call condomless_promise(the_person)
+
+
+            "Fuck her raw anyways.\nRequires: 150 Obedience (disabled)" if the_person.obedience < 150:
+                pass
+
+
+
     elif the_person.get_opinion_score("bareback sex") < 0 or the_person.effective_sluttiness("condomless_sex") < condom_threshold + 20 or the_person.has_taboo("condomless_sex"): # They suggest you put on a condom.
         $ the_person.call_dialogue("condom_ask")
         menu:
@@ -738,9 +774,10 @@ label condom_ask(the_person):
                 else:
                     if the_person.on_birth_control:
                         the_person "Okay. I'm on birth control, so it should be fine."
+                        $ the_person.update_birth_control_knowledge()
                     else:
                         the_person "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
-
+                        call condomless_promise(the_person)
 
     else: #Slutty enough that she doesn't even care about a condom.
         if the_person.get_opinion_score("bareback sex") > 0 or the_person.get_opinion_score("creampies") > 0 or the_person.has_role(breeder_role):
@@ -793,6 +830,31 @@ label condom_ask(the_person):
 
 
     return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
+
+label condomless_promise(the_person):
+    menu:
+        "Promise to pull out.":
+            mc.name "I'll pull out, don't worry."
+            "[the_person.possessive_title] seems reassured by your promise."
+            #TODO: Add negative stats if you promise and cum inside her anyways
+
+        "Don't promise anything.":
+            mc.name "I'll do my best. I'm not sure I'll be able to resist."
+            if not the_person.on_birth_control:
+                the_person "You're going to get me pregnant if you aren't careful!"
+             #TODO: Middle ground between warning her it's happening and lying to her.
+
+        "Promise to cum inside.":
+            mc.name "Oh I'm not pulling out. I'm planning on dumping my load inside of your tight little pussy."
+            if the_person.get_opinion_score("creampies") > 0:
+                the_person "Oh god..."
+            elif not the_person.on_birth_control:
+                the_person "Fuck [the_person.mc_title], you're going to get me pregnant like that!"
+                "She squirms unconfortably, but this doesn't seem to be a deal breaker for her."
+            else:
+                the_person "Oh god, of course you are..."
+            #TODO: Moderate stat penalties, but less than lying
+    return
 
 label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO: Add an arousal cost to stripping a girl down, but give an arousal boost if she likes getting naked.
     python:

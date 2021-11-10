@@ -1,6 +1,7 @@
 init 1 python:
     integration_test_labels.append("run_sex_system_integration_test")
-    integration_test_labels.append("run_complex_sex_integraiton_test")
+    integration_test_labels.append("run_complex_sex_integration_test")
+    integration_test_labels.append("run_strip_tease_integration_tests")
 
 
 label run_sex_system_integration_test():
@@ -91,7 +92,7 @@ label run_sex_system_integration_test():
     $ mc.change_location(bedroom)
     return True
 
-label run_complex_sex_integraiton_test():
+label run_complex_sex_integration_test():
     "Testing complex sex options."
     "Run encounters until you do not have any options left."
     $ test_person = create_random_person()
@@ -165,4 +166,76 @@ label run_complex_sex_integraiton_test():
             return False
 
     $ mc.change_location(bedroom)
+    return True
+
+label run_strip_tease_integration_tests():
+    $ renpy.notify("Starting strip tease with random person. Run a few steps.")
+    $ test_person = create_random_person()
+    $ test_person.set_title("Tester")
+    $ test_person.set_possessive_title("Your Tester")
+    $ test_person.set_mc_title("Player")
+    call strip_tease(test_person)
+    menu:
+        "Strip tease proceeded properly, low Sluttiness.":
+            pass
+
+        "Test failed.":
+            return False
+
+    $ renpy.notify("Starting strip tease with higher sluttiness. Make her strip.")
+    $ test_person = create_random_person()
+    $ test_person.set_title("Tester")
+    $ test_person.set_possessive_title("Your Tester")
+    $ test_person.set_mc_title("Player")
+    $ test_person.change_slut(50)
+    call strip_tease(test_person)
+    menu:
+        "Strip tease proceeded properly, high Sluttiness.":
+            pass
+
+        "Test failed.":
+            return False
+
+    $ renpy.notify("Starting strip tease with high obedience, low sluttiness. Order her.")
+    $ test_person = create_random_person()
+    $ test_person.set_title("Tester")
+    $ test_person.set_possessive_title("Your Tester")
+    $ test_person.set_mc_title("Player")
+    $ test_person.change_obedience(100)
+    call strip_tease(test_person)
+    menu:
+        "Strip tease proceeded properly, high obedience.":
+            pass
+
+        "Test failed.":
+            return False
+
+    $ renpy.notify("Starting strip tease for pay, low sluttiness.")
+    $ test_person = create_random_person()
+    $ test_person.set_title("Tester")
+    $ test_person.set_possessive_title("Your Tester")
+    $ test_person.set_mc_title("Player")
+    $ mc.business.funds += 1000
+    call strip_tease(test_person, for_pay = True)
+    menu:
+        "Strip tease proceeded properly, did stuff for pay.":
+            pass
+
+        "Test failed.":
+            return False
+
+    $ renpy.notify("Starting strip tease for pay. Test orgasm system.")
+    $ test_person = create_random_person()
+    $ test_person.set_title("Tester")
+    $ test_person.set_possessive_title("Your Tester")
+    $ test_person.set_mc_title("Player")
+    $ test_person.change_slut(15)
+    $ mc.change_arousal(50)
+    call strip_tease(test_person, for_pay = True)
+    menu:
+        "Orgasming worked correctly.":
+            pass
+
+        "Test failed.":
+            return False
     return True

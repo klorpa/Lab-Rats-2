@@ -12,9 +12,9 @@ init -2 python:
 
         the_person.event_triggers_dict["recently_milked"] = False
 
-    def lactation_serum_on_day(the_person):
-        lactation_serum_on_turn(the_person)
-        lactation_serum_on_turn(the_person)
+    def lactating_serum_on_day(the_person):
+        lactating_serum_on_turn(the_person)
+        lactating_serum_on_turn(the_person)
         return
 
     def milk_for_serum_requirement(the_person):
@@ -30,7 +30,7 @@ init -2 python:
 
 label milk_for_serum_label(the_person): #Note that thee serum types have already had the "Milk" component added to them and are unconnected copies of the origional.
     $ serum_produced = get_random_from_list(the_person.event_triggers_dict.get("lactating_serum_types", [])) #If there are multiple traits we only use a random one
-    $ milk_serum = copy.copy(serum_produced)
+    $ milk_serum = copy.deepcopy(serum_produced)
     $ milk_serum.name = "Milky " + milk_serum.name
     $ milk_trait = the_person.get_milk_trait()
     $ milk_serum.add_trait(milk_trait)
@@ -231,7 +231,7 @@ label milk_for_serum_label(the_person): #Note that thee serum types have already
                         "Milk her {i}hard{/i}":
                             mc.name "Let's make sure we get every last drop..."
                             "You squeeze down hard on [the_person.possessive_title]'s breast. She gasps in a mixture of surprise and pain."
-                            if the_person.has_role(breeder_role) or the_person.get_opinion_score("being in control") < 0:
+                            if the_person.has_role(breeder_role) or the_person.get_opinion_score("being submissive") > 0:
                                 the_person "Mmm, get it all [the_person.mc_title]..."
                                 $ the_person.change_slut(1,50)
                                 "She sounds a little too happy to be milked roughly."
@@ -253,10 +253,10 @@ label milk_for_serum_label(the_person): #Note that thee serum types have already
                             the_person "Some of my own milk? Why?"
                             "You fabricate a quick story."
                             mc.name "Women are very sensitive to minor contaminants in their own breast milk. You can save us a lot of time in the lab this way."
-                            if the_person.intelligence < 3:
+                            if the_person.int < 3:
                                 "[the_person.title] doesn't even think about it, trusting you blindly."
                                 the_person "Alright then, you're the expect here."
-                            elif the_person.intelligence < 5:
+                            elif the_person.int < 5:
                                 the_person "I suppose that makes some amount of sense... Alright, just a little bit."
                             else:
                                 "[the_person.title] thinks about this for a long time. You're getting worried she's about to call your bluff when she nods."

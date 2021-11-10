@@ -7,6 +7,10 @@ init 1300:
             valid_titles.append("Aunt " + the_person.name)
             if the_person.love > 20:
                 valid_titles.append("Auntie")
+                valid_titles.append("Becky")
+                valid_titles.append("Becca")
+                valid_titles.append("Aunt Becky")
+                valid_titles.append("Aunt Becca")
             return valid_titles
 
         def aunt_possessive_titles(the_person):

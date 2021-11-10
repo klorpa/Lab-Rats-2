@@ -14,6 +14,7 @@ init -3 python: #Init -3 is used for all project wide imports of external resour
     from functools import partial
     import re
     import string
+    from operator import attrgetter
 
 
 #Init -2 establishes all game clases
@@ -36,6 +37,8 @@ init -1: # Establish some platform specific stuff.
     python:
         list_of_positions = [] # These are sex positions that the PC can make happen while having sex.
         list_of_girl_positions = [] # These are sex positiosn that the girl can make happen while having sex.
+        list_of_strip_positions = [] # These are positiosn a girl can take while putting on a stirp tease for you.
+
 
         day_names = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"] #Arrays that hold the names of the days of the week and times of day. Arrays start at 0.
         time_names = ["Early Morning","Morning","Afternoon","Evening","Night"]
@@ -259,17 +262,27 @@ label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS
         $ new_location = _return
         call change_location(new_location) from _call_change_location #_return is the location returned from the map manager.
         if new_location.people: #There are people in the room, let's see if there are any room events
+            $ enabled_people_events = []
             $ enabled_room_events = []
             python: #Scan through all the people and...
                 for a_person in new_location.people:
-                    for possible_room_event in a_person.on_room_enter_event_list:
-                        if possible_room_event.is_action_enabled(a_person): #See what events the are enabled...
-                            enabled_room_events.append([a_person, possible_room_event]) #Then keep track of the person so we know who to remove it from if it triggers.
+                    for possible_person_event in a_person.on_room_enter_event_list:
+                        if possible_person_event.is_action_enabled(a_person): #See what events the are enabled...
+                            enabled_people_events.append([a_person, possible_person_event]) #Then keep track of the person so we know who to remove it from if it triggers.
 
-            if enabled_room_events: #If there are room events to take care of run those right now.
-                $ picked_event = get_random_from_list(enabled_room_events)
+                for possible_room_event in new_location.on_room_enter_event_list:
+                    if possible_room_event.is_action_enabled():
+                        enabled_room_events.append(possible_room_event)
+
+            if enabled_people_events: #If there are room events to take care of run those right now.
+                $ picked_event = get_random_from_list(enabled_people_events)
                 $ picked_event[0].on_room_enter_event_list.remove(picked_event[1]) #Remove the event from their list since we will be running it.
                 $ picked_event[1].call_action(picked_event[0]) #Run the action with the person as an extra argument.
+
+            elif enabled_room_events:
+                $ picked_event = get_random_from_list(enabled_room_events)
+                $ new_location.on_room_enter_event_list.remove(picked_event)
+                $ picked_event.call_action()
 
             elif new_location in [mc.business.m_div, mc.business.p_div, mc.business.r_div, mc.business.s_div, mc.business.h_div]: #There are no room events, so generate a quick room greeting from an employee if one is around.
                 $ possible_greetings = []
@@ -341,7 +354,7 @@ label talk_person(the_person):
         roles_that_need_people_args = []
         for role in the_person.special_role:
             for act in role.actions:
-                special_role_actions.append([act,the_person]) #They're a list of actions and their extra arg so that gets passed through properly.
+                special_role_actions.append([act, the_person]) #They're a list of actions and their extra arg so that gets passed through properly.
                 roles_that_need_people_args.append(act) #All role actions need to be passed the specific person, so we keep a list of these actions here and check it below.
 
         for act in mc.main_character_actions: #The main character has a "role" that lets us add special actions as well.
@@ -674,6 +687,8 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
             map_pos = [8,3], lighting_conditions = standard_indoor_lighting)
         office_store = Room("office supply store","Office Supply Store", background_image = standard_mall_backgrounds[:], public = True,
             map_pos = [9,1], lighting_conditions = standard_indoor_lighting)
+        electronics_store = Room("electornics store", "Electronics Store", background_image = standard_mall_backgrounds[:], public = True,
+            map_pos = [7,2], lighting_conditions = standard_indoor_lighting)
 
 
         ##Other Locations##
@@ -736,6 +751,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         list_of_places.append(sex_store)
         list_of_places.append(home_store)
         list_of_places.append(gym)
+        list_of_places.append(electronics_store)
         list_of_places.append(mall)
 
         list_of_places.append(aunt_apartment)
@@ -754,7 +770,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
             room.add_object(make_window())
 
         home_bathroom.add_object(make_wall())
-        home_bathroom.add_object(Object("shower door", ["Lean"], sluttiness_modifier = 5, obedience_modifier = 5))
+        home_bathroom.add_object(Object("shower door", ["Lean"]))#, sluttiness_modifier = 5, obedience_modifier = 5))
         home_bathroom.add_object(make_floor())
 
         kitchen.add_object(make_wall())
@@ -821,6 +837,9 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         home_store.add_object(make_wall())
         home_store.add_object(make_floor())
         home_store.add_object(make_chair())
+
+        electronics_store.add_object(make_wall())
+        electronics_store.add_object(make_floor())
 
         mall.add_object(make_wall())
         mall.add_object(make_floor())

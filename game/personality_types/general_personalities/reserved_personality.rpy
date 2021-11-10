@@ -1670,7 +1670,6 @@ label reserved_underwear_nudity_taboo_break(the_person, the_clothing):
         the_person "If I take off my [the_clothing.display_name] you'll see me in my underwear."
         mc.name "That's the plan, yes."
         the_person "I shouldn't be going around half naked for men I barely know. What would people think?"
-        mc.name "Why do you care what other people think? Forget about them and just focus on us."
 
         if the_person.has_taboo(["bare_tits","bare_pussy"]):
             mc.name "Why do you care what other people think? Forget about them and just focus on the moment."

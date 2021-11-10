@@ -99,13 +99,13 @@ label tutorial_start:
     mom "Okay, you've convinced me. I'll get in touch with the bank and put a loan on the house."
     "You jump up and throw your arms around [mom.possessive_title]. She laughs and hugs you back."
 
-    mom "What's going on?"
+    lily "What's going on?"
     $ lily.draw_person()
     "[lily.possessive_title] steps into the doorway and looks at you both."
     $ mom.draw_person(position = "sitting")
     mom "Your brother is starting a business. I'm his first investor."
     $ lily.draw_person(emotion = "happy")
-    mom "Is that what you've been excited about the last couple days? What're you actually making?"
+    lily "Is that what you've been excited about the last couple days? What're you actually making?"
     mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
     $ clear_scene()
     "You leave [mom.possessive_title] and sister in the kitchen to talk. You retreat to your room for some privacy."
@@ -113,11 +113,11 @@ label tutorial_start:
     $ bedroom.show_background()
     "You can manage the machinery of the lab, but you're going to need help refining the serum design from last year."
     "You pick up your phone and call [stephanie.title]."
-    mom "Hello?"
+    stephanie "Hello?"
     mc.name "Stephanie, this is [mc.name]."
-    mom "[stephanie.mc_title]! Good to hear from you, what's up?"
+    stephanie "[stephanie.mc_title]! Good to hear from you, what's up?"
     mc.name "I'd like to talk to you about a business offer. Any chance we could meet somewhere?"
-    mom "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
+    stephanie "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
     mc.name "Done. Where's convenient for you?"
     "Stephanie sends you the address of a bar close to the university."
     scene
@@ -125,31 +125,31 @@ label tutorial_start:
     "It takes you an hour to get your pitch prepared and to get over to the bar."
     "When you arrive [stephanie.title] is sitting at the bar with a drink already. She smiles and raises her glass."
     $ stephanie.draw_person(position = "sitting", emotion = "happy")
-    mom "Hey [stephanie.mc_title], it's great to see you!"
+    stephanie "Hey [stephanie.mc_title], it's great to see you!"
     $ mc.change_locked_clarity(5)
     "She stands and gives you a hug."
-    mom "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
+    stephanie "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
     mc.name "Me too, that's actually part of what I want to talk to you about."
     "You order a drink for yourself and sit down."
     "You lay out your idea to [stephanie.title]: the commercial production and distribution of the experimental serum."
-    mom "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
+    stephanie "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
     mc.name "Right. Production processes are my bread and butter, but I need your help to figure out what we're actually making."
     "Stephanie finishes off her drink and flags down the bartender for another."
-    mom "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
+    stephanie "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
     mc.name "Correct."
-    mom "Do you have any clients?"
+    stephanie "Do you have any clients?"
     mc.name "Not yet. It's hard to have clients without a product."
     "Stephanie gets her drink and sips it thoughtfully."
     mc.name "The pay won't be great either, but I can promise..."
-    mom "I'm in."
+    stephanie "I'm in."
     mc.name "I... what?"
-    mom "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
-    mom "I think this is it."
+    stephanie "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
+    stephanie "I think this is it."
     "She raises her drink and smiles a huge smile."
-    mom "A toast: To us, and stupid risks!"
+    stephanie "A toast: To us, and stupid risks!"
     mc.name "To us!"
     "You clink glasses together and drink."
-    mom "Ah... Okay, so I've got some thoughts already..."
+    stephanie "Ah... Okay, so I've got some thoughts already..."
     "Stephanie grabs a napkin and starts doodling on it. You spend the rest of the night with her, drinking and talking until you have to say goodbye."
     $ clear_scene()
     "A week later [mom.possessive_title] has a new mortgage on the house and purchases the lab in your name."
@@ -220,7 +220,7 @@ label research_tutorial_intro():
             "You close the door and sit down at the desk, pulling out your phone to find some porn to get you off."
             "You settle on an old favourite and start to jack off, determined to make it quick."
             "After a couple of minutes you notice something odd - you're barely paying attention to the bouncing tits on your tiny screen."
-            "Instead your remembering all the trouble you got up to last year, and all of the new opportunities you will have now."
+            "Instead you're remembering all the trouble you got up to last year, and all of the new opportunities you will have now."
             "Does [stephanie.title] really not care what you're making here, and what it can do? How could she not?"
             "Maybe she likes it? Maybe you really left an impression on her with your last serum-based mind control spree?"
             $ mc.change_locked_clarity(10)
@@ -230,7 +230,7 @@ label research_tutorial_intro():
             $ climax_controller.show_climax_menu()
             $ climax_controller.do_clarity_release()
             "You snatch at some tissues and do your best to contain the mess as you cum."
-            "A cold calm washes over you now that you're finished, and alongwith it the razor sharp focus you'll need to achieve your goals."
+            "A cold calm washes over you now that you're finished, and along with it the razor sharp focus you'll need to achieve your goals."
             "You double check that you're presentable and return to the research lab."
             $ stephanie.draw_person()
             stephanie "Well, any ideas?"

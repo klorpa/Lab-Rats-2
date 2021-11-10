@@ -583,8 +583,8 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
                 mc.name "I was thinking about it, but you're acting like the only thing you care about is getting at my cock!"
                 mc.name "Now I just want to head home. Maybe you can try this again some other night."
                 $ the_person.change_happiness(-20)
-                $ the_person.change_love(-(2 + the_person.get_opinion_score("being in control")))
-                if the_person.get_opinion_score("being in control") > 0:
+                $ the_person.change_love(-(2 + the_person.get_opinion_score("taking control")))
+                if the_person.get_opinion_score("taking control") > 0:
                     the_person "If you felt like that why did you come home with me at all?"
                     the_person "Wasn't it obvious what was going to happen? Did I have to write it out for you?"
                     "She scoffs and backs away from you."

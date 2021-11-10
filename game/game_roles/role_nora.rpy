@@ -222,7 +222,7 @@ label nora_research_up_label(the_person):
 
 
     # Prepare the event that triggers the next phase
-    $ nora_research_cash_intro_action = Action("Nora cash research intro", nora_research_cash_intro_requirement, "nora_research_cash_intro", args = the_person, requirement_args = [the_person, day + renpy.random.randint(3,6)])
+    $ nora_research_cash_intro_action = Action("Nora cash research intro", nora_research_cash_intro_requirement, "nora_research_cash_intro", args = [the_person, True], requirement_args = [the_person, day + renpy.random.randint(3,6)])
     $ mc.business.mandatory_crises_list.append(nora_research_cash_intro_action)
 
     return
@@ -484,7 +484,7 @@ label nora_special_research(the_person):
         the_person "There doesn't seem to be anything of particular interest about your subject, unfortunately."
 
     $ mc.business.event_triggers_dict["nora_research_subject"] = None
-
+    $ the_subject = None
     return
 
 label nora_profile_person(the_person):
@@ -510,7 +510,7 @@ label nora_profile_person(the_person):
         "All that is left now is to take it back to her and see if she finds anything interesting."
 
 
-    $ mc.business.event_triggers_dict["nora_research_subject"] = the_person
+    $ mc.business.event_triggers_dict["nora_research_subject"] = copy.deepcopy(the_person) #TODO: Double check there are no serious performance repercusions from this
     $ clear_scene()
     call advance_time from _call_advance_time_24
     return

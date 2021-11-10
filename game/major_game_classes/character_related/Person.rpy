@@ -372,7 +372,7 @@ init -2 python:
 
                 if not modified_word:
                     temp_what += word + " "
-                    
+
             new_what = temp_what #[:-1] #STrip the last character, which is an unused space.
             new_what = self.wrap_string(new_what, the_colour = new_colour)
 
@@ -425,7 +425,11 @@ init -2 python:
             age = renpy.random.randint(18, self.age-16)
 
             if renpy.random.randint(0,100) < 60:
-                body_type = self.body_type
+                if self.body_type == "standard_preg_body":
+                    body_type = self.event_triggers_dict.get("pre_preg_body", "standard_body")
+                else:
+                    body_type = self.body_type
+
             else:
                 body_type = None
 
@@ -601,7 +605,7 @@ init -2 python:
                 if self.get_opinion_score("masturbating") > 0: # Masturbating turns her on, so just getting off turns her back on!
                     self.arousal = 15*self.get_opinion_score("masturbating")
                 self.change_happiness(5+5*self.get_opinion_score("masturbating"), add_to_log = False)
-                self.run_orgasm(show_dialogue = False, trance_chance_modifier = self.get_opinion_score("masturbating"), add_to_log = False)
+                self.run_orgasm(show_dialogue = False, trance_chance_modifier = self.get_opinion_score("masturbating"), add_to_log = False, fire_event = False)
 
 
             remove_list = []
@@ -935,13 +939,18 @@ init -2 python:
             return False
 
         def get_opinion_score(self, topic): #Like get_opinion_topic, but only returns the score and not a tuple. Use this when determining a persons reaction to a relavent event.
-            if topic in self.opinions:
-                return self.opinions[topic][0]
+            return_value = 0
+            if isinstance(topic, list):
+                for a_topic in topic:
+                    return_value += self.get_opinion_score(a_topic)
+            else:
+                if topic in self.opinions:
+                    return_value += self.opinions[topic][0]
 
-            if topic in self.sexy_opinions:
-                return self.sexy_opinions[topic][0]
+                if topic in self.sexy_opinions:
+                    return_value += self.sexy_opinions[topic][0]
 
-            return 0
+            return return_value
 
         def get_opinion_topics_list(self, include_unknown = True, include_normal = True, include_sexy = True, include_hate = True, include_dislike = True, include_like = True, include_love = True):
             #TODO: Needs unit testing
@@ -1066,7 +1075,7 @@ init -2 python:
 
             return updated
 
-        def weaken_opnion(self, topic, add_to_log = True):
+        def weaken_opinion(self, topic, add_to_log = True):
             display_name = self.create_formatted_title("???")
             if self.title:
                 display_name = self.title
@@ -1138,7 +1147,19 @@ init -2 python:
                     return True
             return False
 
-        def break_taboo(self, the_taboo, add_to_log = True):
+        def has_broken_taboo(self, the_taboos):
+            if the_taboos is None:
+                return False
+
+            if isinstance(the_taboos, basestring):
+                the_taboos = [the_taboos]
+
+            for a_taboo in the_taboos: #We also handle lists, if we wnat to check if someone has _any_ of several taboos at once
+                if a_taboo in self.broken_taboos:
+                    return True
+            return False
+
+        def break_taboo(self, the_taboo, add_to_log = True, fire_event = True):
             if the_taboo not in self.broken_taboos:
                 self.broken_taboos.append(the_taboo)
                 display_name = self.create_formatted_title("???")
@@ -1149,6 +1170,20 @@ init -2 python:
 
                 self.change_novelty(5, add_to_log)
 
+                if fire_event:
+                    mc.listener_system.fire_event("girl_taboo_break", the_taboo = the_taboo)
+                return True
+            return False
+
+        def restore_taboo(self, the_taboo, add_to_log = True):
+            if the_taboo in self.broken_taboos:
+                while the_taboo in self.broken_taboos:
+                    self.broken_taboos.remove(the_taboo)
+                display_name = self.create_formatted_title("???")
+                if self.title:
+                    display_name = self.title
+                if add_to_log:
+                    mc.log_event(" Taboo reasserted with " + display_name + "!", "float_text_red")
                 return True
             return False
 
@@ -1942,8 +1977,9 @@ init -2 python:
 
             return return_amount
 
-        def run_orgasm(self, show_dialogue = True, force_trance = False, trance_chance_modifier = 0, add_to_log = True, sluttiness_increase_limit = 30):
+        def run_orgasm(self, show_dialogue = True, force_trance = False, trance_chance_modifier = 0, add_to_log = True, sluttiness_increase_limit = 30, fire_event = True):
             self.change_slut(1, sluttiness_increase_limit, add_to_log = add_to_log)
+            mc.listener_system.fire_event("girl_climax", the_person = the_person)
             if renpy.random.randint(0,100) < self.suggestibility + trance_chance_modifier or force_trance:
                 display_name = self.create_formatted_title("???")
                 if self.title:
@@ -2260,6 +2296,28 @@ init -2 python:
                 if role.role_name == the_role:
                     return role
             return None
+
+        def has_queued_event(self, the_event):
+            for an_event in self.on_talk_event_list:
+                if an_event == the_event:
+                    return True
+
+            for an_event in self.on_room_enter_event_list:
+                if an_event == the_event:
+                    return True
+
+            return False
+
+        def has_queued_event_with_name(self, the_name):
+            for an_event in self.on_talk_event_list:
+                if an_event.name == the_name:
+                    return True
+
+            for an_event in self.on_room_enter_event_list:
+                if an_event.name == the_name:
+                    return True
+
+            return False
 
         def add_infraction(self, the_infraction, add_to_log = True, require_policy = True):
             if office_punishment.is_active() or not require_policy:

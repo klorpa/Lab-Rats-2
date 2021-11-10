@@ -640,6 +640,30 @@ init 0 python:
             self.assertTrue(test_person.has_taboo("underwear_nudity"))
             self.assertFalse(test_person.break_taboo("kissing"))
 
+        def test_check_taboo(self):
+            test_person = create_random_person()
+
+            self.assertTrue(test_person.has_taboo("kissing"))
+            self.assertFalse(test_person.has_broken_taboo("kissing"))
+
+            self.assertTrue(test_person.break_taboo("kissing"))
+
+            self.assertFalse(test_person.has_taboo("kissing"))
+            self.assertTrue(test_person.has_broken_taboo("kissing"))
+
+        def test_restore_taboo(self):
+            test_person = create_random_person()
+
+            self.assertTrue(test_person.has_taboo("kissing"))
+            self.assertTrue(test_person.break_taboo("kissing"))
+            self.assertFalse(test_person.has_taboo("kissing"))
+
+            self.assertTrue(test_person.restore_taboo("kissing"))
+            self.assertTrue(test_person.has_taboo("kissing"))
+
+            self.assertTrue(test_person.has_taboo("touching_body"))
+            self.assertFalse(test_person.restore_taboo("touching_body"))
+
         def test_get_opinion(self):
             test_person = create_random_person()
             test_person.opinions["Test Normal"] = [1,False]
@@ -679,15 +703,15 @@ init 0 python:
 
             self.assertEqual(test_person.get_opinion_score("being fingered"), 2)
 
-            test_person.weaken_opnion("being fingered")
+            test_person.weaken_opinion("being fingered")
 
             self.assertEqual(test_person.get_opinion_score("being fingered"), 1)
 
-            test_person.weaken_opnion("being fingered")
+            test_person.weaken_opinion("being fingered")
 
             self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
 
-            test_person.weaken_opnion("being fingered")
+            test_person.weaken_opinion("being fingered")
 
             self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
 
@@ -703,10 +727,36 @@ init 0 python:
 
             self.assertEqual(test_person.get_opinion_score("being fingered"), -2)
 
-            test_person.weaken_opnion("being fingered")
-            test_person.weaken_opnion("being fingered")
+            test_person.weaken_opinion("being fingered")
+            test_person.weaken_opinion("being fingered")
 
             self.assertEqual(test_person.get_opinion_score("being fingered"), 0)
+
+        def test_multi_opinion_checks(self):
+            test_person = create_random_person()
+            test_person.weaken_opinion("lingerie")
+            test_person.weaken_opinion("lingerie")
+
+            test_person.weaken_opinion("incest")
+            test_person.weaken_opinion("incest")
+
+            self.assertEqual(test_person.get_opinion_score(["lingerie", "incest"]), 0)
+
+            test_person.create_opinion("lingerie", start_positive = True)
+
+            self.assertEqual(test_person.get_opinion_score(["lingerie", "incest"]), 1)
+
+            test_person.create_opinion("incest", start_positive = False)
+
+            self.assertEqual(test_person.get_opinion_score("incest"), -1)
+            self.assertEqual(test_person.get_opinion_score("lingerie"), 1)
+            self.assertEqual(test_person.get_opinion_score(["lingerie", "incest"]), 0)
+
+            test_person.strengthen_opinion("lingerie")
+
+            self.assertEqual(test_person.get_opinion_score("incest"), -1)
+            self.assertEqual(test_person.get_opinion_score("lingerie"), 2)
+            self.assertEqual(test_person.get_opinion_score(["lingerie", "incest"]), 1)
 
         def test_trance_proc(self):
             test_person = create_random_person()

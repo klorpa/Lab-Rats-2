@@ -24,7 +24,7 @@ init -1 python:
         if not the_person.has_role(lactating_serum_role):
             the_person.add_role(lactating_serum_role)
             the_person.event_triggers_dict["serum_in_breasts"] = 0
-            
+
         if the_person.event_triggers_dict.get("lactating_serum_types", False):
             the_person.event_triggers_dict["lactating_serum_types"].append(target_design)
         else:
@@ -128,7 +128,7 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
         basic_hair_dye_trait = SerumTraitBlueprint(
             unlock_label = "basic_hair_dye_unlock_label",
             name = "Encapsulated Hair Dyes",
-            desc = "Precise delivery of commonly available hair dyes recolours the targets hair over the course of hours. Only a limited ranges of hair colours are suitable for this procedure.",
+            desc = "Precise delivery of commonly available hair dyes recolours the targets hair over the course of hours. Only a limited ranges of hair colours are available with this procedure.",
             positive_slug = "+$15 Value, Shifts Hair Colour Towards Selected Preset Colour",
             negative_slug = "+40 Research Needed",
             value_added = 15,
@@ -154,7 +154,7 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
             value_added = 30,
             research_added = 80,
             base_side_effect_chance = 20,
-            requires = [basic_hair_dye_trait],
+            requires = [hair_lighten_dye, hair_darken_dye],
             tier = 2,
             research_needed = 400,
             exclude_tags = "Dye",
@@ -169,7 +169,7 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
             value_added = 30,
             research_added = 40,
             base_side_effect_chance = 40,
-            requires = [basic_hair_dye_trait],
+            requires = [hair_lighten_dye, hair_darken_dye],
             tier = 2,
             research_needed = 200,
             clarity_cost = 150)
@@ -182,7 +182,7 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
             value_added = 2,
             research_added = 1200,
             slots_added = 0,
-            production_added = 0,
+            production_added = 120,
             duration_added = 6,
             base_side_effect_chance = 100,
             clarity_added = 500,

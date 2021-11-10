@@ -39,6 +39,8 @@ init -2 python:
             else:
                 self.actions = actions #A list of Action objects
 
+            self.on_room_enter_event_list = [] #A list of Actions that are triggered when you enter a location. People events take priority.
+
             self.public = public #If True, random people can wander here.
 
             if map_pos is None:
