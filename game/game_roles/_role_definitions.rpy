@@ -284,4 +284,13 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
 
         milk_for_serum_action = Action("Milk her for serum. -15{image=gui/extra_images/energy_token.png}", milk_for_serum_requirement, "milk_for_serum_label", menu_tooltip = "Those tits contain company property!")
         lactating_serum_role = Role("Lactating Serum", [milk_for_serum_action], hidden = True, on_turn = lactating_serum_on_turn, on_day = lactating_serum_on_day)
+
+
+        # role_trainables
+        city_rep_dressup_training = Trainable("City_Rep_Dressup", "city_rep_dressup_training", "Slutty Work Uniform.", unlocked_function = city_rep_dressup_training_requirement, doubling_amount = 4)
+        city_rep_penalty_reduction_training = Trainable("City_Rep_Pen_Reduct", "city_rep_penalty_reduction_training", "Reduce Penalty Severity", 200, city_rep_penalty_reduction_training_requirement)
+        city_rep_internal_sabotage_training = Trainable("City_Rep_Satbo", "city_rep_internal_sabotage_training", "Sabotage Investigations", 400, city_rep_internal_sabotage_training_requirement)
+
+        city_rep_role = Role("City Representative", [], role_trainables = [city_rep_dressup_training, city_rep_penalty_reduction_training, city_rep_internal_sabotage_training])
+
 return

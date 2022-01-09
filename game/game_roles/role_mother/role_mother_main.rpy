@@ -128,13 +128,13 @@ label mom_weekly_pay_label(the_person):
                     $ mc.change_locked_clarity(10)
                     the_person "I haven't taken my birth control all week. If you're able to pay me I won't start again."
                     menu:
-                        "Keep her off her birth control. -$150" if mc.business.funds >= 150:
+                        "Keep her off her birth control. -$150" if mc.business.has_funds(150):
                             mc.name "I think we can keep this deal going."
                             "You pull out the cash and hand it over. She places them alongside the bills."
-                            $ mc.business.funds += -150
+                            $ mc.business.change_funds(-150)
                             the_person "Thank you so much. Is there anything else I could do for a little more help?"
 
-                        "Keep her off her birth control. -$150 (disabled)" if mc.business.funds < 150:
+                        "Keep her off her birth control. -$150 (disabled)" if not mc.business.has_funds(150):
                             pass
 
                         "Let her start taking her birth control.":
@@ -184,9 +184,9 @@ label mom_low_sluttiness_weekly_pay(the_person):
             $ the_person.draw_person(position = "sitting", emotion = "sad")
             the_person "Okay swetheart, I understand. I'll talk with Lily and let her know that we have to cut back on non essentials."
 
-        "Help out.\n{size=22}-$100{/size}" if mc.business.funds >= 100:
+        "Help out.\n{size=22}-$100{/size}" if mc.business.has_funds(100):
             "You pull out your wallet and count out some cash, but hesitate before you hand it over."
-            $ mc.business.funds += -100
+            $ mc.business.change_funds(-100)
             menu:
                 "Ask for a kiss.":
                     mc.name "I'd like a kiss for it though."
@@ -239,17 +239,17 @@ label mom_low_sluttiness_weekly_pay(the_person):
             $ the_person.draw_person(position = "sitting", emotion = "happy")
             "She gives you a hug and turns her attention back to organising the bills."
 
-        "Help out.\n{size=22}-$100{/size} (disabled)" if mc.business.funds < 100:
+        "Help out.\n{size=22}-$100{/size} (disabled)" if not mc.business.has_funds(100):
             pass
     return
 
 label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these over to use Actions instead of just being a menu.
     menu:
-        "Strip for me. -$100" if mc.business.funds >= 100:
+        "Strip for me. -$100" if mc.business.has_funds(100):
             if mc.business.event_triggers_dict.get("Mom_Strip", 0) >= 1:
                 mc.name "I want you to show off yourself off to me, how does that sound?"
                 the_person "Fair is fair, but I'll need a little extra if you want to see anything... inappropriate."
-                $ mc.business.funds += -100
+                $ mc.business.change_funds(-100)
                 $ the_person.change_obedience(1)
                 "You hand over the cash and sit back while [the_person.possessive_title] entertains you."
             else:
@@ -257,22 +257,22 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 mc.name "I'd like to see a little more of you Mom, how about I pay you to give me a little strip tease."
                 the_person "Oh my god, I've raised such a dirty boy. How about I pose for you a bit, and if you want to see more you can contribute a little extra."
                 mc.name "Sounds like a good deal Mom."
-                $ mc.business.funds += -100
+                $ mc.business.change_funds(-100)
                 $ the_person.change_obedience(1)
                 "You hand over the cash and sit back while [the_person.possessive_title] entertains you."
 
             call strip_tease(the_person, for_pay = True)
 
 
-        "Strip for me. -$100 (disabled)" if mc.business.funds <100:
+        "Strip for me. -$100 (disabled)" if not mc.business.has_funds(100):
             pass
 
-        "Test some serum. -$100" if mc.business.funds >= 100:
+        "Test some serum. -$100" if mc.business.has_funds(100):
             if mc.business.event_triggers_dict.get("Mom_Serum_Test",0) >= 1:
                 mc.name "I've got some more serum I'd like you to test Mom."
                 call give_serum(the_person) from _call_give_serum_10
                 if _return:
-                    $ mc.business.funds += -100
+                    $ mc.business.change_funds(-100)
                     "You hand the serum to [the_person.possessive_title], followed by the cash."
                     the_person "Okay, so that's all for now?"
                     mc.name "That's all. I'll just be keeping an eye on you in the future, but you don't need to worry about that."
@@ -289,7 +289,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 mc.name "Excellent, let me just see if I have anything with me right now..."
                 call give_serum(the_person) from _call_give_serum_11
                 if _return:
-                    $ mc.business.funds += -100
+                    $ mc.business.change_funds(-100)
                     "You hand the serum to [the_person.possessive_title], followed by the cash."
                     the_person "Okay, so that's all for now?"
                     mc.name "That's all. I'll just be keeping an eye on you in the future, but you don't need to worry about that."
@@ -297,6 +297,9 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 else:
                     mc.name "Actually, I don't have anything right now. Maybe next wek though, okay?"
                     the_person "Okay sweetheart, thanks for at least thinking about it."
+
+        "Test some serum. -$100 (disabled)" if not mc.business.has_funds(100):
+            pass
 
         # "I want to make some changes around here." if the_person.obedience >= 120:
         #     #TODO: Requires obedience, but unlocks a bunch of other options, like having your Mom bring you breakfast every morning, not wearing anything at home, etc.
@@ -310,13 +313,13 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
 
         #TODO: "I want to breed Lily" option, once you've got Mom at high sluttiness, obedience, and Love. She gives you the go-ahead to knock up your sister.
 
-        "Suck me off. -$300" if mc.business.funds >= 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
+        "Suck me off. -$300" if mc.business.has_funds(300) and the_person.effective_sluttiness("sucking_cock") >= 30:
             mc.name "Alright, I'll pay you to give me a blowjob."
             if (not the_person.has_taboo("sucking_cock")) or the_person.effective_sluttiness("sucking_cock") >= 60:
                 the_person "If that's what you need."
                 $ mc.change_locked_clarity(10)
                 "You pull out your wallet and count out her cash while [the_person.possessive_title] gets onto her knees in front of you."
-                $ mc.business.funds += -300
+                $ mc.business.change_funds(-300)
                 $ the_person.draw_person(position = "blowjob")
                 the_person "Remember, not a word to anyone else though. Okay?"
                 mc.name "Of course, this is just between you and me."
@@ -327,7 +330,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 "You pull out your wallet and count out the cash while you talk."
                 mc.name "Sure you could. It's just me and you here, nobody would ever need to know."
                 mc.name "Besides, it's for the family, right? This is just another way to help everyone out. Myself included, I've been real stressed at work lately."
-                $ mc.business.funds += -300
+                $ mc.business.change_funds(-300)
                 "You lay the cash down on the table. [the_person.possessive_title] hesitates, then meekly reaches for the money."
                 the_person "Not a word to anyone, or I'll kick you out of the house."
                 mc.name "Of course [the_person.title], don't you trust your own son?"
@@ -352,10 +355,10 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
             $ the_person.review_outfit()
             $ the_person.change_obedience(4)
 
-        "Suck me off. -$300 (disabled)" if mc.business.funds < 300 and the_person.effective_sluttiness("sucking_cock") >= 30:
+        "Suck me off. -$300 (disabled)" if not mc.business.has_funds(300) and the_person.effective_sluttiness("sucking_cock") >= 30:
             pass
 
-        "Stop your birth control. -$150" if mc.business.funds >= 150 and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0 and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
+        "Stop your birth control. -$150" if mc.business.has_funds(150) and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0 and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
             mc.name "I have something I'd like you to do. I want you to stop taking your birth control."
             if the_person.on_birth_control:
                 if the_person.has_taboo("vaginal_sex"):
@@ -367,7 +370,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 the_person "How about... I stop for the week. If you don't want me to take it you'll have to pay me every week."
                 mc.name "Okay, let's test it out for this week and see how you do."
                 "You hand over the money to her and she tucks it away quickly."
-                $ mc.business.funds += -150
+                $ mc.business.change_funds(-150)
                 the_person "One moment."
                 "[the_person.possessive_title] leaves the room, but returns quickly. She hands you a small blister pack labeled with each day of the week."
                 the_person "Here are my pills for the week, so you know I'm not lying. I've already taken one for today, but starting tomorrow I won't have any."
@@ -388,11 +391,11 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 call mom_high_sluttiness_weekly_pay(the_person) from _call_mom_high_sluttiness_weekly_pay_1
 
 
-        "Stop your birth control. -$150 (disabled)" if mc.business.funds < 150 and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0  and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
+        "Stop your birth control. -$150 (disabled)" if not mc.business.has_funds(150) and the_person.effective_sluttiness() >= 30 and persistent.pregnancy_pref > 0  and not the_person.event_triggers_dict.get("Mom_forced_off_bc", False):
             pass
 
         #TODO: Enable this and tie it into Lily's new Instapic story chunk
-        # "Let [lily.title] get a boob job. -$500" if mc.business.funds >= 200 and lily.event_triggers_dict.get("insta_boobjob_wanted", False): #TODO: Implement this!
+        # "Let [lily.title] get a boob job. -$500" if mc.business.has_funds(200) and lily.event_triggers_dict.get("insta_boobjob_wanted", False): #TODO: Implement this!
         #     mc.name "This will be some easy money for you. I want you to let [lily.title] have some cosmetic surgery done."
         #     mc.name "I'll pay you $500 if you just tell her you're okay with it. You don't need to do anythin else."
         #     the_person "Cosmetic surgery? What does she want to have changed? She's a beautiful young woman!"
@@ -1267,4 +1270,116 @@ label mom_office_person_request():
         else:
             the_person "I'm sorry, but she doesn't seem to be in the building at the moment."
             mc.name "Right, okay. Sorry to bother you."
+    return
+
+
+init -1 python:
+    def mom_found_serums_requirement(start_day):
+        if day < start_day:
+            return False
+
+        return True
+
+label mom_found_serums(): #TODO: Triggers a couple of days after the start of the game
+    # Triggers in the morning (so you have a chance to interact with her after dosing her)
+    $ the_person = mom
+
+    $ blue_serum = SerumDesign()
+    $ blue_serum.name = "Blue Serum"
+    $ blue_serum.add_trait(primitive_serum_prod)
+    $ blue_serum.add_trait(high_capacity_design)
+    $ blue_serum.add_trait(high_con_drugs)
+    $ blue_serum.add_trait(simple_aphrodesiac)
+
+    $ red_serum = SerumDesign()
+    $ red_serum.name = "Red Serum"
+    $ red_serum.add_trait(improved_serum_prod)
+    $ red_serum.add_trait(high_capacity_design)
+    $ red_serum.add_trait(aphrodisiac)
+    $ red_serum.add_trait(off_label_drugs)
+    $ red_serum.add_trait(large_obedience_enhancer)
+
+    $ purple_serum = SerumDesign()
+    $ purple_serum.name = "Purple Serum"
+    $ purple_serum.add_trait(improved_serum_prod)
+    $ purple_serum.add_trait(off_label_drugs)
+    $ purple_serum.add_trait(improved_duration_trait)
+
+    "There's a knock on your door."
+    $ the_person.draw_person()
+    the_person "[the_person.mc_title], can I come in?"
+    mc.name "Sure [the_person.title]."
+    "[the_person.possessive_title] opens up your bedroom door. She's holding a dusty cardboard box."
+    the_person "I was doing some tidying in the attic and found this. It has your name on it..."
+    "She turns the other side to face you. \"[mc.name] - Serum Reserve DO NOT TOUCH\"."
+    menu:
+        "Snatch the box from her.":
+            "You step close and grab at the box."
+            mc.name "I can take that!"
+            "She laughs and steps away, mistaking your worry for play."
+            the_person "Oh? Hiding something away in here? Something you don't want your mother to see?"
+            the_person "Am I about to find a stack of dirty magazines?"
+            "She opens up the top of the box and looks inside."
+
+        "Ask calmly for it.":
+            mc.name "Oh, that. I can take that from you."
+            "You step close and motion to take the box from her, but she holds onto it for a moment and opens the top of the box."
+
+    the_person "What is all of this, anyways? A whole lot of glass..."
+    mc.name "It's some... stuff from the university lab."
+    the_person "[the_person.mc_title], were you stealing?"
+    "You were."
+    mc.name "No, of course not! It's stuff I... made. I didn't know it was still around. Can I have the box now?"
+    "She pulls out one of the glass vials inside and holds it up to the light. It's a light blue"
+    the_person "Is this the stuff you're making in your lab now?"
+    mc.name "Sort of, yeah."
+    the_person "Hmm... What does it do?"
+    menu:
+        "You should try it and find out.":
+            mc.name "Drink it and find out. It's not harmful."
+            the_person "Really? It's not a drug, is it?"
+            mc.name "Everything's a drug, [the_person.title]. It won't get you high, if that's what you're asking."
+            "She considers it, then shrugs and uncorks the top of the vial."
+            the_person "I have to admit I am a little curious..."
+            $ the_person.give_serum(blue_serum)
+            "[the_person.possessive_title] drinks down the liquid and drops the empty vial back into the box."
+            the_person "Well? Now what?"
+            mc.name "You probably won't feel anything. The effects are subtle."
+            the_person "But it's good for me?"
+            mc.name "Yes [the_person.title], it's good for you."
+            "She smiles happily and hands you the box full of old serum doses."
+
+
+        "Nothing, really.":
+            mc.name "Nothing, really. But it quite delicate, so if I could just have those..."
+            the_person "Right, sorry."
+            "She puts the vial back and hands the box to you."
+
+    the_person "Now I'll get out of your way. Have a good day!"
+    $ clear_scene()
+
+    "She closes the door behind her, leaving you alone with your spoils. You had forgotten you stashed these away as an emergency reserve."
+    "You dig through the box. Some vials are empty - maybe you used them, or they were never full to begin with."
+    $ mc.inventory.change_serum(blue_serum, 6)
+    $ mc.log_event("Found 6 doses of Blue Serum!", "float_text_blue")
+    "You find a number of blue serum doses. Back in university they did a wonderful job of making girls slutty and influenceable."
+    "Best to save them for when you have a specific boundry to push though, because they don't last very long."
+
+    "You dig a little deeper. There are a few specialised doses of serum in here too."
+    $ mc.inventory.change_serum(red_serum, 3)
+    $ mc.log_event("Found 3 doses of Red Serum!", "float_text_blue")
+    "Red serum. It was stronger than your Blue design, making girls slutty and obedient on the spot."
+    "It was also particularly likely to make a girl suggestable after she climaxed."
+
+    $ mc.inventory.change_serum(purple_serum, 3)
+    $ mc.log_event("Found 3 doses of Purple Serum!", "float_text_blue")
+    "And some Purple serum. It's a gentler, longer duration serum."
+    "It didn't make girls any sluttier directly, but it gave you a lot of time to try and make them cum."
+    "If you did you could usually put some very fun ideas in their heads."
+    "Useful when you have the time and opportunity to focus on one girl in particular."
+
+
+    "Of course you could always sell these doses at the office. Sometime soon you'll be able to recreate them and more anyways."
+    "But maybe it's a good idea to hold onto them, in case you find any interesting opportunities to apply them."
+
     return

@@ -1,7 +1,7 @@
 init -2 python:
     class Action(renpy.store.object): #Contains the information about actions that can be taken in a room. Dispayed when you are asked what you want to do somewhere.
         # Also used for crises, those are not related to any partiular room and are not displayed in a list. They are forced upon the player when their requirement is met.
-        def __init__(self,name,requirement,effect,args = None, requirement_args = None, menu_tooltip = None, priority = 0, event_duration = 99999):
+        def __init__(self,name,requirement,effect,args = None, requirement_args = None, menu_tooltip = None, priority = 0, event_duration = 99999, is_fast = True):
             self.name = name
 
             # A requirement returns False if the action should be hidden, a string if the action should be disabled but visible (the string is the reason it is not enabled), and True if the action is enabled
@@ -28,6 +28,8 @@ init -2 python:
 
             self.event_duration = event_duration # Used for actions turned into limtied time actions as the starting duration.
 
+            self.is_fast = is_fast #A "fast" event is one that can never result in a time change. A "slow" event that has the potential to cause a time jump, and might not be allowed in some time sensitive situations.
+
         def __cmp__(self,other): ##This and __hash__ are defined so that I can use "if Action in List" and have it find identical actions that are different instances.
             if type(other) is Action:
                 if self.name == other.name and self.requirement == other.requirement and self.effect == other.effect and self.args == other.args:
@@ -38,7 +40,7 @@ init -2 python:
                     else:
                         return 1
             else:
-                if other is None:
+                if not callable(other.__hash__):
                     return 1
                 elif self.__hash__() < other.__hash__(): #Use hash values to break ties.
                     return -1

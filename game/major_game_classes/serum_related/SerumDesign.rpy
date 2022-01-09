@@ -13,7 +13,6 @@ init -2 python:
             self.research_needed = 0
             self.clarity_needed = 0
             self.slots = 0
-            self.value = 0
             self.production_cost = 0
 
             self.duration = 0
@@ -22,6 +21,14 @@ init -2 python:
             self.expires = True #If set to false the serum does not tick up the duration_counter, meaning it will never expire.
 
             self.effects_dict = {} # A dict that can be used to store information about this serum when appied to people. For example, tracking how much Sluttiness was added so the same amount can be removed at the end of the duration.
+
+            self.tier = 0
+            self.mental_aspect = 0
+            self.physical_aspect = 0
+            self.sexual_aspect = 0
+            self.medical_aspect = 0
+            self.flaws_aspect = 0
+            self.attention = 0
 
         def is_same_design(self, other): #Checks if two serums are the same design (but not necessarily the same _dose_ of that design).
             same = False
@@ -69,10 +76,17 @@ init -2 python:
                 #Add the trait effects on the core develpment stats of the serum.
                 self.research_needed += the_trait.research_added
                 self.clarity_needed += the_trait.clarity_added
-                self.value += the_trait.value_added
                 self.slots += the_trait.slots
                 self.production_cost += the_trait.production_cost
                 self.duration += the_trait.duration
+
+                self.mental_aspect += the_trait.mental_aspect
+                self.physical_aspect += the_trait.physical_aspect
+                self.sexual_aspect += the_trait.sexual_aspect
+                self.medical_aspect += the_trait.medical_aspect
+                self.flaws_aspect += the_trait.flaws_aspect
+                self.update_attention()
+                self.update_tier()
 
         def remove_trait(self, the_trait): #Used when the serum is being built in the serum designer.
             if the_trait in self.traits or the_trait in self.side_effects:
@@ -84,10 +98,28 @@ init -2 python:
                 #Remove the trait effects on the core development stats of the serum.
                 self.research_needed += -the_trait.research_added
                 self.clarity_needed += -the_trait.clarity_added
-                self.value += -the_trait.value_added
                 self.slots += -the_trait.slots
                 self.production_cost += -the_trait.production_cost
                 self.duration += -the_trait.duration
+
+                self.mental_aspect += -the_trait.mental_aspect
+                self.physical_aspect += -the_trait.physical_aspect
+                self.sexual_aspect += -the_trait.sexual_aspect
+                self.medical_aspect += -the_trait.medical_aspect
+                self.flaws_aspect += -the_trait.flaws_aspect
+                self.update_attention()
+
+        def update_tier(self):
+            for trait in self.traits + self.side_effects:
+                if trait.tier > self.tier:
+                    self.tier = trait.tier
+
+        def update_attention(self):
+            self.attention = 0
+            for trait in self.traits + self.side_effects:
+                if trait.attention > self.attention:
+                    self.attention = trait.attention
+
 
         def duration_expired(self): #Returns true if the serum has expired (ie. duration counter equal to or over duration.).
             if self.duration_counter >= self.duration:
@@ -172,3 +204,20 @@ init -2 python:
                 the_slug += trait.negative_slug
                 if trait is not traits_with_slugs[-1]: #If it isn't the last element.
                         the_slug += ", " #This gets us a nice formatted string in the form A, B, C, D.
+
+        def has_production_trait(self):
+            for trait in self.traits:
+                if "Production" in trait.exclude_tags:
+                    return True
+            return False
+
+        def trait_add_allowed(self, the_trait):
+            disallowed_tags = []
+            for trait in self.traits:
+                disallowed_tags.extend(trait.exclude_tags)
+
+            for new_tag in the_trait.exclude_tags:
+                if new_tag in disallowed_tags:
+                    return False
+
+            return True

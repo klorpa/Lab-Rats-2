@@ -26,6 +26,14 @@ init -2 python:
 
 init -1 python:
     # Definitions for the events
+    def work_spank_opportunity_requirement(the_person):
+        if not the_person.has_role(employee_role):
+            return False
+        elif not person_at_work(the_person):
+            return False
+        else:
+            return True
+
     def ask_new_title_requirement(the_person):
         if the_person.obedience > 130: #If she has higher obedience she ONLY lets you change her title.
             return False
@@ -75,6 +83,8 @@ init -1 python:
     ### ON TALK EVENTS ###
     ask_new_title_action = Action("Ask new title", ask_new_title_requirement, "ask_new_title_label", event_duration = 2)
     work_walk_in = Action("Employee walk in", work_walk_in_requirement, "work_walk_in_label", event_duration = 4)
+    work_spank_opportunity = Action("Employee spank opportunity", work_spank_opportunity_requirement, "work_spank_opportunity", event_duration = 3)
+
 
     new_insta_account_action = Action("Make New Insta", new_insta_account_requirement, "new_insta_account", event_duration = 4)
     new_dikdok_account_action = Action("Make New Dikdok", new_dikdok_account_requirement, "new_dikdok_account", event_duration = 4)
@@ -85,6 +95,8 @@ init -1 python:
     limited_time_event_pool.append([new_insta_account_action,4, "on_talk"])
     limited_time_event_pool.append([new_dikdok_account_action,2, "on_talk"])
     limited_time_event_pool.append([new_onlyfans_account_action,1, "on_talk"])
+
+    limited_time_event_pool.append([work_spank_opportunity,2, "on_enter"])
 
     #TODO: Add some girlfriend/paramour events where they ask right away if you want to fuck
 
@@ -243,7 +255,6 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                 $ mc.change_locked_clarity(10)
                 "[the_person.possessive_title] slumps in her chair, panting quietly. After taking a moment to recover she sits up and glances around."
                 $ the_person.draw_person(position = "sitting")
-                $ the_person.reset_arousal()
                 "She freezes when she sees you, standing just behind her."
                 the_person "... I... Hello [the_person.mc_title]. How... How long were you standing there?"
                 mc.name "The whole time."
@@ -394,7 +405,6 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     the_person "Much, I didn't realise how badly I needed that."
                     the_person "Now, what did you want to talk about?"
                     $ the_person.change_slut(2 + the_person.get_opinion_score("public sex"), 80)
-                    $ the_person.reset_arousal()
 
                 else:
                     the_person "Gladly! Ah!"
@@ -426,7 +436,6 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                     $ the_person.change_slut(1, 50)
                     "She takes a deep breath and nods, pulling herself up to sit properly in her chair."
                     the_person "I think so [the_person.mc_title]. Did you need to talk to me?"
-                    $ the_person.reset_arousal()
 
                 $ the_person.discover_opinion("public sex")
 
@@ -488,7 +497,6 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                             "Let it go.":
                                 pass
 
-                    $ the_person.reset_arousal()
                     $ the_person.change_slut(2 + the_person.get_opinion_score("masturbating") + the_person.discover_opinion("public sex"), 80)
                     $ the_person.change_obedience(-2)
                     the_person "Now, what did you need to talk about?"
@@ -543,4 +551,153 @@ label new_onlyfans_account(the_person):
         $ the_person.event_triggers_dict["onlyfans_known"] = True
     $ the_person.special_role.append(onlyfans_role)
     call talk_person(the_person) from _call_talk_person_29
+    return
+
+label work_spank_opportunity(the_person):
+    $ the_person.draw_person(position = "standing_doggy")
+    "When you walk in you see [the_person.possessive_title], leaning over a desk and staring at paperworking."
+    if the_person.outfit.vagina_visible():
+        $ mc.change_locked_clarity(20)
+        "She swings her hips idley, unintentionally shaking her bare ass at you."
+    elif not the_person.outfit.panties_covered():
+        $ mc.change_locked_clarity(10)
+        "She swings her hips idley, shaking her barely-covered ass right at you."
+    else:
+        "She swings her hips idley, shaking her ass in your direction."
+
+    menu:
+        "Slap her ass.":
+            "You step close and slap your hand across her ass."
+            $ mc.change_locked_clarity(20)
+            if the_person.outfit.vagina_visible():
+                "There's a loud smack as you make contact with her bare ass."
+            elif not the_person.outfit.panties_covered():
+                "There's a loud smack as you make contact with her tight ass."
+            else:
+                "There's a muffled smack as you make contact with her covered butt."
+
+            if the_person.effective_sluttiness() + 5*the_person.get_opinion_score("being submissive") < 20 and not the_person.has_role(employee_freeuse_role):
+                the_person "Oh my god!"
+                $ the_person.draw_person(emotion = "angry")
+                "She snaps straight up and spins around, glaring at you."
+                $ the_person.change_love(-2)
+                $ the_person.change_happiness(-10)
+                the_person "What the hell was that?"
+                mc.name "I was just saying hi. It looked like you wanted it."
+                the_person "Clearly I don't."
+                "You hold your hands up innocently. She shakes her head and turns away from you."
+            elif the_person.effective_sluttiness() + 5*the_person.get_opinion_score("being submissive") < 40:
+                the_person "Oh!"
+                $ the_person.draw_person()
+                "She snaps to attention, grabbing her bottom as she turns to face you."
+                the_person "Oh, it's you [the_person.mc_title]."
+                mc.name "Expecting someone else?"
+                the_person "No, just... You startled me, is all."
+                $ the_person.change_obedience(1)
+                $ the_person.change_slut(1, 40)
+            else:
+                the_person "Mmmph..."
+                "She glances over her shoulder at you. She keeps her ass pointed in your direction."
+                the_person "Hello [the_person.mc_title]. Am I not working hard enough?"
+                $ mc.change_locked_clarity(10)
+                menu:
+                    "You're doing fine.":
+                        "You rest your hand on her butt, squeezing it gently."
+                        mc.name "You're doing fine. Pretend I'm not even here."
+                        the_person "You're making that a little hard... ah..."
+                        mc.name "The feeling's mutual."
+
+                    "No, you're not.":
+                        "You smack her ass again. She gasps, more for effect than actual surprise."
+                        mc.name "No, you're not. Now get back to it."
+                        the_person "Right away [the_person.mc_title]!"
+
+                "You step back and let [the_person.title] focus on her work."
+
+
+
+        "Grope her pussy." if the_person.outfit.vagina_available():
+            $ mc.change_locked_clarity(15)
+            "You reach between [the_person.possessive_title]'s legs and press two fingers up against her pussy."
+            if the_person.arousal > 50:
+                $ mc.change_locked_clarity(20)
+                "You're surprised to find that she's already wet."
+
+            if the_person.effective_sluttiness() + 5*the_person.get_opinion_score("being fingered") < 20 and not the_person.has_role(employee_freeuse_role):
+                the_person "Oh my god!"
+                $ the_person.draw_person(emotion = "angry")
+                "She snaps straight up and spins around, glaring at you."
+                $ the_person.change_slut(the_person.get_opinion_score("being fingered"))
+                $ the_person.change_love(-2 +the_person.get_opinion_score("being fingered"))
+                $ the_person.change_happiness(-10)
+                the_person "What the hell was that?"
+                mc.name "I was just saying hi. It looked like you wanted it."
+                the_person "Clearly I don't."
+                "You hold your hands up innocently. She shakes her head and turns away from you."
+            elif the_person.effective_sluttiness() + 5*the_person.get_opinion_score("being fingered") < 40:
+                the_person "What the..."
+                "She tries to stand up, but your hand between her legs stops her progress. You stroke the lips of her pussy slowly."
+                mc.name "Hey [the_person.title]. Work going well?"
+                the_person "You're making it... Mph.... hard to focus right now."
+                "You slide a finger inside of her. She gasps and jumps, slamming her hips into the desk."
+                the_person "[the_person.mc_title]!"
+                mc.name "Sorry, it just looked very inviting."
+                the_person "Well you should... ah... give a girl some warning!"
+                $ the_person.break_taboo("touching_vagina")
+                "You give her pussy a few more strokes, then pull out and wipe your fingers on her thigh."
+                mc.name "You've got work to do. Maybe we can pick this up later."
+                $ the_person.change_slut(the_person.get_opinion_score("being fingered"))
+                $ the_person.change_arousal(20+ 20*the_person.get_opinion_score("being fingered"))
+                "She nods, face suddenly flush and her breathing heavy."
+            else:
+                the_person "Oh... Hello [the_person.mc_title]..."
+                $ mc.change_locked_clarity(30)
+                "She sighs and lowers her shoulders to the desk, instinctively pressing her hips back against your hand."
+                mc.name "Just checking in, making sure everything is going well..."
+                the_person "It's... all very good..."
+                $ the_person.break_taboo("touching_vagina")
+                "You slip two fingers into her pussy. She sighs again and starts to move her hips with you."
+                the_person "But I think... I need a break... Have I earned a break [the_person.mc_title]?"
+                menu:
+                    "Keep fingering her.":
+                        mc.name "I think you have. Here let me help you..."
+                        $ the_person.change_arousal(10+10*the_person.get_opinion_score("being fingered"))
+                        call fuck_person(the_person, start_position = standing_finger, skip_intro = True)
+                        $ the_report = _return
+                        $ the_person.call_dialogue("sex_review", the_report = the_report)
+
+                    "Finish up.":
+                        "You slide your fingers back out and wipe them off on her thigh."
+                        mc.name "Sorry, but I've got work to get done. So do you."
+                        $ the_person.change_arousal(20+20*the_person.get_opinion_score("being fingered"))
+                        "She moans, a little more desperately than she might have intended, and stands up."
+                        $ the_person.draw_person()
+                        the_person "Right, right..."
+
+        "Enjoy the view.":
+            "You stop and stare for a little bit."
+            $ mc.change_locked_clarity(10)
+            "After a few moments [the_person.title] stands up and turns around."
+            if the_person.effective_sluttiness() + 5*the_person.get_opinion_score("showing her ass") < 15:
+                "She blushes, clearly aware that you've been there for a while."
+                $ the_person.change_slut(1)
+                $ the_person.change_love(-1)
+                the_person "Oh, hey [the_person.mc_title]... Can I help you?"
+                mc.name "Just passing by."
+            elif the_person.effective_sluttiness() + 5*the_person.get_opinion_score("showing her ass") < 40:
+                "She smiles at you. You aren't sure if she doesn't know you were staring at her, or if she just doesn't care."
+                the_person "Hi [the_person.mc_title]. Need anything?"
+                mc.name "Just passing by."
+            else:
+                the_person "Oh hi [the_person.mc_title]. I'm sorry, were you looking at something?"
+                $ mc.change_locked_clarity(10)
+                $ the_person.draw_person(position = "back_peek")
+                "She turns around again, emphasizing her ass for you."
+                mc.name "I was, actually, but I have work to do."
+                the_person "Stop by any time."
+
+        "Move along.":
+            "You pull your eyes off of the pleasant sight and move along."
+
+    $ clear_scene()
     return

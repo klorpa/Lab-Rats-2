@@ -41,6 +41,7 @@ label view_dikdok(the_person):
     if the_person.event_triggers_dict.get("dikdok_generate_video", False) or the_person.event_triggers_dict.get("dikdok_force_video", False):
         "It looks like [the_person.title] has posted a new video."
         $ the_person.event_triggers_dict["dikdok_force_video"] = False
+        $ the_person.event_triggers_dict["dikdok_generate_video"] = False
         $ rand_num = renpy.random.randint(0,3)
         if the_person.event_triggers_dict.get("dikdok_new_boobs_brag", False):
             $ the_person.event_triggers_dict["dikdok_new_boobs_brag"] = False

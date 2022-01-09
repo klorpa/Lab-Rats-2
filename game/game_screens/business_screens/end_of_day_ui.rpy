@@ -23,9 +23,10 @@ screen end_of_day_update():
             text "     " + "Production Used: " + str(mc.business.production_used) style "textbutton_text_style"
             text "     " + "Research Produced: " + str(mc.business.research_produced) style "textbutton_text_style"
             text "     " + "Sales Made: $" + str(mc.business.sales_made) style "textbutton_text_style"
-            text "     " + "Daily Salary Paid: $" + str(mc.business.calculate_salary_cost()) style "textbutton_text_style"
+            if mc.business.is_work_day():
+                text "     " + "Daily Salary Paid: $" + str(mc.business.calculate_salary_cost()) style "textbutton_text_style"
+                text "     " + "Daily Operating Costs: $" + str(mc.business.operating_costs) style "textbutton_text_style"
             text "     " + "Serums Sold Today: " + str(mc.business.serums_sold) style "textbutton_text_style"
-            text "     " + "Serums Ready for Sale: " + str(mc.business.sale_inventory.get_any_serum_count()) style "textbutton_text_style"
 
     frame:
         background "#1a45a1aa"

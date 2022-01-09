@@ -42,18 +42,18 @@ label basic_business_tests(): #TODO:we can probably automate these tests (or bui
     $ test_serum.name = "Integration Test Desgin"
     $ test_serum.add_trait(primitive_serum_prod)
     $ test_serum.add_trait(basic_med_app)
-    $ mc.business.sale_inventory.change_serum(test_serum, 5)
-    "Testing marketing work. Giving company inventory several doses of serum. Funds should rise after sales."
+    $ mc.business.inventory.change_serum(test_serum, 5)
+    "Testing marketing work. Market reach should expand after work."
     call market_work_action_description
     menu:
-        "Funds increased, doses gone.":
+        "Market Reach expanded.":
             pass
 
         "Test failed.":
             return False
 
-    $ mc.business.clear_production()
-    $ mc.business.change_production(test_serum, 0)
+    $ mc.business.clear_all_production()
+    $ mc.business.production_lines[0].set_product(test_serum, 100)
     $ mc.int += 100
     $ mc.business.supply_count += 1000
     "Testing production work. Should convert materials into serum production."

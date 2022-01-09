@@ -1729,8 +1729,8 @@ label wild_creampie_taboo_break(the_person):
     if the_person.wants_creampie():
         if the_person.on_birth_control:
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
-                the_person "Oh my god, I'm such a horrible [so_title], but I really needed this."
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
+                the_person "Oh my god, I'm such a horrible [girl_title], but I really needed this."
                 the_person "He'd understand, right? A girl has needs!"
 
             else:
@@ -1738,9 +1738,9 @@ label wild_creampie_taboo_break(the_person):
 
         elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
                 the_person "Oh god, I've wanted a good creampie for so long!"
-                the_person "I'm a terrible [so_title], but I really just want a man to fuck me, cum in me, and knock me up!"
+                the_person "I'm a terrible [girl_title], but I really just want a man to fuck me, cum in me, and knock me up!"
 
             else:
                 the_person "Oh god, I've wanted a good creampie for so long!"
@@ -1751,8 +1751,8 @@ label wild_creampie_taboo_break(the_person):
 
         else:
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
-                the_person "Oh fuck... I'm such a terrible [so_title]!"
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
+                the_person "Oh fuck... I'm such a terrible [girl_title]!"
                 "She sighs happily."
                 the_person "But that felt so good!"
 
@@ -1768,8 +1768,8 @@ label wild_creampie_taboo_break(the_person):
             the_person "Oh fuck, did you cum inside me?"
 
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
-                the_person "What if you just got me pregnant? I would be the worst [so_title] of all time!"
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
+                the_person "What if you just got me pregnant? I would be the worst [girl_title] of all time!"
 
             else:
                 the_person "What if I get pregnant? I'm not ready for that kind of responsability!"
@@ -1777,10 +1777,10 @@ label wild_creampie_taboo_break(the_person):
             the_person "You're going to have to wear a condom if we ever do this again, I just can't risk it."
 
         elif the_person.relationship != "Single":
-            $ so_title = girl_relationship_to_title(the_person.relationship)
+            $ girl_title = girl_relationship_to_title(the_person.relationship)
             the_person "Did you really just creampie me after I told you to pull out?"
             "She sighs unhappily."
-            the_person "God, I'm such a terrible [so_title]. Maybe next time I'll make you wear a condom as punishment."
+            the_person "God, I'm such a terrible [girl_title]. Maybe next time I'll make you wear a condom as punishment."
 
         elif the_person.get_opinion_score("creampies") < 0:
             the_person "Oh man, really? Ugh, I hate this feeling. Couldn't you have cum on my face or something?"

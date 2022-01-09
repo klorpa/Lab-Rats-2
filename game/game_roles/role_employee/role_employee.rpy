@@ -77,7 +77,7 @@ init -2 python:
             return False #Don't show anything if we have a higher level to show.
         elif not mandatory_paid_serum_testing_policy.is_active():
             return False #"Requires Policy: Mandatory Paid Serum Testing"
-        elif mc.business.funds < 100:
+        elif not mc.business.has_funds(100):
             return "Requires: $100"
         else:
             return True
@@ -168,35 +168,35 @@ label employee_pay_cash_bonus(the_person):
             "[the_person.title] looks visibly disappointed."
             the_person "Right, of course."
 
-        "Give her a days wages. -$[days_wages]" if mc.business.funds >= days_wages:
+        "Give her a days wages. -$[days_wages]" if mc.business.has_funds(days_wages):
             mc.name "Here you go, treat yourself to something nice tonight."
             $ the_person.draw_person(emotion = "happy")
             $ change_amount = 1+mc.charisma
-            $ mc.business.funds -= the_person.salary
+            $ mc.business.change_funds(-the_person.salary)
             $ the_person.change_happiness(change_amount)
             "[the_person.title] takes the bills from you and smiles."
             the_person "Thank you sir."
 
 
-        "Give her a weeks wages. -$[weeks_wages]" if mc.business.funds >= weeks_wages:
+        "Give her a weeks wages. -$[weeks_wages]" if mc.business.has_funds(weeks_wages):
             mc.name "Here you go, don't spend it all in once place."
             $ the_person.draw_person(emotion = "happy")
             $ change_amount = 1+mc.charisma
             $ change_amount_happiness = 5+mc.charisma
             $ the_person.change_happiness(change_amount_happiness)
             $ the_person.change_obedience(change_amount)
-            $ mc.business.funds -= weeks_wages
+            $ mc.business.change_funds(-weeks_wages)
             "[the_person.title] takes the bills, then smiles broadly at you."
             the_person "That's very generous of you sir, thank you."
 
-        "Give her a months wages. -$[months_wages]" if mc.business.funds >= months_wages:
+        "Give her a months wages. -$[months_wages]" if mc.business.has_funds(months_wages):
             mc.name "Here, you're a key part of the team and you deserved to be rewarded as such."
             $ the_person.draw_person(emotion = "happy")
             $ change_amount = 5+mc.charisma
             $ change_amount_happiness = 10+mc.charisma
             $ the_person.change_happiness(change_amount_happiness)
             $ the_person.change_obedience(change_amount)
-            $ mc.business.funds -= months_wages
+            $ mc.business.change_funds(-months_wages)
             "[the_person.title] takes the bills, momentarily stunned by the amount."
             if the_person.effective_sluttiness() > 40 and the_person.happiness > 100:
                 the_person "Wow... this is amazing sir. I'm sure there's something I can do to pay you back, right?"
@@ -661,7 +661,7 @@ label employee_performance_review(the_person):
 
                                     if not mc.condom and the_person.has_taboo("condomless_sex"):
                                         $ the_person.break_taboo("condomless_sex")
-                                        
+
                                     "You hold yourself deep inside of her and enjoy the sudden warmth around your shaft."
                                     "When you think she's ready you pull your hips back and start to pump in and out of her."
 
@@ -816,7 +816,7 @@ label employee_paid_serum_test_label(the_person):
     mc.name "[the_person.title], we're running field trials and you're one of the test subjects. I'm going to need you to take this, a bonus will be added onto your paycheck."
     call give_serum(the_person) from _call_give_serum_18
     if _return:
-        $ mc.business.funds += -pay_serum_cost
+        $ mc.business.change_funds(-pay_serum_cost)
     return
 
 label employee_unpaid_serum_test_label(the_person):

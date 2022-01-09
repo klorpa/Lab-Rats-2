@@ -2,6 +2,18 @@ screen research_select_ui: #How you select serum and trait research
     default selected_research = None #If not None a screen is shown, including a "begin research" button or an "unlock and research" button.
     add "Science_Menu_Background.png"
     modal True
+
+    $ all_tiers = [0,1,2,3]
+    $ tier_zero = [0]
+    $ tier_one = [1]
+    $ tier_two = [2]
+    $ tier_three = [3]
+
+    default sort_method = alpha_sort
+    default sort_reversed = False
+
+    default allowed_tiers = all_tiers
+
     vbox:
         xalign 0.1
         yalign 0.4
@@ -31,110 +43,153 @@ screen research_select_ui: #How you select serum and trait research
             ysize 900
             xsize 1000
             hbox:
-                viewport: #Research new traits
-                    xsize 320
-                    ysize 800
-                    scrollbars "vertical"
-                    mousewheel True
-                    vbox:
-                        xsize 320
+                vbox:
+                    text "Research New Traits" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
+                    hbox:
+                        xsize 300
                         spacing 0
-                        text "Research New Traits" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
-                        for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
-                            if not trait.researched and trait.has_required():
-                                $ trait_tags = ""
-                                if trait.exclude_tags:
-                                    $ trait_tags = "\nExcludes Other: "
-                                    for a_tag in trait.exclude_tags:
-                                        $ trait_tags += "[[" + a_tag + "]"
+                        $ tier_sort_dict = OrderedDict([("All", all_tiers), ("T0", tier_zero), ("T1", tier_one), ("T2", tier_two), ("T3", tier_three)])
+                        $ tier_number = 0
+                        for tier_name in tier_sort_dict:
+                            if allowed_tiers == tier_sort_dict[tier_name] and tier_number <= mc.business.research_tier:
+                                $ button_sensitive = False
+                            else:
+                                $ button_sensitive = True
 
-                                if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
-                                    $ research_needed_string = "\nResearch Impossible"
-                                else:
-                                    $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
-                                $ trait_title = trait.name + " " + research_needed_string  + trait_tags
-                                textbutton trait_title:
-                                    text_xalign 0.5
-                                    text_text_align 0.5
-                                    text_size 14
-                                    action SetScreenVariable("selected_research", trait)
-                                    style "textbutton_style"
-                                    text_style "textbutton_text_style"
-                                    if selected_research == trait:
-                                        background "#59853f"
-                                        hover_background "#a9d59f"
-                                    else:
-                                        background "#000080"
-                                        hover_background "#1a45a1"
-                                    xsize 300
+                            $ tier_number += 1
+                            textbutton tier_name action SetScreenVariable("allowed_tiers", tier_sort_dict[tier_name]) sensitive button_sensitive xsize 55 ysize 40 style "textbutton_style" text_style "textbutton_text_style" text_align (0.5,0.5) text_anchor (0.5,0.5) text_size 16
 
-                viewport: #Master Existing traits
-                    xsize 320
-                    ysize 800
-                    scrollbars "vertical"
-                    mousewheel True
-                    vbox:
+                    viewport: #Research new traits
                         xsize 320
-                        text "Master Existing Traits:" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
+                        ysize 785
+                        scrollbars "vertical"
+                        mousewheel True
+                        vbox:
+                            xsize 320
+                            spacing 0
+                            $ sorted_traits_list = list_of_traits+mc.business.blueprinted_traits
+                            if not sort_method == alpha_sort:
+                                $ sorted_traits_list = sorted(sorted_traits_list, key = alpha_sort) # If we're sorting by something other than alphabetical also sort by alphabetical after.
+                            $ sorted_traits_list = sorted(sorted_traits_list, key=sort_method, reverse = sort_reversed)
 
-                        for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
-                            if trait.researched:
-                                $ trait_tags = ""
-                                if trait.exclude_tags:
-                                    $ trait_tags = "\nExcludes Other: "
-                                    for a_tag in trait.exclude_tags:
-                                        $ trait_tags += "[[" + a_tag + "]"
-
-                                if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
-                                    $ research_needed_string = "Research Impossible"
-                                else:
-                                    $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
-
-                                $ side_effect_chance = trait.get_effective_side_effect_chance()
-                                if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
-                                    $ side_effect_chance_string = "Always Guaranteed"
-                                else:
-                                    $ side_effect_chance_string = str(side_effect_chance) + "%"
-                                $ trait_title = trait.name + " " + research_needed_string + trait_tags + "\nMastery Level: " + str(trait.mastery_level) + "\nSide Effect Chance: " + side_effect_chance_string
-                                textbutton trait_title:
-                                    text_xalign 0.5
-                                    text_text_align 0.5
-                                    text_size 14
-                                    action SetScreenVariable("selected_research", trait)
-                                    style "textbutton_style"
-                                    text_style "textbutton_text_style"
-                                    if selected_research == trait:
-                                        background "#59853f"
-                                        hover_background "#a9d59f"
+                            for trait in sorted_traits_list:
+                                if not trait.researched and trait.has_required() and trait.tier in allowed_tiers:
+                                    if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
+                                        $ research_needed_string = "\nResearch Impossible"
                                     else:
-                                        background "#000080"
-                                        hover_background "#1a45a1"
-                                    xsize 300
+                                        $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
+                                    $ trait_title = trait.name + " " + research_needed_string
+                                    textbutton trait_title:
+                                        text_xalign 0.5
+                                        text_text_align 0.5
+                                        text_size 14
+                                        action SetScreenVariable("selected_research", trait)
+                                        style "textbutton_style"
+                                        text_style "textbutton_text_style"
+                                        if selected_research == trait:
+                                            background "#59853f"
+                                            hover_background "#a9d59f"
+                                        else:
+                                            background "#000080"
+                                            hover_background "#1a45a1"
+                                        xsize 300
 
-                viewport: #Research new designs
+                    hbox:
+                        yalign 1.0
+                        yanchor 1.0
+                        xanchor 0.5
+                        xalign 0.5
+                        $ serum_sort_buttons = OrderedDict([("ABC", alpha_sort), \
+                            ("{color=#0049d8}Men{/color}", men_sort), ("{color=#00AA00}Phy{/color}", phys_sort), \
+                            ("{color=#FFC0CB}Sex{/color}", sex_sort), ("{color=#FFFFFF}Med{/color}", med_sort), \
+                            ("{color=#BBBBBB}Flaw{/color}", flaw_sort), ("{color=#FF6249}Attn{/color}", attn_sort)])
+                        for sort_button in serum_sort_buttons:
+                            $ sort_name = sort_button
+                            $ background_colour = "#000080"
+                            if serum_sort_buttons[sort_button] == sort_method:
+                                $ background_colour = "#4040c0"
+                                $ button_action = ToggleScreenVariable("sort_reversed")
+                                if sort_reversed:
+                                    $ sort_name += " ^" #TODO: Get the proper unicode here.
+                                else:
+                                    $ sort_name += " v" #TODO: and here
+                            else:
+                                $ button_action = [SetScreenVariable("sort_method", serum_sort_buttons[sort_button]), SetScreenVariable("sort_reversed", False)]
+
+                            textbutton sort_name:
+                                action button_action sensitive button_sensitive
+                                background background_colour insensitive_background "#222222" hover_background "#aaaaaa"
+                                xsize 50 ysize 40 style "textbutton_style" text_style "textbutton_text_style" text_align (0.5,0.5) text_anchor (0.5,0.5) text_size 12
+
+
+
+                vbox:
                     xsize 320
-                    ysize 800
-                    scrollbars "vertical"
-                    mousewheel True
-                    vbox:
+                    text "Master Existing Traits:" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
+                    viewport: #Master Existing traits
                         xsize 320
-                        text "Research New Designs:" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
-                        for serum in mc.business.serum_designs:
-                            if not serum.researched:
-                                textbutton "[serum.name] ([serum.current_research]/[serum.research_needed])":
-                                    text_xalign 0.5
-                                    text_text_align 0.5
-                                    text_size 14
-                                    action SetScreenVariable("selected_research", serum)
-                                    text_style "textbutton_text_style"
-                                    style "textbutton_style"
-                                    if selected_research == trait:
-                                        background "#59853f"
-                                        hover_background "#a9d59f"
+                        ysize 800
+                        scrollbars "vertical"
+                        mousewheel True
+                        vbox:
+                            xsize 320
+
+
+                            for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
+                                if trait.researched:
+                                    if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
+                                        $ research_needed_string = "Research Impossible"
                                     else:
-                                        background "#000080"
-                                        hover_background "#1a45a1"
-                                    xsize 300
+                                        $ research_needed_string = "(" +str(trait.current_research)+"/"+ str(trait.research_needed) + ")"
+
+                                    $ side_effect_chance = trait.get_effective_side_effect_chance()
+                                    if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
+                                        $ side_effect_chance_string = "Always Guaranteed"
+                                    else:
+                                        $ side_effect_chance_string = str(side_effect_chance) + "%"
+                                    $ trait_title = trait.name + " " + research_needed_string + "\nMastery Level: " + str(trait.mastery_level) + "\nSide Effect Chance: " + side_effect_chance_string
+                                    textbutton trait_title:
+                                        text_xalign 0.5
+                                        text_text_align 0.5
+                                        text_size 14
+                                        action SetScreenVariable("selected_research", trait)
+                                        style "textbutton_style"
+                                        text_style "textbutton_text_style"
+                                        if selected_research == trait:
+                                            background "#59853f"
+                                            hover_background "#a9d59f"
+                                        else:
+                                            background "#000080"
+                                            hover_background "#1a45a1"
+                                        xsize 300
+
+                vbox:
+                    xsize 320
+                    text "Research New Designs:" style "menu_text_style" size 20 xanchor 0.5 xalign 0.5
+                    viewport: #Research new designs
+                        xsize 320
+                        ysize 800
+                        scrollbars "vertical"
+                        mousewheel True
+                        vbox:
+                            xsize 320
+
+                            for serum in mc.business.serum_designs:
+                                if not serum.researched:
+                                    textbutton "[serum.name] ([serum.current_research]/[serum.research_needed])":
+                                        text_xalign 0.5
+                                        text_text_align 0.5
+                                        text_size 14
+                                        action SetScreenVariable("selected_research", serum)
+                                        text_style "textbutton_text_style"
+                                        style "textbutton_style"
+                                        if selected_research == trait:
+                                            background "#59853f"
+                                            hover_background "#a9d59f"
+                                        else:
+                                            background "#000080"
+                                            hover_background "#1a45a1"
+                                            xsize 300
 
             textbutton "Return" action Return("None") style "textbutton_style" text_style "textbutton_text_style" yalign 0.995 xanchor 0.5 xalign 0.5
 

@@ -33,16 +33,16 @@ init -1 python:
             return False
         elif not the_person.event_triggers_dict.get("sister_oral_quest_progress", 0) == 1:
             return False
-        elif mc.business.funds < 1200:
+        elif not mc.business.has_funds(1200):
             return ""
         else:
-            return
+            return True
 
     def sister_oral_revisit_quest_complete_requirement(the_person):
         if not the_person.event_triggers_dict.get("sister_oral_quest_active", False):
             return False
         elif not the_person.event_triggers_dict.get("sister_oral_quest_progress", 0) == 2:
-            return "Buy her a πphone."
+            return "Buy her a pi-phone."
         else:
             return True
 
@@ -279,8 +279,9 @@ label sister_oral_taboo_break_revisit(the_person):
             $ the_person.change_slut(-10)
             $ mc.log_event(the_person.title + "'s taboos restored!", "float_text_red")
 
-            #$ electronics_store.on_room_enter_event_list.append(Action("pi phone discover", sister_oral_quest_1_requirement, "sister_oral_taboo_break_revisit_quest_1", args = the_person, requirement_args = the_person))
-            $ electronics_store.actions.append(Action("Buy a πphone. -$1200", sister_oral_quest_2_requirement, "sister_oral_taboo_break_revisit_quest_2", args = the_person, requirement_args = the_person))
+            $ electronics_store.on_room_enter_event_list.append(Action("pi phone discover", sister_oral_quest_1_requirement, "sister_oral_taboo_break_revisit_quest_1", args = the_person, requirement_args = the_person))
+
+            $ electronics_store.actions.append(Action("Buy a pi-phone. -$1200", sister_oral_quest_2_requirement, "sister_oral_taboo_break_revisit_quest_2", args = the_person, requirement_args = the_person))
 
             $ the_person.get_role_reference(sister_role).actions.append(Action("Check back in...", sister_oral_revisit_quest_complete_requirement, "sister_oral_taboo_break_revisit_complete"))
 
@@ -297,7 +298,7 @@ label sister_oral_taboo_break_revisit(the_person):
 
 label sister_oral_taboo_break_revisit_quest_1(the_person):
     "As you get close to the electronics store you see a long line snaking out the front and down one arm of the mall."
-    "The front of the store is covered in posters, all advertising \"The New πphone. Only $1200!\"."
+    "The front of the store is covered in posters, all advertising \"The New pi-phone. Only $1200!\"."
     $ the_person.event_triggers_dict["sister_oral_quest_progress"] = 1
     return
 
@@ -334,7 +335,7 @@ label sister_oral_taboo_break_revisit_quest_2(the_person):
 
                 "Talk to them.":
                     "You don't have anything better to do with your time, so you turn around and try and strike up a conversation."
-                    mc.name "Hey, you three here for the πphone release too?"
+                    mc.name "Hey, you three here for the pi-phone release too?"
                     $ the_group.set_primary(other_girl_2)
                     $ the_group.draw_group()
                     other_girl_2 "Uh, duh. Why else would we be here?"
@@ -377,14 +378,14 @@ label sister_oral_taboo_break_revisit_quest_2(the_person):
             "The line finally pulls up to the front of the store."
             "Without much fanfare you're ushered in. The staff look stressed, hurrying to serve the swarms of people."
             "You get your phone, pay for it, and are directed towards the exit without any issues."
-            $ mc.business.funds += -1200
+            $ mc.business.change_funds(-1200)
             $ the_person.event_triggers_dict["sister_oral_quest_progress"] = 2
             call advance_time()
 
         "Keep waiting. {image=gui/heart/Time_Advance.png}\nNot enough time (disabled)" if time_of_day == 4:
             pass
 
-        "Buy one from a scalper. -$2400" if mc.business.funds >= 2400:
+        "Buy one from a scalper. -$2400" if mc.business.has_funds(2400):
             "You don't feel like waiting in line for hours just to get this phone, so you start looking for someone who has one to sell you theirs."
             "You wait at the exit from the store, asking people as they go past."
             mc.name "Hey man, want to make some quick money? I'll pay double."
@@ -392,12 +393,12 @@ label sister_oral_taboo_break_revisit_quest_2(the_person):
             "Stranger" "Seriously? Uh..."
             mc.name "Come on, you can take the cash and get back into line right away."
             "Stranger" "Aaaah, fuck it. Fine, do you have actual cash?"
-            "You have to find an ATM to get the man his cash, but after a few minutes you have a new πphone in your hands."
+            "You have to find an ATM to get the man his cash, but after a few minutes you have a new pi-phone in your hands."
             "A hell of a lot better than waiting in line for hours, you think to yourself."
-            $ mc.business.funds += -2400
+            $ mc.business.change_funds(-2400)
             $ the_person.event_triggers_dict["sister_oral_quest_progress"] = 2
 
-        "Buy one from a scalper. -$2400 (disabled)" if mc.business.funds < 2400:
+        "Buy one from a scalper. -$2400 (disabled)" if not mc.business.has_funds(2400):
             pass
 
         "Give up for now.":
@@ -410,7 +411,7 @@ label sister_oral_taboo_break_revisit_complete(the_person):
     $ the_person.event_triggers_dict["oral_revisit_complete"] = True
 
     mc.name "Hey, you were looking for this, right?"
-    "You pull out [the_person.title]'s new πphone and wave it in front of her."
+    "You pull out [the_person.title]'s new pi-phone and wave it in front of her."
     $ the_person.draw_person(emotion = "happy")
     the_person "Oh my god, you actually got one? Aaaah!"
     $ the_person.change_happiness(20)
@@ -427,7 +428,7 @@ label sister_oral_taboo_break_revisit_complete(the_person):
             the_person "What? Oh... Very funny [the_person.mc_title]. Come on, just give me the phone."
             the_person "It's not like I'm going to give you a blowjob just for a phone."
             mc.name "Aren't you? All of the girls at the store were talking about their InstaPic accounts."
-            mc.name "Imagine how you'll look, if you're the only who doesn't have a πphone..."
+            mc.name "Imagine how you'll look, if you're the only who doesn't have a pi-phone..."
             "You leave the question hanging. [the_person.possessive_title] pouts again, but sighs when it's clear that won't break you."
             the_person "You're the worst, you know that? Fiiiine."
             if mc.location.get_person_count() > 1:
@@ -589,6 +590,8 @@ label sister_anal_taboo_break_revisit(the_person):
     return
 
 label sister_anal_taboo_break_revisit_complete(the_person):
+    $ the_person.event_triggers_dict["sister_anal_quest_active"] = False
+    $ the_person.event_triggers_dict["anal_revisit_complete"] = True
     mc.name "So, I got you those pictures with [mom.title]."
     the_person "I know, I can't believe she actually did that!"
     the_person "My fans {i}love{/i} them! They're such perverts!"
@@ -679,7 +682,7 @@ label sister_vaginal_taboo_break_revisit(the_person):
             mc.name "Yeah, I guess that'll have to be enough."
             "[the_person.possessive_title] smiles and breathes a sigh of relief."
             the_person "I was worried you were going to make a big deal out of it."
-            the_person "Thanks for being a cool brother [the_person.title]."
+            the_person "Thanks for being a cool brother [the_person.mc_title]."
             $ the_person.change_slut(-10)
             $ mc.log_event(the_person.title + "'s taboos restored!", "float_text_red")
     $ clear_scene()

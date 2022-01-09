@@ -129,16 +129,16 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
             unlock_label = "basic_hair_dye_unlock_label",
             name = "Encapsulated Hair Dyes",
             desc = "Precise delivery of commonly available hair dyes recolours the targets hair over the course of hours. Only a limited ranges of hair colours are available with this procedure.",
-            positive_slug = "+$15 Value, Shifts Hair Colour Towards Selected Preset Colour",
-            negative_slug = "+40 Research Needed",
-            value_added = 15,
+            positive_slug = "Shifts Hair Colour Towards Selected Preset Colour",
+            negative_slug = "",
             research_added = 40,
             base_side_effect_chance = 5,
             requires = [hair_lighten_dye, hair_darken_dye],
             tier = 1,
             research_needed = 100,
             exclude_tags = "Dye",
-            clarity_cost = 50)
+            clarity_cost = 50,
+            mental_aspect = 0, physical_aspect = 4, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 1)
 
         #################
         # Tier 2 Traits #
@@ -149,37 +149,36 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
             unlock_label = "hair_colour_change_unlock_label",
             name = "Organic Hair Chemicals",
             desc = "Triggers the production of natural hair dyes, which quickly recolour the subject's hair over the course of hours. Application for several days is suggested for perfect colour accuracy. Test on hidden patch first.",
-            positive_slug = "+$30 Value, Shifts Hair Colour Towards Set Target Colour",
-            negative_slug = "+80 Serum Research",
-            value_added = 30,
+            positive_slug = "Shifts Hair Colour Towards Set Target Colour",
+            negative_slug = "",
             research_added = 80,
             base_side_effect_chance = 20,
             requires = [hair_lighten_dye, hair_darken_dye],
             tier = 2,
             research_needed = 400,
             exclude_tags = "Dye",
-            clarity_cost = 300)
+            clarity_cost = 300,
+            mental_aspect = 0, physical_aspect = 7, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 2)
 
         eye_dye_trait = SerumTraitBlueprint(
             unlock_label = "eye_colour_change_unlock_label",
             name = "Occular Dyes",
             desc = "Modifies the cells of the subject's iris, causing them change to the target colour over the course of hours. This method can achieve eye colours not normally seen.",
-            positive_slug = "+$30 Value, Shifts Eye Colour Towards Set Target Colour",
-            negative_slug = "+40 Serum Research",
-            value_added = 30,
+            positive_slug = "Shifts Eye Colour Towards Set Target Colour",
+            negative_slug = "",
             research_added = 40,
             base_side_effect_chance = 40,
             requires = [hair_lighten_dye, hair_darken_dye],
             tier = 2,
             research_needed = 200,
-            clarity_cost = 150)
+            clarity_cost = 150,
+            mental_aspect = 0, physical_aspect = 6, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 1)
 
         breast_milk_serum_production = SerumTraitBlueprint(name = "Serum Lactation",
             unlock_label = "breast_milk_serum_production_unlock_label",
             desc = "Temporarily reprograms the mammary glands of the subject, causing them to produce the selected Serum Design along with their natural milk when they lactate. The number of doses that can be collected depends primarily on the subject's breast size and lactation intensity, although other factors are suspected to exist.",
-            positive_slug = "0 Slots, 6 Turn Duration, Lactation Produces Serum Milk, $2 Value",
-            negative_slug = "+1200 Serum Research, +500 Clarity Cost, 120 Production/Batch",
-            value_added = 2,
+            positive_slug = "0 Slots, 6 Turn Duration, Lactation Produces Serum Milk",
+            negative_slug = "120 Production/Batch",
             research_added = 1200,
             slots_added = 0,
             production_added = 120,
@@ -194,7 +193,8 @@ label instantiate_serum_trait_blueprints(): # Called from instantiate_serum_trai
             tier = 2,
             research_needed = 1000,
             exclude_tags = "Production",
-            clarity_cost = 1500)
+            clarity_cost = 1500,
+            mental_aspect = 0, physical_aspect = 2, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 2)
 
         # TIER 1 #
         list_of_traits.append(basic_hair_dye_trait)

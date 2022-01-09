@@ -141,7 +141,7 @@ init 0 python:
             return False
 
     male_focused_marketing_policy = Policy(name = "Male Focused Modeling",
-        desc = "The adage \"Sex Sells\" is especially true when selling your serum to men. Serum will sell for +1% per point of sluttiness of your marketing uniform.",
+        desc = "The adage \"Sex Sells\" is especially true when selling your serum to men. Market reach is increased by an additional 1% per point of outfit Sluttiness worn by your marketing staff",
         cost = 500,
         toggleable = True,
         requirement = male_focused_marketing_requirement,

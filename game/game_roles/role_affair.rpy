@@ -152,6 +152,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
     $ the_report = _return
 
     $ done = False
+    $ had_to_run = False
     $ girl_came = False
     $ so_called = False
     $ energy_gain_amount = 50 #Drops each round, representing your flagging endurance.
@@ -211,6 +212,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
                                 "You jump up from [the_person.possessive_title]'s bed and look around the room. You hear her [so_title] close the car door."
                                 $ random_num = renpy.random.randint(0,100)
                                 $ hiding_under_bed = True
+                                $ had_to_run = True
                                 if random_num < 50:
                                     "Without many options you drop to the ground and shimmy yourself under her bed, trying to make sure you can't be seen from the bedroom door."
                                     "Above you [the_person.title] lies down on her bed and waits. You hear her [so_title] open the front door, then walk through the house toward you."
@@ -266,6 +268,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
 
                             "Run for it!":
                                 $ done = True
+                                $ had_to_run = True
                                 mc.name "Fuck!"
                                 "You don't waste any time, throwing your clothes on as quickly as possible. By the time you hear the front door open you're already rushing for the back yard."
                                 $ random_num = renpy.random.randint(0,100)
@@ -523,6 +526,9 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
 
     #As soon as done is True we finish looping. This means each path should narrate it's own end of encounter stuff.
     #Generic stuff to make sure we don't keep showing anyone.
+    if not had_to_run:
+        call check_date_trance(the_person)
+
     $ the_person.clear_situational_slut("Date")
     $ clear_scene()
     return "Advance Time"

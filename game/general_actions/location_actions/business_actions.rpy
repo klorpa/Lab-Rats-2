@@ -37,7 +37,7 @@ init 0 python:
     def production_work_action_requirement():
         if time_of_day >= 4:
             return "Too late to work."
-        elif len(mc.business.serum_production_array) == 0:
+        elif mc.business.get_used_line_weight() == 0:
             return "No serum design set."
         else:
             return True
@@ -104,6 +104,16 @@ init 0 python:
     def review_designs_action_requirement():
         return True
 
+    def mc_breakthrough_requirement(new_level, clarity_cost):
+        if mc.business.research_tier+1 != new_level:
+            return False
+        elif clarity_cost > mc.free_clarity:
+            return "Not enough Clarity."
+        elif time_of_day >= 4:
+            return "Too late to work."
+        else:
+            return True
+
 label sleep_action_description:
     "You go to bed after a hard days work."
     call advance_time from _call_advance_time
@@ -151,7 +161,7 @@ label interview_action_description:
     "Bringing in [count] people for an interview will cost $[interview_cost]. Do you want to spend time interviewing potential employees?"
     menu:
         "Yes, I'll pay the cost. -$[interview_cost]":
-            $ mc.business.funds += -interview_cost
+            $ mc.business.change_funds(-interview_cost)
             $ clear_scene()
             $ renpy.free_memory() #Try and free available memory
             python: #Build our list of candidates with our proper recruitment requirements
@@ -307,12 +317,12 @@ label trade_serum_action_description:
     return
 
 label sell_serum_action_description:
-    "You look through your stock of serum, marking some to be sold by your marketing team."
     hide screen main_ui
     hide screen phone_hud_ui
     hide screen business_ui
     $ renpy.block_rollback()
-    call screen serum_trade_ui(mc.business.inventory,mc.business.sale_inventory,"Production Stockpile","Sales Stockpile")
+    # call screen serum_trade_ui(mc.business.inventory,mc.business.sale_inventory,"Production Stockpile","Sales Stockpile")
+    call screen serum_sell_ui()
     $ renpy.block_rollback()
 
     show screen phone_hud_ui
@@ -519,4 +529,20 @@ label set_serum_description: #TODO: Add a special screen for all of this instead
     elif selected_div == "H":
         $ mc.business.h_serum = selected_serum
 
+    return
+
+label mc_research_breakthrough(new_level, clarity_cost):
+    "You feel an idea in the back of your head. You realise it's been there this whole time, but you've been too distracted to see it."
+    "You snatch up the nearest notebook and get to work right away."
+    "Within minutes your thoughts are flowing fast and clear. Everything makes sense, and your path forward is made crystal clear."
+    $ mc.spend_clarity(clarity_cost)
+    $ mc.business.research_tier = new_level
+    if new_level == 1:
+        $ mc.log_event("Tier 1 Research Unlocked", "float_text_grey")
+    elif new_level == 2:
+        $ mc.log_event("Tier 2 Research Unlocked", "float_text_grey")
+    else:
+        $ mc.log_event("Max Research Tier Unlocked", "float_text_grey")
+    "You throw your pen down when you're finished. Your new theory is awash in possibilities!"
+    "Now you just need to research them in the lab!"
     return

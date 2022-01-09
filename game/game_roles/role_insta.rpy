@@ -290,7 +290,7 @@ label dm_option_specific_outfit_response(the_person, the_outfit):
         $ the_person.event_triggers_dict["insta_special_request_outfit"] = the_outfit
         if the_person.event_triggers_dict.get("insta_special_request_level",0) < 1:
             $ the_person.event_triggers_dict["insta_special_request_level"] = 1
-        $ mc.business.funds += -20
+        $ mc.business.change_funds(-20)
         "You wire her the cash you promised."
 
     $ insta_dm_cleanup(the_person)
@@ -378,7 +378,7 @@ label dm_option_underwear_response(the_person):
             $ the_person.event_triggers_dict["onlyfans_known"] = True
             "She sends you a link."
 
-        $ mc.business.funds += -50
+        $ mc.business.change_funds(-50)
         if the_person.event_triggers_dict.get("insta_special_request_level",0) < 2:
             $ the_person.event_triggers_dict["insta_special_request_level"] = 2
         "You wire her the cash you promised."
@@ -483,7 +483,7 @@ label dm_option_topless_response(the_person):
             $ the_person.event_triggers_dict["onlyfans_known"] = True
 
 
-        $ mc.business.funds += -100
+        $ mc.business.change_funds(-100)
         if the_person.event_triggers_dict.get("insta_special_request_level",0) < 3:
             $ the_person.event_triggers_dict["insta_special_request_level"] = 3
         "You wire her the cash you promised."
@@ -582,7 +582,7 @@ label dm_option_nude_response(the_person):
             "She sends you a link."
             $ the_person.event_triggers_dict["onlyfans_known"] = True
 
-        $ mc.business.funds += -200
+        $ mc.business.change_funds(-200)
         if the_person.event_triggers_dict.get("insta_special_request_level",0) < 4:
             $ the_person.event_triggers_dict["insta_special_request_level"] = 4
         "You wire her the cash you promised."

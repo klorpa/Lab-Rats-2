@@ -1,5 +1,3 @@
-# Holds all of the labels for command related actions.
-
 label serum_demand_label(the_person):
     # Description called when you use a girls obedience to have her take a dose of serum for you.
 

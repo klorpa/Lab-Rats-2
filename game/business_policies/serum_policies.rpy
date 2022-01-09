@@ -90,11 +90,58 @@ init 0 python:
         dependant_policies = serum_size_2_policy)
     serum_policies_list.append(serum_size_3_policy)
 
+    def serum_production_improvement(increase_amount = 1, operating_cost_increase = 0):
+        mc.business.max_serum_tier += increase_amount
+        mc.business.operating_costs += operating_cost_increase
+
+    def serum_production_1_requirement():
+        return True
+
+    serum_production_1_policy = Policy(name = "Tier 1 Serum Production",
+        desc = "You will need more complex machinery to produce advanced serum designs, but those machines aren't cheap, and they add significant overhead to your business. Allows you to produce tier 1 serum designs, but costs an additional $50 per day in oprating costs.",
+        cost = 750,
+        toggleable = False,
+        requirement = serum_production_1_requirement,
+        on_buy_function = serum_production_improvement,
+        extra_arguments = {"operating_cost_increase":50})
+    serum_policies_list.append(serum_production_1_policy)
+
+    def serum_production_2_requirement():
+        if serum_production_1_policy.is_owned():
+            return True
+        else:
+            return False
+
+    serum_production_2_policy = Policy(name = "Tier 2 Serum Production",
+        desc = "Equipping your production lines with state-of-the-art machinery is necessary to produce tier 2 serum designs. Maintenence and licensing fees will cost an additional $200 per work day.",
+        cost = 5000,
+        toggleable = False,
+        requirement = serum_production_2_requirement,
+        on_buy_function = serum_production_improvement,
+        extra_arguments = {"operating_cost_increase":200})
+    serum_policies_list.append(serum_production_2_policy)
+
+    def serum_production_3_requirement():
+        if serum_production_1_policy.is_owned():
+            return True
+        else:
+            return False
+
+    serum_production_3_policy = Policy(name = "Tier 3 Serum Production",
+        desc = "Installing protoype machinery in your production lines will allow you to produce tier 3 serum designs. Maintenence and licensing fees will cost an additional $500 per work day.",
+        cost = 10000,
+        toggleable = False,
+        requirement = serum_production_3_requirement,
+        on_buy_function = serum_production_improvement,
+        extra_arguments = {"operating_cost_increase":500})
+    serum_policies_list.append(serum_production_3_policy)
+
     def production_line_addition_1_requirement():
         return True
 
     def add_production_lines(amount):
-        mc.business.production_lines += amount
+        for x in range(0,amount):
+            mc.business.production_lines.append(ProductionLine(mc.business.inventory))
 
     production_line_addition_1_policy = Policy(name = "Production Line Expansion 1",
         desc = "Adding a new serum processing area will allow for the production of three serums at once.",

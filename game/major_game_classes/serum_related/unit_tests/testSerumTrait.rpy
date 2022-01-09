@@ -20,7 +20,7 @@ init 0 python:
 
             self.complex_test_serum_trait = SerumTrait("Complex trait", "This is a complex trait",
                 positive_slug = "Positive slug", negative_slug = "Negative slug",
-                value_added = 40, research_added = 40, slots_added = 1, production_added = 20,
+                research_added = 40, slots_added = 1, production_added = 20,
                 base_side_effect_chance = 20, clarity_added = 20,
                 on_apply = test_trait_on_apply,
                 on_remove = test_trait_on_remove,

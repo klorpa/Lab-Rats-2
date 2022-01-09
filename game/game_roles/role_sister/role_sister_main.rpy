@@ -87,7 +87,7 @@ init -2 python:
     def sister_serum_test_requirement(the_person):
         if not mc.business.event_triggers_dict.get("sister_serum_test", False):
             return False
-        elif mc.business.funds < 50:
+        elif not mc.business.has_funds(50):
             return "Requires: $50"
         else:
             return True
@@ -117,7 +117,7 @@ init -2 python:
             return False
         elif len(lily_bedroom.people) > 1:
             return False
-        elif the_person.sluttiness < 30 or mc.business.funds < 100:
+        elif the_person.sluttiness < 30 or not mc.business.has_funds(100):
             return "Requires: $100, " + get_red_heart(30)
         else:
             return True
@@ -203,7 +203,7 @@ label sister_serum_test_label(the_person):
     the_person "Alright, $50 and I'll try it."
     call give_serum(the_person) from _call_give_serum_7
     if _return:
-        $ mc.business.funds += -50
+        $ mc.business.change_funds(-50)
         "You give [the_person.possessive_title] the cash and the serum. She puts the money away then drinks the serum, handing back the empty vial."
         $ the_person.change_obedience(1)
         the_person "Easiest fifty bucks I've ever earned. I guess you can hang around and keep an eye on me if it's important for your research."
@@ -279,13 +279,13 @@ label sister_strip_explanation(the_person):
     "[the_person.title] nods. There's a long silence before she speaks again."
     the_person "So... do you want me to do it for you now?"
     menu:
-        "Ask her to strip for you." if mc.business.funds >= 100:
+        "Ask her to strip for you." if mc.business.has_funds(100):
             mc.name "I don't see why not."
-            $ mc.business.funds += -100
+            $ mc.business.change_funds(-100)
             "You pull a hundred dollars out of your wallet and hand it over to [the_person.possessive_title]. She tucks it away and gets ready."
             call strip_tease(the_person, for_pay = True)
 
-        "Ask her to strip for you.\n{size=22}Requires: $100{/size} (disabled)" if mc.business.funds < 100:
+        "Ask her to strip for you.\n{size=22}Requires: $100{/size} (disabled)" if not mc.business.has_funds(100):
             pass
 
         "Not right now.":
@@ -301,7 +301,7 @@ label sister_strip_label(the_person):
         the_person "Oh, do you want me to... show off for you?"
     else:
         the_person "You want me to strip down for you?"
-    $ mc.business.funds += -100
+    $ mc.business.change_funds(-100)
     $ the_person.change_obedience(1)
     "You nod and sit down on [the_person.possessive_title]'s bed. She holds her hand out and you hand over her money."
     "She tucks the money away and gets ready in front of you."

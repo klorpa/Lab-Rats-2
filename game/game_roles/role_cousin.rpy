@@ -38,7 +38,7 @@ init -2 python:
     def stripclub_show_requirement():
         if time_of_day in [0,1,2]:
             return "Too early for the performance to start."
-        elif mc.business.funds < 20:
+        elif not mc.business.has_funds(20):
             return "Not enough cash."
         else:
             return True
@@ -285,7 +285,7 @@ label cousin_blackmail_list(the_person):
                     "[the_person.title] pulls out a small wad of bills."
                 the_person "Fine."
                 "She pulls out a $100 bill and hands it over to you. You take the money and slip it into your wallet."
-            $ mc.business.funds += 100
+            $ mc.business.change_funds(100)
             $ the_person.change_love(-1)
             $ the_person.change_obedience(3)
             $ the_person.event_triggers_dict["last_blackmailed"] = day
@@ -781,7 +781,7 @@ label cousin_boobjob_ask_label(the_person):
             if breast_enhancement in serum_design.traits:
                 has_boob_enhancement_serum = True #The player has a serum in their inventory that can grow her breasts, so you can do that instead of getting her surgery.
     menu:
-        "Pay for it. -$5000" if mc.business.funds >= 5000:
+        "Pay for it. -$5000" if mc.business.has_funds(5000):
             mc.name "Fine. Send me over the bill and I'll pay it."
             the_person "Really? Just like that?"
             if the_person.love < 10:
@@ -794,9 +794,9 @@ label cousin_boobjob_ask_label(the_person):
 
             $ the_person.change_obedience(5)
             $ the_person.change_slut(2, 60)
-            $ mc.business.funds += -5000
+            $ mc.business.change_funds(-5000)
 
-        "Pay for it. -$5000 (disabled)" if mc.business.funds < 5000:
+        "Pay for it. -$5000 (disabled)" if not mc.business.has_funds(5000):
             pass
 
         "Offer breast enhancing serum instead." if has_boob_enhancement_serum:
@@ -834,7 +834,7 @@ label cousin_boobjob_ask_label(the_person):
         "Refuse to pay.":
             mc.name "Five thousand dollars? That's ridiculous. I can't pay that just to get you a set of bigger tits."
             the_person "Come on, please? What can I do to convince you?"
-            if mc.business.funds < 5000:
+            if not mc.business.has_funds(5000):
                 mc.name "Nothing, because I don't have that kind of money."
                 $ the_person.change_happiness(-5)
                 the_person "Really? Ugh, you're useless."
@@ -894,7 +894,7 @@ label cousin_talk_boobjob_again_label(the_person):
                 has_boob_enhancement_serum = True #The player has a serum in their inventory that can grow her breasts, so you can do that instead of getting her surgery.
 
     menu:
-        "Pay for it. -$5000" if mc.business.funds >= 5000:
+        "Pay for it. -$5000" if mc.business.has_funds(5000):
             mc.name "Fine. Send me the bill and I'll pay it."
             the_person "Really? Just like that?"
             if the_person.love < 10:
@@ -908,7 +908,7 @@ label cousin_talk_boobjob_again_label(the_person):
             python:
                 the_person.change_obedience(5)
                 the_person.change_slut(2, 50)
-                mc.business.funds += -5000
+                mc.business.change_funds(-5000)
                 the_person.event_triggers_dict["getting boobjob"] = True #Reset the flag so you can ask her to get _another_ boobjob.
                 cousin_boobjob_get_action = Action("Cousin boob job get", cousin_boobjob_get_requirement, "cousin_boobjob_get_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(4,6)])
                 mc.business.mandatory_crises_list.append(cousin_boobjob_get_action)
@@ -918,7 +918,7 @@ label cousin_talk_boobjob_again_label(the_person):
                         cousin_role.actions.remove(an_action)
                         break
 
-        "Pay for it. -$5000 (disabled)" if mc.business.funds < 5000:
+        "Pay for it. -$5000 (disabled)" if not mc.business.has_funds(5000):
             pass
 
         "Offer breast enhancing serum instead." if has_boob_enhancement_serum:
@@ -1062,7 +1062,7 @@ label cousin_new_boobs_brag_label(the_person):
 
 label cousin_tits_payback_label(the_person, amount_remaining):
     "You receive a notification on your phone from your bank."
-    $ mc.business.funds += 1000
+    $ mc.business.change_funds(1000)
     if amount_remaining > 1000:
         "[the_person.title] has transfered you $1000 with a note saying \"You know why\"."
         $ cousin_tits_payback_action = Action("cousin tits payback", cousin_tits_payback_requirement, "cousin_tits_payback_label", args = [the_person, amount_remaining-1000], requirement_args = day + 7)
@@ -1130,7 +1130,7 @@ label stripclub_dance():
     $ pose_list = ["walking_away","back_peek","standing_doggy","stand2","stand3","stand4","stand5"] #A list to let us randomly get some poses so each dance is a little different. #  Removed until we fix this with the clipping
 
     "You decide to stay a while and enjoy a show. You stop by the bar to satisfy the drink minimum, then find a seat near the edge of the stage."
-    $ mc.business.funds += -20
+    $ mc.business.change_funds(-20)
     "You nurse your beer while you wait for the next performer."
 
     $ the_person = get_random_from_list(list(set(stripclub_strippers) & set(mc.location.people))) #Create a list of strippers who are present, then pick a random person.
@@ -1220,8 +1220,8 @@ label stripclub_dance():
 
 label stripshow_strip(the_person):
     menu:
-        "Throw some cash. -$20" if mc.business.funds >= 20:
-            $ mc.business.funds += -20
+        "Throw some cash. -$20" if mc.business.has_funds(20):
+            $ mc.business.change_funds(-20)
             "You reach into your wallet and pull out a $20 bill. You wait until the dancer is looking in your direction, then throw it onto the stage."
 
             $ random_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_lower = True,  exclude_feet = True, do_not_remove = True) #Try and get a bra/top first if you can
@@ -1236,7 +1236,7 @@ label stripshow_strip(the_person):
                 $ mc.change_locked_clarity(5)
                 "She smiles and wiggles her hips for you."
 
-        "Throw some cash. -$20 (disabled)" if mc.business.funds < 20:
+        "Throw some cash. -$20 (disabled)" if not mc.business.has_funds(20):
             pass
 
         "Just enjoy the show.":

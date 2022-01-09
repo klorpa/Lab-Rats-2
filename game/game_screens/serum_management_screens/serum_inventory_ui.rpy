@@ -5,13 +5,13 @@ screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_name
         $ count = 0
         spacing 40
         xalign 0.05
-        yalign 0.05
+        yalign 0.2
         for an_inventory in [the_inventory] + extra_inventories:
             frame:
                 background "#888888"
-                xsize 400
+                xsize 600
                 viewport:
-                    xsize 410
+                    xsize 610
                     ysize 800
                     xalign 0.05
                     yalign 0.05
@@ -27,20 +27,7 @@ screen show_serum_inventory(the_inventory, extra_inventories = [],inventory_name
 
                         default selected_serum = None
                         for design in sorted(an_inventory.serums_held, key=lambda a_serum: a_serum[0].name):
-                            if design == selected_serum:
-                                textbutton design[0].name + ": " + str(design[1]) + " Doses":
-                                    style "textbutton_style" text_style "textbutton_text_style"
-                                    action [SetScreenVariable("selected_serum", None), Hide("serum_tooltip")]
-                                    sensitive True
-                                    #hovered Show("serum_tooltip",None,design[0])
-                                    background "#666666"
-                            else:
-                                textbutton design[0].name + ": " + str(design[1]) + " Doses":
-                                    style "textbutton_style" text_style "textbutton_text_style"
-                                    action SetScreenVariable("selected_serum", design)
-                                    sensitive True
-                                    hovered [SetScreenVariable("selected_serum", None), Show("serum_tooltip", None, design[0], given_anchor = (1.0,0.0), given_align = (0.95,0.05))]
-                                    unhovered Hide("serum_tooltip")
+                            use serum_design_menu_item(design[0], name_addition = ": " + str(design[1]) + " Doses")
                 $ count += 1
 
     frame:

@@ -81,7 +81,7 @@ label strip_dancing_climax(the_person, guy_state, for_pay = False):
     "[the_person.possessive_title]'s dancing speeds up and takes on a frantic, almost jerky quality."
     the_person "Oh my... Ah...!"
     "She squeals and locks her knees together, climaxing just from you watching her."
-    $ the_person.run_orgasm(trance_chance_modifier = the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"))
+    $ the_person.run_orgasm(trance_chance_modifier = the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"), reset_arousal = False)
     "Her thighs quiver with effort for a few seconds, then relax as the orgasm passes."
     "Her shoulders slump and she takes long, deep breaths to try and regain control of herself."
     "When she has caught her breath she gives you a weak smile and wiggles her hips, starting to dance for you again."

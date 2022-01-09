@@ -150,20 +150,20 @@ label transition_default_handjob(the_girl, the_location, the_object):
     return
 
 label strip_handjob(the_girl, the_clothing, the_location, the_object):
-    "[the_girl.title] starts to strip off her [the_clothing.name] while stroking you off."
+    "[the_girl.title] starts to strip off her [the_clothing.display_name] while stroking you off."
     $ the_girl.call_dialogue("sex_strip")
     $ the_girl.draw_animated_removal(the_clothing, position = handjob.position_tag)
     "She pulls it off and drops it to the ground."
     return
 
 label strip_ask_handjob(the_girl, the_clothing, the_location, the_object):
-    the_girl "[the_girl.mc_title], would you like me to take off my [the_clothing.name]?"
+    the_girl "[the_girl.mc_title], would you like me to take off my [the_clothing.display_name]?"
     "She keeps stroking your cock while you respond."
     menu:
         "Let her strip.":
             mc.name "Take it off for me."
             $ the_girl.draw_animated_removal(the_clothing, position = handjob.position_tag)
-            "[the_girl.possessive_title] strips out of her [the_clothing.name] and drops it to the side."
+            "[the_girl.possessive_title] strips out of her [the_clothing.display_name] and drops it to the side."
             the_girl "Ah, so much better."
             return True
 

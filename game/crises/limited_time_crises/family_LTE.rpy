@@ -314,6 +314,7 @@ label sister_walk_in_label(the_person):
 
             "Leave her alone.":
                 $ clear_scene()
+                $ the_person.run_orgasm()
                 "You take a quick step back and, as quietly as you can manage, close her door."
                 $ mc.change_location(hall)
                 $ the_person.apply_outfit(the_person.planned_outfit)

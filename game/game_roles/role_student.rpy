@@ -327,7 +327,7 @@ label student_study_university(the_person):
         $ mc.log_event(the_person.title + " stayed focused while studying and learned more than usual.", "float_text_grey")
 
     "[the_person.possessive_title] packs up her books and hands over your pay for the study session."
-    $ mc.business.funds += 200
+    $ mc.business.change_funds(200)
 
     if not the_person.event_triggers_dict.get("home_tutor_enabled", False):
         menu:
@@ -520,7 +520,7 @@ label student_study_home(the_person):
     if time_of_day == 3 and christina in christina.home.people:
         call study_check_up(the_person, christina) from _call_study_check_up
 
-    $ mc.business.funds += 200
+    $ mc.business.change_funds(200)
     $ the_person.event_triggers_dict["times_studied_home"] = the_person.event_triggers_dict.get("times_studied_home", 0) + 1
     if the_person.event_triggers_dict.get("current_marks",0) > 100:
         $ the_person.event_triggers_dict["current_marks"] = 100
@@ -1162,7 +1162,7 @@ label student_punish_question(the_person, wants_to_fail = False):
 label student_punish_pay_her(the_person, was_failure, wants_to_fail, successes = 0, failures = 0):
     # You pay your student a cash reward for her answer
     the_person "So, what about my reward?"
-    $ mc.business.funds += -50
+    $ mc.business.change_funds(-50)
     "You put $50 onto the table. [the_person.possessive_title] grabs it and holds it up triumphantly."
     $ the_person.change_happiness(5)
     if successes + failures < 4:
@@ -1174,7 +1174,7 @@ label student_punish_pay_her(the_person, was_failure, wants_to_fail, successes =
 label student_punish_pay_you(the_person, was_failure, wants_to_fail, successes = 0, failures = 0): # Your student pays you in cash for her answer.
     mc.name "Alright, hand over the cash."
     "[the_person.possessive_title] pouts and finds her purse. She hands over $50."
-    $ mc.business.funds += 50
+    $ mc.business.change_funds(50)
     if successes + failures < 4:
         the_person "Whatever, just give me another one."
     else:
@@ -1681,7 +1681,7 @@ label student_test(the_person): #TODO: Hook this up
             "She rolls her eyes."
             the_person "I should have known. Okay, here..."
             "She reaches into her purse and gives you a wad of cash."
-            $ mc.business.funds += 500
+            $ mc.business.change_funds(500)
             the_person "My Mom wanted to give you a bonus, I was just waiting a little to tell you."
 
         "Seeing you happy is reward enough.":

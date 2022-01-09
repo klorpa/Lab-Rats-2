@@ -217,7 +217,6 @@ label sister_instathot_label_solo(the_person):
 
     $ skip_change = False
     if the_person.has_taboo(["bare_tits", "bare_pussy"]):
-        $ skip_change = True
         "She looks at you expectantly."
         the_person "Can, you give me a moment? I'm not going to get undressed in front of you."
         menu:
@@ -230,6 +229,7 @@ label sister_instathot_label_solo(the_person):
                     the_person "Good point. Alright, you can stay."
                     $ the_person.break_taboo("bare_tits")
                     $ the_person.break_taboo("bare_pussy")
+
                 elif the_person.effective_sluttiness() >= 30:
                     the_person "Fun for you, maybe. WHat am I getting out of it?"
                     mc.name "I'm helping you out already, aren't I? Come on [the_person.title], it's not a big deal."
@@ -244,6 +244,7 @@ label sister_instathot_label_solo(the_person):
                     mc.name "So?"
                     "She scoffs and shakes her head."
                     the_person "Yeah, that's not happening. Come on, we need to do this quick before [mom.title] gets curious."
+                    $ clear_scene()
                     "You get the sense that she's not going to change her mind, so you step out into the hallway."
                     $ skip_change = True
 
@@ -395,7 +396,7 @@ label sister_instathot_label_solo(the_person):
         "Take the money. +$[money_amount]":
             mc.name "I'm not going to say no."
             "She rolls her eyes and direct transfers you some cash."
-            $ mc.business.funds += money_amount
+            $ mc.business.change_funds(money_amount)
             the_person "No, I didn't think you would mr.\"I own a business\"."
 
         "Let her keep it.":
@@ -1016,7 +1017,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
         "Take the money. +$[money_amount]":
             $ the_group.draw_person(the_mom)
             the_mom "It's so nice to see you two working well together."
-            $ mc.business.funds += money_amount
+            $ mc.business.change_funds(money_amount)
 
         "Let her keep it.":
             mc.name "Don't worry about it, I'm just happy to see you doing something cool."
@@ -1383,7 +1384,7 @@ label sister_get_boobjob(the_person):
     "She shrugs innocently."
     the_person "I'm putting in all I have!"
     menu:
-        "Pay.\n-$4000" if mc.business.funds >= 4000:
+        "Pay.\n-$4000" if mc.business.has_funds(4000):
             mc.name "Fine, I'll pay for the rest. You have to get everything organised though."
             $ the_person.draw_person(emotion = "happy")
             "[the_person.possessive_title] nods eagerly."
@@ -1391,7 +1392,7 @@ label sister_get_boobjob(the_person):
             $ mc.change_locked_clarity(5)
             "She pulls you into a tight hug."
             the_person "I'll let you know when it's done, I guess. I'm so excited!"
-            $ mc.business.funds += -4000
+            $ mc.business.change_funds(-4000)
             "You send [the_person.title] the money she needs."
             #BUG: If she's getting a second boobjob from some other event this could cause a rare collision. Probably not a problem worth worrying about.
             $ the_person.event_triggers_dict["getting boobjob"] = True #Avoids potential problem where she gets another boobjob from a different source.
@@ -1399,7 +1400,7 @@ label sister_get_boobjob(the_person):
             $ mc.business.mandatory_crises_list.append(got_boobjob_action)
             $ the_person.event_triggers_dict["sister_boobjob_ask_enabled"] = False
 
-        "Pay.\n{color=#FF0000}Requires: $4000{/color} (disabled)" if mc.business.funds < 4000:
+        "Pay.\n{color=#FF0000}Requires: $4000{/color} (disabled)" if not mc.business.has_funds(4000):
             pass
 
         "Talk about it later.":

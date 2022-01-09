@@ -200,7 +200,7 @@ label aunt_intro_phase_two_label():
     $ the_group.redraw_group()
     aunt "Thank you two so much, you're such sweethearts. Here's something for all your hard work."
     $ aunt.change_love(2)
-    $ mc.business.funds += 20
+    $ mc.business.change_funds(20)
     "[aunt.possessive_title] finds her purse, pulls out her wallet, and hands you and [lily.possessive_title] $20."
     aunt "Now I think your mother wanted to talk with me. I'm sure you both have busy days, so don't let me keep you!"
     #Their temporary homes are at your place. Later we will restore them to their normal homes.
@@ -487,9 +487,9 @@ label aunt_intro_moving_apartment_label(the_person):
         "Pizza Guy" "Hey, this is for you. One large."
         "He hands it over, then waits for you to pay."
         menu:
-            "Pay for the pizza.\n-$25" if mc.business.funds >= 25:
+            "Pay for the pizza.\n-$25" if mc.business.has_funds(25):
                 mc.name "Thanks, here you go."
-                $ mc.business.funds += -25
+                $ mc.business.change_funds(-25)
                 "Pizza Guy" "Thanks man, enjoy."
                 "You take the pizza into the kitchen. A couple of minutes later [aunt.title] comes out of the bathroom."
                 aunt "Oh, is that here already? I'm sorry [aunt.mc_title], I was going to pay for that."
@@ -497,7 +497,7 @@ label aunt_intro_moving_apartment_label(the_person):
                 $ aunt.change_love(1)
                 aunt "Well thank you. Give me a slice of that, I'm starving now too!"
 
-            "Pay for the pizza.\n-$25 (disabled)" if mc.business.funds < 25:
+            "Pay for the pizza.\n-$25 (disabled)" if mc.business.change_funds(25):
                 pass
 
             "Get the money from [aunt.title].":
@@ -1654,7 +1654,7 @@ label family_games_night_cash(the_mom, the_aunt, the_sister, partner):
             mc.name "Ooh, tough break girls. Come on, pay up."
             "[opponent_a.possessive_title] and [opponent_b.possessive_title] sigh and pull out a twenty."
             "They slide the money over to you and [partner.possessive_title]."
-            $ mc.business.funds += 20
+            $ mc.business.change_funds(20)
         else:
 
             $ partner.change_happiness(-1)
@@ -1671,8 +1671,8 @@ label family_games_night_cash(the_mom, the_aunt, the_sister, partner):
             opponent_a "So sorry about this, but it looks we won."
             $ the_group.draw_person(opponent_b, position = "sitting", emotion = "happy")
             opponent_b "You know the rules."
-            if mc.business.funds >= 20:
-                $ mc.business.funds += -20
+            if mc.business.has_funds(20):
+                $ mc.business.change_funds(-20)
             else:
                 "You pull out your wallet and realise there's no more cash in it."
                 mc.name "Uh... it looks like you've cleared me out."

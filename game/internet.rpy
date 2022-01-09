@@ -155,9 +155,9 @@ label text_chat_label(the_person):
         call small_talk_person(the_person, is_phone = True) from _call_small_talk_person_2
     return return_to_phone
 
-label text_flirt_label(the_person):
+label text_flirt_label(the_person, apply_energy_cost = True, skip_intro = True):
     $ return_to_phone = True
-    if mc.location.has_person(the_person): #She's in the same location as you.
+    if mc.location.has_person(the_person) and not skip_intro: #She's in the same location as you.
         mc.name "Hey, [the_person.title]. What are you up to right now?"
         $ mc.end_text_convo()
         $ the_person.draw_person()
@@ -166,7 +166,8 @@ label text_flirt_label(the_person):
         call flirt_person(the_person) from _call_flirt_person
         $ return_to_phone = False
     else:
-        $ mc.change_energy(-15)
+        if (apply_energy_cost):
+            $ mc.change_energy(-15)
         $ the_person.call_dialogue("flirt_response_text")
         menu:
             "Be romantic.":

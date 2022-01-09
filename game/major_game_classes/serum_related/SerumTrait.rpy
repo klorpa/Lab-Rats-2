@@ -1,10 +1,11 @@
 init -2 python:
     class SerumTrait(renpy.store.object):
         def __init__(self,name,desc, positive_slug = "", negative_slug = "",
-            value_added = 0, research_added = 0, slots_added = 0, production_added = 0, duration_added = 0, base_side_effect_chance = 0, clarity_added = 0,
+            research_added = 0, slots_added = 0, production_added = 0, duration_added = 0, base_side_effect_chance = 0, clarity_added = 0,
             on_apply = None, on_remove = None, on_turn = None, on_day = None, on_move = None,
             requires = None, tier = 0, start_researched = False, research_needed=50, exclude_tags=None, is_side_effect = False,
-            clarity_cost = 50, start_unlocked = False):
+            clarity_cost = 50, start_unlocked = False,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 0):
 
             # Display info #
             self.name = name
@@ -14,7 +15,6 @@ init -2 python:
 
 
             # Serum trait values #
-            self.value_added = value_added
             self.research_added = research_added
             self.slots = slots_added
             self.production_cost = production_added
@@ -54,6 +54,13 @@ init -2 python:
                 self.exclude_tags = [exclude_tags]
 
             self.is_side_effect = is_side_effect #If true this trait is a side effect and not counted towards serum max traits and such. It also cannot be added to a serum on purpose.
+
+            self.mental_aspect = mental_aspect
+            self.physical_aspect = physical_aspect
+            self.sexual_aspect = sexual_aspect
+            self.medical_aspect = medical_aspect
+            self.flaws_aspect = flaws_aspect
+            self.attention = attention
 
         def run_on_apply(self, the_person, the_serum, add_to_log = True):
             if self.on_apply is not None:
@@ -112,13 +119,29 @@ init -2 python:
                 return False
 
         def build_negative_slug(self):
+            return_slug = self.negative_slug
+
+            if self.research_added > 0:
+                if return_slug:
+                    return_slug += ", "
+                return_slug += "+" + str(self.research_added) + " Serum Research"
+
+            if self.clarity_added > 0:
+                if return_slug:
+                    return_slug += ", "
+                return_slug += "+" + str(self.clarity_added) + " Clarity to Unlock"
+
             if self.is_side_effect:
-                return self.negative_slug #For side effects we do not want to display the side effect chance as a negative modifier.
+                pass #For side effects we do not want to display the side effect chance as a negative modifier.
             else:
+                if return_slug:
+                    return_slug += ", "
                 if self.get_effective_side_effect_chance() >= 10000:
-                    return self.negative_slug + ", Guaranteed Side Effect"
+                    return_slug += "Guaranteed Side Effect"
                 else:
-                    return self.negative_slug + ", " + str(self.get_effective_side_effect_chance()) + "% Chance of Side Effect"
+                    return_slug += str(self.get_effective_side_effect_chance()) + "% Chance of Side Effect (" + str(self.mastery_level) + " Mastery)"
+
+            return return_slug
 
         def has_required(self):
             has_prereqs = True

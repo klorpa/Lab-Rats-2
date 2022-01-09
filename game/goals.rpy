@@ -24,7 +24,6 @@
 
 
 #GOALS TO MAKE#
-# Have X number of dollars (at end of time chunk? We could change all of the .funds += to .change_funds() and then add a listener to that. TODO: This
 # "Dress up" - Assign an outfit with X sluttiness to a person.
 # Reach research tier X.
 
@@ -118,7 +117,7 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
         return mc.business.get_employee_count()/the_goal.arg_dict["required"]
 
     def bank_account_size_valid_function(the_goal, the_difficulty):
-        if mc.business.funds >= 500 + (500*the_difficulty):
+        if mc.business.has_funds(500 + 500*the_difficulty):
             return False
         else:
             return True

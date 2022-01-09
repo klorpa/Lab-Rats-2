@@ -169,17 +169,17 @@ label model_photography_list_label(the_person):
 
     the_person "What do you think [the_person.mc_title]? Should I get this ad made up and sent out?"
     menu:
-        "Pay for the ad space. -$300" if mc.business.funds >=300:
+        "Pay for the ad space. -$300" if mc.business.has_funds(300):
             mc.name "The pictures look good, get to work and get that pushed out as soon as possible."
             the_person "You got it!"
-            $ mc.business.funds += -300
+            $ mc.business.change_funds(-300)
             $ mc.business.add_sales_multiplier("Ad Campaign", ad_multiplier)
             $ ad_expire_trigger = Action("Ad Expire", ad_expire_requirement, "ad_expire", args = ad_multiplier, requirement_args = day+7)
             $ mc.business.mandatory_crises_list.append(ad_expire_trigger) #It'll expire in 7 days.
             $ mc.business.event_triggers_dict["Last Ad Shot Day"] = day
 
 
-        "Pay for the ad space. -$300 (disabled)" if mc.business.funds < 300:
+        "Pay for the ad space. -$300 (disabled)" if not mc.business.has_funds(300):
             pass
 
         "Scrap the plan.":
@@ -484,7 +484,7 @@ label photo_touch(the_person):
             mc.name "That's perfect [the_person.title]. Now just get onto your knees for me, we're going to get some hard core shots."
             call photo_blowjob(the_person) from _call_photo_blowjob_1
 
-        "Suck my cock.\n{color=#ff0000}Not slutty or obedient enough{/color} (disabled)" if slut_willingness < 70:
+        "Suck my cock.\n{color=#ff0000}Not slutty or obedient enough{/color} (disabled)" if slut_willingness < 55:
             pass
 
         "Take photos as she climaxes.":

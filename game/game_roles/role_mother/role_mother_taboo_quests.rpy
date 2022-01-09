@@ -81,7 +81,7 @@ init -1 python:
     def mom_anal_quest_complete_requirement(the_person):
         if not the_person.event_triggers_dict.get("mom_anal_quest_active", False):
             return False
-        elif mc.business.funds < 5000:
+        elif not mc.business.has_funds(5000):
             return ""
         else:
             return True
@@ -89,7 +89,7 @@ init -1 python:
     def mom_vaginal_quest_2_requirement(the_person):
         if not the_person.event_triggers_dict.get("mom_vaginal_quest_active", False):
             return False
-        elif the_person.event_triggers_dict.get("mom_vaginal_quest_progress", 0) == 1:
+        elif not the_person.event_triggers_dict.get("mom_vaginal_quest_progress", 0) == 1:
             return False
         elif time_of_day == 4:
             return "Not enough time."
@@ -99,7 +99,9 @@ init -1 python:
     def mom_vaginal_quest_3_requirement(the_person, trigger_day):
         if day < trigger_day:
             return False
-        elif not mom_bedroom.has_person(the_person):
+        elif time_of_day == 4: #Prevents the event from triggering in the morning instead of the evening.
+            return False
+        elif mom.get_next_destination() == mom_bedroom: #Check that she will be moving into the bedroom on her _next_ Move phase (ie after this crisis check is made).
             return False
         else:
             return True
@@ -207,7 +209,7 @@ label mom_kissing_taboo_break_revisit(the_person):
 
             $ the_person.event_triggers_dict["mom_kissing_quest_active"] = True
 
-            $ bedroom.actions.append(Action("Clean you're room. -20 {image=gui/extra_images/energy_token.png},{image=gui/heart/Time_Advance.png}", mom_kissing_quest_1_requirement, "mom_kissing_taboo_break_revisit_quest_1", args = the_person, requirement_args = the_person))
+            $ bedroom.actions.append(Action("Clean your room. -20 {image=gui/extra_images/energy_token.png},{image=gui/heart/Time_Advance.png}", mom_kissing_quest_1_requirement, "mom_kissing_taboo_break_revisit_quest_1", args = the_person, requirement_args = the_person))
             $ hall.actions.append(Action("Clean the bathroom. -20 {image=gui/extra_images/energy_token.png},{image=gui/heart/Time_Advance.png}", mom_kissing_quest_2_requirement, "mom_kissing_taboo_break_revisit_quest_2", args = the_person, requirement_args = the_person))
             $ hall.actions.append(Action("Clean the living room. -20 {image=gui/extra_images/energy_token.png},{image=gui/heart/Time_Advance.png}", mom_kissing_quest_3_requirement, "mom_kissing_taboo_break_revisit_quest_3", args = the_person, requirement_args = the_person))
             $ kitchen.actions.append(Action("Clean the fridge. -20 {image=gui/extra_images/energy_token.png},{image=gui/heart/Time_Advance.png}", mom_kissing_quest_4_requirement, "mom_kissing_taboo_break_revisit_quest_4", args = the_person, requirement_args = the_person))
@@ -704,7 +706,7 @@ label mom_vaginal_taboo_break_revisit(the_person):
             the_person "You know what, I'm going to ask online. I'm sure some other mother has gone through this before."
             "She nods, confident in her decision."
             the_person "I'll do it anonymously, of course! Yes, that sounds like a good idea."
-            mc.name "I hope you can find the advince you need [the_person.title]."
+            mc.name "I hope you can find the advice you need [the_person.title]."
             the_person "I'll let you know what they suggest, alright?"
             "You nod, and [the_person.title] seems happier now."
             "It's probably a good idea to make sure [the_person.possessive_title] only sees the advice you want her to see."
@@ -759,7 +761,7 @@ label mom_vaginal_taboo_break_revisit_quest_1(the_person):
     "You open the web browser and check the history."
     "You're tempted to see what [the_person.possessive_title] has been looking at on \"MILFSDaily.xxx\", but that's not what you're here for."
     "Below the obvious porn links you see a couple of recent visits to \"A_Mothers_Advice.net\"."
-    "You restore the most recent page. It's a post by \"UncertainMommy\", asking for advince. You take a moment to read through it."
+    "You restore the most recent page. It's a post by \"UncertainMommy\", asking for advice. You take a moment to read through it."
     "{b}(Advice Needed) Sex with my Son???{/b}" (what_style = "text_message_style")
     "VeryNaughtyMommy" "I have a very strange situation, and I need help from all of you girls!" (what_style = "text_message_style")
     "VeryNaughtyMommy" "Me and my son have always been very physical when we show our love (please don't judge)." (what_style = "text_message_style")
@@ -782,7 +784,7 @@ label mom_vaginal_taboo_break_revisit_quest_1(the_person):
             pass
 
     $ the_person.event_triggers_dict["mom_vaginal_quest_progress"] = 1
-    $ bedroom.actions.append(Action("CHeck " + the_person.title + "'s advice post.", mom_vaginal_quest_2_requirement, "mom_vaginal_taboo_break_revisit_quest_2", args = the_person, requirement_args = the_person))
+    $ bedroom.actions.append(Action("Check " + the_person.title + "'s advice post.", mom_vaginal_quest_2_requirement, "mom_vaginal_taboo_break_revisit_quest_2", args = the_person, requirement_args = the_person))
 
     return
 
@@ -806,7 +808,7 @@ label mom_vaginal_taboo_break_revisit_quest_2(the_person):
 
     call advance_time()
 
-    $ decision_event = Action("make a decision", mom_vaginal_quest_3_requirement, "mom_vaginal_quest_3", args = the_person, requirement_args = [the_person, day + renpy.random(1,3)])
+    $ decision_event = Action("make a decision", mom_vaginal_quest_3_requirement, "mom_vaginal_quest_3", args = the_person, requirement_args = [the_person, day + renpy.random.randint(1,3)])
     $ mc.business.mandatory_crises_list(decision_event)
     return
 
@@ -922,7 +924,7 @@ label mom_vaginal_quest_3(the_person):
         "Don't reply.":
             "You shrug and put your phone back in your pocket."
 
-
+    $ mc.end_text_convo()
     $ seduce_action = Action("Seduce my son.", mom_vaginal_quest_complete_requirement, "mom_vaginal_taboo_break_revisit_complete")
     $ the_person.on_room_enter_event_list.append(seduce_action)
     return

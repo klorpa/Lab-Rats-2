@@ -629,17 +629,17 @@ label apply_sex_slut_modifiers(the_person, in_private = True):
         if the_person.get_opinion_score("cheating on men") > 0:
             $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 5, "I'm cheating on my boyfriend!")
         else:
-            $ the_person.add_situational_slut("cheating", -5 + (the_person.get_opinion_score("cheating on men") * -10), "I can't cheat on my boyfriend!")
+            $ the_person.add_situational_slut("cheating", -5 + (the_person.get_opinion_score("cheating on men") * 10), "I can't cheat on my boyfriend!")
     elif the_person.relationship == "Fiancée":
         if the_person.get_opinion_score("cheating on men") > 0:
             $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 8, "I'm cheating on my fiancé!")
         else:
-            $ the_person.add_situational_slut("cheating", -15 + (the_person.get_opinion_score("cheating on men") * -15), "I could never cheat on my fiancé!")
+            $ the_person.add_situational_slut("cheating", -15 + (the_person.get_opinion_score("cheating on men") * 15), "I could never cheat on my fiancé!")
     elif the_person.relationship == "Married":
         if the_person.get_opinion_score("cheating on men") > 0:
             $ the_person.add_situational_slut("cheating", the_person.get_opinion_score("cheating on men") * 10, "I'm cheating on my husband!")
         else:
-            $ the_person.add_situational_slut("cheating", -20 + (the_person.get_opinion_score("cheating on men") * -20), "I could never cheat on my husband!")
+            $ the_person.add_situational_slut("cheating", -20 + (the_person.get_opinion_score("cheating on men") * 20), "I could never cheat on my husband!")
 
     #Privacy modifiers
     if mc.location.get_person_count() == 1 and not in_private:
@@ -668,12 +668,12 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
     $ other_people = [person for person in mc.location.people if person is not the_person] #Build a list with all the _other_ people in the room other than the one we're fucking.
     python: #Checks to see if anyone watching is in a realtionship, and if they are sets up an event where they confront you later about you actively cheating in front of the,
         for a_person in other_people:
-            if the_person.get_opinion_score("public sex") > 0:
+            if a_person.get_opinion_score("public sex") > 0:
                 a_person.add_situational_slut("public sex watcher", 5*a_person.get_opinion_score("public sex"), "They're doing it right in front of me! That's so fucking hot!")
-            elif the_person.get_opinion_score("public sex") < 0:
+            elif a_person.get_opinion_score("public sex") < 0:
                 a_person.add_situational_slut("public sex watcher", 5*a_person.get_opinion_score("public sex"), "Right here in front of me?! That's disgusting!")
 
-            if the_person.has_role(girlfriend_role) and the_position.slut_requirement > (a_person.effective_sluttiness()/2): #You can get away with stuff half as slutty as she would do
+            if a_person.has_role(girlfriend_role) and the_position.slut_requirement > (a_person.effective_sluttiness()/2): #You can get away with stuff half as slutty as she would do
                 caught_cheating_action = Action("Caught cheating action", caught_cheating_requirement, "caught_cheating_label", args = the_person)
                 not_already_in = True
                 for an_action in a_person.on_room_enter_event_list:
@@ -685,7 +685,7 @@ label watcher_check(the_person, the_position, the_object, the_report): # Check t
                     renpy.say("",a_person.title + " gasps when she sees what you and " + the_person.title + " are doing.")
 
 
-            elif the_person.has_role(affair_role) and the_position.slut_requirement > ((a_person.effective_sluttiness()*2)/3): #You can get away with stuff two thirds as slutty as what she would do.
+            elif a_person.has_role(affair_role) and the_position.slut_requirement > ((a_person.effective_sluttiness()*2)/3): #You can get away with stuff two thirds as slutty as what she would do.
                 caught_affair_cheating_action = Action("Caught affair cheating action", caught_affair_cheating_requirement, "caught_affair_cheating_label", args = the_person)
                 not_already_in = True
                 for an_action in a_person.on_room_enter_event_list:
@@ -716,7 +716,7 @@ label describe_girl_climax(the_person, the_position, the_object, private, report
     $ trance_chance_modifier += report_log.get("girl orgasms", 0)
     if not trance_chance_modifier == 0:
         $ mc.log_event("Trance chance modifed by " + str(trance_chance_modifier) + "%% due to position opinion and previous orgasms.", "float_text_grey")
-    $ the_person.run_orgasm(trance_chance_modifier = trance_chance_modifier, sluttiness_increase_limit = the_position.slut_requirement)
+    $ the_person.run_orgasm(trance_chance_modifier = trance_chance_modifier, sluttiness_increase_limit = the_position.slut_requirement, reset_arousal = False)
     $ report_log["girl orgasms"] += 1
     return
 

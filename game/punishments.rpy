@@ -235,7 +235,7 @@ label punishment_serum_test(the_person, the_infraction):
                     $ the_person.change_obedience(1)
                     $ the_person.change_love(-1)
                 "[the_person.title] hands over the market value of the dose you gave her."
-                $ mc.business.funds += _return.value
+                $ mc.business.change_funds(mc.business.get_serum_base_value(_return))
 
             "Make her pay for it.\nRequires Policy: Mandatory Unpaid Serum Testing (disabled)" if not mandatory_unpaid_serum_testing_policy.is_active():
                 pass
@@ -1045,7 +1045,7 @@ init -1 python:
     def punishment_unpaid_intern_requirement(the_person, the_infraction):
         if the_infraction.severity < 5:
             return "Severity 5"
-        elif the_person.salary < 0:
+        elif the_person.salary <= 0:
             return "Requires: Paid Position"
         else:
             return True

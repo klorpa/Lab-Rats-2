@@ -117,7 +117,7 @@ label lady_of_the_night_label():
             $ the_person.set_title(get_random_title(the_person))
             $ the_person.set_possessive_title(get_random_possessive_title(the_person))
             the_person "You can call me [the_person.title]. For two hundred dollars I'll be your best friend for the next hour."
-            $ mc.business.funds += -200
+            $ mc.business.change_funds(-200)
             $ the_person.change_obedience(1)
             "The streets are quiet this time of night. You pull your wallet out and hand over the cash."
             "She takes it with a smile and tucks it away, then wraps herself around your arm."
@@ -188,7 +188,7 @@ label meet_person_label():
 
 
         "Keep the cash.\n{color=#0F0}+$200{/color}":
-            $ mc.business.funds += 200
+            $ mc.business.change_funds(200)
             "You slip the cash out of the womans wallet and watch as she rushes to catch her bus."
             $ clear_scene()
             "She gets on and the bus pulls away. When you pass a mailbox you slide the wallet inside - at least she'll get it back."

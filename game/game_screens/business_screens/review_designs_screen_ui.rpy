@@ -1,5 +1,6 @@
 screen review_designs_screen(show_designs = True, show_traits = True, allow_exit = True, select_instead_of_delete = False, hide_partially_researched = False):
     add "Science_Menu_Background.png"
+    modal True
     default selected_research = None
 
     frame:

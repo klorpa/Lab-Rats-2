@@ -1,6 +1,6 @@
 init -1 python:
     def prostitute_requirement(the_person):
-        if mc.business.funds < 200:
+        if not mc.business.has_funds(200):
             "Not enough cash"
         elif the_person.sexed_count >= 1:
             "She's worn out. Maybe later."
@@ -10,7 +10,7 @@ init -1 python:
 label prostitute_label(the_person):
     mc.name "[the_person.title], I'm looking for a friend to spend some time with. Are you available?"
     the_person "If you're paying I am."
-    $ mc.business.funds += -200
+    $ mc.business.change_funds(-200)
     $ the_person.change_obedience(1)
 
     $ the_person.add_situational_obedience("prostitute", 40, "I'm being paid for this, I should do whatever he wants me to do.")

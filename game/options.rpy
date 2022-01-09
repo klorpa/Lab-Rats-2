@@ -23,7 +23,7 @@ define gui.show_name = False
 
 ## The version of the game.
 
-define config.version = "v0.46.1"
+define config.version = "v0.48.1"
 
 
 ## Text that is placed on the game's about screen. To insert a blank line
@@ -47,6 +47,7 @@ define build.name = "Lab_Rats_2"
 define config.has_sound = True
 define config.has_music = True
 define config.has_voice = True
+
 
 
 ## To allow the user to play a test sound on the sound or voice channel,

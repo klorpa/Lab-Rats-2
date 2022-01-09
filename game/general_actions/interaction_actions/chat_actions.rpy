@@ -1,3 +1,43 @@
+init -1 python:
+    #Chat actions shown with all girls. Add to these lists to have options displayed when talking to someone.
+    chat_actions = [] #Default actions that are displayed when you are talking to a girl. Remember to set is_fast = False if an event can advance time.
+
+    small_talk_action = Action("Make small talk.\n-15 {image=gui/extra_images/energy_token.png}", requirement = small_talk_requirement, effect = "small_talk_person",
+        menu_tooltip = "A pleasant chat about your likes and dislikes. A good way to get to know someone and the first step to building a lasting relationship. Provides a chance to study the effects of active serum traits and raise their mastery level.")
+    chat_actions.append(small_talk_action)
+
+    compliment_action = Action("Compliment her.\n-15 {image=gui/extra_images/energy_token.png}", requirement = compliment_requirement, effect = "compliment_person",
+        menu_tooltip = "Lay the charm on thick and heavy. A great way to build a relationship, and every girl is happy to receive a compliment! Provides a chance to study the effects of active serum traits and raise their mastery level.")
+    chat_actions.append(compliment_action)
+
+    flirt_action = Action("Flirt with her.\n-15 {image=gui/extra_images/energy_token.png}", requirement = flirt_requirement, effect = "flirt_person",
+        menu_tooltip = "A conversation filled with innuendo and double entendre. Both improves your relationship with a girl and helps make her a little bit sluttier. Provides a chance to study the effects of active serum traits and raise their mastery level.")
+    chat_actions.append(flirt_action)
+
+
+    make_girlfriend_action = Action("Ask her to be your girlfriend.", requirement = ask_girlfriend_requirement, effect = "ask_be_girlfriend_label",
+        menu_tooltip = "Ask her to start an official, steady relationship and be your girlfriend.", priority = 10)
+    chat_actions.append(make_girlfriend_action)
+
+    bc_talk_action = Action("Talk about her birth control.", requirement = bc_talk_requirement, effect = "bc_talk_label",
+        menu_tooltip = "Talk to her about her use of birth control. Ask her to start or stop taking it, or just check what she's currently doing.")
+    chat_actions.append(bc_talk_action)
+
+    date_action = Action("Ask her on a date.", requirement = date_option_requirement, effect = "date_person",
+        menu_tooltip = "Ask her out on a date. The more you impress her the closer you'll grow. Play your cards right and you might end up back at her place.", is_fast = False)
+    chat_actions.append(date_action)
+
+
+    specific_actions = [] #Default "agressive" actions that are displayed when talking to a girl.
+
+    grope_action = Action("Grope her.\n-5 {image=gui/extra_images/energy_token.png}", requirement = grope_requirement, effect = "grope_person",
+        menu_tooltip = "Be \"friendly\" and see how far she is willing to let you take things. May make her more comfortable with physical contact, but at the cost of her opinion of you.")
+    specific_actions.append(grope_action)
+
+    command_action = Action("Give her a command.", requirement = command_requirement, effect = "command_person",
+        menu_tooltip = "Leverage her obedience and command her to do something.")
+    specific_actions.append(command_action)
+
 init -2 python:
     def always_true_requirement():
         return True
@@ -78,7 +118,7 @@ init -2 python:
         else:
             return True
 
-    def evening_date_trigger(day_of_week): #Used for a mandatory crisis that triggers on the next Friday in time chunk 3.
+    def evening_date_trigger(day_of_week): #Used for a mandatory crisis that triggers on the next Friday in turn 3.
         if time_of_day == 3 and day%7 == day_of_week: #Day of week is a nubmer from 0 to 6, where 0 is Monday.
             return True
         return False

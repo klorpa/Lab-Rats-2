@@ -119,7 +119,7 @@ screen character_create_screen():
                     textbutton "<" action [SetScreenVariable("m_skill",m_skill-1), SetScreenVariable("character_points", character_points+1)] sensitive m_skill>0 style "textbutton_style" text_style "textbutton_text_style"
                     text str(m_skill)+"/[work_skill_max]" style "textbutton_text_style"
                     textbutton ">" action [SetScreenVariable("m_skill",m_skill+1), SetScreenVariable("character_points", character_points-1)] sensitive character_points>0 and m_skill<work_skill_max style "textbutton_style" text_style "textbutton_text_style"
-                text "     Your skill at marketing. Higher skill will allow you to ship more doses of serum per day." style "menu_text_style"
+                text "     Your skill at marketing. Higher skill will allow you to extend your market reach faster." style "menu_text_style"
                 null height 30
                 hbox:
                     text "Research and Development: " style "menu_text_style"

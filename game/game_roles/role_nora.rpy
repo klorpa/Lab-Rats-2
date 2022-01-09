@@ -376,7 +376,7 @@ label nora_research_cash(the_person):
         $ turn_in_person_research_action = Action("Turn in a research questionnaire.", special_research_requirement, "nora_special_research", args = the_person, requirement_args = the_person,
             menu_tooltip = "Turn in the research questionnaire you had filled out. If the person is particularly unique or extreme she may be able to discover unqiue serum traits for you to research.")
         $ university.actions.append(turn_in_person_research_action)
-    $ mc.business.funds += 2000
+    $ mc.business.change_funds(2000)
     $ clear_scene()
     return
 

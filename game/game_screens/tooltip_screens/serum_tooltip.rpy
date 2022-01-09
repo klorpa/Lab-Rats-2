@@ -11,13 +11,15 @@ screen serum_tooltip(the_serum, given_anchor = (0.0,0.0), given_align = (0.0,0.0
             scrollbars "vertical"
             mousewheel True
             vbox:
+                spacing 10
                 text "[the_serum.name]" style "menu_text_style" xanchor 0.5 xalign 0.5 size 26
+                use aspect_grid(the_serum)
+
                 grid 2 3 xanchor 0.5 xalign 0.5:
-                    spacing 10
+                    spacing 5
                     text "Research Required: [the_serum.research_needed]" style "menu_text_style"
                     text "Production Cost: [the_serum.production_cost]" style "menu_text_style"
-                    text "Value: $[the_serum.value]" style "menu_text_style"
-                    $ calculated_profit = (the_serum.value*mc.business.batch_size)-the_serum.production_cost
+                    $ calculated_profit = __builtin__.round(mc.business.get_serum_base_value(the_serum)-(the_serum.production_cost/mc.business.batch_size))
                     if calculated_profit > 0:
                         text "Expected Profit:{color=#98fb98} $[calculated_profit]{/color}" style "menu_text_style"
                     else:
@@ -29,15 +31,15 @@ screen serum_tooltip(the_serum, given_anchor = (0.0,0.0), given_align = (0.0,0.0
                         null
                     else:
                         text "Clarity Cost: [the_serum.clarity_needed]" style "menu_text_style"
+                    null
 
-                for trait in the_serum.traits: #Note: We might want to Use the trait_tooltip for this to keep our display parameters consistent.
-                    text trait.name style "menu_text_style"
-                    text "    "  + trait.positive_slug style "menu_text_style" color "#98fb98"
-                    text "    "  + trait.negative_slug style "menu_text_style" color "#ff0000"
 
-                if the_serum.side_effects:
-                    for side_effect in the_serum.side_effects:
-                        text side_effect.name style "menu_text_style"
-                        text "    "  + side_effect.negative_slug style "menu_text_style" color "#ff0000"
+
+                for trait in the_serum.traits:
+                    use trait_details(trait, 0.0, 0.0)
+
+
+                for side_effect in the_serum.side_effects:
+                    use trait_details(side_effect, 0.0, 0.0)
 
                 transclude #If you hand the serum tooltip a child it's added to the vBox

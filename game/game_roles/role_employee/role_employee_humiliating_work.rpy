@@ -40,7 +40,7 @@ label employee_humiliating_work_report_label(the_person):
 
     $ the_person.draw_person()
     "[the_person.title] catches your attention while you are working."
-    the_person "Do you have a moment [the_person.title]?"
+    the_person "Do you have a moment [the_person.mc_title]?"
     mc.name "Sure, what do you need?"
     the_person "I wanted to let you know that I've finished my week of punishment."
     menu:

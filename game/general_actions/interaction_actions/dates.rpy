@@ -63,7 +63,7 @@ label lunch_date_label(the_person): #Could technically be included in the planni
     mc.name "You grab a seat and I'll order for us."
     $ clear_scene()
     "You order food for yourself and [the_person.possessive_title] and wait until it's ready."
-    $ mc.business.funds += -30
+    $ mc.business.change_funds(-30)
     $ the_person.draw_person(position = "sitting")
     "When it's ready you bring it over to [the_person.title] and sit down at the table across from her."
     if renpy.random.randint(0,100) < 40:
@@ -122,10 +122,10 @@ label movie_date_label(the_person):
     "You have a movie date planned with [the_person.title] right now."
 
     menu:
-        "Get ready for the date. {image=gui/heart/Time_Advance.png}" if mc.business.funds >= 50:
+        "Get ready for the date. {image=gui/heart/Time_Advance.png}" if mc.business.has_funds(50):
             pass
 
-        "Get ready for the date.\nRequires: $50 (disabled)" if mc.business.funds < 50:
+        "Get ready for the date.\nRequires: $50 (disabled)" if not mc.business.has_funds(50):
             pass
 
         "Cancel the date. (tooltip)She won't be happy with you canceling last minute.":
@@ -192,15 +192,15 @@ label movie_date_label(the_person):
 
     #TODO: Generate a girl and assign them a uniform.
     "You walk up to the ticket booth and get tickets for yourself and [the_person.possessive_title]."
-    $ mc.business.funds += -50
+    $ mc.business.change_funds(-50)
 
     "Tickets in hand, you rejoin [the_person.title] and set off to find your theater."
     the_person "Did you want to get us some popcorn or anything like that?"
     menu:
-        "Stop at the concession stand. -$20" if mc.business.funds >= 20:
+        "Stop at the concession stand. -$20" if mc.business.has_funds(20):
             mc.name "Sure, you run ahead and I'll go get us some snacks."
             $ clear_scene()
-            $ mc.business.funds += -20
+            $ mc.business.change_funds(-20)
             "You give [the_person.possessive_title] her ticket and split up. At the concession stand you get a pair of drinks and some popcorn to share."
             menu:
                 "Put a dose of serum in her drink." if mc.inventory.get_any_serum_count() > 0:
@@ -215,7 +215,7 @@ label movie_date_label(the_person):
             "Snacks in hand you return to [the_person.title]. She takes a sip from her drink as you settle into your seat beside her."
 
 
-        "Stop at the concession stand. -$20 (disabled)" if mc.business.funds < 20:
+        "Stop at the concession stand. -$20 (disabled)" if not mc.business.has_funds(20):
             pass
 
         "Just go to the movie.":
@@ -396,10 +396,10 @@ label dinner_date_label(the_person):
     $ mc.business.event_triggers_dict["date_scheduled"] = False #Deflag this event so you can schedule a date with another person for next week.
     "You have a dinner date planned with [the_person.title]."
     menu:
-        "Get ready for the date. {image=gui/heart/Time_Advance.png}" if mc.business.funds >= 50:
+        "Get ready for the date. {image=gui/heart/Time_Advance.png}" if mc.business.has_funds(50):
             pass
 
-        "Get ready for the date.\nRequires: $30 (disabled)" if mc.business.funds < 50:
+        "Get ready for the date.\nRequires: $30 (disabled)" if not mc.business.has_funds(50):
             pass
 
         "Cancel the date. (tooltip)She won't be happy with you canceling last minute.":
@@ -426,25 +426,25 @@ label dinner_date_label(the_person):
     the_person "So, where are we going tonight [the_person.mc_title]?"
     menu:
         "A cheap restaurant. -$50":
-            $ mc.business.funds += -50
+            $ mc.business.change_funds(-50)
             the_person "It sounds cozy. Let's go, I'm starving!"
 
-        "A moderately priced restaurant. -$100" if mc.business.funds >= 100:
-            $ mc.business.funds += -100
+        "A moderately priced restaurant. -$100" if mc.business.has_funds(100):
+            $ mc.business.change_funds(-100)
             $ the_person.change_love(5)
             $ the_person.change_happiness(5)
             the_person "It sounds nice. Come on, I'm starving and could use a drink."
 
-        "An expensive restaurant. -$300" if mc.business.funds >= 300:
-            $ mc.business.funds += -300
+        "An expensive restaurant. -$300" if mc.business.has_funds(300):
+            $ mc.business.change_funds(-300)
             $ the_person.change_love(10)
             $ the_person.change_happiness(5)
             the_person "Oh, it sounds fancy! Well, I'm flattered [the_person.mc_title]."
 
-        "A moderately priced restaurant. -$100 (disabled)" if mc.business.funds <= 100:
+        "A moderately priced restaurant. -$100 (disabled)" if not mc.business.has_funds(100):
             pass
 
-        "An expensive restaurant. -$300 (disabled)" if mc.business.funds < 300:
+        "An expensive restaurant. -$300 (disabled)" if not mc.business.has_funds(300):
             pass
 
     $ the_person.draw_person(emotion = "happy", position = "sitting")
@@ -598,6 +598,8 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
                     mc.name "I'm going to get going. Have a good night."
                     "[the_person.title] watches you leave, then sulks back inside of her house."
 
+        call check_date_trance(the_person)
+
     elif (the_person.effective_sluttiness(["underwear_nudity", "bare_tits", "bare_pussy"]) + (5 * the_person.get_opinion_score("not wearing anything")) + (5 * the_person.get_opinion_score("lingerie")) > 45) or the_person.has_role(girlfriend_role):
         the_person "Let me get you a drink and show you around."
         "She pours you a drink and leads you around her place. The tour ends in the living room."
@@ -645,6 +647,8 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
                 mc.name "Yeah, I think I'd like that."
                 "You say goodnight and leave, heading back to your place."
 
+        call check_date_trance(the_person)
+
     else:
         #Normal date-turned-fuck session.
         the_person "Let me get you a drink and show you around."
@@ -684,6 +688,8 @@ label date_take_home_her_place(the_person, date_type = None): #Your date went we
                 the_person "I had a fun time, we should do this again."
                 mc.name "I think I'd like that."
                 "You finish your drink and say goodnight to [the_person.title]."
+
+        call check_date_trance(the_person)
 
     return
 
@@ -750,6 +756,10 @@ label shopping_date_loop(the_person, previous_choice = None):
         "Go lingerie shopping." if previous_choice != "Underwear":
             call shopping_date_underwear(the_person)
             return "Underwear"
+
+        "Get her hair done." if previous_choice != "Hair":
+            call shopping_date_hair(the_person)
+            return "Hair"
         #
         # "Look at electronics." if previous_choice != "Electronics": #TODO: Write these other options when we have time
         #     call shopping_date_electronics(the_person)
@@ -785,7 +795,7 @@ label shopping_date_food(the_person):
     "You lead [the_person.possessive_title] to the crowded food court. She looks around and hums as she decides what to eat."
     #TODO: Have a list of random food places to arbirarily chose from
     menu:
-        "Pay for her lunch. -$40" if mc.business.funds >= 40:
+        "Pay for her lunch. -$40" if mc.business.has_funds(40):
             mc.name "Lunch is on me, what do you want me to get you?"
             $ the_person.change_love(1)
             $ the_person.change_happiness(10)
@@ -796,7 +806,7 @@ label shopping_date_food(the_person):
             "[the_person.title] nods and heads off into the crowd to find a free table."
             $ clear_scene()
             "You get in line and order food for yourself and [the_person.possessive_title]. It takes a few minutes until order number is called."
-            $ mc.business.funds += -40
+            $ mc.business.change_funds(-40)
             "You collect your order and move over to the condiment station."
             menu:
                 "Add serum to her drink." if mc.inventory.get_any_serum_count() > 0:
@@ -816,22 +826,22 @@ label shopping_date_food(the_person):
             $ the_person.change_love(1)
             "You eat lunch together, chatting idly about nothing important."
 
-        "Pay for her lunch. -$40 (disabled)" if mc.business.funds < 40:
+        "Pay for her lunch. -$40 (disabled)" if not mc.business.has_funds(40):
             pass
 
-        "Just buy your own lunch. -$20" if mc.business.funds >= 20:
+        "Just buy your own lunch. -$20" if mc.business.has_funds(20):
             mc.name "See anything you like?"
             the_person "Not right away... I'm going to wander around a bit, you go ahead and order something."
             $ clear_scene()
             "[the_person.possessive_title] moves off into the crowd. You pick a fast food place for yourself and order some food."
-            $ mc.business.funds += -20
+            $ mc.business.change_funds(-20)
             "When you get your order you find a table, and a couple of minutes later [the_person.title] shows up with her own lunch."
             $ the_person.draw_person(position = "sitting", emotion = "happy")
             the_person "Hope you weren't waiting long, it just all looked so good!"
             $ the_person.change_love(1)
             "You eat lunch together, chatting idly about nothing important."
 
-        "Just buy your own lunch. -$20 (disabled)" if mc.business.funds < 20:
+        "Just buy your own lunch. -$20 (disabled)" if not mc.business.has_funds(20):
             pass
 
         "Don't buy anything.":
@@ -883,15 +893,15 @@ label shopping_date_overwear(the_person, skip_intro = False):
         "You and [the_person.possessive_title] move to the cashier at the front of the store."
         $ cost = (10 * len(new_overwear.generate_clothing_list())) + (5 * new_overwear.get_overwear_slut_score())
         menu:
-            "Pay for the outfit. -$[cost]" if mc.business.funds >= cost:
+            "Pay for the outfit. -$[cost]" if mc.business.has_funds(cost):
                 mc.name "Let me get this for you [the_person.title]."
                 "She smiles at you as you pull out your wallet."
                 $ the_person.change_obedience(1)
                 $ the_person.change_love(2)
-                $ mc.business.funds += -cost
+                $ mc.business.change_funds(-cost)
                 the_person "That's so sweet of you [the_person.mc_title]. Thank you!"
 
-            "Pay for the outfit. -$[cost] (disabled)" if mc.business.funds < cost:
+            "Pay for the outfit. -$[cost] (disabled)" if not mc.business.has_funds(cost):
                 pass
 
             "Let [the_person.title] pay.":
@@ -975,15 +985,15 @@ label shopping_date_underwear(the_person):
         "You and [the_person.possessive_title] move to the cashier at the front of the store."
         $ cost = (5 * len(new_underwear.generate_clothing_list())) + (15 * new_underwear.get_overwear_slut_score())
         menu:
-            "Pay for the lingerie. -$[cost]" if mc.business.funds >= cost:
+            "Pay for the lingerie. -$[cost]" if mc.business.has_funds(cost):
                 mc.name "Let me get this for you [the_person.title]."
                 "She smiles at you as you pull out your wallet."
                 $ the_person.change_obedience(1)
                 $ the_person.change_love(2)
-                $ mc.business.funds += -cost
+                $ mc.business.change_funds(-cost)
                 the_person "That's so sweet of you [the_person.mc_title]. Thank you!"
 
-            "Pay for the lingerie. -$[cost] (disabled)" if mc.business.funds < cost:
+            "Pay for the lingerie. -$[cost] (disabled)" if not mc.business.has_funds(cost):
                 pass
 
             "Let [the_person.title] pay.":
@@ -1465,6 +1475,149 @@ label shopping_date_inside_changing_room(the_person, new_outfit, changing_type, 
     "[the_person.title] changes back into her original outfit and slides the curtain to the changing room open."
     the_person "Come on, let's get going."
     return wants_outfit
+
+label shopping_date_hair(the_person):
+    mc.name "How about we get your hair done? I think there's a salon in here somewhere."
+    if the_person.has_role(girlfriend_role) or the_person.has_role(affair_role):
+        "She runs her fingers through her hair."
+        the_person "Do you think it's time for a change?"
+        mc.name "Maybe. Let's take a look."
+    elif the_person.has_role(sister_role):
+        the_person "Why, don't you think my hair looks cute?"
+        mc.name "Can't hurt to try a new style, right?"
+        "She runs her fingers through her hair and thinks for a few seconds."
+        the_person "I guess... Alright, we can take a look."
+    elif the_person.has_role(mother_role):
+        the_person "Oh, I don't like to spend money on things like that. I'm happy with my hair nice and plain."
+        mc.name "Come on, if it's money that's the issue I can pay for it. You should treat yourself once in a while."
+        "She runs her fingers through her hair and thinks for a moment."
+        the_person "Well... I suppose it couldn't hurt to look."
+    else: #In theory this shouldn't come up right now, but maybe it will in the future.
+        the_person "Don't you like my hair?"
+        mc.name "Sure, but a new style could be nice too, right?"
+        "She runs her fingers through her hair, then shrugs and nods."
+        the_person "Alright, we can take a look."
+
+    "You and [the_person.possessive_title] walk to the salon. The receptionist smiles as you come and offers you a style magazine to look through."
+    # if the_person.obedience + 10*the_person.get_opinion_score("being submissive") >= 120: /TODO: Finish the non-obedience branches when we have the time to test and verify everything.
+    "She flips through some of the pictures, then shrugs and hands the magazine to you."
+    the_person "There are just so many options! What do you think I should do?"
+    $ did_haircut = False
+    menu:
+        "Pick a hair style.":
+            mc.name "Definitely a haircut of some style. Let's see..."
+            $ hair_list = []
+            python:
+                for hair in hair_styles:
+                    if hair.name != the_person.hair_style.name:
+                        hair_list.append([hair.name, hair])
+                hair_list.append(("None of these","None"))
+
+            $ style_choice = renpy.display_menu(hair_list, True, "Choice")
+            if style_choice == "None":
+                mc.name "Looking at all of these, I think your hair is just perfect. Let's go."
+            else:
+                "You point to a picture on the page."
+                mc.name "This one looks nice."
+                the_person "Okay, I trust you."
+                call do_haircut(the_person, style_choice)
+                $ did_haircut = True
+
+
+        "Dye her hair.":
+            mc.name "I think it's time for a new hair colour."
+            the_person "Do you really think so? Well... okay. I trust you [the_person.mc_title]."
+            call screen colour_selector(True, "Pick a dye colour")
+            $ colour_choice = _return
+            if colour_choice == None:
+                mc.name "Now that I'm looking at them, none of these look better than your natural colour."
+                mc.name "Come on, let's go."
+            else:
+                mc.name "This colour will look good."
+                call do_dye(the_person, colour_choice)
+                $ did_haircut = True
+
+    #
+    # elif the_person.obedience + 10*the_person.get_opinion_score("being submissive") > 90:
+    #     pass #TODO: Gives you a few options to pick from.
+    #
+    # else:
+    #     pass #TODO: Decides by herself what to do, but you can veto it if you don't like.
+
+    if did_haircut:
+        the_person "Well, what do you think?"
+        "She gives a little turn so you can get a good look."
+        menu:
+            "It's cute.":
+                mc.name "It's a cute look."
+                $ the_person.change_love(1)
+
+            "It's sexy.":
+                mc.name "You look pretty hot."
+                $ the_person.change_slut(1, 30)
+
+            "It's what I wanted.":
+                mc.name "It's just what I wanted."
+                $ the_person.change_obedience(1)
+
+        "The receptionist interrupts, sliding a receipt towards you."
+        menu:
+            "Pay. -$200" if mc.business.has_funds(200):
+                "You charge it to the business card."
+                $ mc.business.funds += -200
+
+            "Pay. -$200 (disabled)" if not mc.business.has_funds(200):
+                pass
+
+            "Tell her to pay.":
+                mc.name "[the_person.title], can you take care of that please."
+                if the_person.has_role(affair_role):
+                    $ so_title = SO_relationship_to_title(the_person.relationship)
+                    the_person "I can do even better. I'm sure my [so_title] won't mind paying for this."
+                    "She swipes a credit card - one without her name on it - and smiles at you."
+                elif the_person.obedience + 10* the_person.get_opinion_score("being submissive") >= 120:
+                    the_person "Of course [the_person.mc_title]."
+                    "She swipes a credit card obediently."
+                else:
+                    the_person "Oh, I thought... Never mind. Of course I can take care of it."
+                    $ the_person.change_love(-1)
+                    the_person "It's my hair after all."
+
+        "You leave the salon together. [the_person.possessive_title] keeps looking at her new style in her phone camera."
+    return
+
+label do_haircut(the_person, new_style):
+    $ clear_scene()
+    "You take a seat as [the_person.possessive_title] is taken away by a stylist."
+
+    $ old_colour = the_person.hair_style.colour
+    $ the_person.hair_style = new_style.get_copy()
+    $ the_person.hair_style.colour = old_colour
+    "You pass the time on your phone until [the_person.title] comes back out."
+    $ the_person.draw_person()
+    return
+
+label do_dye(the_person, new_colour):
+    $ clear_scene()
+    "You take a seat as [the_person.possessive_title] is taken away by a stylist."
+    $ the_person.set_hair_colour(new_colour, change_pubes = False)
+    "You pass the time on your phone until [the_person.title] comes back out."
+    $ the_person.draw_person()
+    return
+
+label check_date_trance(the_person): #At the end of a date you have an opportunity to trance her as well.
+    if the_person.has_role(trance_role):
+        "You pause. [the_person.possessive_title] seems to still be stunned by her serum-enhanced orgasms."
+        "This might be your chance to put some new thoughts in her head."
+        menu:
+            "Train her.":
+                call do_training(the_person)
+
+            "Leave her alone.":
+                pass
+    return
+
+
 
 #TODO: Write all of the date options, which should include.
 # A) Get some food (chat + serum chance)

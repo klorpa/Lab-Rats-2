@@ -306,7 +306,7 @@ label nightime_grope(the_person, masturbating = False):
                 the_person "Mmm... So close... Ah...Noo...Yessss..."
                 "Her legs squeeze together suddenly, accompanied by a sharp moan of pleasure."
                 "[the_person.possessive_title] arches her back, thrusting her hips into the air as she is wracked by a night time orgasm."
-                $ the_person.run_orgasm(show_dialogue = False, trance_chance_modifier = 2*the_person.get_opinion_score("being fingered"))
+                $ the_person.run_orgasm(show_dialogue = False, trance_chance_modifier = 2*the_person.get_opinion_score("being fingered"), reset_arousal = False)
                 $ the_person.arousal = 50
                 $ mc.change_locked_clarity(20)
                 "You're ready to make a quick retreat if needed, but after a moment of tension she collapses back into bed, still asleep."
@@ -402,7 +402,7 @@ label nightime_grope(the_person, masturbating = False):
                 "[the_person.title] pants softly and rolls her head from side to side in her sleep."
                 the_person "Mmm... So close... Ah...Noo...Yessss..."
                 "Suddenly, she gasps and bucks her hips up into your hand. Her thighs quiver as she is wracked by a night time orgasm."
-                $ the_person.run_orgasm(show_dialogue = False, trance_chance_modifier = 2*the_person.get_opinion_score("being fingered"))
+                $ the_person.run_orgasm(show_dialogue = False, trance_chance_modifier = 2*the_person.get_opinion_score("being fingered"), reset_arousal = False)
                 $ the_person.arousal = 50
                 $ mc.change_locked_clarity(20)
                 "You're ready to make a quick retreat if needed, but after a moment of tension she collapses back into bed, still asleep."

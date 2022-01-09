@@ -1,3 +1,8 @@
+## SERUM TRAIT GUIDELINES ##
+# These are some guidelines for how serum traits are priced out.
+# Each tier of serum trait should provide 2*(tier+1) aspect points.
+# Add 1 extra aspect point per point of attention.
+
 #Serum trait functions. Each serum trait can have up to four key functions: on_apply, on_remove, on_turn, and on_day. These are run at various points throughout the game.
 init -1:
     python:
@@ -55,7 +60,7 @@ init -1:
         def aphrodisiac_on_remove(the_person, the_serum, add_to_log):
             the_person.change_slut(-15, add_to_log = add_to_log)
 
-        def aphrodisiac_on_turn(the_person, the_serum, add_to_log):
+        def aphrodisiac_on_day(the_person, the_serum, add_to_log):
             the_person.change_obedience(-1, add_to_log)
 
         ## caffeine_trait functions##
@@ -513,7 +518,6 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         #     desc = "serum description",
         #     positive_slug = "description of the positive effects",
         #     negative_slug = "description of the negative effects",
-        #     value_added = a_number,
         #     research_added = a_number,
         #     slots_added = a_number,
         #     production_added = a_number,
@@ -530,7 +534,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         #     research_needed = a_number,
         #     exclude_tags = [list_of_other_tags],
         #     is_side_effect = a_bool,
-        #     clarity_cost = a_number)
+        #     clarity_cost = a_number,
+        #     mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 0)
 
         #################
         # Tier 0 Traits #
@@ -539,9 +544,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         primitive_serum_prod = SerumTrait(name = "Primitive Serum Production",
             desc = "The fundamental serum creation technique. The special carrier molecule can deliver one other serum trait with pinpoint accuracy.",
-            positive_slug = "1 Trait Slot, 3 Turn Duration, $2 Value",
-            negative_slug = "+25 Serum Research, +25 Clarity Cost, 40 Production/Batch",
-            value_added = 2,
+            positive_slug = "1 Trait Slot, 3 Turn Duration",
+            negative_slug = "40 Production/Batch",
             research_added = 50,
             slots_added = 1,
             production_added = 40,
@@ -551,49 +555,49 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             start_researched = True,
             research_needed = 75,
             exclude_tags = "Production",
-            clarity_cost = 50)
+            clarity_cost = 50,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 0)
 
         high_capacity_design = SerumTrait(name = "High Capacity Design",
             desc = "Removing the standard stabilizing agents allow an additional serum trait to be added to the design. This change shortens the duration of the serum and is almost certain to introduce unpleasant side effects.",
             positive_slug = "+1 Trait Slot",
-            negative_slug = "-1 Turn Duration, -$5 Value, +75 Serum Research",
-            value_added = -5,
+            negative_slug = "-1 Turn Duration",
             research_added = 75,
             slots_added = 2,
             duration_added = -1,
             base_side_effect_chance = 200,
             requires = primitive_serum_prod,
             research_needed = 150,
-            clarity_cost = 20)
+            clarity_cost = 20,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 0)
 
         basic_med_app = SerumTrait(name = "Basic Medical Application",
             desc = "A spread of minor medical benefits ensures this will always have value for off label treatments. The required research may suggest other effects that can be included in a serum.",
-            positive_slug = "+$20 Value",
-            negative_slug = "+50 Serum Research",
-            value_added = 20,
+            positive_slug = "",
+            negative_slug = "",
             research_added = 50,
             base_side_effect_chance = 5,
             research_needed = 200,
-            clarity_cost = 25)
+            clarity_cost = 25,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 0)
 
         suggestion_drugs_trait = SerumTrait(name = "Suggestion Drugs",
             desc = "Carefully selected mind altering agents amplify the preexisting effects of the serum, making the recipient more vulnurable to behavioural changes.",
-            positive_slug = "+$15 Value, +10 Suggestibility",
-            negative_slug = "+50 Serum Research.",
-            value_added = 15,
+            positive_slug = "+10 Suggestibility",
+            negative_slug = "",
             research_added = 50,
             on_apply = suggestion_drugs_on_apply,
             on_remove = suggestion_drugs_on_remove,
             base_side_effect_chance = 10,
             research_needed = 100,
             exclude_tags = "Suggest",
-            clarity_cost = 15)
+            clarity_cost = 15,
+            mental_aspect = 2, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 1)
 
         high_con_drugs = SerumTrait(name = "High Concentration Drugs",
             desc = "By increasing the dose of mind altering agents a larger change to suggestibility can be achieved. The increased dosage has a tendency to leave the recipient depressed.",
-            positive_slug = "+$15 Value, +25 Suggestibility",
-            negative_slug = "-2 Happiness/Turn, +50 Serum Research.",
-            value_added = 15,
+            positive_slug = "+25 Suggestibility",
+            negative_slug = "-2 Happiness/Turn",
             research_added = 50,
             base_side_effect_chance = 15,
             on_apply = high_con_drugs_on_apply,
@@ -602,62 +606,62 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app, suggestion_drugs_trait],
             research_needed = 150,
             exclude_tags = "Suggest",
-            clarity_cost = 40)
+            clarity_cost = 40,
+            mental_aspect = 3, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 2)
 
         sedatives_trait = SerumTrait(name = "Low Concentration Sedatives",
             desc = "A low dose of slow release sedatives makes the recipient more obedient, but have a negative effect on productivity.",
-            positive_slug = "+$15 Value, +10 Obedience",
-            negative_slug = "-1 To All Stats, +50 Serum Research",
-            value_added = 15,
+            positive_slug = "+10 Obedience",
+            negative_slug = "-1 To All Stats",
             research_added = 50,
             base_side_effect_chance = 10,
             on_apply = sedatives_trait_on_apply,
             on_remove = sedatives_trait_on_remove,
             requires = basic_med_app,
             research_needed = 100,
-            clarity_cost = 20)
+            clarity_cost = 20,
+            mental_aspect = 2, physical_aspect = 1, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         caffeine_trait = SerumTrait(name = "Caffeine Infusion",
             desc = "Adding simple, well understood caffeine to the serum increase the energy levels of the recipient. Unfortunately, the stimulating effect tends to reduce obedience for the duration.",
-            positive_slug = "+$15 Value, +20 Max Energy",
-            negative_slug = "-15 Obedience, +50 Serum Research",
-            value_added = 15,
+            positive_slug = "+20 Max Energy",
+            negative_slug = "-15 Obedience",
             research_added = 50,
             base_side_effect_chance = 20,
             on_apply = caffeine_trait_on_apply,
             on_remove = caffeine_trait_on_remove,
             research_needed = 150,
-            clarity_cost = 10)
+            clarity_cost = 10,
+            mental_aspect = 1, physical_aspect = 1, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 0)
 
         birth_control_suppression = SerumTrait(name = "Birth Control Suppression",
             desc = "Designed to interfere with the most common forms of oral birth control, reducing their effectiveness.",
-            positive_slug = "+$10 Value, -40% BC Effectiveness",
-            negative_slug = "+50 Serum Research",
-            value_added = 10,
+            positive_slug = "-40% BC Effectiveness",
+            negative_slug = "",
             research_added = 50,
             base_side_effect_chance = 30,
             on_apply = birth_control_suppression_on_apply,
             on_remove = birth_control_suppression_on_remove,
             research_needed = 100,
-            clarity_cost = 30)
+            clarity_cost = 30,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 2, medical_aspect = 1, flaws_aspect = 0, attention = 1)
 
         simple_aphrodesiac = SerumTrait(name = "Inhibition Suppression",
             desc = "Direct delivery of alchoholic molecules to the subject's brain produces notably reduced inhibitions. Side effects are common, but always include drowsiness.",
-            positive_slug = "+$15 Value, +10 Sluttiness (Max 30)",
-            negative_slug = "-20 Energy, +50 Serum Research",
-            value_added = 15,
+            positive_slug = "+10 Sluttiness (Max 30)",
+            negative_slug = "-20 Energy",
             research_added = 50,
             base_side_effect_chance = 50,
             on_apply = simple_aphrodesiac_on_apply,
             on_remove = simple_aphrodesiac_on_remove,
             research_needed = 75,
-            clarity_cost = 25)
+            clarity_cost = 25,
+            mental_aspect = 1, physical_aspect = 0, sexual_aspect = 2, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         foreplay_enhancer = SerumTrait(name = "Tactile Stimulator",
             desc = "Tunes the subject's nerves, especially those in the extremities, to higher levels of precision. Increases a girls Foreplay skill for the duration.",
-            positive_slug = "+$10 Value, +2 Foreplay Skill",
-            negative_slug = "+50 Serum Research",
-            value_added = 10,
+            positive_slug = "+2 Foreplay Skill",
+            negative_slug = "",
             research_added = 50,
             base_side_effect_chance = 20,
             on_apply = foreplay_enhancer_on_apply,
@@ -665,33 +669,34 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app],
             tier = 0,
             research_needed = 100,
-            clarity_cost = 50)
+            clarity_cost = 50,
+            mental_aspect = 0, physical_aspect = 1, sexual_aspect = 2, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         hair_lighten_dye = SerumTrait(name = "Synthetic Hair Bleach",
             desc = "Slow release chemicals lighten the hair colour of the subject's hair. Application over several hours or days is needed for the best results.",
-            positive_slug = "+$10 Value, Lightens the Subject's Hair Colour.",
-            negative_slug = "+40 Serum Research",
-            value_added = 10,
+            positive_slug = "Lightens the Subject's Hair Colour.",
+            negative_slug = "",
             research_added = 40,
             base_side_effect_chance = 40,
             on_turn = hair_lighten_dye_on_turn,
             tier = 0,
             research_needed = 75,
             exclude_tags = "Dye",
-            clarity_cost = 20)
+            clarity_cost = 20,
+            mental_aspect = 0, physical_aspect = 2, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 0)
 
         hair_darken_dye = SerumTrait(name = "Synthetic Hair Darkening Agent",
             desc = "Slow release chemicals darken the hair colour of the subject. Application over several hours or days is needed for the best results.",
-            positive_slug = "+$10 Value, Darkens the Subject's Hair Colour.",
-            negative_slug = "+40 Serum Research",
-            value_added = 10,
+            positive_slug = "Darkens the Subject's Hair Colour.",
+            negative_slug = "",
             research_added = 40,
             base_side_effect_chance = 40,
             on_turn = hair_darken_dye_on_turn,
             tier = 0,
             research_needed = 75,
             exclude_tags = "Dye",
-            clarity_cost = 20)
+            clarity_cost = 20,
+            mental_aspect = 0, physical_aspect = 2, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 0)
 
 
         #################
@@ -701,9 +706,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         improved_serum_prod = SerumTrait(name = "Improved Serum Production",
             desc = "General improvements to the basic serum creation formula. Allows for two serum traits to be delivered, but requires slightly more production to produce.",
-            positive_slug = "2 Trait Slots, 3 Turn Duration, $2 Value",
-            negative_slug = "+50 Serum Research, +250 Clarity Cost, 70 Production/Batch",
-            value_added = 2,
+            positive_slug = "2 Trait Slots, 3 Turn Duration",
+            negative_slug = "70 Production/Batch",
             research_added = 50,
             slots_added = 2,
             production_added = 70,
@@ -714,13 +718,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 1,
             research_needed = 200,
             exclude_tags = "Production",
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 0)
 
         obedience_enhancer = SerumTrait(name = "Obedience Enhancer",
             desc = "A blend of off the shelf pharmaceuticals will make the recipient more receptive to direct orders.",
-            positive_slug = "+$20 Value, +10 Obedience",
-            negative_slug = "+75 Serum Research",
-            value_added = 20,
+            positive_slug = "+10 Obedience",
+            negative_slug = "",
             research_added = 75,
             base_side_effect_chance = 15,
             on_apply = obedience_enhancer_on_apply,
@@ -728,13 +732,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app],
             tier = 1,
             research_needed = 300,
-            clarity_cost = 200)
+            clarity_cost = 200,
+            mental_aspect = 3, physical_aspect = 0, sexual_aspect = 2, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         large_obedience_enhancer = SerumTrait(name = "Experimental Obedience Treatment.",
             desc = "The combination of several only recently released compounds should produce a larger increase in obedience. Unfortunately the effect leaves the recipient rather stuck up and stuffy.",
-            positive_slug = "+$20 Value, +20 Obedience",
-            negative_slug = "-1 Sluttiness/Turn, +75 Serum Research",
-            value_added = 20,
+            positive_slug = "+20 Obedience",
+            negative_slug = "-1 Sluttiness/Turn",
             research_added = 75,
             base_side_effect_chance = 20,
             on_apply = large_obedience_enhancer_on_apply,
@@ -743,41 +747,41 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = obedience_enhancer,
             tier = 1,
             research_needed = 350,
-            clarity_cost = 400)
+            clarity_cost = 400,
+            mental_aspect = 5, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 2)
 
         improved_duration_trait = SerumTrait(name = "Improved Reagent Purification",
             desc = "By carefully purifying the starting materials the length of time a serum remains active.",
-            positive_slug = "+$20 Value, +2 Turn Duration",
-            negative_slug = "+75 Serum Research",
-            value_added = 20,
+            positive_slug = "+2 Turn Duration",
+            negative_slug = "",
             research_added = 75,
             duration_added = 2,
             base_side_effect_chance = 10,
             requires = basic_med_app,
             tier = 1,
             research_needed = 350,
-            clarity_cost = 300)
+            clarity_cost = 300,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 4, flaws_aspect = 0, attention = 0)
 
         aphrodisiac = SerumTrait(name = "Distilled Aprodisac",
             desc = "Careful distilation can concentrate the active ingredient from common aprodisiacs, producing a sudden spike in sluttiness when consumed. The sexual frustration linked to this effect tends to make the recipient less obedient over time as well.",
-            positive_slug = "+$20 Value, +15 Sluttiness",
-            negative_slug = "-1 Obedience/Turn, +60 Serum Research",
-            value_added = 20,
+            positive_slug = "+15 Sluttiness",
+            negative_slug = "-1 Obedience/Day",
             research_added = 60,
             base_side_effect_chance = 20,
             on_apply = aphrodisiac_on_apply,
             on_remove = aphrodisiac_on_remove,
-            on_turn = aphrodisiac_on_turn,
+            on_day = aphrodisiac_on_day,
             requires = basic_med_app,
             tier = 1,
             research_needed = 250,
-            clarity_cost = 300)
+            clarity_cost = 300,
+            mental_aspect = 2, physical_aspect = 0, sexual_aspect = 4, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         love_potion = SerumTrait(name = "Love Potion",
             desc = "A carefully balanced combination of chemicals can replicate the brains response to loved ones. Produces an immediate but temporary feeling of love. This trait is particularly prone to introducing side effects.",
-            positive_slug = "+$20 Value, +20 Love",
-            negative_slug = "+75 Seum Research",
-            value_added = 20,
+            positive_slug = "+20 Love",
+            negative_slug = "",
             research_added = 75,
             base_side_effect_chance = 75,
             on_apply = love_potion_on_apply,
@@ -785,13 +789,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [aphrodisiac, basic_med_app],
             tier = 1,
             research_needed = 250,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 3, physical_aspect = 0, sexual_aspect = 2, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         off_label_drugs = SerumTrait(name = "Off Label Pharmaceuticals",
             desc = "Several existing drugs can be repurposed to increase the mental pliability of the recipient.",
-            positive_slug = "+$20 Value, +30 Suggestibility",
-            negative_slug = "+80 Serum Research",
-            value_added = 20,
+            positive_slug = "+30 Suggestibility",
+            negative_slug = "",
             research_added = 80,
             base_side_effect_chance = 30,
             on_apply = off_label_drugs_on_apply,
@@ -800,38 +804,38 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 1,
             research_needed = 300,
             exclude_tags = "Suggest",
-            clarity_cost = 250)
+            clarity_cost = 250,
+            mental_aspect = 4, physical_aspect = 0, sexual_aspect = 1, medical_aspect = 1, flaws_aspect = 0, attention = 2)
 
         clinical_testing = SerumTrait(name = "Clinical Testing Procedures",
             desc = "A set of careful tests rather than any single ingredient or process. Serums may be put through formal clinical testing, significantly boosting their value to the general public. This also significantly raises the research cost of each serum design.",
-            positive_slug = "+$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 0,
             requires = [basic_med_app, improved_serum_prod],
             tier = 1,
             research_needed = 400,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 4, flaws_aspect = 0, attention = 0)
 
         mood_enhancer = SerumTrait(name = "Mood Enhancer",
             desc = "Standard antidepressants provide a general improvement in mood. The most common side effect is a lack of respect for authority figures, brought on by the chemical endorphin rush.",
-            positive_slug = "+$20 Value, +10 Happiness/Turn",
-            negative_slug = "-1 Obedience/Turn, +75 Serum Research",
-            value_added = 20,
+            positive_slug = "+10 Happiness/Turn",
+            negative_slug = "-1 Obedience/Turn",
             research_added = 75,
             base_side_effect_chance = 15,
             on_turn = mood_enhancer_on_turn,
             requires = basic_med_app,
             tier = 1,
             research_needed = 300,
-            clarity_cost = 300)
+            clarity_cost = 300,
+            mental_aspect = 2, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 0)
 
         refined_caffeine_trait = SerumTrait(name = "Refined Stimulants",
             desc = "A more carefully refined stimulant produces the same boost to baseline energy levels as ordinary caffeine, but with none of the unpleasant side effects.",
-            positive_slug = "+$20 Value, +20 Max Energy",
-            negative_slug = "+50 Serum Research",
-            value_added = 20,
+            positive_slug = "+20 Max Energy",
+            negative_slug = "",
             research_added = 50,
             base_side_effect_chance = 25,
             on_apply = refined_caffeine_trait_on_apply,
@@ -839,13 +843,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [caffeine_trait],
             tier = 1,
             research_needed = 300,
-            clarity_cost = 250)
+            clarity_cost = 250,
+            mental_aspect = 0, physical_aspect = 3, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 0)
 
         fertility_enhancement_trait = SerumTrait(name = "Fertility Enhancement",
             desc = "Targets and enhances a womans natural reproductive cycle, increasing the chance that she may become pregnant. Birth control will still prevent most pregnancies.",
-            positive_slug = "+$20 Value, +20% Fertility",
-            negative_slug = "+100 Serum Research",
-            value_added = 20,
+            positive_slug = "+20% Fertility",
+            negative_slug = "",
             research_added = 100,
             base_side_effect_chance = 40,
             on_apply = fertility_enhancement_on_apply,
@@ -853,13 +857,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [birth_control_suppression, basic_med_app],
             tier = 1,
             research_needed = 250,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 0, physical_aspect = 1, sexual_aspect = 1, medical_aspect = 3, flaws_aspect = 0, attention = 1)
 
         fertility_suppression_trait = SerumTrait(name = "Fertility Suppression",
             desc = "Targets and dampens a womans natural reproductive cycle, decreasing the chance that she may become pregnant.",
-            positive_slug = "+$15 Value, -20% Fertility",
-            negative_slug = "+100 Serum Research",
-            value_added = 15,
+            positive_slug = "-20% Fertility",
+            negative_slug = "",
             research_added = 100,
             base_side_effect_chance = 40,
             on_apply = fertility_suppression_on_apply,
@@ -867,13 +871,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [birth_control_suppression, basic_med_app],
             tier = 1,
             research_needed = 250,
-            clarity_cost = 200)
+            clarity_cost = 200,
+            mental_aspect = 0, physical_aspect = 1, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 0)
 
         lactation_hormones = SerumTrait(name = "Lactation Promotion Hormones",
             desc = "Contains massive quantities of hormones normally found naturally in the body during late stage pregnancy. Triggers immediate breast lactation",
-            positive_slug = "+$25 Value, Encourages Lactation",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
+            positive_slug = "Encourages Lactation",
+            negative_slug = "",
             research_added = 150,
             base_side_effect_chance = 20,
             on_apply = lactation_hormones_on_apply,
@@ -881,13 +885,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [fertility_enhancement_trait],
             tier = 1,
             research_needed = 600,
-            clarity_cost = 750)
+            clarity_cost = 750,
+            mental_aspect = 0, physical_aspect = 4, sexual_aspect = 1, medical_aspect = 1, flaws_aspect = 0, attention = 2)
 
         oral_enhancer = SerumTrait(name = "Gag Suppressant",
             desc = "Targets and suppresses the natural gag reflex of the subject. This has little practical benefit, other than making it significantly easier for the subject to perform oral sex.",
-            positive_slug = "+$15 Value, +2 Oral Skill",
-            negative_slug = "+150 Serum Research",
-            value_added = 15,
+            positive_slug = "+2 Oral Skill",
+            negative_slug = "",
             research_added = 150,
             base_side_effect_chance = 50,
             on_apply = oral_enhancer_on_apply,
@@ -895,13 +899,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app],
             tier = 1,
             research_needed = 300,
-            clarity_cost = 750)
+            clarity_cost = 750,
+            mental_aspect = 0, physical_aspect = 1, sexual_aspect = 3, medical_aspect = 1, flaws_aspect = 0, attention = 1)
 
         climax_limiter = SerumTrait(name = "Pleasure Center Depressant",
             desc = "Makes it much harder for a subject to orgasm, while still allowing them to feel the full effects of being highly aroused. Some subjects may take drastic steps to achieve orgasm.",
-            positive_slug = "+$15 Value, +40 Max Arousal",
-            negative_slug = "+100 Serum Research",
-            value_added = 15,
+            positive_slug = "+40 Max Arousal",
+            negative_slug = "",
             research_added = 100,
             base_side_effect_chance = 35,
             on_apply = climax_limiter_on_apply,
@@ -909,13 +913,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app],
             tier = 1,
             research_needed = 200,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 0, physical_aspect = 1, sexual_aspect = 4, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         weight_gain = SerumTrait(name = "Weight Gain Promoter",
             desc = "Triggers a natural response inside of the body, encouraging it to store as much excess energy as possible. Has a small chance of changing the subject's body type each turn, at the cost of lowering the amount of energy they have available.",
-            positive_slug = "+$10 Value, 15% Chance/Turn to Change Body Type",
-            negative_slug = "+80 Serum Research, -20 Max Energy",
-            value_added = 10,
+            positive_slug = "15% Chance/Turn to Change Body Type",
+            negative_slug = "-20 Max Energy",
             research_added = 80,
             base_side_effect_chance = 40,
             on_apply = weight_gain_on_apply,
@@ -925,13 +929,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 1,
             research_needed = 150,
             exclude_tags = ["Weight Modification"],
-            clarity_cost = 200)
+            clarity_cost = 200,
+            mental_aspect = 0, physical_aspect = 4, sexual_aspect = 0, medical_aspect = 1, flaws_aspect = 0, attention = 1)
 
         weight_loss = SerumTrait(name = "Weight Loss Promoter",
             desc = "Dampens the appetite of the subject, resulting in mostly-natural weight loss. Has a small chance of changing the subject's body type each turn, at the cost of lowering the amount of energy they have available.",
-            positive_slug = "+$20 Value, 15% Chance/Turn to Change Body Type",
-            negative_slug = "+160 Serum Research, -20 Max Energy",
-            value_added = 20,
+            positive_slug = "15% Chance/Turn to Change Body Type",
+            negative_slug = "-20 Max Energy",
             research_added = 160,
             base_side_effect_chance = 80,
             on_apply = weight_loss_on_apply,
@@ -941,7 +945,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 1,
             research_needed = 500,
             exclude_tags = ["Weight Modification"],
-            clarity_cost = 700)
+            clarity_cost = 700,
+            mental_aspect = 0, physical_aspect = 4, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 2)
 
         #################
         # Tier 2 Traits #
@@ -950,9 +955,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         advanced_serum_prod = SerumTrait(name = "Advanced Serum Production",
             desc = "Advanced improvements to the basic serum design. Adds four serum trait slots, but requires even more production points.",
-            positive_slug = "4 Trait Slots, 3 Turn Duration, $2 Value",
-            negative_slug = "+200 Serum Research, +750 Clarity Cost, 80 Production/Batch",
-            value_added = 2,
+            positive_slug = "4 Trait Slots, 3 Turn Duration",
+            negative_slug = "80 Production/Batch",
             research_added = 200,
             slots_added = 4,
             production_added = 80,
@@ -963,13 +967,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             research_needed = 800,
             exclude_tags = "Production",
-            clarity_cost = 1500)
+            clarity_cost = 1500,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 1)
 
         blood_brain_pen = SerumTrait(name = "Blood Brain Penetration",
             desc = "A carefully designed delivery unit can bypass the blood-brain barrier. This will provide a large increase to the Suggestibility of the recipient.",
-            positive_slug = "+$25 Value, +50 Suggestibility",
-            negative_slug = "+120 Serum Research",
-            value_added = 25,
+            positive_slug = "+50 Suggestibility",
+            negative_slug = "",
             research_added = 25,
             base_side_effect_chance = 40,
             on_apply = blood_brain_pen_on_apply,
@@ -978,52 +982,52 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             research_needed = 500,
             exclude_tags = "Suggest",
-            clarity_cost = 800)
+            clarity_cost = 800,
+            mental_aspect = 6, physical_aspect = 0, sexual_aspect = 2, medical_aspect = 1, flaws_aspect = 0, attention = 3)
 
         low_volatility_reagents = SerumTrait(name = "Low Volatility Reagents",
             desc = "Carefully sourced and stored reagents will greatly prolong the effects of a serum.",
-            positive_slug = "+$25 Value, +5 Turn Duration",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
+            positive_slug = "+5 Turn Duration",
+            negative_slug = "",
             research_added = 150,
             duration_added = 5,
             base_side_effect_chance = 15,
             requires = improved_duration_trait,
             tier = 2,
             research_needed = 600,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 7, flaws_aspect = 0, attention = 1)
 
         breast_enhancement = SerumTrait(name = "Breast Enhancement",
             desc = "Grows breasts overnight. Has a 25% chance of increasing a girls breast size by one step with each time unit.",
-            positive_slug = "+$30 Value, 25% Chance/Turn Breast Growth",
-            negative_slug = "+125 Serum Research",
-            value_added = 30,
+            positive_slug = "25% Chance/Turn Breast Growth",
+            negative_slug = "",
             research_added = 125,
             base_side_effect_chance = 20,
             on_turn = breast_enhancement_on_turn,
             requires = [weight_gain],
             tier = 2,
             research_needed = 500,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 0, physical_aspect = 6, sexual_aspect = 2, medical_aspect = 1, flaws_aspect = 0, attention = 3)
 
         breast_reduction = SerumTrait(name = "Breast Reduction",
             desc = "Shrinks breasts overnight. Has a 25% chance of decreasing a girls breast size by one step with each time unit.",
-            positive_slug = "+$30 Value, 25% Chance/Turn Breast Reduction",
-            negative_slug = "+125 Serum Research",
-            value_added = 30,
+            positive_slug = "25% Chance/Turn Breast Reduction",
+            negative_slug = "",
             research_added = 125,
             base_side_effect_chance = 20,
             on_turn = breast_reduction_on_turn,
             requires = [weight_loss],
             tier = 2,
             research_needed = 500,
-            clarity_cost = 750)
+            clarity_cost = 750,
+            mental_aspect = 0, physical_aspect = 6, sexual_aspect = 2, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         focus_enhancement = SerumTrait(name = "Medical Amphetamines",
             desc = "The inclusion of low doses of amphetamines help the user focus intently for long periods of time.",
-            positive_slug = "+$25 Value, +2 Focus",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
+            positive_slug = "+2 Focus",
+            negative_slug = "",
             research_added = 150,
             base_side_effect_chance = 30,
             on_apply = focus_enhancement_on_apply,
@@ -1031,13 +1035,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app, clinical_testing],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 800)
+            clarity_cost = 800,
+            mental_aspect = 4, physical_aspect = 1, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 2)
 
         int_enhancement = SerumTrait(name = "Quick Release Nootropics",
             desc = "Nootropics enhance cognition and learning. These fast acting nootropics produce results almost instantly, but for a limited period of time.",
-            positive_slug = "+$25 Value, +2 Intelligence",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
+            positive_slug = "+2 Intelligence",
+            negative_slug = "",
             research_added = 150,
             base_side_effect_chance = 30,
             on_apply = int_enhancement_on_apply,
@@ -1045,13 +1049,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app, clinical_testing],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 800)
+            clarity_cost = 800,
+            mental_aspect = 5, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 2)
 
         cha_enhancement = SerumTrait(name = "Stress Inhibitors",
             desc = "By reducing the users natural stress response to social interactions they are able to express themselves more freely and effectively. Takes effect immediately, but lasts only for a limited time",
-            positive_slug = "+$25 Value, +2 Charisma",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
+            positive_slug = "+2 Charisma",
+            negative_slug = "",
             research_added = 150,
             base_side_effect_chance = 30,
             on_apply = cha_enhancement_on_apply,
@@ -1059,26 +1063,26 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app, clinical_testing],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 800)
+            clarity_cost = 800,
+            mental_aspect = 4, physical_aspect = 0, sexual_aspect = 1, medical_aspect = 3, flaws_aspect = 0, attention = 2)
 
         happiness_tick = SerumTrait(name = "Slow Release Dopamine",
             desc = "By slowly flooding the users dopamine receptors they can be put into a long lasting sense of optimism",
-            positive_slug = "+$25 Value, +5 Happiness/Turn",
-            negative_slug = "+100 Serum Research",
-            value_added = 25,
+            positive_slug = "+5 Happiness/Turn",
+            negative_slug = "",
             research_added = 100,
             base_side_effect_chance = 20,
             on_turn = happiness_tick_on_turn,
             requires = [basic_med_app, clinical_testing],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 6, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 2)
 
         slutty_caffeine_trait = SerumTrait(name = "Libido Stimulants",
             desc = "Careful engineering allows for the traditional side effects of stimulants to be redirected to the parasympathetic nervous system, causing an immediate spike in arousal as well as general energy levels.",
-            positive_slug = " +$25 Value, +20 Max Energy, +15 Sluttiness",
-            negative_slug = "+150 Serum Research",
-            value_added = 25,
+            positive_slug = " +20 Max Energy, +15 Sluttiness",
+            negative_slug = "",
             research_added = 150,
             base_side_effect_chance = 60,
             on_apply = slutty_caffeine_trait_on_apply,
@@ -1086,39 +1090,39 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [refined_caffeine_trait, aphrodisiac],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 1200)
+            clarity_cost = 1200,
+            mental_aspect = 0, physical_aspect = 3, sexual_aspect = 5, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         pregnancy_accelerator_trait = SerumTrait(name = "Pregnancy Acceleration Hormones",
             desc = "Encourages and supports the ongoing development of a fetus, increasing the effective speed at which a pregnancy develops.",
-            positive_slug = "+$25 Value, +1 Pregnancy Progress per Day",
-            negative_slug = "+250 Serum Research",
-            value_added = 25,
+            positive_slug = "+1 Pregnancy Progress/Day",
+            negative_slug = "",
             research_added = 250,
             base_side_effect_chance = 60,
             on_day = pregnancy_accelerator_on_day,
             requires = [fertility_enhancement_trait],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 1200)
+            clarity_cost = 1200,
+            mental_aspect = 0, physical_aspect = 3, sexual_aspect = 0, medical_aspect = 6, flaws_aspect = 0, attention = 3)
 
         pregnancy_decelerator_trait = SerumTrait(name = "Pregnancy Deceleration Hormones",
             desc = "Slows the ongoing development of a fetus, increasing the total amount of time needed to bring a pregnancy to term. If properly applied a pregnancy could be maintained indefinitely.",
-            positive_slug = "+$20 Value, -1 Pregnancy Progress per Day",
-            negative_slug = "+250 Serum Research",
-            value_added = 20,
+            positive_slug = "-1 Pregnancy Progress/Day",
+            negative_slug = "",
             research_added = 250,
             base_side_effect_chance = 60,
             on_day = pregnancy_decellerator_on_day,
             requires = [fertility_enhancement_trait],
             tier = 2,
             research_needed = 800,
-            clarity_cost = 800)
+            clarity_cost = 800,
+            mental_aspect = 0, physical_aspect = 3, sexual_aspect = 0, medical_aspect = 6, flaws_aspect = 0, attention = 3)
 
         vaginal_enhancer = SerumTrait(name = "Natural Lubricant Stimulation",
             desc = "Kicks the subject's natural lubrication production into overdrive. Improved lubrication allows for more vigorous activities without discomfort.",
-            positive_slug = "+20 Value, +2 Vaginal Skill",
-            negative_slug = "+300 Serum Research",
-            value_added = 20,
+            positive_slug = "+2 Vaginal Skill",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 60,
             on_apply = vaginal_enhancer_on_apply,
@@ -1126,13 +1130,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app],
             tier = 2,
             research_needed = 700,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 0, physical_aspect = 2, sexual_aspect = 6, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         anal_enhancer = SerumTrait(name = "Sphinctor Elasticity Promotor",
             desc = "Triggers a release of chemicals in the subject that increase muscle elasticity dramatically.",
-            positive_slug = "+20 Value, +2 Anal Skill",
-            negative_slug = "+300 Serum Research",
-            value_added = 20,
+            positive_slug = "+2 Anal Skill",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 60,
             on_apply = anal_enhancer_on_apply,
@@ -1140,13 +1144,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [basic_med_app],
             tier = 2,
             research_needed = 700,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 0, physical_aspect = 2, sexual_aspect = 6, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         climax_enhancer = SerumTrait(name = "Pleasure Center Stimulator",
             desc = "Changes the baseline of pleasure chemicals in the subject's brain. This has the effect of making it much easier for physical stimulation to trigger an orgasm in the subject. Comes with a large risk of side effects, and disturbs the subject's natural sense of enjoyment.",
-            positive_slug = "+25 Value, -20 Max Arousal (Min 20)",
-            negative_slug = "-5 Happiness/Turn, +350 Serum Research",
-            value_added = 25,
+            positive_slug = "-20 Max Arousal (Min 20)",
+            negative_slug = "-5 Happiness/Turn",
             research_added = 350,
             base_side_effect_chance = 100,
             on_apply = climax_enhancer_on_apply,
@@ -1155,13 +1159,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [mood_enhancer, aphrodisiac],
             tier = 2,
             research_needed = 1000,
-            clarity_cost = 1600)
+            clarity_cost = 1600,
+            mental_aspect = 2, physical_aspect = 0, sexual_aspect = 6, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         rolling_orgasm = SerumTrait(name = "Climax Cycler",
             desc = "Linking the pleasure center of the brain to the subject's natural circadian rhythm causes periodic, low grade orgasms spaced several hours apart. In addition to being pleasant and slightly tiring, this can trigger other orgasm related effects if they exist.",
-            positive_slug = "+30 Value, +5 Happiness/Turn, 1 Forced Orgasm/Turn",
-            negative_slug = "-10 Max Energy, +400 Serum Research",
-            value_added = 30,
+            positive_slug = "+5 Happiness/Turn, 1 Forced Orgasm/Turn",
+            negative_slug = "-10 Max Energy",
             research_added = 400,
             base_side_effect_chance = 50,
             on_apply = rolling_orgasm_on_apply,
@@ -1170,13 +1174,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = [climax_enhancer],
             tier = 2,
             research_needed = 1000,
-            clarity_cost = 2000)
+            clarity_cost = 2000,
+            mental_aspect = 0, physical_aspect = 2, sexual_aspect = 7, medical_aspect = 0, flaws_aspect = 0, attention = 3)
 
         height_increase = SerumTrait(name = "Human Growth Rebooter",
             desc = "Provides the required hormonal signals to promote growth that would otherwise stop after puberty, allowing the subject to grow taller. Causes a height increase of roughly 1 inch per day. There is a minor chance that the subject's breasts will grow along with her frame.",
-            positive_slug = "+$20 Value, +1\" Height/Day",
-            negative_slug = "10% Chance/Day Breast Enhancement, +200 Serum Research",
-            value_added = 20,
+            positive_slug = "+1\" Height/Day",
+            negative_slug = "10% Chance/Day Breast Enhancement",
             research_added = 200,
             base_side_effect_chance = 80,
             on_day = height_increase_on_day,
@@ -1184,13 +1188,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             research_needed = 600,
             exclude_tags = ["Height Modification"],
-            clarity_cost = 1400)
+            clarity_cost = 1400,
+            mental_aspect = 0, physical_aspect = 7, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 3)
 
         height_decrease = SerumTrait(name = "Human Growth Rewinder",
             desc = "Carefully engineered hormones produce an inverted growth effect, effectively causing the subject to grow shorter. The subject's height will decrease by roughly 1 inch per day. There is a minor chance that the subject's breasts will be shrink along with her frame",
-            positive_slug = "+$20 Value, -1\" Height/Day",
-            negative_slug = "10% Chance/Day Breast Reduction, +200 Serum Research",
-            value_added = 20,
+            positive_slug = "-1\" Height/Day",
+            negative_slug = "10% Chance/Day Breast Reduction",
             research_added = 200,
             base_side_effect_chance = 80,
             on_day = height_decrease_on_day,
@@ -1198,7 +1202,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             research_needed = 600,
             exclude_tags = ["Height Modification"],
-            clarity_cost = 1400)
+            clarity_cost = 1400,
+            mental_aspect = 0, physical_aspect = 7, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 3)
 
         #################
         # Tier 3 Traits #
@@ -1207,9 +1212,8 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
 
         futuristic_serum_prod = SerumTrait(name = "Futuristic Serum Production",
             desc = "Space age technology makes the serum incredibly versitle. Adds seven serum trait slots at an increased production cost.",
-            positive_slug = "7 Trait Slots, 3 Turn Duration, $2 Value",
-            negative_slug = "+500 Serum Research, +1250 Clarity Cost, 135 Production/Batch",
-            value_added = 2,
+            positive_slug = "7 Trait Slots, 3 Turn Duration",
+            negative_slug = "135 Production/Batch",
             research_added = 500,
             slots_added = 7,
             production_added = 135,
@@ -1220,13 +1224,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 3,
             research_needed = 3000,
             exclude_tags = "Production",
-            clarity_cost = 2500)
+            clarity_cost = 2500,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 5, flaws_aspect = 0, attention = 2)
 
         mind_control_agent = SerumTrait(name = "Mind Control Agent",
             desc = "This low grade mind control agent will massively increase the suggestibility of the recipient, resulting in rapid changes in personality based on external stimuli.",
-            positive_slug = "+$40 Value, +70 Suggestibility",
-            negative_slug = "+200 Serum Research",
-            value_added = 40,
+            positive_slug = "+70 Suggestibility",
+            negative_slug = "",
             research_added = 200,
             base_side_effect_chance = 50,
             on_apply = mind_control_agent_on_apply,
@@ -1235,13 +1239,13 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 3,
             research_needed = 1500,
             exclude_tags = "Suggest",
-            clarity_cost = 2000)
+            clarity_cost = 2000,
+            mental_aspect = 7, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 5, flaws_aspect = 0, attention = 4)
 
         permanent_bimbo = SerumTrait(name = "Permanent Bimbofication",
             desc = "This delicate chemical cocktail was reverse engineered from an experimental serum sampled in the lab and will turn the recipient into a complete bimbo. Intelligence and obedience will suffer, but she will be happy and slutty. This change is permanent. It does not end when the serum expires and cannot be reversed with other serums.",
             positive_slug = "New Personality: Bimbo, +$40 Value, +10 Permanent Sluttiness, +10 Permanent Obedience",
-            negative_slug = "+$40 Value, +400 Serum Research, Int Lowered to 1 Permanently",
-            value_added = 40,
+            negative_slug = "Int Lowered to 1 Permanently",
             research_added = 400,
             base_side_effect_chance = 80,
             on_apply = permanent_bimbo_on_apply,
@@ -1249,33 +1253,34 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             requires = mind_control_agent,
             tier = 3,
             research_needed = 2000,
-            clarity_cost = 2200)
+            clarity_cost = 2200,
+            mental_aspect = 8, physical_aspect = 0, sexual_aspect = 5, medical_aspect = 0, flaws_aspect = 0, attention = 5)
 
         massive_pregnancy_accelerator = SerumTrait(name = "Extreme Pregnancy Hormones",
             desc = "Overloads the body with natural pregnancy hormones alongside nutrient supplements. Massively increases the pace at which a pregnancy will progress.",
-            positive_slug = "+$40 Value, +1 Pregnancy Progress per Turn",
-            negative_slug = "+300 Serum Research",
-            value_added = 40,
+            positive_slug = "+1 Pregnancy Progress/Turn",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 80,
             on_turn = massive_pregnancy_accelerator_on_turn,
             requires = [pregnancy_accelerator_trait],
             tier = 3,
             research_needed = 1400,
-            clarity_cost = 1800)
+            clarity_cost = 1800,
+            mental_aspect = 0, physical_aspect = 9, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 4)
 
         self_generating_serum = SerumTrait(name = "Self Replicating Serum",
-            desc = "Inserts instructions for the creation of this serum into the subject's cells, allowing them to create it entirely within the body. The effects of this serum will last practically forever.",
-            positive_slug = "+$40 Value, Near-infinite Duration",
-            negative_slug = "+800 Serum Research, Near-infinite Duration",
-            value_added = 40,
+            desc = "Inserts instructions for the creation of this serum into the subject's cells, allowing them to create it entirely independently. The effects of this serum will last practically forever.",
+            positive_slug = "Near-infinite Duration",
+            negative_slug = "Near-infinite Duration",
             research_added = 800,
             duration_added = 9999,
             base_side_effect_chance = 200,
             requires = [low_volatility_reagents, futuristic_serum_prod],
             tier = 3,
             research_needed = 2400,
-            clarity_cost = 3000)
+            clarity_cost = 3000,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 11, attention = 3)
 
 
     ### SPECIAL TRAITS ###
@@ -1284,8 +1289,7 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
         nora_suggest_up = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Raises suggestibility significantly, but is guaranteed to generate a side effect and negatively effects value.",
             positive_slug = "+50 Suggestibility",
-            negative_slug = "+75 Serum Research, -$150 Value",
-            value_added = -150,
+            negative_slug = "",
             research_added = 75,
             base_side_effect_chance = 1000000,
             on_apply = nora_suggest_up_on_apply,
@@ -1294,35 +1298,35 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             start_researched = False,
             research_needed = 1000,
             clarity_cost = 1000,
-            exclude_tags = "Suggest")
+            exclude_tags = "Suggest",
+            mental_aspect = 8, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 2, attention = 2)
 
         nora_nightmares = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Negatively affects the recipient's sleep, as well as generating a side effect and negatively effecting value.",
-            negative_slug = "+75 Serum Research, -15 Happiness/Night, -$150 Value",
-            value_added = -150,
+            negative_slug = "-15 Happiness/Night",
             research_added = 75,
             base_side_effect_chance = 1000000,
             on_day = nora_nightmares_on_day,
             tier = 2,
             research_needed = 1000,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 4, physical_aspect = 4, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 2, attention = 2)
 
         nora_obedience_swing = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Causes wild fluctuations in the recipient's willingness to follow orders, as well as generating a side effect and negatively effecting value.",
-            negative_slug = "+75 Serum Research, Random Obedience Changes, -$150 Value",
-            value_added = -150,
+            negative_slug = "Random Obedience Changes",
             research_added = 75,
             base_side_effect_chance = 1000000,
             on_turn = nora_obedience_swing_on_turn,
             tier = 2,
             research_needed = 1000,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 4, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 4, flaws_aspect = 2, attention = 2)
 
         nora_sluttiness_boost = SerumTrait(name = "Nora's Research Trait",
             desc = "The manufacturing details for a serum trait developed by Nora. Causes a sudden spike in the recipients sluttiness, as well as generating a side effect and negatively effecting value.",
             positive_slug = "+20 Sluttiness",
-            negative_slug = "+75 Serum Research, -$150 Value",
-            value_added = -150,
+            negative_slug = "",
             research_added = 75,
             base_side_effect_chance = 1000000,
             on_apply = nora_sluttiness_boost_on_apply,
@@ -1330,68 +1334,68 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             start_researched = False,
             research_needed = 1000,
-            clarity_cost = 1000)
+            clarity_cost = 1000,
+            mental_aspect = 2, physical_aspect = 0, sexual_aspect = 6, medical_aspect = 0, flaws_aspect = 2, attention = 2)
 
 
         ### Nora boss unlock traits ###
 
         nora_reward_mother_trait = SerumTrait(name = "Motherly Devotion",
             desc = "A special serum trait developed by Nora after studying your mother. Permanently increases the recipient's Love by 1 per turn for every 10 points that their Sluttiness is higher than Love.",
-            positive_slug = "+1 Love per Turn per 10 Sluttiness greater than Love, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+1 Love/Turn per 10 Sluttiness greater than Love",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 50,
             on_turn = nora_reward_mother_trait_on_turn,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 6, physical_aspect = 0, sexual_aspect = 3, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         nora_reward_sister_trait = SerumTrait(name = "Sisterly Obedience",
             desc = "A special serum trait developed by Nora after studying your sister. Permanently increases the recipient's Sluttiness by 1 per day for every 10 points that their Obedience is above 100.",
-            positive_slug = "+1 Core Sluttiness/day per 10 Obedience over 100, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+1 Core Sluttiness/Day per 10 Obedience over 100",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 75,
             on_day = nora_reward_sister_trait_on_day,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 3, physical_aspect = 0, sexual_aspect = 7, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         nora_reward_cousin_trait = SerumTrait(name = "Cousinly Hate",
             desc = "A special serum trait developed by Nora after studying your cousin. Permanently increases the recipient's Sluttiness by 1 per day for every 5 Love that they are below 0.",
-            positive_slug = "+1 Core Sluttiness/day per 5 Love below 0, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+1 Core Sluttiness/Day per 5 Love below 0",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 50,
             on_day = nora_reward_cousin_trait_on_day,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 4, physical_aspect = 0, sexual_aspect = 7, medical_aspect = 0, flaws_aspect = 0, attention = 3)
 
         nora_reward_aunt_trait = SerumTrait(name = "Auntly Potential",
             desc = "A special serum trait developed by Nora after studying your aunt. Increases the number of traits a serum design may contain by 2.",
             positive_slug = "+2 Extra Trait Slots",
-            negative_slug = "+300 Serum Research",
-            value_added = 0,
+            negative_slug = "",
             research_added = 300,
             slots_added = 3,
             base_side_effect_chance = 100,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 0, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 4, flaws_aspect = 0, attention = 1)
 
         nora_reward_nora_trait = SerumTrait(name = "Meritocratic Attraction",
             desc = "A special serum trait developed by Nora after studying herself. Increases the recipients Obedience and Sluttiness for the duration by 5 for every point of Intelligence you have.",
-            positive_slug = "+5 Obedience and Sluttiness per Intelligence, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+5 Obedience and Sluttiness per Intelligence",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 50,
             on_apply = nora_reward_nora_trait_on_apply,
@@ -1399,26 +1403,26 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 4, physical_aspect = 0, sexual_aspect = 6, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         nora_reward_high_love_trait = SerumTrait(name = "Lovers Attraction",
             desc = "A special serum trait developed by Nora after studying someone who adores you. Each turn permanently converts one point of Sluttiness into Love until they are equal.",
-            positive_slug = "Converts 1 Sluttiness to Love per turn until equal, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "Converts 1 Sluttiness to Love per turn until equal",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 75,
             on_turn = nora_reward_high_love_trait_on_turn,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 6, physical_aspect = 0, sexual_aspect = 5, medical_aspect = 0, flaws_aspect = 0, attention = 2)
 
         nora_reward_low_love_trait = SerumTrait(name = "Distilled Disgust",
             desc = "A special serum trait developed by Nora after studying someone who absolutely hates you. Gives a massive penalty to love for the duration of the serum.",
-            positive_slug = "+$10 Value",
-            negative_slug = "-50 Love, +300 Serum Research",
-            value_added = 10,
+            positive_slug = "",
+            negative_slug = "-50 Love",
             research_added = 300,
             base_side_effect_chance = 10,
             on_apply = nora_reward_low_love_trait_on_apply,
@@ -1426,71 +1430,72 @@ label instantiate_serum_traits(): #Creates all of the default LR2 serum trait ob
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 9, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 0, flaws_aspect = 0, attention = 1)
 
         nora_reward_high_obedience_trait = SerumTrait(name = "Pleasurable Obedience",
             desc = "A special serum trait developed by Nora after studying someone who was completely subservient to you. Increases happiness by 1 for every 5 points of Obedience over 100 per turn.",
-            positive_slug = "+1 Happiness per 5 Obedience over 100 per turn, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+1 Happiness/Turn per 5 Obedience over 100",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 50,
             on_turn = nora_reward_high_obedience_trait_on_turn,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 7, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 2, flaws_aspect = 0, attention = 1)
 
         nora_reward_high_slut_trait = SerumTrait(name = "Rapid Corruption",
             desc = "A special serum trait developed by Nora after studying someone who was a complete slut. Instantly and permanently increases their Sluttiness by 5.",
-            positive_slug = "+5 Permanent Sluttiness, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+5 Permanent Sluttiness",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 50,
             on_apply = nora_reward_high_slut_trait_on_apply,
             tier = 2,
             start_researched = False,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 4, physical_aspect = 0, sexual_aspect = 7, medical_aspect = 0, flaws_aspect = 0, attention = 3)
 
         nora_reward_genius_trait = SerumTrait(name = "Natural Talent",
             desc = "A special serum trait developed by Nora after studying someone who was a genius. Instantly and permanetly sets the recipients Intelligence, Charisma, and Focus to 5.",
-            positive_slug = "Sets Charisma, Intelligence, Focus to 5, +$50 Value",
-            negative_slug = "+1000 Serum Research",
-            value_added = 50,
+            positive_slug = "Sets Charisma, Intelligence, Focus to 5",
+            negative_slug = "",
             research_added = 1000,
             base_side_effect_chance = 300,
             on_apply = nora_reward_genius_trait_on_apply,
             tier = 2,
             start_researched = False,
             research_needed = 4000,
-            clarity_cost = 8000)
+            clarity_cost = 8000,
+            mental_aspect = 8, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 3)
 
         nora_reward_hucow_trait = SerumTrait(name = "Human Breeding Hormones",
             desc = "A special serum trait developed by Nora after studying someone who was in the later stages of pregnancy. Massively decreases birth control effectiveness, increases fertility, and triggers breast swelling and lactation.",
-            positive_slug = "+70% Fertility, -75% BC Effectiveness, Increased Breast Size, Massive Lactation, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "+70% Fertility, -75% BC Effectiveness, Increased Breast Size, Massive Lactation",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 80,
             on_apply = nora_reward_hucow_trait_on_apply,
             on_remove = nora_reward_hucow_trait_on_remove,
             tier = 2,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 0, physical_aspect = 8, sexual_aspect = 3, medical_aspect = 0, flaws_aspect = 0, attention = 3)
 
         nora_reward_instant_trance = SerumTrait(name = "Trance Inducer",
             desc = "A special serum trait developed by Nora after studying someone who was deep in a trance at the time. Instantly puts the subject in a Trance if they are not already in one. Does not deepen existing Trances.",
-            positive_slug = "Induces Trance State, +$35 Value",
-            negative_slug = "+300 Serum Research",
-            value_added = 35,
+            positive_slug = "Induces Trance State",
+            negative_slug = "",
             research_added = 300,
             base_side_effect_chance = 75,
             on_apply = nora_reward_instant_trance_on_apply,
             tier = 2,
             research_needed = 750,
-            clarity_cost = 500)
+            clarity_cost = 500,
+            mental_aspect = 8, physical_aspect = 0, sexual_aspect = 0, medical_aspect = 3, flaws_aspect = 0, attention = 3)
 
     # Tier 0
         list_of_traits.append(primitive_serum_prod)

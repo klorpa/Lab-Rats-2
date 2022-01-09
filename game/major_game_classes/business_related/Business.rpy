@@ -15,7 +15,7 @@ init -2 python:
             self.bankrupt_days = 0 #How many days you've been bankrupt. If it hits the max value you lose.
             self.max_bankrupt_days = 3 #How many days you can be negative without loosing the game. Can be increased through research.
 
-            self.m_div = m_div #The phsyical locations of all of the teams, so you can move to different offices in the future.
+            self.m_div = m_div #The physical locations of all of the teams, so you can move to different offices in the future.
             self.p_div = p_div
             self.r_div = r_div
             self.s_div = s_div
@@ -58,6 +58,7 @@ init -2 python:
             self.effectiveness_cap = 100 #Max cap, can be raised.
 
             self.research_tier = 0 #The tier of research the main charcter has unlocked with storyline events. 0 is starting, 3 is max.
+            self.max_serum_tier = 0 #The tier of serum you can produce in your lab. Mirrors reasearch tiers.
 
             self.blueprinted_traits = [] #List of traits that we have built from trait blueprints.
 
@@ -65,12 +66,20 @@ init -2 python:
             self.active_research_design = None #The current research (serum design or serum trait) the business is working on
 
             self.batch_size = 5 #How many serums are produced in each production batch
-            self.production_lines = 2 #How many different production lines the player has access to.
-            self.serum_production_array = {} #This dict will hold tuples of int(line number):[SerumDesign, int(weight), int(production points), int(autosell)]
 
 
             self.inventory = SerumInventory()
-            self.sale_inventory = SerumInventory()
+            # Produciton lines now have their own class.
+            self.production_lines = [] #Holds instances of Production Line. Default is 2, buying more production lines let's you produce serum designs in parallel (but no more than your default amount).
+            self.production_lines.append(ProductionLine(self.inventory))
+            self.production_lines.append(ProductionLine(self.inventory))
+
+            self.max_active_contracts = 2
+            self.active_contracts = []
+
+            self.max_offered_contracts = 2
+            self.offered_contracts = []
+
 
             self.policy_list = [] #This is a list of Policy objects.
             self.active_policy_list = [] #This is a list of currently active policies (vs just owned ones)
@@ -101,15 +110,37 @@ init -2 python:
             self.event_triggers_dict["outfit_tutorial"] = 1 #We have an outfit design tutorial.
             self.event_triggers_dict["hiring_tutorial"] = 1 #We have an outfit design tutorial.
 
+            self.market_reach = 100 #"market_reach" can be thought of as your total customr base.
+            self.mental_aspect_sold = 0 #Customers only have so much need for serum, so as you sell aspects the price per aspect goes down. You need to increase your market reach to get that price back up.
+            self.physical_aspect_sold = 0
+            self.sexual_aspect_sold = 0
+            self.medical_aspect_sold = 0
+
+            self.default_aspect_price = 10 # THis is the starting price that most aspects are "worth".
+            self.aspect_price_max_variance = 8 # This is the todal amount each aspect can be worht (ie no aspect is ever worth base more than 18 or less than 2).
+            self.aspect_price_daily_variance = 2 #This is the +- amount the price of each apsect can fluctuate.
+
+
+            self.mental_aspect_price = self.default_aspect_price #These are the actual current values of each aspect, which will vary from day to day
+            self.physical_aspect_price = self.default_aspect_price
+            self.sexual_aspect_price = self.default_aspect_price
+            self.medical_aspect_price = self.default_aspect_price
+
+            self.flaws_aspect_cost = -10 #NOTE: Flaws are a flat -10 each, _not_ reduced by amount sold.
+
+            self.attention = 0 #Current attention.
+            self.max_attention = 100 #If you end the day over this much attention you trigger a high attention event.
+            self.attention_bleed = 10 #How much attention is burned each day,
+
+            self.operating_costs = 0 #How much money is spent every work day just owning yoru lab.
+
             self.listener_system = ListenerManagementSystem()
+
+            self.renew_contracts()
 
         def run_turn(self): #Run each time the time segment changes. Most changes are done here.
             if time_of_day == 1 and daily_serum_dosage_policy.is_active() and self.is_work_day(): #Not done on run_day because we want it to apply at the _start_ of the day.
                 self.give_daily_serum()
-
-
-
-
 
             #Compute other deparement effects
             for person in self.supply_team:
@@ -127,8 +158,6 @@ init -2 python:
                     self.production_progress(person.focus,person.int,person.production_skill)
                     person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("production work"), add_to_log = False)
 
-            self.mark_autosale() #Mark extra serums to be sold by marketing.
-
             for person in self.market_team:
                 if person in self.m_div.people:
                     if person.should_wear_uniform():
@@ -137,13 +166,15 @@ init -2 python:
                         self.sale_progress(person.charisma, person.focus, person.market_skill) #Otherwise their standard outfit provides no bonuses.
                     person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("marketing work"), add_to_log = False)
 
+            self.do_autosale() #Mark extra serums to be sold by marketing.
+
             for policy in self.active_policy_list:
                 policy.on_turn()
 
             #Compute efficiency drop
             for person in self.supply_team + self.research_team + self.production_team + self.market_team:
                 if person in self.s_div.people + self.r_div.people + self.p_div.people + self.m_div.people: #Only people in the office lower effectiveness, no loss on weekends, not in for the day, etc.
-                    self.team_effectiveness += -1 #TODO: Make this dependant on charisma (High charisma have a lower impact on effectiveness) and happiness.
+                    self.change_team_effectiveness(-1)
 
             #Compute effiency rise from HR
             for person in self.hr_team:
@@ -151,26 +182,43 @@ init -2 python:
                     self.hr_progress(person.charisma,person.int,person.hr_skill)
                     person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("HR work"), add_to_log = False)
 
-            if self.team_effectiveness < 50:
-                self.team_effectiveness = 50
-
-            if self.team_effectiveness > self.effectiveness_cap:
-                self.team_effectiveness = self.effectiveness_cap
-
         def run_move(self):
             for policy in self.active_policy_list:
                 policy.on_move()
 
-
-
         def run_day(self): #Run at the end of the day.
-            #Pay everyone for the day
+            self.attention += -self.attention_bleed
+            if self.attention < 0:
+                self.attention = 0
+
             if mc.business.is_work_day():
-                cost = self.calculate_salary_cost()
-                self.funds += -cost
+                cost = self.calculate_salary_cost() + self.operating_costs
+                self.change_funds(-cost)
+
+                if self.attention >= self.max_attention and not self.event_triggers_dict.get("attention_event_pending", False):
+                    self.event_triggers_dict["attention_event_pending"] = True
+                    self.mandatory_crises_list.append(Action("attention_event", attention_event_requirement, "attention_event"))
 
                 for policy in self.active_policy_list:
                     policy.on_day()
+
+                remove_list = []
+                for contract in self.active_contracts:
+                    remove_list = []
+                    if contract.run_day():
+                        remove_list.append(contract)
+                        if contract.can_finish_contract():
+                            contract.finish_contract()
+                            self.add_normal_message("Contract " + contract.name + " was going to expire with product in inventory, completed automatically.")
+                        else:
+                            contract.abandon_contract()
+                            self.add_normal_message("Contract " + contract.name + " has expired unfilled.")
+
+                for removal in remove_list:
+                    self.active_contracts.remove(removal)
+
+            if day%7 == 6: #ie is Monday
+                self.renew_contracts()
             return
 
         def is_open_for_business(self): #Checks to see if employees are currently working
@@ -285,7 +333,7 @@ init -2 python:
             self.production_used = 0
             self.research_produced = 0
             self.sales_made = 0
-            self.serums_sold =0
+            self.serums_sold = 0
 
         def add_counted_message(self,message,new_count = 1):
             if message in self.counted_message_list:
@@ -312,12 +360,9 @@ init -2 python:
                 self.active_research_design = None
 
             delete_list = []
-            for line in self.serum_production_array:
-                if the_serum is self.serum_production_array[line][0]:
-                    delete_list.append(line) #Store a list of all the keys we need to delete to avoid modifying while interating. Needed in case two lines are making the same serum.
-
-            for key in delete_list: #Now delete the production lines.
-                del self.serum_production_array[key]
+            for line in self.production_lines:
+                 if line.selected_design == the_serum:
+                     line.set_product(None)
 
         def remove_trait(self, the_trait):
             self.blueprinted_traits.remove(the_trait)
@@ -409,173 +454,187 @@ init -2 python:
                 if max_supply <= 0:
                     return 0
 
-            self.funds += -max_supply
+            self.change_funds(-max_supply)
             self.supply_count += max_supply
             self.supplies_purchased += max_supply #Used for end of day reporting
+            max_supply = int(max_supply)
             return max_supply
 
+        def accept_contract(self, the_contract):
+            self.active_contracts.append(the_contract)
+            if the_contract in self.offered_contracts:
+                self.offered_contracts.remove(the_contract)
+
+            the_contract.start_contract()
+
+        def abandon_contract(self, the_contract):
+            if the_contract in self.active_contracts:
+                self.active_contracts.remove(the_contract)
+
+            the_contract.abandon_contract()
+
+        def complete_contract(self, the_contract):
+            if the_contract in self.active_contracts:
+                self.active_contracts.remove(the_contract)
+
+            the_contract.finish_contract()
+
+        def renew_contracts(self):
+            self.offered_contracts = []
+            for x in range(0, self.max_offered_contracts):
+                self.offered_contracts.append(generate_contract(self.max_serum_tier))
+
         def player_market(self):
-            amount_sold = self.sale_progress(mc.charisma,mc.focus,mc.market_skill)
-            self.listener_system.fire_event("player_serums_sold_count", amount = amount_sold)
+            amount_increased = self.sale_progress(mc.charisma,mc.focus,mc.market_skill)
+            #  #TODO: Replace the old goal here with the new one.
             self.listener_system.fire_event("general_work")
-            renpy.say("","You spend time making phone calls to clients and shipping out orders. You sell " + str(amount_sold) + " doses of serum.")
-            return amount_sold
+            # renpy.say("","You spend time making phone calls to clients and shipping out orders. You sell " + str(amount_sold) + " doses of serum.")
+            renpy.say("","You spend time making cold calls to potential clients. You increase your market reach by " + str(amount_increased) + ".")
+            return amount_increased
 
-        def sale_progress(self,cha,focus,skill, slut_modifier = 0):
+        def sale_progress(self,cha,focus,skill, slut_modifier = 0): #TODO: Decide what effects should directly affect price, and which ones should increase market reach gain.
+            amount_increased = ((3*cha) + (focus) + (2*skill)) * ((self.team_effectiveness*0.01)) * (1.0+(slut_modifier)) * 5.0
+            amount_increased = __builtin__.round(amount_increased)
+            self.market_reach += amount_increased
+            return amount_increased
 
-            serum_value_multiplier = 1.00 #For use with value boosting policies. Multipliers are multiplicative.
-            if male_focused_marketing_policy.is_active(): #Increase value by the character's outfit sluttiness if you own that policy.
-                sluttiness_multiplier = (slut_modifier/100.0) + 1
-                serum_value_multiplier = serum_value_multiplier * (sluttiness_multiplier)
+        def sell_serum(self, the_serum, serum_count = 1, slut_modifier = 0, fixed_price = -1, external_serum_source = False): #TODO: Set this up. Takes each serum, check's it's value on todays' market, and sells it.
+            #NOTE: Each serum immediately decreases the value of the one sold after it. (ie selling one serum at a time is no more or less efficent than bulk selling to the open market.
+            sales_value = 0
 
-            multipliers_used = {} #Generate a dict with only the current max multipliers of each catagory.
-            for multiplier_source in self.sales_multipliers:
-                if not multiplier_source[0] in multipliers_used:
-                    multipliers_used[multiplier_source[0]] = multiplier_source[1]
-                elif multiplier_source[1] > multipliers_used.get(multiplier_source[0]):
-                    multipliers_used[multiplier_source[0]] = multiplier_source[1]
+            if self.inventory.get_serum_count(the_serum) < serum_count and not external_serum_source:
+                serum_count = self.inventory.get_serum_count(the_serum)
 
-            for maxed_multiplier in multipliers_used:
-                value_change = multipliers_used.get(maxed_multiplier)
-                serum_value_multiplier = serum_value_multiplier * value_change
-                if value_change > 1:
-                    self.add_normal_message("+" + str((value_change-1)*100) + "% serum value due to " + maxed_multiplier + ".")
-                elif value_change < 1: #No message shown for exactly 1.
-                    self.add_normal_message(str((value_change-1)*100) + "% serum value due to " + maxed_multiplier + ".") #Duplicate normal messages are not shown twice, so this should only exist once per turn, per multiplier.
+            for x in range(0, serum_count):
+                if fixed_price >= 0:
+                    serum_base_value = fixed_price
+                else:
+                    serum_base_value = self.get_serum_base_value(the_serum)
+                sales_value += serum_base_value
 
-            serum_sale_count = __builtin__.round(((3*cha) + (focus) + (2*skill) + 5) * (self.team_effectiveness))/100 #Total number of doses of serum that can be sold by this person.
-            serum_sale_count = __builtin__.int(serum_sale_count)
-            sorted_by_value = sorted(self.sale_inventory.serums_held, key = lambda serum: serum[0].value) #List of tuples [SerumDesign, count], sorted by the value of each design. Used so most valuable serums are sold first.
-            if self.sale_inventory.get_any_serum_count() < serum_sale_count:
-                serum_sale_count = self.sale_inventory.get_any_serum_count()
+                self.mental_aspect_sold += the_serum.mental_aspect
+                self.physical_aspect_sold += the_serum.physical_aspect
+                self.sexual_aspect_sold += the_serum.sexual_aspect
+                self.medical_aspect_sold += the_serum.medical_aspect
 
-            this_batch_serums_sold = 0
-            if serum_sale_count > 0: #ie. we have serum in our inventory to sell, and the capability to sell them.
-                for serum in sorted_by_value:
-                    if serum_sale_count <= serum[1]:
-                        #There are enough to satisfy order. Remove, add value to wallet, and break
-                        value_sold = serum_sale_count * serum[0].value * serum_value_multiplier
-                        if value_sold < 0:
-                            value_sold = 0
-                        self.funds += value_sold
-                        self.sales_made += value_sold
-                        self.listener_system.fire_event("serums_sold_value", amount = value_sold)
-                        self.serums_sold += serum_sale_count
-                        this_batch_serums_sold += serum_sale_count
-                        self.sale_inventory.change_serum(serum[0],-serum_sale_count)
-                        serum_sale_count = 0
-                        break
-                    else:
-                        #There are not enough in this single order, remove _all_ of them, add value, go onto next thing.
-                        serum_sale_count += -serum[1] #We were able to sell this number of serum.
-                        value_sold = serum[1] * serum[0].value * serum_value_multiplier
-                        if value_sold < 0:
-                            value_sold = 0
-                        self.funds += value_sold
-                        self.sales_made += value_sold
-                        self.listener_system.fire_event("serums_sold_value", amount = value_sold)
-                        self.serums_sold += serum_sale_count
-                        this_batch_serums_sold += serum_sale_count
-                        self.sale_inventory.change_serum(serum[0],-serum[1]) #Should set serum count to 0.
-                        #Don't break, we haven't used up all of the serum count
-            return this_batch_serums_sold
+                attention_gain = the_serum.attention
+                if attention_floor_increase_1_policy.is_active():
+                    attention_gain += - 1
+                if attention_floor_increase_2_policy.is_active():
+                    attention_gain += - 1
+                if attention_gain < 0:
+                    attention_gain = 0
+                self.attention += attention_gain
 
+            sales_value = int(__builtin__.round(sales_value))
 
+            if not external_serum_source:
+                self.inventory.change_serum(the_serum, -serum_count)
+            self.change_funds(sales_value)
+            self.sales_made += sales_value
+            self.listener_system.fire_event("player_serums_sold_count", amount = serum_count)
+            self.listener_system.fire_event("serums_sold_value", amount = sales_value)
+
+        def get_serum_base_value(self, the_serum, round_value = False):
+            serum_value = 0
+            serum_value += the_serum.mental_aspect * self.get_aspect_price("mental")
+            serum_value += the_serum.physical_aspect * self.get_aspect_price("physical")
+            serum_value += the_serum.sexual_aspect * self.get_aspect_price("sexual")
+            serum_value += the_serum.medical_aspect * self.get_aspect_price("medical")
+
+            if round_value:
+                serum_value = int(__builtin__.round(serum_value))
+
+            return serum_value
+
+        def get_aspect_price(self, the_aspect): #If we want to be really proper we could have this check _per aspect_, but I think that's excessive.
+            the_aspect = the_aspect.lower()
+            if the_aspect == "mental":
+                return (self.mental_aspect_price*1.0)/(1+((self.mental_aspect_sold*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "physical":
+                return (self.physical_aspect_price*1.0)/(1+((self.physical_aspect_price*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "sexual":
+                return (self.sexual_aspect_price*1.0)/(1+((self.sexual_aspect_price*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "medical":
+                return (self.medical_aspect_price*1.0)/(1+((self.medical_aspect_sold*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "flaw":
+                return self.flaws_aspect_cost
+
+        def get_aspect_percent(self, the_aspect):
+            the_aspect = the_aspect.lower()
+            if the_aspect == "mental":
+                return 1.0/(1+((self.mental_aspect_sold*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "physical":
+                return 1.0/(1+((self.physical_aspect_price*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "sexual":
+                return 1.0/(1+((self.sexual_aspect_price*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "medical":
+                return 1.0/(1+((self.medical_aspect_sold*1.0)/(self.market_reach*1.0)))
+
+            elif the_aspect == "flaw":
+                return 1.0
+
+        def has_funds(self, money_amount):
+            if self.funds >= money_amount:
+                return True
+            else:
+                return False
+
+        def change_funds(self, change_amount):
+            change = int(change_amount)
+            self.funds += change_amount
 
         def production_progress(self,focus,int,skill):
             #First, figure out how many production points we can produce total. Subtract that much supply and mark that much production down for the end of day report.
             production_amount = __builtin__.round(((3*focus) + (int) + (2*skill) + 10) * (self.team_effectiveness))/100
             self.production_potential += production_amount
 
-            if self.serum_production_array is None:
-                return #If we don't have anything in production just tally how much we could have produced and move on.
-
             if production_amount > self.supply_count:
                 production_amount = self.supply_count #Figure out our total available production, before we split it up between tasks (which might not have 100% usage!)
 
-            #Now go through each production line we have marked.
-            for production_line in self.serum_production_array:
-                # A production line is a tuple of [SerumDesign, production weight (int), production point progress (int)].
-                serum_weight = self.serum_production_array[production_line][1]
-                the_serum = self.serum_production_array[production_line][0]
-
-                proportional_production = (serum_weight/100.0) * production_amount #Get the closest integer value for the weighted production we put into the serum
-                self.production_used += proportional_production #Update our usage stats and subract supply needed.
-                self.supply_count += -proportional_production
-
-                self.serum_production_array[production_line][2] += proportional_production
-                serum_prod_cost = the_serum.production_cost
-                if serum_prod_cost <= 0:
-                    serum_prod_cost = 1
-                serum_count = self.serum_production_array[production_line][2]//serum_prod_cost #Calculates the number of batches we have made (previously for individual serums, now for entire batches)
-                if serum_count > 0:
-                    self.add_counted_message("Produced " + self.serum_production_array[production_line][0].name,serum_count*self.batch_size) #Give a note to the player on the end of day screen for how many we made.
-                    self.serum_production_array[production_line][2] -= serum_count * self.serum_production_array[production_line][0].production_cost
-                    self.inventory.change_serum(self.serum_production_array[production_line][0],serum_count*self.batch_size) #Add the number serums we made to our inventory.
+            for line in self.production_lines:
+                supply_used = line.add_production(production_amount) #NOTE: this is modified by the weighted use of the Line in particular. This allows for greater than 100% efficency.
+                self.supply_count += - supply_used
+                self.production_used += supply_used
 
             return production_amount
 
-        def clear_production(self): #Clears all current produciton lines.
-            for production_line in self.serum_production_array:
-                self.serum_production_array[production_line][0] = None
-                self.serum_production_array[production_line][1] = 0
-                self.serum_production_array[production_line][2] = 0 #Set production points stored to 0 for the new serum
-                self.serum_production_array[production_line][3] = -1 #Set autosell to -1, ie. don't auto sell.
-
-        def change_production(self,new_serum,production_line):
-            if production_line in self.serum_production_array: #If it already exists, change the serum type and production points stored, but keep the weight for that line (it can be changed later)
-                self.serum_production_array[production_line][0] = new_serum
-                self.serum_production_array[production_line][1] = __builtin__.int(100 - self.get_used_line_weight() + self.serum_production_array[production_line][1]) #Set the production weight to everything we have remaining
-                self.serum_production_array[production_line][2] = 0 #Set production points stored to 0 for the new serum
-                self.serum_production_array[production_line][3] = -1 #Set autosell to -1, ie. don't auto sell.
-            else: #If the production line didn't exist before, add a key for that line.
-                self.serum_production_array[production_line] = [new_serum, __builtin__.int(100 - self.get_used_line_weight()), 0, -1]
+        # Use to be def clear_production(self)
+        def clear_all_production(self): #Clears all current produciton lines.
+            for line in self.production_lines:
+                line.set_product(None)
 
         def get_used_line_weight(self):
             used_production = 0
-            for existing_lines in self.serum_production_array:
-                used_production += self.serum_production_array[existing_lines][1] #Tally how much weight we are using so far.
+            for line in self.production_lines:
+                used_production += line.production_weight #Tally how much weight we are using so far.
             return used_production
 
-        def change_line_weight(self,line,weight_change):
-            if line in self.serum_production_array:
-                used_production = self.get_used_line_weight()
-                if weight_change > 0 and weight_change + used_production > 100:
-                    weight_change = 100 - used_production #If the full weight change would put us above our 100% max cap it at as much as can be assigned.
-
-                self.serum_production_array[line][1] += weight_change
-                if self.serum_production_array[line][1] < 0:
-                    self.serum_production_array[line][1] = 0 #We cannot have a value less than 0%
-
-        def change_line_autosell(self, line, threshold_change):
-            if line in self.serum_production_array:
-                if threshold_change > 0 and self.serum_production_array[line][3] < 0: #We use negative values as a marker for no threshold. If it's negative always treat it as -1 when we start adding again.
-                    self.serum_production_array[line][3] = -1
-                self.serum_production_array[line][3] += threshold_change
-
-        def mark_autosale(self):
-            for line in self.serum_production_array:
-                if self.serum_production_array[line][3] >= 0: #There is an auto sell threshold set.
-                    if self.inventory.get_serum_count(self.serum_production_array[line][0]) > self.serum_production_array[line][3]:
-                        difference = __builtin__.int(self.inventory.get_serum_count(self.serum_production_array[line][0]) - self.serum_production_array[line][3]) #Check how many serums we need to sell to bring us to the threshold.
-                        self.inventory.change_serum(self.serum_production_array[line][0], -difference) #Remove them from the production inventory.
-                        self.sale_inventory.change_serum(self.serum_production_array[line][0], difference) #Add them to the sales inventory.
+        def do_autosale(self):
+            for line in self.production_lines:
+                if line.autosell and line.selected_design:
+                    extra_doses = self.inventory.get_serum_count(line.selected_design) - line.autosell_amount
+                    if extra_doses > 0:
+                        self.sell_serum(line.selected_design, extra_doses)
 
         def get_random_weighed_production_serum(self): #Return the serum design of one of our activly produced serums, relative probability by weight.
-            used_production = 0
-            for key in self.serum_production_array:
-                used_production += self.serum_production_array[key][1] #Sum how much production we are using, usually 100%
-            if used_production == 0:
-                return None #If we are not _actually_ producing anything, return None.
-
+            used_production = self.get_used_line_weight()
             random_serum_number = renpy.random.randint(0,used_production)
-            for key in self.serum_production_array:
-                if random_serum_number <= self.serum_production_array[key][1]:
-                    return self.serum_production_array[key][0]
+
+            for line in self.production_lines:
+                if random_serum_number < line.production_weight and line.selected_design:
+                    return line.selected_design
                 else:
-                    random_serum_number -= self.serum_production_array[key][1] #Subtract the probability of this one from our number to make progress in our search.
+                    random_serum_number -= line.production_weight #Subtract the probability of this one from our number to make progress in our search.
 
-
+            return None
 
 
         def player_production(self):
@@ -594,7 +653,7 @@ init -2 python:
 
         def hr_progress(self,cha,int,skill): #Don't compute efficiency cap here so that player HR effort will be applied against any efficiency drop even though it's run before the rest of the end of the turn.
             restore_amount = (3*cha) + (int) + (2*skill) + 5
-            self.team_effectiveness += restore_amount
+            self.change_team_effectiveness(restore_amount)
             return restore_amount
 
         def change_team_effectiveness(self, the_amount):

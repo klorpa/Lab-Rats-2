@@ -148,6 +148,9 @@ init 1 python:
                 return True
         return False
 
+    def mc_at_work():
+        return mc.is_at_work()
+
     def mc_at_home(): #Returns true if the main character is inside their house, anywhere.
         if mc.location == hall or mc.location == bedroom or mc.location == lily_bedroom or mc.location == mom_bedroom or mc.location == kitchen:
             return True
@@ -727,8 +730,8 @@ label special_training_crisis_label():
     the_person "[the_person.mc_title], I've just gotten word about a training seminar going on right now a few blocks away. I would love to take a trip over and see if there is anything I could learn."
     the_person "There's a sign up fee of $500. If you can cover that, I'll head over right away."
     menu:
-        "Send [the_person.title] to the Seminar. -$500" if mc.business.funds >= 500:
-            $ mc.business.funds += -500
+        "Send [the_person.title] to the Seminar. -$500" if mc.business.has_funds(500):
+            $ mc.business.change_funds(-500)
             "You type up a response."
             mc.name "That sounds like a great idea. I'll call and sort out the fee, you start heading over."
             the_person "Understood, thank you sir! What would you like me to focus on?"
@@ -825,7 +828,7 @@ label lab_accident_crisis_label():
 init 1 python:
     def production_accident_requirement():
         if in_production_with_other():
-            if len(mc.business.serum_production_array) > 0: #Check to see if there's at least one person in the production department and that we're serum right now.
+            if mc.business.get_used_line_weight() > 0: #Check to see if there's at least one person in the production department and that we're serum right now.
                 return True
         return False
 
@@ -916,6 +919,7 @@ label extra_mastery_crisis_label():
         #She's in the same room as you.
         the_person "[the_person.mc_title], I have something interesting to show you."
         $ the_person.draw_person()
+        $ the_person.draw_person()
     else:
         #She comes to meet you,
         "Your work is interrupted when [the_person.title] comes into the room."
@@ -928,17 +932,17 @@ label extra_mastery_crisis_label():
     $ cost = __builtin__.int(the_trait.mastery_level * 50) #The cost is 100 * mastery level,
     "You look through the file [the_person.title] gave you. It would cost $[cost] to raise the mastery level of [the_trait.name] by 2."
     menu:
-        "Purchase the equipment. -$[cost] (tooltip)Raises the mastery level of [the_trait.name] by 2. The higher your mastery of a serum trait the less likely it is to produce a side effect." if mc.business.funds >= cost:
+        "Purchase the equipment. -$[cost] (tooltip)Raises the mastery level of [the_trait.name] by 2. The higher your mastery of a serum trait the less likely it is to produce a side effect." if mc.business.has_funds(cost):
 
             "You hand the file back to [the_person.title]."
             mc.name "This is a terrific idea, I want you to purchase whatever equipment you need and get to work immediately."
             $ the_person.draw_person(emotion = "happy")
             the_person "Understood!"
-            $ mc.business.funds += -cost
+            $ mc.business.change_funds(-cost)
             $ the_trait.add_mastery(2)
             $ mc.log_event("Mastery of " + the_trait.name + " increased by 2.", "float_text_blue")
 
-        "Purchase the equipment. -$[cost] (disabled)" if mc.business.funds < cost:
+        "Purchase the equipment. -$[cost] (disabled)" if not mc.business.has_funds(cost):
             pass
 
         "Do not purchase the equipment.":
@@ -1556,7 +1560,7 @@ label invest_rep_visit_label(rep_name):
                     "Accept $5000 for 1%% of all future sales.":
                         "You reach your hand across the table to shake [rep_name]'s hand."
                         mc.name "I think we have a deal. Lets sort out the paperwork."
-                        $ mc.business.funds += 5000
+                        $ mc.business.change_funds(5000)
                         python:
                             already_invested = False
                             investment_cost = 0.99
@@ -2400,23 +2404,215 @@ label research_reminder_crisis_label():
 
     $ the_person = mc.business.head_researcher
 
-    "While you're working you receive a text from your head researcher [the_person.title]. It reads:"
 
-    $ researched_all_at_level = True
-    python:
-        for trait in list_of_traits:
-            if not trait.researched and trait.tier == mc.business.research_tier:
-                researched_all_at_level = False
-                break
-    $ mc.start_text_convo(the_person)
-    if researched_all_at_level:
-        the_person "[the_person.mc_title], I appreciate all the free time you're giving me here in the lab, but I think my talents would be better used if you put me to work."
-        the_person "I've followed up on all the immediate research leads we had. I think we should start thinking about some more dramatic options."
-        the_person "Come to the lab when you have some free time and we can talk about what comes next."
-    else: #We have more to research at this level. Let them just keep chugging along.
-        the_person "[the_person.mc_title], I appreciate all the free time you're giving me here in the lab, but I think my talents would be better used if you put me to work."
-        the_person "I've got some promising leads, stop by when you have a chance and let me know what you want me to work on."
-    $ mc.end_text_convo()
+    if not mc.is_at_work():
+        "While you're working you receive a text from your head researcher [the_person.title]. It reads:"
+        $ researched_all_at_level = True
+        python:
+            for trait in list_of_traits:
+                if not trait.researched and trait.tier == mc.business.research_tier:
+                    researched_all_at_level = False
+                    break
+        $ mc.start_text_convo(the_person)
+        if researched_all_at_level:
+            the_person "[the_person.mc_title], I appreciate all the free time you're giving me here in the lab, but I think my talents would be better used if you put me to work."
+            the_person "I've followed up on all the immediate research leads we had. I think we should start thinking about some more dramatic options."
+            the_person "Come to the lab when you have some free time and we can talk about what comes next."
+        else: #We have more to research at this level. Let them just keep chugging along.
+            the_person "[the_person.mc_title], I appreciate all the free time you're giving me here in the lab, but I think my talents would be better used if you put me to work."
+            the_person "I've got some promising leads, stop by when you have a chance and let me know what you want me to work on."
+        $ mc.end_text_convo()
+
+    else: #TDOO: Have a variant for when you've already had this interaction
+        $ the_person.draw_person()
+        "You're busy working when [the_person.title] comes up to you."
+        the_person "[the_person.mc_title], do you have some time to talk? It's about the progress of our research."
+        menu:
+            "Of course.":
+                mc.name "Of course, what do we need to talk about?"
+                the_person "Well, I've appreciated all of the free time I've had in the lab, but I really think we should be putting our talent to better use."
+                the_person "Do you have any inspriation for me? A new research project, or maybe a new serum design?"
+                menu:
+                    "I just can't think straight.":
+                        mc.name "Sorry [the_person.title], I just haven't had any inspiration lately."
+                        the_person "Is there something I can do to help? I feel pretty useless twiddling my thumbs in the lab all day."
+                        menu:
+                            "I need to cum.":
+                                $ the_person.event_triggers_dict["head_researcher_cum_assistance"] = the_person.event_triggers_dict.get("head_researcher_cum_assistance", 0) + 1
+                                call apply_sex_slut_modifiers(the_person)
+                                if the_person.get_opinion_score("research work") > 0:
+                                    $ the_person.add_situational_slut("science", 5*the_person.get_opinion_score("research work"), "I'll do whatever I need for the cause of science!")
+                                if the_person.event_triggers_dict.get("head_researcher_cum_assistance", 0) <= 1:
+                                    mc.name "This is going to sound crazy, but... I really need to cum to think straight."
+                                    if the_person.effective_sluttiness() < 10 - 5*the_person.get_opinion_score("masturbating"):
+                                        "[the_person.title] blushes and looks away."
+                                        $ the_person.change_love(-1)
+                                        the_person "Jesus [the_person.mc_title], I think... Uh, I don't know what to even say about that."
+                                        mc.name "I know, I know. But when I climax I suddenly have all of these brilliant ideas."
+                                        mc.name "It's like I store them all up, and then release them all at once!"
+                                        "[the_person.possessive_title] shuffles from one foot to another uncomfortably."
+
+                                    elif the_person.effective_sluttiness() < 30 - 5*the_person.get_opinion_score("masturbating"):
+                                        "[the_person.title] blushes and laughs a little."
+                                        the_person "Oh yeah, I could see that being a problem."
+                                        mc.name "It's more than just being distracted though. It's like I have all these brilliant ideas, but they're locked away."
+                                        mc.name "But when I cum they all come flooding out, and I can hardly write them all down before they've swept past me!"
+                                        the_person "Wow, that sounds intense!"
+
+                                    else:
+                                        "[the_person.title] nods her understanding."
+                                        the_person "I know what {i}that{/i} feels like!"
+                                        mc.name "No, it's more than just being horny and distracted. I have all these brilliant ideas, but I just can't express them."
+                                        mc.name "When I cum they all come flooding out. It's like the world suddenly makes sense - every bit of it."
+                                        "[the_person.possessive_title] almost looks like she's jealous as she listens."
+                                        the_person "Fuck, that sounds like the best orgasm ever."
+
+                                else:
+                                    mc.name "I just can't think straight again. I really feel like I need to cum before I can get all my ideas straight!"
+
+                                    if the_person.effective_sluttiness() < 10 - 5*the_person.get_opinion_score("masturbating"):
+                                        "[the_person.title] blushes and looks away."
+                                        $ the_person.change_love(-1)
+                                        the_person "[the_person.mc_title], should you really be telling me that?"
+                                        "[the_person.possessive_title] shuffles from one foot to another uncomfortably."
+
+                                    elif the_person.effective_sluttiness() < 30 - 5*the_person.get_opinion_score("masturbating"):
+                                        "[the_person.title] blushes and laughs a little."
+                                        the_person "Oh that again? That sounds really frustrating."
+
+                                    else:
+                                        "[the_person.title] eyes soften and she nods her understanding."
+
+                                if the_person.effective_sluttiness("touching_penis") + 5*the_person.get_opinion_score("giving handjobs") < 15:
+                                    the_person "I don't really know what I could do about that [the_person.mc_title]..."
+                                    "There's a moment of realization on her face. She clearly {i}does{/i} know what she could do now."
+                                    the_person "I, uh... I need to go. We can talk later."
+                                    "She rushes off, blushing even harder than she was before."
+
+                                elif the_person.effective_sluttiness("sucking_cock") + 5*the_person.get_opinion_score("giving blowjobs") < 40:
+                                    if the_person.has_taboo("touching_penis"):
+                                        the_person "I could... Uh..."
+                                        "She takes a deep breath and forces herself to continue."
+                                        $ mc.change_locked_clarity(10)
+                                        the_person "Help you cum. With my hand. Just so we can start with our research again, obviously."
+
+                                    else:
+                                        the_person "Do you want me to... help you with that?"
+                                        $ mc.change_locked_clarity(10)
+                                        "She brings one closed hand up to her chest and shakes it back and forth a little bit, miming a handjob."
+
+                                    menu:
+                                        "Let her give you a handjob.":
+                                            mc.name "That would be very helpful. Thank you [the_person.title]."
+                                            the_person "Come, let's take care of this in your office."
+                                            "She leads you into the private room and closes the door behind her."
+                                            "Without any further prompting she steps close to you and unzips your pants."
+                                            "You sit on the edge of your desk as she pulls them down around your ankles."
+                                            if the_person.has_taboo("touching_penis"):
+                                                "[the_person.possessive_title] hovers her hand close to your cock for a few seconds."
+                                                $ the_person.break_taboo("touching_penis")
+                                                "Finally she wraps her slender fingers around your shaft, lightly at first."
+
+                                            else:
+                                                "She reaches down and wraps her slender fingers around your shaft, looking into your eyes at the same time."
+                                            the_person "Now just relax. I'll take care of this for you..."
+                                            $ the_start_object = mc.location.get_object_with_trait("Stand")
+                                            call fuck_person(the_person, private = True, start_position = handjob, start_object = the_start_object, girl_in_charge = True, skip_intro = True, position_locked = True)
+                                            $ the_report = _return
+                                            if the_report.get("guy orgasms", 0) > 0:
+                                                the_person "Well, did it work? Do you have any ideas for our research?"
+                                                "You're still struggling to catch your breath."
+                                                mc.name "I'm going to need a minute to recover. I'll... I'll come talk to you if I think of something, okay?"
+                                                $ the_person.change_obedience(2)
+                                                "She nods and leaves you alone in your office to get cleaned up."
+                                            else:
+                                                the_person "Sorry [the_person.mc_title], I just can't seem to get you there..."
+                                                mc.name "It's fine, really. Maybe I just need some time to think."
+                                                $ the_person.change_obedience(1)
+                                                "She nods and moves to step out of the room. You shove your cock back into your pants."
+                                                the_person "Okay. Come see me if you think of something, alright?"
+                                                "With that she steps out and closes the door behind her."
+
+                                        "Not right now.":
+                                            mc.name "Not right now [the_person.title]. I'll figure out some way to take care of things."
+                                            the_person "Okay, I understand. I hope you get this resolved soon."
+
+                                else:# the_person.effective_sluttiness("sucking_cock") + 5*the_person.get_opinion_score("giving blowjobs") < 70:
+                                    if the_person.has_taboo("sucking_cock"):
+                                        the_person "Would we be able to continue with our research if you were able to cum?"
+                                        "You nod. She clearly already has an idea in her head."
+                                        the_person "What if I... helped you with that, then? I'll make it as quick as possible. Strictly business."
+                                        mc.name "What are you thinking of doing?"
+                                        the_person "Well, I think it would be fastest if I used my... mouth. Does that sound acceptable?"
+                                    else:
+                                        the_person "Would we be able to continue with our research when you cum?"
+                                        "You nod. She clearly already has an idea in her head."
+                                        the_person "Good. Then I'll give you a quick blowjob, and you'll be back to work before you know it."
+
+                                    menu:
+                                        "Let her give you a blowjob.":
+                                            mc.name "That would be very helpful. Thank you [the_person.title]."
+                                            the_person "Come, let's take care of this in your office."
+                                            "She leads you into the private room and closes the door behind her."
+                                            "Without any further prompting she steps close to you and drops to her knees."
+                                            "Your hard cock springs free excitedly, and she stares at it for a moment."
+                                            if the_person.has_taboo("sucking_cock"):
+                                                the_person "Okay... Here we go..."
+                                                "[the_person.possessive_title] holds your cock with one hand and tilts it down so the tip is just in front of her lips."
+                                                "She kisses it experimentally and, finding it to her liking, slides it past her lips into her mouth."
+                                            else:
+                                                "[the_person.possessive_title] wastes no time, sliding the tip of your dick past her lips and into her mouth."
+                                            "She starts to bob her head, getting your shaft wet and sending warm tingles up your spine."
+                                            $ the_start_object = mc.location.get_object_with_trait("Kneel")
+                                            call fuck_person(the_person, private = True, start_position = blowjob, start_object = the_start_object, girl_in_charge = True, skip_intro = True, position_locked = True)
+                                            $ the_report = _return
+                                            if the_report.get("guy orgasms", 0) > 0:
+                                                the_person "Well, did it work? Do you have any ideas for our research?"
+                                                "You're still struggling to catch your breath."
+                                                mc.name "I'm going to need a minute to recover. I'll... I'll come talk to you if I think of something, okay?"
+                                                $ the_person.change_obedience(2)
+                                                "She nods and stands up, brushing off her knees."
+                                                the_person "You know where to fine me."
+                                                "[the_person.possessive_title] steps out of the room, leaving you alone as you get cleaned up."
+
+                                            else:
+                                                the_person "Sorry [the_person.mc_title], I just can't seem to get you there..."
+                                                mc.name "It's fine, really. Maybe I just need some time to think."
+                                                $ the_person.change_obedience(1)
+                                                "She nods and stands up, brushing off her knees. You shove your cock back into your pants."
+                                                the_person "Okay. Come see me if you think of something, alright?"
+                                                "With that she steps out of your office and closes the door behind her."
+
+                                        "Not right now.":
+                                            mc.name "Not right now [the_person.title]. I'll figure out some way to take care of things."
+                                            the_person "Okay, I understand. I hope you get this resolved soon."
+
+                                # else:
+                                #     #TODOO: She offers to let you skull fuck her
+
+                                $ the_person.clear_situational_slut("science")
+                                call clear_sex_slut_modifiers(the_person)
+
+
+
+
+                            # "I need to get horny.":
+                            #     mc.name "This is going to sound a little strange, but I really need to get horny..."
+
+                            "Nothing right now.":
+                                mc.name "Nothing right now, but if I think of something I'll let you know."
+                                the_person "Alright, just... If you have a breakthrough, you know where to find me."
+
+                    "I'll come up with something.":
+                        mc.name "Nothing right now, but I'll come up with something soon."
+                        the_person "Alright, just... If you have a breakthrough, you know where to find me."
+
+
+            "Not right now.":
+                mc.name "Not right now [the_person.title]."
+                the_person "Alright, just... If you have any work for me, you know where to find me."
+
+        $ clear_scene()
     return
 
 
@@ -2604,7 +2800,7 @@ init 1 python:
 
 label daughter_work_crisis_label():
     if mc.business.get_employee_count() >= mc.business.max_employee_count:
-        return #The business is full due to some other crisis triggering this time chunk.
+        return #The business is full due to some other crisis triggering this turn.
 
     python:
         valid_people_list = []

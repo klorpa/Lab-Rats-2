@@ -136,7 +136,7 @@ label strip_close_dancing_climax(the_person, guy_state, for_pay = False):
         "She squeals and locks her knees together, climaxing while you jerk off next to her."
     else:
         "She squeals and locks her knees together, climaxing just from you watching her."
-    $ the_person.run_orgasm(trance_chance_modifier = the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"))
+    $ the_person.run_orgasm(trance_chance_modifier = the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"), reset_arousal = False)
     "You feel a shiver run through her body. You hold onto her, in case she's about to collapse completely."
     "After a long moment her shoulders slump. She takes long, deep breaths to try and regain control of herself."
     "When she has caught her breath she gives you a weak smile and stands back up under her own strength."

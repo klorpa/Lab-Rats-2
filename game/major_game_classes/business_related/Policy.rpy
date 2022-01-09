@@ -87,7 +87,7 @@ init -2 python:
         def buy_policy(self, ignore_cost = False):
             mc.business.policy_list.append(self)
             if not ignore_cost:
-                mc.business.funds -= self.cost
+                mc.business.change_funds(-self.cost)
             if self.on_buy_function is not None:
                 self.on_buy_function(**self.extra_arguments)
 

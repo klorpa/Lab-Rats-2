@@ -1188,8 +1188,8 @@ label reserved_date_seduction(the_person):
             the_person "Come home with me. I want to worship that big cock of yours with my mouth, slide it into my throat..."
             the_person "Mmm... You can fuck my face and make me gag on it. Wouldn't you like that?"
         elif the_person.get_opinion_score("being covered in cum") > 0:
-            $ her_title = girl_relationship_to_title(the_person.relationship)
-            the_person "Come home with me. Lay me out on his bed and cover his [her_title] with cum from head to toe."
+            $ girl_title = girl_relationship_to_title(the_person.relationship)
+            the_person "Come home with me. Lay me out on his bed and cover his [girl_title] with cum from head to toe."
         elif the_person.get_opinion_score("giving tit fucks") > 0 and the_person.has_large_tits():
             the_person "Come home with me. Let me worship your cock with my tits all night long."
             the_person "I'll massage you with them, fuck you with them, and make you cum with them. Over, and over again."
@@ -1758,8 +1758,8 @@ label reserved_creampie_taboo_break(the_person):
     if the_person.wants_creampie():
         if the_person.on_birth_control:
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
-                the_person "Oh... I feel like such a bad [so_title], but I think I needed this. I'm sure he would understand."
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
+                the_person "Oh... I feel like such a bad [girl_title], but I think I needed this. I'm sure he would understand."
 
             else:
                 the_person "Oh lord, I've wanted this so badly for so long!"
@@ -1778,8 +1778,8 @@ label reserved_creampie_taboo_break(the_person):
 
         else:
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
-                the_person "I can't believe I let you do that... I'm such a terrible [so_title], but it felt so good!"
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
+                the_person "I can't believe I let you do that... I'm such a terrible [girl_title], but it felt so good!"
 
 
             else:
@@ -1801,9 +1801,9 @@ label reserved_creampie_taboo_break(the_person):
             the_person "Maybe next time you should wear a condom, in case you get carried away again."
 
         elif the_person.relationship != "Single":
-            $ so_title = girl_relationship_to_title(the_person.relationship)
+            $ girl_title = girl_relationship_to_title(the_person.relationship)
             the_person "[the_person.mc_title], I told you to pull out."
-            the_person "I'm being a already a terrible [so_title], and this just makes me feel even worse."
+            the_person "I'm being a already a terrible [girl_title], and this just makes me feel even worse."
             the_person "Maybe next time you should wear a condom in case you get too excited."
 
         elif the_person.get_opinion_score("creampies") < 0:

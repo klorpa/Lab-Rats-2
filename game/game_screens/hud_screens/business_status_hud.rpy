@@ -1,5 +1,5 @@
 label check_business_inventory_loop:
-    call screen show_serum_inventory(mc.business.inventory,[mc.business.sale_inventory],["Production Inventory","Waiting to Ship"])
+    call screen show_serum_inventory(mc.business.inventory,[],["Business Inventory"])
     return
 
 screen business_ui(): #Shows some information about your business.
@@ -32,10 +32,10 @@ screen business_ui(): #Shows some information about your business.
                 action NullAction()
                 sensitive True
 
-            textbutton "Daily Salary Cost: $"+ str(int(mc.business.calculate_salary_cost())):
+            textbutton "Daily Salary Cost: $"+ str(int(mc.business.calculate_salary_cost())) + " | $" + str(int(mc.business.operating_costs)):
                 ysize 28
                 text_style "menu_text_style"
-                tooltip "The amount of money spent daily to pay your employees. Employees are not paid on the weekend."
+                tooltip "The amount of money spent daily to pay your employees along with daily operating costs. Neither apply during the weekend."
                 action NullAction()
                 sensitive True
 

@@ -1,3 +1,25 @@
+init -2 python:
+    def alpha_sort(a_trait):
+        return a_trait.name
+
+    def men_sort(a_trait):
+        return -a_trait.mental_aspect
+
+    def phys_sort(a_trait):
+        return -a_trait.physical_aspect
+
+    def sex_sort(a_trait):
+        return -a_trait.sexual_aspect
+
+    def med_sort(a_trait):
+        return -a_trait.medical_aspect
+
+    def flaw_sort(a_trait):
+        return a_trait.flaws_aspect
+
+    def attn_sort(a_trait):
+        return a_trait.attention
+
 screen serum_design_ui(starting_serum,current_traits):
     add "Science_Menu_Background.png"
     python:
@@ -8,6 +30,18 @@ screen serum_design_ui(starting_serum,current_traits):
 
     $ tooltip_anchor = (0.5,0.57)
     $ tooltip_align = (0.5,0.0)
+
+    $ all_tiers = [0,1,2,3]
+    $ tier_zero = [0]
+    $ tier_one = [1]
+    $ tier_two = [2]
+    $ tier_three = [3]
+
+    default sort_method = alpha_sort
+    default sort_reversed = False
+
+
+    default allowed_tiers = all_tiers
     hbox:
         yalign 0.15
         xanchor 0.5
@@ -16,10 +50,22 @@ screen serum_design_ui(starting_serum,current_traits):
         spacing 40
         frame:
             background "#888888"
-            ysize 800
+            ysize 900
             vbox:
                 xsize 550
-                #text "Add a trait" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5
+                if not starting_serum.has_production_trait():
+                    text "Pick Production Method" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5 xsize 530
+                else:
+                    text "Add Serum Traits" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5 xsize 530
+                hbox:
+                    xanchor 0.5 xalign 0.5
+                    $ tier_sort_dict = OrderedDict([("All", all_tiers), ("T0", tier_zero), ("T1", tier_one), ("T2", tier_two), ("T3", tier_three)])
+                    for tier_name in tier_sort_dict:
+                        if allowed_tiers == tier_sort_dict[tier_name]:
+                            $ button_sensitive = False
+                        else:
+                            $ button_sensitive = True
+                        textbutton tier_name action SetScreenVariable("allowed_tiers", tier_sort_dict[tier_name]) sensitive button_sensitive xsize 90 ysize 50 style "textbutton_style" text_style "textbutton_text_style" text_align (0.5,0.5) text_anchor (0.5,0.5)
                 viewport:
                     xsize 550
                     ysize 760
@@ -30,66 +76,49 @@ screen serum_design_ui(starting_serum,current_traits):
                         background None
                         vbox:
                             xsize 530
-                            text "Pick Production Type" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5 xsize 530
-                            for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True): # Sort traits by exclude tags (So all production traits are grouped, for example), then by tier (so the highest tier production tag ends up at the top
-                                if trait not in starting_serum.traits and trait.researched and "Production" in trait.exclude_tags:
-                                    $ trait_tags = ""
-                                    if trait.exclude_tags:
-                                        $ trait_tags = " - "
-                                        for a_tag in trait.exclude_tags:
-                                            $ trait_tags += "[[" + a_tag + "]"
-                                    $ trait_allowed = True
-                                    python: # Check to see if the trait is excluded by any of the traits currently in the serum. A long looped segment only to deal with lists of tags, which are unlikely.
-                                        for checking_trait in starting_serum.traits:
-                                            for tag in trait.exclude_tags:
-                                                for checking_tag in checking_trait.exclude_tags:
-                                                    if tag == checking_tag:
-                                                        trait_allowed = False
-                                    $ side_effect_chance = trait.get_effective_side_effect_chance()
-                                    if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
-                                        $ side_effect_chance_string = "Always Guaranteed"
-                                    else:
-                                        $ side_effect_chance_string = str(side_effect_chance) + "%"
-                                    $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
-                                    textbutton trait.name + trait_tags + trait_side_effects:
-                                        action [Hide("trait_tooltip"),Function(starting_serum.add_trait,trait)]
-                                        sensitive trait_allowed
-                                        style "textbutton_style"
-                                        text_style "textbutton_text_style"
-                                        hovered Show("trait_tooltip",None,trait, tooltip_anchor, tooltip_align)
-                                        unhovered Hide("trait_tooltip")
-                                        xsize 530
+                            $ sorted_traits_list = list_of_traits+mc.business.blueprinted_traits
+                            if not sort_method == alpha_sort:
+                                $ sorted_traits_list = sorted(sorted_traits_list, key = alpha_sort) # If we're sorting by something other than alphabetical also sort by alphabetical after.
+                            $ sorted_traits_list = sorted(sorted_traits_list, key=sort_method, reverse = sort_reversed)
 
-                            null height 30
-                            text "Add Serum Traits" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5 xsize 530
-                            for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True): # Sort traits by exclude tags (So all production traits are grouped, for example), then by tier (so the highest tier production tag ends up at the top
-                                if trait not in starting_serum.traits and trait.researched and "Production" not in trait.exclude_tags:
-                                    $ trait_tags = ""
-                                    if trait.exclude_tags:
-                                        $ trait_tags = " - "
-                                        for a_tag in trait.exclude_tags:
-                                            $ trait_tags += "[[" + a_tag + "]"
-                                    $ trait_allowed = True
-                                    python: # Check to see if the trait is excluded by any of the traits currently in the serum. A long looped segment only to deal with lists of tags, which are unlikely.
-                                        for checking_trait in starting_serum.traits:
-                                            for tag in trait.exclude_tags:
-                                                for checking_tag in checking_trait.exclude_tags:
-                                                    if tag == checking_tag:
-                                                        trait_allowed = False
-                                    $ side_effect_chance = trait.get_effective_side_effect_chance()
-                                    if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
-                                        $ side_effect_chance_string = "Always Guaranteed"
-                                    else:
-                                        $ side_effect_chance_string = str(side_effect_chance) + "%"
-                                    $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
-                                    textbutton trait.name + trait_tags + trait_side_effects:
-                                        action [Hide("trait_tooltip"),Function(starting_serum.add_trait,trait)]
-                                        sensitive trait_allowed
-                                        style "textbutton_style"
-                                        text_style "textbutton_text_style"
-                                        hovered Show("trait_tooltip", None, trait, tooltip_anchor, tooltip_align)
-                                        unhovered Hide("trait_tooltip")
-                                        xsize 530 # Trait tooltip use to have an argument of ,0.315,0.57, corrisponding to x and yoffset, I think.
+                            #TODO: Sort the trait list here. Sort by: Alpha, men, phy, sex, med, flaw, attention, going high or low (cycle through high low when clicked)
+                            if not starting_serum.has_production_trait():
+                                for trait in sorted_traits_list:
+                                    if trait.researched and trait not in starting_serum.traits and "Production" in trait.exclude_tags and trait.tier in allowed_tiers:
+                                        $ trait_allowed = starting_serum.trait_add_allowed(trait)
+                                        use trait_select_button(trait, is_enabled = trait_allowed, the_action = Function(starting_serum.add_trait, trait), tooltip_anchor = (0.5, 0.57), tooltip_align = (0.5, 0.0))
+                            else:
+                                for trait in sorted_traits_list:
+                                    if trait.researched and trait not in starting_serum.traits and "Production" not in trait.exclude_tags and trait.tier in allowed_tiers:
+                                        $ trait_allowed = starting_serum.trait_add_allowed(trait)
+                                        use trait_select_button(trait, is_enabled = trait_allowed, the_action = Function(starting_serum.add_trait, trait), tooltip_anchor = (0.5, 0.57), tooltip_align = (0.5, 0.0))
+
+                hbox:
+                    yalign 1.0
+                    yanchor 1.0
+                    xanchor 0.5
+                    xalign 0.5
+                    $ serum_sort_buttons = OrderedDict([("ABC", alpha_sort), \
+                        ("{color=#0049d8}Men{/color}", men_sort), ("{color=#00AA00}Phy{/color}", phys_sort), \
+                        ("{color=#FFC0CB}Sex{/color}", sex_sort), ("{color=#FFFFFF}Med{/color}", med_sort), \
+                        ("{color=#BBBBBB}Flaw{/color}", flaw_sort), ("{color=#FF6249}Attn{/color}", attn_sort)])
+                    for sort_button in serum_sort_buttons:
+                        $ sort_name = sort_button
+                        $ background_colour = "#000080"
+                        if serum_sort_buttons[sort_button] == sort_method:
+                            $ background_colour = "#4040c0"
+                            $ button_action = ToggleScreenVariable("sort_reversed")
+                            if sort_reversed:
+                                $ sort_name += " ^" #TODO: Get the proper unicode here.
+                            else:
+                                $ sort_name += " v" #TODO: and here
+                        else:
+                            $ button_action = [SetScreenVariable("sort_method", serum_sort_buttons[sort_button]), SetScreenVariable("sort_reversed", False)]
+
+                        textbutton sort_name:
+                            action button_action sensitive button_sensitive
+                            background background_colour insensitive_background "#222222" hover_background "#aaaaaa"
+                            xsize 70 ysize 50 style "textbutton_style" text_style "textbutton_text_style" text_align (0.5,0.5) text_anchor (0.5,0.5) text_size 14
 
         frame:
             background "#888888"
@@ -107,28 +136,11 @@ screen serum_design_ui(starting_serum,current_traits):
                         background None
                         vbox:
                             for trait in starting_serum.traits:
-                                $ trait_tags = ""
-                                if trait.exclude_tags:
-                                    $ trait_tags = " - "
-                                    for a_tag in trait.exclude_tags:
-                                        $ trait_tags += "[[" + a_tag + "]"
-                                $ side_effect_chance = trait.get_effective_side_effect_chance()
-                                if side_effect_chance >= 10000: #If it's a massively high side effect chance assume it's a special trait and it's just guarnateed.
-                                    $ side_effect_chance_string = "Always Guaranteed"
-                                else:
-                                    $ side_effect_chance_string =  str(side_effect_chance) + "%"
-                                $ trait_side_effects = "\nMastery Level: " + str(trait.mastery_level) + " | Side Effect Chance: " + side_effect_chance_string
-                                textbutton trait.name + trait_tags + trait_side_effects:
-                                    action[Hide("trait_tooltip"), Function(starting_serum.remove_trait,trait)]
-                                    style "textbutton_style"
-                                    text_style "textbutton_text_style"
-                                    hovered Show("trait_tooltip",None,trait, tooltip_anchor, tooltip_align)
-                                    unhovered Hide("trait_tooltip")
-                                    xsize 550 #trait_tooltip use to have a value of ,0.635,0.57
+                                use trait_select_button(trait, is_enabled = True, the_action = [Hide("trait_tooltip"), Function(starting_serum.remove_trait,trait)], tooltip_anchor = (0.5, 0.57), tooltip_align = (0.5, 0.0))
 
         frame:
             background "#888888"
-            ysize 800
+            ysize 900
             vbox:
                 xsize 550
                 text "Current Serum Statistics:" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5
@@ -148,12 +160,18 @@ screen serum_design_ui(starting_serum,current_traits):
                             add "Serum_Slot_Incorrect.png" xanchor 0.5 xalign 0.5
                         else:
                             add "Serum_Slot_Empty.png" xanchor 0.5 xalign 0.5
+
+                use aspect_grid(starting_serum)
+
                 grid 2 3 xanchor 0.5 xalign 0.5:
                     spacing 10
                     text "Research Required: [starting_serum.research_needed]" style "menu_text_style"
                     text "Production Cost: [starting_serum.production_cost]" style "menu_text_style"
-                    text "Value: $[starting_serum.value]" style "menu_text_style"
-                    $ calculated_profit = (starting_serum.value*mc.business.batch_size)-starting_serum.production_cost
+                    if starting_serum.tier <= mc.business.max_serum_tier:
+                        text "Serum Tier: " + str(starting_serum.tier) style "menu_text_style"
+                    else:
+                        text "Serum Tier: {color=#fb6868}" + str(starting_serum.tier) + "{/color}" style "menu_text_style"
+                    $ calculated_profit = round(mc.business.get_serum_base_value(starting_serum)-(starting_serum.production_cost/mc.business.batch_size))
                     if calculated_profit > 0:
                         text "Expected Profit:{color=#98fb98} $[calculated_profit]{/color}/dose" style "menu_text_style"
                     else:
@@ -172,10 +190,12 @@ screen serum_design_ui(starting_serum,current_traits):
                         xsize 550
                         background None
                         vbox:
+                            spacing 5
                             for trait in starting_serum.traits:
-                                text trait.name style "menu_text_style"
-                                text "    "  + trait.positive_slug style "menu_text_style" color "#98fb98"
-                                text "    "  + trait.build_negative_slug() style "menu_text_style" color "#ff0000"
+                                use trait_details(trait)
+
+
+
 
     frame:
         background "#888888"
@@ -195,6 +215,12 @@ screen serum_design_ui(starting_serum,current_traits):
                 xsize 230
 
             textbutton "Reject Design" action Return("None") style "textbutton_style" text_style "textbutton_text_style" xanchor 0.5 xalign 0.5 xsize 230
+
+            textbutton "View Contracts":
+                style "textbutton_style"
+                text_style "textbutton_text_style"
+                xsize 230
+                action Show("contract_select")
 
     imagebutton:
         auto "/tutorial_images/restart_tutorial_%s.png"

@@ -87,7 +87,7 @@ label strip_awkward_stand_climax(the_person, guy_state, for_pay = False): #TODO:
     "[the_person.possessive_title] looks away from you, panting loudly."
     the_person "Don't... don't look at me! I'm going to... Ah!"
     "She squeals and locks her knees together as she climaxes."
-    $ the_person.run_orgasm(trance_chance_modifier = the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"))
+    $ the_person.run_orgasm(trance_chance_modifier = the_person.get_opinion_score("public sex") + the_person.get_opinion_score("masturbating"), reset_arousal = False)
     "Her thighs quiver with effort for a few seconds, then relax as the orgasm passes."
     "Her shoulders slump and she takes long, deep breaths to try and regain control of herself."
     return

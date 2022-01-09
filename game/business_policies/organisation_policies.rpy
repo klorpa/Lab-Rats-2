@@ -63,6 +63,62 @@ init 0 python:
         extra_arguments = {"amount":20})
     organisation_policies_list.append(business_size_4_policy)
 
+    def business_contract_increase(change_amount = 1):
+        mc.business.max_active_contracts += change_amount
+
+    def business_contract_offered_increase(change_amount = 1):
+        mc.business.max_offered_contracts += change_amount
+
+    def business_contract_increase_1():
+        return True
+
+    def business_contract_increase_1_on_turn():
+        mc.business.change_team_effectiveness(-len(mc.business.active_contracts))
+
+    business_contract_increase_1_policy = Policy(name = "Streamlined Contract Processing.",
+        desc = "Managing multiple contracts at once is difficult, but the extra payout offered makes the trouble worth it. Allows you to have one additional active contract at a time, but reduces business efficiency by 1 per turn per active contract.",
+        cost = 500,
+        toggleable = False,
+        requirement = business_contract_increase_1,
+        on_buy_function = business_contract_increase,
+        on_turn_function = business_contract_increase_1_on_turn)
+    organisation_policies_list.append(business_contract_increase_1_policy)
+
+    business_contract_offer_increase_1_policy = Policy(name = "Favoured Business Partnerships",
+        desc = "Forging strong relationships with repeat customers makes it more likely they'll turn to you when they have special requests. Increases the number of contracts offered every Monday by 1.",
+        cost = 1000,
+        toggleable = False,
+        requirement = business_contract_increase_1,
+        on_buy_function = business_contract_offered_increase)
+    organisation_policies_list.append(business_contract_offer_increase_1_policy)
+
+    def business_contract_increase_2():
+        if business_contract_increase_1_policy.is_owned():
+            return True
+        return False
+
+    def business_contract_offered_increase_2():
+        if business_contract_offer_increase_1_policy.is_owned():
+            return True
+        return False
+
+    business_contract_increase_2_policy = Policy(name = "Multi-Contract Business Strategy.",
+        desc = "Focus your business on managing multiple contract at once. Increases the maximum number of active contracts by 1, but reduces business efficiency by 1 per turn per active contract.",
+        cost = 3000,
+        toggleable = False,
+        requirement = business_contract_increase_2,
+        on_buy_function = business_contract_increase,
+        on_turn_function = business_contract_increase_1_on_turn)
+    organisation_policies_list.append(business_contract_increase_2_policy)
+
+    business_contract_offer_increase_2_policy = Policy(name = "Public Relationship Management",
+        desc = "Further reinforce your relationship with common business partners, encouraging them to present you with contracts first and often. Increases the number of contracts offered every Monday by 1.",
+        cost = 5000,
+        toggleable = False,
+        requirement = business_contract_offered_increase_2,
+        on_buy_function = business_contract_offered_increase)
+    organisation_policies_list.append(business_contract_offer_increase_2_policy)
+
     def public_advertising_license_requirement():
         return True
 
@@ -168,7 +224,7 @@ init 0 python:
 
     def research_journal_subscription_on_day():
         if mc.business.is_work_day():
-            mc.business.funds += -30
+            mc.business.change_funds(-30)
 
     research_journal_subscription = Policy(name = "Research Journal Subscription",
         desc = "Ensuring your research team has access to all of the latest research isn't cheap, but it is important if you want to push your own progress further and faster. Converts an additional 5% of idle Research Points into Clarity when your R&D team is idle. Costs $30 a day to maintain your subscription.",
@@ -258,3 +314,60 @@ init 0 python:
         on_day_function = superliminal_office_messaging_on_day,
         dependant_policies = mandatory_staff_reading)
     organisation_policies_list.append(superliminal_office_messaging)
+
+    def max_attention_increase(amount = 100):
+        mc.business.max_attention += amount
+
+    def max_attention_increase_1():
+        return True
+
+    max_attention_increase_1_policy = Policy(name = "National Sales",
+        desc = "Begin working with clients all over the country. The local authorities are less likely to take an interest in you if your product doesn't always end up in their back yard. Increase the attention threshold by 100.",
+        cost = 2000,
+        toggleable = False,
+        requirement = max_attention_increase_1,
+        on_buy_function = max_attention_increase)
+    organisation_policies_list.append(max_attention_increase_1_policy)
+
+    def attention_bleed_increase(amount = 10):
+        mc.business.attention_bleed += amount
+
+    def attention_bleed_increase_1():
+        return True
+
+    attention_bleed_increase_1_policy = Policy(name = "Public Charity Work",
+        desc = "Sponsor a few local charities to improve the public perception of your business. Reduces pressure for authorities to tkae action against you, lowering Attention by an additional 10 per day.",
+        cost = 2000,
+        toggleable = False,
+        requirement = attention_bleed_increase_1,
+        on_buy_function = attention_bleed_increase)
+    organisation_policies_list.append(attention_bleed_increase_1_policy)
+
+    def attention_bleed_increase_2_requirement():
+        return True
+
+    attention_bleed_increase_2_policy = Policy(name = "City Hall Internal Sabotage",
+        desc = "Reports go missing, meetings are misscheduled, and evidence is misfiled. An inside agent down at city hall is making sure it's particularly hard to pin anything on your business. Lowers Attention by an additional 10 per day.",
+        cost = 0,
+        toggleable = False,
+        on_buy_function = attention_bleed_increase,
+        requirement = attention_bleed_increase_2_requirement) #Only accessable by corrupting the city rep.
+
+    def attention_floor_increase_1():
+        return True
+
+    attention_floor_increase_1_policy = Policy(name = "Establish Cover Story",
+        desc = "Establish a cover story for your business. This will reduce the amount of attention generated when selling a dose of serum by 1.",
+        cost = 2000,
+        toggleable = True,
+        requirement = attention_floor_increase_1)
+    organisation_policies_list.append(attention_floor_increase_1_policy)
+
+    def attention_floor_increase_2():
+        return True
+
+    attention_floor_increase_2_policy = Policy(name = "Business License",
+        desc = "Having the proper licenses and paperwork makes it much easier to sell product without attracting undo attention. Reduces the amount of attention generated when selling a dose of serum by another 1.",
+        cost = 2500,
+        toggleable = False,
+        requirement = attention_floor_increase_2) #Only accessable by corrupting the city rep

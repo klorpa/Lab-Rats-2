@@ -119,7 +119,7 @@ label train_new_opinion_label(the_person, sexy_list = False):
     else:
         $ opinion_train_options = opinions_list[:]
     python:
-        for known_opinion in the_person.get_opinion_topics_list(include_unknown = False, include_sexy = False):
+        for known_opinion in the_person.get_opinion_topics_list(include_unknown = False, include_sexy = sexy_list, include_normal = not sexy_list):
             if known_opinion in opinion_train_options:
                 opinion_train_options.remove(known_opinion) #Remove opinions we already know about.
 

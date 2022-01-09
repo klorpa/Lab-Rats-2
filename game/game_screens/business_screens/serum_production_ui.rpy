@@ -1,11 +1,10 @@
 screen serum_production_select_ui():
     add "Science_Menu_Background.png"
+    modal True
     default line_selected = None
-    default production_remaining = 100
+    default production_remaining = 100 #TODO: We can set this higher than 100 if we want now.
     python:
-        production_remaining = 100
-        for key in mc.business.serum_production_array:
-            production_remaining -= mc.business.serum_production_array[key][1] # How much of the 100% capability are we using?
+        production_remaining = 100 - mc.business.get_used_line_weight()
 
     vbox:
         xalign 0.04
@@ -16,40 +15,45 @@ screen serum_production_select_ui():
             background "#888888"
             xsize 510
             text "Production Lines" style "menu_text_style" size 30 xalign 0.5
+
         frame:
             background "#888888"
             xsize 510
-            text "Capacity Remaining: [production_remaining]%" style "menu_text_style"
+            vbox:
+                text "Capacity Remaining: [production_remaining]%" style "menu_text_style"
+                textbutton "Max Serum Tier: " + str(mc.business.max_serum_tier) action VrenNullAction style "textbutton_style" text_style "menu_text_style" tooltip "The highest tier of serum you can produce is limited by your production facilities. Upgrade them to produce higher tier designs."
+
         spacing 20
-        for count in range(1,mc.business.production_lines+1): #For the non-programmers we index our lines to 1 through production_lines.
+        $ line_number = 0
+        for line in mc.business.production_lines: #For the non-programmers we index our lines to 1 through production_lines.
+            $ line_number += 1
             frame:
                 background "#888888"
                 vbox:
                     $ name_string = ""
-                    if count in mc.business.serum_production_array:
-                        $ name_string = "Production Line " + str(count) + "\nCurrently Producing: " + mc.business.serum_production_array[count][0].name
+                    if line.selected_design:
+                        $ name_string = "Production Line " + str(line_number) + "\nCurrently Producing: " + line.selected_design.name
                     else:
-                        $ name_string = "Production Line " + str(count) + "\nCurrently Producing: Nothing"
+                        $ name_string = "Production Line " + str(line_number) + "\nCurrently Producing: Nothing"
 
                     $ button_background = "#000080"
-                    if line_selected == count:
+                    if line_selected == line:
                         $ button_background = "#666666"
 
-                    if count in mc.business.serum_production_array:
-                        $ the_serum = mc.business.serum_production_array[count][0]
-                        textbutton name_string action [SetScreenVariable("line_selected",count),Hide("serum_tooltip")] style "textbutton_style" text_style "textbutton_text_style" hovered Show("serum_tooltip",None,the_serum, given_anchor = (1.0,0.0), given_align = (0.97,0.04)) unhovered Hide("serum_tooltip") background button_background xsize 500
+                    if line.selected_design:
+                        textbutton name_string action [SetScreenVariable("line_selected", line),Hide("serum_tooltip")] style "textbutton_style" text_style "textbutton_text_style" hovered Show("serum_tooltip",None, line.selected_design, given_anchor = (1.0,0.0), given_align = (0.97,0.04)) unhovered Hide("serum_tooltip") background button_background xsize 500
                     else:
-                        textbutton name_string action SetScreenVariable("line_selected",count) style "textbutton_style" text_style "textbutton_text_style" background button_background xsize 500
+                        textbutton name_string action SetScreenVariable("line_selected", line) style "textbutton_style" text_style "textbutton_text_style" background button_background xsize 500
 
                     null height 20
                     hbox:
                         ysize 40
                         xsize 500
                         text "Production Weight: " style "menu_text_style" xalign 0.0
-                        if count in mc.business.serum_production_array:
-                            textbutton "-10%" action Function(mc.business.change_line_weight,count,-10) style "textbutton_style" text_style "textbutton_text_style" yanchor 0.25 tooltip "Work done by production employees will be split between active lines based on production weight."
-                            text str(mc.business.serum_production_array[count][1]) + "%" style "menu_text_style"
-                            textbutton "+10%" action Function(mc.business.change_line_weight,count,10) style "textbutton_style" text_style "textbutton_text_style" yanchor 0.25 tooltip "Work done by production employees will be split between active lines based on production weight."
+                        if line.selected_design:
+                            textbutton "-10%" action Function(line.change_line_weight, -10) style "textbutton_style" text_style "textbutton_text_style" sensitive line.production_weight >= 10 yanchor 0.25 tooltip "Work done by production employees will be split between active lines based on production weight."
+                            text str(line.production_weight) + "%" style "menu_text_style"
+                            textbutton "+10%" action Function(line.change_line_weight, 10) style "textbutton_style" text_style "textbutton_text_style" sensitive production_remaining >= 10 yanchor 0.25 tooltip "Work done by production employees will be split between active lines based on production weight."
                         else:
                             textbutton "-10%" action NullAction style "textbutton_style" text_style "textbutton_text_style" sensitive False yanchor 0.25 tooltip "Work done by production employees will be split between active lines based on production weight."
                             text "0%" style "menu_text_style"
@@ -57,19 +61,18 @@ screen serum_production_select_ui():
 
                     hbox:
                         ysize 40
-                        xsize 500
-                        text "Auto-sell Threshold: " style "menu_text_style"
-                        if count in mc.business.serum_production_array:
-                            textbutton "-1" action Function(mc.business.change_line_autosell,count,-1) style "textbutton_style" text_style "textbutton_text_style" yanchor 0.25 tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
-                            if mc.business.serum_production_array[count][3] < 0:
-                                text "None" style "menu_text_style"
-                            else:
-                                text str(mc.business.serum_production_array[count][3]) style "menu_text_style"
-                            textbutton "+1" action Function(mc.business.change_line_autosell,count,1) style "textbutton_style" text_style "textbutton_text_style"  yanchor 0.25 tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
+                        text "Auto-sell: " style "menu_text_style" yalign 0.5 yanchor 0.5
+                        if line.autosell:
+                            button action Function(line.toggle_line_autosell) background "#44aa44" xsize 35 ysize 35 yalign 0.5 yanchor 0.5 xalign 0.0 xanchor 0.0 tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
                         else:
-                            textbutton "-1" action NullAction style "textbutton_style" text_style "textbutton_text_style" sensitive False yanchor 0.25 tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
-                            text "None" style "menu_text_style"
-                            textbutton "+1" action NullAction style "textbutton_style" text_style "textbutton_text_style" sensitive False yanchor 0.25 tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
+                            button action Function(line.toggle_line_autosell) background "#444444" xsize 35 ysize 35 yalign 0.5 yanchor 0.5 xalign 0.0 xanchor 0.0 tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
+
+                        if line.selected_design:
+                            if line.autosell:
+                                textbutton "-1" action Function(line.change_line_autosell, -1) style "textbutton_style" yalign 0.5 yanchor 0.5  text_style "textbutton_text_style" tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
+                                text "When > " + str(line.autosell_amount) + " doses" style "menu_text_style" ysize 30 yalign 0.5 yanchor 0.5
+                                textbutton "+1" action Function(line.change_line_autosell, 1) style "textbutton_style" yalign 0.5 yanchor 0.5 text_style "textbutton_text_style" tooltip "Doses of serum above the auto-sell threshold will automatically be flagged for sale and moved to the marketing department."
+
 
     if line_selected:
         frame:
@@ -79,7 +82,7 @@ screen serum_production_select_ui():
             yalign 0.04
             xsize 600
             vbox:
-                text "Choose Production for Line [line_selected]" style "menu_text_style" size 30
+                text "Choose Production" style "menu_text_style" size 30
                 if len(mc.business.serum_designs) == 0:
                     frame:
                         xfill True
@@ -89,9 +92,10 @@ screen serum_production_select_ui():
                     for a_serum in mc.business.serum_designs:
                         if a_serum.researched:
                             textbutton a_serum.name:
-                                action [Hide("serum_tooltip"), Function(mc.business.change_production,a_serum,line_selected), SetScreenVariable("line_selected",None)]
-                                hovered Show("serum_tooltip",None, a_serum, given_anchor = (1.0,0.0), given_align = (0.97,0.04))
+                                action [Hide("serum_tooltip"), Function(line_selected.set_product, a_serum, production_remaining), SetScreenVariable("line_selected", None)]
+                                hovered Show("serum_tooltip", None, a_serum, given_anchor = (1.0,0.0), given_align = (0.97,0.04))
                                 unhovered Hide("serum_tooltip")
+                                sensitive a_serum.tier <= mc.business.max_serum_tier
                                 style "textbutton_style" text_style "textbutton_text_style"
 
     frame:
@@ -116,7 +120,7 @@ screen serum_production_select_ui():
         action Function(mc.business.reset_tutorial,"production_tutorial")
 
 
-    $ production_tutorial_length = 5 #The number of  tutorial screens we have.
+    $ production_tutorial_length = 5 #The number of tutorial screens we have.
     if mc.business.event_triggers_dict["production_tutorial"] > 0 and mc.business.event_triggers_dict["production_tutorial"] <= production_tutorial_length: #We use negative numbers to symbolize the tutorial not being enabled
         imagebutton:
             auto

@@ -1,31 +1,4 @@
 ## This file is used to house all of the functions and lables used to debug LR2.##
-# CURRENT CONCLUSIONS: #
-# 1) Time to create people is independent of the number of people involved.
-#
-#
-#
-#
-#
-#
-
-## LEADS:##
-# 1) Outfits that deep copy other outfits (and other improper uses of deepcopy) will end up duplicating the image set library for each clothing item (which should be a singleton). That makes character objects huge and the game slow.
-# 2) Moving characters at the end of the day takes seconds for a large number of people.
-# 3) Running hte move code involves a deep copy. Likely the issue.
-#
-#
-#
-
-## RESOLUTIONS: ##
-# 1) Add a create_copy function to the outfit and clothign class that properly copy it without the use of deep copy.
-# 2) Review all uses of deep copy and remove them if at all possible. Purge them, they are almost certainly not being used correctly.
-#
-#
-#
-#
-#
-
-
 
 init -15 python:
     from datetime import datetime

@@ -5,8 +5,8 @@ init 1 python:
     def so_relationship_improve_requirement():
         for place in list_of_places:
             for a_person in place.people:
-                if (a_person.love > 10 or employee_role in a_person.special_role) and not a_person.title is None and not a_person.relationship == "Married":
-                    if not (affair_role in a_person.special_role or girlfriend_role in a_person.special_role or mother_role in a_person.special_role or sister_role in a_person.special_role or cousin_role in a_person.special_role or aunt_role in a_person.special_role):
+                if (a_person.love > 10 or a_person.has_role(employee_role)) and not a_person.title is None and not a_person.relationship == "Married":
+                    if not (a_person.has_role(affair_role) or a_person.has_role(girlfriend_role) or a_person.has_role(mother_role) or a_person.has_role(sister_role) or a_person.has_role(cousin_role) or a_person.has_role(aunt_role)):
                     # You have at least one person you know who is in a relationship. People you're having an affair never have it get better.
                     # Your also family never forms relationships, because we do that through direct story stuff.
                         return True
@@ -15,8 +15,8 @@ init 1 python:
     def so_relationship_worsen_requirement():
         for place in list_of_places:
             for a_person in place.people:
-                if (a_person.love > 10 or employee_role in a_person.special_role) and not a_person.title is None and not a_person.relationship == "Single":
-                    if not (mother_role in a_person.special_role or sister_role in a_person.special_role or cousin_role in a_person.special_role or aunt_role in a_person.special_role):
+                if (a_person.love > 10 or a_person.has_role(employee_role)) and not a_person.title is None and not a_person.relationship == "Single":
+                    if not (a_person.has_role(mother_role) or a_person.has_role(sister_role) or a_person.has_role(cousin_role) or a_person.has_role(aunt_role)):
                     # We only change thse relationships in events. If we can find anyone who meets the requirements the event can proceed.
                         return True
         return False
@@ -88,8 +88,6 @@ label so_relationship_improve_label():
     $ mc.end_text_convo()
     return
 
-
-
 label so_relationship_worsen_label():
     $ potential_people = []
     python:
@@ -128,7 +126,7 @@ init 1 python:
         if time_of_day == 3 or time_of_day == 4:
             for place in list_of_places:
                 for a_person in place.people:
-                    if affair_role in a_person.special_role and a_person not in mc.location.people: #someone is in an affair with you and wants a dic pic
+                    if a_person.has_role(affair_role) and a_person not in mc.location.people: #someone is in an affair with you and wants a dic pic
                         return True
         return False
 
@@ -835,4 +833,73 @@ label work_relationship_change_label():
         if mc.is_at_work():
             "While working you notice [person_one.title] and [person_two.title] aren't getting along with each other. They seem to have developed an unfriendly rivalry."
 
+    return
+
+
+init 1 python:
+    def friend_sends_text_requirement():
+        for place in list_of_places:
+            for a_person in place.people:
+                if a_person.love > 10 and not a_person.title is None: #Only text with people with 10 Love or more
+                    if not (a_person.has_role(mother_role)):
+                        return True
+        return False
+    friend_sends_text_crisis = Action("Friend Sends Text Crisis", friend_sends_text_requirement, "friend_sends_text")
+    crisis_list.append([friend_sends_text_crisis, 12])
+
+label friend_sends_text():
+    $ potential_people = []
+    python:
+        for place in list_of_places:
+            for a_person in place.people:
+                if a_person.love > 10 and not a_person.title is None: #Only text with people with 10 Love or more. NOTE: Unless you've botched your relationship with everyone this overlaps with the employee trigger.
+                    if not (a_person.has_role(mother_role)):
+                        potential_people.append(a_person)
+
+    $ the_person = get_random_from_list(potential_people)
+
+    "Your phone buzzes. It's a text from [the_person.title]."
+    $ mc.start_text_convo(the_person)
+    the_person "Hey [the_person.mc_title]. Doing anything right now?"
+    the_person "I'm bored."
+    menu:
+        "Chat with [the_person.title].":
+            call small_talk_person(the_person, apply_energy_cost = False, is_phone = True)
+
+        "Ignore her.":
+            "You shrug and ignore her."
+            if ((the_person.get_opinion_score("showing her tits") > 0 or the_person.get_opinion_score("showing her ass") > 0) and the_person.effective_sluttiness() >= 30) or the_person.has_role(affair_role):
+                "A few minutes later your phone buzzes."
+                the_person "Do I need to get your attention?"
+                if the_person.get_opinion_score("showing her tits") > 0:
+                    $ the_person.outfit.strip_to_tits()
+                    $ the_person.draw_person(position = "kneeling1")
+                    "After a short pause she sends you a picture."
+                    the_person "How about now? Do you want to talk if I have my tits out?"
+                    #Bare tits shot
+                elif the_person.get_opinion_score("showing her ass") > 0:
+                    $ the_person.outfit.strip_to_vagina(visible_enough = True)
+                    $ the_person.draw_person(position = "walking_away")
+                    "After a short pause she sends you a picture."
+                    the_person "How about now? Do you want to talk if you get to look at my ass?"
+                    #Ass shot
+                else:
+                    $ the_person.outfit.strip_to_underwear()
+                    $ the_person.draw_person()
+                    "After a short pause she sends you a picture."
+                    the_person "How about now? Do you want to talk if you know I'm in my underwear?"
+                    #Underwear shot
+
+                menu:
+                    "Flirt with [the_person.title].":
+                        "That's enough to convince you. You grab your phone and start to text back."
+                        call text_flirt_label(the_person, apply_energy_cost = False, skip_intro = True)
+
+                    "Keep ignoring her.":
+                        "You ignore your phone again. She doesn't text you again."
+                        $ the_person.change_love(-1)
+
+            $ the_person.apply_outfit()
+
+    $ mc.end_text_convo()
     return

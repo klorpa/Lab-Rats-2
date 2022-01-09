@@ -215,7 +215,7 @@ label run_strip_tease_integration_tests():
     $ test_person.set_title("Tester")
     $ test_person.set_possessive_title("Your Tester")
     $ test_person.set_mc_title("Player")
-    $ mc.business.funds += 1000
+    $ mc.business.change_funds(1000)
     call strip_tease(test_person, for_pay = True)
     menu:
         "Strip tease proceeded properly, did stuff for pay.":

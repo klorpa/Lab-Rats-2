@@ -184,7 +184,6 @@ label train_hypnotic_orgasm(the_person):
             "Meanwhile, her other hand doesn't stop pumping in and out of her climaxing cunt."
             $ the_person.run_orgasm()
             $ the_person.change_love(2)
-            $ the_person.reset_arousal()
             "She gasps and moans into your ear for a long moment, but little by little her orgasm subsides."
             "When she is in control of herself again she stands under her own power and looks at you, a dumb smile spreading across her face."
 
@@ -194,7 +193,6 @@ label train_hypnotic_orgasm(the_person):
             "[the_person.title] falls to the ground, barely catching herself at the last minute with her free hand."
             "She ends up face down, hips bucking with each new climactic spasm. Her thighs twitch in sync, all while she continues to finger herself."
             $ the_person.run_orgasm()
-            $ the_person.reset_arousal()
             $ the_person.change_slut(2)
             "She moans and writhes on the floor for a long moment, but little by little her orgasm subsides and she gains control of herself again."
             $ the_person.draw_person(position = "missionary", emotion = "happy")

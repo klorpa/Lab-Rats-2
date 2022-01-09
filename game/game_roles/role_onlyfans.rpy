@@ -48,18 +48,18 @@ label view_onlyfans(the_person):
         the_person "There's new content every day, so you'll always have something to enjoy."
         "She blows a kiss to the camera, then a subscription information box pops up."
         menu:
-            "Subscribe for the day. -$5" if mc.business.funds >= 5:
+            "Subscribe for the day. -$5" if mc.business.has_funds(5):
                 $ the_person.event_triggers_dict["onlyfans_subscription_valid_until"] = day
-                $ mc.business.funds += -5
+                $ mc.business.change_funds(-5)
 
-            "Subscribe for the day. -$5 (disabled)" if mc.business.funds < 5:
+            "Subscribe for the day. -$5 (disabled)" if not mc.business.has_funds(5):
                 pass
 
-            "Subscribe for the week. -$20" if mc.business.funds >= 20:
+            "Subscribe for the week. -$20" if mc.business.has_funds(20):
                 $ the_person.event_triggers_dict["onlyfans_subscription_valid_until"] = day + 7
-                $ mc.business.funds += -20
+                $ mc.business.change_funds(-20)
 
-            "Subscribe for the week. -$20 (disabled)" if mc.business.funds < 20:
+            "Subscribe for the week. -$20 (disabled)" if not mc.business.has_funds(20):
                 pass
 
             "Back":
@@ -190,9 +190,8 @@ label view_onlyfans(the_person):
             if give_clarity:
                 $ mc.change_locked_clarity(20)
             "She doesn't waste any time, licking at the tip of the plastic tip enthusiastically."
-            $ the_person.draw_person(position = "kneeling1", special_modifier = "blowjob")
             "After wetting the tip she slips it into her mouth and start to work it deeper into her throat."
-            $ the_person.draw_person(position = "kneeling1", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.5)
+            $ the_person.draw_person(position = "kneeling1", the_animation = blowjob_bob, animation_effect_strength = 0.5)
             "[the_person.title] looks directly into the camera as she gives a blowjob to her toy."
             if give_clarity:
                 $ mc.change_locked_clarity(20)

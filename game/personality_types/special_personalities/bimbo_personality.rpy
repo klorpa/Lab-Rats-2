@@ -1451,8 +1451,8 @@ label bimbo_creampie_taboo_break(the_person):
 
         else:
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
-                the_person "Oh my god, I'm like, such a terrible [so_title]!"
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
+                the_person "Oh my god, I'm like, such a terrible [girl_title]!"
                 "She sighs happily."
                 the_person "This feels so good though... I want you to do it again, even if I get pregnant!"
 
@@ -1465,10 +1465,10 @@ label bimbo_creampie_taboo_break(the_person):
             the_person "Like, oh my god. Did you just creampie me?!"
 
             if the_person.relationship != "Single":
-                $ so_title = girl_relationship_to_title(the_person.relationship)
+                $ girl_title = girl_relationship_to_title(the_person.relationship)
                 the_person "Oh no, now I might get pregnant!"
                 "She pouts and sighs unhappily."
-                the_person "I'm such a bad [so_title]."
+                the_person "I'm such a bad [girl_title]."
 
             else:
                 if the_person.kids == 0:
