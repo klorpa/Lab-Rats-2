@@ -85,6 +85,22 @@ init -2 python:
         else:
             return True
 
+    def aunt_offer_hire_requirement(the_person):
+        if not the_person.has_job(aunt_unemployed_job):
+            return False
+        elif not the_person.event_triggers_dict.get("moving_apartment",0) < 0: #ie. if they haven't finished moving yet.
+            return False
+        elif the_person.love < 10:
+            return False
+        elif the_person.love < 20:
+            return "Requires: 20 Love"
+        elif mc.business.get_employee_count() >= mc.business.max_employee_count:
+            return "At employee limit"
+        else:
+            return True
+
+    def cousin_aunt_hire_reaction_requirement(the_person): #NOTE: This is an event sitting on the cousin, not the aunt
+        return True
 
 
 
@@ -210,11 +226,11 @@ label aunt_intro_phase_two_label():
         cousin.home.move_person(cousin,lily_bedroom)
         cousin.home = lily_bedroom
 
-        aunt.set_schedule(aunt.home, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready.
-        cousin.set_schedule(cousin.home, times = [0,1,2,3,4])
-
+        aunt.set_schedule(aunt.home, the_times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready.
+        cousin.set_schedule(cousin.home, the_times = [0,4])
+        cousin.set_schedule(None, the_times = [1,2,3])
         #Your aunt is a homebody, but your cousin goes wandering during the day (Eventually to be repalced with going to class sometimes.)
-        cousin.set_schedule(None, times = [1,2,3])
+
 
     $ aunt_intro_phase_three = Action("aunt_intro_phase_three", aunt_intro_phase_three_requirement, "aunt_intro_phase_three_label", requirement_args = day + renpy.random.randint(6,10))
     $ mc.business.mandatory_morning_crises_list.append(aunt_intro_phase_three)
@@ -601,13 +617,9 @@ label aunt_intro_phase_final_label():
         aunt_apartment.visible = True
         cousin_bedroom.visible = True
 
-        aunt.set_schedule(aunt.home, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready.
-        cousin.set_schedule(cousin.home, times = [0,1,2,3,4])
-
-        #Your aunt is a homebody, but your cousin goes wandering during the day (Eventually to be repalced with going to class sometimes.)
-        aunt.set_schedule(aunt_apartment, times = [2,3])
-
-        cousin.set_schedule(None, times = [1,2,3])
+        aunt.set_schedule(aunt.home, the_times = [0,4])
+        aunt.set_schedule(aunt_apartment, the_times = [1,2,3])
+        cousin.set_schedule(cousin.home, the_times = [0,4])
 
         cousin_at_house_phase_one_action = Action("Cousin changes schedule", cousin_house_phase_one_requirement, "cousin_house_phase_one_label", args = cousin, requirement_args = day+renpy.random.randint(2,5))
         mc.business.mandatory_crises_list.append(cousin_at_house_phase_one_action) #This event changes the cousin's schedule so she shows up at your house.
@@ -1175,17 +1187,17 @@ label family_games_night_intro(the_person): # Triggered as an on-talk event in h
     $ clear_scene()
     return
 
-label family_games_night_setup(the_mom, the_aunt): # Triggered as a mandatory crisis right before the
+label family_games_night_setup(the_mom, the_aunt): # Triggered as a mandatory crisis right before the games night
     python:
         if the_mom.get_destination(specified_time = 4) in [the_mom.home, None, hall] and the_aunt.get_destination(specified_time = 4) in [the_aunt.home, None, hall]: #Change their schedule if they aren't explicitly suppose to be somewhere else.
-            the_mom.set_schedule(hall, [2], [4]) #She is in the hall on wednesdays in the evening.
-            the_aunt.set_schedule(hall, [2], [4]) #She is in the hall on wednesdays in the evening.
+            the_mom.set_schedule(hall, the_days = 2, the_times = 4) #She is in the hall on wednesdays in the evening.
+            the_aunt.set_schedule(hall, the_days = 2, the_times = 4) #She is in the hall on wednesdays in the evening.
 
         elif the_mom.get_destination(specified_time = 4) == hall: #She's in the hall but her sister can't make it.
-            the_mom.set_schedule(the_mom.home, [2], [4])
+            the_mom.set_schedule(the_mom.home, the_days = 2, the_times = 4)
 
         elif the_aunt.get_destination(specified_time = 4) == hall: #She's in the hall but her sister can't make it.
-            the_aunt.set_schedule(the_aunt.home, [2], [4])
+            the_aunt.set_schedule(the_aunt.home, the_days = 2, the_times = 4)
 
 
         if not mc.business.event_triggers_dict.get("family_games_setup_complete", False):
@@ -2064,3 +2076,114 @@ init -1 python:
         person.update_outfit_taboos() #Make sure we update all taboos, in case two were broken at once.
         mc.change_locked_clarity(10)
         return #TODO: Have this return something special so we can tell if any of the girls should comment.
+
+label aunt_offer_hire(the_person):
+    mc.name "Now that you're settled, have you thought about finding some work around the city [the_person.title]?"
+    the_person "Oh, I don't know... I have enough money from the divorce that I can survive as long as I'm careful."
+    the_person "Can I be honest with you?"
+    mc.name "Of course."
+    "She chuckles self-conciously before working up her courage to continue."
+    the_person "I've never really worked a real job. When I was a teen I worked at a convenience store, and that's about all."
+    the_person "I got married, had [cousin.title], and that was my life."
+    the_person "So I'm not even sure how I would get started!"
+    mc.name "Well, you could come work for me."
+    the_person "Oh, you don't want me hanging around. I'll only get in the way and slow everything down."
+    menu:
+        "I promise you'll enjoy it." if the_person.get_known_opinion_score("working") >= 2:
+            mc.name "I know you'll enjoy it. Don't you want to get out there and experience the world?"
+            "She thinks about it for a moment."
+            the_person "Maybe it would be nice to get out of the house now and then."
+            mc.name "Exactly what I was thinking! Now, let's talk about your skills..."
+            call stranger_hire_result(the_person)
+            if _return:
+                call aunt_hire_reaction_setup()
+                mc.name "Then it's settled! Welcome to the team [the_person.title]!"
+                the_person "I'm almost in shock! I can't believe this is happening!"
+            else:
+                mc.name "I'm going to need some time to think this over. I'll get back to you, alright?"
+                the_person "Right, of course. Take your time."
+
+        "I promise you'll enjoy it.\nRequires: Loves working (disabled)" if the_person.get_known_opinion_score("working") < 2:
+            pass
+
+        "Don't you want to work with [cousin.title]?" if cousin.has_role(employee_role):
+            mc.name "Don't you want to come work with [cousin.title]? You two get so little time together..."
+            "She thinks about it for a moment."
+            the_person "It would be nice to spend more time with her. You would be fine with that?"
+            mc.name "Of course, I'd love to spend more time around both of you!"
+            "[the_person.possessive_title] smiles happily and claps her hands together."
+            the_person "Alright, I'll do it!"
+            mc.name "Good! Now, let's talk about your skills..."
+            call stranger_hire_result(the_person)
+            if _return:
+                call aunt_hire_reaction_setup()
+                mc.name "Then it's settled! Welcome to the team [the_person.title]!"
+                the_person "I'm almost in shock! I can't believe this is happening!"
+            else:
+                mc.name "I'm going to need some time to think this over. I'll get back to you, alright?"
+                the_person "Right, of course. Take your time."
+
+        "Don't you want to work with [cousin.title]?\nRequires: Hire [cousin.title] (disabled)" if not cousin.has_role(employee_role):
+            pass
+
+        "I understand.":
+            mc.name "I understand. If you change your mind come talk to me, alright?"
+            the_person "Alright, I will."
+
+    return
+
+label aunt_hire_reaction_setup():
+    python:
+        reaction_action = Action("hire_reaction", cousin_aunt_hire_reaction_requirement, "cousin_aunt_hire_reaction")
+        cousin.on_talk_event_list.append(reaction_action)
+    return
+
+label cousin_aunt_hire_reaction(the_person):
+    if the_person.has_role(employee_role):
+        $ the_person.change_happiness(-10)
+        the_person "You fucking asshole!"
+        "[the_person.possessive_title] looks pissed already. It seems to be her natural state."
+        mc.name "What?"
+        the_person "You hired my MOM?!"
+        mc.name "Oh, that? Yeah, what's the problem?"
+        the_person "When I took this job I thought it would get me away from that bitch."
+        the_person "Now I'm going to have to see her all fucking day?"
+        "She rolls her eyes and moans dramatically."
+        the_person "Why would you hire her in the first place? She's going to be fucking useless."
+
+    else: #She's off doing something else
+        the_person "Hey, what the fuck?"
+        "[the_person.possessive_title] looks pissed already. It seems to be her natural state."
+        mc.name "What?"
+        the_person "What are you doing with my mom? She said she's working for you now?"
+        mc.name "Oh, that? Yeah, what's the problem?"
+        the_person "It's weird, that's all. What possible reason do you want that useless bitch around for?"
+
+    menu:
+        "She's a good worker.":
+            mc.name "She seemed like she'd be a good worker if someone gave her the chance."
+            "[the_person.title] laughs and shakes her head."
+            the_person "The only thing she was ever good at was sucking a dick."
+            mc.name "Maybe that will come in handy too."
+            the_person "Ew. You pervert."
+
+        "I'm going to fuck her.":
+            mc.name "Isn't it obvious? I want her close so I can start fucking her around the clock."
+            "[the_person.title] laughs and shakes her head."
+            the_person "You fucking pervert. Fine, don't tell me why you're doing it."
+
+        "I wanted to piss you off." if the_person.has_role(employee_role):
+            mc.name "I was thinking about what would make your life as miserable as possible, and this seemed like a good first step."
+            the_person "Oh my god, you're the fuuuuucking worst."
+            "[the_person.title] moans dramatically."
+            the_person "She's going to want to talk to me all the time! God damn it [the_person.mc_title]!"
+            the_person "I swear to god I'm going to quit one of these days!"
+
+        "I'm keeping her away from you." if not the_person.has_role(employee_role):
+            mc.name "I thought you'd thank me. I'm getting her out of the house and away from you."
+            "[the_person.title] laughs and shakes her head."
+            the_person "Yeah, I'm sure you're doing this out the kindness of your heart."
+            the_person "Whatever, I don't even care."
+
+    call talk_person(the_person)
+    return

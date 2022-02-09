@@ -1,4 +1,4 @@
-#Contains all of the role events and actions related to the main Mom storylin.
+#Contains all of the role events and actions related to the main Mom storyline.
 
 init -2 python:
     def mom_on_day(the_person):
@@ -182,7 +182,7 @@ label mom_low_sluttiness_weekly_pay(the_person):
             $ the_person.change_happiness(-5)
             $ the_person.change_love(-1)
             $ the_person.draw_person(position = "sitting", emotion = "sad")
-            the_person "Okay swetheart, I understand. I'll talk with Lily and let her know that we have to cut back on non essentials."
+            the_person "Okay sweetheart, I understand. I'll talk with Lily and let her know that we have to cut back on non essentials."
 
         "Help out.\n{size=22}-$100{/size}" if mc.business.has_funds(100):
             "You pull out your wallet and count out some cash, but hesitate before you hand it over."
@@ -278,7 +278,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                     mc.name "That's all. I'll just be keeping an eye on you in the future, but you don't need to worry about that."
                     the_person "Well thank you sweetheart, this money will really make a difference. I'm so proud of you!"
                 else:
-                    mc.name "Actually, I don't have anything right now. Maybe next wek though, okay?"
+                    mc.name "Actually, I don't have anything right now. Maybe next week though, okay?"
                     the_person "Okay sweetheart, thanks for at least thinking about it."
             else:
                 $ mc.business.event_triggers_dict["Mom_Serum_Test"] = 1
@@ -295,7 +295,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                     mc.name "That's all. I'll just be keeping an eye on you in the future, but you don't need to worry about that."
                     the_person "Well thank you sweetheart, this money will really make a difference. I'm so proud of you!"
                 else:
-                    mc.name "Actually, I don't have anything right now. Maybe next wek though, okay?"
+                    mc.name "Actually, I don't have anything right now. Maybe next week though, okay?"
                     the_person "Okay sweetheart, thanks for at least thinking about it."
 
         "Test some serum. -$100 (disabled)" if not mc.business.has_funds(100):
@@ -351,7 +351,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
                 mc.name "I didn't know you were going to enjoy that so much. Maybe you should be paying me next time."
                 the_person "Ah... I hope we can come to some sort of deal... Ah... In the future..."
             else:
-                "You pull your pants up while [the_person.possessive_title] gets off of her kness and cleans herself up."
+                "You pull your pants up while [the_person.possessive_title] gets off of her knees and cleans herself up."
             $ the_person.review_outfit()
             $ the_person.change_obedience(4)
 
@@ -397,7 +397,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
         #TODO: Enable this and tie it into Lily's new Instapic story chunk
         # "Let [lily.title] get a boob job. -$500" if mc.business.has_funds(200) and lily.event_triggers_dict.get("insta_boobjob_wanted", False): #TODO: Implement this!
         #     mc.name "This will be some easy money for you. I want you to let [lily.title] have some cosmetic surgery done."
-        #     mc.name "I'll pay you $500 if you just tell her you're okay with it. You don't need to do anythin else."
+        #     mc.name "I'll pay you $500 if you just tell her you're okay with it. You don't need to do anything else."
         #     the_person "Cosmetic surgery? What does she want to have changed? She's a beautiful young woman!"
         #     menu:
         #         "She wants breast implants.":
@@ -417,7 +417,7 @@ label mom_high_sluttiness_weekly_pay(the_person): #TODO: Change all of these ove
 
         #TODO: pay her to fuck you.
         #TODO: pay her to change her wardrobe
-        #TODO: pay her to do somehting with Lily.
+        #TODO: pay her to do something with Lily.
         #TODO: have Lily start a cam show to make cash, then bring your Mom into it.
 
 
@@ -433,7 +433,7 @@ label mom_make_house_changes(the_person):
     # A list of house rules to put into place.
     # TODO: This entire event. Make each one a linked action so that requirements work properly.
 
-    #TODO: Just display a bunch of action options os that the requirements are propertly formatted for all of these.
+    #TODO: Just display a bunch of action options os that the requirements are properly formatted for all of these.
 
     # menu:
     #     "I want breakfast delivered to me every morning." if mc.business.event_triggers_dict.get("mom_home_breakfast", false): #Bonus energy recovery. #TODO: Figure out how this works with other random events.
@@ -459,9 +459,9 @@ label mom_make_house_changes(the_person):
     #     "You can't wear anything that would keep your tits and pussy from me.":
     #         pass
     #
-    #     # TODO: The disipline options are only available after Lily's started her InstaPic account and is posting stuff and you turn her in. If Mom is too slutty she says she doesn't care.
+    #     # TODO: The discipline options are only available after Lily's started her InstaPic account and is posting stuff and you turn her in. If Mom is too slutty she says she doesn't care.
     #     # TODO: Add other "bad" things you can use as leverage against Lily.
-    #     "I want to be in charge of Lily's discipline.": #Only after she's done somethign "bad", let's you punish her somehow, or just unlocks other things in this menu?
+    #     "I want to be in charge of Lily's discipline.": #Only after she's done something "bad", let's you punish her somehow, or just unlocks other things in this menu?
     #         # The whole Lily section might be better broken out into her role. with this as the enabling action. Definitely one of the paths to breaking them both and having your incest harem.
     #         pass
     #
@@ -477,7 +477,7 @@ label mom_make_house_changes(the_person):
     return
 
 label mom_offer_make_dinner_label(the_person): #you offer to make dinner. It takes up time, but you can slip serum to your mom and sister.
-    mc.name "You've been working youself so hard lately Mom, how about you let me make dinner tonight?"
+    mc.name "You've been working yourself so hard lately Mom, how about you let me make dinner tonight?"
     the_person "Oh [the_person.mc_title], that's such a sweet thing for you to offer!"
     $ the_person.change_happiness(5)
     $ the_person.change_obedience(-1)
@@ -654,7 +654,7 @@ label mom_stress_relief_offer(the_person): #TODO: Write and hook this up.
     #TODO: What she offers to do depends on her sluttiness.
     return
 
-label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awareness to Mom so she can coment on you dating multiple girls, ect.
+label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awareness to Mom so she can comment on you dating multiple girls, etc.
     #Triggers when you've got a date planned with a girl, but Mom has high Love.
     #TODO: Write a Mom specific movie date. Maybe mirror the LR1 event and have Lily join in sometimes.
 
@@ -712,7 +712,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 $ the_mom.change_love(2)
                 $ the_mom.change_slut(1, 70)
                 "[the_mom.possessive_title]'s face lights up."
-                the_mom "Thank you [the_mom.mc_title], you're making the right decision. We're going to have such a wonderful time togther."
+                the_mom "Thank you [the_mom.mc_title], you're making the right decision. We're going to have such a wonderful time together."
                 mc.name "Just give me a moment, okay? She's probably not going to be happy about this."
                 $ skip_intro = False
                 $ start_position = None
@@ -736,7 +736,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     $ the_mom.change_love(4)
                     $ the_mom.change_slut(1, 70)
                     $ mc.change_locked_clarity(30)
-                    "[the_mom.title]'s eyes light up, and she bobs her head up and down on your shaft happily. You have to stiffle a moan."
+                    "[the_mom.title]'s eyes light up, and she bobs her head up and down on your shaft happily. You have to stifle a moan."
                     the_date "Oh no, is everyone okay?"
                     $ the_date.change_happiness(-20)
                     $ the_date.change_love(-3)
@@ -785,7 +785,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                             "You grab [the_mom.title]'s hips with your free hand and hold her steady as you slide your cock into her wet pussy. You fuck her slowly while you talk."
                             $ the_mom.draw_person(position = "doggy", the_animation = blowjob_bob, animation_effect_strength = 0.3)
                             mc.name "I can't really say any more than that right now. I'm sorry."
-                            the_date "I understand, I hope everything works out. Let's try and resechedule some time soon, okay?"
+                            the_date "I understand, I hope everything works out. Let's try and reschedule some time soon, okay?"
                             $ mc.change_locked_clarity(30)
                             "[the_mom.possessive_title] grabs one of your pillows to muffle her moans with."
                             mc.name "Yeah, I'll be in touch. Thanks for understanding [the_date.title]. Bye."
@@ -807,7 +807,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                             "You place a hand on [the_mom.possessive_title]'s butt and squeeze it idly as you talk."
                             mc.name "It's my Mom, she really needs me close right now."
                             mc.name "I can't really say any more than that right now. I'm sorry."
-                            the_date "I understand, I hope everything works out. Let's try and resechedule some time soon, okay?"
+                            the_date "I understand, I hope everything works out. Let's try and reschedule some time soon, okay?"
                             $ mc.change_locked_clarity(30)
                             "[the_mom.possessive_title] puts a hand between her legs and starts to massage her clit while you're talking."
                             mc.name "Yeah, I'll be in touch. Thanks for understanding [the_date.title]. Bye."
@@ -849,7 +849,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                             mc.name "Fine, but we need to make it quick."
                             $ the_mom.change_love(1)
                             $ the_mom.change_slut(1, 80)
-                            "She nods happly."
+                            "She nods happily."
                             $ the_mom.add_situational_slut("Eager", 20, "I need to drain those balls before that skank touches him!")
                             call fuck_person(the_mom, private = True) from _call_fuck_person_40
                             $ report = _return
@@ -941,7 +941,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     $ the_mom.change_love(4)
                     $ the_mom.change_slut(1, 70)
                     $ mc.change_locked_clarity(20)
-                    "[the_mom.title]'s eyes light up, and she bobs her head up and down on your shaft happily. You have to stiffle a moan."
+                    "[the_mom.title]'s eyes light up, and she bobs her head up and down on your shaft happily. You have to stifle a moan."
                     the_date "Oh no, is everyone okay?"
                     $ the_date.change_happiness(-20)
                     $ the_date.change_love(-3)
@@ -989,7 +989,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 if not the_mom.outfit.vagina_visible() or not the_mom.outfit.tits_visible():
                     menu:
                         "Order her to strip." if the_mom.obedience >= 140:
-                            mc.name "You should be dressed for the occassion first. Strip."
+                            mc.name "You should be dressed for the occasion first. Strip."
                             the_mom "Of course, right away [the_mom.mc_title]."
                             $ the_mom.draw_person()
                             "She stands up to get undressed."
@@ -1232,7 +1232,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
 label mom_office_person_request():
     $ the_person = mc.business.event_triggers_dict.get("mom_office_secretary", None)
     if the_person is None:
-        $ the_person = create_random_person()
+        $ the_person = create_random_person(job = secretary_job)
         $ mc.business.event_triggers_dict["mom_office_secretary"] = the_person
     #TODO: Give her a specific outfit, so she's always dressed appropriately
 
@@ -1363,13 +1363,13 @@ label mom_found_serums(): #TODO: Triggers a couple of days after the start of th
     $ mc.inventory.change_serum(blue_serum, 6)
     $ mc.log_event("Found 6 doses of Blue Serum!", "float_text_blue")
     "You find a number of blue serum doses. Back in university they did a wonderful job of making girls slutty and influenceable."
-    "Best to save them for when you have a specific boundry to push though, because they don't last very long."
+    "Best to save them for when you have a specific boundary to push though, because they don't last very long."
 
     "You dig a little deeper. There are a few specialised doses of serum in here too."
     $ mc.inventory.change_serum(red_serum, 3)
     $ mc.log_event("Found 3 doses of Red Serum!", "float_text_blue")
     "Red serum. It was stronger than your Blue design, making girls slutty and obedient on the spot."
-    "It was also particularly likely to make a girl suggestable after she climaxed."
+    "It was also particularly likely to make a girl suggestible after she climaxed."
 
     $ mc.inventory.change_serum(purple_serum, 3)
     $ mc.log_event("Found 3 doses of Purple Serum!", "float_text_blue")

@@ -1,12 +1,14 @@
 init -1 python:
-    def make_person(): #This will generate a person, using a pregen body some of the time if they are available.
+    def make_person(requirement_dict = None): #This will generate a person, using a pregen body some of the time if they are available.
         split_proportion = 20 #1/5 characters generated will be a premade character.
         return_character = None
-        if renpy.random.randint(1,100) < split_proportion:
-            return_character = get_premade_character()
+        if renpy.random.randint(1,100) < split_proportion and requirement_dict is None:
+            return_character = get_premade_character() #NOTE: We don't use premades if there are character requirements at the moment. TODO: Properly skim them to grab valid people.
 
         if return_character is None: #Either we aren't getting a premade, or we are out of them.
-            return_character = create_random_person()
+            if requirement_dict is None:
+                requirement_dict = {}
+            return_character = create_random_person(**requirement_dict)
         return return_character
 
     # create_random_person is used to generate a Person object from a list of random or provided stats. use "make_a_person" to properly get premade characters mixed with randoms.
@@ -15,7 +17,9 @@ init -1 python:
         personality = None, custom_font = None, name_color = None, dial_color = None, starting_wardrobe = None, stat_array = None, skill_array = None, sex_array = None,
         start_sluttiness = None, start_obedience = None, start_happiness = None, start_love = None, start_home = None,
         title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None, base_outfit = None,
-        generate_insta = None, generate_dikdok = None, generate_onlyfans = None):
+        generate_insta = None, generate_dikdok = None, generate_onlyfans = None,
+        bonus_kids = 0, bonus_sluttiness = 0, bonus_obedience = 0, bonus_happiness = 0, bonus_suggest = 0, bonus_love = 0,
+        stat_cap = 5, skill_cap = 5, age_floor = 18, age_ceiling = 50):
 
         if personality is None:
             personality = get_random_personality()
@@ -41,7 +45,7 @@ init -1 python:
         if last_name is None:
             last_name = get_random_last_name()
         if age is None:
-            age = renpy.random.randint(18,50)
+            age = renpy.random.randint(age_floor,age_ceiling)
         if body_type is None:
             body_type = get_random_body_type()
         if tits is None:
@@ -106,14 +110,12 @@ init -1 python:
             # Use name_color
             dial_color = copy.copy(name_color) #Take a copy
 
-        skill_cap = 5
-        stat_cap = 5
 
-        if recruitment_skill_improvement_policy.is_active():
-            skill_cap += 2
-
-        if recruitment_stat_improvement_policy.is_active():
-            stat_cap += 2
+        # if recruitment_skill_improvement_policy.is_active():
+        #     skill_cap += 2
+        #
+        # if recruitment_stat_improvement_policy.is_active():
+        #     stat_cap += 2
 
         if skill_array is None:
             skill_array = [renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap)]
@@ -126,23 +128,21 @@ init -1 python:
 
         if start_love is None:
             start_love = 0
+        start_love += bonus_love
 
         if start_happiness is None:
             start_happiness = 100 + renpy.random.randint(-10,10)
+        start_happiness += bonus_happiness
 
-        start_suggest = 0
+        start_suggest = 0 + bonus_suggest
 
         if start_obedience is None:
             start_obedience = renpy.random.randint(-10,10)
-
-        if recruitment_obedience_improvement_policy.is_active():
-            start_obedience += 10
+        start_obedience += bonus_obedience
 
         if start_sluttiness is None:
             start_sluttiness = renpy.random.randint(0,10)
-
-        if recruitment_slut_improvement_policy.is_active():
-            start_sluttiness += 20
+        start_sluttiness += bonus_sluttiness
 
         if relationship is None:
             relationship = get_random_from_weighted_list([["Single",120-age],["Girlfriend",50],["Fiancée",120-(age*2)],["Married",20+(age*4)]]) #Age plays a major factor.
@@ -184,6 +184,8 @@ init -1 python:
                 kids += -1 #Young people have less time to have kids in general, so modify their number down a bit.
                 if kids < 0:
                     kids = 0
+
+            kids += bonus_kids
 
         if SO_name is None and relationship != "Single":
             SO_name = get_random_male_name()

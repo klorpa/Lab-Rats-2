@@ -484,13 +484,13 @@ label student_study_home(the_person):
             the_person "Okay, what did you have in mind?"
             menu:
                 "Masturbate first" if the_person.effective_sluttiness() >= 15:
-                    call student_masturbate_label(the_person) from _call_student_masturbate_label
+                    call student_masturbate_label(the_person)
 
                 "Masturbate first\nRequires: 15 Sluttiness (disabled)" if the_person.effective_sluttiness() < 15:
                     pass
 
                 "Punish her for wrong answers." if the_person.obedience >= 100:
-                    call student_punish_hub_label(the_person) from _call_student_punish_hub_label
+                    call student_punish_hub_label(the_person)
 
                 "Punish her for wrong answers.\nRequires: 100 Obedience (disabled)" if the_person.obedience < 100:
                     pass
@@ -517,7 +517,7 @@ label student_study_home(the_person):
         $ the_person.event_triggers_dict["current_marks"] += total_improvement
         $ mc.log_event(the_person.title + " stayed focused while studying and learned more than usual.", "float_text_grey")
 
-    if time_of_day == 3 and christina in christina.home.people:
+    if time_of_day == 3 and christina.home.has_person(christina):
         call study_check_up(the_person, christina) from _call_study_check_up
 
     $ mc.business.change_funds(200)
@@ -728,6 +728,7 @@ label student_masturbate_label(the_person):
         #TODO: Chance her mom walks by and asks what's going on.
         $ mc.change_locked_clarity(10)
         "You listen at the door, and hear [the_person.title]'s chair creaking as she moves. After a few minutes you hear a faint gasp."
+        $ the_person.run_orgasm()
         $ the_person.draw_person()
         "The bedroom door opens. Her face is beet red."
         mc.name "Did you have a good time?"
@@ -769,9 +770,10 @@ label student_masturbate_label(the_person):
                 $ mc.change_locked_clarity(10)
                 "She grips at the side of her chair and takes a deep breath. She starts to hammer her fingers in and out of herself."
                 the_person "Oh fuck, there it is! Oh... Oh!"
-                $ the_person.change_slut(1, 50)
+                $ the_person.run_orgasm(sluttiness_increase_limit = 50)
                 $ the_person.change_obedience(1)
                 $ mc.change_locked_clarity(10)
+
                 "[the_person.title] keeps her fingers moving for a few more seconds, then slows down and stops. She takes a deep sigh and slides them out of her wet cunt."
                 the_person "You know, I {i}do{/i} feel very relaxed now."
                 "She opens her eyes, then blushes and looks away, as if suddenly shy."
@@ -1735,12 +1737,10 @@ label student_test(the_person): #TODO: Hook this up
                 "[the_person.title] thinks about it for a moment, then nods."
                 the_person "Yeah, let's do it!"
                 mc.name "That's great to hear. I'll just need to ask you a few questions to confirm you're a good fit for the company..."
-                call hire_select_process([the_person,make_person()]) #Padded with extra random person to prevent hiring crash
-                if _return is not None:
-                    call hire_someone(the_person)
+                call stranger_hire_result(the_person)
+                if _return:
                     mc.name "It's a deal then, I'll see you at the office."
                     the_person "Sounds good to me!"
-
                 else:
                     mc.name "I'm going to have to take some time to consider this. I'll be in touch, okay?"
                     the_person "Right, sure."
@@ -1756,7 +1756,6 @@ label student_test(the_person): #TODO: Hook this up
                 the_person "That sounds good to me."
                 $ the_person.event_triggers_dict["student_offer_job_enabled"] = True
 
-        $ the_person.remove_role(student_role)
         #TODO: Increase her work skill in production/research to mark the end of her education.
 
 

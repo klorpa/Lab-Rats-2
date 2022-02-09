@@ -186,7 +186,7 @@ label nora_intro_label(the_steph):
     return
 
 label nora_research_up_label(the_person):
-
+    $ the_person.set_override_schedule(None)
     "You knock on the door to [the_person.title]'s lab and wait until the door is opened."
     $ the_person.draw_person()
     the_person "[the_person.mc_title], it's good to see you again."
@@ -217,7 +217,7 @@ label nora_research_up_label(the_person):
     $ mc.business.event_triggers_dict["nora_cash_reintro_needed"] = False
     $ list_of_traits.remove(the_trait)
     $ list_of_nora_traits.remove(the_trait)
-    $ nora.set_schedule(university, times = [1,2,3])
+
     $ clear_scene()
 
 
@@ -230,6 +230,7 @@ label nora_research_up_label(the_person):
 
 label nora_research_cash_intro(the_person, did_research = False):
     # Nora calls you and enables the rest of the quest line. Doesn't give you the first trait yet, for that you need to visit her.
+    $ the_person.set_override_schedule(None) #Let her out into the wild
     if did_research:
         "You get a call from [the_person.title]."
         mc.name "[the_person.title], good to hear from you. How can I help you."
@@ -266,7 +267,6 @@ label nora_research_cash_intro(the_person, did_research = False):
         "With that she hangs up. You make a note to stop by your old university at some point and move on with your day."
         $ mc.business.event_triggers_dict["nora_trait_researched"] = None
         $ university.visible = True
-        $ nora.set_schedule(university, times = [1,2,3])
         $ nora_research_visit = Action("Vist Nora's lab.", visit_lab_intro_requirement, "nora_research_cash_first_time", args = the_person, requirement_args = the_person,
             menu_tooltip = "Visit your old lab and talk to Nora about serum research.")
 

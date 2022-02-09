@@ -340,15 +340,13 @@ label pay_strip_scene(the_person):
     return
 
 label strip_tease(the_person, in_private = True, for_pay = False, start_girl_direction = None, start_guy_state = None, start_girl_state = None, skip_intro = False):
-    #TODO: Replace the old strip stuff
+    #TODO: Generate a report like we do when having sex, so we can check for orgasms, if we escalated to having sex, etc.
 
     # She can have a couple of different states (kind of like actions she could choose)
     # -> Awkwardly standing - She just stands there while you stare at her
     # -> Dancing - Moving her body while you watch.
     # -> Close Dancing - Tits and ass in your face. Close enough to touch.
     # -> Lapdance - Grinding her body against yours. If your cock is out she's rubbing it between her ass cheeks, if not it's uncomfortablly hard.
-
-    #ToDO: Decide on her starting state based on how slutty she is and if she's done this for you before.
 
     #Each stripposition needs to have an:
     # Intro - what we describe when we _start_ in that position_name

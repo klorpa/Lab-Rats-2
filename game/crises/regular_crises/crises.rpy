@@ -162,7 +162,7 @@ init 1 python:
         return False
 
     def person_at_work(the_person): #Returns True if the_person is at whatever location their work location is
-        if the_person.work is not None and the_person.work.has_person(the_person):
+        if the_person.job and the_person.job.job_location and the_person.job.job_location.has_person(the_person):
             return True
         else:
             return False

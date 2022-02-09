@@ -36,6 +36,9 @@ init -1: # Establish some platform specific stuff.
     default persistent.vren_display_pref = "Float" # "Float" = no BG, "Frame" = Frame with coloured BG for most interactions.
 
     python:
+        list_of_instantiation_labels = [] #Strings added to this list will be called at the start of the game. Use to initialize things which need their game state saved.
+        # label should take no parameters.
+
         list_of_positions = [] # These are sex positions that the PC can make happen while having sex.
         list_of_girl_positions = [] # These are sex positiosn that the girl can make happen while having sex.
         list_of_strip_positions = [] # These are positiosn a girl can take while putting on a stirp tease for you.
@@ -175,12 +178,13 @@ label normal_start:
     #TODO: Have an on_enter event for Steph if you see her the first day. Minor interaction stuff.
 
     #Add Stepyhanie to our business and flag her with a special role.
+
     $ mc.business.add_employee_research(stephanie)
     $ mc.business.r_div.add_person(stephanie) #Lets make sure we actually put her somewhere
     $ mc.business.r_div.move_person(stephanie,lobby)
-    $ stephanie.set_work(mc.business.r_div)
+    $ setup_employee_stats(stephanie)
+    $ stephanie.add_role(head_researcher)
     $ mc.business.head_researcher = stephanie
-    $ stephanie.special_role = [steph_role, employee_role, head_researcher]
 
     #TODO: movement overlay tutorial thing.
     jump game_loop
@@ -535,18 +539,22 @@ label advance_time:
 
 label initialize_game_state(character_name,business_name,last_name,stat_array,skill_array,_sex_array,max_num_of_random=4): #Gets all of the variables ready. TODO: Move some of this stuff to an init block?
 
+    ##Global Variable Initialization##
+    $ day = 0 ## Game starts on day 0.
+    $ time_of_day = 0 ## 0 = Early morning, 1 = Morning, 2 = Afternoon, 3 = Evening, 4 = Night
+
     $ list_of_traits = [] #List of serum traits that can be used. Established here so they play nice with rollback, saving, etc.
     $ list_of_nora_traits = []
     $ list_of_side_effects = [] #List of special serum traits that are reserved for bad results.
 
     #NOTE: These need to be established in a seperate label to ensure they are loaded/saved correctly
-    call instantiate_serum_traits() from _call_instantiate_serum_traits #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has labels that can be externally added and called here.
-    call instantiate_side_effect_traits() from _call_instantiate_side_effect_traits
+    call instantiate_serum_traits() #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has labels that can be externally added and called here.
+    call instantiate_side_effect_traits()
     call instantiate_roles()
     call instantiate_business_policies()
 
-    python:
 
+    python:
         list_of_places = [] #By having this in an init block it may be set to null each time the game is reloaded, because the initialization stuff below is only called once.
 
         ##Work Actions##
@@ -717,6 +725,9 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         bar_location = Room("Bar", "Bar", background_image = standard_bar_backgrounds[:],
             map_pos = [10,10], visible = False, lighting_conditions = standard_indoor_lighting)
 
+        city_hall = Room("City Hall", "City Hall", background_image = standard_house_backgrounds[:],
+            map_pos = [20,20], visible = False, lighting_conditions = standard_indoor_lighting)
+
         ##PC starts in his bedroom##
         main_business = Business(business_name, m_division, p_division, rd_division, office, office)
         mc = MainCharacter(bedroom,character_name,last_name,main_business,stat_array,skill_array,_sex_array)
@@ -727,8 +738,6 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
 
         town_relationships = RelationshipArray() #Singleton class used to track relationships. Remvoes need for recursive character references (which messes with Ren'py's saving methods)
         mc.generate_goals()
-
-        generate_premade_list() # Creates the list with all the premade characters for the game in it. Without this we both break the policies call in create_random_person, and regenerate the premade list on each restart.
 
         ##Keep a list of all the places##
         list_of_places.append(bedroom)
@@ -761,6 +770,8 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
 
         list_of_places.append(mom_office_lobby)
         list_of_places.append(mom_offices)
+
+        list_of_places.append(city_hall)
 
         for room in [bedroom, lily_bedroom, mom_bedroom, aunt_bedroom, cousin_bedroom]:
             room.add_object(make_wall())
@@ -858,6 +869,19 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         strip_club.add_object(make_chair())
         strip_club.add_object(make_stage())
 
+        city_hall.add_object(make_wall())
+        city_hall.add_object(make_floor())
+        city_hall.add_object(make_chair())
+        city_hall.add_object(make_table())
+
+    call instantiate_jobs() #We need locations to exist before we can set up jobs, so we do that here.
+    $ c = 0
+    while c < len(list_of_instantiation_labels):
+        $ renpy.call(list_of_instantiation_labels[c])
+        $ c += 1
+    python:
+        generate_premade_list() # Creates the list with all the premade characters for the game in it. Without this we both break the policies call in create_random_person, and regenerate the premade list on each restart.
+
         for place in list_of_places:
             if place.public:
                 if not max_num_of_random == 0:
@@ -872,17 +896,10 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         stripclub_strippers = []
         stripclub_wardrobe = wardrobe_from_xml("Stripper_Wardrobe")
         for i in __builtin__.range(0,4):
-            a_girl = create_random_person(start_sluttiness = renpy.random.randint(15,30))
+            a_girl = create_random_person(start_sluttiness = renpy.random.randint(15,30), job = stripper_job)
             a_girl.generate_home()
-            a_girl.set_schedule(strip_club, times = [3,4])
-            stripclub_strippers.append(a_girl)
             strip_club.add_person(a_girl)
 
         business_wardrobe = wardrobe_from_xml("Business_Wardrobe") #Used in some of Mom's events when we need a business-ish outfit
-
-
-        ##Global Variable Initialization##
-        day = 0 ## Game starts on day 0.
-        time_of_day = 0 ## 0 = Early morning, 1 = Morning, 2 = Afternoon, 3 = Evening, 4 = Night
 
     return

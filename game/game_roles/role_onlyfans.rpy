@@ -67,7 +67,7 @@ label view_onlyfans(the_person):
 
 
     if the_person.event_triggers_dict.get("onlyfans_subscription_valid_until", 0) >= day:
-        #NOTE: These should all be deterministic events (ie. no random chance) because the MC can return here whenver they want and should be given the same content.
+        #NOTE: These should all be deterministic events (ie. no random chance) because the MC can return here whenever they want and should be given the same content.
         $ give_clarity = True # Only get Clarity from one post a day.
         if the_person.event_triggers_dict.get("onlyfans_visited_today",False):
             $ give_clarity = False

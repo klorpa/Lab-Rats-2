@@ -2,13 +2,24 @@ init -2 python:
     def purchase_policy(the_policy,ignore_cost = False):
         the_policy.buy_policy(ignore_cost)
         if not the_policy.toggleable or the_policy.is_toggleable(): #Note: is_toggleable() checks to see if a toggleable policy has pre-reqs met to toggle, while toggleable flags a policy to turn on when bought then stay on.
+            if the_policy.exclusive_tag is not None:
+                for other_policy in mc.business.active_policy_list:
+                    if other_policy.is_toggleable() and the_policy.exclusive_tag == other_policy.exclusive_tag:
+                        toggle_policy(other_policy)
+
             the_policy.apply_policy()
 
     def toggle_policy(the_policy):
         if the_policy in mc.business.active_policy_list:
             the_policy.remove_policy()
         else:
+            if the_policy.exclusive_tag is not None:
+                for other_policy in mc.business.active_policy_list:
+                    if other_policy.is_toggleable() and the_policy.exclusive_tag == other_policy.exclusive_tag:
+                        toggle_policy(other_policy)
+
             the_policy.apply_policy()
+
 
 screen policy_selection_screen():
     add "Paper_Background.png"
@@ -91,7 +102,7 @@ screen policy_selection_screen():
                                     else:
                                         $ policy_name += "{color=902020}$" + str(policy.cost) + "{/color}"
 
-                                    if not (policy.requirement() and (policy.cost <= mc.business.funds)):
+                                    if not (policy.requirement_met() and (policy.cost <= mc.business.funds)):
                                         $ policy_name = "{color=999999}" + policy_name + "{/color}"
                                 textbutton policy_name:
                                     xalign 0.5
@@ -108,7 +119,7 @@ screen policy_selection_screen():
                                         #insensitive_background "#305012"
                                         insensitive_background "#222222"
                                     else:
-                                        if policy.requirement() and (policy.cost <= mc.business.funds):
+                                        if policy.requirement_met() and (policy.cost <= mc.business.funds):
                                             background "#000080"
                                         else:
                                             background "#000040"
@@ -155,6 +166,16 @@ screen policy_selection_screen():
                                     text_align 0.0
                                     size 18
                                     style "textbutton_text_style"
+
+                                if not selected_policy.requirement_met() and selected_policy.get_requirement_string() != "":
+                                    text selected_policy.get_requirement_string():
+                                        xalign 0.5
+                                        xanchor 0.5
+                                        yanchor 0.0
+                                        text_align 0.0
+                                        size 18
+                                        style "textbutton_text_style"
+                                        color "#b00000"
 
                                 null height 30
 
@@ -225,7 +246,7 @@ screen policy_selection_screen():
                                 background "#000080"
                                 hover_background "#1a45a1"
                                 insensitive_background "#222222"
-                                sensitive selected_policy.requirement() and (selected_policy.cost <= mc.business.funds)
+                                sensitive selected_policy.requirement_met() and (selected_policy.cost <= mc.business.funds)
                                 text_xalign 0.5
                                 text_xanchor 0.5
 

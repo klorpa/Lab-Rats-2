@@ -37,6 +37,7 @@ init -1 python:
         preg_transform_action = Action("Pregnancy Transform", preg_transform_requirement, "pregnant_transform", args = the_person, requirement_args = the_person)
         mc.business.mandatory_morning_crises_list.append(preg_transform_action) #This event adds an announcement event the next time you enter the same room as the girl.
 
+        mc.listener_system.fire_event("girl_pregnant", the_person = the_person)
         the_person.add_role(pregnant_role)
 
     def preg_transform_announce_requirement(the_person):
@@ -342,8 +343,7 @@ label pregnant_finish_announce(the_person): #TODO: have more varients for girlfr
     the_person "I'll let you know as soon as things are finished. Bye!"
 
     python:
-        the_person.event_triggers_dict["preg_old_schedule"] = the_person.copy_schedule() #Get a duplicate copy of their current schedule.
-        the_person.set_schedule(the_person.home, times = [0,1,2,3,4])
+        the_person.set_override_schedule(the_person.home) #Force her to stay home for the entire duration
 
         preg_finish_action = Action("Pregnancy Finish", preg_finish_requirement, "pregnant_finish", args = the_person, requirement_args = [the_person, day + renpy.random.randint(4,7)])
         mc.business.mandatory_morning_crises_list.append(preg_finish_action)
@@ -352,7 +352,7 @@ label pregnant_finish_announce(the_person): #TODO: have more varients for girlfr
 label pregnant_finish(the_person):
     python:
         the_person.body_type = the_person.event_triggers_dict.get("pre_preg_body", "standard_body")
-        the_person.schedule = the_person.event_triggers_dict.get("preg_old_schedule")
+        the_person.set_override_schedule(None) #Clear the override so she can go back to her job/home schedule.
 
         the_person.event_triggers_dict["preg_knows"] = False #Reset this, otherwise she immediately knows the next time she's pregnant.
         the_person.kids += 1 #TODO: add a new role related to a girl being a mother of your kid?

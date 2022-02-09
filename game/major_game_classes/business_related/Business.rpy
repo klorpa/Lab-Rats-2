@@ -67,6 +67,8 @@ init -2 python:
 
             self.batch_size = 5 #How many serums are produced in each production batch
 
+            self.recruitment_cost = 50
+
 
             self.inventory = SerumInventory()
             # Produciton lines now have their own class.
@@ -550,19 +552,19 @@ init -2 python:
         def get_aspect_price(self, the_aspect): #If we want to be really proper we could have this check _per aspect_, but I think that's excessive.
             the_aspect = the_aspect.lower()
             if the_aspect == "mental":
-                return (self.mental_aspect_price*1.0)/(1+((self.mental_aspect_sold*1.0)/(self.market_reach*1.0)))
+                return self.mental_aspect_price * self.get_aspect_percent("mental")
 
             elif the_aspect == "physical":
-                return (self.physical_aspect_price*1.0)/(1+((self.physical_aspect_price*1.0)/(self.market_reach*1.0)))
+                return self.physical_aspect_price * self.get_aspect_percent("physical")
 
             elif the_aspect == "sexual":
-                return (self.sexual_aspect_price*1.0)/(1+((self.sexual_aspect_price*1.0)/(self.market_reach*1.0)))
+                return self.sexual_aspect_price * self.get_aspect_percent("sexual")
 
             elif the_aspect == "medical":
-                return (self.medical_aspect_price*1.0)/(1+((self.medical_aspect_sold*1.0)/(self.market_reach*1.0)))
+                return self.medical_aspect_price * self.get_aspect_percent("medical")
 
             elif the_aspect == "flaw":
-                return self.flaws_aspect_cost
+                return self.flaws_aspect_cost * self.get_aspect_percent("flaw")
 
         def get_aspect_percent(self, the_aspect):
             the_aspect = the_aspect.lower()
@@ -570,10 +572,10 @@ init -2 python:
                 return 1.0/(1+((self.mental_aspect_sold*1.0)/(self.market_reach*1.0)))
 
             elif the_aspect == "physical":
-                return 1.0/(1+((self.physical_aspect_price*1.0)/(self.market_reach*1.0)))
+                return 1.0/(1+((self.physical_aspect_sold*1.0)/(self.market_reach*1.0)))
 
             elif the_aspect == "sexual":
-                return 1.0/(1+((self.sexual_aspect_price*1.0)/(self.market_reach*1.0)))
+                return 1.0/(1+((self.sexual_aspect_sold*1.0)/(self.market_reach*1.0)))
 
             elif the_aspect == "medical":
                 return 1.0/(1+((self.medical_aspect_sold*1.0)/(self.market_reach*1.0)))
@@ -663,51 +665,62 @@ init -2 python:
             elif self.team_effectiveness < 50:
                 self.team_effectiveness = 50
 
-
-        def add_employee_research(self, new_person):
-            self.research_team.append(new_person)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work(self.r_div)
-            new_person.add_role(employee_role)
-
-        def add_employee_production(self, new_person):
-            self.production_team.append(new_person)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work(self.p_div)
-            new_person.add_role(employee_role)
-
-        def add_employee_supply(self, new_person):
-            self.supply_team.append(new_person)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work(self.s_div)
-            new_person.add_role(employee_role)
-
-        def add_employee_marketing(self, new_person):
-            self.market_team.append(new_person)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work(self.m_div)
-            new_person.add_role(employee_role)
-
-        def add_employee_hr(self, new_person):
-            self.hr_team.append(new_person)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work(self.h_div)
-            new_person.add_role(employee_role)
-
-        def remove_employee(self, the_person, remove_linked = False):
+        def undesignate_person(self, the_person): #Removes the_person from all of the work lists so they can be moved around without them working in two departments.
             if the_person in self.research_team:
                 self.research_team.remove(the_person)
-            elif the_person in self.production_team:
+            if the_person in self.production_team:
                 self.production_team.remove(the_person)
-            elif the_person in self.supply_team:
+            if the_person in self.supply_team:
                 self.supply_team.remove(the_person)
-            elif the_person in self.market_team:
+            if the_person in self.market_team:
                 self.market_team.remove(the_person)
-            elif the_person in self.hr_team:
+            if the_person in self.hr_team:
                 self.hr_team.remove(the_person)
 
-            the_person.set_work(None)
-            the_person.remove_role(employee_role, remove_linked = remove_linked) #Some events only shuffle employees around, leaving employee related roles in place. For those, set remove_linked to True
+        def evict_person(self, the_person): #Removes a person from a location in the building and moves them to their home.
+            self.move_person(the_person, the_person.home)
+
+        def move_person(self, the_person, the_destination):
+            if rd_division.has_person(the_person):
+                rd_division.move_person(the_person, the_destination)
+            if p_division.has_person(the_person):
+                p_division.move_person(the_person, the_destination)
+            if office.has_person(the_person):
+                office.move_person(the_person, the_destination)
+            if m_division.has_person(the_person):
+                m_division.move_person(the_person, the_destination)
+
+        def add_employee_research(self, new_person):
+            self.undesignate_person(new_person)
+            self.research_team.append(new_person)
+            new_person.add_job(rd_job, job_known = True)
+
+        def add_employee_production(self, new_person):
+            self.undesignate_person(new_person)
+            self.production_team.append(new_person)
+            new_person.add_job(production_job, job_known = True)
+
+        def add_employee_supply(self, new_person):
+            self.undesignate_person(new_person)
+            self.supply_team.append(new_person)
+            new_person.add_job(supply_job, job_known = True)
+
+
+        def add_employee_marketing(self, new_person):
+            self.undesignate_person(new_person)
+            self.market_team.append(new_person)
+            new_person.add_job(market_job, job_known = True)
+
+        def add_employee_hr(self, new_person):
+            self.undesignate_person(new_person)
+            self.hr_team.append(new_person)
+            new_person.add_job(hr_job, job_known = True)
+
+        def remove_employee(self, the_person): #As of v0.49 this should be used exclusively for firing people. When changing jobs you can just assign them a new one, they should keep the correct roles.
+            self.undesignate_person(the_person)
+            self.evict_person(the_person)
+
+            the_person.add_job(unemployed_job, job_known = True)
 
             #Roles can have an on_remove function, but these have special events that we want to make sure are triggered properly.
             if the_person == self.head_researcher:
@@ -822,3 +835,74 @@ init -2 python:
             if [multiplier_class, multiplier] in self.sales_multipliers:
                 mc.log_event("No longer reciving " + str((multiplier - 1) * 100) + "% serum value increase from " + multiplier_class + ".", "float_text_grey")
                 self.sales_multipliers.remove([multiplier_class, multiplier])
+
+        def generate_candidate_requirements(self): #Checks current business policies and generates a dict of keywords for create_random_person to set the correct values to company requirements.
+            # In cases where a range is allowed it generates a random value in that range, so call this one per person being created.
+            candidate_dict = {} # This will hold keywords and arguments for create_random_person to create a person with specific modifies
+
+            if recruitment_skill_improvement_policy.is_active():
+                skill_cap = 7
+                candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
+                candidate_dict["skill_array"] = [renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap)]
+
+            if recruitment_stat_improvement_policy.is_active():
+                stat_cap = 7
+                candidate_dict["age_floor"] = candidate_dict.get("age_floor", 18) + 10
+                candidate_dict["stat_array"] = [renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap)]
+
+            if recruitment_sex_improvement_policy.is_active():
+                stat_cap = 7
+                candidate_dict["sex_array"] = [renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap)]
+
+            if recruitment_suggest_improvment_policy.is_active():
+                candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
+                candidate_dict["bonus_suggest"] = 2
+
+            if recruitment_obedience_improvement_policy.is_active():
+                candidate_dict["bonus_obedience"] = 10
+
+            if recruitment_slut_improvement_policy.is_active():
+                candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
+                candidate_dict["bonus_sluttiness"] = 20
+
+            if candidate_dict.get("age_ceiling", 50) < candidate_dict.get("age_floor", 18):
+                candidate_dict["age_ceiling"] = candidate_dict.get("age_floor",18) + 1
+
+
+            if recruitment_mothers_policy.is_active():
+                candidate_dict["bonus_kids"] = candidate_dict.get("bonus_kids", 0) + 1
+            elif recruitment_childless_policy.is_active():
+                candidate_dict["kids"] = 0
+
+            if recruitment_big_tits_policy.is_active():
+                candidate_dict["tits"] = get_random_big_tit()
+            elif recruitment_huge_tits_policy.is_active():
+                candidate_dict["tits"] = get_random_huge_tit()
+            elif recruitment_small_tits_policy.is_active():
+                candidate_dict["tits"] = get_random_small_tit()
+            elif recruitment_tiny_tits_policy.is_active():
+                candidate_dict["tits"] = "AA"
+
+            if recruitment_short_policy.is_active():
+                candidate_dict["height"] = 0.9 + (renpy.random.random()/30)
+            elif recruitment_tall_policy.is_active():
+                candidate_dict["height"] = 0.96 + (renpy.random.random()/30)
+
+
+            if recruitment_single_policy.is_active():
+                candidate_dict["relationship"] = "Single"
+            elif recruitment_married_policy.is_active():
+                candidate_dict["relationship"] = "Married"
+
+
+            if recruitment_old_policy.is_active():
+                candidate_dict["age_floor"] = 40
+            elif recruitment_teen_policy.is_active():
+                candidate_dict["age_ceiling"] = 19
+
+            if candidate_dict.get("age_ceiling", 50) > 60: #TODO: Introduce postmenapause women.
+                candidate_dict["age_ceiling"] = 60
+            if candidate_dict.get("age_floor", 18) < 18: #No FBI needed here!
+                candidate_dict["age_floor"] = 18
+
+            return candidate_dict

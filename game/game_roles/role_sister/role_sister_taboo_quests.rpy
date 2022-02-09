@@ -308,9 +308,11 @@ label sister_oral_taboo_break_revisit_quest_2(the_person):
     menu:
         "Keep waiting. {image=gui/heart/Time_Advance.png}" if time_of_day < 4:
             $ lead_girl = iris
-            $ iris.set_schedule(iris.home, times = [3])
-            $ iris.set_schedule(university, times = [1,2])
-            $ electronics_store.add_person(iris) #Now that she's added the world her turns proccess as normal too.
+            $ iris.add_role(dikdok_role)
+            $ iris.add_role(instapic_role) #Make sure she has both an instapic and dikdok account.
+            $ iris.add_job(influencer_job)
+            $ electronics_store.add_person(iris) #Now that she's added to the world her turns proccess as normal too.
+            # Let her wander the city for now, she doesn't "exist" until this point so we don't need to worry about her.
             "You sigh and resign yourself to the long wait."
             $ other_girl_1 = create_random_person()
             $ other_girl_2 = create_random_person()

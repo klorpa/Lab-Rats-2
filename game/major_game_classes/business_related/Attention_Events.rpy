@@ -34,11 +34,11 @@ label attention_event():
 
     $ city_rep.event_triggers_dict["currently_interogating"] = True #Set to False so we can use Role actions without them appearing when you meet her somewhere else.
     $ city_rep.event_triggers_dict["bribe_attempts"] = [] #Reset our list so we can avoid letting you repeatedly bribe her
-    $ city_rep.event_triggers_dict["bribe_successful"] = None #Store the most recently used bribe option so we can have some specific dialogue.s
+    $ city_rep.event_triggers_dict["bribe_successful"] = None #Store the most recently used bribe option so we can have some specific dialogues
 
 
     if city_rep.event_triggers_dict.get("city_rep_forced_uniform", False):
-        $ city_rep.apply_outfit(city_rep.event_triggers_dict.get("city_rep_forced_uniform", False))
+        $ city_rep.apply_outfit(city_rep.event_triggers_dict.get("city_rep_forced_uniform", Outfit("Nude")))
     else:
         $ city_rep.apply_outfit(city_rep.wardrobe.build_appropriate_outfit(city_rep.sluttiness))
 
@@ -77,7 +77,7 @@ label attention_event():
     elif bribe_result == "order":
         "[city_rep.title]'s enforcers come back. Before they can report anything she orders them outside."
         city_rep "We're done here."
-        "The two brusiers look at each other, a little confused. [city_rep.title] snaps at them."
+        "The two bruisers look at each other, a little confused. [city_rep.title] snaps at them."
 
     elif bribe_result == "orgasm":
         "[city_rep.title]'s enforcers come back. Before they can report anything she orders them outside."
@@ -169,13 +169,13 @@ label attention_seize_inventory(the_person):
     "She slips it back into it's box and turns back to you."
     if the_person.event_triggers_dict.get("city_rep_reduced_penalties_trained", False):
         the_person "We'll be taking..."
-        "She pauses. You can see the trance_planted obedience taking hold."
+        "She pauses. You can see the trance-planted obedience taking hold."
         the_person "... Some of this with us. You, go put half of that back."
         "Enforcer" "Ma'am? Are you sure?"
         the_person "Of course I'm sure! Now hurry up, before I have to report you when we get back."
-        "Enforcer" "Sorry Ma,am. Right away Ma'am."
+        "Enforcer" "Sorry Ma'am. Right away Ma'am."
     else:
-        the_person "We'll be taking this with us for futher investigation."
+        the_person "We'll be taking this with us for further investigation."
         mc.name "Will I be getting them back?"
         "She shakes her head politely."
         the_person "No. You won't."

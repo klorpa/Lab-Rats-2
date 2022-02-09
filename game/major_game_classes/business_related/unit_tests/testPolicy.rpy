@@ -7,11 +7,11 @@ init 0 python:
             mc.business.policy_list = [] #Makes sure we don't have policies left in this list from a previous test.
 
         def test_init(self):
-            test_policy = Policy("Test Policy", "This is a test description", test_policy_requirement, 100)
+            test_policy = Policy("Test Policy", "This is a test description", cost = 100, requirement = test_policy_requirement)
             self.assertIsInstance(test_policy, Policy)
 
         def test_policy_purchase(self):
-            test_policy = Policy("Test Policy", "This is a test description", test_policy_requirement, 100)
+            test_policy = Policy("Test Policy", "This is a test description", cost = 100, requirement = test_policy_requirement)
             start_cash = mc.business.funds
 
             test_policy.buy_policy()
@@ -19,7 +19,7 @@ init 0 python:
             self.assertTrue(test_policy in mc.business.policy_list)
 
         def test_policy_toggle(self):
-            test_policy = Policy("Test Policy", "This is a test description", test_policy_requirement, 100, toggleable = True)
+            test_policy = Policy("Test Policy", "This is a test description", cost = 100, requirement = test_policy_requirement, toggleable = True)
 
             test_policy.buy_policy()
             self.assertNotIn(test_policy, mc.business.active_policy_list)

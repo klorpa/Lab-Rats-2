@@ -55,25 +55,18 @@ screen person_info_ui(the_person, display_layer = "solo"): #Used to display stat
                 else:
                     text "???" style "menu_text_style" font the_person.char.what_args["font"] color the_person.char.what_args["color"] size 30
 
-                if mc.business.get_employee_title(the_person) == "None":
-                    text "     Job: Not employed." style "menu_text_style"
+                $ job_string = ""
+                if the_person.event_triggers_dict.get("job_known", False):
+                    $ job_string = the_person.job.job_title
                 else:
-                    text "     Job: " + mc.business.get_employee_title(the_person) style "menu_text_style"
+                    $ job_string = "Unknown"
 
+                text "     Job: " + job_string style "menu_text_style"
                 for role in the_person.special_role:
                     if not role.hidden:
                         text "       - " + role.role_name style "menu_text_style" size 14
 
             vbox:
-                # if the_person.arousal >= 20: #Removed in v0.43, arousal gains are now displayed in the same way as situational sluttiness.
-                #     textbutton "Arousal: [the_person.arousal]/[the_person.max_arousal] (+" + get_red_heart(__builtin__.int(the_person.arousal/4)) + ") {image=gui/extra_images/arousal_token.png}":
-                #         ysize 24
-                #         text_style "menu_text_style"
-                #         tooltip "When a girl is brought to 100% arousal she will start to climax. Climaxing will instantly turn temporary sluttiness into core sluttiness, as well as make the girl happy. The more aroused you make a girl the more sex positions she is willing to consider."
-                #         action NullAction()
-                #         sensitive True
-                # else:
-
                 $ disp_arousal = the_person.arousal
                 $ disp_max_arousal = the_person.max_arousal
                 textbutton "Arousal: " + str(disp_arousal) + "/" + str(disp_max_arousal) + " {image=gui/extra_images/arousal_token.png}":

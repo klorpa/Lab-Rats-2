@@ -194,6 +194,11 @@ init -2:
         list_of_names.append("Bonnie")
         list_of_names.append("Jasmine")
         list_of_names.append("Sasha")
+        list_of_names.append("Alessandra")
+        list_of_names.append("Ara")
+        list_of_names.append("Ami")
+        list_of_names.append("Ann-Kathrin")
+        list_of_names.append("Lizzie")
 
 
         def get_random_name():
@@ -351,6 +356,10 @@ init -2:
         list_of_last_names.append("Sánchez")
         list_of_last_names.append("Jones")
         list_of_last_names.append("Tanaka")
+        list_of_last_names.append("DeVille")
+        list_of_last_names.append("Onuki")
+        list_of_last_names.append("Luck")
+        list_of_last_names.append("Archer")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -522,8 +531,38 @@ init -2:
         list_of_tits.append(["F",1])
         list_of_tits.append(["FF",1])
 
+
+
         def get_random_tit():
             return get_random_from_weighted_list(list_of_tits)
+
+        list_of_big_tits = []
+        list_of_big_tits.append(["D",15])
+        list_of_big_tits.append(["DD",10])
+        list_of_big_tits.append(["DDD",5])
+        list_of_big_tits.append(["E",2])
+        list_of_big_tits.append(["F",1])
+        list_of_big_tits.append(["FF",1])
+
+        def get_random_big_tit():
+            return get_random_from_weighted_list(list_of_big_tits)
+
+        list_of_huge_tits = []
+        list_of_huge_tits.append(["E",2])
+        list_of_huge_tits.append(["F",1])
+        list_of_huge_tits.append(["FF",1])
+
+        def get_random_huge_tit():
+            return get_random_from_weighted_list(list_of_huge_tits)
+
+        list_of_small_tits = []
+        list_of_small_tits.append(["AA",5])
+        list_of_small_tits.append(["A",15])
+        list_of_small_tits.append(["B",30])
+        list_of_small_tits.append(["C",30])
+
+        def get_random_small_tit():
+            return get_random_from_weighted_list(list_of_small_tits)
 
         def get_smaller_tits(current_tits):
             for tits in list_of_tits:
@@ -562,13 +601,7 @@ init -2:
             # Picks one of several mostly-neutral colours that should go well with most items
             return get_random_from_list(list_of_clothing_colours)
 
-        list_of_jobs = []
-        list_of_jobs.append("scientist")
-        list_of_jobs.append("secretary")
-        list_of_jobs.append("PR representative")
-        list_of_jobs.append("sales person")
-
-        def get_random_job():
+        def get_random_job(): #TODO: Replace this with a more directed fucntion that distributes jobs based on stats.
             return get_random_from_list(list_of_jobs)
 
         list_of_body_types = []
@@ -974,7 +1007,7 @@ init 1 python:
         list_of_premade_characters.append(create_random_person(body_type = "standard_body", height=0.95, skin="tan", tits="FF", hair_colour="brown", hair_style=ponytail))
 
 
-        # Patron reward characters!
+        # Patron reward characters! #
         list_of_unique_characters = []
 
         dinah_wardrobe = wardrobe_from_xml("Dinah_Wardrobe")
@@ -1035,17 +1068,23 @@ init 1 python:
             personality = wild_personality, stat_array = [4,3,1], skill_array = [5,2,2,1,1], sex_array = [1,3,4,2])
         list_of_unique_characters.append(person_nuyoi)
 
-        # lynn_wardrobe = wardrobe_from_xml("Lynn_Wardrobe") #NOTE: Patron did not want a specific wardrobe, she'll draw her wardrobe randomly as normal.
+        lynn_wardrobe = wardrobe_from_xml("Lynn_Wardrobe") #NOTE: Patron did not want a specific wardrobe, she'll draw her wardrobe randomly as normal.
         # An exchange student who is doing a year abroad at a Catholic school. Especially to get away from her helicopter parents.
-        person_lynn = create_random_person(name = "Lynn", last_name = "Borch", body_type = "thin_body", height = 0.94, skin = "white", eyes = "brown", tits = "C", hair_colour = "brown", hair_style = long_hair,
+        person_lynn = create_random_person(name = "Lynn", last_name = "Borch", body_type = "thin_body", height = 0.94, age = 19, skin = "white", eyes = "brown", tits = "C", hair_colour = "brown", hair_style = long_hair, starting_wardrobe = lynn_wardrobe,
             personality = introvert_personality, stat_array = [1,3,4], skill_array = [1,2,1,5,2], sex_array = [2,1,5,1])
+        person_lynn.weaken_opinion("cheating on men", add_to_log = False)
+        person_lynn.weaken_opinion("cheating on men", add_to_log = False) #Just in case she already had an opinion.
+        person_lynn.create_opinion("cheating on men", start_positive = False, start_known = False, add_to_log = False)
+        person_lynn.strengthen_opinion("cheating on men", add_to_log = False)
         list_of_unique_characters.append(person_lynn)
 
         # Olga is a young library employee who likes to dress colorfully and is childish by behavior.
         # As if she wants to overplay something.
         olga_wardrobe = wardrobe_from_xml("Olga_Wardrobe")
-        person_olga = create_random_person(name = "Olga", last_name = "Schaad", body_type = "standard_body", height = 0.95, skin = "tan", eyes = "green", tits = "E", hair_colour = "blond", hair_style = messy_ponytail,
+        person_olga = create_random_person(name = "Olga", last_name = "Schaad", body_type = "standard_body", height = 0.95, skin = "tan", eyes = "green", tits = "E", hair_colour = "blond", hair_style = messy_ponytail, starting_wardrobe = olga_wardrobe,
             personality = wild_personality, stat_array = [4,1,3], skill_array = [2,5,2,1,1], sex_array = [2,4,1,1])
+        person_olga.weaken_opinion("working", add_to_log = False)
+        person_olga.weaken_opinion("working", add_to_log = False) #Just in case she already had an opinion.
         person_olga.create_opinion("working", start_positive = True, start_known = False, add_to_log = False)
         list_of_unique_characters.append(person_olga)
 
@@ -1060,7 +1099,10 @@ init 1 python:
             stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 14, start_obedience = 12, start_happiness = 119, start_love = 7, \
             title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
         stephanie.generate_home()
-        stephanie.opinions["research work"] = [2, True] #Steph always loves research work, which you know
+        stephanie.add_job(steph_lab_assistant)
+        stephanie.add_role(steph_role)
+        #NOTE: Stepahnie is hired in an event at the start of the game.
+        stephanie.set_opinion("research work", 2, True) #Steph always loves research work, which you know
 
         ### NORA ##
         nora_wardrobe = wardrobe_from_xml("Nora_Wardrobe")
@@ -1080,8 +1122,11 @@ init 1 python:
 
         nora.generate_home()
         nora.add_role(nora_role)
-        nora.set_schedule(nora.home, times = [0,1,2,3,4])
+        #Note that we don't add the professor job until you actually meet her, so we don't have her wandering around campus unintentionally.
+        nora.set_override_schedule(nora.home) #Sets her to stay at home so she doesn't wander around the city
+        nora.add_job(nora_professor_job)
         nora.home.add_person(nora)
+        nora.set_opinion("research work", 2, True) #Always loves research work
 
         reintro_event = Action("Nora cash reintro", nora_reintro_requirement, "nora_research_cash_intro", args = [nora, False])
         mc.business.mandatory_crises_list.append(reintro_event) #Reintro her if you don't take the option to visit her. Provides access to her special traits eventually.
@@ -1109,8 +1154,13 @@ init 1 python:
         alexia.on_room_enter_event_list.append(alexia_intro_phase_one_action)
 
         alexia.add_role(alexia_role)
-        alexia.set_schedule(alexia.home, times = [0,1,2,3,4])#Hide them in their bedroom off the map until they're ready.
+        alexia.add_job(alexia_barista_job)
+
+        #Her Barista job is added by an event that triggers two weeks in, so you can't run into her by accident
+        alexia.set_override_schedule(alexia.home) #Hide them in their bedroom off the map until they're ready.
         alexia.home.add_person(alexia)
+        alexia.set_override_schedule(alexia.home) #Stay at hom until we clear this.
+        alexia.set_opinion("marketing work", 2, False) #loves marketing work, but you don't now that right away.
 
         ### EMILY (18) ###
         emily_wardrobe = wardrobe_from_xml("Emily_Wardrobe")
@@ -1121,10 +1171,9 @@ init 1 python:
             eyes = "light blue", personality = relaxed_personality, starting_wardrobe = emily_wardrobe, stat_array = [3,2,1], skill_array = [2,1,1,1,2], sex_array = [3,1,1,0], \
             start_sluttiness = 6, start_obedience = 0, start_happiness = 100, start_love = 0, relationship = "Single", kids = 0, base_outfit = emily_base)
 
-        emily.generate_home()
-        emily.set_schedule(university, times = [1,2])
-        emily.set_schedule(emily.home, times = [3])
-        emily.home.add_person(emily)
+        emily.generate_home().add_person(emily)
+        emily.add_job(emily_student_job)
+        emily.set_schedule(emily.home, the_times = [0,1,2,3,4])
         emily.add_role(student_role)
 
 
@@ -1139,7 +1188,7 @@ init 1 python:
             eyes = "light blue", personality = reserved_personality, starting_wardrobe = christina_wardrobe, stat_array = [4,2,3], skill_array = [2,1,1,1,1], sex_array = [2,3,3,2], \
             start_sluttiness = 10, start_obedience = 5, start_happiness = 85, start_love = 0, start_home = emily.home, relationship = "Married", kids = 1, base_outfit = christina_base)
 
-        christina.set_schedule(christina.home, times = [1,2,3]) #She's a stay-at-home Mom.
+        christina.set_schedule(christina.home) #She's a stay-at-home Mom.
         christina.home.add_person(christina)
         #Note: She plays an important role to Emily's story, but she is just given the normal affair role during the game.
 
@@ -1154,9 +1203,10 @@ init 1 python:
 
         iris.add_role(instapic_role)
         iris.add_role(dikdok_role)
+        iris.add_job(influencer_job)
 
         iris.generate_home()
-        iris.set_schedule(iris.home, times = [0,1,2,3,4])
+        iris.set_schedule(iris.home) #Hides her at home so she doesn't wander the city by accident.
         iris.home.add_person(iris)
 
 
@@ -1171,8 +1221,9 @@ init 1 python:
             start_sluttiness = 0, start_obedience = -20, start_happiness = 100, start_love = -20)
 
         city_rep.add_role(city_rep_role)
+        city_rep.add_job(city_rep_job)
         city_rep.generate_home().add_person(city_rep)
-        city_rep.set_schedule(city_rep.home, times = [0,4])
+        city_rep.set_schedule(city_rep.home)
 
         city_rep.set_title("???")
         city_rep.set_mc_title("Mr."+mc.last_name)
@@ -1188,8 +1239,8 @@ init 1 python:
             title = "Lily", possessive_title = "Your sister", mc_title = mc.name, relationship = "Single", kids = 0)
 
         lily.add_role(sister_role)
-        lily.set_schedule(lily.home, times = [3])
-        lily.set_schedule(university, times = [1,2])
+        lily.add_job(sister_student_job)
+        lily.set_schedule(lily.home, the_times = [0,3,4])
 
         sister_intro_crisis = Action("sister_intro_crisis", sister_intro_crisis_requirements, "sister_intro_crisis_label", args=lily, requirement_args = [lily, renpy.random.randint(7,14)]) #Def is in roles.rpy
         sister_strip_intro_crisis = Action("sister_strip_intro_crisis", sister_strip_intro_requirement, "sister_strip_intro_label", args=lily, requirement_args = lily)
@@ -1215,8 +1266,9 @@ init 1 python:
             title = "Mom", possessive_title = "Your mother", mc_title = "Sweetheart", relationship = "Single", kids = 2, base_outfit = mom_base)
 
         mom.add_role(mother_role)
-        mom.set_schedule(kitchen, times = [3])
-        mom.set_work(mom_offices, work_times = [1,2])
+        mom.add_job(mom_associate_job)
+        mom.set_schedule(mom.home, the_times = [0,4])
+        mom.set_schedule(kitchen, the_times = 3)
 
         mom_weekly_pay_action = Action("mom weekly pay", mom_weekly_pay_requirement, "mom_weekly_pay_label", args=mom, requirement_args =[mom])
         mc.business.mandatory_morning_crises_list.append(mom_weekly_pay_action)
@@ -1241,8 +1293,9 @@ init 1 python:
             title = "Rebecca", possessive_title = "Your aunt", mc_title = mc.name, relationship = "Single", kids = 1)
 
 
-        aunt.add_role(aunt_role)
-        aunt.set_schedule(aunt_bedroom, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready.
+        aunt.add_role(aunt_role) #Note that her "Hire" event is actually held by her aunt role, which just checks if she has the aunt_unemployed_job Job. Avoids needing a new Role just for her non-job.
+        aunt.add_job(aunt_unemployed_job)
+        aunt.set_schedule(aunt_bedroom) #Hide them in their bedroom off the map until they're ready.
         aunt.home.add_person(aunt)
 
         aunt_intro_action = Action("Aunt introduction", aunt_intro_requirement, "aunt_intro_label", requirement_args = renpy.random.randint(15,20))
@@ -1262,7 +1315,8 @@ init 1 python:
             title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = "Single", kids = 0)
 
         cousin.add_role(cousin_role)
-        cousin.set_schedule(cousin_bedroom, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready
+        cousin.add_job(unemployed_job)
+        cousin.set_schedule(cousin_bedroom) #Hide them in their bedroom off the map until they're ready
         cousin.home.add_person(cousin)
 
 

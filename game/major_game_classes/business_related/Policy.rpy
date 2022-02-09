@@ -1,11 +1,25 @@
 init -2 python:
     class Policy(renpy.store.object): # An upgrade that can be purchased by the character for their business.
-        def __init__(self, name, desc, requirement, cost, toggleable = False,
+        def __init__(self, name, desc, cost, requirement = None, own_requirement = None, active_requirement = None, toggleable = False, exclusive_tag = None,
             on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_move_function = None, on_day_function = None, dependant_policies = None):
 
             self.name = name #A short name for the policy.
             self.desc = desc #A text description of the policy.
             self.requirement = requirement #a function that is run to see if the PC can purchase this policy.
+            if own_requirement is None:
+                self.own_requirement = [] #List of other policies that need to be owned for this policy to be available.
+            elif isinstance(own_requirement, Policy):
+                self.own_requirement = [own_requirement]
+            else:
+                self.own_requirement = own_requirement
+
+            if active_requirement is None:
+                self.active_requirement = [] #List of other policies that need to be active for this policy to be available.
+            elif isinstance(active_requirement, Policy):
+                self.active_requirement = [active_requirement]
+            else:
+                self.active_requirement = active_requirement
+
             self.cost = cost #Cost in dollars.
 
             self.toggleable = toggleable #If True this policy can be toggled on and off. Otherwise, it is set "active" when bought and can never be deactivated.
@@ -22,6 +36,7 @@ init -2 python:
             self.on_turn_function = on_turn_function #These functions are applied to anyone with the Employee role. Policies that affect people with specific sub-roles
             self.on_move_function = on_move_function
             self.on_day_function = on_day_function
+            self.exclusive_tag = exclusive_tag
 
             if dependant_policies is None:
                 self.dependant_policies = []
@@ -53,6 +68,52 @@ init -2 python:
 
         def __hash__(self):
             return hash((self.name,self.desc,self.cost))
+
+        def requirement_met(self):
+            default_requirements_met = True
+            for policy in self.own_requirement:
+                if not policy.is_owned():
+                    return False
+
+            for policy in self.active_requirement:
+                if not policy.is_active():
+                    return False
+
+            if not callable(self.requirement):
+                return True
+
+            requirement_return = self.requirement()
+            if isinstance(requirement_return, basestring) or not requirement_return:
+                return False
+
+            else:
+                return True
+
+        def get_requirement_string(self):
+            if self.requirement_met():
+                return ""
+
+            purchase_string = ""
+            if self.own_requirement:
+                for policy in self.own_requirement:
+                    if not policy.is_owned():
+                        purchase_string += policy.name + ", "
+
+            if self.active_requirement:
+                for policy in self.active_requirement:
+                    if not policy.is_active():
+                        purchase_string += policy.name + ", "
+
+            if callable(self.requirement):
+                requirement_return = self.requirement()
+                if isinstance(requirement_return, basestring):
+                    purchase_string += requirement_return
+
+            if purchase_string != "":
+                purchase_string = "Requires: " + purchase_string
+                purchase_string = purchase_string[:-2:] #Clear the comma and trailing space off of the last entry
+
+            return purchase_string
 
         def is_owned(self):
             if self in mc.business.policy_list:

@@ -13,13 +13,9 @@ init -2 python:
             return True
         return False
 
-    def alexia_intro_phase_two_requirement(the_person): #BUG: Alexia's title appears correctly in the action name but incorrectly in the disabled slug. May be due to some argument list references that are by reference instead of value.
-        if mc.business.is_weekend():
-            return "[alexia.title] only works on week days."
-        elif time_of_day == 0:
-            return "It's too early to visit [alexia.title]."
-        elif time_of_day >= 4:
-            return "It's too late to visit [alexia.title]."
+    def alexia_intro_phase_two_requirement(the_person):
+        if not the_person.job.job_location.has_person(the_person):
+            return False
         else:
             return True
 
@@ -94,8 +90,7 @@ init -2 python:
         return False
 
 label alexia_phase_zero_label():
-    #Sets Alexia's schedule so she is downtown during time periods 1,2,3.
-    $alexia.set_schedule(downtown, times = [1,2,3])
+    $ alexia.set_override_schedule(None) #Let her wander so she can go to work and show up Downtown.
     return
 
 label alexia_intro_phase_one_label(the_person):
@@ -138,10 +133,8 @@ label alexia_intro_phase_one_label(the_person):
     "You wave goodbye to [the_person.possessive_title] as she walks away."
 
     python:
-        alexia_intro_phase_two_action = Action("Visit " + the_person.title + " at work", alexia_intro_phase_two_requirement, "alexia_intro_phase_two_label", args = the_person, requirement_args = the_person)
-        downtown.actions.append(alexia_intro_phase_two_action)
-        downtown.move_person(the_person, the_person.home) #Change her schedule again so you don't see her anymore unless you visit her explicitly.
-        alexia.set_schedule(alexia.home, times = [1,2,3])
+        alexia_intro_phase_two_action = Action("Have coffee together", alexia_intro_phase_two_requirement, "alexia_intro_phase_two_label")
+        alexia_role.actions.append(alexia_intro_phase_two_action)
     $ clear_scene()
     return
 
@@ -149,11 +142,7 @@ label alexia_intro_phase_two_label(the_person):
     # Have a coffee together. She talk about what she's been doing, introduce her boyfriend.
 
     #TODO: Add a new background for the coffee shop (and other events that take place here?)
-    "You find the coffee shop [the_person.title] works at. It's a small corner unit, with a patio outside full of patrons."
-    #TODO: Add a waitress outfit for her
-    $ the_person.draw_person()
-    "You step inside and see [the_person.possessive_title] behind the front counter. She smiles when she sees you and waves you over."
-    the_person "Hey, I'm glad you were able to make it! I'm just finishing up my shift. Grab a seat and I'll be over in a minute."
+    the_person "I'm glad you were able to make it! I'm just finishing up my shift. Grab a seat and I'll be over in a minute."
     $ clear_scene()
     "She heads into the back room of the shop. You sit down at a small table for two by a window and wait."
     "A couple of minutes later [the_person.title] comes over with a paper cup in each hand. She puts one on the table and sits down opposite you."
@@ -227,8 +216,7 @@ label alexia_intro_phase_two_label(the_person):
     $ clear_scene()
     "[the_person.title] gets into the passenger side of her boyfriend's car. She says goodbye from inside and they drive off."
     python:
-        downtown.actions.remove(alexia_intro_phase_two_action) #Clear the action from her actions list.
-        alexia.set_schedule(downtown, times = [1,2,3]) #She spends her time downtown "working".
+        alexia.get_role_reference(alexia_role).actions.remove(alexia_intro_phase_two_action) #Clear the action from her actions list.
 
         alexia_hire_action = Action("Hire " + alexia.title + " to work in sales.", alexia_hire_requirement, "alexia_hire_label")
         the_person.get_role_reference(alexia_role).actions.append(alexia_hire_action) #NOTE: I think we can actually just modify the Role here, but we'll be double-sure.
@@ -261,14 +249,8 @@ label alexia_hire_label(the_person):
     $ the_person.draw_person(emotion = "happy") #TODO: When we have a hugging position draw them as happy.
     the_person "So, when can I start?"
     "You give [the_person.title] all of the details about her new job. She phones the coffee shop and quits on the spot."
-    python: #TODO: Consider calling the "hire someone" label instead of having a special section for this.
-        the_person.event_triggers_dict["employed_since"] = day
-        mc.business.listener_system.fire_event("new_hire", the_person = the_person)
-        for other_employee in mc.business.get_employee_list():
-            town_relationships.begin_relationship(the_person, other_employee) #She is introduced to everyone at work
-
-        mc.business.add_employee_marketing(the_person)
-        the_person.set_work(mc.business.m_div)
+    call hire_someone(the_person, production_allowed = False, research_allowed = False, supply_allowed = False, hr_allowed = False)
+    python: #Set up some role specific stuff here
         the_person.get_role_reference(alexia_role).actions.remove(alexia_hire_action) #Remove the hire action because this story event has played itself out.
 
         ad_suggest_event = Action("Ad Suggestion", alexia_ad_suggest_requirement, "alexia_ad_suggest_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(7,12)])

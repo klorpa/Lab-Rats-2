@@ -8,9 +8,10 @@ init 1300:
             return valid_titles
 
         def stephanie_possessive_titles(the_person):
-            return "Your friend"
+            return the_person.name
         def stephanie_player_titles(the_person):
             return mc.name
+
         stephanie_personality = Personality("stephanie", default_prefix = "wild",
         common_likes = ["pants", "research work", "Fridays", "makeup", "the colour red"],
         common_sexy_likes = ["giving blowjobs", "drinking cum","cheating on men"],

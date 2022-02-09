@@ -22,6 +22,11 @@ init -1 python:
     def fuck_date_requirement(the_person):
         if mc.business.event_triggers_dict.get("date_scheduled", False):
             return "You already have a date planned!"
+        elif the_person.has_role(girlfriend_role): #Girlfriends have a Sluttiness requirement
+            if the_person.effective_sluttiness() < 60:
+                return "Requires: 60 Sluttiness"
+            else:
+                return True
         else:
             return True
 
@@ -53,14 +58,22 @@ label plan_fuck_date_label(the_person):
     # A special date available to people you're in an affair with. Just hard core fucking, as long as you have the energy for.
     # Raises her love and sluttiness, with a small chance each time that her SO will come home and catch you.
     # If he comes home, chance to assert dominance and just keep fucking her (if she would normally leave her SO, or if you can make her cum when he comes in).
-
-    $ so_title = SO_relationship_to_title(the_person.relationship)
-    "You place a hand on [the_person.possessive_title]'s hips and caress her leg. She smiles and leans into your hand."
-    mc.name "I want to be alone with you. When will your [so_title] be out of the way so I can have you all to myself?"
-    if the_person.kids > 0:
-        the_person "He normally stays late at work on Fridays. I can make sure the house is empty and we can get down to business the moment you're in the door."
+    if the_person.has_role(affair_role):
+        $ so_title = SO_relationship_to_title(the_person.relationship)
+        "You place a hand on [the_person.possessive_title]'s hips and caress her leg. She smiles and leans into your hand."
+        mc.name "I want to be alone with you. When will your [so_title] be out of the way so I can have you all to myself?"
+        if the_person.kids > 0:
+            the_person "He normally stays late at work on Fridays. I can make sure the house is empty and we can get down to business the moment you're in the door."
+        else:
+            the_person "He's normally stuck late at work on Fridays. Just come on over and we can get down to business."
     else:
-        the_person "He's normally stuck late at work on Fridays. Just come on over and we can get down to business."
+        "You place your hands on [the_person.possessive_title]'s hips and squeeze her tight. She smiles and leans against you."
+        mc.name "I want to have you to myself for a whole night. I want to have the time to enjoy every single inch of you."
+        mc.name "When can you make that happen?"
+        if day & 7 == 4:
+            the_person "Mmm... Why wait? Come over tonight."
+        else:
+            the_person "Mmm... Think you can wait until Friday?"
 
     menu:
         "Plan a date for Friday night.":
@@ -85,8 +98,6 @@ label fuck_date_label(the_person):
     # Occures at night. You go to her place.
 
     $ mc.business.event_triggers_dict["date_scheduled"] = False #Deflag this event so you can schedule a date with another person for next week.
-    if the_person.relationship == "Single":
-        return #If she's single she must have broken up with her SO at some point, which means you're no longer having an affair with her. Clear out your date and move on with your life.
 
     "You have a fuck date planned with [the_person.title]."
     menu:
@@ -103,19 +114,30 @@ label fuck_date_label(the_person):
             return
 
     $ mc.change_location(the_person.home)
-    $ so_title = SO_relationship_to_title(the_person.relationship) #TODO: Make sure she's still in a relationship, or void this date if she isn't (because she's your girlfriend now).
+    if the_person.has_role(affair_role):
+        $ so_title = SO_relationship_to_title(the_person.relationship) #TODO: Make sure she's still in a relationship, or void this date if she isn't (because she's your girlfriend now).
 
-    if the_person.home not in mc.known_home_locations:
-        $ mc.known_home_locations.append(the_person.home)
-        "You make your way to [the_person.possessive_title]'s house for the first time. You text her first, in case her [so_title] is unexpectedly home."
+        if the_person.home not in mc.known_home_locations:
+            $ mc.known_home_locations.append(the_person.home)
+            "You make your way to [the_person.possessive_title]'s house for the first time. You text her first, in case her [so_title] is unexpectedly home."
+        else:
+            "You make your way to [the_person.possessive_title]'s house. You text her first, in case her [so_title] is unexpectedly home."
     else:
-        "You make your way to [the_person.possessive_title]'s house. You text her first, in case her [so_title] is unexpectedly home."
+        "You make your way to [the_person.possessive_title]'s house. You text her to let you know you're here."
+    $ mc.start_text_convo(the_person)
     mc.name "I'm here. Are you ready?"
     the_person "Come on in, the door is unlocked. I'm in the bedroom"
     $ mc.location.show_background()
+    $ mc.end_text_convo()
     "You go inside. The only light in the house comes from a room with its door ajar. When you swing it open you see [the_person.title] waiting."
     $ the_person.add_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!") # Bonus to sluttiness since you're in an affair and this is blatently a date to get fucked on.
-    call fuck_date_event(the_person) from _call_fuck_date_event
+
+    if the_person.has_role(girlfriend_role):
+        call girlfriend_fuck_date_event(the_person)
+    else:
+        call fuck_date_event(the_person)
+
+    $ the_person.clear_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!")
     return "Advance Time"
 
 label fuck_date_event(the_person): #A breakout function so we can call the fuck_date stuff any time you go back to a girls place.

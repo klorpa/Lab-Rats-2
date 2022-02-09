@@ -1,4 +1,4 @@
-## Holds all of the information required for the city rep who visits your copmany when Attention gets too high.
+## Holds all of the information required for the city rep who visits your company when Attention gets too high.
 
 #TODO: write our requiprements. Remember to check if "currently_interogating" is True if it's explicitly for a bribe, if not we've met her somewhere else!
 init -1 python:
@@ -37,7 +37,7 @@ label city_rep_negotiate(the_person):
     mc.name "Couldn't we come to some sort of agreement so this isn't necessary? What does the city need to stay out of my hair."
     $ obedience_requirement = 130 - 10*the_person.get_opinion_score("being submissive")
     if the_person.love < 0:
-        the_person "They need you to stop peddaling unregulated, unethical pharmaceuticals. Do you think you can do that for me?"
+        the_person "They need you to stop peddling unregulated, unethical pharmaceuticals. Do you think you can do that for me?"
         mc.name "That's my whole business..."
         the_person "Then I suppose we'll be seeing a lot of each other."
     elif the_person.love < 25:
@@ -60,7 +60,7 @@ label city_rep_negotiate(the_person):
             "Pay her. -$2500" if mc.business.has_funds(2500):
                 mc.name "I can pay you for it. I'm sure there are application fees, extra taxes, and so on..."
                 the_person "[the_person.mc_title], are you trying to bribe me?"
-                mc.name "Of course not! But if you're taking a risk, you deserve to be compinsated. Consider it insurance in case something does go wrong."
+                mc.name "Of course not! But if you're taking a risk, you deserve to be compensated. Consider it insurance in case something does go wrong."
                 "A longer pause this time."
                 the_person "Okay, I'll arrange for the paperwork to be put through."
                 mc.name "And I'll be sending you your funds. thank you for your help [the_person.title]."
@@ -83,7 +83,7 @@ label city_rep_negotiate(the_person):
 
             "Never mind.":
                 mc.name "I wouldn't want you to put your career in danger. I'm sure I can figure something else out."
-                the_person "You've proven to be quite ingenius to date, so I don't doubt it."
+                the_person "You've proven to be quite ingenious to date, so I don't doubt it."
     return
 
 label city_rep_bribe(the_person):
@@ -127,7 +127,7 @@ label city_rep_bribe(the_person):
                 the_person "They're perfectly respectable governmental employees, thank you very much."
     return
 
-label city_rep_seduce(the_person): #TODO: FIgure out if we can have something like this trigger automatically if you seduce her by groping her or something
+label city_rep_seduce(the_person): #TODO: Figure out if we can have something like this trigger automatically if you seduce her by groping her or something
     $ the_person.event_triggers_dict["bribe_attempts"] = the_person.event_triggers_dict.get("bribe_attempts",[]).append("seduction_attempted")
     mc.name "It seems like we have some time to spare [the_person.title]."
     "You step close to her and put your hand on the small of her back."
@@ -163,7 +163,7 @@ label city_rep_seduce(the_person): #TODO: FIgure out if we can have something li
                 "You wait a few minutes in silence."
 
 
-    else: #Hell yeah (TODO: Have an optoin for her to proposition you when she shows up instead)
+    else: #Hell yeah (TODO: Have an option for her to proposition you when she shows up instead)
         "She leans into you, pressing her weight into your side."
         the_person "I thought you'd never ask. Your office is a good idea, I think we'd cause a bit of a scene if we stayed here..."
         "You lead her to your office and close the door behind you."
@@ -174,11 +174,11 @@ label city_rep_seduce(the_person): #TODO: FIgure out if we can have something li
         $ the_report = _return
         if the_report.get("girl orgasms", 0) > 0:
             $ the_person.event_triggers_dict["bribe_successful"] = "orgasm"
-            mc.name "I trust I've given you sufficent reason to take your thugs and leave?"
+            mc.name "I trust I've given you sufficient reason to take your thugs and leave?"
             "[the_person.possessive_title] is still breathing heavy, recovering from her climax."
             the_person "What? Oh... Fine, I'll call off my men."
             $ the_person.change_obedience(2)
-            the_person "But nobody can no about this, understood?"
+            the_person "But nobody can know about this, understood?"
             mc.name "Of course [the_person.title]. It will be our little secret."
         else:
             $ the_report = _return
@@ -229,7 +229,7 @@ label city_rep_order(the_person):
 
 init -1 python:
     def city_rep_dressup_training_requirement(the_person):
-        if the_person.get_known_opinion_score("likes skimpy uniforms") > 0:
+        if the_person.get_known_opinion_score("skimpy uniforms") > 0:
             return True
         else:
             return "Likes Skimpy Uniforms"
@@ -289,7 +289,7 @@ label city_rep_dressup_training(the_person):
             "It's not a suggestion, it's a command. She nods."
             the_person "Okay. What if my boss comments on my outfit?"
             mc.name "Tell him he's welcome to look at much as he wants."
-            mc.name "He probably has a boring job, he shoudl be thanking me for giving him some eye candy."
+            mc.name "He probably has a boring job, he should be thanking me for giving him some eye candy."
             "She nods obediently."
         the_person "Okay, I'll go and buy everything I need tonight."
         mc.name "Good girl."
@@ -310,13 +310,24 @@ label city_rep_penalty_reduction_training(the_person):
 
 
 label city_rep_internal_sabotage_training(the_person):
-    mc.name "[the_person.title], all of these vitits are nice, but I'd like a little less attention from the city."
+    mc.name "[the_person.title], all of these visits are nice, but I'd like a little less attention from the city."
     mc.name "I want you to start destroying any evidence about me that crosses your desk."
     "She shakes her head weakly."
-    the_person "I... I can't do that [the_person.mc_title]. It's not what I'm suppose to do."
+    the_person "I... I can't do that [the_person.mc_title]. It's not what I'm supposed to do."
     mc.name "It is now, because I'm telling you to do it."
-    "She resists a moment longer, but she can only hold out so long while in a trace."
+    "She resists a moment longer, but she can only hold out so long while in a trance."
     the_person "Okay, I'll get rid of anything I can..."
     mc.name "Good girl."
     $ attention_bleed_increase_2_policy.buy_policy(ignore_cost = True)
+    return
+
+label city_rep_offer_hire(the_person):
+    mc.name "Tell me [the_person.title], have you ever thought about finding work in the public sector?"
+    mc.name "I'm sure you could make a lot more money at, random example, a friendly pharmaceutical company."
+    "She shakes her head, dismissing the idea."
+    the_person "I don't do this for the money, I do it for the people."
+    the_person "It's not glamourous, but I know that I'm making a difference and keeping people safe."
+    mc.name "Surely there's something I could offer you to change your mind."
+    "She smiles politely and shakes her head again."
+    the_person "Sorry [the_person.mc_title], I'm not for sale."
     return

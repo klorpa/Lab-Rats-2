@@ -809,7 +809,7 @@ label mom_vaginal_taboo_break_revisit_quest_2(the_person):
     call advance_time()
 
     $ decision_event = Action("make a decision", mom_vaginal_quest_3_requirement, "mom_vaginal_quest_3", args = the_person, requirement_args = [the_person, day + renpy.random.randint(1,3)])
-    $ mc.business.mandatory_crises_list(decision_event)
+    $ mc.business.mandatory_crises_list.append(decision_event)
     return
 
 label mom_advice_dm(the_person):

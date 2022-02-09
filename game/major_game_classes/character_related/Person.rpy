@@ -2,7 +2,7 @@ init -2 python:
     class Person(renpy.store.object): #Everything that needs to be known about a person.
         global_character_number = 0 #This is increased for each character that is created.
         def __init__(self,name,last_name,age,body_type,tits,height,body_images,expression_images,hair_colour,hair_style,pubes_colour,pubes_style,skin,eyes,job,wardrobe,personality,stat_list,skill_list,
-            sluttiness=0,obedience=0,suggest=0,sex_list=[0,0,0,0], love = 0, happiness = 100, home = None, work = None,
+            sluttiness=0,obedience=0,suggest=0,sex_list=[0,0,0,0], love = 0, happiness = 100, home = None,
             font = "fonts/Avara.tff", name_color = "#ffffff", dialogue_color = "#ffffff",
             face_style = "Face_1",
             special_role = None,
@@ -16,6 +16,8 @@ init -2 python:
             self.character_number = Person.global_character_number #This is a gunique number for each character. Used as a tag when showing a character to identify if they are already drawn (and thus need to be hidden)
             Person.global_character_number += 1
 
+            self.event_triggers_dict = {} #A dict used to store extra parameters used by events, like how many days has it been since a performance review.
+
             self.title = title #Note: We format these down below!
             self.possessive_title = possessive_title #The way the girl is refered to in relation to you. For example "your sister", "your head researcher", or just their title again.
             if mc_title:
@@ -23,13 +25,13 @@ init -2 python:
             else:
                 self.mc_title = "Stranger"
 
-            self.home = home #The room the character goes to at night. If none a ranjdom public location is picked.
-            self.work = work #The room the character goes to for work.
-            self.schedule = {}
-            for x in range(0,7):
-                self.schedule[x] = {0:home,1:None,2:None,3:None,4:home}
-            #If there is a place in the schedule the character will go there. Otherwise they have free time and will do whatever they want.
-            self.job = job
+            self.home = home #The room the character goes to at night. If none a random public location is picked.
+
+            self.schedule = Schedule()
+
+            self.override_schedule = Schedule() #The mandatory place a person will go EVEN if they have work (useful for giving days off or requiring weekend work)
+
+
 
             # Relationship and family stuff
             if relationship:
@@ -142,14 +144,13 @@ init -2 python:
                 self.special_role = []
                 log_message("Person \"" + name + " " + last_name + "\" was handed an incorrect special role parameter.")
 
+            self.job = None
+            self.add_job(job)
 
             self.on_room_enter_event_list = [] #Checked when you enter a room with this character. If an event is in this list and enabled it is run (and no other event is until the room is reentered)
                 # If handed a list of [action, positive_int], the integer is how many turns this action is kept around before being removed, triggered or not.
             self.on_talk_event_list = [] #Checked when you start to interact with a character. If an event is in this list and enabled it is run (and no other event is until you talk to the character again.)\
                 # If handed a list of [action, positive_int], the integer is how many turns this action is kept around before being removed, triggered or not.
-
-            self.event_triggers_dict = {} #A dict used to store extra parameters used by events, like how many days has it been since a performance review.
-            self.event_triggers_dict["employed_since"] = 0
 
             ##Mental stats##
             #Mental stats are generally fixed and cannot be changed permanently. Ranges from 1 to 5 at start, can go up or down (min 0)
@@ -172,9 +173,9 @@ init -2 python:
             self.max_energy = 100
             self.energy = self.max_energy
 
+            self.salary_modifier = 1.0 # Set by events for what this character considers "fair" for their skill, and/or reflects what they were promised.
             self.salary = self.calculate_base_salary()
 
-            # self.employed_since = 0 #Default this to 0, it will almost always be overwritten but in case it sneaks through this makes sure that nothing breaks.
 
             self.idle_pose = get_random_from_list(["stand2","stand3","stand4","stand5"]) #Get a random idle pose that you will use while people are talking to you.
             self.idle_animation = idle_wiggle_animation #If we support animation we use this to jiggle their tits and ass just a little to give the screen some movement.
@@ -417,7 +418,7 @@ init -2 python:
 
                 self.home = start_home
                 if set_home_time:
-                    self.set_schedule(start_home, times = [0,4])
+                    self.set_schedule(start_home, the_times = [0,4])
                 list_of_places.append(start_home)
             return self.home
 
@@ -526,12 +527,12 @@ init -2 python:
                 self.planned_uniform = None
 
             destination = self.get_destination() #None destination means they have free time
-            if destination == self.work and not mc.business.is_open_for_business():
-                destination = None #TODO: We can now do day-of-the-week scheduling, so this is no longer needed.
+            # if destination == self.work and not mc.business.is_open_for_business():
+            #     destination = None #TODO: We can now do day-of-the-week scheduling, so this is no longer needed.
 
             if destination is not None: #We have somewhere scheduled to be for this turn. Let's move over there.
                 location.move_person(self, destination) #Always go where you're scheduled to be.
-                if self.get_destination() == self.work: #We're going to work.
+                if self.job and self.get_destination() == self.job.job_location: #We're going to work.
                     if self.should_wear_uniform(): #Get a uniform if we should be wearing one.
                         self.wear_uniform()
                         self.change_happiness(self.get_opinion_score("work uniforms"),add_to_log = False)
@@ -1049,6 +1050,25 @@ init -2 python:
 
             return updated
 
+        def set_opinion(self, topic, strength, known = False): #override function to set an opinion to a known value, mainly used to set up characters before they are introduced
+            is_sexy_opinion = False
+            if topic in sexy_opinions_list:
+                is_sexy_opinion = True
+
+            if not strength == 0:
+                if is_sexy_opinion:
+                    self.sexy_opinions[topic] = [strength, known]
+                else:
+                    self.opinions[topic] = [strength, known]
+
+            else:
+                if topic in self.opinions:
+                    self.opinions.pop(topic)
+                if topic in self.sexy_opinions:
+                    self.sexy_opinions.pop(topic)
+
+
+
         def strengthen_opinion(self, topic, add_to_log = True):
             display_name = self.create_formatted_title("???")
             if self.title:
@@ -1100,7 +1120,7 @@ init -2 python:
                 updated = True
                 if topic in self.opinions:
                     self.opinions.pop(topic)
-                else:
+                elif topic in self.sexy_opinions:
                     self.sexy_opinions.pop(topic)
                 display_string += "Opinion Weakened: " + display_name + " now " + opinion_score_to_string(self.get_opinion_score(topic)) + " " + topic
 
@@ -1979,7 +1999,7 @@ init -2 python:
 
         def run_orgasm(self, show_dialogue = True, force_trance = False, trance_chance_modifier = 0, add_to_log = True, sluttiness_increase_limit = 30, reset_arousal = True, fire_event = True):
             self.change_slut(1, sluttiness_increase_limit, add_to_log = add_to_log)
-            mc.listener_system.fire_event("girl_climax", the_person = the_person)
+            mc.listener_system.fire_event("girl_climax", the_person = self)
             if renpy.random.randint(0,100) < self.suggestibility + trance_chance_modifier or force_trance:
                 display_name = self.create_formatted_title("???")
                 if self.title:
@@ -2181,60 +2201,40 @@ init -2 python:
             if add_to_log and amount != 0:
                 mc.log_event(log_string, "float_text_green")
 
+        #TODO: We should add an "expected salary modifier" field, so people who are interns don't get angry about it.
         def calculate_base_salary(self): #returns the default value this person should be worth on a per day basis.
-            return (self.int + self.focus + self.charisma)*2 + (self.hr_skill + self.market_skill + self.research_skill + self.production_skill + self.supply_skill)
+            return __builtin__.int((self.int + self.focus + self.charisma)*2 + (self.hr_skill + self.market_skill + self.research_skill + self.production_skill + self.supply_skill) * self.salary_modifier)
 
-        def set_schedule(self, the_location, days = None, times = None):
-            if days is None:
-                days = [0,1,2,3,4,5,6] #Full week if not specified
-            if times is None:
-                times = []
+        def set_schedule(self, the_location, the_days = None, the_times = None):
+            self.schedule.set_schedule(the_location, the_days, the_times)
 
-            for the_day in days:
-                for time_chunk in times:
-                    self.schedule[the_day][time_chunk] = the_location
+        def set_override_schedule(self, the_location, the_days = None, the_times = None):
+            self.override_schedule.set_schedule(the_location, the_days, the_times)
 
         def copy_schedule(self): #Returns a properly formatted dict without references to the current schedule.
-            return_schedule = {}
-            for x in range(0,7):
-                return_schedule[x] = copy.copy(self.schedule[x])
-            return return_schedule
+            return self.schedule.get_copy()
+            #TODO: Should this return some sort of overlapped work/life schedule?
 
-        def set_work(self, the_location, work_days = None, work_times = None): #Sets the person's schedule so they visit their location at those times.
-            if work_days is None:
-                work_days = [0,1,2,3,4] #Standard values
-            if work_times is None:
-                work_times = [1,2,3] #Standard values
+        def get_destination(self, specified_day = None, specified_time = None): #TODO: Needs to check against personal and work schedule
+            override_return = self.override_schedule.get_destination(specified_day, specified_time)
+            if override_return is not None:
+                return override_return
 
-            if the_location is None: #Setting Location as None clears their work schedule completely
-                for the_day in range(0,7):
-                    for the_time in range(0,5):
-                        if self.schedule[the_day][the_time] == self.work:
-                            self.schedule[the_day][the_time] = None
+            work_return = self.job.schedule.get_destination(specified_day, specified_time)
+            if work_return is not None:
+                return work_return #our job is telling us to be somewhere, so go there
 
-            else:
-                self.set_schedule(the_location, work_days, work_times) #Set them to work M-F, morning till afternoon
-
-            self.work = the_location
-
-        def get_destination(self, specified_day = None, specified_time = None):
-            if specified_day is None:
-                specified_day = day%7 #Today
-            elif specified_day >= 7:
-                specified_day = day%7 #Convert to weekly day key.
-
-            if specified_time is None:
-                specified_time = time_of_day #Now
-            return self.schedule[specified_day][specified_time] #Returns the Room this person should be in during the specified turn.
+            return self.schedule.get_destination(specified_day, specified_time) #Otherwise, go where we want.
 
         def get_next_destination(self):
-            check_time = time_of_day + 1
-            check_day = day
-            if check_time > 4:
-                check_day = day+1
-                check_time = 0
-
-            return self.get_destination(check_day, check_time)
+            override_return = self.override_schedule.get_next_destination()
+            if override_return is not None:
+                return override_return
+            work_return = self.job.schedule.get_next_destination()
+            if work_return is not None:
+                return work_return
+            else:
+                return self.schedule.get_next_destination()
 
         def person_meets_requirements(self, slut_required = 0, core_slut_required = 0, obedience_required = 0, obedience_max = 2000, love_required = -200):
             if self.sluttiness >= slut_required and self.obedience >= obedience_required and self.obedience <= obedience_max and self.love >= love_required:
@@ -2268,6 +2268,37 @@ init -2 python:
                 what = text_modifier(self, what)
 
             return what
+
+        def has_job(self, the_job):
+            if self.job and self.job == the_job:
+                return True
+            return False
+
+
+        def add_job(self, new_job, job_known = True): #Start a new job, quitting your old one if nessesary #TODO: REname this to "change_job"?
+            if self.job and new_job == self.job: #Don't do anything if we already have this job.
+                return
+
+            if self.job:
+                if self.job.quit_function:
+                    self.job.quit_function(self)
+
+                if not new_job.job_role == self.job.job_role: # If the new job has the same job role we don't change roles (which might otherwise remove linked roles.
+                    self.remove_role(self.job.job_role)
+
+
+            if new_job.hire_function:
+                new_job.hire_function(self)
+
+            if (self.job and not new_job.job_role == self.job.job_role) or not self.job: #Only add the role if it differs from our current job.
+                self.add_role(new_job.job_role)
+
+            self.job = new_job
+            self.event_triggers_dict["job_known"] = job_known
+
+        def quit_job(self, job_known = True): #Quit and become unemployed
+            self.add_job(unemployed_job)
+
 
         def add_role(self, the_role):
             self.special_role.append(the_role)

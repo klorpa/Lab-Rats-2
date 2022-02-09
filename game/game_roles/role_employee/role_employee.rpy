@@ -115,6 +115,8 @@ init -2 python:
             return True
 
 
+
+
 #### EMPLOYEE ACTION LABELS ####
 
 label employee_complement_work(the_person):
@@ -775,38 +777,28 @@ label move_employee_label(the_person):
                 return
 
     the_person "Where would you like me then?"
-    $ mc.business.remove_employee(the_person, remove_linked = False)
+    # $ mc.business.remove_employee(the_person, remove_linked = False)
     #TODO: All of the moving employees around should probably be its own function, which would let us set up an employee schedule where they work in different sections if we wanted.
-
-    if rd_division.has_person(the_person):
-        $ rd_division.remove_person(the_person)
-    elif p_division.has_person(the_person):
-        $ p_division.remove_person(the_person)
-    elif office.has_person(the_person):
-        $ office.remove_person(the_person)
-    elif m_division.has_person(the_person):
-        $ m_division.remove_person(the_person)
-
     menu:
         "Research and Development.":
             $ mc.business.add_employee_research(the_person)
-            $ mc.business.r_div.add_person(the_person)
+            $ mc.business.move_person(the_person, mc.business.r_div)
 
         "Production.":
             $ mc.business.add_employee_production(the_person)
-            $ mc.business.p_div.add_person(the_person)
+            $ mc.business.move_person(the_person, mc.business.p_div)
 
         "Supply Procurement.":
             $ mc.business.add_employee_supply(the_person)
-            $ mc.business.s_div.add_person(the_person)
+            $ mc.business.move_person(the_person, mc.business.s_div)
 
         "Marketing.":
             $ mc.business.add_employee_marketing(the_person)
-            $ mc.business.m_div.add_person(the_person)
+            $ mc.business.move_person(the_person, mc.business.m_div)
 
         "Human Resources.":
             $ mc.business.add_employee_hr(the_person)
-            $ mc.business.h_div.add_person(the_person)
+            $ mc.business.move_person(the_person, mc.business.h_div)
 
     the_person "I'll move over there right away!"
     return

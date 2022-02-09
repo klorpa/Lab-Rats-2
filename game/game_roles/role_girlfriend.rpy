@@ -212,16 +212,6 @@ label caught_cheating_label(the_other_girl, the_girlfriend): #Note: the_other_gi
     $ town_relationships.worsen_relationship(the_girlfriend, the_other_girl)
     return
 
-label ask_change_hair_style(the_person):
-    #Requires moderate obedience. Ask her to cut her hair a different way.
-    #TODO: Implement ordered_variable for hair so we know what hairs take more time to grow into what other hairs.
-    return
-
-label ask_dye_hair(the_person):
-    #Requires moderate obedience. Ask her to dye her hair a different colour.
-
-    return
-
 label ask_get_boobjob_label(the_person):
     mc.name "I've been thinking about something lately."
     the_person "Mhmm? What about?"
@@ -305,7 +295,7 @@ label ask_get_boobjob_label(the_person):
     return
 
 label girlfriend_got_boobjob_label(the_person):
-    call got_boobjob(the_person) from _call_got_boobjob_1
+    call got_boobjob(the_person)
     $ girlfriend_boob_brag_action = Action("Girlfriend Boobjob Brag", girlfriend_boob_brag_requirement, "girlfriend_boob_brag_label")
     $ the_person.on_talk_event_list.append(girlfriend_boob_brag_action)
     return
@@ -323,7 +313,7 @@ label girlfriend_boob_brag_label(the_person): #TODO: Decide if we need a little 
         the_person "I hope you like them, maybe we can have some fun with them later."
         $ the_person.change_slut(2, 60)
 
-    call talk_person(the_person) from _call_talk_person_9
+    call talk_person(the_person)
     return
 
 label plan_date_night(the_person):
@@ -409,3 +399,110 @@ label girlfriend_do_trim_pubes_label(the_person, the_style):
 label girlfriend_pubes_comment(the_person):
     #Next time you talk to her she comments that she trimmed her pubes
     return
+
+label girlfriend_fuck_date_event(the_person):
+    #Figure out her outfit for this
+
+    if the_person.get_opinion_score("not wearing anything") > the_person.get_opinion_score("lingerie"):
+        $ the_person.apply_outfit(Outfit("Nude"), update_taboo = True) #She's wearing nothing at all. nothing at all. nothing at all...
+
+    elif the_person.get_opinion_score("lingerie") >= 0:
+        $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.sluttiness + 20, 0 + (the_person.sluttiness/2), guarantee_output = True), update_taboo = True) #She's just wearing lingerie for the evening.
+
+    else:
+        $ the_person.apply_outfit(the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0), update_taboo = True) #She picks a slutty outfit, but nothing truely "special".
+
+    if the_person.obedience > 130 or the_person.get_opinion_score("being submissive") > 0 or the_person.get_opinion_score("giving blowjobs") > 0:
+        #She's on her knees and ready to suck you off as soon as you come in.
+        $ the_person.draw_person(position = "kneeling1")
+        $ mc.change_locked_clarity(20)
+        the_person "Hello, I'm ready for you [the_person.mc_title]..."
+        "She licks her lips and watches you from her knees."
+        the_person "Don't waste any time, I want you in my mouth."
+        call fuck_person(the_person, private = True, start_position = blowjob)
+
+    else:
+        #She's standing and ready to make out as soon as you come in."
+        $ the_person.draw_person()
+        $ mc.change_locked_clarity(10)
+        the_person "Hello [the_person.mc_title]... I've been thinking about this all day."
+        "You step inside. She reaches past you and closes the bedroom door." #Note that you never end up with submissive people down this branch
+        "She wastes no time wrapping her arms around you and kissing you."
+        call fuck_person(the_person, private = True, start_position = kissing)
+
+    $ the_report = _return
+
+    $ done = False
+    $ had_to_run = False
+    $ girl_came = False
+    $ so_called = False
+    $ energy_gain_amount = 50 #Drops each round, representing your flagging endurance.
+    while not done:
+        if the_report.get("girl orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
+            $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
+            $ the_person.change_slut(1, 80)
+            the_person "Oh god... That was amazing!"
+            "[the_person.title] lies down on her bed and catches her breath."
+            the_person "Ready to get back to it?"
+            $ girl_came = True
+
+        else:
+            the_person "Whew, good job. Get some water and let's go for another!"
+            "You take some time to catch your breath, drink some water, and wait for your refractory period to pass."
+            "You hold [the_person.title] in bed while she caresses you and touches herself, keeping herself ready for you."
+
+
+
+        if mc.energy < 40 and energy_gain_amount <= 20: #Forced to end the fuck date, so we set done to True.
+            "The spirit is willing, but the flesh is spent. Try as she might [the_person.title] can't coax your erection back to life."
+            if girl_came:
+                the_person "Well, I guess that's all I'm going to be drawing out of you for tonight. That was fun."
+                "She kisses you and runs her hand over your back."
+                the_person "Now you should get going. Unless you're planning to stay the night?"
+            else:
+
+                $ the_person.change_love(-1)
+                $ the_person.change_slut(-1)
+                the_person "Well I guess we're done then... Maybe next time you can get me off as well."
+
+            $ done = True
+            "You get dressed, triple check you haven't forgotten anything, and leave. [the_person.title] kisses you goodbye at the door."
+        else:
+            "After a short rest you've recovered some of your energy and [the_person.possessive_title]'s eager to get back to work."
+            $ mc.change_energy(energy_gain_amount)
+            $ the_person.change_energy(energy_gain_amount) #She gains some back too
+            if energy_gain_amount >= 10:
+                $ energy_gain_amount += -10 #Gain less and less energy back each time until eventually you're exhausted and gain nothing back.
+            menu:
+                "Fuck her again.":
+                    "Soon you're ready to go again and you wrap your arms around [the_person.title]."
+                    mc.name "Come here you little slut."
+                    # $ random_num = renpy.random.randint(0,100)
+                    #TODO: Chance her adult daughter comes home and finds out what you're doing. (ie. same as the affair fuck date).
+                    call fuck_person(the_person)
+                    $ the_report = _return
+
+                "Call it a night.":
+                    mc.name "I have to get going. This was fun."
+                    "You kiss [the_person.title], then get up and start collecting your clothes."
+                    if girl_came:
+                        the_person "Okay then. We need to do this again, you rocked my world [the_person.mc_title]."
+                        "She sighs happily and lies down on her bed."
+
+                    else:
+                        the_person "Really? I didn't even get to cum yet..."
+                        $ the_person.change_love(-1)
+                        $ the_person.change_slut(-1)
+                    $ done = True
+                    "You shrug and pull up your pants."
+
+
+
+    #As soon as done is True we finish looping. This means each path should narrate it's own end of encounter stuff.
+    #Generic stuff to make sure we don't keep showing anyone.
+    if not had_to_run:
+        call check_date_trance(the_person)
+
+    $ the_person.clear_situational_slut("Date")
+    $ clear_scene()
+    return "Advance Time"

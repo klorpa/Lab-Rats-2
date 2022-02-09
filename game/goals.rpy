@@ -20,6 +20,7 @@
 # "sex_cum_vagina", the_person
 # "girl_climax", the_person
 # "core_slut_change", the_person, amount
+# "girl_pregnant", the_person
 
 
 
@@ -248,6 +249,12 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
             return True
         return False
 
+    def knockup_count_function(the_goal, **kwargs):
+        the_goal.arg_dict["count"] += 1
+        if the_goal.arg_dict["count"] >= the_goal.arg_dict["required"]:
+            return True
+        return False
+
     def orgasm_count_difficulty_function(the_goal, the_difficulty):
         the_goal.arg_dict["required"] += the_difficulty
         return
@@ -312,6 +319,12 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
 
     def always_valid_goal_function(the_goal, the_difficulty): #Always a valid goal to give to the player. TODO: Impliment support for non-valid goals.
         return True
+
+    def pregnancy_valid_goal_function(the_goal, the_difficulty):
+        if persistent.pregnancy_pref > 0 and the_difficulty >= 5: #Don't trigger this goal too early
+            return True
+        else:
+            return False
 
     def flat_difficulty_function(the_goal, the_difficulty): #Does not become more difficult with time.
         return
@@ -409,6 +422,10 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
     {"count": 0, "required": 2},
     difficulty_scale_function = taboo_break_difficulty_function, report_function = standard_count_report, progress_fraction_function = standard_progress_fraction)
 
+    knockup_goal = Goal("Beautiful Burdening", "They might say they don't want kids, but in the heat of the moment simple biology can not be denied. Bang 'em and breed 'em!", "girl_pregnant", "MC", pregnancy_valid_goal_function, knockup_count_function,
+    {"count": 0, "required": 1},
+    difficulty_scale_function = flat_difficulty_function, report_function = standard_count_report, progress_fraction_function = standard_progress_fraction)
+
 
     stat_goals.append(work_time_goal)
     stat_goals.append(hire_someone_goal)
@@ -433,3 +450,4 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
     sex_goals.append(vagina_cum_goal)
     sex_goals.append(chain_orgasm_goal)
     sex_goals.append(taboo_break_goal)
+    sex_goals.append(knockup_goal)

@@ -102,7 +102,8 @@ label lady_of_the_night_label():
     # You run into a lady who propositions you for money.
     $ the_person = create_random_person(start_sluttiness = renpy.random.randint(25, 40))
     $ the_person.set_mc_title("Sir")
-    $ the_person.add_role(prostitute_role)
+    $ the_person.add_job(prostitute_job)
+    #$ the_person.add_role(prostitute_role)
     "You're lost in thought when a female voice calls out to you."
     the_person "Excuse me, [the_person.mc_title]."
     $ the_person.draw_person()
@@ -181,10 +182,55 @@ label meet_person_label():
             "You shake her hand. You and [the_person.title] chat while she waits for the next bus to come by."
             $ the_person.change_happiness(10)
             $ the_person.change_love(8)
-            "When it does she gives you a quick hug."
-            the_person "Thank you again, you've saved my whole day. Maybe we'll see each other again."
-            mc.name "I'd like that. "
-            "She smiles and steps onto the bus, waving briefly from one of the windows."
+
+            menu:
+                "Ask for her number.":
+                    mc.name "I hope this isn't too forward, but could I have your number?"
+                    if the_person.relationship == "Single" or the_person.get_opinion_score("cheating on men") > 0:
+                        "She smiles and nods, holding her hand out for your phone."
+                        the_person "Maybe we can go out for drinks. I owe you something for saving my butt today."
+                        "[the_person.title] types in her number and hands back the device."
+                        $ mc.phone.register_number(the_person)
+                        mc.name "I'm going to hold you to that."
+                        "A moment later her bus pulls up and she steps on."
+                        the_person "Don't be a stranger."
+                        "She waves from her seat as the bus pulls away."
+                        $ clear_scene()
+                    else:
+                        $ so_title = SO_relationship_to_title(the_person.relationship)
+                        the_person "I don't know... I've got a [so_title], I don't want him getting the wrong idea."
+                        menu:
+                            "Convince her." if mc.charisma >= 3:
+                                "You smile and pour on the charm."
+                                mc.name "You're allowed to have men as friends, right? He can't seriously be that jelous."
+                                the_person "Well... You're right. Here..."
+                                $ mc.phone.register_number(the_person)
+                                "She reaches out for your phone. You hand it over and wait for her to type in her number."
+                                the_person "There. Now don't be a stranger, I owe you a drink after everything you've done for me."
+                                mc.name "I'm going to hold you to that."
+                                "A moment later her bus pulls up and she steps on."
+                                the_person "Don't be a stranger."
+                                "She waves from her seat as the bus pulls away."
+                                $ clear_scene()
+
+                            "Convince her.\nRequires: 3 Charisma (disabled)" if mc.charisma < 3:
+                                pass
+
+
+                            "Let it go.":
+                                mc.name "Ah, I understand."
+                                the_person "Yeah, you know how it is..."
+                                "A minute later the bus arrives. She steps onboard and waves goodbye from the window as she pulls away."
+                                $ clear_scene()
+
+
+
+                "Say goodbye.":
+                    mc.name "I should really get going. Glad I could help you out."
+                    the_person "Thank you again, you've saved my whole day. Maybe we'll see each other again."
+                    "She waves goodbye as you walk away, leaving her waiting at the bus stop alone."
+                    $ clear_scene()
+
 
 
         "Keep the cash.\n{color=#0F0}+$200{/color}":

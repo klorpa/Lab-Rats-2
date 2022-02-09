@@ -491,59 +491,89 @@ init 0 python:
             self.assertIsInstance(test_person.calculate_base_salary(), __builtin__.int)
 
         def test_set_schedule(self):
-            test_person = create_random_person()
+            test_person = create_random_person(job = unemployed_job)
             test_room = Room("Schedule test location")
-            test_person.set_schedule(test_room, times = [0,1])
+            test_person.set_schedule(test_room, the_times = [0,1])
 
-            self.assertIs(test_person.schedule[0][1], test_room)
-            self.assertIs(test_person.schedule[3][0], test_room)
+
+            self.assertIs(test_person.get_destination(specified_day = 0, specified_time = 1), test_room)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 0), test_room)
 
             other_test_room = Room("Other schedule test room")
-            test_person.set_schedule(other_test_room, days = [2,4], times = [0])
+            test_person.set_schedule(other_test_room, the_days = [2,4], the_times = [0])
 
-            self.assertIs(test_person.schedule[2][0], other_test_room)
-            self.assertIs(test_person.schedule[4][0], other_test_room)
-            self.assertIs(test_person.schedule[4][1], test_room)
-            self.assertIs(test_person.schedule[3][0], test_room)
+            self.assertIs(test_person.get_destination(specified_day = 2, specified_time = 0), other_test_room)
+            self.assertIs(test_person.get_destination(specified_day = 4, specified_time = 0), other_test_room)
+            self.assertIs(test_person.get_destination(specified_day = 4, specified_time = 1), test_room)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 0), test_room)
 
         def test_set_work(self):
-            test_person = create_random_person()
+            test_person = create_random_person(job = unemployed_job)
             test_room = Room("Schedule test location")
-            test_person.set_work(test_room)
+            test_person.add_job(unemployed_job)
 
-            self.assertIs(test_person.schedule[0][1], test_room)
-            self.assertIs(test_person.schedule[4][1], test_room)
-            self.assertIsNot(test_person.schedule[3][4], test_room)
-            self.assertIsNot(test_person.schedule[2][0], test_room)
-            self.assertIsNot(test_person.schedule[6][1], test_room)
 
-            test_person.set_work(None)
-            self.assertIsNone(test_person.schedule[0][1])
-            self.assertIsNone(test_person.schedule[4][1])
+            self.assertIsNone(test_person.get_destination(specified_day = 0, specified_time = 1))
+            self.assertIsNone(test_person.get_destination(specified_day = 4, specified_time = 1))
 
             other_test_room = Room("Other schedule test location")
-            test_person.set_work(other_test_room, work_days = [5,6], work_times = [0,3])
+            test_job = Job("Test Job", job_location = other_test_room, work_days = [5,6], work_times = [0,3])
+            test_person.add_job(test_job)
 
-            self.assertIs(test_person.schedule[5][0], other_test_room)
-            self.assertIs(test_person.schedule[6][3], other_test_room)
-            self.assertIsNot(test_person.schedule[2][2], other_test_room)
-            self.assertIsNot(test_person.schedule[5][1], other_test_room)
+            # test_person.job.schedule.print_schedule()
+            # test_person.schedule.print_schedule()
+
+            self.assertIs(test_person.get_destination(specified_day = 5, specified_time = 0), other_test_room)
+            self.assertIs(test_person.get_destination(specified_day = 6, specified_time = 3), other_test_room)
+            self.assertIsNot(test_person.get_destination(specified_day = 2, specified_time = 2), other_test_room)
+            self.assertIsNot(test_person.get_destination(specified_day = 5, specified_time = 1), other_test_room)
 
         def test_get_destination(self):
-            test_person = create_random_person()
+            test_person = create_random_person(job = unemployed_job)
 
             self.assertIsNone(test_person.get_destination())
 
             test_home_location = Room("Test home location")
             test_work_location = Room("Test location")
-            test_person.set_schedule(test_home_location, times = [0,1,2,3,4])
-            test_person.set_work(test_work_location)
+            test_person.set_schedule(test_home_location, the_days = [0,1,2,3,4,5,6], the_times = [0,1,2,3,4])
+
+            test_job = Job("Test Job", job_location = test_work_location)
+            test_person.add_job(test_job)
 
             self.assertIsInstance(test_person.get_destination(), Room)
+
             self.assertIs(test_person.get_destination(specified_day = 4, specified_time = 2), test_work_location)
             self.assertIs(test_person.get_destination(specified_day = 4, specified_time = 4), test_home_location)
             self.assertIs(test_person.get_destination(specified_day = 4+7, specified_time = 2), test_work_location)
             self.assertIs(test_person.get_destination(specified_day = 4+14, specified_time = 4), test_home_location)
+
+        def test_override_schedule(self):
+            test_person = create_random_person(job = unemployed_job)
+
+            test_location_1 = Room("Location 1")
+            test_location_2 = Room("Location 2")
+            test_location_3 = Room("Location 3")
+
+            test_person.set_schedule(test_location_1)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 3), test_location_1)
+
+            test_job = Job("Test Job", job_location = test_location_2)
+            test_person.add_job(test_job)
+
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 3), test_location_2)
+            self.assertIs(test_person.get_destination(specified_day = 6, specified_time = 3), test_location_1)
+
+            test_person.set_override_schedule(test_location_3, the_days = 3, the_times = 3)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 3), test_location_3)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 2), test_location_2)
+            self.assertIs(test_person.get_destination(specified_day = 6, specified_time = 3), test_location_1)
+
+            test_person.set_override_schedule(None)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 3), test_location_2)
+            self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 2), test_location_2)
+            self.assertIs(test_person.get_destination(specified_day = 6, specified_time = 3), test_location_1)
+
+
 
         def test_role_manipulation(self):
             test_person = create_random_person()
@@ -683,6 +713,28 @@ init 0 python:
             self.assertFalse(test_person.has_unknown_opinions())
             self.assertFalse(test_person.has_unknown_opinions(sexy_opinions = False))
             self.assertFalse(test_person.has_unknown_opinions(normal_opinions = False))
+
+        def tes_set_opinion(self):
+            test_person = create_random_person()
+            test_person.opinions["Test Normal"] = [1,False]
+            test_person.sexy_opinions["Test Sexy"] = [2,False]
+
+            self.assertEqual(test_person.get_opinion_score("Test Normal", 1))
+
+            test_person.set_opinion("Test Normal", 2)
+
+            self.assertEqual(test_person.get_opinion_score("Test Normal", 2))
+            self.assertEqual(test_person.get_opinion_score("Test Sexy", 2))
+
+            test_person.set_opinion("Test Sexy", -2)
+
+            self.assertEqual(test_person.get_opinion_score("Test Normal", 2))
+            self.assertEqual(test_person.get_opinion_score("Test Sexy", -2))
+
+            test_person.set_opinion("Test Normal", 0)
+
+            self.assertEqual(test_person.get_opinion_score("Test Normal", 0))
+            self.assertEqual(test_person.get_opinion_score("Test Sexy", -2))
 
         def test_opinion_manipulation(self):
             test_person = create_random_person()

@@ -157,7 +157,7 @@ label interview_action_description:
     elif recruitment_batch_one_policy.is_active():
         $ count = 4
 
-    $ interview_cost = 50
+    $ interview_cost = mc.business.recruitment_cost
     "Bringing in [count] people for an interview will cost $[interview_cost]. Do you want to spend time interviewing potential employees?"
     menu:
         "Yes, I'll pay the cost. -$[interview_cost]":
@@ -168,7 +168,7 @@ label interview_action_description:
                 candidates = []
 
                 for x in range(0,count+1): #NOTE: count is given +1 because the screen tries to pre-calculate the result of button presses. This leads to index out-of-bounds, unless we pad it with an extra character (who will not be reached).
-                    candidates.append(make_person())
+                    candidates.append(make_person(mc.business.generate_candidate_requirements()))
 
                 reveal_count = 0
                 reveal_sex = False
@@ -222,45 +222,41 @@ label hire_select_process(candidates):
     return _return
 
 
-label hire_someone(new_person, add_to_location = False): # Breaks out some of the functionality of hiring someone into an independent lable.
-    python:
-        new_person.event_triggers_dict["employed_since"] = day
-        mc.business.listener_system.fire_event("new_hire", the_person = new_person)
-        for other_employee in mc.business.get_employee_list():
-            town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
+label hire_someone(new_person, add_to_location = False, research_allowed = True, production_allowed = True, supply_allowed = True, marketing_allowed = True, hr_allowed = True): # Breaks out some of the functionality of hiring someone into an independent lable.
+    # python:
+        # new_person.event_triggers_dict["employed_since"] = day
+        # mc.business.listener_system.fire_event("new_hire", the_person = new_person)
+        # for other_employee in mc.business.get_employee_list():
+        #     town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
+
+    # $ setup_employee_stats(the_person) # Sets up relationships with everyone at work, the day they were hired, etc.
 
     "You complete the necessary paperwork and hire [_return.name]. What division do you assign her to?"
     menu:
-        "Research and Development.":
+        "Research and Development." if research_allowed:
             $ mc.business.add_employee_research(new_person)
-            $ new_person.set_work(mc.business.r_div)
             if add_to_location:
                 $ mc.business.r_div.add_person(new_person)
 
-        "Production.":
+        "Production." if production_allowed:
             $ mc.business.add_employee_production(new_person)
-            $ new_person.set_work(mc.business.p_div)
             if add_to_location:
                 $ mc.business.p_div.add_person(new_person)
 
-        "Supply Procurement.":
+        "Supply Procurement." if supply_allowed:
             $ mc.business.add_employee_supply(new_person)
-            $ new_person.set_work(mc.business.s_div)
             if add_to_location:
                 $ mc.business.s_div.add_person(new_person)
 
-        "Marketing.":
+        "Marketing." if marketing_allowed:
             $ mc.business.add_employee_marketing(new_person)
-            $ new_person.set_work(mc.business.m_div)
             if add_to_location:
                 $ mc.business.m_div.add_person(new_person)
 
-        "Human Resources.":
+        "Human Resources." if hr_allowed:
             $ mc.business.add_employee_hr(new_person)
-            $ new_person.set_work(mc.business.h_div)
             if add_to_location:
                 $ mc.business.h_div.add_person(new_person)
-
     return
 
 label serum_design_action_description:

@@ -90,7 +90,7 @@ init -2 python:
             self.people.remove(the_person)
 
         def move_person(self,the_person,the_destination):
-            if not the_person in the_destination.people: # Don't bother moving people who are already there.
+            if not the_destination.has_person(the_person): # Don't bother moving people who are already there.
                 if the_person in self.people: #Don't try and move if we aren't actually here!
                     self.remove_person(the_person)
                     the_destination.add_person(the_person)
