@@ -8,7 +8,7 @@ init -1 python:
             return True
 
 label stripper_private_dance_label(the_person):
-    if the_person.has_role(cousing_role):
+    if the_person.has_role(cousin_role):
         mc.name "So, do you do private dances?"
         "[the_person.possessive_title] glares at you and rolls her eyes."
         the_person "Screw off."
@@ -45,7 +45,7 @@ label stripper_private_dance_label(the_person):
         "Then [the_person.possessive_title] flicks a switch, pumping the club music into the small booth."
         the_person "Now just stay still and let me get through my routine."
         "She starts to dance, swaying her hips and shaking her tits as you watch."
-        call strip_tease(for_pay = True, skip_intro = True, start_girl_state = strip_dancing)
+        call strip_tease(the_person, for_pay = True, skip_intro = True, start_girl_state = strip_dancing)
         the_person "Happy? Satisfied? Good."
         $ the_person.apply_outfit()
         "[the_person.possessive_title] gets dressed and pulls the curtain back, hurrying out into the main showroom without waiting for you."
@@ -67,7 +67,7 @@ label stripper_private_dance_label(the_person):
         the_person "Now before we go any further, do you have something for me..."
         $ mc.change_locked_clarity(10)
         "She places her hands on the bench behind you, nearly pressing her breasts into your face."
-        $ the_item = the_person.outfit.get_upper_visible()
+        $ the_item = the_person.outfit.get_upper_top_layer()
         menu:
             "Hand her the cash. -$100":
                 "You pull out your wallet and retrieve [the_person.title]'s money."
@@ -82,7 +82,7 @@ label stripper_private_dance_label(the_person):
 
         the_person "Now you just sit back, relax, and let me take care of you..."
         "She flicks on a speaker, pumping the club music into the small booth, and starts to dance."
-        call strip_tease(for_pay = True, skip_intro = True, start_girl_state = strip_dancing)
+        call strip_tease(the_person, for_pay = True, skip_intro = True, start_girl_state = strip_dancing)
         $ the_person.apply_outfit()
         "[the_person.possessive_title] gets tidied up, then slides the curtain open and walks out into the main showroom again."
         "You take a minute to compose yourself, then stand up and walk out yourself."
