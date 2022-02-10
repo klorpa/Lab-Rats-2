@@ -45,6 +45,8 @@ init -1 python:
         if last_name is None:
             last_name = get_random_last_name()
         if age is None:
+            if age_ceiling < age_floor:
+                age_ceiling = age_floor # Make sure our range is actually a range and not inverted.
             age = renpy.random.randint(age_floor,age_ceiling)
         if body_type is None:
             body_type = get_random_body_type()

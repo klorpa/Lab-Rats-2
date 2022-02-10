@@ -852,7 +852,7 @@ init -2 python:
 
             if recruitment_sex_improvement_policy.is_active():
                 stat_cap = 7
-                candidate_dict["sex_array"] = [renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap)]
+                candidate_dict["sex_array"] = [renpy.random.randint(1,stat_cap), renpy.random.randint(1,stat_cap), renpy.random.randint(1,stat_cap), renpy.random.randint(1,stat_cap)]
 
             if recruitment_suggest_improvment_policy.is_active():
                 candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
