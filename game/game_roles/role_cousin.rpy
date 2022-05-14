@@ -78,7 +78,7 @@ init -2 python:
             return False
         elif the_person.event_triggers_dict.get("getting boobjob", False):
             return False
-        elif rank_tits(the_person.tits) >= 8:
+        elif Person.rank_tits(the_person.tits) >= Person.rank_tits("F"):
             return False #She already has F sized tits, which she thinks is good enough.
         elif the_person.sluttiness < 40:
             return False
@@ -120,8 +120,13 @@ init -2 python:
             return False
         return True
 
+    def special_stripper_hire(the_person):
+        strip_club_no_of_strippers += 1 #Increase the list target to account for Gabrielle
+        stripper_hire(the_person) #Add her to the stripper list
 
-
+    def special_stripper_leave(the_person):
+        strip_club_no_of_strippers -= 1 #Decrease the list target to account for Gabrielle leaving 
+        stripper_replace(the_person) #Remove her from the pool and generate a replacement if necessary
 
 ###COUSIN ACTION LABELS###
 label cousin_intro_phase_one_label():
@@ -549,12 +554,13 @@ label cousin_blackmail_list(the_person):
             mc.name "I trust you because I have leverage on you."
             mc.name "If you fucked me over I'll tell your Mom what you've been doing for cash."
             the_person "And if I quit to work for you? What will you tell her then?"
-            mc.name "The same thing. Do you think she's going to be proud because you {i}use{/i} to be a stripper?"
+            mc.name "The same thing. Do you think she's going to be proud because you {i}used{/i} to be a stripper?"
             mc.name "No, she'd rip you appart if she ever heard about this. I'm sure I could find plenty of evidence..."
             "[the_person.possessive_title] sighs and shakes her head, admitting defeat."
             the_person "Shut up, I'll do it. But I'm not going to be cheap, alright?"
             the_person "I'm not one of those cheap skanks you keep around."
             $ the_person.salary_modifier = 2.0
+            $ special_stripper_leave(the_person) #Decrement the stripper target pool, and remove Gabriel, so that an extra replacement isn't generated
             call stranger_hire_result(the_person)
             if _return:
                 mc.name "Congratulations, you have a real job now."
@@ -567,7 +573,7 @@ label cousin_blackmail_list(the_person):
                         the_person "I don't need your permission! I was going to keep working there anyways."
                         $ the_person.set_schedule(strip_club, the_days = [5,6], the_times = [3,4])
                         $ the_person.add_role(stripper_role) #Add the role back specifically for her so when she's in the club she can give dances
-                        $ stripclub_strippers.append(the_person)
+                        $ special_stripper_hire(the_person) #Add her to stripclub list and increase Stripclub target strippers to account for her presence
                         "You shrug, content that either way she'll have her tits on display during the weekend."
 
                     "Demand she stop stripping.":
@@ -578,6 +584,7 @@ label cousin_blackmail_list(the_person):
                         the_person "Ugh... Whatever."
 
             else:
+                $ special_stripper_hire(the_person) #Readd her
                 mc.name "Man, I thought you might have been useful for something, but this is just dreadful."
                 the_person "Fuck you, you came to me!"
                 mc.name "Yeah, that was a mistake. Nevermind, stripping is probably the best you can do with your life."
@@ -781,7 +788,8 @@ label cousin_blackmail_level_2_confront_label(the_person, in_club = False):
     $ mc.change_locked_clarity(5)
     the_person "God, you fucking perv. Fine, if you can keep quiet I might also let you... touch me. Deal?"
     mc.name "I think that might be enough."
-    $ the_person.add_job(stripper_job) #She's a stripper now, offically.
+    $ special_stripper_hire(stripper_job)
+    $ the_person.change_job(stripper_job) #She's a stripper now, offically.
     $ the_person.event_triggers_dict["blackmail_level"] = 2
     call begin_boobjob_story(the_person) from _call_begin_boobjob_story_2
     return
@@ -1126,7 +1134,7 @@ label cousin_tits_payback_label(the_person, amount_remaining):
     return
 
 label cousin_serum_boobjob_label(the_person, starting_tits):
-    if rank_tits(the_person.tits) == rank_tits(starting_tits):
+    if the_person.rank_tits(the_person.tits) == the_person.rank_tits(starting_tits):
         #No change.
         "You get a text from [the_person.title]."
         $ the_person.change_love(-1)
@@ -1134,7 +1142,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         the_person "Hey [the_person.mc_title], your serum thing didn't do anything for me."
         the_person "I'm going to need some cash so I can go to an actual doctor to do this for me. Come talk to me."
 
-    elif rank_tits(the_person.tits) < rank_tits(starting_tits):
+    elif the_person.rank_tits(the_person.tits) < the_person.rank_tits(starting_tits):
         "You get an angry text from [the_person.title]."
         $ the_person.change_happiness(-10)
         $ the_person.change_love(-5)
@@ -1144,7 +1152,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         the_person "Come talk to me, I need cash for my boob job."
         #You actually made her tits smaller
 
-    elif rank_tits(the_person.tits) - rank_tits(starting_tits) == 1:
+    elif the_person.rank_tits(the_person.tits) - the_person.rank_tits(starting_tits) == 1:
         # One level bigger which she's kind of happy with but wanted more.
         "You get a text from [the_person.title]."
         $ the_person.change_obedience(2)
@@ -1186,8 +1194,8 @@ label stripclub_dance():
 
     $ the_person = get_random_from_list(list(set(stripclub_strippers) & set(mc.location.people))) #Create a list of strippers who are present, then pick a random person.
     if the_person is None:
-        $ the_person = get_random_from_list(stripclub_strippers) #If there is nobody around make sure to grab them and bring them here so we don't crash.
-
+        $ the_person = fallback_stripper #Use special fallback stripper (avoids bringing in strippers who might eg be hidden due to being extremely pregnant)
+ 
     $ the_person.apply_outfit(stripclub_wardrobe.pick_random_outfit()) #TODO: Add more stripper outfits
     $ performer_title = the_person.title
     $ the_person.draw_person()

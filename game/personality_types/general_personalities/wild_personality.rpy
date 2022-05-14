@@ -8,7 +8,7 @@ init 1300:
         def wild_player_titles(the_person):
             return mc.name
         wild_personality = Personality("wild", #Stephanie style personality
-        common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work","heavy metal","punk"],
+        common_likes = ["skirts", "small talk", "Fridays", "the weekend", "the colour red", "makeup", "flirting", "marketing work","heavy metal music","punk music"],
         common_sexy_likes = ["anal creampies", "doggy style sex", "giving blowjobs", "getting head", "anal sex", "public sex", "skimpy outfits", "showing her tits", "showing her ass", "taking control", "not wearing underwear", "creampies", "bareback sex"],
         common_dislikes = ["Mondays", "the colour pink", "supply work", "conservative outfits", "work uniforms"],
         common_sexy_dislikes = ["being submissive", "being fingered", "missionary style sex", "giving handjobs"],
@@ -25,11 +25,11 @@ label wild_introduction(the_person):
     the_person "Uh, sure? What do you want?"
     mc.name "I know this sounds crazy, but I saw you and just wanted to say hi and get your name."
     "She laughs and crosses her arms."
-    $ title_choice = get_random_title(the_person)
+    $ title_choice = the_person.get_random_title()
     $ formatted_title = the_person.create_formatted_title(title_choice)
     the_person "Yeah? Well I like the confidence, I'll say that. My name's [formatted_title]."
     $ the_person.set_title(title_choice)
-    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    $ the_person.set_possessive_title(the_person.get_random_possessive_title())
     the_person "And what about you, random stranger? What's your name?"
     return
 

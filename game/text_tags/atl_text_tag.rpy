@@ -156,8 +156,8 @@ init python:
             st = st + self.offset
             at = at + self.offset
             if self.hold:
-                st = max(st, 0)
-                at = max(at, 0)
+                st = __builtin__.max(st, 0)
+                at = __builtin__.max(at, 0)
 
             # Get child render and our output render
             child_render = renpy.render(self.child, width, height, st, at)

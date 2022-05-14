@@ -15,30 +15,7 @@ screen person_info_detailed(the_person):
         xanchor 0.5
         yalign 0.2
         use girl_title_header(the_person, 1750, 120)
-        # frame:
-        #     xsize 1750
-        #     ysize 120
-        #     xalign 0.5
-        #     background "#1a45a1aa"
-        #     vbox:
-        #         xalign 0.5 xanchor 0.5
-        #         text "[the_person.name] [the_person.last_name]" style "menu_text_style" size 30 xalign 0.5 yalign 0.5 yanchor 0.5 color the_person.char.who_args["color"] font the_person.char.what_args["font"]
-        #         if not mc.business.get_employee_title(the_person) == "None":
-        #             text "Position: " + mc.business.get_employee_title(the_person) + " ($[the_person.salary]/day)" style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
-        #
-        #         $ visible_roles = []
-        #         $ role_string = "Special Roles: "
-        #         python:
-        #             for role in the_person.special_role:
-        #                 if not role.hidden:
-        #                     visible_roles.append(role.role_name)
-        #
-        #             if visible_roles:
-        #                 role_string += visible_roles[0]
-        #                 for role in visible_roles[1::]: #Slicing off the first manually let's us use commas correctly.
-        #                     role_string += ", " + role
-        #         if visible_roles:
-        #             text role_string style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
+
 
         hbox:
             xsize 1750
@@ -51,6 +28,8 @@ screen person_info_detailed(the_person):
                 ysize 450
                 vbox:
                     text "Status and Info" style "menu_text_style" size 22
+                    if reveal_type():
+                        text "Type: [the_person.type]" style "menu_text_style"
                     text "Happiness: [the_person.happiness]" style "menu_text_style"
                     text "Suggestibility: [the_person.suggestibility]" style "menu_text_style"
                     text "Sluttiness: [the_person.sluttiness]" style "menu_text_style"
@@ -58,6 +37,7 @@ screen person_info_detailed(the_person):
                     text "Obedience: [the_person.obedience] - " + get_obedience_plaintext(the_person.obedience) style "menu_text_style"
 
                     text "Age: [the_person.age]" style "menu_text_style"
+                    text "Height: " + height_to_string(the_person.height) style "menu_text_style"
                     text "Cup Size: [the_person.tits]" style "menu_text_style"
                     if the_person.has_role(girlfriend_role):
                         text "Relationship: Girlfriend" style "menu_text_style"
@@ -73,7 +53,7 @@ screen person_info_detailed(the_person):
                     #TODO: Decide how much of this information we want to give to the player directly and how much we want to have delivered in game.
                     if persistent.pregnancy_pref > 0:
                         if the_person.event_triggers_dict.get("preg_knows", False):
-                            text "Pregnant, " + str(the_person.event_triggers_dict["preg_start_date"] - day) + " Days" style "menu_text_style"
+                            text "Pregnant, " + str(day - the_person.event_triggers_dict["preg_start_date"] ) + " Days" style "menu_text_style"
                         else:
                             if persistent.pregnancy_pref == 1:
                                 text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
@@ -120,6 +100,12 @@ screen person_info_detailed(the_person):
                 xsize 325
                 ysize 450
                 vbox:
+                    text "Work Experience Level: [the_person.work_experience]" style "menu_text_style" size 16
+                    if the_person.has_role(employee_role):
+                        textbutton "Review Duties: " + str(len(the_person.duties)) + "/" + str(the_person.work_experience):
+                            style "textbutton_style"
+                            text_style "textbutton_text_style"
+                            action Show("set_duties_screen", the_person = the_person, allow_changing_duties = False, show_available_duties = True, hide_on_exit = True)
                     text "Work Skills" style "menu_text_style" size 22
                     text "HR Skill: [the_person.hr_skill]" style "menu_text_style"
                     text "Marketing Skill: [the_person.market_skill]" style "menu_text_style"

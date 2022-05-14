@@ -29,7 +29,7 @@ init -1 python:
             return "Requires: " + str(obedience_required) + " Obedience"
         elif the_person.event_triggers_dict.get("getting boobjob", False):
             return "Boobjob already scheduled."
-        elif the_person.tits == "FF":
+        elif the_person.tits == the_person.get_larger_tit(the_person.tits):
             return "Boobs are as large as they can become."
         else:
             return True
@@ -322,14 +322,16 @@ label plan_date_night(the_person):
     return
 
 label got_boobjob(the_person):
+    $ min_cup_increase = 2
     # Event called a few days after someone has been asked to get a boob job. Results in larger brests. Duh.
-    if rank_tits(the_person.tits) <= 2: #Ie. B cup or smaller.
-        $ the_person.tits = "D" #Small tits all get upgraded to "large" D cup tits as a minimum, so they can be titfucked after.
+    if Person.rank_tits(the_person.tits) <= (Person.rank_tits(Person.get_minimum_large_tit())-min_cup_increase): #Ie. B cup or smaller.
+        $ the_person.tits = Person.get_minimum_large_tit() #Small tits all get upgraded to "large" D cup tits as a minimum, so they can be titfucked after.
         if the_person.personal_region_modifiers.get("breasts", 1) < 0.6:
             $ the_person.personal_region_modifiers["breasts"] = 0.3 #This is "normal" for C cups, so a little firmer than natural breasts but not by much.
     else: #Otherwise they get bigger by two steps.
-        $ the_person.tits = get_larger_tits(the_person.tits) #Upgrade them twice, because we want boob jobs to be immediately noticeable.
-        $ the_person.tits = get_larger_tits(the_person.tits)
+        python:
+            for x in range(0,min_cup_increase):
+                    the_person.tits = the_person.get_larger_tit(the_person.tits) #Upgrade them twice, because we want boob jobs to be immediately noticeable.
         #Note that we DON'T change their breast region weight, to simulate natural vs. fake tits.
 
     if the_person.has_role(instapic_role):

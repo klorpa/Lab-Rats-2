@@ -285,6 +285,8 @@ label marketing_tutorial_intro():
     "You nod in agreement and wander around the room until you're satisfied there's nothing more of interest."
     mc.name "That's everything there is to see, so I guess it's time to get to work!"
     stephanie "I'll get back to the lab, come see me if you want to check in on my progress."
+    #End Tutorial
+    $ mc.business.event_triggers_dict["Tutorial_Section"] = False
     python:
         for place in list_of_places:
             place.accessable = True

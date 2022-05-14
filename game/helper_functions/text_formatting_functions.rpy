@@ -67,32 +67,14 @@ init -1 python:
         else:
             return "ERROR - relationship incorrectly defined"
 
-    def height_to_string(the_height): #Height is a value between 0.9 and 1.0 which corisponds to 5' 0" and 5' 10"
-        rounded_height = __builtin__.round(the_height,2) #Round height to 2 decimal points.
-        if rounded_height >= 1.00:
-            return "5' 10\""
-        elif rounded_height == 0.99:
-            return "5' 9\""
-        elif rounded_height == 0.98:
-            return "5' 8\""
-        elif rounded_height == 0.97:
-            return "5' 7\""
-        elif rounded_height == 0.96:
-            return "5' 6\""
-        elif rounded_height == 0.95:
-            return "5' 5\""
-        elif rounded_height == 0.94:
-            return "5' 4\""
-        elif rounded_height == 0.93:
-            return "5' 3\""
-        elif rounded_height == 0.92:
-            return "5' 2\""
-        elif rounded_height == 0.91:
-            return "5' 1\""
-        elif rounded_height <= 0.90:
-            return "5' 0\""
-        else:
-            return "Problem, height not found in chart."
+    def height_to_string(the_height): #Height is a value normally between 0.9 and 1.05 which corisponds to 5' 0" and 5' 10" (1" = 0.015 height)
+        rounded_height = __builtin__.round(the_height,3) #Round height to 3 decimal points.
+        height_in_inches = __builtin__.round((rounded_height)*100/1.5)
+        feet = int(math.floor(height_in_inches/12))
+        inches = int(height_in_inches%12)
+        return "{}' {}\"".format(feet,inches)
+
+
 
 
     def remove_punctuation(the_text):

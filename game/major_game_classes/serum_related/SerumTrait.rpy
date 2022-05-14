@@ -62,6 +62,44 @@ init -2 python:
             self.flaws_aspect = flaws_aspect
             self.attention = attention
 
+        def is_similar(self, other): #Returns True if these two traits are near-identical, even if they aren't the same object (primarily for dynamic traits like breast milk)
+            if other is None:
+                return False
+
+            same = False
+            if self.name == other.name and self.desc == other.desc:
+                same = True
+                if self.on_apply != other.on_apply:
+                    same = False
+                elif self.on_remove != other.on_remove:
+                    same = False
+                elif self.on_turn != other.on_turn:
+                    same = False
+                elif self.on_move != other.on_move:
+                    same = False
+                elif self.on_day != other.on_day:
+                    same = False
+                elif self.tier != other.tier:
+                    same = False
+                elif self.researched != other.researched:
+                    same = False
+                elif self.is_side_effect != other.is_side_effect:
+                    same = False
+                elif self.mental_aspect != other.mental_aspect:
+                    same = False
+                elif self.physical_aspect != other.physical_aspect:
+                    same = False
+                elif self.sexual_aspect != other.sexual_aspect:
+                    same = False
+                elif self.medical_aspect != other.medical_aspect:
+                    same = False
+                elif self.flaws_aspect != other.flaws_aspect:
+                    same = False
+                elif self.attention != other.attention:
+                    same = False
+
+            return same
+
         def run_on_apply(self, the_person, the_serum, add_to_log = True):
             if self.on_apply is not None:
                 self.on_apply(the_person, the_serum, add_to_log)

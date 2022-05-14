@@ -66,7 +66,7 @@ label city_rep_negotiate(the_person):
                 mc.name "And I'll be sending you your funds. thank you for your help [the_person.title]."
                 the_person "Don't make me regret this."
                 $ mc.business.change_funds(-2500)
-                $ attention_floor_increase_2_policy.buy_policy(ignore_cost = True)
+                $ purchase_policy(attention_floor_increase_2_policy,ignore_cost = True)
 
             "Pay her. -$1000 (disabled)" if not mc.business.has_funds(-1000):
                 pass
@@ -74,7 +74,7 @@ label city_rep_negotiate(the_person):
             "Order her." if the_person.obedience >= obedience_requirement:
                 mc.name "That's a risk you're going to have to take. Get me that license."
                 $ the_person.change_love(-5 + 2*the_person.get_opinion_score("being submissive"))
-                $ attention_floor_increase_2_policy.buy_policy(ignore_cost = True)
+                $ purchase_policy(attention_floor_increase_2_policy,ignore_cost = True)
                 "[the_person.title] seems unhappy with being ordered around, but she nods obediently anyways."
                 the_person "Fine, I'll sort out the paperwork for you."
 
@@ -87,7 +87,7 @@ label city_rep_negotiate(the_person):
     return
 
 label city_rep_bribe(the_person):
-    $ the_person.event_triggers_dict["bribe_attempts"] = the_person.event_triggers_dict.get("bribe_attempts",[]).append("cash_bribe")
+    $ the_person.event_triggers_dict["bribe_attempts"].append("cash_bribe")
     mc.name "This is a waste of everyone's time. Isn't there some sort of fee I can pay you and we can all get back to doing real work?"
     if the_person.love < 0:
         the_person "I hope you aren't trying to bribe me [the_person.mc_title]."
@@ -128,11 +128,11 @@ label city_rep_bribe(the_person):
     return
 
 label city_rep_seduce(the_person): #TODO: Figure out if we can have something like this trigger automatically if you seduce her by groping her or something
-    $ the_person.event_triggers_dict["bribe_attempts"] = the_person.event_triggers_dict.get("bribe_attempts",[]).append("seduction_attempted")
+    $ the_person.event_triggers_dict["bribe_attempts"].append("seduction_attempted")
     mc.name "It seems like we have some time to spare [the_person.title]."
     "You step close to her and put your hand on the small of her back."
     mc.name "How about we head to my office and get to know each other better while your thugs are searching the place."
-    call apply_sex_slut_modifier(the_person)
+    call apply_sex_slut_modifiers(the_person)
     $ should_fuck = False
     if the_person.effective_sluttiness() < 20: #Offended
         $ the_person.change_love(-1)
@@ -189,12 +189,12 @@ label city_rep_seduce(the_person): #TODO: Figure out if we can have something li
     return
 
 label city_rep_order(the_person):
-    $ the_person.event_triggers_dict["bribe_attempts"] = the_person.event_triggers_dict.get("bribe_attempts",[]).append("order_attempted")
+    $ the_person.event_triggers_dict["bribe_attempts"].append("order_attempted")
     if the_person.obedience < 110:
         mc.name "[the_person.title], you're going to stop with this stupid charade. There isn't going to be any punishment today."
         "She smirks and glares at you."
         the_person "You really think that? You don't have any power here [the_person.mc_title]."
-        the_person "Now take a breath and get yourself under control before you say something that makes things worse for you."
+        the_person "Now take a breath and get yourself under control before you say something that makes this worse for yourself."
 
     elif the_person.obedience < 130:
         mc.name "[the_person.title], you need to make this go away for me."
@@ -318,7 +318,7 @@ label city_rep_internal_sabotage_training(the_person):
     "She resists a moment longer, but she can only hold out so long while in a trance."
     the_person "Okay, I'll get rid of anything I can..."
     mc.name "Good girl."
-    $ attention_bleed_increase_2_policy.buy_policy(ignore_cost = True)
+    $ purchase_policy(attention_bleed_increase_2_policy,ignore_cost = True)
     return
 
 label city_rep_offer_hire(the_person):

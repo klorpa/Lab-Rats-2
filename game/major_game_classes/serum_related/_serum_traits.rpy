@@ -127,14 +127,14 @@ init -1:
         ## breast_enhancement_functions ##
         def breast_enhancement_on_turn(the_person, the_serum, add_to_log):
             if renpy.random.randint(0,100) < 25:
-                new_tits = get_larger_tits(the_person.tits)
+                new_tits = the_person.get_larger_tit(the_person.tits)
                 if new_tits != the_person.tits: #Double check we don't already have them to avoid increasing breast weight infinitely
                     the_person.tits = new_tits
                     the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts receive a boost in region weight because they're natural.
 
         def breast_reduction_on_turn(the_person, the_serum, add_to_log):
             if renpy.random.randint(0,100) < 25:
-                new_tits = get_smaller_tits(the_person.tits)
+                new_tits = the_person.get_smaller_tit(the_person.tits)
                 if new_tits != the_person.tits:
                     the_person.tits = new_tits
                     the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts receive a boost in region weight because they're natural.
@@ -371,21 +371,21 @@ init -1:
                     the_person.body_type = "standard_body"
 
         def height_increase_on_day(the_person, the_serum, add_to_log):
-            the_person.height += 0.01 #TODO: Decide what the maximum should be. You should be able to make giants with this
-            if the_person.height > 1.1:
-                the_person.height = 1.1
+            the_person.height += the_person.get_height_step() #TODO: Decide what the maximum should be. You should be able to make giants with this. Currently 7" for practical concerns (being able to see face) 
+            if the_person.height > the_person.get_height_ceiling(initial=False): #1.375 original cap
+                the_person.height = the_person.get_height_ceiling(initial=False)
             if renpy.random.randint(0,100) < 10:
-                new_tits = get_larger_tits(the_person.tits)
+                new_tits = the_person.get_larger_tit(the_person.tits)
                 if new_tits != the_person.tits: #Double check we don't already have them to avoid increasing breast weight infinitely
                     the_person.tits = new_tits
                     the_person.personal_region_modifiers["breasts"] += 0.1 #Her breasts receive a boost in region weight because they're natural.
 
         def height_decrease_on_day(the_person, the_serum, add_to_log):
-            the_person.height -= 0.01 #TODO: Decide what the minimum should be. Should be smaller than normal
-            if the_person.height < 0.56:
-                the_person.height = 0.56
+            the_person.height -= the_person.get_height_step() #TODO: Decide what the minimum should be. Should be smaller than normal
+            if the_person.height < the_person.get_height_floor(initial=False): #0.7 original cap / 0.6 adjusted (changed to 0.72 for 4' 0")
+                the_person.height = the_person.get_height_floor(initial=False)
             if renpy.random.randint(0,100) < 10:
-                new_tits = get_smaller_tits(the_person.tits)
+                new_tits = the_person.get_smaller_tit(the_person.tits)
                 if new_tits != the_person.tits:
                     the_person.tits = new_tits
                     the_person.personal_region_modifiers["breasts"] -= 0.1 #Her breasts receive a boost in region weight because they're natural.
@@ -469,12 +469,13 @@ init -1:
             the_person.fertility_percent += 70
             the_person.lactation_sources += 3
 
-            tit_changes = 2
-            if rank_tits(the_person.tits) > 5:
-                tit_changes = 7 - rank_tits(the_person.tits)
+            max_tit_changes = 2
+            max_tit_rank = Person.rank_tits(Person.get_maximum_tit())
+            tit_changes = __builtin__.min(max_tit_rank - Person.rank_tits(the_person.tits),max_tit_changes)
+
 
             for count in range(0, tit_changes):
-                the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
+                the_person.tits = the_person.get_larger_tit(the_person.tits) #Her tits start to swell.
 
             the_serum.effects_dict["nora_hucow_tit_changes"] = tit_changes
             the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + (tit_changes*0.1) #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
@@ -498,7 +499,7 @@ init -1:
 
             tit_changes = the_serum.effects_dict.get("nora_hucow_tit_changes", 2)
             for count in range(0, tit_changes):
-                the_person.tits = get_smaller_tits(the_person.tits) #Her tits start to swell.
+                the_person.tits = the_person.get_smaller_tit(the_person.tits) #Her tits start to swell.
 
             the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - (0.1*tit_changes) #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 

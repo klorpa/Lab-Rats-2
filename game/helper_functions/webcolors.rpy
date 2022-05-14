@@ -826,7 +826,7 @@ init -2 python:
             gd = (g_c - requested_colour[1]) ** 2
             bd = (b_c - requested_colour[2]) ** 2
             min_colours[(rd + gd + bd)] = name
-        return min_colours[min(min_colours.keys())]
+        return min_colours[__builtin__.min(min_colours.keys())]
 
     def get_colour_name(requested_colour):
         try:

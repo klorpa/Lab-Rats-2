@@ -11,7 +11,7 @@ init 1300:
         def reserved_player_titles(the_person):
             return mc.name
         reserved_personality = Personality("reserved", #Mom style personality
-        common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits","jazz","classical"],
+        common_likes = ["pants", "research work", "HR work", "Mondays", "working", "makeup", "the colour blue", "conservative outfits","jazz","classical music"],
         common_sexy_likes = ["missionary style sex", "kissing", "lingerie", "being submissive", "vaginal sex", "creampies", "giving tit fucks"],
         common_dislikes = ["the colour red", "marketing work", "flirting"],
         common_sexy_dislikes = ["masturbating", "giving head", "getting head", "doggy style sex", "public sex", "not wearing underwear", "not wearing anything", "bareback sex", "cum facials"],
@@ -33,11 +33,11 @@ label reserved_introduction(the_person):
     the_person "I suppose you could. How can I help you?"
     mc.name "I'm so sorry, I know this is silly but I just couldn't let you walk by without knowing your name."
     "She laughs and rolls her eyes."
-    $ title_choice = get_random_title(the_person)
+    $ title_choice = the_person.get_random_title()
     $ formatted_title = the_person.create_formatted_title(title_choice)
     the_person "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
     $ the_person.set_title(title_choice)
-    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    $ the_person.set_possessive_title(the_person.get_random_possessive_title())
     "[the_person.possessive_title] holds her hand out to shake yours."
     the_person "What about you, what's your name?"
     return

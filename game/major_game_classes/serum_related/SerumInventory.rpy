@@ -8,7 +8,7 @@ init -2 python:
 
         def get_serum_count(self, serum_design):
             for design in self.serums_held:
-                if design[0] == serum_design:
+                if design[0].is_same_design(serum_design):
                     return design[1]
             return 0
 
@@ -33,14 +33,19 @@ init -2 python:
 
             return highest_count
 
-        def change_serum(self, serum_design,change_amount): ##Serum count must be greater than 0. Adds to stockpile of serum_design if it is already there, creates it otherwise.
+        def change_serum(self, serum_design, change_amount): ##Serum count must be greater than 0. Adds to stockpile of serum_design if it is already there, creates it otherwise.
             found = False
+            remove_list = []
             for design in self.serums_held:
-                if design[0] == serum_design and not found:
+                if design[0].is_same_design(serum_design) and not found:
                     design[1] += int(change_amount)
                     found = True
                     if design[1] <= 0:
-                        self.serums_held.remove(design)
+                        remove_list.append(design)
+
+            if remove_list: #Avoid removing items while we traverse the list
+                for design in remove_list:
+                    self.serums_held.remove(design)
 
             if not found:
                 if change_amount > 0:

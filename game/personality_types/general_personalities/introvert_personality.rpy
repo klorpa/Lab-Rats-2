@@ -11,9 +11,9 @@ init 1300:
             return mc.name
 
         introvert_personality = Personality("introvert", #Stephanie style personality
-        common_likes = ["conservative outfits", "research work", "punk", "working", "the colour black"],
+        common_likes = ["conservative outfits", "research work", "punk music", "working", "the colour black"],
         common_sexy_likes = ["big dicks", "kissing", "anal sex", "getting head", "giving blowjobs", "masturbating", "anal creampies", "giving tit fucks"],
-        common_dislikes = ["skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop"],
+        common_dislikes = ["skirts", "HR work", "marketing work", "makeup", "flirting", "small talk", "pop music"],
         common_sexy_dislikes = ["skimpy outfits", "not wearing underwear", "not wearing anything", "public sex", "lingerie"],
         titles_function = introvert_titles, possessive_titles_function = introvert_possessive_titles, player_titles_function = introvert_player_titles,
         insta_chance = 20, dikdok_chance = 0)
@@ -32,11 +32,11 @@ label introvert_introduction(the_person):
     $ the_person.change_happiness(-1)
     mc.name "I don't know yet, but there's something about you that I just couldn't turn away from."
     "She seems nervous while she thinks for a second."
-    $ title_choice = get_random_title(the_person)
+    $ title_choice = the_person.get_random_title()
     $ formatted_title = the_person.create_formatted_title(title_choice)
     the_person "My name is [formatted_title]. Is that all you wanted to know?"
     $ the_person.set_title(title_choice)
-    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    $ the_person.set_possessive_title(the_person.get_random_possessive_title())
     $ the_person.change_happiness(-2)
     mc.name "Well I wanted to introduce myself too..."
     return

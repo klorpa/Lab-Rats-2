@@ -56,7 +56,7 @@ init -2 python:
                 tit_size = the_person.tits
                 face_style = the_person.face_style
                 if the_person.lactation_sources > 0:
-                    nipple_wetness = (0.1*(float(rank_tits(the_person.tits)+the_person.lactation_sources))) * (the_person.arousal*1.0/the_person.max_arousal)
+                    nipple_wetness = (0.1*(float(Person.rank_tits(the_person.tits)+the_person.lactation_sources))) * (the_person.arousal*1.0/the_person.max_arousal)
                     if nipple_wetness > 1.0:
                         nipple_wetness = 1.0
 

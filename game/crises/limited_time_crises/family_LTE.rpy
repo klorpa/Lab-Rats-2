@@ -59,7 +59,7 @@ init -1 python:
     #TODO: We really need to be able to assign LTE's to roles instead of being general events
 
     def mom_work_slutty_requirement(the_person):
-        if not the_person.has_role(mother_role):
+        if not the_person.has_job(mom_secretary_job):
             return False
         elif mc.business.is_weekend():
             return False

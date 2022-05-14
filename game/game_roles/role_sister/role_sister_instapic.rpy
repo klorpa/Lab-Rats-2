@@ -29,7 +29,7 @@ init -2 python:
             return True
 
     def sister_instapic_discover_requirement(the_person):
-        if lily not in lily_bedroom.people:
+        if not lily_bedroom.has_person(the_person):
             return False #She's not at home, probably because of some other event
         elif not mc_at_home():
             return False #We're not at home, same deal.
@@ -63,7 +63,7 @@ init -2 python:
             return True
 
     def sister_serum_new_boobs_check_requirement(the_person, start_size, end_day):
-        if rank_tits(the_person.tits) - rank_tits(start_size) >= 2:
+        if the_person.rank_tits(the_person.tits) - the_person.rank_tits(start_size) >= 2:
             return True #Her boobs grew, she'll trigger her brag event
         elif day >= end_day:
             return True #It's been too long, she'll trigger the fail/timeout event.
@@ -389,7 +389,7 @@ label sister_instathot_label_solo(the_person):
         the_person "Thanks so much [the_person.mc_title], these look amazing!"
         $ the_person.change_slut(1, 40)
     the_person "I guess I should pay you, huh? Since you're doing all this work for me."
-    $ money_amount = 100 + 50*(rank_tits(the_person.tits)-4)
+    $ money_amount = 100 + 50*(Person.rank_tits(the_person.tits)-4)
     if money_amount < 50:
         $ money_amount = 50
     menu:
@@ -397,7 +397,7 @@ label sister_instathot_label_solo(the_person):
             mc.name "I'm not going to say no."
             "She rolls her eyes and direct transfers you some cash."
             $ mc.business.change_funds(money_amount)
-            the_person "No, I didn't think you would mr.\"I own a business\"."
+            the_person "No, I didn't think you would Mr.\"I own a business\"."
 
         "Let her keep it.":
             mc.name "Don't worry about it, I'm just happy to see you doing something cool."
@@ -807,6 +807,13 @@ label sister_instathot_label_mom(the_sister, the_mom):
         "You lean against a wall and pass some time on your phone while [the_sister.possessive_title] and [the_mom.title] pick out outfits."
         the_sister "Right, I think these are going to drive them wild. Come on, let's see how they look!"
 
+        $ mom_start_instapic_event = Action("mom start instapic", mom_instapic_setup_intro_requirement, "mom_instapic_setup_intro", requirement_args = day + renpy.random.randint(3,5))
+        $ the_mom.on_room_enter_event_list.append(mom_start_instapic_event) #She'll want to start her own Instapic account in a few days (assuming she doesn't already have one)
+
+        $ mom_start_instapic_alternative_event = Action("mom alt start instapic", mom_instapic_alt_intro_requirement, "mom_instapic_alt_intro", requirement_args = day + renpy.random.randint(3,5))
+        $ the_mom.on_room_enter_event_list.append(mom_start_instapic_alternative_event) #If she ends up with an Instapic account in some other way (or already has one) this intros the help options.
+
+
     else:
         the_sister "Hey [the_mom.title], come on in!"
         $ the_group.draw_person(the_mom)
@@ -904,12 +911,12 @@ label sister_instathot_label_mom(the_sister, the_mom):
             $ the_sister.change_happiness(5)
             "You get some great pictures of [the_mom.title] and [the_sister.title] playing around on the bed together."
 
+            #TODO:
             menu:
-                "Take your tits out.": #TODO: Figure out what our requirements for this should be (mainly for Lily). Maybe a new event for Lily where she tells you people want shirtless shots.
-
+                "Take your tits out.":
                     mc.name "This is really good stuff, but I want just a little bit more."
                     mc.name "How about you take your shirts off now girls."
-                    if the_mom.has_taboo("bare_tits"):#TODO: She's not okay with it until you've broken her taboo.
+                    if the_mom.has_taboo("bare_tits"):
                         $ the_mom.change_obedience(-1)
                         $ the_group.draw_person(the_mom)
                         "[the_mom.possessive_title] scoffs and shakes her head."
@@ -979,6 +986,8 @@ label sister_instathot_label_mom(the_sister, the_mom):
                             "Just do it [the_mom.title]\nRequires: [the_mom.title] 140 Obedience. (disabled)" if the_mom.obedience < 140:
                                 pass
 
+                            #TODO: have an onlyfans option if they both have an account.
+
                             "Uh...":
                                 mc.name "Uh... Up to you guys?"
 
@@ -993,6 +1002,14 @@ label sister_instathot_label_mom(the_sister, the_mom):
                         $ the_group.draw_person(the_mom)
                         the_mom "I'm not here to cramp your style. Let's do it!"
                         call sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group)
+
+                # "Get some OnlyFanatics content." if the_mom.event_triggers_dict.get("onlyfans_known", False) and the_sister.event_triggers_dict.get("onlyfans_known", False):
+                #     if first_time:
+                #         pass
+                #     else:
+                #         pass
+                #     #TODO: Lead into some lesbian action with the two of them.
+                #     #TODO: Leave some obvious places for threesome action.
 
                 "All done.":
                     pass
@@ -1010,7 +1027,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
     the_mom "That was really fun, thanks for inviting me you two."
     $ the_group.draw_person(the_sister, emotion = "happy")
     the_sister "It was! Oh, I should give [the_sister.mc_title] his cut for being our photographer."
-    $ money_amount = 100 + 50*(rank_tits(the_sister.tits)-4) + 50*(rank_tits(the_mom.tits)-4)
+    $ money_amount = 100 + 50*(Person.rank_tits(the_sister.tits)-4) + 50*(Person.rank_tits(the_mom.tits)-4)
     if money_amount < 50:
         $ money_amount = 50
     menu:
@@ -1071,6 +1088,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
     return
 
 label sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group): #Called when you convince them to take some shirtless pics.
+    #TODO: Have extra options if htey have Onlyfans accounts.
     $ the_sister.event_triggers_dict["mom_sister_instapic_shirtless_count"] = the_sister.event_triggers_dict.get("mom_sister_instapic_shirtless_count", 0) + 1
     $ the_item = the_sister.outfit.get_upper_top_layer()
     "[the_sister.possessive_title] starts to strip off her [the_item.display_name], and [the_mom.possessive_title] follows her lead."
@@ -1096,6 +1114,7 @@ label sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group): #Cal
         $ red_heart_token = get_red_heart(cover_other_requirement)
 
         menu:
+            #TODO: Enable this if they both have an onlyfans account.
             "Cover each other's tits." if (the_mom.effective_sluttiness() >= 50 or the_mom.get_known_opinion_score("incest") > 0) and (the_sister.effective_sluttiness() >= 50 or the_sister.get_known_opinion_score("incest") > 0):
                 mc.name "Let's try a few different poses now. [the_mom.title], sit behind [the_sister.title] and hold onto her boobs for her."
                 mc.name "[the_sister.title], all you have to do is make sure your body is in the way of [the_mom.title]'s tits. Can you do that?"
@@ -1176,8 +1195,13 @@ label sister_instathot_label_mom_shirtless(the_sister, the_mom, the_group): #Cal
             "All done.":
                 pass
 
+        if not the_mom.event_triggers_dict.get("mom_instapic_banned", False): #TOD: Check if we've already triggerded this for Mom
+            $ mom_insta_ban_event = Action("Mom InstaPic Ban", mom_instapic_ban_requirement, "mom_instapic_ban", requirement_args = day + renpy.random.randint(3,5))
+            $ the_mom.on_room_enter_event_list.append(mom_insta_ban_event)
+
     else:
         "You take some great shots of them with their shirts off."
+
     $ the_sister.event_triggers_dict["sister_instathot_mom_shirtless_covered_count"] = the_sister.event_triggers_dict.get("sister_instathot_mom_shirtless_covered_count", 0) + 1
     return
 
@@ -1443,7 +1467,7 @@ label sister_got_boobjob_label(the_person):
     return
 
 label sister_serum_new_boobs_check(the_person, starting_tits):
-    if rank_tits(the_person.tits) - rank_tits(starting_tits) >= 2:
+    if the_person.rank_tits(the_person.tits) - the_person.rank_tits(starting_tits) >= 2:
         $ sister_serum_brag_action = Action("Sister_brag_serum_boobjob", sister_boobjob_brag_requirement, "sister_new_boobs_brag_label", args = True)
         $ the_person.on_room_enter_event_list.append(sister_serum_brag_action)
     else: #Handles all the possible ways the serum checks could fail.
@@ -1547,18 +1571,18 @@ label sister_serum_partial_boobjob_label(starting_tits, the_person):
                 $ the_person.event_triggers_dict["sister_boobjob_convince_mom_enabled"] = True
 
     else: #You gave her some, but they weren't effective.
-        if rank_tits(the_person.tits) == rank_tits(starting_tits):
+        if the_person.rank_tits(the_person.tits) == the_person.rank_tits(starting_tits):
             the_person "So it's been a while, and I don't think your boob drug stuff is really working."
             "She gestures down at her chest and shrugs."
             the_person "I guess the only thing left is to get implants. That means we need to convince [mom.title]."
             mc.name "I'll bring it up next time you're taking InstaPic's with her."
             the_person "Okay, I hope you're convincing!"
-        elif rank_tits(the_person.tits) < rank_tits(starting_tits):
+        elif the_person.rank_tits(the_person.tits) < the_person.rank_tits(starting_tits):
             the_person "So it's been a while, and I really don't think your boob drug stuff is working."
             "She gestures down at her chest and shrugs."
             the_person "I think they've actually gotten smaller!"
 
-        elif rank_tits(the_person.tits) - rank_tits(starting_tits) == 1:
+        elif the_person.rank_tits(the_person.tits) - the_person.rank_tits(starting_tits) == 1:
             the_person "So it's been a while, and I don't think your boob drug stuff is really working."
             "She gestures down at her chest and shrugs."
             the_person "They're a little bit bigger, I guess, but I imagining a more dramatic change."

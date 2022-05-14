@@ -1225,6 +1225,8 @@ label family_games_night_start(the_aunt, the_mom): # Triggered as an on enter ev
     # Girls ask if you want to have some drinks, and then play cards some cards.
 
     $ the_group = GroupDisplayManager([the_mom, the_aunt], the_mom)
+    $ the_mom.apply_outfit()
+    $ the_aunt.apply_outfit()
     $ the_group.draw_group(position = "sitting", emotion = "happy")
     $ first_time = mc.business.event_triggers_dict.get("family_games_cards",0) == 0
 

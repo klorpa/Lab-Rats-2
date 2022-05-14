@@ -4,8 +4,13 @@ init 0 python:
             return "Not enough time."
         elif mc.location.get_person_count() > 0:
             return "Not with someone around."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
+
+    def cheat_menu_requirement():
+        return True
 
 label faq_loop:
     menu:
@@ -120,4 +125,45 @@ label bedroom_masturbation(location_description = "home", edging_available = Tru
 
     if should_advance_time:
         call advance_time()
+    return
+
+label cheat_menu():
+    #TODO; Check to see if it's a patron account. Of course for the patron release I'm _sure_ only patrons end up with this copy, so no need to worry about it now!
+    menu:
+        "+$10,000.":
+            $ mc.business.change_funds(10000)
+        "+5000 Clarity.":
+            $ mc.add_clarity(5000)
+        "Unlock all Clarity.":
+            $ mc.convert_locked_clarity(with_novelty = 100)
+        "+1 Stat Point.":
+            $ mc.buy_point("stat")
+        "+1 Work Skill Point.":
+            $ mc.buy_point("work")
+        "+1 Sex Skill Point.":
+            $ mc.buy_point("sex")
+        "+25 Family Sluttiness.":
+            $ mom.change_slut(25)
+            $ lily.change_slut(25)
+            $ cousin.change_slut(25)
+            $ aunt.change_slut(25)
+        "+25 Family Obedience.":
+            $ mom.change_obedience(25)
+            $ lily.change_obedience(25)
+            $ cousin.change_obedience(25)
+            $ aunt.change_obedience(25)
+        "+25 Family Love.":
+            $ mom.change_love(25)
+            $ lily.change_love(25)
+            $ cousin.change_love(25)
+            $ aunt.change_love(25)
+        "+1 research tier.":
+            $ mc.business.research_tier += 1
+        "Research all serum traits.":
+            python:
+                for a_trait in list_of_traits:
+                    if not isinstance(a_trait, SerumTraitBlueprints): #Don't research trait blueprints; they have special rules.
+                        a_trait.unlock_trait(pay_clarity = False)
+                        a_trait.researched = True
+            "All base serum traits researched."
     return

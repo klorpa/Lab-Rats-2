@@ -40,7 +40,7 @@ init -2 python:
         @staticmethod
         def inappropriate_behaviour_factory(name = "Inappropriate Behaviour", desc = None, severity = 3, days_valid = 7):
             if desc is None:
-                desc = "Actions inappropriate for a workplace setting. Strange how this never applies to the owner..."
+                desc = "Actions inappropriate for a workplace setting. Strange how this never applies to the management..."
             return Infraction(name, desc, severity, days_valid)
 
         def __init__(self, name, desc, severity, days_valid, days_existed = 0):

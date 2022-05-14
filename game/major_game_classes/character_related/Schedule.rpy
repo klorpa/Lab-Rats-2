@@ -44,6 +44,12 @@ init -2 python:
 
             self.day_plan[the_times] = the_place
 
+        def has_destination(self, the_place):
+            for x in range(0,4):
+                if self.day_plan[x] == the_place:
+                    return True
+            return False
+
     class Schedule(renpy.store.object):
         def __init__(self,
             monday_schedule = None, tuesday_schedule = None, wednesday_schedule = None, thursday_schedule = None, friday_schedule = None,
@@ -135,3 +141,12 @@ init -2 python:
                     else:
                         day_message += "None | "
                 print(day_message)
+
+        def has_destination(self, the_place, the_days):
+            if not isinstance(the_days, list):
+                the_days = [the_days]
+
+            for day_number in the_days:
+                if self.schedule[day_number].has_destination(the_place):
+                    return True
+            return False

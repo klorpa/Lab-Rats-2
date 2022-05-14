@@ -140,7 +140,10 @@ label breeder_fuck(the_person):
         menu:
             "Fuck her.":
                 "You pull down your pants and get your hard cock out. You climb onto [the_person.title]'s [start_object.name] and fit your hips between her legs."
-                the_person "Get inside me [the_person.mc_title], come fuck your mother."
+                if the_person.has_role(mother_role):
+                    the_person "Get inside me [the_person.mc_title], come fuck your mother!"
+                else:
+                    the_person "Get inside me [the_person.mc_title], I want you to make me a mother!"
                 "She reaches down and holds onto your shaft, rubbing the tip of your cock against her pussy lips. She strokes your cheek lovingly with her other hand."
                 "You push forward, sinking your dick inside of her. Her eyes flutter and she gasps softly."
                 the_person "Oh [the_person.title]..."

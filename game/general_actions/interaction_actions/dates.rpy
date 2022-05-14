@@ -15,7 +15,7 @@ label date_conversation(the_person):
     $ opinion_question_list = []
     python: #Generates a list with a few (usually 4, unless there's some opinion collision, but it's not important enough to fliter things out more intelligently) opinions, one of which she likes
         for x in __builtin__.range(3):
-            possible_opinions = get_random_opinion()
+            possible_opinions = the_person.get_random_opinion()
             if possible_opinions not in opinion_question_list:
                 opinion_question_list.append(possible_opinions)
 

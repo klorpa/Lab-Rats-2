@@ -2,6 +2,83 @@ init -2 python: # Some functions used only within screens for modifying variable
     def show_candidate(the_candidate):
         clear_scene()
         the_candidate.draw_person(show_person_info = False, background_fill = "444444", the_animation = no_animation)
+                
+    def interview_reveal_age():
+        reveal_age = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_age = reveal_age or recruitment_policy.extra_data.get("reveal_age",False)
+        return reveal_age
+
+    def interview_reveal_tits():
+        reveal_tits = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_tits = reveal_tits or recruitment_policy.extra_data.get("reveal_tits",False)
+        return reveal_tits
+
+    def interview_reveal_sex_skills():
+        reveal_sex_skills = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_sex_skills = reveal_sex_skills or recruitment_policy.extra_data.get("reveal_sex_skills",False)
+        return reveal_sex_skills
+
+    def interview_reveal_kids():
+        reveal_kids = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_kids = reveal_kids or recruitment_policy.extra_data.get("reveal_kids",False)
+        return reveal_kids
+
+    def interview_reveal_relationship():
+        reveal_relationship = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_relationship = reveal_relationship or recruitment_policy.extra_data.get("reveal_relationship",False)
+        return reveal_relationship
+
+    def interview_reveal_suggestibility():
+        reveal_suggestibility = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_suggestibility = reveal_suggestibility or recruitment_policy.extra_data.get("reveal_suggestibility",False)
+        return reveal_suggestibility
+
+    def interview_reveal_obedience():
+        reveal_obedience = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_obedience = reveal_obedience or recruitment_policy.extra_data.get("reveal_obedience",False)
+        return reveal_obedience
+
+    def interview_reveal_sluttiness():
+        reveal_sluttiness = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_sluttiness = reveal_sluttiness or recruitment_policy.extra_data.get("reveal_sluttiness",False)
+        return reveal_sluttiness
+
+    def interview_reveal_happiness():
+        reveal_happiness = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_happiness = reveal_happiness or recruitment_policy.extra_data.get("reveal_happiness",False)
+        return reveal_happiness
+
+    def interview_reveal_love():
+        reveal_love = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_love = reveal_love or recruitment_policy.extra_data.get("reveal_love",False)
+        return reveal_love
+
+    def interview_reveal_height():
+        reveal_height = False
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                reveal_height = reveal_height or recruitment_policy.extra_data.get("reveal_height",False)
+        return reveal_height
 
 
 screen interview_ui(the_candidates,count):
@@ -29,7 +106,38 @@ screen interview_ui(the_candidates,count):
                 ysize 550
                 vbox:
                     text "Personal Information" style "menu_text_style" size 26 xalign 0.5 xanchor 0.5 #Info about the person: age, height, happiness, obedience, etc.
-                    text "Age: [the_candidate.age]" style "menu_text_style" size 16
+                    if reveal_type():
+                        text "Type: [the_candidate.type]" style "menu_text_style" size 16
+                    if interview_reveal_happiness():
+                        text "Happiness: [the_candidate.happiness]" style "menu_text_style" size 16
+                    if interview_reveal_suggestibility():
+                        text "Suggestibility: [the_candidate.suggestibility]" style "menu_text_style" size 16
+                    if interview_reveal_sluttiness():
+                        text "Sluttiness: [the_candidate.sluttiness]" style "menu_text_style" size 16
+                    if interview_reveal_love():
+                        text "Love: [the_candidate.love]" style "menu_text_style" size 16
+                    if interview_reveal_obedience():
+                        text "Obedience: [the_candidate.obedience] - " + get_obedience_plaintext(the_candidate.obedience) style "menu_text_style" size 16
+                    if interview_reveal_age():
+                        text "Age: [the_candidate.age]" style "menu_text_style" size 16
+                    if interview_reveal_height():
+                        text "Height: " + height_to_string(the_candidate.height) style "menu_text_style" size 16
+                    if interview_reveal_tits():
+                        text "Cup Size: [the_candidate.tits]" style "menu_text_style" size 16
+                    if interview_reveal_relationship():
+                        if the_candidate.has_role(girlfriend_role):
+                            text "Relationship: Girlfriend" style "menu_text_style" size 16
+                        else:
+                            text "Relationship: [the_candidate.relationship]" style "menu_text_style" size 16
+
+                        if the_candidate.relationship != "Single":
+                            text "Significant Other: [the_candidate.SO_name]" style "menu_text_style" size 16
+                        elif the_candidate.has_role(girlfriend_role):
+                            text "Significant Other: [mc.name]" style "menu_text_style" size 16
+
+                    if interview_reveal_kids():
+                        text "Kids: [the_candidate.kids]" style "menu_text_style" size 16
+
                     text "Required Salary: $[the_candidate.salary]/day" style "menu_text_style" size 16
 
 
@@ -39,6 +147,7 @@ screen interview_ui(the_candidates,count):
                 ysize 550
                 vbox:
                     text "Stats and Skills" style "menu_text_style" size 26 xalign 0.5 xanchor 0.5 #Info about the persons raw stats, work skills, and sex skills
+                    text "Work Experience Level: [the_candidate.work_experience]" style "menu_text_style" size 16
                     text "Stats" style "menu_text_style" size 20
                     text "    Charisma: [the_candidate.charisma]" style "menu_text_style" size 16
                     text "    Intelligence: [the_candidate.int]" style "menu_text_style" size 16
@@ -49,7 +158,7 @@ screen interview_ui(the_candidates,count):
                     text "    Research: [the_candidate.research_skill]" style "menu_text_style" size 16
                     text "    Production: [the_candidate.production_skill]" style "menu_text_style" size 16
                     text "    Supply: [the_candidate.supply_skill]" style "menu_text_style" size 16
-                    if recruitment_knowledge_four_policy.is_active():
+                    if interview_reveal_sex_skills():
                         text "Sex Skills" style "menu_text_style" size 20
                         text "    Foreplay: " + str(the_candidate.sex_skills["Foreplay"]) style "menu_text_style" size 16
                         text "    Oral: " + str(the_candidate.sex_skills["Oral"]) style "menu_text_style" size 16

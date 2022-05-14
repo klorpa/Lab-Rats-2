@@ -1,7 +1,7 @@
 #Contains LR2 specific styles and transforms that are used elsewhere, rather inconsistently.
 init 0:
     transform scale_person(height_factor = 1):
-        zoom height_factor
+        zoom (height_factor*0.8)  #This is the scale factor for height, with the tallest unmodified by serum girl being 0.8 and the shortest being 0.72
 
     transform character_right():
         yalign 0.95

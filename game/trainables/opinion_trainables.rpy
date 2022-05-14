@@ -115,9 +115,9 @@ label train_new_opinion_label(the_person, sexy_list = False):
     mc.name "I want to talk to you about something."
     the_person "Okay, what do you want to talk about?"
     if sexy_list:
-        $ opinion_train_options = sexy_opinions_list[:]
+        $ opinion_train_options = the_person.get_sexy_opinions_list()
     else:
-        $ opinion_train_options = opinions_list[:]
+        $ opinion_train_options = the_person.get_normal_opinions_list()
     python:
         for known_opinion in the_person.get_opinion_topics_list(include_unknown = False, include_sexy = sexy_list, include_normal = not sexy_list):
             if known_opinion in opinion_train_options:

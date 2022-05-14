@@ -1,4 +1,7 @@
 init 0 python:
+    def cheat_requirement():
+        return debugMode
+
     def sleep_action_requirement():
         if time_of_day != 4:
             return "Too early to sleep."
@@ -11,6 +14,8 @@ init 0 python:
     def hr_work_action_requirement():
         if time_of_day >= 4:
             return "Too late to work."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
@@ -19,18 +24,24 @@ init 0 python:
             return "Too late to work."
         elif mc.business.active_research_design == None:
             return "No research project set."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
     def supplies_work_action_requirement():
         if time_of_day >= 4:
             return "Too late to work."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
     def market_work_action_requirement():
         if time_of_day >= 4:
             return "Too late to work."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
@@ -39,6 +50,8 @@ init 0 python:
             return "Too late to work."
         elif mc.business.get_used_line_weight() == 0:
             return "No serum design set."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
@@ -47,12 +60,16 @@ init 0 python:
             return "Too late to work."
         elif mc.business.get_employee_count() >= mc.business.max_employee_count:
             return "At employee limit."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
     def serum_design_action_requirement():
         if time_of_day >= 4:
             return "Too late to work."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         else:
             return True
 
@@ -109,6 +126,8 @@ init 0 python:
             return False
         elif clarity_cost > mc.free_clarity:
             return "Not enough Clarity."
+        elif mc.business.event_triggers_dict["Tutorial_Section"]:
+            return "Not enough time."
         elif time_of_day >= 4:
             return "Too late to work."
         else:
@@ -149,15 +168,14 @@ label production_work_action_description:
     return
 
 label interview_action_description:
-    $ count = 3 #Num of people to generate, by default is 3. Changed with some policies
-    if recruitment_batch_three_policy.is_active():
-        $ count = 10
-    elif recruitment_batch_two_policy.is_active():
-        $ count = 6
-    elif recruitment_batch_one_policy.is_active():
-        $ count = 4
+    python:
+        interview_cost = mc.business.recruitment_cost
+        count = 3 #Num of people to generate, by default is 3. Changed with some policies
+        for recruitment_policy in recruitment_policies_list:
+            if recruitment_policy.is_active():
+                count += recruitment_policy.extra_data.get("recruitment_batch_adjust",0)
+                interview_cost +=  recruitment_policy.extra_data.get("interview_cost_adjust",0)
 
-    $ interview_cost = mc.business.recruitment_cost
     "Bringing in [count] people for an interview will cost $[interview_cost]. Do you want to spend time interviewing potential employees?"
     menu:
         "Yes, I'll pay the cost. -$[interview_cost]":
@@ -167,24 +185,31 @@ label interview_action_description:
             python: #Build our list of candidates with our proper recruitment requirements
                 candidates = []
 
-                for x in range(0,count+1): #NOTE: count is given +1 because the screen tries to pre-calculate the result of button presses. This leads to index out-of-bounds, unless we pad it with an extra character (who will not be reached).
+                for x in range(0,count):
                     candidates.append(make_person(mc.business.generate_candidate_requirements()))
+                #NOTE: Append an exta not-special character because the screen tries to pre-calculate the result of button presses. This leads to index out-of-bounds, unless we pad it with an extra character (who will not be reached).
+                candidates.append(create_random_person(**(mc.business.generate_candidate_requirements())))
 
                 reveal_count = 0
                 reveal_sex = False
-                if recruitment_knowledge_one_policy.is_active():
-                    reveal_count += 2
-                if recruitment_knowledge_two_policy.is_active():
-                    reveal_count += 2
-                if recruitment_knowledge_three_policy.is_active():
-                    reveal_count += 1
-                    reveal_sex = True
-                if recruitment_knowledge_four_policy.is_active():
-                    reveal_count += 1
+                for recruitment_policy in recruitment_policies_list:
+                    if recruitment_policy.is_active():
+                        reveal_count += recruitment_policy.extra_data.get("reveal_count_adjust",0)
+                        reveal_sex = reveal_sex or recruitment_policy.extra_data.get("reveal_sex_opinion",False)
                 for a_candidate in candidates:
                     for x in __builtin__.range(0,reveal_count): #Reveal all of their opinions based on our policies.
                         a_candidate.discover_opinion(a_candidate.get_random_opinion(include_known = False, include_sexy = reveal_sex),add_to_log = False) #Get a random opinion and reveal it.
             call hire_select_process(candidates) from _call_hire_select_process
+            python:
+                #Special candidates who aren't hired wander town rather than be deleted
+                for candidate in candidates:
+                    if candidate != _return:
+                        if candidate.type == "premade" or candidate.type == "unique":
+                            candidate.generate_home()
+                            candidate.home.add_person(candidate)
+                            candidate.set_title(candidate.get_random_title())
+                            candidate.set_possessive_title(candidate.get_random_possessive_title())
+                            candidate.set_mc_title(candidate.get_random_player_title())
             $ candidates = [] #Prevent it from using up extra memory
             $ renpy.free_memory() #Try and force a clean up of unused memory.
 
@@ -192,9 +217,9 @@ label interview_action_description:
                 $ new_person = _return
                 $ new_person.generate_home() #Generate them a home location so they have somewhere to go at night.
                 call hire_someone(new_person, add_to_location = True) from _call_hire_someone #
-                $ new_person.set_title(get_random_title(new_person))
-                $ new_person.set_possessive_title(get_random_possessive_title(new_person))
-                $ new_person.set_mc_title(get_random_player_title(new_person))
+                $ new_person.set_title(new_person.get_random_title())
+                $ new_person.set_possessive_title(new_person.get_random_possessive_title())
+                $ new_person.set_mc_title(new_person.get_random_player_title())
             else:
                 "You decide against hiring anyone new for now."
             call advance_time from _call_advance_time_6
@@ -231,7 +256,7 @@ label hire_someone(new_person, add_to_location = False, research_allowed = True,
 
     # $ setup_employee_stats(the_person) # Sets up relationships with everyone at work, the day they were hired, etc.
 
-    "You complete the necessary paperwork and hire [_return.name]. What division do you assign her to?"
+    "You complete the necessary paperwork and hire [new_person.name]. What division do you assign her to?"
     menu:
         "Research and Development." if research_allowed:
             $ mc.business.add_employee_research(new_person)
@@ -257,6 +282,10 @@ label hire_someone(new_person, add_to_location = False, research_allowed = True,
             $ mc.business.add_employee_hr(new_person)
             if add_to_location:
                 $ mc.business.h_div.add_person(new_person)
+
+    call set_duties_controller(new_person)
+    if _return:
+        $ new_person.event_triggers_dict["work_duties_last_set"] = day
     return
 
 label serum_design_action_description:
@@ -287,6 +316,13 @@ label research_select_action_description:
     show screen phone_hud_ui
     show screen business_ui
     show screen main_ui
+    return
+
+label cheat:
+    $ mc.free_stat_points += 4 + 7 + 7
+    $ mc.free_work_points += 8 *5
+    $ mc.free_sex_points += 8 *4 -2 + 5
+    $ mc.business.change_funds(100000)
     return
 
 label production_select_action_description: #TODO: Change this to allow you to select which line of serum you are changing!
@@ -364,7 +400,7 @@ label head_researcher_select_description:
     call screen employee_overview(white_list = mc.business.research_team, person_select = True)
     $ new_head = _return
     $ mc.business.head_researcher = new_head
-    $ new_head.add_role(head_researcher)
+    $ new_head.change_job(head_researcher_job)
     return
 
 label pick_company_model_description:

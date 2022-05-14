@@ -18,7 +18,7 @@ init 1300:
             return valid_mc_titles
 
         alexia_personality = Personality("alexia", default_prefix = "relaxed",
-        common_likes = ["sports", "the colour yellow", "pop", "marketing work"],
+        common_likes = ["sports", "the colour yellow", "pop music", "marketing work"],
         common_sexy_likes = ["doggy style sex", "bareback sex", "not wearing anything", "skimpy outfits"],
         common_dislikes = ["pants", "conservative outfits", "hiking"],
         common_sexy_dislikes = ["anal sex", "being fingered", "taking control"],

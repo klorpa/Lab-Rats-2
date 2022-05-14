@@ -8,23 +8,38 @@ label instantiate_jobs():
     python:
         unemployed_job = Job("Unemployed", unemployed_role, work_days = [], work_times = [])
 
-        # Your business Roles #TODO: Add the ability to give girls new titles for their job.
-        # -> alternatively, have different _jobs_ within the divisions you can assign girls too.
-        # -> "Mary, Job: Professional Cumdump" has a good ring to it.
-        # -> Add some sort of job title progression?
-        hr_job = Job("Personnel Manager", employee_role, job_location = mc.business.h_div, hire_function = setup_employee_stats)
-        market_job = Job("Sales Representative",  employee_role, job_location = mc.business.m_div, hire_function = setup_employee_stats)
-        rd_job = Job("R&D Scientist", employee_role, job_location = mc.business.r_div, hire_function = setup_employee_stats)
-        supply_job = Job("Logistics Manager", employee_role, job_location = mc.business.s_div, hire_function = setup_employee_stats)
-        production_job = Job("Production Line Worker", employee_role, job_location = mc.business.p_div, hire_function = setup_employee_stats)
+        ## HR Jobs ##
+        hr_job = Job("Personnel Manager", employee_role, job_location = mc.business.h_div, hire_function = setup_employee_stats,
+            mandatory_duties = [hr_work_duty], available_duties = [] + general_duties_list + general_hr_duties)
+        #TODO: Personal secretary job
+
+        ## Market Jobs ##
+        market_job = Job("Sales Representative",  employee_role, job_location = mc.business.m_div, hire_function = setup_employee_stats,
+            mandatory_duties = [market_work_duty], available_duties = [] + general_duties_list + general_market_duties)
+
+
+        ## R&D Jobs ##
+        head_researcher_job = Job("Head Researcher", [employee_role, head_researcher], job_location = mc.business.r_div, hire_function = setup_employee_stats,
+            mandatory_duties = [research_work_duty, head_researcher_duty], available_duties = [] + general_duties_list + general_rd_duties)
+        rd_job = Job("R&D Scientist", employee_role, job_location = mc.business.r_div, hire_function = setup_employee_stats,
+            seniority_level = 2, mandatory_duties = [research_work_duty], available_duties = [] + general_duties_list + general_rd_duties)
+
+
+        ## Supply Jobs ##
+        supply_job = Job("Logistics Manager", employee_role, job_location = mc.business.s_div, hire_function = setup_employee_stats,
+            mandatory_duties = [supply_work_duty], available_duties = [] + general_duties_list + general_supply_duties)
+
+        ## Production Jobs ##
+        production_job = Job("Production Line Worker", employee_role, job_location = mc.business.p_div, hire_function = setup_employee_stats,
+            mandatory_duties = [production_work_duty], available_duties = [] + general_duties_list + general_production_duties)
 
         # Jobs with existing effects #TODO Some of these should leave new roles (ex-stripper, etc.) when you hire someone.
-        mom_associate_job = Job("Business Associate", mom_associate_role, job_location = mom_offices, work_times = [1,2])
-        mom_secretary_job = Job("Personal Secretary", mom_secretary_role, job_location = mom_offices, work_times = [1,2])
+        mom_associate_job = Job("Business Associate", mom_associate_role, job_location = mom_offices, work_times = [1,2], seniority_level = 2)
+        mom_secretary_job = Job("Personal Secretary", mom_secretary_role, job_location = mom_offices, work_times = [1,2], seniority_level = 1)
 
         aunt_unemployed_job = Job("Unemployed", critical_job_role, work_days = [], work_times = [])
 
-        influencer_job = Job("Influencer", critical_job_role)
+        influencer_job = Job("Influencer", critical_job_role, work_days = [], work_times = [])
 
 
         steph_lab_assistant = Job("Lab Assistant", critical_job_role, job_location = university) #Job for Steph to technically have at the start of the game so her job title is set correctly.

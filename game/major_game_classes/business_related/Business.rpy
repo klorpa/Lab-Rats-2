@@ -54,6 +54,7 @@ init -2 python:
             self.auto_sell_threshold = None
             self.marketability = 0
             #self.production_points = 0 Use to be used to store partial progress on serum. is now stored in the assembly line array
+            self.team_effectiveness_temp = 100 #Used as a temporary store to flip-flop the value at the start of the turn for HR puprposes.
             self.team_effectiveness = 100 #Ranges from 50 (Chaotic, everyone functions at 50% speed) to 200 (masterfully organized). Normal levels are 100, special traits needed to raise it higher.
             self.effectiveness_cap = 100 #Max cap, can be raised.
 
@@ -135,38 +136,50 @@ init -2 python:
             self.attention_bleed = 10 #How much attention is burned each day,
 
             self.operating_costs = 0 #How much money is spent every work day just owning yoru lab.
+            self.standard_efficiency_drop = 1 #How much efficiency drops per employee per turn at work.
 
             self.listener_system = ListenerManagementSystem()
 
             self.renew_contracts()
 
         def run_turn(self): #Run each time the time segment changes. Most changes are done here.
-            if time_of_day == 1 and daily_serum_dosage_policy.is_active() and self.is_work_day(): #Not done on run_day because we want it to apply at the _start_ of the day.
-                self.give_daily_serum()
+            # if time_of_day == 1 and daily_serum_dosage_policy.is_active() and self.is_work_day(): #Not done on run_day because we want it to apply at the _start_ of the day.
+            #     self.give_daily_serum()
 
-            #Compute other deparement effects
-            for person in self.supply_team:
-                if person in self.s_div.people: #Check to see if the person is in the room, otherwise don't count their progress (they are at home, dragged away by PC, weekend, etc.)
-                    self.supply_purchase(person.focus,person.charisma,person.supply_skill)
-                    person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("supply work"), add_to_log = False)
+            # #Compute other deparement effects
+            # for person in self.supply_team:
+            #     if person in self.s_div.people: #Check to see if the person is in the room, otherwise don't count their progress (they are at home, dragged away by PC, weekend, etc.)
+            #         person.run_turn_duties()
+            #
+            #         #self.supply_purchase(person.focus,person.charisma,person.supply_skill, person.calculate_job_efficency())
+            #         person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("supply work"), add_to_log = False)
 
-            for person in self.research_team:
-                if person in self.r_div.people:
-                    self.research_progress(person.int,person.focus,person.research_skill)
-                    person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("research work"), add_to_log = False)
+            # for person in self.research_team:
+            #     if person in self.r_div.people:
+            #         person.run_turn_duties()
+            #
+            #         #self.research_progress(person.int,person.focus,person.research_skill, person.calculate_job_efficency())
+            #         person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("research work"), add_to_log = False)
 
-            for person in self.production_team:
-                if person in self.p_div.people:
-                    self.production_progress(person.focus,person.int,person.production_skill)
-                    person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("production work"), add_to_log = False)
+            # for person in self.production_team:
+            #     if person in self.p_div.people:
+            #         person.run_turn_duties()
+            #
+            #         # self.production_progress(person.focus,person.int,person.production_skill,person.calculate_job_efficency())
+            #         person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("production work"), add_to_log = False)
 
-            for person in self.market_team:
-                if person in self.m_div.people:
-                    if person.should_wear_uniform():
-                        self.sale_progress(person.charisma,person.focus, person.market_skill, slut_modifier = person.outfit.slut_requirement) #If there is a uniform pass it's sluttiness along.
-                    else:
-                        self.sale_progress(person.charisma, person.focus, person.market_skill) #Otherwise their standard outfit provides no bonuses.
-                    person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("marketing work"), add_to_log = False)
+            # for person in self.market_team:
+            #     if person in self.m_div.people:
+            #         # if person.should_wear_uniform():
+            #         #     self.sale_progress(person.charisma,person.focus, person.market_skill, slut_modifier = person.outfit.slut_requirement, person.calculate_job_efficency()) #If there is a uniform pass it's sluttiness along.
+            #         # else:
+            #         #     self.sale_progress(person.charisma, person.focus, person.market_skill) #Otherwise their standard outfit provides no bonuses.
+            #         person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("marketing work"), add_to_log = False)
+
+            for a_person in self.get_employee_list():
+                if a_person.job.job_location.has_person(a_person) and not a_person.has_duty(extra_paperwork_duty):
+                    self.change_team_effectiveness(-self.standard_efficiency_drop) #Last thing we do is figur out what our effectivness drop should be before truncating our temp_value and applying it.
+            self.update_team_effectiveness()
 
             self.do_autosale() #Mark extra serums to be sold by marketing.
 
@@ -174,15 +187,15 @@ init -2 python:
                 policy.on_turn()
 
             #Compute efficiency drop
-            for person in self.supply_team + self.research_team + self.production_team + self.market_team:
-                if person in self.s_div.people + self.r_div.people + self.p_div.people + self.m_div.people: #Only people in the office lower effectiveness, no loss on weekends, not in for the day, etc.
-                    self.change_team_effectiveness(-1)
+            # for person in self.supply_team + self.research_team + self.production_team + self.market_team:
+            #     if person in self.s_div.people + self.r_div.people + self.p_div.people + self.m_div.people: #Only people in the office lower effectiveness, no loss on weekends, not in for the day, etc.
+            #         self.change_team_effectiveness(-1)
 
             #Compute effiency rise from HR
-            for person in self.hr_team:
-                if person in self.h_div.people:
-                    self.hr_progress(person.charisma,person.int,person.hr_skill)
-                    person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("HR work"), add_to_log = False)
+            # for person in self.hr_team:
+            #     if person in self.h_div.people:
+            #         #self.hr_progress(person.charisma,person.int,person.hr_skill, person.calculate_job_efficency())
+            #         person.change_happiness(person.get_opinion_score("working")+person.get_opinion_score("HR work"), add_to_log = False)
 
         def run_move(self):
             for policy in self.active_policy_list:
@@ -376,8 +389,8 @@ init -2 python:
                 new_research = new_research() #Used by serumtrait.unlock_function's, particularly SerumTraitBlueprints to properly set the new trait.
             self.active_research_design = new_research
 
-        def research_progress(self,int,focus,skill):
-            research_amount = __builtin__.round(((3*int) + (focus) + (2*skill) + 10) * (self.team_effectiveness))/100
+        def research_progress(self,int,focus,skill, production_modifier = 1.0):
+            research_amount = __builtin__.round(((3*int) + (focus) + (2*skill) + 10) * (self.team_effectiveness/100.0) * production_modifier)
 
             if self.head_researcher:
                 bonus_percent = (self.head_researcher.int - 2)*0.05
@@ -407,25 +420,6 @@ init -2 python:
                             self.add_normal_message("New serum trait researched: " + the_research.name)
                             self.active_research_design = None #If it's a newly discovered trait clear it so we don't start mastering it without player input.
 
-            else:
-                clarity_produced = 0
-                if theoretical_research.is_active():
-                    clarity_produced += research_amount * 0.05
-
-                if research_journal_subscription.is_active():
-                    clarity_produced += research_amount * 0.05
-
-                if independent_experimentation.is_active():
-                    if mc.business.supply_count >= 5:
-                        mc.business.supply_count += -5
-                        clarity_produced += research_amount * 0.05
-
-                self.partial_clarity += clarity_produced
-                if self.partial_clarity >= 1.0:
-                    int_clarity = __builtin__.int(self.partial_clarity)
-                    self.partial_clarity += -int_clarity
-                    mc.add_clarity(int_clarity, add_to_log = False)
-                    self.add_counted_message("Idle R&D team produced Clarity")
 
 
 
@@ -448,15 +442,15 @@ init -2 python:
             renpy.say("","You spend time securing new supplies for the lab, purchasing " + str(amount_bought) + " units of serum supplies.")
             return amount_bought
 
-        def supply_purchase(self,focus,cha,skill):
-            max_supply = __builtin__.round(((3*focus) + (cha) + (2*skill) + 10) * (self.team_effectiveness))/100
+        def supply_purchase(self,focus,cha,skill, production_modifier = 1.0, cost_modifier = 1.0):
+            max_supply = __builtin__.round(((3*focus) + (cha) + (2*skill))  * (self.team_effectiveness/100.0) * production_modifier)
             max_supply = __builtin__.int(max_supply)
             if max_supply + self.supply_count > self.supply_goal:
                 max_supply = self.supply_goal - self.supply_count
                 if max_supply <= 0:
                     return 0
 
-            self.change_funds(-max_supply)
+            self.change_funds(-max_supply * cost_modifier)
             self.supply_count += max_supply
             self.supplies_purchased += max_supply #Used for end of day reporting
             max_supply = int(max_supply)
@@ -494,8 +488,8 @@ init -2 python:
             renpy.say("","You spend time making cold calls to potential clients. You increase your market reach by " + str(amount_increased) + ".")
             return amount_increased
 
-        def sale_progress(self,cha,focus,skill, slut_modifier = 0): #TODO: Decide what effects should directly affect price, and which ones should increase market reach gain.
-            amount_increased = ((3*cha) + (focus) + (2*skill)) * ((self.team_effectiveness*0.01)) * (1.0+(slut_modifier)) * 5.0
+        def sale_progress(self,cha,focus,skill, slut_modifier = 0, production_modifier = 1.0): #TODO: Decide what effects should directly affect price, and which ones should increase market reach gain.
+            amount_increased = __builtin__.round(((3*cha) + (focus) + (2*skill)) * (1.0+(slut_modifier)) * 5.0 * (self.team_effectiveness/100.0) * production_modifier)
             amount_increased = __builtin__.round(amount_increased)
             self.market_reach += amount_increased
             return amount_increased
@@ -593,9 +587,9 @@ init -2 python:
             change = int(change_amount)
             self.funds += change_amount
 
-        def production_progress(self,focus,int,skill):
+        def production_progress(self,focus,int,skill, production_modifier = 1.0):
             #First, figure out how many production points we can produce total. Subtract that much supply and mark that much production down for the end of day report.
-            production_amount = __builtin__.round(((3*focus) + (int) + (2*skill) + 10) * (self.team_effectiveness))/100
+            production_amount = __builtin__.round(((3*focus) + (int) + (2*skill)) * (self.team_effectiveness/100.0) * production_modifier)
             self.production_potential += production_amount
 
             if production_amount > self.supply_count:
@@ -647,23 +641,36 @@ init -2 python:
             return production_amount
 
         def player_hr(self):
-            eff_amount = self.hr_progress(mc.charisma,mc.int,mc.hr_skill)
+            eff_amount = self.hr_progress(mc.charisma,mc.int,mc.hr_skill, instant_effect = True) #Player effect is instant so that it can be reflected on the UI right away.
             self.listener_system.fire_event("player_efficiency_restore", amount = eff_amount)
             self.listener_system.fire_event("general_work")
             renpy.say("","You settle in and spend a few hours filling out paperwork, raising company efficiency by " + str(eff_amount )+ "%%.")
             return eff_amount
 
-        def hr_progress(self,cha,int,skill): #Don't compute efficiency cap here so that player HR effort will be applied against any efficiency drop even though it's run before the rest of the end of the turn.
-            restore_amount = (3*cha) + (int) + (2*skill) + 5
-            self.change_team_effectiveness(restore_amount)
+        def hr_progress(self,cha,int,skill, production_modifier = 1.0, instant_effect = False): #Don't compute efficiency cap here so that player HR effort will be applied against any efficiency drop even though it's run before the rest of the end of the turn.
+            restore_amount = __builtin__.round(((3*cha) + (int) + (2*skill)) * production_modifier)
+            self.change_team_effectiveness(restore_amount, instant = instant_effect)
             return restore_amount
 
-        def change_team_effectiveness(self, the_amount):
-            self.team_effectiveness += the_amount
+        def change_team_effectiveness(self, the_amount, instant = False):
+            self.team_effectiveness_temp += the_amount #temp_effectiveness is changed to team_effectiveness on_turn so that all HR effects are frozen.
+
+            if instant:
+                self.team_effectiveness += the_amount
+                if self.team_effectiveness > self.effectiveness_cap:
+                    self.team_effectiveness = self.effectiveness_cap
+                elif self.team_effectiveness < 50:
+                    self.team_effectiveness = 50
+
+        def update_team_effectiveness(self):
+            self.team_effectiveness = self.team_effectiveness_temp
+
             if self.team_effectiveness > self.effectiveness_cap:
                 self.team_effectiveness = self.effectiveness_cap
             elif self.team_effectiveness < 50:
                 self.team_effectiveness = 50
+
+            self.team_effectiveness_temp = self.team_effectiveness #Gets rid of overflow/underflow for the next round
 
         def undesignate_person(self, the_person): #Removes the_person from all of the work lists so they can be moved around without them working in two departments.
             if the_person in self.research_team:
@@ -693,34 +700,34 @@ init -2 python:
         def add_employee_research(self, new_person):
             self.undesignate_person(new_person)
             self.research_team.append(new_person)
-            new_person.add_job(rd_job, job_known = True)
+            new_person.change_job(rd_job, job_known = True)
 
         def add_employee_production(self, new_person):
             self.undesignate_person(new_person)
             self.production_team.append(new_person)
-            new_person.add_job(production_job, job_known = True)
+            new_person.change_job(production_job, job_known = True)
 
         def add_employee_supply(self, new_person):
             self.undesignate_person(new_person)
             self.supply_team.append(new_person)
-            new_person.add_job(supply_job, job_known = True)
+            new_person.change_job(supply_job, job_known = True)
 
 
         def add_employee_marketing(self, new_person):
             self.undesignate_person(new_person)
             self.market_team.append(new_person)
-            new_person.add_job(market_job, job_known = True)
+            new_person.change_job(market_job, job_known = True)
 
         def add_employee_hr(self, new_person):
             self.undesignate_person(new_person)
             self.hr_team.append(new_person)
-            new_person.add_job(hr_job, job_known = True)
+            new_person.change_job(hr_job, job_known = True)
 
         def remove_employee(self, the_person): #As of v0.49 this should be used exclusively for firing people. When changing jobs you can just assign them a new one, they should keep the correct roles.
             self.undesignate_person(the_person)
             self.evict_person(the_person)
 
-            the_person.add_job(unemployed_job, job_known = True)
+            the_person.change_job(unemployed_job, job_known = True)
 
             #Roles can have an on_remove function, but these have special events that we want to make sure are triggered properly.
             if the_person == self.head_researcher:
@@ -788,39 +795,6 @@ init -2 python:
                         employees_meeting_requirement.append(person)
             return employees_meeting_requirement
 
-        def give_daily_serum(self):
-            for person in self.get_employee_list():
-                self.give_department_serum(person)
-
-        def give_department_serum(self, the_person):
-            the_serum = None
-            if the_person in self.research_team:
-                the_serum = self.r_serum
-            elif the_person in self.market_team:
-                the_serum = self.m_serum
-            elif the_person in self.production_team:
-                the_serum = self.p_serum
-            elif the_person in self.supply_team:
-                the_serum = self.s_serum
-            elif the_person in self.hr_team:
-                the_serum = self.h_serum
-
-            if the_serum is not None:
-                should_give_serum = True
-                for active_serum in the_person.serum_effects:
-                    if the_serum.is_same_design(active_serum):
-                        if active_serum.duration - active_serum.duration_counter >= 3:
-                            should_give_serum = False #Don't double-dose girls if they have the serum running and it will last the work day already
-                            break
-
-                if should_give_serum:
-                    if self.inventory.get_serum_count(the_serum) > 0:
-                        self.inventory.change_serum(the_serum,-1)
-                        the_person.give_serum(copy.copy(the_serum), add_to_log = False)
-                    else:
-                        the_message = "Stockpile out of " + the_serum.name + " to give to staff."
-                        self.add_counted_message(the_message)
-
         def advance_tutorial(self, tutorial_name):
             self.event_triggers_dict[tutorial_name] += 1 #advance our tutorial slot.
 
@@ -839,70 +813,94 @@ init -2 python:
         def generate_candidate_requirements(self): #Checks current business policies and generates a dict of keywords for create_random_person to set the correct values to company requirements.
             # In cases where a range is allowed it generates a random value in that range, so call this one per person being created.
             candidate_dict = {} # This will hold keywords and arguments for create_random_person to create a person with specific modifies
+            
+            candidate_dict["age_range"] = [Person.get_age_floor(),Person.get_age_ceiling()]
+            candidate_dict["height_range"] = [Person.get_height_floor(),Person.get_height_ceiling()]
+            candidate_dict["stat_range_array"] = [[Person.get_stat_floor(),Person.get_stat_ceiling()] for x in range(0,3)]
+            candidate_dict["skill_range_array"]= [[Person.get_skill_floor(),Person.get_skill_ceiling()] for x in range(0,5)]
+            candidate_dict["sex_skill_range_array"]= [[Person.get_sex_skill_floor(),Person.get_sex_skill_ceiling()] for x in range(0,4)]
 
-            if recruitment_skill_improvement_policy.is_active():
-                skill_cap = 7
-                candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
-                candidate_dict["skill_array"] = [renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap)]
+            candidate_dict["happiness_range"] = [Person.get_happiness_floor(),Person.get_happiness_ceiling()]
+            candidate_dict["suggestibility_range"] = [Person.get_suggestibility_floor(),Person.get_suggestibility_ceiling()]
+            candidate_dict["sluttiness_range"] = [Person.get_sluttiness_floor(),Person.get_sluttiness_ceiling()]
+            candidate_dict["love_range"] = [Person.get_love_floor(),Person.get_love_ceiling()]
+            candidate_dict["obedience_range"] = [Person.get_obedience_floor(),Person.get_obedience_ceiling()]
 
-            if recruitment_stat_improvement_policy.is_active():
-                stat_cap = 7
-                candidate_dict["age_floor"] = candidate_dict.get("age_floor", 18) + 10
-                candidate_dict["stat_array"] = [renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap)]
+            candidate_dict["tits_range"] = Person.get_tit_weighted_list()
+            
+            candidate_dict["relationship_list"] = Person.get_potential_relationships_list()
 
-            if recruitment_sex_improvement_policy.is_active():
-                stat_cap = 7
-                candidate_dict["sex_array"] = [renpy.random.randint(1,stat_cap), renpy.random.randint(1,stat_cap), renpy.random.randint(1,stat_cap), renpy.random.randint(1,stat_cap)]
+            #First Pass / Independent & Relative Policies
+            for recruitment_policy in recruitment_policies_list:
+                if recruitment_policy.is_active():
+                    candidate_dict["age_range"][0] += recruitment_policy.extra_data.get("age_floor_adjust",0)
+                    candidate_dict["age_range"][1] += recruitment_policy.extra_data.get("age_ceiling_adjust",0)
 
-            if recruitment_suggest_improvment_policy.is_active():
-                candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
-                candidate_dict["bonus_suggest"] = 2
+                    for stat_range in candidate_dict["stat_range_array"]:
+                        stat_range[0] += recruitment_policy.extra_data.get("stat_floor_adjust",0)
+                        stat_range[1] += recruitment_policy.extra_data.get("stat_ceiling_adjust",0)
 
-            if recruitment_obedience_improvement_policy.is_active():
-                candidate_dict["bonus_obedience"] = 10
+                    for skill_range in candidate_dict["skill_range_array"]:
+                        skill_range[0] += recruitment_policy.extra_data.get("skill_floor_adjust",0)
+                        skill_range[1] += recruitment_policy.extra_data.get("skill_ceiling_adjust",0)
+                
+                    for sex_skill_range in candidate_dict["sex_skill_range_array"]:
+                        sex_skill_range[0] += recruitment_policy.extra_data.get("sex_skill_floor_adjust",0)
+                        sex_skill_range[1] += recruitment_policy.extra_data.get("sex_skill_ceiling_adjust",0)
+            
+                    
+                    candidate_dict["happiness_range"][0] += recruitment_policy.extra_data.get("happiness_floor_adjust",0) 
+                    candidate_dict["happiness_range"][1] += recruitment_policy.extra_data.get("happiness_ceiling_adjust",0)
 
-            if recruitment_slut_improvement_policy.is_active():
-                candidate_dict["age_ceiling"] = candidate_dict.get("age_ceiling", 50) - 10
-                candidate_dict["bonus_sluttiness"] = 20
+                    candidate_dict["suggestibility_range"][0] += recruitment_policy.extra_data.get("suggestibility_floor_adjust",0) 
+                    candidate_dict["suggestibility_range"][1] += recruitment_policy.extra_data.get("suggestibility_ceiling_adjust",0)
 
-            if candidate_dict.get("age_ceiling", 50) < candidate_dict.get("age_floor", 18):
-                candidate_dict["age_ceiling"] = candidate_dict.get("age_floor",18) + 1
+                    candidate_dict["sluttiness_range"][0] += recruitment_policy.extra_data.get("sluttiness_floor_adjust",0) 
+                    candidate_dict["sluttiness_range"][1] += recruitment_policy.extra_data.get("sluttiness_ceiling_adjust",0)
 
+                    candidate_dict["love_range"][0] += recruitment_policy.extra_data.get("love_floor_adjust",0) 
+                    candidate_dict["love_range"][1] += recruitment_policy.extra_data.get("love_ceiling_adjust",0)
 
-            if recruitment_mothers_policy.is_active():
-                candidate_dict["bonus_kids"] = candidate_dict.get("bonus_kids", 0) + 1
-            elif recruitment_childless_policy.is_active():
-                candidate_dict["kids"] = 0
+                    candidate_dict["obedience_range"][0] += recruitment_policy.extra_data.get("obedience_floor_adjust",0) 
+                    candidate_dict["obedience_range"][1] += recruitment_policy.extra_data.get("obedience_ceiling_adjust",0)
+                
+                    relationships_allowed = recruitment_policy.extra_data.get("relationships_allowed")
+                    if relationships_allowed:
+                        candidate_dict["relationship_list"] = [relationship for relationship in candidate_dict["relationship_list"] if relationship[0] in relationships_allowed] 
 
-            if recruitment_big_tits_policy.is_active():
-                candidate_dict["tits"] = get_random_big_tit()
-            elif recruitment_huge_tits_policy.is_active():
-                candidate_dict["tits"] = get_random_huge_tit()
-            elif recruitment_small_tits_policy.is_active():
-                candidate_dict["tits"] = get_random_small_tit()
-            elif recruitment_tiny_tits_policy.is_active():
-                candidate_dict["tits"] = "AA"
+            #Make sure ranges are not reversed (only done for ranges where that is currently possible)
+            if candidate_dict["age_range"][0] > candidate_dict["age_range"][1]:
+                candidate_dict["age_range"].reverse()
 
-            if recruitment_short_policy.is_active():
-                candidate_dict["height"] = 0.9 + (renpy.random.random()/30)
-            elif recruitment_tall_policy.is_active():
-                candidate_dict["height"] = 0.96 + (renpy.random.random()/30)
+            #2nd Pass / Absolute Policies
+            for recruitment_policy in recruitment_policies_list:
+                if recruitment_policy.is_active():
+                     candidate_dict["tits_range"] = recruitment_policy.extra_data.get("tits_range", candidate_dict["tits_range"])
+                     
+                     #Because these are absolute they should also ensure that the range is valid (so an absolute floor also needs to raise the ceiling if it's below the floor)
+                     candidate_dict["height_range"][0] = __builtin__.max(candidate_dict["height_range"][0],recruitment_policy.extra_data.get("height_floor", candidate_dict["height_range"][0]))   
+                     candidate_dict["height_range"][1] = __builtin__.max(candidate_dict["height_range"][1],recruitment_policy.extra_data.get("height_floor", candidate_dict["height_range"][1]))   
 
+                     candidate_dict["height_range"][1] = __builtin__.min(candidate_dict["height_range"][1],recruitment_policy.extra_data.get("height_ceiling", candidate_dict["height_range"][1]))   
+                     candidate_dict["height_range"][0] = __builtin__.min(candidate_dict["height_range"][0],recruitment_policy.extra_data.get("height_ceiling", candidate_dict["height_range"][0]))   
 
-            if recruitment_single_policy.is_active():
-                candidate_dict["relationship"] = "Single"
-            elif recruitment_married_policy.is_active():
-                candidate_dict["relationship"] = "Married"
+                     candidate_dict["age_range"][0] = __builtin__.max(candidate_dict["age_range"][0],recruitment_policy.extra_data.get("age_floor", candidate_dict["age_range"][0]))   
+                     candidate_dict["age_range"][1] = __builtin__.max(candidate_dict["age_range"][1],recruitment_policy.extra_data.get("age_floor", candidate_dict["age_range"][1]))   
 
+                     candidate_dict["age_range"][1] = __builtin__.min(candidate_dict["age_range"][1],recruitment_policy.extra_data.get("age_ceiling", candidate_dict["age_range"][1]))   
+                     candidate_dict["age_range"][0] = __builtin__.min(candidate_dict["age_range"][0],recruitment_policy.extra_data.get("age_ceiling", candidate_dict["age_range"][0]))   
+            
+            #Enforce limits (only done where it's currently possible for it to be violated)            
+            candidate_dict["age_range"][0] = __builtin__.max(candidate_dict["age_range"][0],Person.get_age_floor(initial=False))
+            candidate_dict["age_range"][1] = __builtin__.min(candidate_dict["age_range"][1],Person.get_age_ceiling(initial=False))
 
-            if recruitment_old_policy.is_active():
-                candidate_dict["age_floor"] = 40
-            elif recruitment_teen_policy.is_active():
-                candidate_dict["age_ceiling"] = 19
+            #3rd Pass / Dependent limits
+            candidate_dict["kids_range"] = Person.get_initial_kids_range(candidate_dict["age_range"],candidate_dict["relationship_list"])
 
-            if candidate_dict.get("age_ceiling", 50) > 60: #TODO: Introduce postmenapause women.
-                candidate_dict["age_ceiling"] = 60
-            if candidate_dict.get("age_floor", 18) < 18: #No FBI needed here!
-                candidate_dict["age_floor"] = 18
+            for recruitment_policy in recruitment_policies_list:
+                if recruitment_policy.is_active():
+                     #These are special restrictions that should be enforced *after* final age / relationships adjustments (which can only be done when the age and relationships are known) so they can't be calculated in at this point
+                     candidate_dict["kids_floor"] = recruitment_policy.extra_data.get("kids_floor")
+                     candidate_dict["kids_ceiling"] = recruitment_policy.extra_data.get("kids_ceiling")
 
             return candidate_dict

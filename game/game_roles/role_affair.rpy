@@ -137,7 +137,7 @@ label fuck_date_label(the_person):
     else:
         call fuck_date_event(the_person)
 
-    $ the_person.clear_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!")
+    $ the_person.clear_situational_slut("Date")
     return "Advance Time"
 
 label fuck_date_event(the_person): #A breakout function so we can call the fuck_date stuff any time you go back to a girls place.
@@ -222,6 +222,7 @@ label fuck_date_event(the_person): #A breakout function so we can call the fuck_
                     $ random_num = renpy.random.randint(0,100)
                     if random_num < 8 and not so_called:
                         #Her SO Comes home (unless he's called, in which case we know where he is.)
+                        $ so_called = True
                         "She smiles and wraps her arms around you in return, pressing her body against yours."
                         the_person "Come and take me. I..."
                         "She freezes as shafts of light shine through the window curtains. You both listen as a car pulls in and turns its engine off."

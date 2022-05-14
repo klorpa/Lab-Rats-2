@@ -1,15 +1,1059 @@
 init -2 python:
     class Person(renpy.store.object): #Everything that needs to be known about a person.
+        #Define "private" range limits, use static/class methods to retrieve from the Person class
+        _final_stat_floor = 0
+        _initial_stat_floor = 1
+        _initial_stat_ceiling = 5
+
+        _final_skill_floor = 0
+        _initial_skill_floor = 1
+        _initial_skill_ceiling = 5
+
+        _final_sex_skill_floor = 0
+        _initial_sex_skill_floor = 1
+        _initial_sex_skill_ceiling = 5
+
+        _final_happiness_floor = 0
+        _initial_happiness_floor = 90
+        _initial_happiness_ceiling = 110
+
+        _initial_suggestibility_floor = 0
+        _initial_suggestibility_ceiling = 0
+
+        _initial_sluttiness_floor = 0
+        _initial_sluttiness_ceiling = 10
+
+        _final_love_floor = -100
+        _initial_love_floor = 0
+        _initial_love_ceiling = 0
+        _final_love_ceiling = 100
+
+        _final_obedience_floor = 0
+        _initial_obedience_floor = 90
+        _initial_obedience_ceiling = 110
+
+        _final_work_experience_floor = 1
+        _initial_work_experience_floor = 1
+        _initial_work_experience_ceiling = 3
+        _final_work_experience_ceiling = 5
+
+        _initial_age_floor = 18
+        _initial_age_ceiling = 50
+        _final_age_floor = 18
+        _final_age_ceiling = 60
+        _teen_age_ceiling = 19
+        _old_age_floor = 40
+
+        _height_step = 0.015 #1 inch
+        _initial_height_floor =   ((5 * 12) +  0) * _height_step #5'  0"
+        _initial_height_ceiling = ((5 * 12) + 10) * _height_step #5' 10"
+        _final_height_floor =     ((4 * 12) +  0) * _height_step #4'  0"
+        _final_height_ceiling =   ((7 * 12) +  0) * _height_step #7'  0"
+        _short_height_ceiling =   ((5 * 12) +  3) * _height_step #5'  3"
+        _tall_height_floor =      ((5 * 12) +  9) * _height_step #5'  9"
+
+        _base_list_of_relationships = [["Single",120],["Girlfriend",50],["Fiancée",120],["Married",20]]
+
+        _large_tit_minimum = "D"
+        _huge_tit_minimum = "E"
+        _small_tit_maximum = "C"
+        _tiny_tit_maximum = "AA"
+
+        _list_of_names = []
+
+        _list_of_names.append("Jessica")
+        _list_of_names.append("Jenny")
+        _list_of_names.append("Victoria")
+        _list_of_names.append("Lily")
+        _list_of_names.append("Jennifer")
+        _list_of_names.append("Nora")
+        _list_of_names.append("Stephanie")
+        _list_of_names.append("Alexia")
+        _list_of_names.append("Danielle")
+        _list_of_names.append("Ashley")
+        _list_of_names.append("Brittany")
+        _list_of_names.append("Sally")
+        _list_of_names.append("Helen")
+        _list_of_names.append("Sarah")
+        _list_of_names.append("Erika")
+        _list_of_names.append("Sandra")
+        _list_of_names.append("Maya")
+        _list_of_names.append("Emma")
+        _list_of_names.append("Katya")
+        _list_of_names.append("Saphirette")
+        _list_of_names.append("Charisma")
+        _list_of_names.append("Mayumi")
+        _list_of_names.append("Brendan")
+        _list_of_names.append("Josie")
+        _list_of_names.append("Saya")
+        _list_of_names.append("Yamiko")
+        _list_of_names.append("Rowena")
+        _list_of_names.append("Katie")
+        _list_of_names.append("Dawn")
+        _list_of_names.append("Sasha")
+        _list_of_names.append("Melanie")
+        _list_of_names.append("Tina")
+        _list_of_names.append("Raven")
+        _list_of_names.append("Sarah")
+        _list_of_names.append("Antonia")
+        _list_of_names.append("Mina")
+        _list_of_names.append("Marisha")
+        _list_of_names.append("Misty")
+        _list_of_names.append("Krya")
+        _list_of_names.append("Kida")
+        _list_of_names.append("Miyu")
+        _list_of_names.append("Rayne")
+        _list_of_names.append("Joana")
+        _list_of_names.append("Bobbi")
+        _list_of_names.append("Moira")
+        _list_of_names.append("Penelope")
+        _list_of_names.append("Julie")
+        _list_of_names.append("Geneviève")
+        _list_of_names.append("Persephone")
+        _list_of_names.append("Kylie")
+        _list_of_names.append("Alice")
+        _list_of_names.append("Ginger")
+        _list_of_names.append("Shirley")
+        _list_of_names.append("Alicia")
+        _list_of_names.append("Arianne")
+        _list_of_names.append("Roxy")
+        _list_of_names.append("Sheyla")
+        _list_of_names.append("Candice")
+        _list_of_names.append("Becky")
+        _list_of_names.append("Susan")
+        _list_of_names.append("Kirsten")
+        _list_of_names.append("Sylvia")
+        _list_of_names.append("Niamh")
+        _list_of_names.append("Teagan")
+        _list_of_names.append("Robin")
+        _list_of_names.append("Mara")
+        _list_of_names.append("Veronica")
+        _list_of_names.append("Misa")
+        _list_of_names.append("Kerri")
+        _list_of_names.append("Marianne")
+        _list_of_names.append("Marry-Ann")
+        _list_of_names.append("Angela")
+        _list_of_names.append("June")
+        _list_of_names.append("Angie")
+        _list_of_names.append("Gillian")
+        _list_of_names.append("Faith")
+        _list_of_names.append("Julia")
+        _list_of_names.append("Bailey")
+        _list_of_names.append("Sierra")
+        _list_of_names.append("Terry")
+        _list_of_names.append("Cordula")
+        _list_of_names.append("Suzy")
+        _list_of_names.append("Elizabeth")
+        _list_of_names.append("Danny")
+        _list_of_names.append("Kanya")
+        _list_of_names.append("Kay")
+        _list_of_names.append("Soni")
+        _list_of_names.append("Alana")
+        _list_of_names.append("Lira")
+        _list_of_names.append("Lilith")
+        _list_of_names.append("Raislyn")
+        _list_of_names.append("Gina")
+        _list_of_names.append("Chrystal")
+        _list_of_names.append("Jenny")
+        _list_of_names.append("Selene")
+        _list_of_names.append("Piper")
+        _list_of_names.append("Nicole")
+        _list_of_names.append("Seraphina")
+        _list_of_names.append("Kitty")
+        _list_of_names.append("Isabelle")
+        _list_of_names.append("Fae")
+        _list_of_names.append("Beth")
+        _list_of_names.append("Lystra")
+        _list_of_names.append("Katreena")
+        _list_of_names.append("Hannah")
+        _list_of_names.append("Mara")
+        _list_of_names.append("Trinity")
+        _list_of_names.append("Stephine")
+        _list_of_names.append("Sydney")
+        _list_of_names.append("Amai")
+        _list_of_names.append("Edith")
+        _list_of_names.append("Alina")
+        _list_of_names.append("Jae")
+        _list_of_names.append("Abbigail")
+        _list_of_names.append("Kayla")
+        _list_of_names.append("Tia")
+        _list_of_names.append("Mimi")
+        _list_of_names.append("Evelyn")
+        _list_of_names.append("Leah")
+        _list_of_names.append("Katya")
+        _list_of_names.append("Kathryn")
+        _list_of_names.append("Bronwyn")
+        _list_of_names.append("Tilly")
+        _list_of_names.append("Katsuni")
+        _list_of_names.append("Samantha")
+        _list_of_names.append("Mara")
+        _list_of_names.append("Zimu")
+        _list_of_names.append("Maria")
+        _list_of_names.append("Bunny")
+        _list_of_names.append("Kara")
+        _list_of_names.append("Dina")
+        _list_of_names.append("Priya")
+        _list_of_names.append("Zaya")
+        _list_of_names.append("Mitzy")
+        _list_of_names.append("Abigail")
+        _list_of_names.append("Georgia")
+        _list_of_names.append("Kaitlyn")
+        _list_of_names.append("Asa")
+        _list_of_names.append("Olivia")
+        _list_of_names.append("Kimberley")
+        _list_of_names.append("Daisy")
+        _list_of_names.append("Ariel")
+        _list_of_names.append("Jade")
+        _list_of_names.append("Kaia")
+        _list_of_names.append("Madeline")
+        _list_of_names.append("Nu")
+        _list_of_names.append("Piper")
+        _list_of_names.append("Kelly")
+        _list_of_names.append("Claire")
+        _list_of_names.append("Elizabeth")
+        _list_of_names.append("Hayley")
+        _list_of_names.append("Melanie")
+        _list_of_names.append("Morrigan")
+        _list_of_names.append("Talia")
+        _list_of_names.append("Sandra")
+        _list_of_names.append("Kaylani")
+        _list_of_names.append("Emily")
+        _list_of_names.append("Steffi")
+        _list_of_names.append("Vanessa")
+        _list_of_names.append("Bonnie")
+        _list_of_names.append("Jasmine")
+        _list_of_names.append("Sasha")
+        _list_of_names.append("Alessandra")
+        _list_of_names.append("Ara")
+        _list_of_names.append("Ami")
+        _list_of_names.append("Ann-Kathrin")
+        _list_of_names.append("Lizzie")
+        _list_of_names.append("Bamboo")
+        _list_of_names.append("Layla")
+        _list_of_names.append("Electra")
+        _list_of_names.append("Angelina")
+        _list_of_names.append("Kaiya")
+        _list_of_names.append("Romina")
+        _list_of_names.append("Jasmine")
+        _list_of_names.append("Judy")
+
+
+        _list_of_last_names = []
+        _list_of_last_names.append("Hitchcock")
+        _list_of_last_names.append("Peters")
+        _list_of_last_names.append("Fallbrooke")
+        _list_of_last_names.append("Williams")
+        _list_of_last_names.append("Orion")
+        _list_of_last_names.append("Marie")
+        _list_of_last_names.append("Millstein")
+        _list_of_last_names.append("Sky")
+        _list_of_last_names.append("Spherica")
+        _list_of_last_names.append("Fields")
+        _list_of_last_names.append("Moran")
+        _list_of_last_names.append("Kurokami")
+        _list_of_last_names.append("Bergstrom")
+        _list_of_last_names.append("Fernandez")
+        _list_of_last_names.append("Bergstrom")
+        _list_of_last_names.append("Sasamiya")
+        _list_of_last_names.append("Onihime")
+        _list_of_last_names.append("Lancie")
+        _list_of_last_names.append("Simmons")
+        _list_of_last_names.append("Parsons")
+        _list_of_last_names.append("Lockheart")
+        _list_of_last_names.append("Summers")
+        _list_of_last_names.append("Seras")
+        _list_of_last_names.append("Proud")
+        _list_of_last_names.append("Blanes")
+        _list_of_last_names.append("Shaw")
+        _list_of_last_names.append("Bailey")
+        _list_of_last_names.append("Daniels")
+        _list_of_last_names.append("Castillo")
+        _list_of_last_names.append("Kimiko")
+        _list_of_last_names.append("Farrowsdotter")
+        _list_of_last_names.append("Prashad")
+        _list_of_last_names.append("Pharys")
+        _list_of_last_names.append("Pires")
+        _list_of_last_names.append("Brock")
+        _list_of_last_names.append("Kingsley")
+        _list_of_last_names.append("Navarias")
+        _list_of_last_names.append("LaPorte")
+        _list_of_last_names.append("Isabella")
+        _list_of_last_names.append("Hamilton")
+        _list_of_last_names.append("Hellene")
+        _list_of_last_names.append("Belladonna")
+        _list_of_last_names.append("Vedeer")
+        _list_of_last_names.append("Currance")
+        _list_of_last_names.append("Murray")
+        _list_of_last_names.append("Silvers")
+        _list_of_last_names.append("Vermelen")
+        _list_of_last_names.append("Blair")
+        _list_of_last_names.append("Rojas")
+        _list_of_last_names.append("Reichart")
+        _list_of_last_names.append("Swift")
+        _list_of_last_names.append("Carroll")
+        _list_of_last_names.append("Maugher")
+        _list_of_last_names.append("Moonstone")
+        _list_of_last_names.append("Kirk")
+        _list_of_last_names.append("Deal")
+        _list_of_last_names.append("Quinn")
+        _list_of_last_names.append("Jade")
+        _list_of_last_names.append("Smythe")
+        _list_of_last_names.append("Rose")
+        _list_of_last_names.append("Chanen")
+        _list_of_last_names.append("Pesche")
+        _list_of_last_names.append("Lighton")
+        _list_of_last_names.append("Michaelson")
+        _list_of_last_names.append("Anderson")
+        _list_of_last_names.append("Connors")
+        _list_of_last_names.append("Song")
+        _list_of_last_names.append("Rosen")
+        _list_of_last_names.append("Mayfair")
+        _list_of_last_names.append("Morgan")
+        _list_of_last_names.append("Grün")
+        _list_of_last_names.append("Berry")
+        _list_of_last_names.append("Sanders")
+        _list_of_last_names.append("Samson")
+        _list_of_last_names.append("Chailai")
+        _list_of_last_names.append("Hara")
+        _list_of_last_names.append("Newman")
+        _list_of_last_names.append("Mead")
+        _list_of_last_names.append("Ersson")
+        _list_of_last_names.append("Sill")
+        _list_of_last_names.append("Mahjor")
+        _list_of_last_names.append("Whitehair")
+        _list_of_last_names.append("Perrit")
+        _list_of_last_names.append("White")
+        _list_of_last_names.append("Wolf")
+        _list_of_last_names.append("Jung")
+        _list_of_last_names.append("Dussoir")
+        _list_of_last_names.append("Dreadlow")
+        _list_of_last_names.append("Duroche")
+        _list_of_last_names.append("Hampson")
+        _list_of_last_names.append("Faith")
+        _list_of_last_names.append("Lee")
+        _list_of_last_names.append("Carbonero")
+        _list_of_last_names.append("Cotten")
+        _list_of_last_names.append("Ookami")
+        _list_of_last_names.append("Du Roche")
+        _list_of_last_names.append("Collins")
+        _list_of_last_names.append("Sladek")
+        _list_of_last_names.append("Liu")
+        _list_of_last_names.append("Carbonara")
+        _list_of_last_names.append("Anne")
+        _list_of_last_names.append("Li")
+        _list_of_last_names.append("West")
+        _list_of_last_names.append("Everette")
+        _list_of_last_names.append("Derry")
+        _list_of_last_names.append("Ling")
+        _list_of_last_names.append("Bjornson")
+        _list_of_last_names.append("Lin")
+        _list_of_last_names.append("Jaye")
+        _list_of_last_names.append("Bowing")
+        _list_of_last_names.append("Llandry")
+        _list_of_last_names.append("Selkirk")
+        _list_of_last_names.append("James")
+        _list_of_last_names.append("Laura")
+        _list_of_last_names.append("Belgazoo")
+        _list_of_last_names.append("Linden")
+        _list_of_last_names.append("Sov")
+        _list_of_last_names.append("Fang")
+        _list_of_last_names.append("Sykora")
+        _list_of_last_names.append("Honey")
+        _list_of_last_names.append("Troy")
+        _list_of_last_names.append("Landry")
+        _list_of_last_names.append("Rai")
+        _list_of_last_names.append("Cassidy")
+        _list_of_last_names.append("Irons")
+        _list_of_last_names.append("Bard")
+        _list_of_last_names.append("Holmes")
+        _list_of_last_names.append("Birch")
+        _list_of_last_names.append("Akira")
+        _list_of_last_names.append("Holmes")
+        _list_of_last_names.append("Benson")
+        _list_of_last_names.append("Spitz")
+        _list_of_last_names.append("Rose")
+        _list_of_last_names.append("Collins")
+        _list_of_last_names.append("Jones")
+        _list_of_last_names.append("Cakes")
+        _list_of_last_names.append("Nguyen")
+        _list_of_last_names.append("Perri")
+        _list_of_last_names.append("Archer")
+        _list_of_last_names.append("Grant")
+        _list_of_last_names.append("Black")
+        _list_of_last_names.append("Williams")
+        _list_of_last_names.append("Glaser")
+        _list_of_last_names.append("Meade")
+        _list_of_last_names.append("Crusher")
+        _list_of_last_names.append("Lei")
+        _list_of_last_names.append("Swann")
+        _list_of_last_names.append("Wildmoser")
+        _list_of_last_names.append("Sánchez")
+        _list_of_last_names.append("Jones")
+        _list_of_last_names.append("Tanaka")
+        _list_of_last_names.append("DeVille")
+        _list_of_last_names.append("Onuki")
+        _list_of_last_names.append("Luck")
+        _list_of_last_names.append("Archer")
+        _list_of_last_names.append("Bui")
+        _list_of_last_names.append("Stephanopoulus")
+        _list_of_last_names.append("Wright")
+        _list_of_last_names.append("Kühnel")
+        _list_of_last_names.append("Lynn")
+        _list_of_last_names.append("Mueller")
+        _list_of_last_names.append("Howarth")
+        _list_of_last_names.append("Marsh")
+
+        _list_of_male_names = []
+        _list_of_male_names.append("Aaron")
+        _list_of_male_names.append("Andre")
+        _list_of_male_names.append("Bradley")
+        _list_of_male_names.append("Colin")
+        _list_of_male_names.append("Dustin")
+        _list_of_male_names.append("Erwin")
+        _list_of_male_names.append("Felix")
+        _list_of_male_names.append("Glenn")
+        _list_of_male_names.append("Harold")
+        _list_of_male_names.append("Ivan")
+        _list_of_male_names.append("Jake")
+        _list_of_male_names.append("Jon")
+        _list_of_male_names.append("Julian")
+        _list_of_male_names.append("Kurt")
+        _list_of_male_names.append("Kim")
+        _list_of_male_names.append("Lowell")
+        _list_of_male_names.append("Maxwell")
+        _list_of_male_names.append("Morton")
+        _list_of_male_names.append("Neil")
+        _list_of_male_names.append("Omar")
+        _list_of_male_names.append("Peter")
+        _list_of_male_names.append("Raul")
+        _list_of_male_names.append("Rudy")
+        _list_of_male_names.append("Steve")
+        _list_of_male_names.append("Stuart")
+        _list_of_male_names.append("Terrance")
+        _list_of_male_names.append("Terry")
+        _list_of_male_names.append("Tyrone")
+        _list_of_male_names.append("Vincent")
+        _list_of_male_names.append("Wilbur")
+        _list_of_male_names.append("William")
+        _list_of_male_names.append("Zachary")
+
+        _coffee_list = []
+        _coffee_list.append("just black")
+        _coffee_list.append("one milk")
+        _coffee_list.append("two milk")
+        _coffee_list.append("cream and sugar")
+        _coffee_list.append("just a splash of cream")
+        _coffee_list.append("lots of sugar")
+        _coffee_list.append("just a little sugar")
+
+
+
+        #These are "ideal" hair colours. Individuals will have minor variations applied to them so that different "blonds" have slightly different hair.
+        _list_of_hairs = []
+        _list_of_hairs.append(["blond", [0.89,0.75,0.47,1]])
+        _list_of_hairs.append(["brown", [0.21,0.105,0.06,1]])
+        _list_of_hairs.append(["black",[0.09,0.07,0.09,1]])
+        _list_of_hairs.append(["chestnut", [0.59,0.31,0.18,1]])
+        #TODO: Add more hair colours
+
+        _list_of_skins = []
+        _list_of_skins.append(["white",5])
+        _list_of_skins.append(["black",1])
+        _list_of_skins.append(["tan",2])
+
+        _list_of_faces = [] # Only character critical faces are included in all versions.
+        _list_of_faces.append("Face_1")
+        _list_of_faces.append("Face_2")
+        _list_of_faces.append("Face_3")
+        _list_of_faces.append("Face_4")
+        _list_of_faces.append("Face_5")
+
+        _list_of_faces.append("Face_6")
+        _list_of_faces.append("Face_7")
+        _list_of_faces.append("Face_8")
+        _list_of_faces.append("Face_9") #Used to be Mobile Exclusion
+        #_list_of_faces.append("Face_10") #Bad render
+        _list_of_faces.append("Face_11") #Used to be Mobile Exclusion
+        _list_of_faces.append("Face_12") #Used to be Mobile Exclusion
+        _list_of_faces.append("Face_13") #Used to be Mobile Exclusion
+        _list_of_faces.append("Face_14") #Used to be Mobile Exclusion
+
+        _list_of_eyes = []
+        _list_of_eyes.append(["dark blue",[0.32, 0.60, 0.82, 1.0]]) # (["dark blue",[0.18, 0.33, 0.44, 1.0]])
+        _list_of_eyes.append(["light blue",[0.60, 0.75, 0.98, 1.0]]) # 0.25, 0.32, 0.37, 1.0]])
+        _list_of_eyes.append(["green",[0.35, 0.68, 0.40, 1.0]])
+        _list_of_eyes.append(["brown",[0.6, 0.5, 0.3, 1.0]])
+        _list_of_eyes.append(["grey",[0.95, 0.98, 0.98, 1.0]])
+
+        _list_of_tits = []
+        _list_of_tits.append(["AA",5])
+        _list_of_tits.append(["A",15])
+        _list_of_tits.append(["B",30])
+        _list_of_tits.append(["C",30])
+        _list_of_tits.append(["D",15])
+        _list_of_tits.append(["DD",10])
+        _list_of_tits.append(["DDD",5])
+        _list_of_tits.append(["E",2])
+        _list_of_tits.append(["F",1])
+        _list_of_tits.append(["FF",1])
+
+        _list_of_clothing_colours = []
+        _list_of_clothing_colours.append([0.15,0.15,0.15,1]) #Black
+        _list_of_clothing_colours.append([1.0,1.0,1.0,1]) #White
+        _list_of_clothing_colours.append([0.7,0.4,0.4,1]) #Light Pink
+        _list_of_clothing_colours.append([0.4,0.7,0.4,1]) #Light blue
+        _list_of_clothing_colours.append([0.4,0.4,0.7,1]) #Light green
+        _list_of_clothing_colours.append([0.31,0.23,0.33,1]) #Purple
+        _list_of_clothing_colours.append([0.9,0.5,0.1,1]) #Orange
+
+        _list_of_body_types = []
+        _list_of_body_types.append("thin_body")
+        _list_of_body_types.append("standard_body")
+        _list_of_body_types.append("curvy_body")
+
+        # Regular opinions _usually_ add a bit of bonus happiness, but some may influence some options or effects.
+        _opinions_list = [] #A master list of things a character might like or dislike. Should always be named so it fits the framework "Likes X" or "Dislikes X". Personalities have a unique list that they always draw from as well
+        _opinions_list.append("skirts")
+        _opinions_list.append("pants")
+        _opinions_list.append("small talk") #Has gameplay effect.
+        _opinions_list.append("Mondays") #Has gameplay effect
+        _opinions_list.append("Fridays") #Has gameplay effect
+        _opinions_list.append("the weekend") #Has gameplay effect
+        _opinions_list.append("working") #Has gameplay effect
+        _opinions_list.append("the colour blue")
+        _opinions_list.append("the colour yellow")
+        _opinions_list.append("the colour red")
+        _opinions_list.append("the colour pink")
+        _opinions_list.append("the colour black")
+        _opinions_list.append("heavy metal music")
+        _opinions_list.append("jazz")
+        _opinions_list.append("punk music")
+        _opinions_list.append("classical music")
+        _opinions_list.append("pop music")
+        _opinions_list.append("conservative outfits") #Has gameplay effect
+        _opinions_list.append("work uniforms") #Has gameplay effect
+        _opinions_list.append("research work") #Has gameplay effect
+        _opinions_list.append("marketing work") #Has gameplay effect
+        _opinions_list.append("HR work") #Has gameplay effect
+        _opinions_list.append("supply work") #Has gameplay effect
+        _opinions_list.append("production work") #Has gameplay effect
+        _opinions_list.append("makeup")
+        _opinions_list.append("flirting") #Has gameplay effect
+        _opinions_list.append("sports") #Has gameplay effect
+        _opinions_list.append("hiking") #Hsa gameplay effect
+
+
+        # Sexy opinions _usually_ add a bit of bonus sluttiness, but some may influence some sex scenes, make some approaches more likely, or have other effects.
+        _sexy_opinions_list = [] #Another list of opinions, but these ones are sex/kink related and probably shoudn't be brought up in polite conversation.
+        _sexy_opinions_list.append("doggy style sex") #Has gameplay effect
+        _sexy_opinions_list.append("missionary style sex") #Has gameplay effect
+        _sexy_opinions_list.append("sex standing up") #Has gameplay effect
+        _sexy_opinions_list.append("giving blowjobs") #Has gameplay effect
+        _sexy_opinions_list.append("getting head") #Has gameplay effect
+        _sexy_opinions_list.append("anal sex") #Has gameplay effect
+        _sexy_opinions_list.append("vaginal sex") #Has gameplay effect
+        _sexy_opinions_list.append("public sex") #Has gameplay effect
+        _sexy_opinions_list.append("kissing") #Has gameplay effect
+        _sexy_opinions_list.append("lingerie") #Has gameplay effect
+        _sexy_opinions_list.append("masturbating") #Has gameplay effect
+        _sexy_opinions_list.append("giving handjobs") #Has gameplay effect
+        _sexy_opinions_list.append("giving tit fucks") #Has gameplay effect
+        _sexy_opinions_list.append("being fingered") #Has gameplay effect
+        _sexy_opinions_list.append("skimpy uniforms") #Has gameplay effect
+        _sexy_opinions_list.append("skimpy outfits") #Has gameplay effect
+        _sexy_opinions_list.append("not wearing underwear") #Has gameplay effect
+        _sexy_opinions_list.append("not wearing anything") #Has gameplay effect
+        _sexy_opinions_list.append("showing her tits") #Has gameplay effect
+        _sexy_opinions_list.append("showing her ass") #Has gameplay effect
+        _sexy_opinions_list.append("being submissive") #Has gameplay effect
+        _sexy_opinions_list.append("taking control") #Has gameplay effect
+        _sexy_opinions_list.append("drinking cum") #Has gameplay effect
+        _sexy_opinions_list.append("creampies") #Has gameplay effect
+        _sexy_opinions_list.append("cum facials") #Has gameplay effect
+        _sexy_opinions_list.append("being covered in cum") #Has gameplay effect
+        _sexy_opinions_list.append("bareback sex") #Has gameplay effect.
+        _sexy_opinions_list.append("big dicks")
+        _sexy_opinions_list.append("cheating on men") #Has gameplay effect
+        _sexy_opinions_list.append("anal creampies") #Has gameplay effect
+        _sexy_opinions_list.append("incest") #Has gameplay effect
+        #TODO: Add an "open relationships" sexy opinion. Reduces penalties of a girl seeing you cheating on her (at high levels add a special training to give a "harem member" role).
+        #TODO: Add a "voyeurism" sexy opinion. Increases effects of watching someone having sex.
+
+
+
+        @classmethod
+        def get_random_tit(cls,min=None,max=None):
+            if not min:
+                start = 0
+            else:
+                start = cls.get_tit_index(min)
+            if not max:
+                end = len(cls._list_of_tits)
+            else:
+                end =  cls.get_tit_index(max)+1
+            return get_random_from_weighted_list(cls._list_of_tits[start:end])
+
+
+        @classmethod
+        def get_tit_weighted_list(cls,min=None,max=None):
+            if not min:
+                start = 0
+            else:
+                start = cls.get_tit_index(min)
+            if not max:
+                end = len(cls._list_of_tits)
+            else:
+                end =  cls.get_tit_index(max)+1
+            return cls._list_of_tits[start:end]
+
+        @classmethod
+        def get_maximum_tit(cls):
+            return get_random_from_weighted_list(cls._list_of_tits[-1:])
+
+        @classmethod
+        def get_tit_index(cls,current_tits):
+            return index_in_weighted_list(current_tits,cls._list_of_tits)
+
+        @classmethod
+        def rank_tits(cls,the_tits): #Useful if you need to know exactly who has larger tits and want to compare ints. Also see Person.has_large_tits(), for a flat definition of large tits as D or larger
+            #Mostly an alias for get_tit_index but defaults to 0 (which is undesirable for a function that may be as like setting a maximum as a minimum)
+            try:
+                return cls.get_tit_index(the_tits)
+            except UnboundLocalError as err:
+                return 0
+
+        @classmethod
+        def get_smaller_tit(cls,current_tit):
+            current_index = cls.get_tit_index(current_tit)
+            return cls._list_of_tits[__builtin__.max(0,current_index-1)][0]
+
+
+        @classmethod
+        def get_larger_tit(cls,current_tit):
+            current_index = cls.get_tit_index(current_tit)
+            return cls._list_of_tits[__builtin__.min(current_index+1,len(cls._list_of_tits)-1)][0]
+
+
+        @classmethod
+        def get_random_tiny_tit(cls):
+            return cls.get_random_tit(max=cls._tiny_tit_maximum)
+
+
+        @classmethod
+        def get_random_small_tit(cls):
+            return cls.get_random_tit(max=cls._small_tit_maximum)
+
+
+        @classmethod
+        def get_random_large_tit(cls):
+            return cls.get_random_tit(min=cls._large_tit_minimum)
+
+        @classmethod
+        def get_random_huge_tit(cls):
+            return cls.get_random_tit(min=cls._huge_tit_minimum)
+
+        @classmethod
+        def get_maximum_tiny_tit(cls):
+            return cls._tiny_tit_maximum
+
+        @classmethod
+        def get_maximum_small_tit(cls):
+            return cls._small_tit_maximum
+
+        @classmethod
+        def get_minimum_large_tit(cls):
+            return cls._large_tit_minimum
+
+        @classmethod
+        def get_minimum_huge_tit(cls):
+            return cls._huge_tit_minimum
+
+
+        @classmethod
+        def get_tiny_tits_weighted_list(cls):
+            return cls.get_tit_weighted_list(max=cls._tiny_tit_maximum)
+
+        @classmethod
+        def get_small_tits_weighted_list(cls):
+            return cls.get_tit_weighted_list(max=cls._small_tit_maximum)
+
+        @classmethod
+        def get_large_tits_weighted_list(cls):
+            return cls.get_tit_weighted_list(min=cls._large_tit_minimum)
+
+        @classmethod
+        def get_huge_tits_weighted_list(cls):
+            return cls.get_tit_weighted_list(min=cls._huge_tit_minimum)
+
+        @staticmethod
+        def tit_is_in_weighted_tits_list(tit,weighted_tit_list):
+            return is_in_weighted_list(tit,weighted_tit_list)
+
+        @classmethod
+        def tit_is_tiny(cls,tit):
+            return cls.tit_is_in_weighted_tits_list(tit,cls.get_tiny_tits_weighted_list())
+
+        @classmethod
+        def tit_is_small(cls,tit):
+            return cls.tit_is_in_weighted_tits_list(tit,cls.get_small_tits_weighted_list())
+
+        @classmethod
+        def tit_is_large(cls,tit):
+            return cls.tit_is_in_weighted_tits_list(tit,cls.get_large_tits_weighted_list())
+
+        @classmethod
+        def tit_is_huge(cls,tit):
+            return cls.tit_is_in_weighted_tits_list(tit,cls.get_huge_tits_weighted_list())
+
+
+        @classmethod
+        def get_random_skin(cls):
+            return get_random_from_weighted_list(cls._list_of_skins)
+
+
+        @classmethod
+        def get_random_hair_colour(cls):
+            return get_random_from_list(cls._list_of_hairs)
+
+        @staticmethod
+        def get_darkened_colour(the_colour, variation_constant = 0.07):
+            return_list = the_colour[:]
+            for component_index in __builtin__.range(3): #In case there's an alpha component, we don't want to change that.
+                return_list[component_index] = return_list[component_index] * (1-variation_constant)
+
+            return return_list
+
+        @classmethod
+        def generate_hair_colour(cls,base_colour = None, create_variation = True):
+            if base_colour:
+                for hair in cls.get_list_of_hairs():
+                    if hair[0] == base_colour:
+                        return_hair = copy.deepcopy(hair)
+            else:
+                return_hair = copy.deepcopy(cls.get_random_hair_colour()) #Deep copy the hair colours because lists are passed by reference and it is two lists deep.
+
+            if create_variation: #The colour is modified slightly to give different characters slightly different hair colours even if they have the same base.
+                hair_colour = return_hair[1]
+                for component_index in __builtin__.range(3): #The RGB components can be 10% lighter or darker each.
+                    component_variation_constant = 0.07
+                    if renpy.random.randint(0,1) == 0:
+                        # Shade it, it's a little darker.
+                        shade_factor = renpy.random.random() * component_variation_constant
+                        hair_colour[component_index] = hair_colour[component_index] * (1-shade_factor)
+
+                    else:
+                        # Tint it, it's a little lighter.
+                        tint_factor = renpy.random.random() * component_variation_constant
+                        hair_colour[component_index] = hair_colour[component_index] + ((1-hair_colour[component_index])*tint_factor)
+
+            return return_hair
+
+        @classmethod
+        def get_random_eye(cls):
+            return get_random_from_list(cls._list_of_eyes)
+
+
+        @classmethod
+        def generate_eye_colour(cls,base_colour = None, create_variation = True):
+            if base_colour:
+                for eyes in cls.get_list_of_eyes():
+                    if eyes[0] == base_colour: #If we ask for a specific base...
+                        return_eyes = copy.deepcopy(eyes)
+            else: #Otherwise just get a random one
+                return_eyes = copy.deepcopy(cls.get_random_eye()) #Deep copy the hair colours because lists are passed by reference and it is two lists deep.
+
+            if create_variation: #The colour is modified slightly to give different characters slightly different hair colours even if they have the same base.
+                eye_colour = return_eyes[1]
+                for component_index in __builtin__.range(3): #The RGB components can be 10% lighter or darker each.
+                    component_variation_constant = 0.02 #TODO: Test how much this should vary for eye colour.
+                    if renpy.random.randint(0,1) == 0:
+                        # Shade it, it's a little darker.
+                        shade_factor = renpy.random.random() * component_variation_constant
+                        eye_colour[component_index] = eye_colour[component_index] * (1-shade_factor)
+
+                    else:
+                        # Tint it, it's a little lighter.
+                        tint_factor = renpy.random.random() * component_variation_constant
+                        eye_colour[component_index] = eye_colour[component_index] + ((1-eye_colour[component_index])*tint_factor)
+
+            return return_eyes
+
+
+
+        @classmethod
+        def get_random_face(cls):
+            return get_random_from_list(cls._list_of_faces)
+
+        @classmethod
+        def get_random_name(cls):
+            return get_random_from_list(cls._list_of_names)
+
+        @classmethod
+        def get_random_last_name(cls):
+            return get_random_from_list(cls._list_of_last_names)
+
+        @classmethod
+        def get_random_male_name(cls):
+            return get_random_from_list(cls._list_of_male_names)
+
+        @classmethod
+        def get_random_glasses_frame_colour(cls):
+            # Picks one of several mostly-neutral colours that should go well with most items
+            return get_random_from_list(cls._list_of_clothing_colours)
+
+        @classmethod
+        def get_random_body_type(cls):
+            return get_random_from_list(cls._list_of_body_types)
+
+        @classmethod
+        def get_normal_opinions_list(cls):
+            return cls._opinions_list[:]
+
+        @classmethod
+        def get_sexy_opinions_list(cls):
+            return cls._sexy_opinions_list[:]
+
+
+        @classmethod
+        def get_random_normal_opinion(cls):
+            return get_random_from_list(cls._opinions_list)
+
+        @classmethod
+        def get_random_sexy_opinion(cls):
+            return get_random_from_list(cls._sexy_opinions_list)
+
+        @classmethod
+        def get_random_coffee_style(cls):
+            return get_random_from_list(cls._coffee_list)
+
+        @classmethod
+        def get_list_of_hairs(cls):
+            return copy.deepcopy(cls._list_of_hairs) #Return a deepcopy so that original list and it's content is immutable
+
+        @classmethod
+        def get_list_of_eyes(cls):
+            return copy.deepcopy(cls._list_of_eyes) #Return a deepcopy so that original list and it's content is immutable
+
+        @classmethod
+        def get_stat_floor(cls,initial=True):
+            if initial:
+                return cls._initial_stat_floor
+            else:
+                return cls._final_stat_floor
+
+        @classmethod
+        def get_skill_floor(cls,initial=True):
+            if initial:
+                return cls._initial_skill_floor
+            else:
+                return cls._final_skill_floor
+
+        @classmethod
+        def get_sex_skill_floor(cls,initial=True):
+            if initial:
+                return cls._initial_sex_skill_floor
+            else:
+                return cls._final_sex_skill_floor
+
+        @classmethod
+        def get_stat_ceiling(cls):
+            return cls._initial_stat_ceiling
+
+        @classmethod
+        def get_skill_ceiling(cls):
+            return cls._initial_skill_ceiling
+
+        @classmethod
+        def get_sex_skill_ceiling(cls):
+            return cls._initial_sex_skill_ceiling
+
+        @classmethod
+        def get_happiness_floor(cls,initial=True):
+            if initial:
+                return cls._initial_happiness_floor
+            else:
+                return cls._final_happiness_floor
+
+        @classmethod
+        def get_happiness_ceiling(cls):
+            return cls._initial_happiness_ceiling
+
+
+        @classmethod
+        def get_suggestibility_floor(cls):
+            return cls._initial_suggestibility_floor
+
+        @classmethod
+        def get_suggestibility_ceiling(cls):
+            return cls._initial_suggestibility_ceiling
+
+        @classmethod
+        def get_sluttiness_floor(cls):
+            return cls._initial_sluttiness_floor
+
+        @classmethod
+        def get_sluttiness_ceiling(cls):
+            return cls._initial_sluttiness_ceiling
+
+        @classmethod
+        def get_love_floor(cls,initial=True):
+            if initial:
+                return cls._initial_love_floor
+            else:
+                return cls._final_love_floor
+
+        @classmethod
+        def get_love_ceiling(cls,initial=True):
+            if initial:
+                return cls._initial_love_ceiling
+            else:
+                return cls._final_love_ceiling
+
+        @classmethod
+        def get_obedience_floor(cls,initial=True):
+            if initial:
+                return cls._initial_obedience_floor
+            else:
+                return cls._final_obedience_floor
+
+        @classmethod
+        def get_obedience_ceiling(cls):
+            return cls._initial_obedience_ceiling
+
+
+        @classmethod
+        def get_work_experience_floor(cls,initial=True):
+            if initial:
+                return cls._initial_work_experience_floor
+            else:
+                return cls._final_work_experience_floor
+
+        @classmethod
+        def get_work_experience_ceiling(cls,initial=True):
+            if initial:
+                return cls._initial_work_experience_ceiling
+            else:
+                return cls._final_work_experience_ceiling
+
+        @classmethod
+        def get_age_floor(cls,initial=True):
+            if initial:
+                return cls._initial_age_floor
+            else:
+                return cls._final_age_floor
+
+        @classmethod
+        def get_age_ceiling(cls,initial=True):
+            if initial:
+                return cls._initial_age_ceiling
+            else:
+                return cls._final_age_ceiling
+
+        @classmethod
+        def get_height_floor(cls,initial=True):
+            if initial:
+                return cls._initial_height_floor
+            else:
+                return cls._final_height_floor
+
+        @classmethod
+        def get_height_ceiling(cls,initial=True):
+            if initial:
+                return cls._initial_height_ceiling
+            else:
+                return cls._final_height_ceiling
+
+        @classmethod
+        def get_old_age_floor(cls):
+            return cls._old_age_floor
+
+        @classmethod
+        def get_teen_age_ceiling(cls):
+            return cls._teen_age_ceiling
+
+        @classmethod
+        def get_tall_height_floor(cls):
+            return cls._tall_height_floor
+
+        @classmethod
+        def get_short_height_ceiling(cls):
+            return cls._short_height_ceiling
+
+        @classmethod
+        def get_height_step(cls):
+            return cls._height_step
+
+        @staticmethod
+        def get_initial_kids_range(age_range,relationships_array):
+            kids_range = [-1,4]
+            if age_range[0] > 22 :
+                kids_range[0] += 1 #Young people have less time to have kids in general, so modify their number down a bit.
+                kids_range[1] += 1
+
+            if age_range[1] < 28:
+                kids_range[1] -= 1 #Young characters don't have as many kids
+
+            if age_range[1] < 38:
+                kids_range[1] -= 1 #As you get older you're more likely to have one
+
+            if not (is_in_weighted_list("Girlfriend",relationships_array) or is_in_weighted_list("Fiancée",relationships_array) or is_in_weighted_list("Married",relationships_array)):
+                kids_range[1] -= 1 #People who are dating have kids more often than single people
+
+            if not (is_in_weighted_list("Fiancée",relationships_array) or is_in_weighted_list("Married",relationships_array)):
+                kids_range[1] -= 2 #And married/engaged people have more kids still
+
+            return kids_range
+
+        @classmethod
+        def get_potential_relationships_list(cls):
+            return copy.deepcopy(cls._base_list_of_relationships)
+
+        #Tighten kid range now that true age is known ?
+        @classmethod
+        def finalize_kids_range(cls,kids_range,age_range,relationships_list,age,relationship):
+            if age_range is None or age_range[0] <= 22:
+                if age > 22:
+                    kids_range[0] += 1 #Young people have less time to have kids in general, so modify their number down a bit.
+                    kids_range[1] += 1
+            if age_range is None or age_range[1] >= 28:
+                if age < 28:
+                    kids_range[1] -= 1 #Young characters don't have as many kids
+            if age_range is None or age_range[1] >= 38:
+                if age < 38:
+                    kids_range[1] -= 1 #Young characters don't have as many kids
+            if relationships_list is None or (is_in_weighted_list("Girlfriend",relationships_list) or is_in_weighted_list("Fiancée",relationships_list) or is_in_weighted_list("Married",relationships_list)):
+                if relationship not in ["Girlfriend","Fiancée","Married"]:
+                    kids_range[1] -= 1 #People who are dating have kids more often than single people
+            if relationships_list is None or (is_in_weighted_list("Fiancée",relationships_list) or is_in_weighted_list("Married",relationships_list)):
+                if relationship not in ["Fiancée","Married"]:
+                    kids_range[1] -= 2 #People who are dating have kids more often than single people
+            return kids_range
+
+        @classmethod
+        def finalize_relationships_weight(cls,relationships_list,age):
+            for relationship in relationships_list:
+                if relationship[0] == "Single":
+                   relationship[1] -= age
+                if relationship[0] == "Fiancée":
+                   relationship[1] -= 2*age
+                if relationship[0] == "Married":
+                   relationship[1] += 4*age
+            return relationships_list
+
+
+
         global_character_number = 0 #This is increased for each character that is created.
         def __init__(self,name,last_name,age,body_type,tits,height,body_images,expression_images,hair_colour,hair_style,pubes_colour,pubes_style,skin,eyes,job,wardrobe,personality,stat_list,skill_list,
-            sluttiness=0,obedience=0,suggest=0,sex_list=[0,0,0,0], love = 0, happiness = 100, home = None,
+            sluttiness=0,obedience=100,suggest=0,sex_skill_list=[0,0,0,0], love = 0, happiness = 100, home = None,
             font = "fonts/Avara.tff", name_color = "#ffffff", dialogue_color = "#ffffff",
             face_style = "Face_1",
             special_role = None,
             title = None, possessive_title = None, mc_title = None,
             relationship = None, SO_name = None, kids = None, base_outfit = None,
-            generate_insta = False, generate_dikdok = False, generate_onlyfans = False):
+            generate_insta = False, generate_dikdok = False, generate_onlyfans = False, coffee_style=None,
+            work_experience = 1, type="random"):
 
+            self.type = type
             ## Personality stuff, name, ect. Non-physical stuff.
             self.name = name
             self.last_name = last_name
@@ -59,13 +1103,13 @@ init -2 python:
             self.sexy_opinions = {}
             # We establish random opinions first and will overwrite any that conflict with generated personality opinions.
             for x in __builtin__.range(1,5):
-                the_opinion_key = get_random_opinion()
+                the_opinion_key = Person.get_random_normal_opinion()
                 degree = renpy.random.randint(-2,2)
                 if not degree == 0: #ie. ignore 0 value opinions.
                     self.opinions[the_opinion_key] = [degree, False]
 
             for x in __builtin__.range(1,2):
-                the_opinion_key = get_random_sexy_opinion()
+                the_opinion_key = Person.get_random_sexy_opinion()
                 degree = renpy.random.randint(-2,2)
                 if not degree == 0: #ie. ignore 0 value opinions.
                     self.sexy_opinions[the_opinion_key] = [degree, False]
@@ -110,7 +1154,7 @@ init -2 python:
             self.age = age
             self.body_type = body_type
             self.tits = tits
-            self.height = height * 0.8 #This is the scale factor for height, with the talest girl being 0.8 and the shortest being 0.64
+            self.height = height
             self.body_images = body_images.get_copy() #instance of Clothing class, which uses full body shots.
             self.face_style = face_style
             self.expression_images = expression_images #instance of the Expression class, which stores facial expressions for different skin colours
@@ -144,9 +1188,6 @@ init -2 python:
                 self.special_role = []
                 log_message("Person \"" + name + " " + last_name + "\" was handed an incorrect special role parameter.")
 
-            self.job = None
-            self.add_job(job)
-
             self.on_room_enter_event_list = [] #Checked when you enter a room with this character. If an event is in this list and enabled it is run (and no other event is until the room is reentered)
                 # If handed a list of [action, positive_int], the integer is how many turns this action is kept around before being removed, triggered or not.
             self.on_talk_event_list = [] #Checked when you start to interact with a character. If an event is in this list and enabled it is run (and no other event is until you talk to the character again.)\
@@ -174,6 +1215,14 @@ init -2 python:
             self.energy = self.max_energy
 
             self.salary_modifier = 1.0 # Set by events for what this character considers "fair" for their skill, and/or reflects what they were promised.
+            self.productivity_adjustment = 1.0 # Set by events for what this character is actually able to produce. Generally a "hidden" stat that you can't change.
+
+            self.work_experience = work_experience # How experienced with work in general this girl is. The higher it is the more money a girl will want, but the more duties she can handle.
+            self.job = None
+            self.duties = []
+            self.change_job(job)
+
+
             self.salary = self.calculate_base_salary()
 
 
@@ -181,7 +1230,7 @@ init -2 python:
             self.idle_animation = idle_wiggle_animation #If we support animation we use this to jiggle their tits and ass just a little to give the screen some movement.
             #self.idle_animation.innate_animation_strength += 0.05 * rank_tits(self.tits) # Larger tits swing more #TODO: Implement region specific weighting.
 
-            self.personal_region_modifiers = {"breasts":0.1+0.1 * rank_tits(self.tits)} #A dict that stores information about modifiers that should be used for specific regions of animations. Default is 1.
+            self.personal_region_modifiers = {"breasts":0.1+0.1 * Person.rank_tits(self.tits)} #A dict that stores information about modifiers that should be used for specific regions of animations. Default is 1.
 
             ##Personality Stats##
             #Things like sugestability, that change over the course of the game when the player interacts with the girl
@@ -192,7 +1241,12 @@ init -2 python:
             self.love = love
             self.sluttiness = 0 + sluttiness #How slutty the girl is by default. Higher will have her doing more things just because she wants to or you asked.
             self.core_sluttiness = self.sluttiness #Core sluttiness is the base level of what a girl considers normal. normal "sluttiness" is the more variable version, technically refered to as "temporary slutiness".
-            self.obedience = 100 + obedience #How likely the girl is to listen to commands. Default is 100 (normal person), lower actively resists commands, higher follows them.
+            self.obedience = obedience #How likely the girl is to listen to commands. Default is 100 (normal person), lower actively resists commands, higher follows them.
+
+            if coffee_style is None:
+                self.coffee_style = self.get_random_coffee_style()
+            else:
+                self.coffee_style = coffee_style
 
             #Situational modifiers are handled by events. These dicts and related functions provide a convenient way to avoid double contributions. Remember to clear your situational modifiers when you're done with them!!
             self.situational_sluttiness = {} #A dict that stores a "situation" string and the corrisponding amount it is contributing to the girls sluttiness.
@@ -208,10 +1262,10 @@ init -2 python:
             ##Sex Skills##
             #These represent how skilled a girl is at different kinds of intimacy, ranging from kissing to anal. The higher the skill the closer she'll be able to bring you to orgasm (whether you like it or not!)
             self.sex_skills = {}
-            self.sex_skills["Foreplay"] = sex_list[0] #A catch all for everything that goes on before blowjobs, sex, etc. Includes things like kissing and strip teases.
-            self.sex_skills["Oral"] = sex_list[1] #The girls skill at giving head.
-            self.sex_skills["Vaginal"] = sex_list[2] #The girls skill at different positions that involve vaginal sex.
-            self.sex_skills["Anal"] = sex_list[3] #The girls skill at different positions that involve anal sex.
+            self.sex_skills["Foreplay"] = sex_skill_list[0] #A catch all for everything that goes on before blowjobs, sex, etc. Includes things like kissing and strip teases.
+            self.sex_skills["Oral"] = sex_skill_list[1] #The girls skill at giving head.
+            self.sex_skills["Vaginal"] = sex_skill_list[2] #The girls skill at different positions that involve vaginal sex.
+            self.sex_skills["Anal"] = sex_skill_list[3] #The girls skill at different positions that involve anal sex.
 
             self.sex_record = {}
             self.sex_record["Handjobs"] = 0
@@ -353,7 +1407,7 @@ init -2 python:
                 elif any(flattened_word == target_word for target_word in ["tit","tits","boob","boobs","breast","breasts","mommy milkers"]):
                     if self.arousal > 40 - 10*self.get_opinion_score("showing her tits"):
                         modified_word = True
-                        tit_effect_strength = str(int(6*(self.arousal/self.max_arousal)) + rank_tits(self.tits))
+                        tit_effect_strength = str(int(6*(self.arousal/self.max_arousal)) + Person.rank_tits(self.tits))
                         word_replace = self.wrap_string(word, the_colour = new_colour)
                         word_replace = "{atl=bounce_text~" + tit_effect_strength + "}" + word_replace + "{/atl}"
                         temp_what += word_replace + " "
@@ -402,7 +1456,7 @@ init -2 python:
             if attr == "core_sluttiness": #Helps maintain mod support after v0.43 removed core_sluttiness as an attribute
                 return self.sluttiness
             else:
-                raise AttributeError
+                raise AttributeError("No attribute: " + attr)
 
 
 
@@ -454,10 +1508,10 @@ init -2 python:
             else:
                 eyes = None
 
-            if renpy.random.randint(0,100) < 60: #Have heights that roughly match (but not exactly, and readjusted for the the general scaling factor.)
-                height = (self.height/0.8) * (renpy.random.randint(95,105)/100.0)
-                if height > 1.0:
-                    height = 1.0
+            if renpy.random.randint(0,100) < 60: #Have heights that roughly match (but not exactly)
+                height = self.height * (renpy.random.randint(95,105)/100.0)
+                if height > 1.05:
+                    height = 1.05
                 elif height < 0.9:
                     height = 0.9
             else:
@@ -506,6 +1560,15 @@ init -2 python:
             else:
                 self.clear_situational_slut("over serum tolerance")
                 self.clear_situational_obedience("over serum tolerance")
+
+            if self.lactation_sources > 0: #She'll have milky tits, which can be milked in some cases
+                self.event_triggers_dict["max_milk_in_breasts"] = Person.rank_tits(self.tits) * 2 #Max milk is determind by tit size
+                self.event_triggers_dict["milk_in_breasts"] = self.event_triggers_dict.get("milk_in_breasts", 0) + Person.rank_tits(self.tits) * self.lactation_sources * 0.2
+                if self.event_triggers_dict.get("milk_in_breasts",0) > self.event_triggers_dict.get("max_milk_in_breasts",0):
+                    self.event_triggers_dict["milk_in_breasts"] = self.event_triggers_dict.get("max_milk_in_breasts",0)
+
+            else:
+                self.event_triggers_dict["max_milk_in_breasts"] = 0
 
             for a_role in self.special_role:
                 a_role.run_turn(self)
@@ -1052,7 +2115,7 @@ init -2 python:
 
         def set_opinion(self, topic, strength, known = False): #override function to set an opinion to a known value, mainly used to set up characters before they are introduced
             is_sexy_opinion = False
-            if topic in sexy_opinions_list:
+            if topic in self.get_sexy_opinions_list():
                 is_sexy_opinion = True
 
             if not strength == 0:
@@ -1141,7 +2204,7 @@ init -2 python:
                 return False
 
             is_sexy_opinion = False
-            if topic in sexy_opinions_list:
+            if topic in self.get_sexy_opinions_list():
                 is_sexy_opinion = True
 
             opinion_tuple = [start_value, start_known]
@@ -1272,7 +2335,11 @@ init -2 python:
             return return_value
 
 
-        def give_serum(self,the_serum_design, add_to_log = True): ##Make sure you are passing a copy of the serum, not a reference.
+        def give_serum(self,the_serum_design, add_to_log = True):
+            if the_serum_design is None:
+                return #We might have handed over no serum because we aren't producing any and a crisis was looking for one, or something similar.
+            else:
+                the_serum_design = copy.copy(the_serum_design) #Take a copy so we aren't touchinn the reference we are handed.
             self.serum_effects.append(the_serum_design)
             the_serum_design.run_on_apply(self)
 
@@ -1912,11 +2979,18 @@ init -2 python:
             if any(relationship in [sister_role,mother_role,aunt_role,cousin_role] for relationship in self.special_role):
                 return True
 
+        def has_tiny_tits(self): #Returns true if the girl has tiny breasts. "AA" cups.
+            return self.tit_is_tiny(self.tits)
+
+        def has_small_tits(self): #Returns true if the girl has small breasts (Below "C" cup)
+            return self.tit_is_small(self.tits)
+
+
         def has_large_tits(self): #Returns true if the girl has large breasts. "D" cups and up are considered large enough for titfucking, swinging, etc.
-            if self.tits == "D" or self.tits == "DD" or self.tits == "DDD" or self.tits == "E" or self.tits == "F" or self.tits == "FF":
-                return True
-            else:
-                return False
+            return self.tit_is_large(self.tits)
+
+        def has_huge_tits(self): #Returns true if the girl has huge breasts ("E" and up)
+            return self.tit_is_huge(self.tits)
 
         def wants_creampie(self): #Returns True if the girl is going to use dialogue where she wants you to creampie her, False if she's going to be angry about it. Used to help keep dialogue similar throughout events
             creampie_threshold = 75
@@ -2004,6 +3078,9 @@ init -2 python:
                 display_name = self.create_formatted_title("???")
                 if self.title:
                     display_name = self.title
+
+                if fire_event:
+                    mc.listener_system.fire_event("girl_trance", the_person = self)
 
                 if not self.has_role(trance_role):
                     self.add_role(trance_role)
@@ -2203,7 +3280,15 @@ init -2 python:
 
         #TODO: We should add an "expected salary modifier" field, so people who are interns don't get angry about it.
         def calculate_base_salary(self): #returns the default value this person should be worth on a per day basis.
-            return __builtin__.int((self.int + self.focus + self.charisma)*2 + (self.hr_skill + self.market_skill + self.research_skill + self.production_skill + self.supply_skill) * self.salary_modifier)
+            return __builtin__.int(((self.int + self.focus + self.charisma)*2 + (self.hr_skill + self.market_skill + self.research_skill + self.production_skill + self.supply_skill)) * self.salary_modifier * (0.5+0.25*self.work_experience))
+
+        def calculate_job_salary(self, salary_modifier = None): #NOTE: base_salary includes self.salary_modifier.
+            if salary_modifier is None:
+                salary_modifier = 1.0
+            return __builtin__.int(self.calculate_base_salary() * salary_modifier * self.job.wage_adjustment);
+
+        def calculate_job_efficency(self):
+            return self.job.productivity_adjustment * self.productivity_adjustment;
 
         def set_schedule(self, the_location, the_days = None, the_times = None):
             self.schedule.set_schedule(the_location, the_days, the_times)
@@ -2236,8 +3321,9 @@ init -2 python:
             else:
                 return self.schedule.get_next_destination()
 
-        def person_meets_requirements(self, slut_required = 0, core_slut_required = 0, obedience_required = 0, obedience_max = 2000, love_required = -200):
-            if self.sluttiness >= slut_required and self.obedience >= obedience_required and self.obedience <= obedience_max and self.love >= love_required:
+
+        def person_meets_requirements(self, slut_required = 0, slut_max = 2000, obedience_required = 0, obedience_max = 2000, love_required = -200, love_max = 2000):
+            if self.effective_sluttiness() >= slut_required and self.effective_sluttiness() <= slut_max and self.obedience >= obedience_required and self.obedience <= obedience_max and self.love >= love_required and self.love <= love_max:
                 return True
             return False
 
@@ -2275,30 +3361,90 @@ init -2 python:
             return False
 
 
-        def add_job(self, new_job, job_known = True): #Start a new job, quitting your old one if nessesary #TODO: REname this to "change_job"?
+        def change_job(self, new_job, job_known = True): #Start a new job, quitting your old one if nessesary
             if self.job and new_job == self.job: #Don't do anything if we already have this job.
                 return
 
-            if self.job:
+            if self.job: # If we had a job before we should quit it. Should only come up on init (after that we're always Unemployed, which is still a Job)
                 if self.job.quit_function:
                     self.job.quit_function(self)
 
-                if not new_job.job_role == self.job.job_role: # If the new job has the same job role we don't change roles (which might otherwise remove linked roles.
-                    self.remove_role(self.job.job_role)
+                for a_role in self.job.job_roles: #Remove any job roles that aren't shared with the new job (we do this to maintain linkd roles which are still valid)
+                    if not a_role in new_job.job_roles:
+                        self.remove_role(a_role)
+
+                for old_duty in self.duties:
+                    if not old_duty in new_job.mandatory_duties + new_job.available_duties: #
+                        self.remove_duty(old_duty) #Remove duties that aren't available in the new job
 
 
             if new_job.hire_function:
                 new_job.hire_function(self)
 
-            if (self.job and not new_job.job_role == self.job.job_role) or not self.job: #Only add the role if it differs from our current job.
-                self.add_role(new_job.job_role)
+            for a_role in new_job.job_roles:
+                if not self.has_exact_role(a_role):
+                    self.add_role(a_role)
+
+            for new_duty in new_job.mandatory_duties:
+                if new_duty not in self.duties:
+                    self.add_duty(new_duty)
+
+            self.limit_duties() # Make sure we don't have too many duties after changing our job.
 
             self.job = new_job
+
+            self.salary = self.calculate_job_salary()
             self.event_triggers_dict["job_known"] = job_known
 
         def quit_job(self, job_known = True): #Quit and become unemployed
-            self.add_job(unemployed_job)
+            self.change_job(unemployed_job)
 
+        def add_duty(self, the_duty):
+            if the_duty not in self.duties: #Isn't possible to have the same duty twice.
+                if the_duty.on_apply is not None:
+                    the_duty.on_apply(self)
+                self.duties.append(the_duty)
+
+        def remove_duty(self, the_duty):
+            if the_duty in self.duties:
+                if the_duty.on_remove is not None:
+                    the_duty.on_remove(self)
+                self.duties.remove(the_duty)
+
+        def has_duty(self, the_duty):
+            for a_duty in self.duties:
+                if a_duty == the_duty:
+                    return True
+            return False
+
+        def limit_duties(self): #Checks if we are over our duty limit and removes non-mandatory duties until we are under
+            if len(self.duties) > self.work_experience:
+                over_count = len(self.duties) - self.work_experience
+                for a_duty in self.duties[::-1]: #Traverse the list backwards, so the most recently added duty is first trimmed.
+                    if a_duty not in self.job.mandatory_duties:
+                        self.remove_duty(a_duty)
+                        over_count += -1
+                        if over_count == 0:
+                            break
+            return
+
+        def get_duty_actions(self):
+            return_list = []
+            for duty in self.duties:
+                if self.job.job_location is None or self.job.job_location.has_person(self) or not duty.only_at_work:
+                    for act in duty.actions:
+                        if act not in return_list: #Trim duplicates out of our duty list (NOTE: maybe we want to trim them out at the UI level?)
+                            return_list.append(act)
+            return return_list
+
+        def get_duty_internet_actions(self):
+            return_list = []
+            for duty in self.duties:
+                if self.job.job_location is None or self.job.job_location.has_person(self) or not duty.only_at_work:
+                    for act in duty.internet_actions:
+                        if act not in return_list:
+                            return_list.append(act)
+            return return_list
 
         def add_role(self, the_role):
             self.special_role.append(the_role)
@@ -2401,3 +3547,214 @@ init -2 python:
                 "Fresh breast milk produced by " +  self.possessive_title + ". Valuable to the right sort of person.",
                 sexual_aspect = 2, medical_aspect = 2)
             return milk_trait
+
+
+        def get_titles(self): #Returns a list of character titles this person can have. A title is what you call a person, often but not always their name or based on their name.
+            list_of_titles = []
+
+            personality_titles = self.personality.get_personality_titles(self)
+            if isinstance(personality_titles, list):
+                list_of_titles.extend(personality_titles)
+            else:
+                list_of_titles.append(personality_titles)
+
+            if self.sluttiness > 20:
+                if self.obedience > 140:
+                    list_of_titles.append("Slave")
+
+
+            if self.sluttiness > 60:
+                list_of_titles.append("Slut")
+                if self.obedience > 140:
+                    list_of_titles.append("Cocksleeve")
+                    list_of_titles.append("Cock Slave")
+
+                if self.has_large_tits():
+                    list_of_titles.append("Big Tits")
+                else:
+                    list_of_titles.append("Little Tits")
+
+                if self.sex_record.get("Vaginal Creampies", 0) >= 20:
+                    list_of_titles.append("Breeding Material")
+
+            if self.sluttiness > (70 - (self.get_opinion_score("drinking cum")*5 + self.get_opinion_score("creampies")*5 + self.get_opinion_score("cum facials")*5 + self.get_opinion_score("being covered in cum")*5)):
+                if self.sex_record.get("Cum Facials", 0) > 5 or self.sex_record.get("Cum in Mouth", 0) > 5 or self.sex_record.get("Cum Covered", 0) > 5:
+                    list_of_titles.append("Cumslut")
+
+            if self.sluttiness > (70 - (self.get_opinion_score("bareback sex")*5 + self.get_opinion_score("creampies")*5)):
+                if self.sex_record.get("Vaginal Creampies", 0) > 5 or self.sex_record.get("Anal Creampies", 0) > 5:
+                    list_of_titles.append("Cumdump")
+
+
+
+            if self.love >= 60 and self.has_role(girlfriend_role):
+                list_of_titles.append("Love")
+
+            if self.love < 0:
+                list_of_titles.append("Cunt")
+                list_of_titles.append("Bitch")
+
+
+
+            return list_of_titles #We return the list so that it can be presented to the player. In general the girl will always want to pick the first one on the list.
+
+        def get_random_title(self):
+            return get_random_from_list(self.get_titles())
+
+        def get_possessive_titles(self):
+            list_of_possessive_titles = []
+            #Your mother and sister both have specific personality types, so they get their family titles there.
+
+            personality_possessive_titles = self.personality.get_personality_possessive_titles(self)
+            if isinstance(personality_possessive_titles, list):
+                list_of_possessive_titles.extend(personality_possessive_titles)
+            else:
+                list_of_possessive_titles.append(personality_possessive_titles)
+
+            if self.has_role(employee_role):
+                list_of_possessive_titles.append("Your employee")
+                if self.sluttiness > 60:
+                    list_of_possessive_titles.append("Your office slut")
+
+            if self.love > 10:
+                list_of_possessive_titles.append("Your friend")
+
+            if self.obedience > 150:
+                list_of_possessive_titles.append("Your slave")
+                if self.sluttiness > 60:
+                    list_of_possessive_titles.append("Your dedicated cocksleeve")
+
+
+            if self.sluttiness > 60:
+                if self.int == 0 and self.has_large_tits():
+                    list_of_possessive_titles.append("Your airhead bimbo")
+
+
+                if self.love > 50:
+                    list_of_possessive_titles.append("Your personal slut")
+                elif self.love < 0:
+                    list_of_possessive_titles.append("Your hatefuck slut")
+                else:
+                    list_of_possessive_titles.append("Your slut")
+
+                if self.kids > 0:
+                    list_of_possessive_titles.append("Your slutty MILF")
+
+                if not self.relationship == "Single":
+                    list_of_possessive_titles.append("Your cheating slut")
+
+                if self.sex_record.get("Vaginal Creampies", 0) >= 20:
+                    list_of_possessive_titles.append("Your breeder")
+
+            if self.sluttiness > (70 - (self.get_opinion_score("drinking cum")*5 + self.get_opinion_score("creampies")*5 + self.get_opinion_score("cum facials")*5 + self.get_opinion_score("being covered in cum")*5)):
+                if self.sex_record.get("Cum Facials", 0) > 5 or self.sex_record.get("Cum in Mouth", 0) > 5 or self.sex_record.get("Cum Covered", 0) > 5:
+                    list_of_possessive_titles.append("Your cumslut")
+
+                if self.sex_record.get("Vaginal Creampies", 0) > 5 or self.sex_record.get("Anal Creampies", 0) > 5:
+                    list_of_possessive_titles.append("Your cumdump")
+
+
+
+            if self.love >= 60 and self.has_role(girlfriend_role):
+                list_of_possessive_titles.append("Your love")
+                list_of_possessive_titles.append("Your girlfriend")
+
+            if self.love >= 60 and self.has_role(affair_role):
+                list_of_possessive_titles.append("Your lover")
+
+            if self.has_role(student_role):
+                list_of_possessive_titles.append("Your student")
+
+            return list_of_possessive_titles
+
+        def get_random_possessive_title(self):
+            return get_random_from_list(self.get_possessive_titles())
+
+        def get_player_titles(self):
+            list_of_player_titles = []
+            personality_player_titles = self.personality.get_personality_player_titles(self)
+            if isinstance(personality_player_titles, list):
+                list_of_player_titles.extend(personality_player_titles)
+            else:
+                list_of_player_titles.append(personality_player_titles)
+
+            if self.has_role(employee_role) or self.has_role(student_role):
+                list_of_player_titles.append("Mr." + mc.last_name)
+                if self.obedience > 120:
+                    list_of_player_titles.append("Sir")
+                elif self.obedience < 80 and self.has_role(employee_role):
+                    list_of_player_titles.append("Boss")
+
+            if self.obedience > 140 and self.sluttiness > 50:
+                list_of_player_titles.append("Master")
+
+            if self.sluttiness > 50:
+                if self.love > 50:
+                    list_of_player_titles.append("Daddy")
+                elif self.love < 0:
+                    list_of_player_titles.append("Fuck Meat")
+                    list_of_player_titles.append("Cunt Slave")
+                else:
+                    list_of_player_titles.append("Boy Toy")
+
+            if self.has_role(student_role):
+                list_of_player_titles.append("Teacher")
+
+            return list_of_player_titles
+
+        def get_random_player_title(self):
+            return get_random_from_list(self.get_player_titles())
+
+        def get_appropriate_mag_name(self, discover_opinion = False): # Returns the name of a porn magazine this person might be interested in reading, based on her opinions.
+            if self.get_opinion_score("drinking cum") > 0:
+                if discover_opinion:
+                    self.discover_opinion("drinking cum")
+                return "Cum Guzzlers Monthly"
+            elif self.get_opinion_score("creampies") > 0:
+                if discover_opinion:
+                    self.discover_opinion("creampies")
+
+                if self.get_opinion_score("bareback sex") > 0:
+                    if discover_opinion:
+                        self.discover_opinion("bareback sex")
+                    return "Storked - Sluts Fucked Pregnant!"
+                else:
+                    return "Close Up Cum Shots - Filled to the Brim!"
+            elif self.get_opinion_score("being covered in cum") > 0:
+                if discover_opinion:
+                    self.discover_opinion("being covered in cum")
+                return "Glazed: Busty Sluts get Covered in Cum!"
+            elif self.get_opinion_score("giving blowjobs") > 0:
+                if discover_opinion:
+                    self.discover_opinion("giving blowjobs")
+                return "Throated: Girls get Messy!"
+            elif self.get_opinion_score("incest") > 0:
+                if discover_opinion:
+                    self.discover_opinion("incest")
+                return "A Mother's Duty - Fuck Your Son!"
+            elif self.get_opinion_score("anal sex") > 0:
+                if discover_opinion:
+                    self.discover_opinion("anal sex")
+                return "Anal Domination"
+            elif self.get_opinion_score("public sex") > 0:
+                if discover_opinion:
+                    self.discover_opinion("public sex")
+                return "Public Sluts"
+            elif self.get_opinion_score("lingerie") > 0:
+                if discover_opinion:
+                    self.discover_opinion("lingerie")
+                return "Lingerie Monthly: What to Wear"
+            elif self.get_opinion_score("giving handjobs") > 0:
+                if discover_opinion:
+                    self.discover_opinion("giving handjobs")
+                return "Getting Handy with Handjobs."
+            elif self.get_opinion_score("giving tit fucks") > 0:
+                if discover_opinion:
+                    self.discover_opinion("giving tit fucks")
+                return "Bimbo Quarterly - Titfuck Edition"
+            elif self.get_opinion_score("being submissive") > 0:
+                if discover_opinion:
+                    self.discover_opinion("being submissive")
+                return "The Good Wife's Guide to Getting Fucked"
+            else:
+                return "Playgirl - Sluts on Display!"

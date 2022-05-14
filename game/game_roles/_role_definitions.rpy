@@ -8,6 +8,8 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
     #All of the role labels and requirements are defined in their own file, but their Action representitions are stored here for saving purposes.
     #EMPLOYEE ACTIONS#
     python:
+        employee_duty_set_action = Action("Set her work duties.", employee_set_duties_requirement, "employee_set_duties_label",
+            menu_tooltip = "Review and set her work duties.")
         move_employee_action = Action("Move her to a new division", move_employee_requirement, "move_employee_label",
             menu_tooltip = "Move her to a new division, where her skills might be put to better use.")
         employee_complement_action = Action("Compliment her work.", employee_complement_requirement, "employee_complement_work",
@@ -18,17 +20,12 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
             menu_tooltip = "A bonus in cold hard cash is good for obedience and happiness. The larger the reward the greater the effect.")
         employee_performance_review = Action("Start a performance review. {image=gui/heart/Time_Advance.png}", employee_performance_review_requirement , "employee_performance_review",
             menu_tooltip = "Bring her to your office for a performance review. Get her opinion about her job, reward, punish, or fire her as you see fit. Can only be done once every seven days.")
-        employee_paid_serum_test = Action("Test serum (paid) -$100.", employee_paid_serum_test_requirement, "employee_paid_serum_test_label",
-            menu_tooltip = "Pay her to willingly take a dose of serum, per company policy.")
-        employee_unpaid_serum_test = Action("Test serum (unpaid).", employee_unpaid_serum_test_requirement, "employee_unpaid_serum_test_label",
-            menu_tooltip = "Give her a dose of serum to test on herself, per company policy.")
         employee_punishment = Action("Punish her.", employee_punishment_hub_requirement, "employee_punishment_hub",
             menu_tooltip = "Punish her for any violations of company policy.", priority = 5)
-        employee_generate_infraction = Action("Invent an infraction.", employee_generate_infraction_requirement, "employee_generate_infraction_label",
-            menu_tooltip = "Company policy here is so complicated it's nearly impossible to go a day without violating some minor rule. If you were paranoid, you might think it was written that way on purpose...")
 
-        employee_role = Role("Employee", [employee_paid_serum_test, employee_unpaid_serum_test, employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action, employee_punishment, employee_generate_infraction],
-            on_turn = employee_on_turn, on_day = employee_on_day)
+
+        employee_role = Role("Employee", [employee_duty_set_action, employee_complement_action, employee_insult_action, employee_pay_cash_action, employee_performance_review, move_employee_action, employee_punishment],
+            on_turn = employee_on_turn, on_move = employee_on_move, on_day = employee_on_day)
 
         #EMPLOYEE BUSYWORK ACTIONS#
         employee_busywork_role = Role("Office Busywork", [], hidden = True) #TODO: Add some other actions to this role
@@ -318,7 +315,12 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         city_rep_internal_sabotage_training = Trainable("City_Rep_Satbo", "city_rep_internal_sabotage_training", "Sabotage Investigations", 400, city_rep_internal_sabotage_training_requirement)
 
         city_rep_hire = Action("Offer to hire her.", offer_to_hire_requirement, "city_rep_offer_hire")
+        city_rep_negotiate_action = Action("Try to negotiate with her.", city_rep_negotiate_requirement, "city_rep_negotiate")
+        city_rep_bribe_action = Action("Try to bribe her.", city_rep_bribe_requirement, "city_rep_bribe")
+        city_rep_seduce_action = Action("Try to seduce her.", city_rep_seduce_requirement, "city_rep_seduce")
+        city_rep_order_action = Action("Try to intimidate her.", city_rep_order_requirement, "city_rep_order")
 
-        city_rep_role = Role("City Representative", [city_rep_hire], role_trainables = [city_rep_dressup_training, city_rep_penalty_reduction_training, city_rep_internal_sabotage_training])
+
+        city_rep_role = Role("City Representative", [city_rep_negotiate_action, city_rep_bribe_action, city_rep_seduce_action, city_rep_order_action, city_rep_hire], role_trainables = [city_rep_dressup_training, city_rep_penalty_reduction_training, city_rep_internal_sabotage_training])
 
 return

@@ -46,7 +46,7 @@ init 1300:
             return valid_player_titles
 
         cousin_personality = Personality("cousin", default_prefix = "introvert",
-            common_likes = ["the colour black","heavy metal","punk","makeup",],
+            common_likes = ["the colour black","heavy metal music","punk music","makeup",],
             common_sexy_likes = ["lingerie","masturbating","taking control","getting head","skimpy outfits"],
             common_dislikes = ["small talk","flirting","working","conservative outfits"],
             common_sexy_dislikes = ["kissing", "giving blowjobs", "bareback sex"],

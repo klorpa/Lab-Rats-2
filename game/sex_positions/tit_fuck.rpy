@@ -33,7 +33,7 @@ label intro_tit_fuck(the_girl, the_location, the_object):
     $ tit_fuck.redraw_scene(the_girl)
     "When your cock springs out, already hard, she drops to her knees in front of you."
     "She takes her tits up in her hands and lifts them up, pressing them on either size of your shaft."
-    if rank_tits(the_girl.tits) >= 7: #E sized or larger
+    if the_girl.has_huge_tits(): #E sized or larger
         "They're warm, soft, and feel like they melt around your sensitive dick. Her breasts are so large the tip of your cock doesn't even make it to the top of her cleavage."
     else:
         "They're warm, soft, and feel like they melt around your sensitive dick. The tip of your cock just barely pops out of the top of her cleavage."
@@ -58,7 +58,7 @@ label taboo_break_tit_fuck(the_girl, the_location, the_object):
         "She lifts your hands off of her chest and kneels down, taking her tits up into her own hands"
     $ the_girl.draw_person(position = "blowjob")
     "She hefts her breasts up and presses them on either side of your shaft."
-    if rank_tits(the_girl.tits) >= 7: #E sized or larger
+    if the_girl.has_huge_tits(): #E sized or larger
         "They're warm, soft, and feel like they melt around your sensitive dick. Her breasts are so large the tip of your cock doesn't even make it to the top of her cleavage."
     else:
         "They're warm, soft, and feel like they melt around your sensitive dick. The tip of your cock just barely pops out of the top of her cleavage."

@@ -124,3 +124,23 @@ init 0 python:
             self.assertTrue(test_trait_one.has_required())
             self.assertTrue(test_trait_two.has_required())
             self.assertTrue(test_trait_three.has_required())
+
+        def test_is_similar(self):
+            test_trait_one = SerumTrait("Test Trait", "Trait 1")
+            test_trait_two = SerumTrait("Different Trait", "Trait 2")
+            test_trait_three = SerumTrait("Test Trait", "Trait 1")
+
+            self.assertFalse(test_trait_one.is_similar(test_trait_two))
+            self.assertFalse(test_trait_two.is_similar(test_trait_one))
+
+            self.assertFalse(test_trait_two.is_similar(test_trait_one))
+            self.assertFalse(test_trait_two.is_similar(test_trait_three))
+
+            self.assertTrue(test_trait_one.is_similar(test_trait_three))
+            self.assertTrue(test_trait_three.is_similar(test_trait_one))
+
+            test_trait_one.physical_aspect = 10
+            self.assertFalse(test_trait_one.is_similar(test_trait_three))
+
+            test_trait_three.physical_aspect = 10
+            self.assertTrue(test_trait_three.is_similar(test_trait_one))

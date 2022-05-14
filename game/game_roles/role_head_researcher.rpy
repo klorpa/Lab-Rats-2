@@ -80,7 +80,7 @@ init -2 python:
             return True
 
     def fire_head_researcher_requirement(the_person): #Remove the person as your head researcher.
-        return True
+        return not mc.business.event_triggers_dict["Tutorial_Section"] #Block firing Steph during the Tutorial
 
     def visit_nora_intro_requirement(the_person):
         if not the_person.has_role(steph_role): #Only Stephanie gets to have this event trigger while she is head researcher.
@@ -113,7 +113,7 @@ label fire_head_researcher(the_person):
     else:
         $ the_person.draw_person(emotion="happy")
         the_person "Whew, I found all that science stuff super confusing to be honest. I hope whoever replaces me can do a better job at it!"
-    $ the_person.remove_role(head_researcher)
+    $ the_person.change_job(rd_job) #Change her to the old R&D job. This will keep any shared duties.
     $ mc.business.head_researcher = None
     return
 
@@ -137,7 +137,7 @@ label improved_serum_unlock_label(the_person): #TODO: Double check this has a ti
                 $ is_valid_design = False #Create a fake person to apply the serum to. If it raises Suggest we're good.
                 $ test_person = create_random_person()
                 $ start_suggest = the_person.suggestibility
-                $ test_person.give_serum(copy.copy(picked_serum), add_to_log = False)
+                $ test_person.give_serum(picked_serum, add_to_log = False)
                 if start_suggest >= test_person.suggestibility:
                     "You hand the vial of serum to [the_person.title]. She swirls it in front of her eye and frowns."
                     the_person "No, I don't think this design is going to work."
@@ -150,7 +150,7 @@ label improved_serum_unlock_label(the_person): #TODO: Double check this has a ti
                         "You step into a small office attached to the research lab."
                     "You prepare a notepad and a pen to take notes, and [the_person.possessive_title] uncorks the vial."
                     the_person "Here we go!"
-                    $ the_person.give_serum(copy.copy(picked_serum))
+                    $ the_person.give_serum(picked_serum)
                     $ mc.inventory.change_serum(picked_serum, -1)
                     "She drinks it down in one smooth motion."
                     mc.name "Okay, let's start with some initial questions..."
@@ -526,11 +526,11 @@ label futuristic_serum_stage_1_label(the_person):
     return
 
 label futuristic_serum_stage_2_label(the_person): #TODO: Make this based on
-    if __builtin__.len(mc.business.get_requirement_employee_list(core_slut_required = 40, obedience_required = 120)) <= 3: # If you don't have enough people who meet the requirements just get an update.
+    if __builtin__.len(mc.business.get_requirement_employee_list(slut_required = 40, obedience_required = 120)) <= 3: # If you don't have enough people who meet the requirements just get an update.
         mc.name "I'm still working on getting your test subjects ready. Could you remind me what you need?"
         the_person "To learn anything useful I need at least three girls who have been seriously affected by our serums. I need them to be obedient and open to some intimate testing procedures."
         "[the_person.title] requires three employees who satisfy the following requirements: Sluttiness 40+ and Obedience 120+"
-        $ satisfying_list = mc.business.get_requirement_employee_list(core_slut_required = 40, obedience_required = 120, exclude_list = [the_person])
+        $ satisfying_list = mc.business.get_requirement_employee_list(slut_required = 40, obedience_required = 120, exclude_list = [the_person])
         $ my_string = "The following people currently satisfy the requirements: "
         python:
             if satisfying_list:
@@ -544,7 +544,7 @@ label futuristic_serum_stage_2_label(the_person): #TODO: Make this based on
 
     mc.name "[the_person.title], I have your group of test subjects ready."
     the_person "Excellent, let me know who to call down and I'll begin as soon as possible."
-    $ possible_picks = mc.business.get_requirement_employee_list(core_slut_required = 40, obedience_required = 120, exclude_list = [the_person])
+    $ possible_picks = mc.business.get_requirement_employee_list(slut_required = 40, obedience_required = 120, exclude_list = [the_person])
     call screen employee_overview(white_list = possible_picks, person_select = True)
     $ pick_1 = _return
     call screen employee_overview(white_list = possible_picks, black_list = [pick_1], person_select = True)

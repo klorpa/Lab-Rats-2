@@ -195,7 +195,7 @@ init python:
             if st > self.time_offset:
                 adjust_st = st - self.time_offset # Adjust for time delay
                 curr_alpha = adjust_st/self.fade_time
-                xoff = max(self.slide_distance - ((adjust_st/self.fade_time) * self.slide_distance), 0)
+                xoff = __builtin__.max(self.slide_distance - ((adjust_st/self.fade_time) * self.slide_distance), 0)
             # Example of using transform to adjust alpha
             t = Transform(child=self.child,  alpha = curr_alpha)
             child_render = renpy.render(t, width, height, st, at)

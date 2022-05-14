@@ -6,6 +6,8 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         $ report_log["positions_used"] = [] #This is a list, not an int.
 
     $ creampie_counter = the_person.sex_record.get("Vaginal Creampies",0)
+    $ facial_counter = the_person.sex_record.get("Cum Facials",0)
+    $ body_cum_counter = the_person.sex_record.get("Cum Covered",0)
 
     $ finished = False #When True we exit the main loop (or never enter it, if we can't find anything to do)
     $ position_choice = None
@@ -152,7 +154,6 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
             $ round_choice = renpy.display_menu(option_list,True,"Choice") #This gets the players choice for what to do this round.
 
-
         # Now that a round_choice has been picked we can do something.
         if round_choice == "Change" or round_choice == "Continue":
             if round_choice == "Change": # If we are changing we first select and transition/intro the position, then run a round of sex. If we are continuing we ignroe all of that
@@ -215,13 +216,13 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                     "[the_person.possessive_title] considers your stiffened cock."
                     $ girl_considers_hard = False
                     $ position_choice = None
-                elif position_choice.guy_energy > mc.energy:
+                elif position_choice.calculate_energy_cost(mc) > mc.energy:
                     if girl_in_charge:
                         "You're too exhausted to let [the_person.possessive_title] keep [position_choice.verbing] you."
                     else:
                         "You're too exhausted to continue [position_choice.verbing] [the_person.possessive_title]."
                     $ position_choice = None
-                elif position_choice.girl_energy > the_person.energy:
+                elif position_choice.calculate_energy_cost(the_person) > the_person.energy:
                     #TODO: Add some differentiated dialgoue depending on the position.
                     #TODO: Add "no energy" transitions where you keep fucking her anyways. (double TODO: Add a way of "breaking" her like this)
                     the_person "I'm exhausted [the_person.mc_title], I can't keep this up..."
@@ -554,8 +555,12 @@ label sex_description(the_person, the_position, the_object, private = True, repo
 
 
     # Change their energy as well.
-    $ the_person.change_energy(-the_position.girl_energy, add_to_log = False) #NOTE: Don't show the energy cost to avoid energy notice spam. The energy cost is already displayed to the player.
-    $ mc.change_energy(-the_position.guy_energy, add_to_log = False)
+    python:
+        the_person.change_energy(-the_position.calculate_energy_cost(the_person), add_to_log = False)
+        mc.change_energy(-the_position.calculate_energy_cost(mc), add_to_log = False)
+
+    # $ the_person.change_energy(-the_position.girl_energy, add_to_log = False) #NOTE: Don't show the energy cost to avoid energy notice spam. The energy cost is already displayed to the player.
+    # $ mc.change_energy(-the_position.guy_energy, add_to_log = False)
 
     # If someone orgasms describe that.
     if the_person.arousal >= the_person.max_arousal:
@@ -577,8 +582,13 @@ label sex_description(the_person, the_position, the_object, private = True, repo
             $ mc.recently_orgasmed = True
             $ report_log["guy orgasms"] += 1
             if the_person.sex_record.get("Vaginal Creampies", 0) > creampie_counter:
-                $ report_log["creampies"] += the_person.sex_record.get("Vaginal Creampies", 0) - creampie_counter #The positions determine how you can finish, so we need to go directly off of the character record.
-                $ creampie_counter = the_person.sex_record.get("Vaginal Creampies", 0)
+                $ report_log["creampies"] = the_person.sex_record.get("Vaginal Creampies", 0) - creampie_counter #The positions determine how you can finish, so we need to go directly off of the character record.
+
+            elif the_person.sex_record.get("Cum Facials", 0) > facial_counter:
+                $ report_log["facials"] = the_person.sex_record.get("Cum Facials", 0) - facial_counter
+
+            elif the_person.sex_record.get("Cum Covered", 0) > body_cum_counter:
+                $ report_log["body_cum"] = the_person.sex_record.get("Cum Covered",0) - body_cum_counter
 
 
     if not private:
@@ -1059,7 +1069,7 @@ label affair_check(the_person, report_log): #Report log is handed over so we can
     return
 
 label lactation_description(the_person, the_position, the_object, report_log): #NOTE: Is only called if lactation_sources > 0.
-    $ tit_rank = rank_tits(the_person.tits)
+    $ tit_rank = Person.rank_tits(the_person.tits)
     $ strength = (the_person.arousal*1.0/the_person.max_arousal) * (the_person.lactation_sources + (tit_rank * 0.1)) #ie large tits add anywhere from 0 to 0.9 extra lactation sources.
     if strength > tit_rank + 1:
         $ strength = tit_rank + 1

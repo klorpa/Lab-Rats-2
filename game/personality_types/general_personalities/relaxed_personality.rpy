@@ -12,7 +12,7 @@ init 1300:
             return mc.name
         #Default personality is a well rounded personaity, without any strong tendencies. Default "Lily" personality.
         relaxed_personality = Personality("relaxed", #Lily style personality
-        common_likes = ["skirts", "the weekend", "small talk", "the colour pink", "HR work", "supply work", "flirting","punk","pop"],
+        common_likes = ["skirts", "the weekend", "small talk", "the colour pink", "HR work", "supply work", "flirting","punk music","pop music"],
         common_sexy_likes = ["missionary style sex", "kissing", "masturbating", "being submissive", "drinking cum", "cum facials"],
         common_dislikes = ["Mondays", "pants", "the colour yellow", "research work", "work uniforms"],
         common_sexy_dislikes = ["taking control", "doggy style sex", "showing her tits", "showing her ass", "bareback sex", "creampies"],
@@ -31,11 +31,11 @@ label relaxed_introduction(the_person):
     "She laughs and blushes."
     the_person "Really? You're just saying that to impress me, aren't you."
     mc.name "Really, I really just wanted to talk to you."
-    $ title_choice = get_random_title(the_person)
+    $ title_choice = the_person.get_random_title()
     $ formatted_title = the_person.create_formatted_title(title_choice)
     the_person "Well fine, my name is [formatted_title]. It's nice to meet you..."
     $ the_person.set_title(title_choice)
-    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    $ the_person.set_possessive_title(the_person.get_random_possessive_title())
     "She waits expectantly for you to introduce yourself."
     return
 

@@ -2,9 +2,8 @@ init -1 python:
     def make_person(requirement_dict = None): #This will generate a person, using a pregen body some of the time if they are available.
         split_proportion = 20 #1/5 characters generated will be a premade character.
         return_character = None
-        if renpy.random.randint(1,100) < split_proportion and requirement_dict is None:
-            return_character = get_premade_character() #NOTE: We don't use premades if there are character requirements at the moment. TODO: Properly skim them to grab valid people.
-
+        if renpy.random.randint(1,100) < split_proportion:
+            return_character = get_premade_character(requirement_dict)
         if return_character is None: #Either we aren't getting a premade, or we are out of them.
             if requirement_dict is None:
                 requirement_dict = {}
@@ -12,17 +11,20 @@ init -1 python:
         return return_character
 
     # create_random_person is used to generate a Person object from a list of random or provided stats. use "make_a_person" to properly get premade characters mixed with randoms.
-    def create_random_person(name = None, last_name = None, age = None, body_type = None, face_style = None, tits = None, height = None,
-        hair_colour = None, hair_style = None, pubes_colour = None, pubes_style = None, skin = None, eyes = None, job = None,
-        personality = None, custom_font = None, name_color = None, dial_color = None, starting_wardrobe = None, stat_array = None, skill_array = None, sex_array = None,
-        start_sluttiness = None, start_obedience = None, start_happiness = None, start_love = None, start_home = None,
-        title = None, possessive_title = None, mc_title = None, relationship = None, kids = None, SO_name = None, base_outfit = None,
+    def create_random_person(name = None, name_list = None, last_name = None, last_name_list = None, age = None, age_range = None, body_type = None, body_type_list = None, face_style = None, face_style_list = None, tits = None, tits_range = None, height = None, height_range = None,
+        hair_colour = None, hair_colour_list = None, hair_style = None, hair_style_list = None, pubes_colour = None, pubes_colour_list = None, pubes_style = None, pubes_style_list = None, skin = None, skin_list = None, eyes = None, eyes_list = None, job = None, job_list = None,
+        personality = None, personality_list = None, custom_font = None, custom_font_list = None, name_color = None, name_color_list = None, dial_color = None, dial_color_list = None, starting_wardrobe = None, starting_wardrobe_list = None, stat_array = None, stat_range_array = None, skill_array = None, skill_range_array = None,
+        sex_skill_array = None, sex_skill_range_array = None, sluttiness = None, sluttiness_range = None, obedience = None, obedience_range = None, happiness = None, happiness_range = None, love = None, love_range = None, start_home = None,
+        title = None, title_list = None, possessive_title = None, possessive_title_list = None, mc_title = None, mc_title_list = None, relationship = None, relationship_list = None, kids = None, kids_range = None, kids_floor = None, kids_ceiling = None, SO_name = None, SO_name_list = None, base_outfit = None, base_outfit_list = None,
         generate_insta = None, generate_dikdok = None, generate_onlyfans = None,
-        bonus_kids = 0, bonus_sluttiness = 0, bonus_obedience = 0, bonus_happiness = 0, bonus_suggest = 0, bonus_love = 0,
-        stat_cap = 5, skill_cap = 5, age_floor = 18, age_ceiling = 50):
+        suggestibility = None, suggestibility_range = None, work_experience = None, work_experience_range = None, type="random"):
 
+        
         if personality is None:
-            personality = get_random_personality()
+            if personality_list is None:
+                personality = get_random_personality()
+            else:
+                personality =  get_random_from_list(personality_list)
 
         if generate_insta is None:
             if renpy.random.randint(0,100) < personality.insta_chance:
@@ -41,49 +43,81 @@ init -1 python:
 
 
         if name is None:
-            name = get_random_name()
+            if name_list is None:
+                name = Person.get_random_name()
+            else:
+                name = get_random_from_list(name_list)
         if last_name is None:
-            last_name = get_random_last_name()
+            if last_name_list is None:
+                last_name = Person.get_random_last_name()
+            else:
+                last_name = get_random_from_list(last_name_list)
         if age is None:
-            if age_ceiling < age_floor:
-                age_ceiling = age_floor # Make sure our range is actually a range and not inverted.
-            age = renpy.random.randint(age_floor,age_ceiling)
+            if age_range is None:
+                age = renpy.random.randint(Person.get_age_floor(),Person.get_age_ceiling())
+            else:
+                if (age_range[0] > age_range[1]): #Make sure range is correct order 
+                    age_range.reverse()
+                age = renpy.random.randint(age_range[0],age_range[1])
         if body_type is None:
-            body_type = get_random_body_type()
+            if body_type_list is None:
+                body_type = Person.get_random_body_type()
+            else:
+                body_type_list =  get_random_from_list(body_type)
         if tits is None:
-            tits = get_random_tit()
+            if tits_range is None:
+                tits = Person.get_random_tit()
+            else:
+                tits = get_random_from_weighted_list(tits_range)
         if height is None:
-            height = 0.9 + (renpy.random.random()/10)
-
+            if height_range is None:
+                height = renpy.random.uniform(Person.get_height_floor(),Person.get_height_ceiling())
+            else:
+                if (height_range[0] > height_range[1]):
+                    height_range.reverse()
+                height = renpy.random.uniform(height_range[0],height_range[1])
         if hair_colour is None: #If we pass nothing we can pick a random hair colour
-            hair_colour = generate_hair_colour() #Hair colour is a list of [string, [colour]], generated with variations by this function,
-        elif isinstance(hair_colour, basestring):
-            hair_colour = generate_hair_colour(hair_colour) #If we pass a string assume we want to generate a variation based on that colour.
+            if hair_colour_list is None:
+                hair_colour = Person.generate_hair_colour() #Hair colour is a list of [string, [colour]], generated with variations by this function,
+            else:
+                hair_colour = get_random_from_list(hair_colour_list)
+        if isinstance(hair_colour, basestring):
+            hair_colour = Person.generate_hair_colour(hair_colour) #If we pass a string assume we want to generate a variation based on that colour.
         #else: we assume a full colour list was passed and everything is okay.
 
         if hair_style is None:
-            hair_style = get_random_from_list(hair_styles).get_copy()
-        else:
-            hair_style = hair_style.get_copy() #Get a copy so we don't modify the master.
+            if hair_style_list is None:
+                hair_style = get_random_from_list(hair_styles)
+            else:
+                hair_style = get_random_from_list(hair_style_list)
+        hair_style = hair_style.get_copy() #Get a copy so we don't modify the master.
 
         hair_style.colour = hair_colour[1]
 
         if pubes_style is None:
-            pubes_style = get_random_from_list(pube_styles).get_copy()
-
-        pubes_colour = get_darkened_colour(hair_colour[1])
+            if pubes_style_list is None:
+                pubes_style = get_random_from_list(pube_styles).get_copy()
+            else:
+                pubes_style = get_random_from_list(pubes_style_list).get_copy()
+            
+        pubes_colour = Person.get_darkened_colour(hair_style.colour)
         pubes_style.colour = pubes_colour
 
         if eyes is None:
-            eyes = generate_eye_colour()
-        elif isinstance(eyes, basestring):
-            eyes = generate_eye_colour(eyes) #If it's a string assume we want a variation within that eye catagory
+            if eyes_list is None:
+                eyes = Person.generate_eye_colour()
+            else:
+                eyes = get_random_from_list(eyes_list)
+        if isinstance(eyes, basestring):
+            eyes = Person.generate_eye_colour(eyes) #If it's a string assume we want a variation within that eye catagory
         # else: we assume at this point what was passed is a correct [description, colour] list.
 
         if skin is None:
-            skin = get_random_skin()
-        if face_style is None:
-            face_style = get_random_face()
+            if skin_list is None:
+                skin = Person.get_random_skin()
+            else:
+                skin = get_random_from_list(skin_list)
+
         if skin == "white":
             body_images = white_skin
         elif skin == "tan":
@@ -91,111 +125,149 @@ init -1 python:
         else:
             body_images = black_skin
 
+        if face_style is None:
+            if face_style_list is None:
+                face_style = Person.get_random_face()
+            else:
+                face_style = get_random_from_list(face_style_list)
+
         emotion_images = Expression(name+"\'s Expression Set", skin, face_style)
 
-        if eyes is None:
-            eyes = get_random_eye()
+        #if eyes is None:
+        #    eyes = Person.get_random_eye()
 
         if job is None:
-            job = get_random_job()
-
+            if job_list is None:
+                job = get_random_job()
+            else:
+                job = get_random_from_list(job_list)
 
         if custom_font is None:
-            #Get a font
-            my_custom_font = get_random_font()
-
+            if custom_font_list is None:
+                #Get a font
+                custom_font = get_random_font()
+            else:
+                custom_font = get_random_from_list(custom_font_list)
         if name_color is None:
-            # Get a color
-            name_color = get_random_readable_color()
+            if name_color_list is None:
+                # Get a color
+                name_color = get_random_readable_color()
+            else:
+                name_color = get_random_from_list(name_color_list)
 
         if dial_color is None:
-            # Use name_color
-            dial_color = copy.copy(name_color) #Take a copy
+            if dial_color_list is None:
+                # Use name_color
+                dial_color = copy.copy(name_color) #Take a copy
+            else:
+                dial_color = get_random_from_list(dial_color)
 
-
-        # if recruitment_skill_improvement_policy.is_active():
-        #     skill_cap += 2
-        #
-        # if recruitment_stat_improvement_policy.is_active():
-        #     stat_cap += 2
 
         if skill_array is None:
-            skill_array = [renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap),renpy.random.randint(1,skill_cap)]
-
+            if skill_range_array is None:
+                skill_range_array = [[Person.get_skill_floor(),Person.get_skill_ceiling()] for x in range(0,5)]
+            skill_array = [renpy.random.randint(skill_range[0],skill_range[1]) for skill_range in skill_range_array]
+            
         if stat_array is None:
-            stat_array = [renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap),renpy.random.randint(1,stat_cap)]
+            if stat_range_array is None:
+                stat_range_array = [[Person.get_stat_floor(),Person.get_stat_ceiling()] for x in range(0,3)]
+            stat_array = [renpy.random.randint(stat_range[0],stat_range[1]) for stat_range in stat_range_array]
 
-        if sex_array is None:
-            sex_array = [renpy.random.randint(0,5),renpy.random.randint(0,5),renpy.random.randint(0,5),renpy.random.randint(0,5)]
+        if sex_skill_array is None:
+            if sex_skill_range_array is None:
+                sex_skill_range_array = [[Person.get_sex_skill_floor(),Person.get_sex_skill_ceiling()] for x in range(0,4)]
+            sex_skill_array = [renpy.random.randint(sex_skill_range[0],sex_skill_range[1]) for sex_skill_range in sex_skill_range_array]
 
-        if start_love is None:
-            start_love = 0
-        start_love += bonus_love
+        if love is None:
+            if love_range is None:
+                love_range = [Person.get_love_floor(),Person.get_love_ceiling()]
+            love = renpy.random.randint(love_range[0],love_range[1])
 
-        if start_happiness is None:
-            start_happiness = 100 + renpy.random.randint(-10,10)
-        start_happiness += bonus_happiness
+        if happiness is None:
+            if happiness_range is None:
+                happiness_range = [Person.get_happiness_floor(),Person.get_happiness_ceiling()]
+            happiness = renpy.random.randint(happiness_range[0],happiness_range[1])
 
-        start_suggest = 0 + bonus_suggest
+        if suggestibility is None:
+            if suggestibility_range is None:
+                suggestibility_range = [Person.get_suggestibility_floor(),Person.get_suggestibility_ceiling()]
+            suggestibility = renpy.random.randint(suggestibility_range[0],suggestibility_range[1])
 
-        if start_obedience is None:
-            start_obedience = renpy.random.randint(-10,10)
-        start_obedience += bonus_obedience
+        if obedience is None:
+            if obedience_range is None:
+                obedience_range = [Person.get_obedience_floor(),Person.get_obedience_ceiling()]
+            obedience = renpy.random.randint(obedience_range[0],obedience_range[1])
 
-        if start_sluttiness is None:
-            start_sluttiness = renpy.random.randint(0,10)
-        start_sluttiness += bonus_sluttiness
+        if sluttiness is None:
+            if sluttiness_range is None:
+                sluttiness_range = [Person.get_sluttiness_floor(),Person.get_sluttiness_ceiling()]
+            sluttiness = renpy.random.randint(sluttiness_range[0],sluttiness_range[1])
+
+        if work_experience is None:
+            if work_experience_range is None:
+                work_experience_range =  [Person.get_work_experience_floor(),Person.get_work_experience_ceiling()]
+            work_experience = renpy.random.randint(work_experience_range[0], work_experience_range[1])
 
         if relationship is None:
-            relationship = get_random_from_weighted_list([["Single",120-age],["Girlfriend",50],["Fiancée",120-(age*2)],["Married",20+(age*4)]]) #Age plays a major factor.
+            if relationship_list is None:
+                relationship_list = Person.get_potential_relationships_list()
+            relationship_list = Person.finalize_relationships_weight(relationship_list,age)
+            relationship = get_random_from_weighted_list(relationship_list)
 
         if starting_wardrobe is None:
-            starting_wardrobe = Wardrobe(name +"'s Wardrobe")
-            starting_wardrobe = starting_wardrobe.merge_wardrobes(default_wardrobe.get_random_selection(25))
+            if starting_wardrobe_list is None:
+                starting_wardrobe = Wardrobe(name +"'s Wardrobe")
+                starting_wardrobe = starting_wardrobe.merge_wardrobes(default_wardrobe.get_random_selection(25))
+            else:
+                starting_wardrobe = get_random_from_list(starting_wardrobe_list)
 
         if base_outfit is None:
-            base_outfit = Outfit(name + "'s base accessories")
-            if relationship == "Fiancée" or relationship == "Married":
-                base_outfit.add_accessory(diamond_ring.get_copy())
+            if base_outfit_list is None:
+                base_outfit = Outfit(name + "'s base accessories")
+                if relationship == "Fiancée" or relationship == "Married":
+                    base_outfit.add_accessory(diamond_ring.get_copy())
 
-            if renpy.random.randint(0,100) < age:
-                #They need/want glasses.
-                the_glasses = None
-                if renpy.random.randint(0,100) < 50:
-                    the_glasses = modern_glasses.get_copy()
-                else:
-                    the_glasses = big_glasses.get_copy()
-                the_glasses.colour = get_random_glasses_frame_colour()
-                base_outfit.add_accessory(the_glasses)
-
+                if renpy.random.randint(0,100) < age:
+                    #They need/want glasses.
+                    the_glasses = None
+                    if renpy.random.randint(0,100) < 50:
+                        the_glasses = modern_glasses.get_copy()
+                    else:
+                        the_glasses = big_glasses.get_copy()
+                    the_glasses.colour = Person.get_random_glasses_frame_colour()
+                    base_outfit.add_accessory(the_glasses)
+            else:
+                base_outfit = get_random_from_list(base_outfit_list)
         if kids is None:
-            kids = 0
-            if age >=28:
-                kids += renpy.random.randint(0,1) #Young characters don't have as many kids
+            #Need to define these if unkown
+            if age_range is None:
+                age_range = [age,age]
+            if relationship_list is None:
+                relationship_list = [relationship]
+            if kids_range is None:
+                kids_range = Person.get_initial_kids_range(age_range,relationship_list)
+            kids_range = Person.finalize_kids_range(kids_range,age_range,relationship_list,age,relationship)
+            kids = renpy.random.randint(kids_range[0],kids_range[1])
+            if kids_floor is None:
+                kids_floor = 0
+            if kids < kids_floor:
+                kids = kids_floor
+            if kids_ceiling is not None:
+                if kids > kids_ceiling:
+                    kids = kids_ceiling
 
-            if age >= 38:
-                kids += renpy.random.randint(0,1) #As you get older you're more likely to have one
-
-            if relationship == "Girlfriend":
-                kids += renpy.random.randint(0,1) #People who are dating have kids more often than single people
-
-            elif relationship != "Single":
-                kids += renpy.random.randint(0,3) #And married/engaged people have more kids still
-
-            if age <= 22:
-                kids += -1 #Young people have less time to have kids in general, so modify their number down a bit.
-                if kids < 0:
-                    kids = 0
-
-            kids += bonus_kids
-
-        if SO_name is None and relationship != "Single":
-            SO_name = get_random_male_name()
+        if relationship != "Single":
+            if SO_name is None:
+                if SO_name_list is None:
+                    SO_name = Person.get_random_male_name()
+                else:
+                    SO_name = get_random_from_list(SO_name_list)
 
         return Person(name,last_name,age,body_type,tits,height,body_images,emotion_images,hair_colour,hair_style,pubes_colour,pubes_style,skin,eyes,job,starting_wardrobe,personality,
-            stat_array,skill_array,sex_list=sex_array,sluttiness=start_sluttiness,obedience=start_obedience,suggest=start_suggest, love=start_love, happiness=start_happiness, home = start_home,
-            font = my_custom_font, name_color = name_color , dialogue_color = dial_color,
+            stat_array,skill_array,sex_skill_list=sex_skill_array,sluttiness=sluttiness,obedience=obedience,suggest=suggestibility, love=love, happiness=happiness, home = start_home,
+            font = custom_font, name_color = name_color , dialogue_color = dial_color,
             face_style = face_style,
             title = title, possessive_title = possessive_title, mc_title = mc_title,
             relationship = relationship, kids = kids, SO_name = SO_name, base_outfit = base_outfit,
-            generate_insta = generate_insta, generate_dikdok = generate_dikdok, generate_onlyfans = generate_onlyfans)
+            generate_insta = generate_insta, generate_dikdok = generate_dikdok, generate_onlyfans = generate_onlyfans,
+            work_experience = work_experience,type=type)

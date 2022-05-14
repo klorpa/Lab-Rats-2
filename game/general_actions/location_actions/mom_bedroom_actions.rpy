@@ -62,7 +62,7 @@ label mom_room_search_description():
             else: # V. high sluttiness.
                 "The moment you open the bedstand you find a large, white, wand style vibrator jammed kitty-corner inside."
                 "Beside the wand is a slightly smaller plum dildo and a half-empty bottle of lube. The two toys are surrounded by loose batteries, either spares or already used up."
-                $ mag_name = get_appropriate_mag_name(the_person, discover_opinion = True)
+                $ mag_name = the_person.get_appropriate_mag_name(discover_opinion = True)
                 "At the bottom of the of the drawer is a magazine, titled \"[mag_name]\"."
                 $ mc.change_locked_clarity(10)
                 "You take a moment and enjoy the thought of [the_person.possessive_title] naked and moaning happily with her toys between her legs."

@@ -1,4 +1,7 @@
 init 0 python:
+    def test_job_requirement():
+        return True
+
     class TestPerson(unittest.TestCase):
         # def setUp(self):
         #     pass
@@ -510,7 +513,7 @@ init 0 python:
         def test_set_work(self):
             test_person = create_random_person(job = unemployed_job)
             test_room = Room("Schedule test location")
-            test_person.add_job(unemployed_job)
+            test_person.change_job(unemployed_job)
 
 
             self.assertIsNone(test_person.get_destination(specified_day = 0, specified_time = 1))
@@ -518,7 +521,7 @@ init 0 python:
 
             other_test_room = Room("Other schedule test location")
             test_job = Job("Test Job", job_location = other_test_room, work_days = [5,6], work_times = [0,3])
-            test_person.add_job(test_job)
+            test_person.change_job(test_job)
 
             # test_person.job.schedule.print_schedule()
             # test_person.schedule.print_schedule()
@@ -538,7 +541,7 @@ init 0 python:
             test_person.set_schedule(test_home_location, the_days = [0,1,2,3,4,5,6], the_times = [0,1,2,3,4])
 
             test_job = Job("Test Job", job_location = test_work_location)
-            test_person.add_job(test_job)
+            test_person.change_job(test_job)
 
             self.assertIsInstance(test_person.get_destination(), Room)
 
@@ -558,7 +561,7 @@ init 0 python:
             self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 3), test_location_1)
 
             test_job = Job("Test Job", job_location = test_location_2)
-            test_person.add_job(test_job)
+            test_person.change_job(test_job)
 
             self.assertIs(test_person.get_destination(specified_day = 3, specified_time = 3), test_location_2)
             self.assertIs(test_person.get_destination(specified_day = 6, specified_time = 3), test_location_1)
@@ -834,3 +837,22 @@ init 0 python:
             test_person.run_turn()
 
             self.assertFalse(test_person.has_role(trance_role))
+
+        def test_get_duty_actions(self):
+            test_person = create_random_person()
+            test_person.work_experience = 5
+
+            test_action_1 = Action("Test Action", test_job_requirement, "test_job_label")
+            test_duty_1 = Duty("Test Duty 1", "A test duty", actions = [test_action_1], only_at_work = False)
+            test_action_2 = Action("Test Action 2", test_job_requirement, "test_job_label")
+            test_duty_2 = Duty("Test Duty", "A test duty", internet_actions = [test_action_2], only_at_work = False)
+            test_job = Job("Test job", mandatory_duties = [test_duty_1, test_duty_2])
+
+            test_person.change_job(test_job)
+
+            self.assertIn(test_action_2, test_person.duties[1].internet_actions)
+
+            self.assertIn(test_action_1, test_person.get_duty_actions())
+            self.assertNotIn(test_action_2, test_person.get_duty_actions())
+            self.assertIn(test_action_2, test_person.get_duty_internet_actions())
+            self.assertNotIn(test_action_1, test_person.get_duty_internet_actions())

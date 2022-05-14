@@ -46,8 +46,8 @@ label basic_hair_dye_unlock_label(new_trait):
     $ goal_colour = None
     $ hair_list = []
     python:
-        for base_hair_colour in list_of_hairs:
-            hair_colour = generate_hair_colour(base_hair_colour[0]) # Generate a variant hair colour so we don't apply the exact same thing every time.
+        for base_hair_colour in Person.get_list_of_hairs():
+            hair_colour = Person.generate_hair_colour(base_hair_colour[0]) # Generate a variant hair colour so we don't apply the exact same thing every time.
             hair_descriptor = hair_colour[0]
             hair_colour = Color(rgb=(hair_colour[1][0], hair_colour[1][1], hair_colour[1][2]))
             hair_list.append(("{color=" + hair_colour.hexcode + "}" + hair_descriptor.capitalize()+"{/color}", hair_colour))

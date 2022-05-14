@@ -33,24 +33,51 @@ init -2 python:
         def is_same_design(self, other): #Checks if two serums are the same design (but not necessarily the same _dose_ of that design).
             same = False
             if self.name == other.name:
+                if len(self.traits) != len(other.traits):
+                    return False
+                elif len(self.side_effects) != len(other.side_effects):
+                    return False
+
                 same = True #At this point assume this is true unless something else is wrong.
                 for trait in self.traits:
-                    if trait not in other.traits:
+                    trait_matched = False
+                    for other_trait in other.traits:
+                        if trait.is_similar(other_trait):
+                            trait_matched = True
+                    if not trait_matched:
                         same = False
                         break
 
                 for trait in other.traits:
-                    if trait not in self.traits:
+                    trait_matched = False
+                    for other_trait in self.traits:
+                        if trait.is_similar(other_trait):
+                            trait_matched = True
+                            break
+
+                    if not trait_matched:
                         same = False
                         break
 
                 for side_effect in self.side_effects:
-                    if side_effect not in other.side_effects:
+                    trait_matched = False
+                    for other_side_effect in other.side_effects:
+                        if side_effect.is_similar(other_side_effect):
+                            trait_matched = True
+                            break
+
+                    if not trait_matched:
                         same = False
                         break
 
                 for side_effect in other.side_effects:
-                    if side_effect not in self.side_effects:
+                    trait_matched = False
+                    for other_side_effect in self.side_effects:
+                        if side_effect.is_similar(other_side_effect):
+                            trait_matched = True
+                            break
+
+                    if not trait_matched:
                         same = False
                         break
 

@@ -183,7 +183,7 @@ label normal_start:
     $ mc.business.r_div.add_person(stephanie) #Lets make sure we actually put her somewhere
     $ mc.business.r_div.move_person(stephanie,lobby)
     $ setup_employee_stats(stephanie)
-    $ stephanie.add_role(head_researcher)
+    $ stephanie.change_job(head_researcher_job)
     $ mc.business.head_researcher = stephanie
 
     #TODO: movement overlay tutorial thing.
@@ -204,6 +204,8 @@ label game_loop(): ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS
     if time_of_day == 4:
         if sleep_action not in mc.location.actions: #If they're in a location they can sleep we shouldn't show this because they can just sleep here.
             $ actions_list.insert(0, ["Go home and sleep.{image=gui/heart/Time_Advance.png}{image=gui/heart/Time_Advance.png} (tooltip)It's late. Go home and sleep.", "Wait"])
+    elif mc.business.event_triggers_dict["Tutorial_Section"]:
+        $ actions_list.insert(0, ["Wait here\n{image=gui/heart/Time_Advance.png} \n{size=16}{color=#ff0000}You should talk to {/color}{/size}[stephanie.title] (disabled)", "Wait"])
     else:
         $ actions_list.insert(0, ["Wait here\n{image=gui/heart/Time_Advance.png}, +10 Extra {image=gui/extra_images/energy_token.png} (tooltip)Kill some time and wait around. Recovers more energy than working.", "Wait"])
     $ actions_list.insert(0,"Do Something")
@@ -355,9 +357,13 @@ label talk_person(the_person, keep_talking = True):
                 if keep_talking or act.is_fast:
                     special_role_actions.append([act, the_person]) #They're a list of actions and their extra arg so that gets passed through properly.
 
+        for act in the_person.get_duty_actions():
+            if keep_talking or act.is_fast:
+                special_role_actions.append([act, the_person])
+
         for act in mc.main_character_actions: #The main character has a "role" that lets us add special actions as well.
             if keep_talking or act.is_fast:
-                special_role_actions.append([act,the_person])
+                special_role_actions.append([act, the_person])
 
         chat_list.sort(key = sort_display_list, reverse = True)
         chat_list.insert(0,"Chat with her")
@@ -551,11 +557,12 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
     call instantiate_serum_traits() #Creates all of the default LR2 serum traits. TODO: Create a mod loading list that has labels that can be externally added and called here.
     call instantiate_side_effect_traits()
     call instantiate_roles()
-    call instantiate_business_policies()
 
+    $ strip_club_no_of_strippers = 4
 
     python:
         list_of_places = [] #By having this in an init block it may be set to null each time the game is reloaded, because the initialization stuff below is only called once.
+
 
         ##Work Actions##
         hr_work_action = Action("Organize your business.\n{image=gui/heart/Time_Advance.png}",hr_work_action_requirement,"hr_work_action_description",
@@ -606,6 +613,8 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
             menu_tooltip = "Go to sleep and advance time to the next day. Overnight counts as three turns when calculating serum durations.", priority = 20)
         bedroom_masturbate_action = Action("Masturbate.\n{image=gui/heart/Time_Advance.png}", bedroom_masturbate_requirement, "bedroom_masturbation",
             menu_tooltip = "Jerk off. A useful way to release Clarity, but you'll grow bored of this eventually.")
+        cheat_action = Action("Show Cheat Options.", cheat_menu_requirement, "cheat_menu",
+            menu_tooltip = "Patron option. Add cash, Clarity, family stats, etc. to help speed through the parts of the game you've already seen.")
 
         ##Mom Bedroom Actions##
         mom_room_search_action = Action("Search [mom.title]'s room. -15{image=gui/extra_images/energy_token.png}", mom_room_search_requirement, "mom_room_search_description",
@@ -644,7 +653,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         hall = Room("main hall","Home", background_image = standard_house_backgrounds[:],
             map_pos = [3,3], lighting_conditions = standard_indoor_lighting)
         bedroom = Room("your bedroom", "Your Bedroom", background_image = standard_bedroom_backgrounds[:],
-            actions = [sleep_action,bedroom_masturbate_action,faq_action,integration_test_action, test_action],
+            actions = [sleep_action,bedroom_masturbate_action,cheat_action,faq_action,integration_test_action, test_action],
             map_pos = [3,2], lighting_conditions = standard_indoor_lighting)
         lily_bedroom = Room("Lily's bedroom", "Lily's Bedroom", background_image = standard_bedroom_backgrounds[:],
             map_pos = [2,3], lighting_conditions = standard_indoor_lighting)
@@ -662,7 +671,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         lobby = Room(business_name + " lobby",business_name + " Lobby", background_image = standard_office_backgrounds[:],
             map_pos = [11,3], tutorial_label = "lobby_tutorial_intro", lighting_conditions = standard_indoor_lighting)
         office = Room("main office","Main Office", background_image = standard_office_backgrounds[:],
-            actions = [policy_purhase_action,hr_work_action,supplies_work_action,interview_action,pick_supply_goal_action,set_uniform_action,set_serum_action],
+            actions = [policy_purhase_action,hr_work_action,supplies_work_action,interview_action,pick_supply_goal_action,set_uniform_action,set_serum_action,cheat_action],
             map_pos = [11,2], tutorial_label = "office_tutorial_intro", lighting_conditions = standard_indoor_lighting)
         m_division = Room("marketing division","Marketing Division", background_image = standard_office_backgrounds[:],
             actions = [sell_serum_action, market_work_action,set_company_model_action],
@@ -709,12 +718,13 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         university = Room("university Campus", "University Campus", background_image = standard_campus_backgrounds[:],
             map_pos = [9,5], visible = False, lighting_conditions = standard_outdoor_lighting)
 
-        strip_club_owner = get_random_male_name()
+        strip_club_owner = Person.get_random_male_name()
+
         strip_club = Room(strip_club_owner + "'s Gentlemen's Club", strip_club_owner + "'s Gentlemen's Club", background_image = stripclub_background,
             actions = [strip_club_show_action],
             map_pos = [6,5], visible = False, lighting_conditions = standard_club_lighting)
 
-        mom_office_name = get_random_male_name() + " and " + get_random_male_name() + " Ltd."
+        mom_office_name = Person.get_random_last_name() + " and " + Person.get_random_last_name() + " Ltd."
         mom_office_lobby = Room(mom_office_name + " Lobby", mom_office_name + " Lobby", background_image = standard_office_backgrounds[:],
             actions = [mom_office_person_request_action],
             map_pos = [5,4], lighting_conditions = standard_indoor_lighting)
@@ -874,6 +884,7 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         city_hall.add_object(make_chair())
         city_hall.add_object(make_table())
 
+    call instantiate_duties() #Duties need to be instantiated by jobs, so do that here.
     call instantiate_jobs() #We need locations to exist before we can set up jobs, so we do that here.
     $ c = 0
     while c < len(list_of_instantiation_labels):
@@ -881,6 +892,8 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
         $ c += 1
     python:
         generate_premade_list() # Creates the list with all the premade characters for the game in it. Without this we both break the policies call in create_random_person, and regenerate the premade list on each restart.
+        setup_storyline_characters()
+        generate_unique_characters_list()
 
         for place in list_of_places:
             if place.public:
@@ -895,11 +908,12 @@ label initialize_game_state(character_name,business_name,last_name,stat_array,sk
 
         stripclub_strippers = []
         stripclub_wardrobe = wardrobe_from_xml("Stripper_Wardrobe")
-        for i in __builtin__.range(0,4):
-            a_girl = create_random_person(start_sluttiness = renpy.random.randint(15,30), job = stripper_job)
-            a_girl.generate_home()
-            strip_club.add_person(a_girl)
-
+        for i in __builtin__.range(0,strip_club_no_of_strippers):
+            create_random_stripper()
+        #Setup fallback stripper to pull in to stripclub if Eg all girls are extremely pregnant. Only appears during her show, so can't be hired/etc.
+        fallback_stripper = create_random_stripper()
+        stripclub_strippers.remove(fallback_stripper)
+        fallback_stripper.set_override_schedule(fallback_stripper.home)
         business_wardrobe = wardrobe_from_xml("Business_Wardrobe") #Used in some of Mom's events when we need a business-ish outfit
 
     return

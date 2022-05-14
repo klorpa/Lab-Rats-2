@@ -11,7 +11,7 @@ init 1300:
             valid_mc_titles.append("cutie")
             return valid_mc_titles
         bimbo_personality = Personality("bimbo", #Currently used in the head researcher event line.
-        common_likes = ["skirts", "small talk", "the colour pink", "makeup", "pop"],
+        common_likes = ["skirts", "small talk", "the colour pink", "makeup", "pop music"],
         common_sexy_likes = ["giving blowjobs", "missionary style sex", "being submissive", "skimpy outfits", "showing her tits", "showing her ass", "not wearing anything", "not wearing underwear", "lingerie", "cum facials"],
         common_dislikes = ["working", "research work", "work uniforms", "conservative outfits", "Mondays"],
         common_sexy_dislikes = ["taking control", "masturbating"],
@@ -25,7 +25,7 @@ label bimbo_introduction(the_person):
     $ the_person.set_title("???")
     the_person "Oh you're cute! Okay, cutie, what do you need?"
     mc.name "I just wanted to get your name. I saw you walking past and..."
-    $ title_choice = get_random_title(the_person)
+    $ title_choice = the_person.get_random_title()
     $ formatted_title = the_person.create_formatted_title(title_choice)
     if the_person.has_large_tits():
         the_person "And you liked my titss? Yeah, I get that a lot. I'm [formatted_title], it's nice to meet you!"
@@ -33,7 +33,7 @@ label bimbo_introduction(the_person):
         the_person "And you liked my ass? Yeah, I get that a lot. I'm [formatted_title], it's nice to meet you!"
     #the_person "Well then, I suppose I shouldn't disappoint you. You can call me [formatted_title]."
     $ the_person.set_title(title_choice)
-    $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+    $ the_person.set_possessive_title(the_person.get_random_possessive_title())
     the_person "So what's your name?"
     return
 

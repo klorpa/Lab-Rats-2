@@ -3,6 +3,12 @@
 init -15 python:
     from datetime import datetime
     import traceback
+    
+    debugMode = False
+
+    def reveal_type():
+        return debugMode
+
 
     def run_unit_tests():
         unittest.main(module = renpy.store, argv = ['first-arg-is-ignored'], exit = False)

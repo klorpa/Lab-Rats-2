@@ -13,7 +13,7 @@ init 0 python:
         on_buy_function = increase_max_employee_size,
         extra_arguments = {"amount":2})
     organisation_policies_list.append(business_size_1_policy)
-    
+
     business_size_2_policy = Policy(name = "Employee Count Improvement Two",
         desc = "Improved employee management software yet again increases the number of employees you can comfortably keep around. Increases max employee count by 3.",
         cost = 2000,
@@ -91,11 +91,10 @@ init 0 python:
     organisation_policies_list.append(public_advertising_license_policy)
 
     office_punishment = Policy(name = "Office Punishment",
-        desc = "Establish a formal set of punishments for business policy violations. Allows you to punish employees for infractions they have committed. More severe infractions enable more severe punishments.",
+        desc = "Establish a formal set of punishments for business policy violations. Allows you to punish employees for infractions they have committed. More severe infractions enable more severe punishments. Unlocks new duty for HR employees to find infractions for you.",
         cost = 700,
         toggleable = False)
     organisation_policies_list.append(office_punishment)
-
 
     corporal_punishment = Policy(name = "Corporal Punishment",
         desc = "Updates to the company punishment guidelines allow for punishments involving physical contact. Research into the topic has shown sexual punishment to be extremely effective in cases of severe disobedience.",
@@ -104,15 +103,19 @@ init 0 python:
         own_requirement = office_punishment)
     organisation_policies_list.append(corporal_punishment)
 
-    def strict_enforcement_on_day():
-        mc.business.change_team_effectiveness(-1*mc.business.get_employee_count())
+    def strict_enforcement_on_apply():
+        mc.business.standard_efficiency_drop += 1
+
+    def strict_enforcement_on_remove():
+        mc.business.standard_efficiency_drop += -1
 
     strict_enforcement = Policy(name = "Strict Enforcement",
         desc = "By strictly applying the letter, rather than spirit, of the company punishment guidelines you are able to treat infractions as more severe than they initially seem. All infraction severities are increased by one while this policy is active, but the increased administrative work lowers business efficiency by one per employee every day.",
         cost = 2500,
         toggleable = True,
         own_requirement = office_punishment,
-        on_day_function = strict_enforcement_on_day)
+        on_apply_function = strict_enforcement_on_apply,
+        on_remove_function = strict_enforcement_on_remove)
     organisation_policies_list.append(strict_enforcement)
 
     def draconian_enforcement_on_day():
@@ -128,41 +131,32 @@ init 0 python:
         dependant_policies = strict_enforcement)
     organisation_policies_list.append(draconian_enforcement)
 
-    def bureaucratic_nightmare_on_day():
-        mc.business.change_team_effectiveness(-1*mc.business.get_employee_count())
-
     bureaucratic_nightmare = Policy(name = "Bureaucratic Nightmare",
-        desc = "Rewriting all company policies to be intentionally vague and misleading creates a work environment where mistakes are practically unavoidable. Allows you to generate minor infractions at will, but the new labyrinthian rules result in business efficiency dropping by an additional one per employee each day.",
+        desc = "Trap employees within a web of intentionally vague and misleading rules and regulations. Unlocks a new duty that allows for the creation of minor infractions at will at the cost of business efficency.",
         cost = 2500,
-        toggleable = True,
-        own_requirement = office_punishment,
-        on_day_function = bureaucratic_nightmare_on_day)
+        toggleable = False,
+        own_requirement = office_punishment)
     organisation_policies_list.append(bureaucratic_nightmare)
 
     theoretical_research = Policy(name = "Theoretical Research",
-        desc = "Establish a framework that will allow your R&D team to contribute to the discovery of completely novel serum traits. When not given a specific task your research team will convert 5% of their generated Research Points into Clarity.",
+        desc = "Unlocks Theoretical Research duty for R&D staff. When assigned the employee will create 1 point of Clarity for every 5 Research Points they produce.",
         cost = 300,
         toggleable = False)
     organisation_policies_list.append(theoretical_research)
 
-    def research_journal_subscription_on_day():
-        if mc.business.is_work_day():
-            mc.business.change_funds(-30)
-
-    research_journal_subscription = Policy(name = "Research Journal Subscription",
-        desc = "Ensuring your research team has access to all of the latest research isn't cheap, but it is important if you want to push your own progress further and faster. Converts an additional 5% of idle Research Points into Clarity when your R&D team is idle. Costs $30 a day to maintain your subscription.",
+    research_journal_subscription = Policy(name = "Study Outside Research",
+        desc = "Unlocks Journal Studies duty for R&D staff. When assigned the employee will create 1 point of Clarity for every 5 Research Points they produce. Journal subscriptions will cost an additional $10 per person per work day.",
         cost = 1000,
         toggleable = False,
-        own_requirement = theoretical_research,
-        on_day_function = research_journal_subscription_on_day)
+        own_requirement = theoretical_research)
     organisation_policies_list.append(research_journal_subscription)
 
-    independent_experimentation = Policy(name = "Independent Experimentation",
-        desc = "Make the lab available to your research staff and encourage them to pursue their own experiments when it would otherwise be idle. Requires 5 serum supply per researcher and converts an additional 5% of idle research production into Clarity.",
+    practical_experimentation = Policy(name = "Practical Experimentation",
+        desc = "Unlocks Practical Experimentation Duty. Provide additional supplies to your R&D staff and encourage them to pursue promising areas of research. Requires 5 units of Serum Supply per researcher and produces 1 point of Clarity for every 5 Research Points they produce.",
         cost = 500,
         toggleable = True,
         own_requirement = theoretical_research)
-    organisation_policies_list.append(independent_experimentation)
+    organisation_policies_list.append(practical_experimentation)
 
 
     def office_conduct_guidelines_on_day():
@@ -170,7 +164,8 @@ init 0 python:
             for an_employee in mc.business.get_employee_list():
                 if an_employee.sluttiness < 20:
                     an_employee.change_slut(1, 20, add_to_log = False)
-                    mc.business.change_team_effectiveness(-1)
+                    if not an_employee.has_duty(extra_paperwork_duty):
+                        mc.business.change_team_effectiveness(-1)
 
     office_conduct_guidelines = Policy(name = "Office Conduct Guidelines",
         desc = "Set and distribute guidelines for staff behaviour. Daily emails will remind them to be \"pleasant, open, and receptive to all things.\". Increases all staff Sluttiness by 1 per day, to a maximum of 20. Reduces business effiency by 1 per employee affected.",
@@ -187,7 +182,8 @@ init 0 python:
 
                 if an_employee.sluttiness < 40:
                     an_employee.change_slut(1, 40, add_to_log = False)
-                    mc.business.change_team_effectiveness(-1)
+                    if not an_employee.has_duty(extra_paperwork_duty):
+                        mc.business.change_team_effectiveness(-1)
 
     mandatory_staff_reading = Policy(name = "Mandatory Staff Reading",
         desc = "Distribute copies of \"Your Place in the Work Place\" - a guidebook for women, written in the 60's by a womanizing executive. Increases all staff Sluttiness by an additional 1 per day, to a maximum of 40. Reduces business efficiency by 1 per employee affected, and reduces happiness of women with Sluttiness 20 or lower by 5 per day.",
@@ -203,10 +199,12 @@ init 0 python:
             for an_employee in mc.business.get_employee_list():
                 if an_employee.sluttiness <= 20:
                     an_employee.change_happiness(-10)
-                    mc.business.change_team_effectiveness(-3)
+                    if not an_employee.has_duty(extra_paperwork_duty):
+                        mc.business.change_team_effectiveness(-3)
                 elif an_employee.sluttiness < 60:
-                    mc.business.change_team_effectiveness(-1)
-                an_employee.change_slut(1, 60, add_to_log = False)
+                    if not an_employee.has_duty(extra_paperwork_duty):
+                        mc.business.change_team_effectiveness(-1)
+                    an_employee.change_slut(1, 60, add_to_log = False)
 
     superliminal_office_messaging = Policy(name = "Superliminal Messaging",
         desc = "Fill the office with overtly sexual content. Distribute pinup girl calendars, provide access to a company porn account, hang nude posters. Increases staff Sluttiness by 1 per day, to a maximum of 60. Reduces business efficiency by 1 per girl affected, or by 3 if her Sluttiness is 20 or lower. Reduces happiness of women with Sluttiness 20 or lower by 10 per day.",

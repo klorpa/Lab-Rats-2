@@ -1,12 +1,11 @@
-#TODO: All the stuff for using a girl as a serum incubator.
+#All the stuff for using a girl as a serum incubator.
 init -2 python:
     def lactating_serum_on_turn(the_person):
-        the_person.event_triggers_dict["max_serum_in_breasts"] = rank_tits(the_person.tits) * 2
+        the_person.event_triggers_dict["max_serum_in_breasts"] = Person.rank_tits(the_person.tits) * 2
         if not the_person.event_triggers_dict.get("serum_in_breasts", False):
             the_person.event_triggers_dict["serum_in_breasts"] = 0
 
-        #TODO: Ability to have a girl pumping for you, so you can talk to her and just get a pile of serum.
-        the_person.event_triggers_dict["serum_in_breasts"] += rank_tits(the_person.tits) * the_person.lactation_sources * 0.2
+        the_person.event_triggers_dict["serum_in_breasts"] += Person.rank_tits(the_person.tits) * the_person.lactation_sources * 0.2
         if the_person.event_triggers_dict.get("serum_in_breasts", 0) > the_person.event_triggers_dict.get("max_serum_in_breasts", 0):
             the_person.event_triggers_dict["serum_in_breasts"] = the_person.event_triggers_dict.get("max_serum_in_breasts", 0)
 
@@ -27,13 +26,17 @@ init -2 python:
         else:
             return True
 
+    def get_girl_milky_serum(the_person):
+        serum_produced = get_random_from_list(the_person.event_triggers_dict.get("lactating_serum_types", [])) #If there are multiple traits we only use a random one
+        milk_serum = copy.deepcopy(serum_produced)
+        milk_serum.name = "Milky " + milk_serum.name
+        milk_trait = the_person.get_milk_trait()
+        milk_serum.add_trait(milk_trait)
+        return milk_serum
 
-label milk_for_serum_label(the_person): #Note that thee serum types have already had the "Milk" component added to them and are unconnected copies of the origional.
-    $ serum_produced = get_random_from_list(the_person.event_triggers_dict.get("lactating_serum_types", [])) #If there are multiple traits we only use a random one
-    $ milk_serum = copy.deepcopy(serum_produced)
-    $ milk_serum.name = "Milky " + milk_serum.name
-    $ milk_trait = the_person.get_milk_trait()
-    $ milk_serum.add_trait(milk_trait)
+
+label milk_for_serum_label(the_person):
+    $ milk_serum = get_girl_milky_serum(the_person)
     #TODO: Set recently_milked = True if you pull it off
     $ milking_allowed = False
     if not the_person.event_triggers_dict.get("been_milked_before", False):
@@ -268,7 +271,7 @@ label milk_for_serum_label(the_person): #Note that thee serum types have already
                                     "You hand her the bottle. Her nipple continues to produce a steady drip of milk, unwilling to stop now that it's started."
                                     "She takes the container and takes a quick sip."
                                     $ available_doses += -1
-                                    $ the_person.give_serum(copy.copy(milk_serum))
+                                    $ the_person.give_serum(milk_serum)
                                     mc.name "How does it taste?"
                                     the_person "Warm, but good."
                                     "You return the bottle to her nipple and keep massaging."
@@ -302,20 +305,20 @@ label milk_for_serum_label(the_person): #Note that thee serum types have already
                                     if full_blast:
                                         $ available_doses += -full_blast_amount
                                         $ count = 0
-                                        $ the_person.give_serum(copy.copy(milk_serum))
+                                        $ the_person.give_serum(milk_serum)
                                         "You hold [the_person.title]'s head in place and massage out as much milk as you can manage."
                                         $ mc.change_locked_clarity(10*full_blast_amount)
                                         if full_blast_amount == 2:
-                                            $ the_person.give_serum(copy.copy(milk_serum))
+                                            $ the_person.give_serum(milk_serum)
                                             "You make sure she gets a mouth full and swallows it down before you let go of her head."
                                             "Her breast falls from her lips and bounces back to it's natural position. She seems a little overwhelmed, but maintains her composure."
                                             the_person "It tastes fine... You made sure I was very thorough!"
                                         elif full_blast_amount <= 4:
-                                            $ the_person.give_serum(copy.copy(milk_serum))
+                                            $ the_person.give_serum(milk_serum)
                                             "[the_person.title] has to swallow multiple times to keep up with her own milk output."
                                             $ gulp_string = "Gulp!"
                                             while count+2 < full_blast_amount:
-                                                $ the_person.give_serum(copy.copy(milk_serum))
+                                                $ the_person.give_serum(milk_serum)
                                                 $ count+= 1
                                                 "[gulp_string]"
                                                 $ gulp_string += " Gulp!"
@@ -326,13 +329,13 @@ label milk_for_serum_label(the_person): #Note that thee serum types have already
 
 
                                         else:
-                                            $ the_person.give_serum(copy.copy(milk_serum))
+                                            $ the_person.give_serum(milk_serum)
                                             "[the_person.title] is practically drowning in her own milk as it comes torrenting out of her tit."
                                             "She sputters briefly, milk splattering around her lips and back onto her own breast."
                                             "Finally she gets into the rhythm and gulps it down as quickly as she makes it."
                                             $ gulp_string = "Gulp!"
                                             while count+2 < full_blast_amount:
-                                                $ the_person.give_serum(copy.copy(milk_serum))
+                                                $ the_person.give_serum(milk_serum)
                                                 $ count+= 1
                                                 "[gulp_string]"
                                                 $ gulp_string += " Gulp!"
@@ -345,7 +348,7 @@ label milk_for_serum_label(the_person): #Note that thee serum types have already
 
                                     else:
                                         $ available_doses += -1
-                                        $ the_person.give_serum(copy.copy(milk_serum))
+                                        $ the_person.give_serum(milk_serum)
                                         "When you're sure [the_person.title] has had about a dose you let go of her head and boob."
                                         "She lets her bounce back to it's natural position."
                                         the_person "Uh... it tastes fine."

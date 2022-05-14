@@ -17,6 +17,8 @@ init -2 python:
             the_person.event_triggers_dict["onlyfans_content_type"] = get_random_from_weighted_list(content_types)
         the_person.event_triggers_dict["onlyfans_visited_today"] = False
 
+        the_person.event_triggers_dict["onlyfans_help_today"] = False # Used as a flag for any event that lts you help them make Onlyfans content.
+
         return
 
 

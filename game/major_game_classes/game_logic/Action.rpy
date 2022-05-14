@@ -10,7 +10,7 @@ init -2 python:
             self.effect = effect #effect is a string for a renpy label that is called when the action is taken.
             if args is None:
                 self.args = [] #stores any arguments that we want passed to the action or requirement when the action is created. Should be a list of variables.
-            elif type(args) is not list:
+            elif not isinstance(args, list):
                 self.args = [args] #Make sure our list of arguments is a list.
             else:
                 self.args = args

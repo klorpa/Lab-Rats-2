@@ -142,12 +142,16 @@ label stripper_offer_hire(the_person):
 
 
 label stripper_hire_accept(the_person):
+    if the_person.has_role(cousin_role):
+        $special_stripper_leave(the_person)
     call stranger_hire_result(the_person)
     if _return:
         mc.name "It's settled then. I'll see you at work."
         the_person "And I'll go call my boss and let him know I'm finished."
         the_person "I don't think he's going to be very happy to hear it..."
     else:
+        if the_person.has_role(cousin_role):
+            $special_stripper_hire(the_person)
         mc.name "On second thought... I think I'm going to have to wait a little before I can take you on."
         the_person "I can't just wait around doing nothing. Tell me when you actually have a position for me, then I'll quit."
     return

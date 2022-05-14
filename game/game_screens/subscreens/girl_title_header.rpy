@@ -19,7 +19,9 @@ screen girl_title_header(the_person, x_size, y_size, include_details_button = Fa
             xalign 0.5 xanchor 0.5
             text "[the_person.name] [the_person.last_name]" style "menu_text_style" size 30 xalign 0.5 yalign 0.5 yanchor 0.5 color the_person.char.who_args["color"] font the_person.char.what_args["font"]
             if not mc.business.get_employee_title(the_person) == "None":
-                text "Position: " + mc.business.get_employee_title(the_person) + " ($[the_person.salary]/day)" style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
+                text "Job: " + the_person.job.job_title + " ($[the_person.salary]/day)" style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
+            else:
+                text "Job: " + the_person.job.job_title style "menu_text_style" xalign 0.5 yalign 0.5 yanchor 0.5
 
             $ visible_roles = []
             $ role_string = "Special Roles: "

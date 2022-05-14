@@ -99,9 +99,9 @@ init -1 python:
     def mom_vaginal_quest_3_requirement(the_person, trigger_day):
         if day < trigger_day:
             return False
-        elif time_of_day == 4: #Prevents the event from triggering in the morning instead of the evening.
+        elif not time_of_day == 3: #Prevents the event from triggering in the morning instead of the evening.
             return False
-        elif mom.get_next_destination() == mom_bedroom: #Check that she will be moving into the bedroom on her _next_ Move phase (ie after this crisis check is made).
+        elif not mom.get_next_destination() == mom_bedroom: #Check that she will be moving into the bedroom on her _next_ Move phase (ie after this crisis check is made).
             return False
         else:
             return True
@@ -303,7 +303,7 @@ label mom_oral_taboo_break_revisit(the_person):
     $ first_time = the_person.event_triggers_dict.get("oral_revisit_count", 0) <= 1
     $ noteable_taboo = "cunn"
     if the_person.has_broken_taboo("sucking_cock"):
-        $ noteable_taboo == "blowjob"
+        $ noteable_taboo = "blowjob"
     if first_time:
         if noteable_taboo == "blowjob":
             the_person "It's the, uh... fun we had together."
@@ -806,10 +806,9 @@ label mom_vaginal_taboo_break_revisit_quest_2(the_person):
     "You sit back, feeling satisfied with your deception. There's nothing to do now but wait for [the_person.title] to make up her mind."
     $ the_person.event_triggers_dict["mom_vaginal_quest_progress"] = 2
 
-    call advance_time()
-
     $ decision_event = Action("make a decision", mom_vaginal_quest_3_requirement, "mom_vaginal_quest_3", args = the_person, requirement_args = [the_person, day + renpy.random.randint(1,3)])
     $ mc.business.mandatory_crises_list.append(decision_event)
+    call advance_time()
     return
 
 label mom_advice_dm(the_person):

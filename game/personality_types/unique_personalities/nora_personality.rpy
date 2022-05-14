@@ -15,9 +15,9 @@ init 1300:
             return valid_titles
 
         nora_personality = Personality("nora", default_prefix = "reserved",
-        common_likes = ["pants", "working", "research work", "classical"],
+        common_likes = ["pants", "working", "research work", "classical music"],
         common_sexy_likes = ["vaginal sex", "skimpy uniforms", "lingerie", "masturbating"],
-        common_dislikes = ["heavy metal", "HR work", "marketing work", "sports"],
+        common_dislikes = ["heavy metal music", "HR work", "marketing work", "sports"],
         common_sexy_dislikes = ["not wearing anything", "not wearing underwear", "being submissive", "creampies"],
         titles_function = nora_titles, possessive_titles_function = nora_possessive_titles, player_titles_function = nora_player_titles,
         insta_chance = 0, dikdok_chance = 0)

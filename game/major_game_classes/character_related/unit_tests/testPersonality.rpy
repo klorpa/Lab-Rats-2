@@ -25,7 +25,7 @@ init 0 python:
             opinion_strength = opinion[1][0]
             opinion_known = opinion[1][1]
 
-            self.assertIn(opinion_topic, opinions_list)
+            self.assertIn(opinion_topic, Person.get_normal_opinions_list())
             self.assertTrue(opinion_strength == -2 or opinion_strength == -1 or opinion_strength == 1 or opinion_strength == 2)
             self.assertFalse(opinion_known)
 
@@ -36,7 +36,7 @@ init 0 python:
             opinion_strength = opinion[1][0]
             opinion_known = opinion[1][1]
 
-            self.assertIn(opinion_topic, sexy_opinions_list)
+            self.assertIn(opinion_topic, Person.get_sexy_opinions_list())
             self.assertTrue(opinion_strength == -2 or opinion_strength == -1 or opinion_strength == 1 or opinion_strength == 2)
             self.assertFalse(opinion_known)
 

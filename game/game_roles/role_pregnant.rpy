@@ -241,7 +241,7 @@ label pregnant_announce(the_person):
 label pregnant_tits_start(the_person):
     python:
         the_person.event_triggers_dict["preg_knows"] = True
-        the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
+        the_person.tits = the_person.get_larger_tit(the_person.tits) #Her tits start to swell.
         the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + 0.1 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
         pregnant_tits_announce_action = Action("Announce Pregnant Tits", pregnant_tits_annouce_requirement, "pregnant_tits_announce", args = day)
@@ -282,7 +282,7 @@ label pregnant_transform(the_person): #Changes the person to their pregnant body
     python:
         the_person.event_triggers_dict["pre_preg_body"] = the_person.body_type
         the_person.body_type = "standard_preg_body"
-        the_person.tits = get_larger_tits(the_person.tits) # Her tits get even larger
+        the_person.tits = the_person.get_larger_tit(the_person.tits) # Her tits get even larger
         the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + 0.1 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
         the_person.lactation_sources += 1
 
@@ -393,7 +393,7 @@ label pregnant_finish(the_person):
 
 label tits_shrink(the_person, reduce_lactation):
     $ the_person.lactation_sources += -1
-    $ the_person.tits = get_smaller_tits(the_person.tits)
+    $ the_person.tits = the_person.get_smaller_tit(the_person.tits)
     $ the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.1
     return
 

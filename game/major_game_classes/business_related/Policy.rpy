@@ -1,7 +1,7 @@
 init -2 python:
     class Policy(renpy.store.object): # An upgrade that can be purchased by the character for their business.
         def __init__(self, name, desc, cost, requirement = None, own_requirement = None, active_requirement = None, toggleable = False, exclusive_tag = None,
-            on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_move_function = None, on_day_function = None, dependant_policies = None):
+            on_buy_function = None, extra_arguments = None, on_apply_function = None, on_remove_function = None, on_turn_function = None, on_move_function = None, on_day_function = None, dependant_policies = None,extra_data= None):
 
             self.name = name #A short name for the policy.
             self.desc = desc #A text description of the policy.
@@ -29,6 +29,12 @@ init -2 python:
                 self.extra_arguments = {}
             else:
                 self.extra_arguments = extra_arguments #A dictionary of extra values that can be used by the various on_buy, on_apply, etc. functions
+
+            if extra_data is None:
+                self.extra_data = {}
+            else:
+                self.extra_data = extra_data #A dictionary of extra data to be accessed
+
 
             self.on_buy_function = on_buy_function #A function to be called when purchased
             self.on_apply_function = on_apply_function

@@ -88,6 +88,10 @@ label browse_internet(is_phone = True): #TODO: Maybe make this a generic functio
                 for act in role.internet_actions:
                     text_actions_display_list.append([act, the_person])
 
+            for act in the_person.get_duty_internet_actions():
+                if keep_talking or act.is_fast:
+                    text_actions_display_list.append([act, the_person])
+
 
         $ text_actions_display_list.sort(key = sort_display_list, reverse = True)
         $ text_actions_display_list.insert(0,"Text [the_person.title]")

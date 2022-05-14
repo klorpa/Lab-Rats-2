@@ -100,9 +100,9 @@ label find_nothing_label():
 
 label lady_of_the_night_label():
     # You run into a lady who propositions you for money.
-    $ the_person = create_random_person(start_sluttiness = renpy.random.randint(25, 40))
+    $ the_person = create_random_person(sluttiness = renpy.random.randint(25, 40))
     $ the_person.set_mc_title("Sir")
-    $ the_person.add_job(prostitute_job)
+    $ the_person.change_job(prostitute_job)
     #$ the_person.add_role(prostitute_role)
     "You're lost in thought when a female voice calls out to you."
     the_person "Excuse me, [the_person.mc_title]."
@@ -115,8 +115,8 @@ label lady_of_the_night_label():
             $ the_person.generate_home()
             $ downtown.add_person(the_person) #If you pay her add her to the location so that she is kept track of in the future.
             mc.name "That sounds nice. It's nice to meet you..."
-            $ the_person.set_title(get_random_title(the_person))
-            $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+            $ the_person.set_title(the_person.get_random_title())
+            $ the_person.set_possessive_title(the_person.get_random_possessive_title())
             the_person "You can call me [the_person.title]. For two hundred dollars I'll be your best friend for the next hour."
             $ mc.business.change_funds(-200)
             $ the_person.change_obedience(1)
@@ -173,9 +173,9 @@ label meet_person_label():
             mc.name "No problem, I'd do it for anyone."
 
             "She holds out her hand to shake yours."
-            $ title_choice = get_random_title(the_person)
+            $ title_choice = the_person.get_random_title()
             $ the_person.set_title(title_choice)
-            $ the_person.set_possessive_title(get_random_possessive_title(the_person))
+            $ the_person.set_possessive_title(the_person.get_random_possessive_title())
             the_person "Thank you so much. I'm [the_person.title]."
             call person_introduction(the_person, girl_introduction = False) from _call_person_introduction_1
             $ mc.change_locked_clarity(5)

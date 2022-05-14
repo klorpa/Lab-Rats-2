@@ -438,7 +438,7 @@ label get_drink_crisis_label():
     $ the_person.draw_person()
     the_person "Stretching your legs?"
     mc.name "Yeah, I was going to get some coffee. Do you want anything?"
-    $ coffee = get_random_coffee_style()
+    $ coffee = the_person.coffee_style
     the_person "Sure. [coffee], please."
     $ clear_scene()
     "You nod and head to the little break room in the office. It doesn't take you long to have both of your drinks made up."
@@ -810,7 +810,7 @@ label lab_accident_crisis_label():
     the_person "I was trying to [techno] and went to move the sample. It slipped out of my hand and when I tried to grab it..."
     "She turns her palm up to you. It's covered in the same coloured liquid, and there's a small cut."
     the_person "I'm not sure what the uptake is like with this new design. I think everything will be fine, but would you mind hanging around for a few minutes?"
-    $the_person.give_serum(copy.copy(the_serum))
+    $the_person.give_serum(the_serum)
     if office_punishment.is_active():
         menu:
             "Punish her for the mistake.":
@@ -867,7 +867,7 @@ label production_accident_crisis_label():
     the_person "I was trying to [techno] like I normally do and went to move the batch. It slipped out of my hand and when I tried to grab it..."
     "She turns her palm up to you. It's covered in the same coloured liquid, and there's a small cut."
     the_person "I'm not sure what the uptake is like with this new design. I think everything will be fine, but would you mind hanging around for a few minutes?."
-    $the_person.give_serum(copy.copy(the_serum))
+    $the_person.give_serum(the_serum)
     if office_punishment.is_active():
         menu:
             "Punish her for the mistake.":
@@ -1197,7 +1197,8 @@ label home_fuck_crisis_label():
     python:
         for person in mc.business.get_employee_list():
             if person.sluttiness >= 15 and (person.relationship == "Single" or person.get_opinion_score("cheating on men") > 0) and not girlfriend_role in person.special_role:
-                meets_sluttiness_list.append(person)
+                if not the_person.is_family():
+                    meets_sluttiness_list.append(person)
     $ the_person = get_random_from_list(meets_sluttiness_list)
     if the_person is None:
         return
@@ -1302,8 +1303,8 @@ label home_fuck_crisis_label():
     return
 
 init 1 python:
-    def quiting_crisis_requirement(): #We are only going to look at quitting actions if it is in the middle of the day when people are at work.
-        if time_of_day == 1 or time_of_day == 2 or time_of_day==3:
+    def quiting_crisis_requirement(the_person): #We are only going to look at quitting actions if it is in the middle of the day when people are at work.
+        if the_person.job.job_location.has_person(the_person):
             return True
         else:
             return False
@@ -1424,7 +1425,7 @@ label invest_opportunity_crisis_label():
     #You receive a call asking for a tour of your facilities. Once there the investvestment agent can be "persuaded" to impress them.
     "Your phone rings while you're busy working. You lean back in your chair and answer it."
     mc.name "[mc.business.name] here, [mc.name] speaking."
-    $ rep_name = get_random_male_name()
+    $ rep_name = Person.get_random_male_name()
     rep_name "Ah, [mc.name], I'm glad I was able to get ahold of you. My name is [rep_name]."
     rep_name "I am the local representative of a rather large mutual fund. It is my responsibility to evaluate local businesses and see if they would be worthwhile investments."
     rep_name "My research turned up your company, and we might be interested in making an investment. I was hoping I could set up a tour with you to take a look around and ask you some questions."
@@ -2747,7 +2748,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                             mc.name "Alright, you've got yourself a deal. I'll have the books updated by the end of the day."
                             $ rd_staff.salary += raise_amount
                             rd_staff "Good to hear it. Let's get right to it then."
-                            $ rd_staff.give_serum(copy.copy(the_serum))
+                            $ rd_staff.give_serum(the_serum)
 
                         "Refuse.":
                             mc.name "I'm sorry but that just isn't in the budget right now."
@@ -2760,7 +2761,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                 else:
                     "[rd_staff.title] pauses for a moment, then nods."
                     rd_staff "Okay sir, if you think it will help the business."
-                    $ rd_staff.give_serum(copy.copy(the_serum))
+                    $ rd_staff.give_serum(the_serum)
 
 
         "[rd_staff.title] drinks down the contents of the vial and places it to the side."
@@ -2790,7 +2791,7 @@ init 1 python:
         # Requries you to have a free slot in the company
         if mc.business.is_open_for_business() and mc.is_at_work() and mc.business.get_employee_count() < mc.business.max_employee_count:
             for person in mc.business.get_employee_list():
-                if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person): #At least one person fits the criteria we need to select a mother, the crisis is valid.
+                if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person) and not person.has_role(mother_role) and not person.has_role(aunt_role): #At least one person fits the criteria we need to select a mother, the crisis is valid.
                     return True
         return False
 
@@ -2805,7 +2806,7 @@ label daughter_work_crisis_label():
     python:
         valid_people_list = []
         for person in mc.business.get_employee_list():
-            if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person): #They have undiscovered kids we can add in.
+            if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person) and not person.has_role(mother_role): #They have undiscovered kids we can add in.
                 valid_people_list.append(person)
 
     $ the_person = get_random_from_list(valid_people_list) #Pick someone appropriate from the company.

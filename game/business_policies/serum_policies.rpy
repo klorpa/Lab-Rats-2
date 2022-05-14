@@ -3,23 +3,23 @@ init 0 python:
     serum_policies_list = []
 
     mandatory_paid_serum_testing_policy = Policy(name = "Mandatory Paid Serum Testing",
-        desc = "Employees will be required to take doses of serum when requested for \"testing purposes\". They will be entitled to compensation equal to five days wages.",
+        desc = "Unlocks new general serum testing duty, as well as one market specific duty. Assigned employees will be required to test any doses of serum provided, in exchange for five days wages in compensation.",
         cost = 500,
-        toggleable = True)
+        toggleable = False)
     serum_policies_list.append(mandatory_paid_serum_testing_policy)
 
     mandatory_unpaid_serum_testing_policy = Policy(name = "Mandatory Unpaid Serum Testing",
-        desc = "Updates to your employe contracts will remove the requirement for compensation when they are asked to test serums.",
+        desc = "Updates to your employee contracts will remove the requirement for compensation when they are asked to test serums.",
         cost = 2000,
-        toggleable = True,
+        toggleable = False,
         own_requirement = mandatory_paid_serum_testing_policy,
         dependant_policies = mandatory_paid_serum_testing_policy)
     serum_policies_list.append(mandatory_unpaid_serum_testing_policy)
 
     daily_serum_dosage_policy = Policy(name = "Daily Serum Dosage",
-        desc = "Mandatory serum testing is expanded into a full scale daily dosage program. Each employee will receive a dose of the selected serum for their department, if one is currently in the stockpile.",
+        desc = "Mandatory serum testing is expanded into a full scale daily dosage program. Unlocks a new duty for all employees, which can be used to have serum automatically consumed at the start of each work day.",
         cost = 5000,
-        toggleable = True,
+        toggleable = False,
         own_requirement = mandatory_unpaid_serum_testing_policy,
         dependant_policies = mandatory_unpaid_serum_testing_policy)
     serum_policies_list.append(daily_serum_dosage_policy)
@@ -108,3 +108,21 @@ init 0 python:
         extra_arguments = {"amount":1},
         dependant_policies = production_line_addition_1_policy)
     serum_policies_list.append(production_line_addition_2_policy)
+
+    breast_milking_space_policy = Policy(name = "Breast Milking Equipment",
+        desc = "Stock the break room with hand-powered breast pumps and make them available to your staff. Unlocks a new duty for all lactating staff to have them turn over a sample of any breast milk produced.",
+        cost = 1500,
+        toggleable = False)
+    serum_policies_list.append(breast_milking_space_policy)
+
+    auto_pumping_stations_policy = Policy(name = "Automatic Breast Pumping Stations",
+        desc = "Cutting edge breast pump machinery will be installed in the break room. Unlocks a new duty for lacting staff to provide a larger amount of breast milk at once, if they have enough to give.",
+        cost = 5000,
+        toggleable = False)
+    serum_policies_list.append(auto_pumping_stations_policy)
+
+    high_suction_pumping_machinery_policy = Policy(name = "High Suction Breast Pumping Machinery",
+        desc = "Repurposed industrial dairy farming equipment will be installed in the break room. A new duty for large breasted lactating staff will produce an uncapped amount of breast milk, plus a small flat added amount.",
+        cost = 12000,
+        toggleable = False)
+    serum_policies_list.append(high_suction_pumping_machinery_policy)

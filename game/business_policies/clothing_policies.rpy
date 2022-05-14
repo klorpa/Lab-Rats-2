@@ -96,7 +96,7 @@ init 0 python:
     uniform_policies_list.append(maximal_arousal_uniform_policy)
 
     male_focused_marketing_policy = Policy(name = "Male Focused Modeling",
-        desc = "The adage \"Sex Sells\" is especially true when selling your serum to men. Market reach is increased by an additional 1% per point of outfit Sluttiness worn by your marketing staff",
+        desc = "The adage \"Sex Sells\" is especially true when selling your serum to men. Market reach is increased by an additional 1% per point of outfit Sluttiness worn by your marketing staff, and several new duties are unlocked for Marketting and Supply staff.",
         cost = 500,
         toggleable = True,
         own_requirement = strict_uniform_policy,

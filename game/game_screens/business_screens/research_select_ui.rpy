@@ -135,7 +135,7 @@ screen research_select_ui: #How you select serum and trait research
                             xsize 320
 
 
-                            for trait in sorted(sorted(list_of_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
+                            for trait in sorted(sorted(list_of_traits+mc.business.blueprinted_traits, key = lambda trait: trait.exclude_tags, reverse = True), key=lambda trait: trait.tier, reverse = True):
                                 if trait.researched:
                                     if trait.research_needed > 10000: #Assume very high values are impossible #TODO: Just make this a boolean we can toggle on each trait.
                                         $ research_needed_string = "Research Impossible"

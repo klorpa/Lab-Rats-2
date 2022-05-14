@@ -65,6 +65,7 @@ init -2 python:
                     the_person.on_room_enter_event_list.append(taboo_revisit_event)
 
 
+
         return
 
 init -2 python:
@@ -1001,7 +1002,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                                 menu:
                                     "Strip it all off.":
                                         mc.name "Take it all off, I don't want you to be wearing anything."
-                                        the_mom "Yes [the_mc.title]. I'll get completely naked for you."
+                                        the_mom "Yes [the_mom.title]. I'll get completely naked for you."
                                         $ remove_shoes = True
 
                                     "Leave them on.":
